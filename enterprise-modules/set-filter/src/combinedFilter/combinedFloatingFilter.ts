@@ -8,15 +8,15 @@ import {
     Autowired,
     FloatingFilterWrapper,
     IFilterDef,
+    Promise,
+    IFilterComp,
 } from '@ag-grid-community/core';
-import { SetFloatingFilterComp } from '../setFilter/setFloatingFilter';
-import { CombinedFilterParams, CombinedFilterModel } from './combinedFilter';
+import { CombinedFilterParams, CombinedFilterModel, CombinedFilter } from './combinedFilter';
 
 export class CombinedFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private wrappedFloatingFilter: IFloatingFilterComp;
-    private setFloatingFilter: SetFloatingFilterComp;
+    private floatingFilters: IFloatingFilterComp[] = [];
 
     constructor() {
         super('<div class="ag-floating-filter-input"></div>');
@@ -24,14 +24,25 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
+        const filters = CombinedFilter.getFilterDefs(filterParams);
 
-        this.wrappedFloatingFilter = this.createWrappedFloatingFilter(filterParams.wrappedFilter, params);
-        this.appendChild(this.wrappedFloatingFilter.getGui());
+        _.forEach(filters, (filterDef, index) => {
+            const floatingFilterParams: IFloatingFilterParams = {
+                ...params,
+                parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
+                    params.parentFilterInstance(parent => (parent as CombinedFilter).getFilter(index).then(callback));
+                }
+            };
 
-        this.setFloatingFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
-        this.appendChild(this.setFloatingFilter.getGui());
+            const floatingFilter = this.createFloatingFilter(filterDef, floatingFilterParams).resolveNow(null, c => c);
 
-        _.setDisplayed(this.setFloatingFilter.getGui(), false);
+            this.floatingFilters.push(floatingFilter);
+            this.appendChild(floatingFilter.getGui());
+
+            if (index > 0) {
+                _.setDisplayed(floatingFilter.getGui(), false);
+            }
+        });
     }
 
     public onParentModelChanged(model: CombinedFilterModel, event: FilterChangedEvent): void {
@@ -40,19 +51,24 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         // as it would be updating as the user is typing
         if (event && event.afterFloatingFilter) { return; }
 
-        let showWrappedFilter = model == null || model.wrappedFilterModel != null;
-        let showSetFilter = model != null && model.setFilterModel != null;
+        if (model == null) {
+            _.forEach(this.floatingFilters, (filter, i) => {
+                filter.onParentModelChanged(null, event);
+                _.setDisplayed(filter.getGui(), i === 0);
+            });
+        } else {
+            const activeFiltersCount = _.filter(model.filterModels, f => f != null).length;
 
-        if (model != null && model.wrappedFilterModel != null && model.setFilterModel != null) {
-            // show nothing if both filters are active
-            showWrappedFilter = showSetFilter = false;
+            _.forEach(this.floatingFilters, (filter, i) => {
+                const filterModel = model.filterModels.length > i ? model.filterModels[i] : null;
+
+                filter.onParentModelChanged(filterModel, event);
+
+                const shouldShow = activeFiltersCount === 0 ? i === 0 : activeFiltersCount === 1 && filterModel != null;
+
+                _.setDisplayed(filter.getGui(), shouldShow);
+            });
         }
-
-        _.setDisplayed(this.wrappedFloatingFilter.getGui(), showWrappedFilter);
-        _.setDisplayed(this.setFloatingFilter.getGui(), showSetFilter);
-
-        this.wrappedFloatingFilter.onParentModelChanged(model == null ? null : model.wrappedFilterModel, event);
-        this.setFloatingFilter.onParentModelChanged(model == null ? null : model.setFilterModel);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -61,12 +77,10 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         super.destroy();
     }
 
-    private createWrappedFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): IFloatingFilterComp {
+    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> {
         const defaultComponentName =
             FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
-        return this.userComponentFactory
-            .newFloatingFilterComponent(filterDef, params, defaultComponentName)
-            .resolveNow(null, c => c);
+        return this.userComponentFactory.newFloatingFilterComponent(filterDef, params, defaultComponentName);
     }
 }

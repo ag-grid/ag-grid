@@ -3,10 +3,8 @@ import {
     Promise,
     ProvidedFilterModel,
     IDoesFilterPassParams,
-    RefSelector,
     IAfterGuiAttachedParams,
     IClientSideRowModel,
-    RowNode,
     Constants,
     IFilterComp,
     Autowired,
@@ -17,68 +15,74 @@ import {
     SimpleFilter,
     _,
     ISetFilterParams,
+    Component,
 } from '@ag-grid-community/core';
-import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
-import { SetValueModel } from '../setFilter/setValueModel';
-import { SetFilterModel } from '../setFilter/setFilterModel';
 
 export interface CombinedFilterParams extends ISetFilterParams {
-    wrappedFilter?: IFilterDef;
+    filters?: IFilterDef[];
     suppressSynchronisation?: boolean;
-    allowBothFiltersConcurrently?: boolean;
+    allowAllFiltersConcurrently?: boolean;
 }
 
-export interface CombinedFilterModel extends ProvidedFilterModel {
-    wrappedFilterModel: any;
-    setFilterModel: SetFilterModel;
+export interface CombinedFilterModel {
+    filterType: string;
+    filterModels: any[];
 }
 
-export class CombinedFilter extends ProvidedFilter {
-    @RefSelector('eCombinedFilter') private readonly eCombinedFilter: HTMLElement;
+export class CombinedFilter extends Component implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
+    private params: CombinedFilterParams;
+    private filters: IFilterComp[] = [];
     private column: Column;
-    private wrappedFilter: IFilterComp;
-    private setFilter: SetFilter;
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
     private suppressSynchronisation: boolean;
-    private allowBothFiltersConcurrently: boolean;
+    private allowAllFiltersConcurrently: boolean;
+
+    constructor() {
+        super('<div class="combined-filter"></div>');
+    }
+
+    public static getFilterDefs(params: CombinedFilterParams): IFilterDef[] {
+        const { filters } = params;
+
+        return filters && filters.length > 0 ?
+            filters :
+            [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
+    }
 
     public init(params: CombinedFilterParams): void {
+        this.params = params;
+
         const {
             column,
             filterChangedCallback,
-            filterModifiedCallback,
-            doesRowPassOtherFilter,
             suppressSynchronisation,
-            allowBothFiltersConcurrently,
+            allowAllFiltersConcurrently,
         } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
         this.suppressSynchronisation = !!suppressSynchronisation;
-        this.allowBothFiltersConcurrently = !!allowBothFiltersConcurrently;
+        this.allowAllFiltersConcurrently = !!allowAllFiltersConcurrently;
 
-        this.wrappedFilter = this.createWrappedFilter(params);
-        this.eCombinedFilter.appendChild(this.wrappedFilter.getGui());
+        const filters = CombinedFilter.getFilterDefs(params);
 
-        const divider = document.createElement('div');
-        _.addCssClass(divider, 'ag-combined-filter-divider');
-        this.eCombinedFilter.appendChild(divider);
+        _.forEach(filters, (filterDef, index) => {
+            if (index > 0) {
+                const divider = document.createElement('div');
+                _.addCssClass(divider, 'ag-combined-filter-divider');
+                this.getGui().appendChild(divider);
+            }
 
-        this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(
-            SetFilter,
-            {
-                ...params,
-                filterModifiedCallback,
-                filterChangedCallback: () => this.filterChanged('set'),
-                doesRowPassOtherFilter,
-            });
+            const filter = this.createFilter(filterDef, index).resolveNow(null, f => f);
 
-        this.eCombinedFilter.appendChild(this.setFilter.getGui());
+            this.filters.push(filter);
+            this.getGui().appendChild(filter.getGui());
+        });
 
         if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -89,24 +93,15 @@ export class CombinedFilter extends ProvidedFilter {
         }
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        if (typeof this.wrappedFilter.afterGuiAttached === 'function') {
-            this.wrappedFilter.afterGuiAttached(params);
-        }
-
-        this.setFilter.afterGuiAttached(params);
-    }
-
     public isFilterActive(): boolean {
-        return !!(this.wrappedFilter.isFilterActive() || this.setFilter.isFilterActive());
+        return _.some(this.filters, filter => filter.isFilterActive());
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        return (!this.wrappedFilter.isFilterActive() || this.wrappedFilter.doesFilterPass(params)) &&
-            (!this.setFilter.isFilterActive() || this.setFilter.doesFilterPass(params));
+        return _.every(this.filters, filter => !filter.isFilterActive() || filter.doesFilterPass(params));
     }
 
-    protected getFilterType(): string {
+    private getFilterType(): string {
         return 'combined';
     }
 
@@ -117,21 +112,16 @@ export class CombinedFilter extends ProvidedFilter {
 
         const model: CombinedFilterModel = {
             filterType: this.getFilterType(),
-            wrappedFilterModel: null,
-            setFilterModel: null,
+            filterModels: _.map(this.filters, filter => {
+                const providedFilter = filter as ProvidedFilter;
+
+                if (filter.isFilterActive() && typeof providedFilter.getModelFromUi === 'function') {
+                    return providedFilter.getModelFromUi();
+                }
+
+                return null;
+            })
         };
-
-        if (this.wrappedFilter.isFilterActive()) {
-            const providedFilter = this.wrappedFilter as ProvidedFilter;
-
-            if (typeof providedFilter.getModelFromUi === 'function') {
-                model.wrappedFilterModel = providedFilter.getModelFromUi();
-            }
-        }
-
-        if (this.setFilter.isFilterActive()) {
-            model.setFilterModel = this.setFilter.getModelFromUi();
-        }
 
         return model;
     }
@@ -143,25 +133,22 @@ export class CombinedFilter extends ProvidedFilter {
 
         const model: CombinedFilterModel = {
             filterType: this.getFilterType(),
-            wrappedFilterModel: null,
-            setFilterModel: null,
+            filterModels: _.map(this.filters, filter => {
+                if (filter.isFilterActive()) {
+                    return filter.getModel();
+                }
+
+                return null;
+            })
         };
-
-        if (this.wrappedFilter.isFilterActive()) {
-            model.wrappedFilterModel = this.wrappedFilter.getModel();
-        }
-
-        if (this.setFilter.isFilterActive()) {
-            model.setFilterModel = this.setFilter.getModel();
-        }
 
         return model;
     }
 
     public setModel(model: CombinedFilterModel): Promise<void> {
-        const setCombineFilterModel = (model: any) => {
+        const setFilterModel = (filter: IFilterComp, model: any) => {
             return new Promise<void>(resolve => {
-                const promise = this.wrappedFilter.setModel(model);
+                const promise = filter.setModel(model);
 
                 if (promise == null) {
                     resolve();
@@ -171,130 +158,95 @@ export class CombinedFilter extends ProvidedFilter {
             });
         };
 
-        return new Promise(resolve => {
-            if (model == null) {
-                setCombineFilterModel(null).then(() => this.setFilter.setModel(null).then(() => resolve()));
-            } else {
-                setCombineFilterModel(model.wrappedFilterModel)
-                    .then(() => this.setFilter.setModel(model.setFilterModel).then(() => resolve()));
+        let promises: Promise<void>[] = [];
+
+        if (model == null) {
+            promises = _.map(this.filters, filter => setFilterModel(filter, null));
+        } else {
+            _.forEach(this.filters, (filter, index) => {
+                const filterModel = model.filterModels.length > index ? model.filterModels[index] : null;
+
+                promises.push(setFilterModel(filter, filterModel));
+            });
+        }
+
+        return Promise.all(promises).then(() => { });
+    }
+
+    public getFilter(index: number): Promise<IFilterComp> {
+        return Promise.resolve(this.filters[index]);
+    }
+
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        this.executeFunctionIfExists('afterGuiAttached', params);
+    }
+
+    public onAnyFilterChanged(): void {
+        this.executeFunctionIfExists('onAnyFilterChanged');
+    }
+
+    public onNewRowsLoaded(): void {
+        this.executeFunctionIfExists('onNewRowsLoaded');
+    }
+
+    public onFloatingFilterChanged(type: string, value: any): void {
+        // might need to ensure this goes to the correct filter?
+        this.executeFunctionIfExists<SimpleFilter<any>>('onFloatingFilterChanged', type, value);
+    }
+
+    public destroy(): void {
+        super.destroy();
+    }
+
+    private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]) {
+        _.forEach(this.filters, filter => {
+            const func = (filter as T)[name];
+
+            if (typeof func === 'function') {
+                func.apply(filter, params);
             }
         });
     }
 
-    public getWrappedFilter(): IFilterComp {
-        return this.wrappedFilter;
-    }
+    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> {
+        const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
-    public getSetFilter(): SetFilter {
-        return this.setFilter;
-    }
-
-    public getValueModel(): SetValueModel {
-        return this.setFilter.getValueModel();
-    }
-
-    public onAnyFilterChanged(): void {
-        if (typeof this.wrappedFilter.onAnyFilterChanged === 'function') {
-            this.wrappedFilter.onAnyFilterChanged();
-        }
-
-        this.setFilter.onAnyFilterChanged();
-    }
-
-    public onNewRowsLoaded(): void {
-        if (typeof this.wrappedFilter.onNewRowsLoaded === 'function') {
-            this.wrappedFilter.onNewRowsLoaded();
-        }
-
-        this.setFilter.onNewRowsLoaded();
-    }
-
-    public onFloatingFilterChanged(type: string, value: any): void {
-        const filter = this.wrappedFilter as SimpleFilter<any>;
-
-        if (typeof filter.onFloatingFilterChanged === 'function') {
-            filter.onFloatingFilterChanged(type, value);
-        }
-
-        // floating set filter is read-only, so will never trigger a change
-    }
-
-    protected updateUiVisibility(): void {
-    }
-
-    protected createBodyTemplate(): string {
-        return `<div ref="eCombinedFilter"></div>`;
-    }
-
-    protected getCssIdentifier(): string {
-        return 'combined-filter';
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // These methods have "dummy" implementations because they are not really used - the wrapped filters have the
-    // relevant implementations.
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
-        return Promise.resolve();
-    }
-
-    protected setModelIntoUi(model: ProvidedFilterModel): Promise<void> {
-        return Promise.resolve();
-    }
-
-    protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
-        return false;
-    }
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private createWrappedFilter(params: CombinedFilterParams): IFilterComp {
-        const { wrappedFilter: combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
-        const filterDef = combineWith || {};
         const filterParams =
         {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
-            filterChangedCallback: () => this.filterChanged('provided'),
+            filterChangedCallback: () => this.filterChanged(index),
             doesRowPassOtherFilter
         };
 
-        return this.userComponentFactory
-            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter')
-            .resolveNow(null, c => c);
+        return this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
     }
 
-    private filterChanged(filterType: 'provided' | 'set'): void {
-        if (this.allowBothFiltersConcurrently) {
+    private filterChanged(index: number): void {
+        if (this.allowAllFiltersConcurrently) {
             this.filterChangedCallback();
             return;
         }
 
-        if (filterType === 'provided') {
-            if (this.setFilter.isFilterActive()) {
-                this.setFilter.setModel(null);
+        _.forEach(this.filters, (filter, i) => {
+            if (i !== index && filter.isFilterActive()) {
+                filter.setModel(null);
             }
+        });
 
-            this.filterChangedCallback();
+        this.filterChangedCallback();
 
-            if (this.wrappedFilter.isFilterActive()) {
-                let values: string[] = [];
+        // if (this.wrappedFilter.isFilterActive()) {
+        //     let values: string[] = [];
 
-                if (!this.suppressSynchronisation && this.clientSideValuesExtractor) {
-                    const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
-                    values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
-                }
+        //     if (!this.suppressSynchronisation && this.clientSideValuesExtractor) {
+        //         const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
+        //         values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
+        //     }
 
-                this.setFilter.setModelIntoUi({ filterType: 'set', values });
-            } else {
-                this.setFilter.setModelIntoUi(null);
-            }
-        }
-
-        if (filterType === 'set') {
-            if (this.wrappedFilter.isFilterActive()) {
-                this.wrappedFilter.setModel(null);
-            }
-
-            this.filterChangedCallback();
-        }
+        //     this.setFilter.setModelIntoUi({ filterType: 'set', values });
+        // } else {
+        //     this.setFilter.setModelIntoUi(null);
+        // }
     }
 }

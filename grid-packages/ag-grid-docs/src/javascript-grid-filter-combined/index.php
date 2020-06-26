@@ -9,13 +9,12 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Combined Filter - Overview</h1>
 
 <p class="lead">
-    The Combined Filter allows you to combine the <a href="../javascript-grid-filter-set/">Set Filter</a> with another
-    filter, giving your users more flexibility in how they filter data in the grid.
+    The Combined Filter allows you to combine multiple filters together on the same column, giving your users more
+    flexibility in how they filter data in the grid.
 </p>
 
 <p>
-    You can use any of the grid's provided filters or provide your own to be wrapped alongside the Set Filter.
-    Only one filter will be active at a time: if you use the Set Filter, the other filter will be reset, and vice versa.
+    You can use any of the grid's provided filters or provide your own to be combined together.
 </p>
 
 <h2>Enabling the Combined Filter</h2>
@@ -31,6 +30,12 @@ include '../documentation-main/documentation_header.php';
 }
 SNIPPET
 ) ?>
+
+<p>
+    By default the Combined Filter will show a <a href="../javascript-grid-filter-text/">Text Filter</a>
+    combined with a <a href="../javascript-grid-filter-set/">Set Filter</a>, but you can specify which filters
+    you would like to combine in the <code>filters</code> array.
+</p>
 
 <p>
     The example below shows the Combined Filter in action. Note the following:
@@ -68,7 +73,7 @@ SNIPPET
 
 <?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
-<h2>Synchronisation</h2>
+<h2>Synchronisation (currently not working - needs revision for generic approach)</h2>
 
 <p>
     When using the <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a> and filtering using the
@@ -109,17 +114,17 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Sychronisation', 'sychronisation', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Synchronisation', 'synchronisation', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Concurrent Filtering</h2>
 
 <p>
-    By default, only one filter from the Combined Filter can be active at any time. If you interact with either filter
-    it will reset the other filter to prevent both being active concurrently.
+    By default, only one filter from the Combined Filter can be active at any time. If you apply any filter, all other
+    filters will be reset to prevent more than one filter being active concurrently.
 </p>
 
 <p>
-    If you would like both filters to be allowed at the same time, set <code>allowBothFiltersConcurrently</code> in the
+    If you would like all filters to be allowed at the same time, set <code>allowAllFiltersConcurrently</code> in the
     <code>filterParams</code>:
 </p>
 
@@ -128,14 +133,14 @@ SNIPPET
 {
     filter: 'agCombinedColumnFilter',
     filterParams: {
-        allowBothFiltersConcurrently: true,
+        allowAllFiltersConcurrently: true,
     }
 }
 SNIPPET
 ) ?>
 
 <p>
-    In this case, when both filters are active, the floating filter will be hidden, and synchronisation will be
+    In this case, when more than one filter is active, the floating filter will be hidden, and synchronisation will be
     disabled automatically. The filters will be applied using AND in the same way that filters from different columns
     are combined.
 </p>
@@ -154,16 +159,17 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Allow Both Filters', 'allow-both-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Allow All Filters', 'allow-all-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Custom Filters</h2>
 
 <p>
-    You can also use your own <a href="../javascript-grid-filter-custom/">Custom Filters</a> with the Combined Filter.
+    You can use your own <a href="../javascript-grid-filter-custom/">Custom Filters</a> with the Combined Filter.
 </p>
 
 <p>
-    The example below shows a Custom Filter in use on the <strong>Year</strong> column.
+    The example below shows a Custom Filter in use on the <strong>Year</strong> column, combined with the grid-provided
+    <a href="../javascript-grid-filter-number/">Number Filter</a>.
 </p>
 
 <?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>

@@ -5,45 +5,63 @@ var gridOptions = {
             field: 'country',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                wrappedFilter: {
-                    filter: 'agTextColumnFilter',
-                    filterParams: {
-                        alwaysShowBothConditions: true,
-                        defaultOption: 'contains',
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        filterParams: {
+                            alwaysShowBothConditions: true,
+                            defaultOption: 'contains',
+                        },
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
                     }
-                }
+                ]
             }
         },
         {
             field: 'gold',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                wrappedFilter: {
-                    filter: 'agNumberColumnFilter',
-                    filterParams: {
-                        alwaysShowBothConditions: true,
+                filters: [
+                    {
+                        filter: 'agNumberColumnFilter',
+                        filterParams: {
+                            alwaysShowBothConditions: true,
+                        },
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
                     }
-                }
+                ]
             }
         },
         {
             field: 'date',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                wrappedFilter: {
-                    filter: 'agDateColumnFilter',
-                    filterParams: {
-                        alwaysShowBothConditions: true,
-                        comparator: function(filterDate, cellValue) {
-                            if (cellValue == null) return -1;
+                filters: [
+                    {
+                        filter: 'agDateColumnFilter',
+                        filterParams: {
+                            alwaysShowBothConditions: true,
+                            comparator: function(filterDate, cellValue) {
+                                if (cellValue == null) return -1;
 
-                            return getDate(cellValue) - filterDate;
+                                return getDate(cellValue) - filterDate;
+                            },
                         },
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                        filterParams: {
+                            alwaysShowBothConditions: true,
+                            comparator: function(a, b) {
+                                return getDate(a) - getDate(b);
+                            }
+                        }
                     }
-                },
-                comparator: function(a, b) {
-                    return getDate(a) - getDate(b);
-                }
+                ]
             }
         },
     ],

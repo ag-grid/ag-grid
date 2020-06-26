@@ -6,10 +6,15 @@ var gridOptions = {
             field: 'year',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                wrappedFilter: {
-                    filter: YearFilter,
-                    floatingFilterComponent: YearFloatingFilter,
-                }
+                filters: [
+                    {
+                        filter: YearFilter,
+                        floatingFilterComponent: YearFloatingFilter,
+                    },
+                    {
+                        filter: 'agNumberColumnFilter'
+                    }
+                ]
             }
         }
     ],

@@ -1,16 +1,24 @@
-import { UserComponentFactory, IFloatingFilterComp, IFloatingFilterParams, Promise, FilterChangedEvent } from '@ag-grid-community/core';
-import { SetFloatingFilterComp } from '../setFilter/setFloatingFilter';
+import {
+    UserComponentFactory,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+    Promise,
+    FilterChangedEvent,
+    ProvidedFilterModel
+} from '@ag-grid-community/core';
 import { CombinedFloatingFilterComp } from './combinedFloatingFilter';
 import { mock } from '../test-utils/mock';
 import { CombinedFilterModel } from './combinedFilter';
+import { SetFilterModel } from '../setFilter/setFilterModel';
 
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
-let wrappedFloatingFilter: jest.Mocked<IFloatingFilterComp>;
-let setFloatingFilter: jest.Mocked<SetFloatingFilterComp>;
+let floatingFilter1: jest.Mocked<IFloatingFilterComp>;
+let floatingFilter2: jest.Mocked<IFloatingFilterComp>;
 
 function createCombinedFloatingFilter(filterParams: any = {}): CombinedFloatingFilterComp {
-    userComponentFactory.newFloatingFilterComponent.mockReturnValue(Promise.resolve(wrappedFloatingFilter));
-    userComponentFactory.createUserComponentFromConcreteClass.mockReturnValue(setFloatingFilter);
+    userComponentFactory.newFloatingFilterComponent
+        .mockReturnValueOnce(Promise.resolve(floatingFilter1))
+        .mockReturnValueOnce(Promise.resolve(floatingFilter2));
 
     const params: IFloatingFilterParams = {
         column: null,
@@ -37,33 +45,33 @@ beforeEach(() => {
 
 describe('init', () => {
     beforeEach(() => {
-        wrappedFloatingFilter = mock<IFloatingFilterComp>('getGui');
-        setFloatingFilter = mock<SetFloatingFilterComp>('getGui');
+        floatingFilter1 = mock<IFloatingFilterComp>('getGui');
+        floatingFilter2 = mock<IFloatingFilterComp>('getGui');
     });
 
-    it('creates floating filters for both filters with set floating filter hidden', () => {
+    it('creates floating filters for both filters with second floating filter hidden', () => {
         const wrappedFloatingFilterElement = document.createElement('div');
-        wrappedFloatingFilterElement.id = 'wrapped-filter';
-        wrappedFloatingFilter = mock<IFloatingFilterComp>('getGui');
-        wrappedFloatingFilter.getGui.mockReturnValue(wrappedFloatingFilterElement);
+        wrappedFloatingFilterElement.id = 'filter-1';
+        floatingFilter1 = mock<IFloatingFilterComp>('getGui');
+        floatingFilter1.getGui.mockReturnValue(wrappedFloatingFilterElement);
 
         const setFloatingFilterElement = document.createElement('div');
-        setFloatingFilterElement.id = 'set-filter';
-        setFloatingFilter = mock<SetFloatingFilterComp>('getGui');
-        setFloatingFilter.getGui.mockReturnValue(setFloatingFilterElement);
+        setFloatingFilterElement.id = 'filter-2';
+        floatingFilter2 = mock<IFloatingFilterComp>('getGui');
+        floatingFilter2.getGui.mockReturnValue(setFloatingFilterElement);
 
         const combinedFloatingFilter = createCombinedFloatingFilter();
 
-        expect(combinedFloatingFilter.getGui().outerHTML).toBe('<div class="ag-floating-filter-input"><div id="wrapped-filter"></div><div id="set-filter" class="ag-hidden"></div></div>');
+        expect(combinedFloatingFilter.getGui().outerHTML).toBe('<div class="ag-floating-filter-input"><div id="filter-1"></div><div id="filter-2" class="ag-hidden"></div></div>');
     });
 });
 
 describe('onParentModelChanged', () => {
     beforeEach(() => {
-        wrappedFloatingFilter = mock<IFloatingFilterComp>('getGui', 'onParentModelChanged');
-        wrappedFloatingFilter.getGui.mockReturnValue(document.createElement('div'));
-        setFloatingFilter = mock<SetFloatingFilterComp>('getGui', 'onParentModelChanged');
-        setFloatingFilter.getGui.mockReturnValue(document.createElement('div'));
+        floatingFilter1 = mock<IFloatingFilterComp>('getGui', 'onParentModelChanged');
+        floatingFilter1.getGui.mockReturnValue(document.createElement('div'));
+        floatingFilter2 = mock<IFloatingFilterComp>('getGui', 'onParentModelChanged');
+        floatingFilter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('passes through onParentModelChanged call when model is null', () => {
@@ -72,27 +80,28 @@ describe('onParentModelChanged', () => {
 
         combinedFloatingFilter.onParentModelChanged(null, event);
 
-        expect(wrappedFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(1);
-        expect(wrappedFloatingFilter.onParentModelChanged).toHaveBeenCalledWith(null, event);
-        expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(1);
-        expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledWith(null);
+        expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
+        expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledWith(null, event);
+        expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledTimes(1);
+        expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledWith(null, event);
     });
 
     it('passes through onParentModelChanged call when model is present', () => {
         const combinedFloatingFilter = createCombinedFloatingFilter();
         const event = mock<FilterChangedEvent>();
+        const filterModel1: ProvidedFilterModel = { filterType: 'text' };
+        const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
         const model: CombinedFilterModel = {
             filterType: 'combined',
-            wrappedFilterModel: { filterType: 'wrapped' },
-            setFilterModel: { filterType: 'set', values: [] },
+            filterModels: [filterModel1, filterModel2]
         };
 
         combinedFloatingFilter.onParentModelChanged(model, event);
 
-        expect(wrappedFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(1);
-        expect(wrappedFloatingFilter.onParentModelChanged).toHaveBeenCalledWith(model.wrappedFilterModel, event);
-        expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(1);
-        expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledWith(model.setFilterModel);
+        expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
+        expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledWith(filterModel1, event);
+        expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledTimes(1);
+        expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledWith(filterModel2, event);
     });
 
     it('does nothing if afterFloatingFilter is true', () => {
@@ -102,44 +111,41 @@ describe('onParentModelChanged', () => {
 
         const model: CombinedFilterModel = {
             filterType: 'combined',
-            wrappedFilterModel: { filterType: 'wrapped' },
-            setFilterModel: { filterType: 'set', values: [] },
+            filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };
 
         combinedFloatingFilter.onParentModelChanged(model, event);
 
-        expect(wrappedFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(0);
-        expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(0);
+        expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(0);
+        expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledTimes(0);
     });
 
-    it('shows wrapped floating filter if only wrapped filter is active', () => {
+    it('shows first floating filter if only first filter is active', () => {
         const combinedFloatingFilter = createCombinedFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const model: CombinedFilterModel = {
             filterType: 'combined',
-            wrappedFilterModel: { filterType: 'wrapped' },
-            setFilterModel: null,
+            filterModels: [{ filterType: 'text' }, null]
         };
 
         combinedFloatingFilter.onParentModelChanged(model, event);
 
-        expect(wrappedFloatingFilter.getGui().className).toBe('');
-        expect(setFloatingFilter.getGui().className).toBe('ag-hidden');
+        expect(floatingFilter1.getGui().className).toBe('');
+        expect(floatingFilter2.getGui().className).toBe('ag-hidden');
     });
 
-    it('shows set floating filter if only set filter is active', () => {
+    it('shows second floating filter if only second filter is active', () => {
         const combinedFloatingFilter = createCombinedFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const model: CombinedFilterModel = {
             filterType: 'combined',
-            wrappedFilterModel: null,
-            setFilterModel: { filterType: 'set', values: [] },
+            filterModels: [null, { filterType: 'set', values: [] }]
         };
 
         combinedFloatingFilter.onParentModelChanged(model, event);
 
-        expect(wrappedFloatingFilter.getGui().className).toBe('ag-hidden');
-        expect(setFloatingFilter.getGui().className).toBe('');
+        expect(floatingFilter1.getGui().className).toBe('ag-hidden');
+        expect(floatingFilter2.getGui().className).toBe('');
     });
 
     it('shows neither floating filter if both filters are active', () => {
@@ -147,13 +153,12 @@ describe('onParentModelChanged', () => {
         const event = mock<FilterChangedEvent>();
         const model: CombinedFilterModel = {
             filterType: 'combined',
-            wrappedFilterModel: { filterType: 'wrapped' },
-            setFilterModel: { filterType: 'set', values: [] },
+            filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };
 
         combinedFloatingFilter.onParentModelChanged(model, event);
 
-        expect(wrappedFloatingFilter.getGui().className).toBe('ag-hidden');
-        expect(setFloatingFilter.getGui().className).toBe('ag-hidden');
+        expect(floatingFilter1.getGui().className).toBe('ag-hidden');
+        expect(floatingFilter2.getGui().className).toBe('ag-hidden');
     });
 });

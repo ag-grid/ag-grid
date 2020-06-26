@@ -160,7 +160,6 @@
     }
 
     .ag-combined-filter-divider {
-        border-bottom: solid 1px;
-        @include ag-border(secondary, bottom);
+        @include ag-border(secondary, bottom, $width: 3px);
     }
 }
