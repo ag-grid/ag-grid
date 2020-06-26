@@ -8,8 +8,8 @@ var gridOptions = {
                 wrappedFilter: {
                     filter: 'agTextColumnFilter',
                     filterParams: {
+                        alwaysShowBothConditions: true,
                         defaultOption: 'contains',
-                        alwaysShowBothConditions: false,
                     }
                 }
             }
@@ -20,6 +20,9 @@ var gridOptions = {
             filterParams: {
                 wrappedFilter: {
                     filter: 'agNumberColumnFilter',
+                    filterParams: {
+                        alwaysShowBothConditions: true,
+                    }
                 }
             }
         },
@@ -30,6 +33,7 @@ var gridOptions = {
                 wrappedFilter: {
                     filter: 'agDateColumnFilter',
                     filterParams: {
+                        alwaysShowBothConditions: true,
                         comparator: function(filterDate, cellValue) {
                             if (cellValue == null) return -1;
 

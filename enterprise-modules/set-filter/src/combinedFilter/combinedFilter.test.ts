@@ -110,13 +110,6 @@ describe('init', () => {
         expect(userComponentFactory.newFilterComponent)
             .toHaveBeenCalledWith(expect.anything(), expect.anything(), 'agTextColumnFilter');
     });
-
-    it('defaults to always show both conditions in the wrapped filter', () => {
-        createCombinedFilter();
-
-        expect(userComponentFactory.newFilterComponent)
-            .toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ alwaysShowBothConditions: true }), expect.anything());
-    });
 });
 
 describe('afterGuiAttached', () => {

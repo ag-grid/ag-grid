@@ -55,10 +55,10 @@ SNIPPET
         which floating filter is shown.
     </li>
     <li>
-        By default, both conditions in the wrapped filter are shown at all times. This reduces the amount of UI movement
-        when the users changes which filter within the Combined Filter they are interacting with. You can disable this
-        by setting <code>alwaysShowBothConditions</code> to <code>false</code>, as shown in the
-        <strong>Country</strong> column.
+        We recommend setting <code>alwaysShowBothConditions</code> to <code>true</code> for provided filters to reduce
+        the amount of UI movement when a user changes which filter within the Combined Filter they are interacting
+        with. We have therefore shown this enabled for all columns except the <strong>Athlete</strong> column, which
+        shows the default behaviour.
     </li>
     <li>
         You can print the current filter state to the console and save/restore it using the buttons at the top of the

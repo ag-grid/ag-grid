@@ -252,7 +252,6 @@ export class CombinedFilter extends ProvidedFilter {
         const filterParams =
         {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
-            alwaysShowBothConditions: true, // default to always show both conditions for combined filter,
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged('provided'),
             doesRowPassOtherFilter
