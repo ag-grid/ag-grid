@@ -9,7 +9,7 @@ import {AgGridColumn} from './ag-grid-column.component';
     exports: [AgGridAngular, AgGridColumn]
 })
 export class AgGridModule {
-    static withComponents(components?: any): ModuleWithProviders {
+    static withComponents(components?: any): ModuleWithProviders<any> {
         return {
             ngModule: AgGridModule,
             providers: [
@@ -18,7 +18,7 @@ export class AgGridModule {
         };
     }
 
-    static forRoot(components?: any): ModuleWithProviders {
+    static forRoot(components?: any): ModuleWithProviders<any> {
         return {
             ngModule: AgGridModule,
             providers: [

@@ -17,6 +17,13 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
+<note>
+<p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
+<code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
+    <p>If you experience this please set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
+    <p>Version 24.0.0 of <code>@ag-grid-community/angular</code> / <code>ag-grid-angular</code> will remove the need for this flag to be set.</p>
+</note>
+
 <note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <h2>Getting Started</h2>
