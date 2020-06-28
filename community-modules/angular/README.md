@@ -9,7 +9,7 @@ ag-Grid Angular Component
 ------
 
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and integrates smoothly with Angular as Angular Component. Here's how our grid looks like with multiple filters and grouping enabled:
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and integrates smoothly with Angular as Angular Component. Here's how our grid looks like with multiple filters and grouping enabled:
 
 ![alt text](./github-grid-demo.jpg "Logo Title Text 1")
 
@@ -47,22 +47,22 @@ Here are some of the features that make ag-Grid stand out:
 * Pinned Rows
 * Full Width Rows
 
-\* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github) only.
+\* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) only.
 
-Check out [developers documentation](https://www.ag-grid.com/documentation-main/documentation.php?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+Check out [developers documentation](https://www.ag-grid.com/documentation-main/documentation.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 Usage Overview
 --------------
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-grid?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/angular-grid?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
 
 #### Install dependencies
 
-    $ npm i --save @ag-grid-communtiy/core @ag-grid-communtiy/angular
+    $ npm i --save @ag-grid-community/core @ag-grid-community/angular
 
 #### Import `AgGridModule` and add it to the `App` module
 
-	import { AgGridModule } from '@ag-grid-communtiy/angular';
+	import { AgGridModule } from '@ag-grid-community/angular';
 
 	@NgModule({
 	  declarations: [AppComponent],
@@ -74,8 +74,8 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 ### Import styles in `styles.css`
 
-    @import "~@ag-grid-communtiy/core/dist/styles/ag-grid.css";
-    @import "~@ag-grid-communtiy/core/dist/styles/ag-theme-balham.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-grid.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 ### Set the grid's configuration in a parent component
 
@@ -95,18 +95,18 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 		];
 	}
 
-### Render the grid as the `@ag-grid-communtiy/angular` child component
+### Render the grid as the `@ag-grid-community/angular` child component
 
-	<@ag-grid-communtiy/angular 
+	<@ag-grid-community/angular 
 		style="width: 500px; height: 500px;" 
 		class="ag-theme-balham"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs">
-	</@ag-grid-communtiy/angular>
+	</@ag-grid-community/angular>
 
 Issue Reporting
 ----------
-If you have found a bug, please report them at this repository `issues` section. If you're using Enterprise version please use the private ticketing system to do that. For more information on support check out our [dedicated page](https://www.ag-grid.com/support.php?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github).
+If you have found a bug, please report them at this repository `issues` section. If you're using Enterprise version please use the private ticketing system to do that. For more information on support check out our [dedicated page](https://www.ag-grid.com/support.php?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github).
 
 
 Asking Questions
@@ -116,7 +116,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 Contributing
 ------------
-ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=@ag-grid-communtiy/angular-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=@ag-grid-community/angular-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 License
 ------------------
