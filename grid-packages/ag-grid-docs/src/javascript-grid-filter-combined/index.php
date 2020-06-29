@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Combined Filter - Overview</h1>
+<h1 class="heading-enterprise">Combined Filter</h1>
 
 <p class="lead">
     The Combined Filter allows <a href="../javascript-grid-filter-provided/">Provided Filters</a> or
