@@ -4,24 +4,20 @@ import {
     ProvidedFilterModel,
     IDoesFilterPassParams,
     IAfterGuiAttachedParams,
-    IClientSideRowModel,
-    Constants,
     IFilterComp,
     Autowired,
     UserComponentFactory,
     FilterManager,
     Column,
     IFilterDef,
-    SimpleFilter,
     _,
     ISetFilterParams,
     Component,
+    IFilterParams,
 } from '@ag-grid-community/core';
-import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export interface CombinedFilterParams extends ISetFilterParams {
     filters?: IFilterDef[];
-    suppressSynchronisation?: boolean;
     allowAllFiltersConcurrently?: boolean;
 }
 
@@ -36,10 +32,9 @@ export class CombinedFilter extends Component implements IFilterComp {
 
     private params: CombinedFilterParams;
     private filters: IFilterComp[] = [];
+    private activeFilters = new Set<IFilterComp>();
     private column: Column;
     private filterChangedCallback: () => void;
-    private clientSideValuesExtractor: ClientSideValuesExtractor;
-    private suppressSynchronisation: boolean;
     private allowAllFiltersConcurrently: boolean;
 
     constructor() {
@@ -57,16 +52,10 @@ export class CombinedFilter extends Component implements IFilterComp {
     public init(params: CombinedFilterParams): void {
         this.params = params;
 
-        const {
-            column,
-            filterChangedCallback,
-            suppressSynchronisation,
-            allowAllFiltersConcurrently,
-        } = params;
+        const { column, filterChangedCallback, allowAllFiltersConcurrently } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
-        this.suppressSynchronisation = !!suppressSynchronisation;
         this.allowAllFiltersConcurrently = !!allowAllFiltersConcurrently;
 
         const filters = CombinedFilter.getFilterDefs(params);
@@ -83,22 +72,22 @@ export class CombinedFilter extends Component implements IFilterComp {
             this.filters.push(filter);
             this.getGui().appendChild(filter.getGui());
         });
-
-        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideValuesExtractor = new ClientSideValuesExtractor(
-                params.rowModel as IClientSideRowModel,
-                params.colDef,
-                params.valueGetter
-            );
-        }
     }
 
     public isFilterActive(): boolean {
         return _.some(this.filters, filter => filter.isFilterActive());
     }
 
-    public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        return _.every(this.filters, filter => !filter.isFilterActive() || filter.doesFilterPass(params));
+    public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
+        let rowPasses = true;
+
+        this.activeFilters.forEach(activeFilter => {
+            if (!rowPasses || activeFilter === filterToSkip) { return; }
+
+            rowPasses = activeFilter.doesFilterPass(params);
+        });
+
+        return rowPasses;
     }
 
     private getFilterType(): string {
@@ -189,11 +178,6 @@ export class CombinedFilter extends Component implements IFilterComp {
         this.executeFunctionIfExists('onNewRowsLoaded');
     }
 
-    public onFloatingFilterChanged(type: string, value: any): void {
-        // might need to ensure this goes to the correct filter?
-        this.executeFunctionIfExists<SimpleFilter<any>>('onFloatingFilterChanged', type, value);
-    }
-
     public destroy(): void {
         super.destroy();
     }
@@ -211,42 +195,48 @@ export class CombinedFilter extends Component implements IFilterComp {
     private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> {
         const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
-        const filterParams =
+        let filterInstance: IFilterComp;
+
+        const filterParams: IFilterParams =
         {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged(index),
-            doesRowPassOtherFilter
+            doesRowPassOtherFilter,
+            doesRowPassSiblingFilters: node => this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        return this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
+        return this.userComponentFactory
+            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter').then(filter => filterInstance = filter);
     }
 
     private filterChanged(index: number): void {
-        if (this.allowAllFiltersConcurrently) {
-            this.filterChangedCallback();
-            return;
+        const changedFilter = this.filters[index];
+
+        if (changedFilter.isFilterActive()) {
+            this.activeFilters.add(changedFilter);
+        } else {
+            this.activeFilters.delete(changedFilter);
         }
 
-        _.forEach(this.filters, (filter, i) => {
-            if (i !== index && filter.isFilterActive()) {
+        const isAnySiblingFilterActive = this.activeFilters.size > 0;
+
+        _.forEach(this.filters, filter => {
+            if (filter === changedFilter) { return; }
+
+            if (!this.allowAllFiltersConcurrently && filter.isFilterActive()) {
                 filter.setModel(null);
+            }
+
+            if (typeof filter.onAnyFilterChanged === 'function') {
+                filter.onAnyFilterChanged();
+            }
+
+            if (typeof filter.onSiblingFilterChanged === 'function') {
+                filter.onSiblingFilterChanged(isAnySiblingFilterActive);
             }
         });
 
         this.filterChangedCallback();
-
-        // if (this.wrappedFilter.isFilterActive()) {
-        //     let values: string[] = [];
-
-        //     if (!this.suppressSynchronisation && this.clientSideValuesExtractor) {
-        //         const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
-        //         values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
-        //     }
-
-        //     this.setFilter.setModelIntoUi({ filterType: 'set', values });
-        // } else {
-        //     this.setFilter.setModelIntoUi(null);
-        // }
     }
 }

@@ -186,7 +186,7 @@ export class FilterManager extends BeanStub {
         return this.isQuickFilterPresent() || this.advancedFilterPresent || this.externalFilterPresent;
     }
 
-    private doesFilterPass(node: RowNode, filterToSkip?: any): boolean {
+    private doesFilterPass(node: RowNode, filterToSkip?: IFilterComp): boolean {
         const { data } = node;
         let filterPasses = true;
 
@@ -280,7 +280,7 @@ export class FilterManager extends BeanStub {
         return this.quickFilter !== null;
     }
 
-    public doesRowPassOtherFilters(filterToSkip: any, node: any): boolean {
+    public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
         return this.doesRowPassFilter(node, filterToSkip);
     }
 
@@ -311,7 +311,7 @@ export class FilterManager extends BeanStub {
         );
     }
 
-    public doesRowPassFilter(node: any, filterToSkip?: any): boolean {
+    public doesRowPassFilter(node: any, filterToSkip?: IFilterComp): boolean {
         // the row must pass ALL of the filters, so if any of them fail,
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
@@ -422,7 +422,7 @@ export class FilterManager extends BeanStub {
 
         let filterInstance: IFilterComp;
 
-        const params = {
+        const params: IFilterParams = {
             ...this.createFilterParams(column, colDef, $scope),
             filterModifiedCallback: () => {
                 const event: FilterModifiedEvent = {
@@ -437,7 +437,7 @@ export class FilterManager extends BeanStub {
             },
             filterChangedCallback: (additionalEventAttributes?: any) =>
                 this.onFilterChanged(filterInstance, additionalEventAttributes),
-            doesRowPassOtherFilter: (node: RowNode) => this.doesRowPassOtherFilters(filterInstance, node),
+            doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
         const res = this.userComponentFactory.newFilterComponent(colDef, params, defaultFilter);

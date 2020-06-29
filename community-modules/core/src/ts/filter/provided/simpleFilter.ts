@@ -241,6 +241,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
+
+        if (model == null) { return true; }
+
         const { operator } = model as ICombinedSimpleModel<M>;
         const models: ISimpleFilterModel[] = [];
 

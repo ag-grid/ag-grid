@@ -16,13 +16,15 @@ import {
     IAfterGuiAttachedParams,
     Promise,
     FocusController,
-    _
+    _,
+    IClientSideRowModel
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
+import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
@@ -38,6 +40,7 @@ export class SetFilter extends ProvidedFilter {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('focusController') private focusController: FocusController;
 
+    private clientSideValuesExtractor: ClientSideValuesExtractor;
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
@@ -156,7 +159,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.setModel(null).then(() => this.refresh());
     }
 
-    public setModelIntoUi(model: SetFilterModel): Promise<void> {
+    protected setModelIntoUi(model: SetFilterModel): Promise<void> {
         this.setMiniFilter(null);
 
         if (model instanceof Array) {
@@ -226,13 +229,16 @@ export class SetFilter extends ProvidedFilter {
 
         this.initialiseFilterBodyUi();
 
-        const syncValuesAfterDataChange =
-            this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            !params.values &&
-            !params.suppressSyncValuesAfterDataChange;
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(
+                params.rowModel as IClientSideRowModel,
+                params.colDef,
+                params.valueGetter
+            );
 
-        if (syncValuesAfterDataChange) {
-            this.addEventListenersForDataChanges();
+            if (!params.values && !params.suppressSyncValuesAfterDataChange) {
+                this.addEventListenersForDataChanges();
+            }
         }
     }
 
@@ -304,7 +310,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
-        let promise = Promise.resolve<void>(null);
+        let promise = Promise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
@@ -490,8 +496,25 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onAnyFilterChanged(): void {
-        this.valueModel.refreshAfterAnyFilterChanged();
-        this.virtualList.refresh();
+        this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh());
+    }
+
+    public onSiblingFilterChanged(isAnySiblingFilterActive: boolean): void {
+        const { doesRowPassSiblingFilters } = this.setFilterParams;
+
+        if (doesRowPassSiblingFilters && !this.isFilterActive()) {
+            if (isAnySiblingFilterActive) {
+                let values: string[] = [];
+
+                if (this.clientSideValuesExtractor) {
+                    values = this.clientSideValuesExtractor.extractUniqueValues(row => doesRowPassSiblingFilters(row));
+                }
+
+                this.setModelIntoUi({ filterType: 'set', values });
+            } else {
+                this.setModelIntoUi(null);
+            }
+        }
     }
 
     private updateSelectAllCheckbox(): void {

@@ -65,7 +65,7 @@ export class SetValueModel implements IEventEmitter {
         private readonly suppressSorting: boolean,
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
     ) {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -131,10 +131,12 @@ export class SetValueModel implements IEventEmitter {
         });
     }
 
-    public refreshAfterAnyFilterChanged(): void {
+    public refreshAfterAnyFilterChanged(): Promise<void> {
         if (this.showAvailableOnly()) {
-            this.allValuesPromise.then(values => this.updateAvailableValues(values));
+            return this.allValuesPromise.then(values => this.updateAvailableValues(values));
         }
+
+        return Promise.resolve();
     }
 
     private updateAllValues(): Promise<string[]> {

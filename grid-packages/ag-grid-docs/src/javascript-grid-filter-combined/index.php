@@ -74,19 +74,21 @@ SNIPPET
 
 <?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
-<h2>Synchronisation (currently not working - needs revision for generic approach)</h2>
+<h2>Synchronisation</h2>
 
 <p>
-    When using the <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a> and filtering using the
-    wrapped filter, the Set Filter will update to show the same selection as if the user had manually chosen the
-    matching items in the Set Filter instead. This allows a user to use the wrapped filter as a starting point to create
+    When any filter in the Combined Filter is applied, other filters can respond to this by implementing the
+    <code>onSiblingFilterChanged()</code> method. For example, when using the
+    <a href="../javascript-grid-filter-set/">Set Filter</a> in the Combined Filter along with the
+    <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>, when other filters in the Combined
+    Filter are active, the Set Filter will update to show the same selection as if the user had manually chosen the
+    matching items in the Set Filter instead. This allows a user to use the other filters as a starting point to create
     a set of values that can then be tweaked in the Set Filter.
 </p>
 
 <p>
-    This synchronisation does not happen when using any other row model; instead the Set Filter will simply show
-    everything as deselected when the wrapped filter is active. You can also specify this behaviour if you would prefer
-    it by setting <code>suppressSynchronisation</code> in the <code>filterParams</code>:
+    If you would like to prevent this behaviour, you can stop sibling filters from responding to changes by
+    setting <code>suppressSynchronisation</code> in the <code>filterParams</code>:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -107,11 +109,11 @@ SNIPPET
 <ul class="content">
     <li>
         The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
-        kept in sync when the wrapped filter is used.
+        kept in sync when the Text Filter is used.
     </li>
     <li>
-        The <strong>Country</strong> column has synchronisation disabled so the Set Filter has everything deselected
-        whenever the wrapped filter is used.
+        The <strong>Country</strong> column has synchronisation disabled. In this case, the Set Filter does not respond
+        to changes in the Text Filter.
     </li>
 </ul>
 
@@ -176,16 +178,6 @@ SNIPPET
 <?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
 <h2>Combined Filter Parameters</h2>
-
-<p>
-    Parameters that are common to all <a href="../javascript-grid-filter-provided/">Provided Filters</a>:
-</p>
-
-<?php createDocumentationFromFile('../javascript-grid-filter-provided/providedFilters.json', 'filterParams') ?>
-
-<p>
-    Parameters that are specific to the Combined Filter:
-</p>
 
 <?php createDocumentationFromFile('combinedFilterParams.json', 'filterParams') ?>
 
