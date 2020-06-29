@@ -9,12 +9,13 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Combined Filter - Overview</h1>
 
 <p class="lead">
-    The Combined Filter allows you to combine multiple filters together on the same column, giving your users more
-    flexibility in how they filter data in the grid.
+    The Combined Filter allows <a href="../javascript-grid-filter-provided/">Provided Filters</a> or
+    <a href="../javascript-grid-filter-component/">Custom Filters</a>  to be combined on the same column. This
+    provides greater flexibility when filtering data in the grid.
 </p>
 
 <p>
-    You can use any of the grid's provided filters or provide your own to be combined together.
+    <img src="combined-filter.png" alt="combined filter"/>
 </p>
 
 <h2>Enabling the Combined Filter</h2>
@@ -41,7 +42,7 @@ SNIPPET
     The example below shows the Combined Filter in action. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>The <strong>Athlete</strong> has a Combined Filter with default behaviour.</li>
     <li>
         The <strong>Country</strong>, <strong>Gold</strong> and <strong>Date</strong> columns have Combined Filters with
@@ -103,7 +104,7 @@ SNIPPET
     The following example demonstrates synchronisation.
 </p>
 
-<ul>
+<ul class="content">
     <li>
         The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
         kept in sync when the wrapped filter is used.
@@ -149,7 +150,7 @@ SNIPPET
     The following example demonstrates the different behaviour.
 </p>
 
-<ul>
+<ul class="content">
     <li>
         The <strong>Athlete</strong> column shows the default behaviour, where only one filter is allowed to be active
         at any time.
