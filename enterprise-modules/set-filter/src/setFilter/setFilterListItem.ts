@@ -53,9 +53,7 @@ export class SetFilterListItem extends Component {
         this.eCheckbox.onValueChange(value => {
             this.selected = value;
 
-            const event: SelectedEvent = {
-                type: SetFilterListItem.EVENT_SELECTED
-            };
+            const event: SelectedEvent = { type: SetFilterListItem.EVENT_SELECTED };
 
             return this.dispatchEvent(event);
         });

@@ -611,8 +611,9 @@ export class SetFilter extends ProvidedFilter {
 
         this.updateSelectAllCheckbox();
         this.onUiChanged();
+        this.virtualList.refresh();
 
-        if (_.exists(focusedRow)) {
+        if (focusedRow != null) {
             window.setTimeout(() => {
                 if (this.isAlive()) {
                     this.virtualList.focusRow(focusedRow);
@@ -742,5 +743,9 @@ class ModelWrapper implements VirtualListModel {
 
     public getRow(index: number): string {
         return this.model.getDisplayedValue(index);
+    }
+
+    public isRowSelected(index: number): boolean {
+        return this.model.isValueSelected(this.getRow(index));
     }
 }
