@@ -1,12 +1,12 @@
-import { ChartTheme } from "./chartTheme";
+import { ChartTheme, IChartTheme } from "./chartTheme";
 
 export class DarkTheme extends ChartTheme {
 
-    getOverrides(): any {
+    getDefaults(): any {
         const fontColor = 'rgb(200, 200, 200)';
         const mutedFontColor = 'rgb(150, 150, 150)';
 
-        const axisOverrides = {
+        const axisDefaults = {
             title: {
                 color: fontColor
             },
@@ -25,7 +25,7 @@ export class DarkTheme extends ChartTheme {
             }
         };
 
-        const chartOverrides = {
+        const chartDefaults = {
             background: {
                 fill: 'rgb(52, 52, 52)'
             },
@@ -37,13 +37,13 @@ export class DarkTheme extends ChartTheme {
             },
             axes: {
                 number: {
-                    ...axisOverrides
+                    ...axisDefaults
                 },
                 category: {
-                    ...axisOverrides
+                    ...axisDefaults
                 },
                 time: {
-                    ...axisOverrides
+                    ...axisDefaults
                 }
             },
             legend: {
@@ -55,9 +55,9 @@ export class DarkTheme extends ChartTheme {
             }
         };
 
-        return this.mergeWithParentOverrides({
+        return this.mergeWithParentDefaults({
             cartesian: {
-                ...chartOverrides,
+                ...chartDefaults,
                 series: {
                     bar: {
                         ...seriesLabelDefaults
@@ -71,7 +71,7 @@ export class DarkTheme extends ChartTheme {
                 }
             },
             polar: {
-                ...chartOverrides,
+                ...chartDefaults,
                 series: {
                     pie: {
                         ...seriesLabelDefaults
@@ -81,7 +81,7 @@ export class DarkTheme extends ChartTheme {
         });
     }
 
-    constructor() {
-        super();
+    constructor(config?: IChartTheme) {
+        super(config);
     }
 }

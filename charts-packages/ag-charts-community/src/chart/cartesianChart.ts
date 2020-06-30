@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxisPosition, ChartAxisDirection, ChartAxis } from "./chartAxis";
+import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
 import { Series } from "./series/series";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";

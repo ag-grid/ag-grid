@@ -7,6 +7,12 @@ export interface ChartPalette {
     strokes: string[];
 }
 
+export interface IChartTheme {
+    baseTheme?: string | ChartTheme;
+    palette: ChartPalette;
+    defaults: any;
+}
+
 export class ChartTheme {
 
     readonly palette: ChartPalette = {
@@ -543,8 +549,17 @@ export class ChartTheme {
         }
     };
 
-    constructor() {
-        this.config = this.createAliases(this.getOverrides());
+    constructor(config?: IChartTheme) {
+        let defaults = this.getDefaults();
+        if (config) {
+            if (config.defaults) {
+                defaults = deepMerge(defaults, config.defaults, { arrayMerge });
+            }
+            if (config.palette) {
+                this.palette = config.palette;
+            }
+        }
+        this.config = this.createAliases(defaults);
     }
 
     private createAliases(config: any) {
@@ -567,28 +582,28 @@ export class ChartTheme {
     /**
      * Meant to be overridden in subclasses. For example:
      * ```
-     *     getOverrides() {
-     *         const subclassOverrides = { ... };
-     *         return this.mergeWithParentOverrides(subclassOverrides);
+     *     getDefaults() {
+     *         const subclassDefaults = { ... };
+     *         return this.mergeWithParentDefaults(subclassDefaults);
      *     }
      * ```
      */
-    getOverrides(): any {
+    getDefaults(): any {
         return deepMerge({}, ChartTheme.defaults, { arrayMerge });
     }
 
-    protected mergeWithParentOverrides(overrides: any): any {
+    protected mergeWithParentDefaults(defaults: any): any {
         const mergeOptions = { arrayMerge };
         const proto = Object.getPrototypeOf(Object.getPrototypeOf(this));
 
         if (proto === Object.prototype) {
             let config: any = deepMerge({}, ChartTheme.defaults, mergeOptions);
-            config = deepMerge(config, overrides, mergeOptions);
+            config = deepMerge(config, defaults, mergeOptions);
             return config;
         }
 
-        const parentOverrides = proto.getOverrides();
-        return deepMerge(parentOverrides, overrides, mergeOptions);
+        const parentDefaults = proto.getDefaults();
+        return deepMerge(parentDefaults, defaults, mergeOptions);
     }
 
     updateChart(chart: Chart) {
