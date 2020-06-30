@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Chart Legend";
+$pageTitle = "Chart Navigator";
 $pageDescription = "ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.";
 $pageKeywords = "Javascript Grid Charting";
 $pageGroup = "feature";

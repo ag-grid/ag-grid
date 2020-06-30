@@ -3,24 +3,44 @@ import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
-import { ChartTheme } from "./themes/chartTheme";
+import { ChartTheme, ChartPalette, IChartTheme } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { getValue } from "../util/object";
 import mappings from './chartMappings';
+import { MaterialLight } from "./themes/materialLight";
+import { MaterialDark } from "./themes/materialDark";
+import { PastelLight } from "./themes/pastelLight";
+import { PastelDark } from "./themes/pastelDark";
+import { SolarLight } from "./themes/solarLight";
+import { SolarDark } from "./themes/solarDark";
+import { VividLight } from "./themes/vividLight";
+import { VividDark } from "./themes/vividDark";
 
 const lightTheme = new ChartTheme();
 const themes = {
     default: lightTheme,
     light: lightTheme,
-    dark: new DarkTheme()
+    dark: new DarkTheme(),
+    'material-light': new MaterialLight(),
+    'material-dark': new MaterialDark(),
+    'pastel-light': new PastelLight(),
+    'pastel-dark': new PastelDark(),
+    'solar-light': new SolarLight(),
+    'solar-dark': new SolarDark(),
+    'vivid-light': new VividLight(),
+    'vivid-dark': new VividDark()
 } as any;
 
-function getTheme(name: string | ChartTheme): ChartTheme {
-    if (typeof name === 'string') {
-        return themes[name] || themes.default;
+function getTheme(value: string | ChartTheme | IChartTheme): ChartTheme {
+    if (typeof value === 'string') {
+        return themes[value] || themes.default;
     }
-    if (name instanceof ChartTheme) {
-        return name;
+    if (value instanceof ChartTheme) {
+        return value;
+    }
+    if (value && (value.defaults || value.palette)) {
+        const baseTheme: any = getTheme(value.baseTheme);
+        return new baseTheme.constructor(value);
     }
     return themes.default;
 }
