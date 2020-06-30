@@ -1,9 +1,10 @@
 import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
+import { forEach } from './array';
 
 export function addCssClass(element: HTMLElement, className: string) {
-    if (!className || className.length === 0) { return; }
+    if (!element || !className || className.length === 0) { return; }
 
     if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(value => addCssClass(element, value));
@@ -29,7 +30,7 @@ export function addCssClass(element: HTMLElement, className: string) {
 }
 
 export function removeCssClass(element: HTMLElement, className: string) {
-    if (!className || className.length === 0) { return; }
+    if (!element || !className || className.length === 0) { return; }
 
     if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(value => removeCssClass(element, value));
@@ -109,12 +110,13 @@ export function setVisible(element: HTMLElement, visible: boolean) {
 
 export function setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
+    const addOrRemoveDisabledAttribute = disabled ?
+        (e: HTMLElement) => e.setAttribute(attributeName, '') :
+        (e: HTMLElement) => e.removeAttribute(attributeName);
 
-    if (disabled) {
-        element.setAttribute(attributeName, '');
-    } else {
-        element.removeAttribute(attributeName);
-    }
+    addOrRemoveDisabledAttribute(element);
+
+    forEach(Array.from(element.querySelectorAll('input')), input => addOrRemoveDisabledAttribute(input));
 }
 
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
@@ -499,5 +501,13 @@ export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
         // isNodeSelected returns back undefined if it's a group and the children
         // are a mix of selected and unselected
         eCheckbox.indeterminate = true;
+    }
+}
+
+export function addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
+    if (value == null) {
+        element.removeAttribute(name);
+    } else {
+        element.setAttribute(name, value.toString());
     }
 }

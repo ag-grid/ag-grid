@@ -184,6 +184,12 @@ export class RowComp extends Component {
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
+        templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
+
+        if (this.rowNode.group) {
+            templateParts.push(` aria-expanded=${this.rowNode.expanded ? 'true' : 'false'}`);
+        }
+
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
 
         // add in the template for the cells
@@ -545,8 +551,14 @@ export class RowComp extends Component {
 
     private onExpandedChanged(): void {
         const rowNode = this.rowNode;
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded));
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded));
+
+        this.eAllRowContainers.forEach(row => {
+            const expanded = rowNode.expanded;
+
+            _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded);
+            _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded);
+            row.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1244,7 +1256,10 @@ export class RowComp extends Component {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected));
+        this.eAllRowContainers.forEach((row) => {
+            row.setAttribute('aria-selected', selected ? 'true' : 'false');
+            _.addOrRemoveCssClass(row, 'ag-row-selected', selected);
+        });
     }
 
     // called:

@@ -44,6 +44,7 @@ import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { _ } from '../utils';
+import {SortController} from "../sortController";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -79,6 +80,7 @@ export class ColumnController extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('sortController') private sortController: SortController;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -1274,6 +1276,33 @@ export class ColumnController extends BeanStub {
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType = "api"): void {
         const column = this.gridColumns[fromIndex];
         this.moveColumn(column, toIndex, source);
+    }
+
+    public getColumnDefs(): (ColDef | ColGroupDef)[] {
+        const res: (ColDef | ColGroupDef)[] = [];
+
+        const cols = this.primaryColumns.slice();
+        if (this.gridColsArePrimary) {
+            cols.sort( (a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b) );
+        }
+
+        cols.forEach( col => {
+            const colDefCloned = _.deepCloneDefinition(col.getColDef());
+
+            colDefCloned.width = col.getActualWidth();
+            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : undefined;
+            colDefCloned.pivotIndex = col.isPivotActive() ? this.pivotColumns.indexOf(col) : null;
+            colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
+            colDefCloned.hide = col.isVisible() ? undefined : true;
+            colDefCloned.pinned = col.isPinned() ? col.getPinned() : undefined;
+
+            colDefCloned.sort = col.getSort() ? col.getSort() : null;
+            colDefCloned.sortedAt = col.getSortedAt() ? col.getSortedAt() : null;
+
+            res.push(colDefCloned);
+        });
+
+        return res;
     }
 
     // used by:

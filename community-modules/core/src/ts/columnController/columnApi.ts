@@ -112,6 +112,8 @@ export class ColumnApi {
     public getSecondaryColumns(): Column[] { return this.columnController.getSecondaryColumns(); }
     public getPrimaryColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
 
+    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnController.getColumnDefs(); }
+
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
     // public getColumnDefs(): (ColDef | ColGroupDef)[] {

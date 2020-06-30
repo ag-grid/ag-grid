@@ -9,12 +9,14 @@ include '../documentation-main/documentation_header.php';
 <h1>Text Filter</h1>
 
 <p class="lead">
-
     Text filters allow you to filter string data.
-    The pages <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
-    <a href="../javascript-grid-filter-provided-simple/">Provided Simple Filters</a> explains the parts of the
-    text filter that the same as the other provided filters. This page builds on that and explains some
-    details that are specific to the text filter.
+</p>
+
+<p>
+    The <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
+    <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> pages explain the parts of the
+    Text Filter that the same as the other Provided Filters. This page builds on that and explains some
+    details that are specific to the Text Filter.
 </p>
 
 <h2>Text Filter Parameters</h2>

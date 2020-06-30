@@ -111,14 +111,27 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private parent: ColumnGroup;
     private originalParent: OriginalColumnGroup;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean, columnSpike: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.visible = !colDef.hide;
-        this.sort = colDef.sort;
-        this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+
+
+        if (columnSpike) {
+            this.sort = colDef.defaultSort;
+            if (colDef.sort==='asc' || colDef.sort==='desc') {
+                this.sort = colDef.sort;
+            }
+            this.sortedAt = colDef.defaultSortedAt;
+            if (colDef.sortedAt) {
+                this.sortedAt = colDef.sortedAt;
+            }
+        } else {
+            this.sortedAt = colDef.sortedAt;
+            this.sort = colDef.sort;
+        }
     }
 
     // gets called when user provides an alternative colDef, eg

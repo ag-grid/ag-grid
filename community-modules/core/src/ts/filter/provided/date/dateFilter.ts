@@ -26,8 +26,6 @@ export interface IDateComparatorFunc {
 }
 
 export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
-    private static readonly FILTER_TYPE = 'date';
-
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.GREATER_THAN,
@@ -150,10 +148,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body">
-                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom">
-                </div>
-                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo">
-                </div>
+                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom"></div>
+                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo"></div>
             </div>`;
     }
 
@@ -169,7 +165,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         const [compFrom, compTo] = this.getFromToComponents(position);
 
-        return compFrom.getDate() != null && (option !== SimpleFilter.IN_RANGE || compTo.getDate() != null);
+        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
@@ -178,9 +174,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             && aSimple.type === bSimple.type;
     }
 
-    // needed for creating filter model
     protected getFilterType(): string {
-        return DateFilter.FILTER_TYPE;
+        return 'date';
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
@@ -192,7 +187,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             dateFrom: serialiseDate(compFrom.getDate()),
             dateTo: serialiseDate(compTo.getDate()),
             type,
-            filterType: DateFilter.FILTER_TYPE
+            filterType: this.getFilterType()
         };
     }
 

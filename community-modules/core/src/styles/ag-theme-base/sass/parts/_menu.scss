@@ -158,4 +158,8 @@
     .ag-filter-no-matches {
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     }
+
+    .ag-combined-filter-divider {
+        @include ag-border(secondary, bottom, $width: 3px);
+    }
 }

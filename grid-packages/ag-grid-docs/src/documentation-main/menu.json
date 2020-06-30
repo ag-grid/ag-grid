@@ -710,6 +710,11 @@
                 ]
               },
               {
+                "title": "Combined Filter",
+                "url": "javascript-grid-filter-combined/",
+                "enterprise": true
+              },
+              {
                 "title": "Filter API",
                 "url": "javascript-grid-filter-api/"
               },

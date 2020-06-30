@@ -240,4 +240,5 @@ gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-rel
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-gulp.task('serve', require('./dev-server'));
+gulp.task('serve', require('./dev-server').bind(null, false));
+gulp.task('serve-core-only', require('./dev-server').bind(null, true));

@@ -44,7 +44,7 @@ export class Component extends BeanStub {
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    private createChildComponentsFromTags(parentNode: Element, paramsMap?: any): void {
+    private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
@@ -62,7 +62,7 @@ export class Component extends BeanStub {
 
             if (childComp) {
                 if ((childComp as any).addItems && childNode.children.length) {
-                    this.createChildComponentsFromTags(childNode);
+                    this.createChildComponentsFromTags(childNode, paramsMap);
 
                     // converting from HTMLCollection to Array
                     const items = Array.prototype.slice.call(childNode.children);
@@ -72,15 +72,16 @@ export class Component extends BeanStub {
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {
-                this.createChildComponentsFromTags(childNode);
+                this.createChildComponentsFromTags(childNode, paramsMap);
             }
         });
     }
 
-    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
+    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: { [key: string]: any; }): Component {
         const key = element.nodeName;
         const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
+
         if (ComponentClass) {
             const newComponent = new ComponentClass(componentParams) as Component;
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -126,12 +127,12 @@ export class Component extends BeanStub {
         }
     }
 
-    public setTemplate(template: string, paramsMap?: any): void {
+    public setTemplate(template: string, paramsMap?: { [key: string]: any; }): void {
         const eGui = _.loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
+    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.addAnnotatedGuiEventListeners();

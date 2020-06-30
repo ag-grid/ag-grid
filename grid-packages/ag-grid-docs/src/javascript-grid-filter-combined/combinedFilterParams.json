@@ -1,0 +1,29 @@
+{
+    "filterParams": {
+        "allowAllFiltersConcurrently": {
+            "default": false,
+            "description": "Set to <code>true</code> if you would like to allow all filters inside the Combined Filter to be active at the same time."
+        },
+        "suppressSynchronisation": {
+            "default": true,
+            "description": "Set to <code>true</code> to prevent other filters in the Combined Filter from being synchronised with the results from the active filter. This has no effect if <code>allowAllFiltersConcurrently = true</code>."
+        },
+        "filters[]": {
+            "meta": {
+                "description": "An array of <code>filter</code> definition objects."
+            },
+            "filter<br />filterFramework": {
+                "description": "Filter component to wrap in the Combined Filter."
+            },
+            "filterParams": {
+                "description": "Custom parameters to be passed to the wrapped filter component."
+            },
+            "floatingFilterComponent<br />floatingFilterComponentFramework": {
+                "description": "Floating filter component to use for the wrapped filter."
+            },
+            "floatingFilterComponentParams": {
+                "description": "Custom parameters to be passed to the floating filter component."
+            }
+        }
+    }
+}

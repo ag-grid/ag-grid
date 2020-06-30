@@ -22,7 +22,7 @@ function createSetFilter(setValueModel?: SetValueModel, filterParams?: any): Set
 
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
-        forEachLeafNode: (callback: (node: RowNode) => void) => { }
+        forEachLeafNode: _ => { }
     } as IClientSideRowModel;
 
     const params: ISetFilterParams = {

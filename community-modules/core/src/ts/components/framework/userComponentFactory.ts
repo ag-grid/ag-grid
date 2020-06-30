@@ -24,7 +24,7 @@ import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCell
 import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
-import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { IFilterComp, IFilterParams, IFilterDef } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
@@ -54,6 +54,7 @@ export type DefinitionObject =
     GridOptions
     | ColDef
     | ColGroupDef
+    | IFilterDef
     | ISetFilterParams
     | IRichCellEditorParams
     | ToolPanelDef
@@ -82,19 +83,13 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
     paramsFromSelector: TParams; // Params the selector function provided, if any
 }
 
-export interface ModifyParamsCallback<TParams> {
-    (params: TParams, component: IComponent<TParams>): TParams;
-}
-
 @Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
-
-    @Autowired("gridOptions") private gridOptions: GridOptions;
-    @Autowired("agComponentUtils") private agComponentUtils: AgComponentUtils;
-    @Autowired("componentMetadataProvider") private componentMetadataProvider: ComponentMetadataProvider;
-    @Autowired("userComponentRegistry") private userComponentRegistry: UserComponentRegistry;
-
-    @Optional("frameworkComponentWrapper") private frameworkComponentWrapper: FrameworkComponentWrapper;
+    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
+    @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
+    @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
+    @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
 
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
         return this.createAndInitUserComponent(this.gridOptions, params, DateComponent, 'agDateInput');
@@ -120,10 +115,7 @@ export class UserComponentFactory extends BeanStub {
         return this.createAndInitUserComponent(
             null,
             params,
-            {
-                propertyName: cellRendererType,
-                isCellRenderer: () => true
-            },
+            { propertyName: cellRendererType, isCellRenderer: () => true },
             cellRendererName);
     }
 
@@ -155,13 +147,8 @@ export class UserComponentFactory extends BeanStub {
         return this.createAndInitUserComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
     }
 
-    public newFilterComponent(
-        colDef: ColDef,
-        params: IFilterParams,
-        defaultFilter: string,
-        modifyParamsCallback: ModifyParamsCallback<IFilterParams>): Promise<IFilterComp> {
-        return this.createAndInitUserComponent(
-            colDef, params, FilterComponent, defaultFilter, false, modifyParamsCallback);
+    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp> {
+        return this.createAndInitUserComponent(def, params, FilterComponent, defaultFilter, false);
     }
 
     public newSetFilterCellRenderer(
@@ -170,9 +157,8 @@ export class UserComponentFactory extends BeanStub {
     }
 
     public newFloatingFilterComponent(
-        colDef: ColDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
-        return this.createAndInitUserComponent(
-            colDef, params, FloatingFilterComponent, defaultFloatingFilter, true);
+        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
+        return this.createAndInitUserComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
     public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
@@ -196,18 +182,14 @@ export class UserComponentFactory extends BeanStub {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
      */
-    private createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
+    public createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
         definitionObject: DefinitionObject,
         paramsFromGrid: TParams,
         componentType: ComponentType,
         defaultComponentName?: string,
         // optional items are: FloatingFilter, CellComp (for cellRenderer)
         optional = false,
-        // used by FilterManager only
-        modifyParamsCallback?: ModifyParamsCallback<TParams>
     ): Promise<A> {
         if (!definitionObject) {
             definitionObject = this.gridOptions;
@@ -229,11 +211,7 @@ export class UserComponentFactory extends BeanStub {
 
         this.addReactHacks(params);
 
-        // give caller chance to set any params that depend on the componentInstance (need here as the
-        // componentInstance was not available when createUserComponent was called)
-        const paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
-
-        const deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
+        const deferredInit = this.initComponent(componentInstance, params);
 
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);

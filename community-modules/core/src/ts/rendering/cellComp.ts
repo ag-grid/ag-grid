@@ -161,30 +161,28 @@ export class CellComp extends Component implements TooltipParentComp {
         const stylesForRowSpanning = this.getStylesForRowSpanning();
         const colIdxSanitised = _.escape(this.getAriaColumnIndex());
 
-        if (this.usingWrapper) {
-            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="gridcell" aria-colindex="${colIdxSanitised}" class="ag-cell-value" ${unselectable}>`;
-            wrapperEndTemplate = '</span></div>';
-        }
-
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` ${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-        templateParts.push(` role="${this.usingWrapper ? 'presentation' : 'gridcell'}"`);
-
-        if (!this.usingWrapper) {
-            templateParts.push(` aria-colindex=${colIdxSanitised}`);
-        }
+        templateParts.push(` role="gridcell"`);
+        templateParts.push(` aria-colindex="${colIdxSanitised}"`);
 
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${_.escape(cssClasses.join(' '))}"`);
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
-            templateParts.push(`title="${tooltipSanitised}"`);
+            templateParts.push(` title="${tooltipSanitised}"`);
         }
 
-        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${_.escape(stylesFromColDef)} ${_.escape(stylesForRowSpanning)}" >`);
+        if (this.usingWrapper) {
+            wrapperStartTemplate =
+                `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                    <span ref="eCellValue" role="presentation" class="ag-cell-value" ${unselectable}>`;
+            wrapperEndTemplate = '</span></div>';
+        }
+
+        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${_.escape(stylesFromColDef)} ${_.escape(stylesForRowSpanning)}">`);
         templateParts.push(wrapperStartTemplate);
 
         if (_.exists(valueSanitised, true)) {
@@ -322,9 +320,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private refreshAriaIndex(): void {
         const colIdx = this.getAriaColumnIndex();
-        const el = this.usingWrapper ? this.eCellValue : this.getGui();
 
-        el.setAttribute('aria-colindex', colIdx);
+        this.getGui().setAttribute('aria-colindex', colIdx);
     }
 
     private getInitialCssClasses(): string[] {
@@ -2128,7 +2125,11 @@ export class CellComp extends Component implements TooltipParentComp {
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-        const event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
-        this.beans.eventService.dispatchEvent(event);
+        const cellEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
+        const editingStoppedEvent = Object.assign(cellEvent, {
+            oldValue: oldValue,
+            newValue: newValue
+        });
+        this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 }

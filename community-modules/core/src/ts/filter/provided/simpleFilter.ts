@@ -5,13 +5,14 @@ import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { forEach } from '../../utils/array';
-import { setDisplayed } from '../../utils/dom';
+import { forEach, every, some } from '../../utils/array';
+import { setDisplayed, setDisabled } from '../../utils/dom';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
     suppressAndOrCondition?: boolean;
+    alwaysShowBothConditions?: boolean;
 }
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
@@ -79,7 +80,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public static GREATER_THAN = 'greaterThan';
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
     public static IN_RANGE = 'inRange';
-
     public static CONTAINS = 'contains';
     public static NOT_CONTAINS = 'notContains';
     public static STARTS_WITH = 'startsWith';
@@ -87,12 +87,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     @RefSelector('eOptions1') private eType1: AgSelect;
     @RefSelector('eOptions2') private eType2: AgSelect;
+    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
     @RefSelector('eJoinOperatorAnd') private eJoinOperatorAnd: AgRadioButton;
     @RefSelector('eJoinOperatorOr') private eJoinOperatorOr: AgRadioButton;
     @RefSelector('eCondition2Body') private eCondition2Body: HTMLElement;
-    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
+    private alwaysShowBothConditions: boolean;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -109,9 +110,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
-
-    // returns the type selected from the drop down. base classes use this.
-    protected abstract getFilterType(): string;
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
@@ -149,7 +147,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> {
-        if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
+        if (!this.isConditionUiComplete(ConditionPosition.One)) {
+            return null;
+        }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
             return {
@@ -241,25 +241,20 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
-        const isCombined = (model as any).operator;
+        const { operator } = model as ICombinedSimpleModel<M>;
+        const models: ISimpleFilterModel[] = [];
 
-        if (isCombined) {
+        if (operator) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            const firstResult = this.individualConditionPasses(params, combinedModel.condition1);
-            const secondResult = this.individualConditionPasses(params, combinedModel.condition2);
-
-            if (combinedModel.operator === 'AND') {
-                return firstResult && secondResult;
-            }
-
-            return firstResult || secondResult;
+            models.push(combinedModel.condition1, combinedModel.condition2);
+        } else {
+            models.push(model as ISimpleFilterModel);
         }
 
-        const simpleModel = model as ISimpleFilterModel;
-        const result = this.individualConditionPasses(params, simpleModel);
+        const combineFunction = operator && operator === 'OR' ? some : every;
 
-        return result;
+        return combineFunction(models, m => this.individualConditionPasses(params, m));
     }
 
     protected setParams(params: ISimpleFilterParams): void {
@@ -269,6 +264,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
+        this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
@@ -325,12 +321,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
-        const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
+        if (!this.allowTwoConditions) {
+            setDisplayed(this.eJoinOperatorPanel, false);
+            setDisplayed(this.eType2.getGui(), false);
+            setDisplayed(this.eCondition2Body, false);
 
-        setDisplayed(this.eCondition2Body, showSecondFilter);
-        setDisplayed(this.eType2.getGui(), showSecondFilter);
-        setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+            return;
+        }
+
+        const secondFilterEnabled = this.isConditionUiComplete(ConditionPosition.One);
+
+        if (this.alwaysShowBothConditions) {
+            this.eJoinOperatorAnd.setDisabled(!secondFilterEnabled);
+            this.eJoinOperatorOr.setDisabled(!secondFilterEnabled);
+            this.eType2.setDisabled(!secondFilterEnabled);
+            setDisabled(this.eCondition2Body, !secondFilterEnabled);
+        } else {
+            setDisplayed(this.eJoinOperatorPanel, secondFilterEnabled);
+            setDisplayed(this.eType2.getGui(), secondFilterEnabled);
+            setDisplayed(this.eCondition2Body, secondFilterEnabled);
+        }
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {
@@ -352,13 +362,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return Promise.resolve();
     }
 
-    public translate(toTranslate: keyof ISimpleFilterTranslations): string {
+    protected translate(toTranslate: keyof ISimpleFilterTranslations): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
-    public addChangedListeners() {
+    private addChangedListeners() {
         const listener = () => this.onUiChanged();
         this.eType1.onValueChange(listener);
         this.eType2.onValueChange(listener);

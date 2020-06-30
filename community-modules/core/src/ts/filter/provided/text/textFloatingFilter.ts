@@ -4,7 +4,7 @@ import { PostConstruct, Autowired } from '../../../context/context';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 export class TextFloatingFilter extends TextInputFloatingFilter {
-
+  
     @RefSelector('eFloatingFilterInput') protected eFloatingFilterInput: AgInputTextField;
     @PostConstruct
     private postConstruct(): void {
@@ -13,7 +13,6 @@ export class TextFloatingFilter extends TextInputFloatingFilter {
                 <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>
             </div>`);
     }
-
 
     protected conditionToString(condition: TextFilterModel): string {
         // it's not possible to have 'in range' for string, so no need to check for it.

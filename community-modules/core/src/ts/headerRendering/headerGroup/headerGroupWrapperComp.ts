@@ -24,12 +24,13 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
 import { Beans } from "../../rendering/beans";
+import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { _ } from "../../utils";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-group-cell" role="presentation" tabindex="-1">
+        `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
             <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
@@ -55,6 +56,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private resizeTakeFromCols: Column[];
     private resizeTakeFromStartWidth: number;
     private resizeTakeFromRatios: number[];
+    private expandable: boolean;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
@@ -81,6 +83,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
+        this.setupExpandable();
 
         this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
@@ -101,17 +104,40 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         const eGui = this.getGui();
         const wrapperHasFocus = activeEl === eGui;
 
+        if (!this.expandable || !wrapperHasFocus) { return; }
+
         switch (e.keyCode) {
             case Constants.KEY_ENTER:
-                if (wrapperHasFocus) {
-                    const column = this.getColumn() as ColumnGroup;
-                    const expandable = column.isExpandable();
+                const column = this.getColumn() as ColumnGroup;
+                const newExpandedValue = !column.isExpanded();
 
-                    if (expandable) {
-                        const newExpandedValue = !column.isExpanded();
-                        this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
-                    }
-                }
+                this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+        }
+    }
+
+    private setupExpandable(): void {
+        const column = this.getColumn() as ColumnGroup;
+        const originalColumnGroup = column.getOriginalColumnGroup();
+
+        this.refreshExpanded();
+
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
+    }
+
+    private refreshExpanded(): void {
+        const column = this.getColumn() as ColumnGroup;
+        const eGui = this.getGui();
+
+        const expandable = column.isExpandable();
+        const expanded = column.isExpanded();
+
+        this.expandable = expandable;
+
+        if (!expandable) {
+            eGui.removeAttribute('aria-expanded');
+        } else {
+            eGui.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         }
     }
 

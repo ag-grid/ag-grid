@@ -33,7 +33,7 @@ import { _ } from "../../utils";
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="presentation" unselectable="on" tabindex="-1">
+        `<div class="ag-header-cell" role="columnheader" unselectable="on" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
         </div>`;
@@ -180,9 +180,30 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private setupSortableClass(enableSorting: boolean): void {
         if (!enableSorting) { return; }
 
-        const element = this.getGui();
-        _.addCssClass(element, 'ag-header-cell-sortable');
+        const eGui = this.getGui();
+
+        _.addCssClass(eGui, 'ag-header-cell-sortable');
+        eGui.setAttribute('aria-sort', this.getSortState());
+
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
+            eGui.setAttribute('aria-sort', this.getSortState());
+        });
+
         this.sortable = true;
+    }
+
+    private getSortState(): string {
+        let sort;
+
+        if (this.column.isSortAscending()) {
+            sort = 'ascending';
+        } else if (this.column.isSortDescending()) {
+            sort = 'descending';
+        } else {
+            sort = 'none';
+        }
+
+        return sort;
     }
 
     private onFilterChanged(): void {
