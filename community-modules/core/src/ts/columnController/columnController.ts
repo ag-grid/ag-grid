@@ -221,7 +221,7 @@ export class ColumnController extends BeanStub {
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
-        this.createValueColumns(source, oldPrimaryColumns);
+        this.extractValueColumns(source, oldPrimaryColumns);
 
         this.ready = true;
 
@@ -2283,30 +2283,31 @@ export class ColumnController extends BeanStub {
         return this.ready;
     }
 
-    private createValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
+    private extractValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
         this.valueColumns = this.extractColumns(oldPrimaryColumns, this.valueColumns,
             (col: Column, flag: boolean) => col.setValueActive(flag, source),
             // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
-            () => null,
-            () => null,
+            () => undefined,
+            () => undefined,
             // aggFunc is a string, so return it's existence
             (colDef: ColDef) => {
+                const aggFunc = colDef.aggFunc;
                 if (this.gridOptionsWrapper.isColumnsSpike()) {
-                    if (colDef.aggFunc==null) {
+                    // null or empty string means clear
+                    if (aggFunc===null || aggFunc==='') {
+                        return null;
+                    } else if (aggFunc===undefined) {
                         return undefined;
                     } else {
-                        return colDef.aggFunc != '';
+                        return aggFunc != '';
                     }
                 } else {
-                    return !!colDef.aggFunc;
+                    return !!aggFunc;
                 }
             },
             (colDef: ColDef) => {
-                if (colDef.defaultAggFunc==null) {
-                    return undefined;
-                } else {
-                    return colDef.defaultAggFunc != '';
-                }
+                // return false if any of the following: null, undefined, empty string
+                return colDef.defaultAggFunc!=null && colDef.defaultAggFunc!='';
             }
         );
 
@@ -2438,27 +2439,32 @@ export class ColumnController extends BeanStub {
             let include: boolean;
 
             if (colIsNew) {
-                // col is new, use reactive values if present, otherwise use default values if present
-                const reactiveValuePresent = value!=null || index!=null;
-                if (reactiveValuePresent) {
-                    if (value!=null) {
+                // col is new, use values if present, otherwise use default values if present
+                const valuePresent = value!==undefined || index!==undefined;
+                if (valuePresent) {
+                    if (value!==undefined) {
                         // if boolean value present, we take it's value, even if 'false'
                         include = value;
                     } else {
-                        // otherwise we based on number value, and treat negative numbers as 'dont include'
+                        // otherwise we based on number value. note that 'null' resets, however 'undefined' doesn't
+                        // go through this code path (undefined means 'ignore').
                         include = index >= 0;
                     }
                 } else {
-                    include = defaultValue==true || defaultIndex>=0;
+                    include = defaultValue == true || defaultIndex >= 0;
                 }
             } else {
-                // col is not new, so we ignore the default values, just use the reactive values if provided
-                if (value!=null) {
+                // col is not new, we ignore the default values, just use the values if provided
+                if (value!==undefined) { // value is never null, as attrToBoolean converts null to false
                     include = value;
-                } else if (index!=null) {
-                    include = index >= 0;
+                } else if (index!==undefined) {
+                    if (index===null) {
+                        include = false;
+                    } else {
+                        include = index >= 0;
+                    }
                 } else {
-                    // no reactive values provided, we include if it was included last time
+                    // no values provided, we include if it was included last time
                     include = previousCols.indexOf(col) >= 0;
                 }
             }

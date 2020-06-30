@@ -267,7 +267,7 @@ export class ColumnFactory extends BeanStub {
         let column = this.findExistingColumn(colDef, existingColsCopy);
 
         if (this.gridOptionsWrapper.isColumnsSpike()) {
-            console.log(`id = ${colDef.colId}, field = ${colDef.field}, match = ${!!column}`, colDef, column);
+            console.log(`id = ${colDef.colId}, field = ${colDef.field}, match = ${!!column}, rowGroup=${colDef.rowGroup}, rowGroupIndex=${colDef.rowGroupIndex}`, colDef, column);
         }
 
         if (!column) {
