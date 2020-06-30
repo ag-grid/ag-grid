@@ -118,15 +118,26 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.colId = colId;
         this.primary = primary;
 
-
         if (columnSpike) {
-            this.sort = colDef.defaultSort;
-            if (colDef.sort==='asc' || colDef.sort==='desc') {
-                this.sort = colDef.sort;
+            if (colDef.sort!==undefined) {
+                if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
+                    this.sort = colDef.sort;
+                }
+            } else {
+                if (colDef.defaultSort===Constants.SORT_ASC || colDef.defaultSort===Constants.SORT_DESC) {
+                    this.sort = colDef.defaultSort;
+                }
             }
-            this.sortedAt = colDef.defaultSortedAt;
-            if (colDef.sortedAt) {
-                this.sortedAt = colDef.sortedAt;
+            const sortedAt = _.attrToNumber(colDef.sortedAt);
+            const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
+            if (sortedAt!==undefined) {
+                if (sortedAt!==null) {
+                    this.sortedAt = sortedAt;
+                }
+            } else {
+                if (defaultSortedAt!==null) {
+                    this.sortedAt = defaultSortedAt;
+                }
             }
         } else {
             this.sortedAt = colDef.sortedAt;
