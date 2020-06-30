@@ -285,8 +285,11 @@ export class GridPanel extends Component {
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
 
-        if (this.rangeController) {
-            this.rangeController.registerGridComp(this);
+        if (this.rangeController || this.gridOptionsWrapper.isRowSelectionMulti()) {
+            this.getGui().setAttribute('aria-multiselectable', 'true');
+            if (this.rangeController) {
+                this.rangeController.registerGridComp(this);
+            }
         }
 
         [this.eCenterViewport, this.eBodyViewport].forEach(viewport => {

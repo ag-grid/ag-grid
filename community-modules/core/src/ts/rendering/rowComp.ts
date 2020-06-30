@@ -184,7 +184,10 @@ export class RowComp extends Component {
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
-        templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
+
+        if (this.beans.gridOptionsWrapper.isRowSelection()) {
+            templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
+        }
 
         if (this.rowNode.group) {
             templateParts.push(` aria-expanded=${this.rowNode.expanded ? 'true' : 'false'}`);
@@ -283,6 +286,7 @@ export class RowComp extends Component {
         // and then all the callbacks are called. this is NOT done in an animation frame.
         rowContainerComp.appendRowTemplate(rowTemplate, () => {
             const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+            this.refreshAriaLabel(eRow, this.rowNode.isSelected());
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
 
@@ -1259,7 +1263,17 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach((row) => {
             row.setAttribute('aria-selected', selected ? 'true' : 'false');
             _.addOrRemoveCssClass(row, 'ag-row-selected', selected);
+            this.refreshAriaLabel(row, selected);
         });
+    }
+
+    private refreshAriaLabel(node: HTMLElement, selected: boolean): void {
+        if (selected && !this.beans.gridOptionsWrapper.isRowDeselection()) {
+            node.removeAttribute('aria-label');
+            return;
+        }
+
+        node.setAttribute('aria-label', `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`);
     }
 
     // called:
