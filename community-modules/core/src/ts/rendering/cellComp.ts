@@ -6,7 +6,6 @@ import {
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEditingStoppedEvent,
     CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -39,7 +38,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private eCellWrapper: HTMLElement;
     private eCellValue: HTMLElement;
-    private eParentOfValue: HTMLElement;
 
     private beans: Beans;
     private column: Column;
@@ -173,6 +171,10 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
             templateParts.push(` title="${tooltipSanitised}"`);
+        }
+
+        if (this.rangeSelectionEnabled) {
+            templateParts.push(` aria-selected="${this.rangeCount ? 'true' : 'false'}"`);
         }
 
         if (this.usingWrapper) {
@@ -518,7 +520,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private replaceContentsAfterRefresh(): void {
         // otherwise we rip out the cell and replace it
-        _.clearElement(this.eParentOfValue);
+        _.clearElement(this.eCellValue);
 
         // remove old renderer component if it exists
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
@@ -628,7 +630,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
-            this.eParentOfValue.innerHTML = colDef.template;
+            this.eCellValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
             // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
             // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
@@ -636,7 +638,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
 
             if (template) {
-                this.eParentOfValue.innerHTML = template;
+                this.eCellValue.innerHTML = template;
             }
         } else {
             // we can switch from using a cell renderer back to the default if a user
@@ -649,7 +651,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 const valueToUse = this.getValueToUse();
 
                 if (valueToUse != null) {
-                    this.eParentOfValue.innerHTML = _.escape(valueToUse);
+                    this.eCellValue.innerHTML = _.escape(valueToUse);
                 }
             }
         }
@@ -689,9 +691,9 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             if (hasNewTooltip) {
-                this.eParentOfValue.setAttribute('title', this.tooltip);
+                this.eCellValue.setAttribute('title', this.tooltip);
             } else {
-                this.eParentOfValue.removeAttribute('title');
+                this.eCellValue.removeAttribute('title');
             }
         }
     }
@@ -882,7 +884,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
-            this.eParentOfValue.appendChild(this.cellRendererGui);
+            this.eCellValue.appendChild(this.cellRendererGui);
         }
     }
 
@@ -905,7 +907,7 @@ export class CellComp extends Component implements TooltipParentComp {
             refreshCell: this.refreshCell.bind(this),
 
             eGridCell: this.getGui(),
-            eParentOfValue: this.eParentOfValue,
+            eParentOfValue: this.eCellValue,
 
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
@@ -1779,6 +1781,8 @@ export class CellComp extends Component implements TooltipParentComp {
             this.rangeCount = newRangeCount;
         }
 
+        element.setAttribute('aria-selected', this.rangeCount > 0 ? 'true' : 'false');
+
         const hasChartRange = this.getHasChartRange();
 
         if (hasChartRange !== this.hasChartRange) {
@@ -1913,9 +1917,8 @@ export class CellComp extends Component implements TooltipParentComp {
     private populateTemplate(): void {
         if (this.usingWrapper) {
 
-            this.eParentOfValue = this.getRefElement('eCellValue');
-            this.eCellWrapper = this.getRefElement('eCellWrapper');
             this.eCellValue = this.getRefElement('eCellValue');
+            this.eCellWrapper = this.getRefElement('eCellWrapper');
 
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
@@ -1929,7 +1932,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.addSelectionCheckbox();
             }
         } else {
-            this.eParentOfValue = this.getGui();
+            this.eCellValue = this.getGui();
         }
     }
 
@@ -1963,7 +1966,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
     }
 
     private addDndSource(): void {
@@ -1971,7 +1974,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createManagedBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eCellValue);
     }
 
     private addSelectionCheckbox(): void {
@@ -1985,7 +1988,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
     }
 
     private addDomData(): void {

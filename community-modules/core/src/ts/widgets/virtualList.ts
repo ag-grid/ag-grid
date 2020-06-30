@@ -108,7 +108,7 @@ export class VirtualList extends ManagedFocusComponent {
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="listbox">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
@@ -169,7 +169,6 @@ export class VirtualList extends ManagedFocusComponent {
         const rowCount = this.model.getRowCount();
 
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
-        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
 
         // ensure height is applied before attempting to redraw rows
         setTimeout(() => {
@@ -217,7 +216,9 @@ export class VirtualList extends ManagedFocusComponent {
 
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
-        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
+        eDiv.setAttribute('role', 'option');
+        eDiv.setAttribute('aria-setsize', this.model.getRowCount().toString());
+        eDiv.setAttribute('aria-posinset', (rowIndex + 1).toString());
         eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
