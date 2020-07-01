@@ -225,10 +225,7 @@ export class VirtualList extends ManagedFocusComponent {
         eDiv.setAttribute('tabindex', '-1');
 
         if (typeof this.model.isRowSelected === 'function') {
-            const isRowSelected = this.model.isRowSelected(rowIndex).toString();
-
-            eDiv.setAttribute('aria-selected', isRowSelected);
-            eDiv.setAttribute('aria-checked', isRowSelected);
+            eDiv.setAttribute('aria-selected', this.model.isRowSelected(rowIndex).toString());
         }
 
         eDiv.style.height = `${this.rowHeight}px`;
