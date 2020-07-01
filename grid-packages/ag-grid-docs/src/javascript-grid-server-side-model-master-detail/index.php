@@ -173,14 +173,17 @@ SNIPPET
         Use property <code>detailRowHeight</code> to set a fixed height for each detail row.
     </li>
     <li>
-        Use callback <code>getRowHeight()</code> to set height for each row individually.
-        One extra complication here is that this method is called for every row in the grid
-        including master rows.
+        Use callback <code>getRowHeight()</code> to explicitly set height for each row individually.
+        The callback must work out how many pixels high each detail row should be.
+    </li>
+    <li>
+        Set <code>detailCellRendererParams.autoHeight=true</code> to get the grid to automatically size
+        the detail grids to fit their rows.
     </li>
 </ol>
 
 <p>
-    The following snippet compares both approaches:
+    The following snippet compares all approaches:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -191,6 +194,7 @@ masterGridOptions.detailRowHeight = 500;
 masterGridOptions.getRowHeight = function(params) {
     var isDetailRow = params.node.detail;
 
+    // not that this callback gets called for all rows, not just the detail row
     if (isDetailRow) {
         // dynamically calculate detail row height
         return params.data.children.length * 50;
@@ -199,6 +203,10 @@ masterGridOptions.getRowHeight = function(params) {
         return 25;
     }
 }
+
+// option 2 - use autoHeight
+masterGridOptions.detailCellRendererParams.autoHeight = true;
+
 SNIPPET
 ) ?>
 
@@ -207,11 +215,11 @@ SNIPPET
     If you are using dynamic row height, ensure <code>maxBlocksInCache</code> is not set.
 </note>
 
-<h2>Example: Dynamic Detail Row Height</h2>
+<h3>Example Using Callback <code>getRowHeight()</code></h3>
 
 <p>
-    The following example shows how the detail row height can be dynamically sized to fit the number of records.
-    From the example you can notice the following:
+    The following example explicitly sets detail row heights based on the number of detail rows.
+    Note the following:
 </p>
 
 <ul class="content">
@@ -220,6 +228,25 @@ SNIPPET
 </ul>
 
 <?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<p>
+    See <a href="../javascript-grid-master-detail-height/#dynamic-height">Master Detail Dynamic Height</a>
+    for more details.
+</p>
+
+<h3>Example Using Property <code>autoHeight</code></h3>
+
+<p>
+    The following example gets the grid to auto-size all details sections to fit their rows. This is done
+    by setting <code>masterGridOptions.detailCellRendererParams.autoHeight = true</code>.
+</p>
+
+<?= grid_example('Auto Detai Row Height', 'auto-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<p>
+    See <a href="../javascript-grid-master-detail-height/#auto-height">Master Detail Auto Height</a> for more
+    details.
+</p>
 
 <h2>Lazy Loading Detail Rows</h2>
 
