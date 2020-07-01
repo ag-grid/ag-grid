@@ -8,7 +8,7 @@ const getRequiredInputs = async () => {
         .prompt([
             {
                 name: 'enterpriseOrCommunity',
-                message: 'Will this be an [E]nterprise or [C]ommunity package [E/C]?',
+                message: 'Will this be an [E]nterprise or [C]ommunity package [E|e/C|c]?',
             },
             {
                 name: 'packageName',
