@@ -1,7 +1,6 @@
 import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
 import {
     CartesianChart,
-    BarSeries,
     AgChart
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -49,17 +48,17 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         this.updateAxes('category', !this.isColumnChart());
 
-        const chart = this.chart;
-        const barSeries = chart.series[0] as BarSeries;
-        const { fills, strokes } = this.getPalette();
+        const options: any = this.chartOptions;
+        options.theme = this.getTheme();
 
-        barSeries.data = this.transformData(params.data, params.category.id);
-        barSeries.xKey = params.category.id;
-        barSeries.xName = params.category.name;
-        barSeries.yKeys = params.fields.map(f => f.colId);
-        barSeries.yNames = params.fields.map(f => f.displayName);
-        barSeries.fills = fills;
-        barSeries.strokes = strokes;
+        const series = options.series[0];
+        series.data = this.transformData(params.data, params.category.id);
+        series.xKey = params.category.id;
+        series.xName = params.category.name;
+        series.yKeys = params.fields.map(f => f.colId);
+        series.yNames = params.fields.map(f => f.displayName);
+
+        AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }

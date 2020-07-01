@@ -354,6 +354,41 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return this.customPalette || this.getPredefinedPalette();
     }
 
+    protected themeMap: { [key in string]: string | {} } = {
+        borneo: 'default',
+        material: 'material-light',
+        pastel: 'pastel-light',
+        bright: 'solar-light',
+        flat: /* 'vivid-light' */ {
+            palette: {
+                fills: [
+                    '#5C2983',
+                    '#0076C5',
+                    '#21B372',
+                    '#FDDE02',
+                    '#F76700',
+                    '#D30018'
+                ],
+                strokes: ['black']
+            },
+            defaults: {
+                cartesian: {
+                    padding: {
+                        top: 100,
+                        right: 100,
+                        bottom: 100,
+                        left: 100
+                    }
+                }
+            }
+        }
+    };
+
+    protected getTheme(): any {
+        const name = this.chartProxyParams.getChartPaletteName();
+        return this.themeMap[name];
+    }
+
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
         const { fills, strokes } = this.getPredefinedPalette();
         const fontOptions = this.getDefaultFontOptions();
