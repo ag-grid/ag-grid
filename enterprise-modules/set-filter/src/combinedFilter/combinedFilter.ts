@@ -183,7 +183,9 @@ export class CombinedFilter extends Component implements IFilterComp {
     }
 
     private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]) {
-        _.forEach(this.filters, filter => {
+        // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
+        // always gets the last say
+        _.forEachReverse(this.filters, filter => {
             const func = (filter as T)[name];
 
             if (typeof func === 'function') {
