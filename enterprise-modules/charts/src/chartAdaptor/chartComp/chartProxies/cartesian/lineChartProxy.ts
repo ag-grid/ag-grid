@@ -1,5 +1,5 @@
 import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, LineSeries, AgChart } from "ag-charts-community";
+import { CartesianChart, AgChart, findIndex } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
@@ -17,6 +17,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const { grouping, parentElement } = this.chartProxyParams;
 
         options = options || this.chartOptions;
+        options.theme = this.getTheme();
         options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
@@ -34,10 +35,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
+        const options: any = this.chartOptions;
+        options.theme = this.getTheme();
+
         this.chartProxyParams.grouping = params.grouping;
 
         if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
+            options.series = [];
             return;
         }
 
@@ -46,52 +50,44 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         this.updateAxes(isDate(testValue) ? 'time' : 'category');
 
-        const { chart } = this;
+        const allSeries: any[] = options.series || (options.series = []);
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
         const data = this.transformData(params.data, params.category.id);
 
-        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
+        const existingSeriesById = allSeries.reduceRight((map, series, i) => {
             const id = series.yKey;
 
             if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
-                chart.removeSeries(series);
+                allSeries.splice(i, 1);
             }
 
             return map;
-        }, new Map<string, LineSeries>());
+        }, new Map<string, any>());
 
-        let previousSeries: LineSeries | undefined = undefined;
+        let previousYKey: string | undefined = undefined;
 
         params.fields.forEach((f, index) => {
-            let lineSeries = existingSeriesById.get(f.colId);
-            const fill = fills[index % fills.length];
-            const stroke = strokes[index % strokes.length];
+            let series = existingSeriesById.get(f.colId);
 
-            if (lineSeries) {
-                lineSeries.title = f.displayName;
-                lineSeries.data = data;
-                lineSeries.xKey = params.category.id;
-                lineSeries.xName = params.category.name;
-                lineSeries.yKey = f.colId;
-                lineSeries.yName = f.displayName;
-                lineSeries.marker.fill = fill;
-                lineSeries.marker.stroke = stroke;
-                lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
+            if (series) {
+                series.title = f.displayName;
+                series.data = data;
+                series.xKey = params.category.id;
+                series.xName = params.category.name;
+                series.yKey = f.colId;
+                series.yName = f.displayName;
             } else {
                 const { seriesDefaults } = this.chartOptions;
                 const marker = {
-                    ...seriesDefaults.marker,
-                    fill,
-                    stroke
+                    ...seriesDefaults.marker
                 } as any;
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                const options: any /*InternalLineSeriesOptions*/ = {
+                series = {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
@@ -100,21 +96,27 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     xName: params.category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    fill,
-                    stroke: fill, // this is deliberate, so that the line colours match the fills of other series
                     fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
                     marker
                 };
 
-                lineSeries = AgChart.createComponent(options, 'line.series');
-
-                chart.addSeriesAfter(lineSeries, previousSeries);
+                let insertIndex = findIndex(allSeries, series => {
+                    return series.yKeys && series.yKeys[0] === previousYKey;
+                });
+                if (insertIndex >= 0) {
+                    insertIndex += 1;
+                } else {
+                    insertIndex = index;
+                }
+                allSeries.splice(insertIndex, 0, series);
             }
 
-            previousSeries = lineSeries;
+            previousYKey = series.yKey;
         });
+
+        AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
 
         this.updateLabelRotation(params.category.id);
     }

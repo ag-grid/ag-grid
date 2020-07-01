@@ -20,6 +20,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const isColumn = this.isColumnChart();
 
         options = options || this.chartOptions;
+        options.theme = this.getTheme();
         options.autoSize = true;
         const { seriesDefaults } = options;
         options.axes = [{

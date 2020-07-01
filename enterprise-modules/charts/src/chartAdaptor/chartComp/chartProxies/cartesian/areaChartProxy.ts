@@ -22,6 +22,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         options = options || this.chartOptions;
+        options.theme = this.getTheme();
         options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
@@ -100,7 +101,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             return;
         }
 
-        const allSeries = options.series as any[];
+        const allSeries: any[] = options.series || (options.series = []);
         const fieldIds = params.fields.map(f => f.colId);
 
         const existingSeriesById = allSeries.reduceRight((map, series, i) => {
