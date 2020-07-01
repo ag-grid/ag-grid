@@ -57,8 +57,7 @@ const main = async () => {
 
     fsExtra.copySync(path.resolve(__dirname, './.gitignore'), `./${moduleDirName}/.gitignore`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.es6.json'), `./${moduleDirName}/tsconfig.es6.json`);
-    fsExtra.copySync(path.resolve(__dirname, './tsconfig.es5.json'), `./${moduleDirName}/tsconfig.es5.json`);
-    fsExtra.copySync(path.resolve(__dirname, './tsconfig.docs.json'), `./${moduleDirName}/tsconfig.docs.json`);
+    fsExtra.copySync(path.resolve(__dirname, './tsconfig.es5.json'), `./${moduleDirName}/tsconfig.json`);
     fsExtra.copySync(path.resolve(__dirname, './main.ts'), `./${moduleDirName}/src/main.ts`);
 
     fs.writeFileSync(`./${moduleDirName}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');
