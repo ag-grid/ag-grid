@@ -82,9 +82,10 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         }
     }
 
-    // this is a user component, and IComponent has "public destroy()" as part of the interface.
-    // so we need to override destroy() just to make the method public.
     public destroy(): void {
+        this.destroyBeans(this.floatingFilters);
+        this.floatingFilters.length = 0;
+
         super.destroy();
     }
 

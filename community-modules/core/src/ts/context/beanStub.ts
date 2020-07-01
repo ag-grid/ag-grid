@@ -6,6 +6,7 @@ import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import { forEach } from '../utils/array';
 
 export class BeanStub implements IEventEmitter {
 
@@ -137,8 +138,9 @@ export class BeanStub implements IEventEmitter {
 
     protected destroyBeans<T>(beans: T[], context?: Context): T[] {
         if (beans) {
-            beans.forEach( bean => this.destroyBean(bean, context));
+            forEach(beans, bean => this.destroyBean(bean, context));
         }
+
         return [];
     }
 }

@@ -187,6 +187,14 @@ export class CombinedFilter extends Component implements IFilterComp {
     }
 
     public destroy(): void {
+        _.forEach(this.filters, filter => {
+            filter.setModel(null);
+            this.destroyBean(filter);
+        });
+
+        this.filters.length = 0;
+        this.activeFilters.clear();
+
         super.destroy();
     }
 
