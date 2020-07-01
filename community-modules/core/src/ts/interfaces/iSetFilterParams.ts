@@ -29,4 +29,5 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     /** @deprecated */ syncValuesLikeExcel?: boolean;
     showTooltips?: boolean;
     excelMode?: 'mac' | 'windows';
+    suppressSyncOnSiblingFilterChange?: boolean;
 }

@@ -5,7 +5,17 @@ var gridOptions = {
             field: 'country',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                suppressSynchronisation: true
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                        filterParams: {
+                            suppressSyncOnSiblingFilterChange: true,
+                        }
+                    }
+                ]
             }
         },
     ],
@@ -13,7 +23,6 @@ var gridOptions = {
         flex: 1,
         minWidth: 200,
         resizable: true,
-        floatingFilter: true,
     }
 };
 

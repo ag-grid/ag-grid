@@ -500,9 +500,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onSiblingFilterChanged(isAnySiblingFilterActive: boolean): void {
-        const { doesRowPassSiblingFilters } = this.setFilterParams;
+        const { doesRowPassSiblingFilters, suppressSyncOnSiblingFilterChange } = this.setFilterParams;
 
-        if (doesRowPassSiblingFilters && !this.isFilterActive()) {
+        if (!suppressSyncOnSiblingFilterChange && doesRowPassSiblingFilters && !this.isFilterActive()) {
             if (isAnySiblingFilterActive) {
                 let values: string[] = [];
 

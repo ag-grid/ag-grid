@@ -74,50 +74,6 @@ SNIPPET
 
 <?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
-<h2>Synchronisation</h2>
-
-<p>
-    When any filter in the Combined Filter is applied, other filters can respond to this by implementing the
-    <code>onSiblingFilterChanged()</code> method. For example, when using the
-    <a href="../javascript-grid-filter-set/">Set Filter</a> in the Combined Filter along with the
-    <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>, when other filters in the Combined
-    Filter are active, the Set Filter will update to show the same selection as if the user had manually chosen the
-    matching items in the Set Filter instead. This allows a user to use the other filters as a starting point to create
-    a set of values that can then be tweaked in the Set Filter.
-</p>
-
-<p>
-    If you would like to prevent this behaviour, you can stop sibling filters from responding to changes by
-    setting <code>suppressSynchronisation</code> in the <code>filterParams</code>:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// ColDef
-{
-    filter: 'agCombinedColumnFilter',
-    filterParams: {
-        suppressSynchronisation: true,
-    }
-}
-SNIPPET
-) ?>
-
-<p>
-    The following example demonstrates synchronisation.
-</p>
-
-<ul class="content">
-    <li>
-        The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
-        kept in sync when the Text Filter is used.
-    </li>
-    <li>
-        The <strong>Country</strong> column has synchronisation disabled. In this case, the Set Filter does not respond
-        to changes in the Text Filter.
-    </li>
-</ul>
-
-<?= grid_example('Synchronisation', 'synchronisation', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Concurrent Filtering</h2>
 
@@ -176,6 +132,62 @@ SNIPPET
 </p>
 
 <?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
+
+<h2>Interacting With Sibling Filters</h2>
+
+<p>
+    When any filter in the Combined Filter is applied, other sibling filters can respond to this by implementing the
+    <code>onSiblingFilterChanged()</code> method. For example, when using the
+    <a href="../javascript-grid-filter-set/">Set Filter</a> in the Combined Filter along with the
+    <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>, when other filters in the Combined
+    Filter are active, the Set Filter will update to show the same selection as if the user had manually chosen the
+    matching items in the Set Filter instead. This allows a user to use the other filters as a starting point to create
+    a set of values that can then be tweaked in the Set Filter.
+</p>
+
+<p>
+    Each filter is in control of whether it responds to changes from sibling filters. In the Set Filter for example,
+    you can prevent the Set Filter from responding to sibling filter changes by setting
+    <code>suppressSyncOnSiblingFilterChange</code> as shown below:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    filter: 'agCombinedColumnFilter',
+    filterParams: {
+        filters: [
+            {
+                filter: 'agTextColumnFilter',
+            },
+            {
+                filter: 'agSetColumnFilter',
+                filterParams: {
+                    suppressSyncOnSiblingFilterChange: true,
+                }
+            }
+        ]
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    The following example demonstrates this in action.
+</p>
+
+<ul class="content">
+    <li>
+        The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
+        kept in sync when the Text Filter is used.
+    </li>
+    <li>
+        The <strong>Country</strong> column has <code>suppressSyncOnSiblingFilterChange = true</code>, so that the Set
+        Filter does not respond to changes in the Text Filter.
+    </li>
+</ul>
+
+<?= grid_example('Interacting With Sibling Filters', 'interacting-with-sibling-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Combined Filter Parameters</h2>
 

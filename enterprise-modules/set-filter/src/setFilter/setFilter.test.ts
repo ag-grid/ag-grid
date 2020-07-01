@@ -220,4 +220,23 @@ describe('onSiblingFilterChanged', () => {
         expect(setValueModel.setModel).toHaveBeenCalledTimes(1);
         expect(setValueModel.setModel).toHaveBeenCalledWith(null);
     });
+
+    it('does nothing if suppressSyncOnSiblingFilterChange is true', () => {
+        const values = ['A', 'B', 'C'];
+
+        (rowModel as jest.Mocked<IClientSideRowModel>).forEachLeafNode
+            .mockImplementation((callback: (node: RowNode, index: number) => void) => {
+                const nodes = values.map(v => ({ data: { value: v } }));
+                nodes.forEach(callback);
+            });
+
+        const setFilter = createSetFilter({
+            doesRowPassSiblingFilters: (params: IDoesFilterPassParams) => params.data.value === 'B',
+            suppressSyncOnSiblingFilterChange: true,
+        });
+
+        setFilter.onSiblingFilterChanged(true);
+
+        expect(setValueModel.setModel).not.toHaveBeenCalled();
+    });
 });

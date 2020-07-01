@@ -68,6 +68,14 @@
                 "url": "../javascript-grid-filter-set-filter-list/#supplying-filter-values"
             }
         },
+        "suppressSyncOnSiblingFilterChange": {
+            "default": false,
+            "description": "By default, when the Set Filter is used in a Combined Filter, if the Set Filter is currently inactive it will automatically synchronise to only show values that pass sibling filters as selected. This allows you to use the other filters as a starting point and refine your filtering in the Set Filter. Set this to <code>true</code> to disable this behaviour.",
+            "more": {
+                "name": "Interacting With Sibling Filters",
+                "url": "../javascript-grid-filter-combined/#interacting-with-sibling-filters"
+            }
+        },
         "textFormatter": {
             "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance if substituting accented characters or if you want to perform case-sensitive Mini Filtering.",
             "more": {
