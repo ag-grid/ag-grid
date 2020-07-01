@@ -49,7 +49,7 @@ export class CombinedFilter extends Component implements IFilterComp {
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: CombinedFilterParams): void {
+    public init(params: CombinedFilterParams): Promise<void> {
         this.params = params;
 
         const { column, filterChangedCallback, allowAllFiltersConcurrently } = params;
@@ -58,19 +58,27 @@ export class CombinedFilter extends Component implements IFilterComp {
         this.filterChangedCallback = filterChangedCallback;
         this.allowAllFiltersConcurrently = !!allowAllFiltersConcurrently;
 
-        const filters = CombinedFilter.getFilterDefs(params);
+        const filterPromises: Promise<IFilterComp>[] = [];
 
-        _.forEach(filters, (filterDef, index) => {
-            if (index > 0) {
-                const divider = document.createElement('div');
-                _.addCssClass(divider, 'ag-combined-filter-divider');
-                this.getGui().appendChild(divider);
+        _.forEach(CombinedFilter.getFilterDefs(params), (filterDef, index) => {
+            const filterPromise = this.createFilter(filterDef, index);
+
+            if (filterPromise != null) {
+                filterPromises.push(filterPromise);
             }
+        });
 
-            const filter = this.createFilter(filterDef, index).resolveNow(null, f => f);
+        return Promise.all(filterPromises).then(filters => {
+            _.forEach(filters, (filter, index) => {
+                if (index > 0) {
+                    const divider = document.createElement('div');
+                    _.addCssClass(divider, 'ag-combined-filter-divider');
+                    this.getGui().appendChild(divider);
+                }
 
-            this.filters.push(filter);
-            this.getGui().appendChild(filter.getGui());
+                this.filters.push(filter);
+                this.getGui().appendChild(filter.getGui());
+            });
         });
     }
 

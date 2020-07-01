@@ -22,11 +22,11 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         super('<div class="ag-floating-filter-input"></div>');
     }
 
-    public init(params: IFloatingFilterParams): void {
+    public init(params: IFloatingFilterParams): Promise<void> {
         const filterParams = params.filterParams as CombinedFilterParams;
-        const filters = CombinedFilter.getFilterDefs(filterParams);
+        const floatingFilterPromises: Promise<IFloatingFilterComp>[] = [];
 
-        _.forEach(filters, (filterDef, index) => {
+        _.forEach(CombinedFilter.getFilterDefs(filterParams), (filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
                 ...params,
                 parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
@@ -34,14 +34,25 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
                 }
             };
 
-            const floatingFilter = this.createFloatingFilter(filterDef, floatingFilterParams).resolveNow(null, c => c);
+            const floatingFilterPromise = this.createFloatingFilter(filterDef, floatingFilterParams);
 
-            this.floatingFilters.push(floatingFilter);
-            this.appendChild(floatingFilter.getGui());
-
-            if (index > 0) {
-                _.setDisplayed(floatingFilter.getGui(), false);
+            if (floatingFilterPromise != null) {
+                floatingFilterPromises.push(floatingFilterPromise);
             }
+        });
+
+        return Promise.all(floatingFilterPromises).then(floatingFilters => {
+            _.forEach(floatingFilters, (floatingFilter, index) => {
+                this.floatingFilters.push(floatingFilter);
+
+                const gui = floatingFilter.getGui();
+
+                this.appendChild(gui);
+
+                if (index > 0) {
+                    _.setDisplayed(gui, false);
+                }
+            });
         });
     }
 
