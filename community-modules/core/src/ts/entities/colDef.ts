@@ -80,14 +80,10 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
     sort?: string;
-
-    /** If sorting by default, set it here. Set to 'asc' or 'desc' */
     defaultSort?: string;
 
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
-
-    /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     defaultSortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
@@ -105,6 +101,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
+    defaultHide?: boolean;
 
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;

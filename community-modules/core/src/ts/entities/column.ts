@@ -114,11 +114,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean, columnSpike: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
-        this.visible = !colDef.hide;
         this.colId = colId;
         this.primary = primary;
 
         if (columnSpike) {
+
+            // sort
             if (colDef.sort!==undefined) {
                 if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
                     this.sort = colDef.sort;
@@ -128,6 +129,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                     this.sort = colDef.defaultSort;
                 }
             }
+
+            // sortedAt
             const sortedAt = _.attrToNumber(colDef.sortedAt);
             const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
             if (sortedAt!==undefined) {
@@ -139,9 +142,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                     this.sortedAt = defaultSortedAt;
                 }
             }
+
+            // hide
+            const hide = _.attrToBoolean(colDef.hide);
+            const defaultHide = _.attrToBoolean(colDef.defaultHide);
+
+            if (hide!==undefined) {
+                this.visible = !hide;
+            } else {
+                this.visible = !defaultHide;
+            }
+
         } else {
             this.sortedAt = colDef.sortedAt;
             this.sort = colDef.sort;
+            this.visible = !colDef.hide;
         }
     }
 

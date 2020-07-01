@@ -287,9 +287,10 @@ export class ColumnFactory extends BeanStub {
     }
 
     private applyColumnSpike(column: Column, colDef: ColDef): void {
-        const colDefMergedWidth = _.attrToNumber(colDef.width);
-        if (colDefMergedWidth!=null) {
-            column.setActualWidth(colDefMergedWidth);
+        // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+        const width = _.attrToNumber(colDef.width);
+        if (width!=null) {
+            column.setActualWidth(width);
         }
 
         // anything but undefined will set sort, thus null or empty string will clear the sort
@@ -302,10 +303,16 @@ export class ColumnFactory extends BeanStub {
         }
 
         // anything but undefined, thus null will clear the sortedAt
-        if (colDef.sortedAt!==undefined) {
-            column.setSortedAt(colDef.sortedAt);
+        const sortedAt = _.attrToNumber(colDef.sortedAt);
+        if (sortedAt!==undefined) {
+            column.setSortedAt(sortedAt);
         }
 
+        // anything but undefined, thus null will clear the hide
+        const hide = _.attrToBoolean(colDef.hide);
+        if (hide!==undefined) {
+            column.setVisible(!hide);
+        }
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
