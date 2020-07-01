@@ -153,10 +153,18 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 this.visible = !defaultHide;
             }
 
+            // pinned
+            if (colDef.pinned!==undefined) {
+                this.setPinned(colDef.pinned);
+            } else {
+                this.setPinned(colDef.defaultPinned);
+            }
+
         } else {
             this.sortedAt = colDef.sortedAt;
             this.sort = colDef.sort;
             this.visible = !colDef.hide;
+            this.setPinned(this.colDef.pinned);
         }
     }
 
@@ -189,7 +197,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     private initialise(): void {
-        this.setPinned(this.colDef.pinned);
 
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();

@@ -105,6 +105,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
+    defaultPinned?: boolean | string;
 
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
@@ -112,7 +113,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** @deprecated since v20.1, use colDef.tooltipValueGetter instead*/
     tooltip?: (params: ITooltipParams) => string;
 
-    /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
+    /** The function used to calculate the tooltip of the object, tooltipField takes precedence */
     tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */

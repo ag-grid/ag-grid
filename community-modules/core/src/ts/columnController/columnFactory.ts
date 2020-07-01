@@ -313,6 +313,11 @@ export class ColumnFactory extends BeanStub {
         if (hide!==undefined) {
             column.setVisible(!hide);
         }
+
+        // pinned - anything but undefined, thus null or empty string will remove pinned
+        if (colDef.pinned!==undefined) {
+            column.setPinned(colDef.pinned);
+        }
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
