@@ -1,5 +1,5 @@
 import { AreaSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
-import { AreaSeries, CartesianChart, AgChart } from "ag-charts-community";
+import { CartesianChart, AgChart, findIndex } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -53,21 +53,24 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.updateAxes();
 
+        const options: any = this.chartOptions;
+        options.theme = this.getTheme();
+
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
-            this.updateAreaChart(params);
+            this.updateAreaChart(params, options);
         } else {
             // stacked and normalized has a single series
-            let areaSeries = this.chart.series[0] as AreaSeries;
+            let series: any = options.series && options.series[0];
 
-            if (!areaSeries) {
+            if (!series) {
                 const seriesDefaults = this.getSeriesDefaults();
                 const marker = { ...seriesDefaults.marker } as any;
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                areaSeries = AgChart.createComponent({
+                series = {
                     ...seriesDefaults,
                     fills: seriesDefaults.fill.colors,
                     fillOpacity: seriesDefaults.fill.opacity,
@@ -75,68 +78,55 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
                     marker
-                }, 'area.series');
-
-                if (areaSeries) {
-                    this.chart.addSeries(areaSeries);
-                } else {
-                    return;
-                }
+                };
+                options.series = [series];
             }
 
-            const { fills, strokes } = this.getPalette();
-
-            areaSeries.data = this.transformData(params.data, params.category.id);
-            areaSeries.xKey = params.category.id;
-            areaSeries.xName = params.category.name;
-            areaSeries.yKeys = params.fields.map(f => f.colId);
-            areaSeries.yNames = params.fields.map(f => f.displayName);
-            areaSeries.fills = fills;
-            areaSeries.strokes = strokes;
+            series.data = this.transformData(params.data, params.category.id);
+            series.xKey = params.category.id;
+            series.xName = params.category.name;
+            series.yKeys = params.fields.map(f => f.colId);
+            series.yNames = params.fields.map(f => f.displayName);
         }
+
+        AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
 
         this.updateLabelRotation(params.category.id);
     }
 
-    private updateAreaChart(params: UpdateChartParams): void {
-        const { chart } = this;
-
+    private updateAreaChart(params: UpdateChartParams, options: any): void {
         if (params.fields.length === 0) {
-            chart.removeAllSeries();
+            options.series = [];
             return;
         }
 
+        const allSeries = options.series as any[];
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series, i) => {
-            const id = series.yKeys[0];
+        const existingSeriesById = allSeries.reduceRight((map, series, i) => {
+            const id = series.yKeys && series.yKeys[0];
 
             if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
-                chart.removeSeries(series);
+                allSeries.splice(i, 1);
             }
 
             return map;
-        }, new Map<string, AreaSeries>());
+        }, new Map<string, any>());
 
         const data = this.transformData(params.data, params.category.id);
-        let previousSeries: AreaSeries | undefined = undefined;
+        let previousYKey: string | undefined = undefined;
 
         params.fields.forEach((f, index) => {
-            let areaSeries = existingSeriesById.get(f.colId);
-            const fill = fills[index % fills.length];
-            const stroke = strokes[index % strokes.length];
+            let series = existingSeriesById.get(f.colId);
 
-            if (areaSeries) {
-                areaSeries.data = data;
-                areaSeries.xKey = params.category.id;
-                areaSeries.xName = params.category.name;
-                areaSeries.yKeys = [f.colId];
-                areaSeries.yNames = [f.displayName];
-                areaSeries.fills = [fill];
-                areaSeries.strokes = [stroke];
+            if (series) {
+                series.data = data;
+                series.xKey = params.category.id;
+                series.xName = params.category.name;
+                series.yKeys = [f.colId];
+                series.yNames = [f.displayName];
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
                 const marker = { ...seriesDefaults.marker } as any;
@@ -144,27 +134,31 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     marker.shape = marker.type;
                     delete marker.type;
                 }
-                const options: any /*InternalAreaSeriesOptions */ = {
+                series = {
                     ...seriesDefaults,
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
                     yKeys: [f.colId],
                     yNames: [f.displayName],
-                    fills: [fill],
-                    strokes: [stroke],
                     fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
                     marker
                 };
 
-                areaSeries = AgChart.createComponent(options, 'area.series');
-
-                chart.addSeriesAfter(areaSeries, previousSeries);
+                let insertIndex = findIndex(allSeries, series => {
+                    return series.yKeys && series.yKeys[0] === previousYKey;
+                });
+                if (insertIndex >= 0) {
+                    insertIndex += 1;
+                } else {
+                    insertIndex = index;
+                }
+                allSeries.splice(insertIndex, 0, series);
             }
 
-            previousSeries = areaSeries;
+            previousYKey = series.yKeys[0];
         });
     }
 
