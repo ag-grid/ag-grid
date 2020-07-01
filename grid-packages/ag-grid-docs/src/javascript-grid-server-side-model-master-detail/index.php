@@ -174,7 +174,7 @@ SNIPPET
     </li>
     <li>
         Using the <code>getRowHeight()</code> grid option callback to explicitly set height for each row individually.
-        This callback will need to work out the pixels height of each detail row.
+        This callback will need to work out the pixel height of each detail row.
     </li>
     <li>
         Using the <code>detailCellRendererParams.autoHeight=true</code> property to let the grid automatically
