@@ -6,16 +6,16 @@ import {
     FilterChangedEvent,
     ProvidedFilterModel
 } from '@ag-grid-community/core';
-import { CombinedFloatingFilterComp } from './combinedFloatingFilter';
+import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
+import { MultiFloatingFilterComp } from './multiFloatingFilter';
+import { MultiFilterModel } from './multiFilter';
 import { mock } from '../test-utils/mock';
-import { CombinedFilterModel } from './combinedFilter';
-import { SetFilterModel } from '../setFilter/setFilterModel';
 
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
 let floatingFilter1: jest.Mocked<IFloatingFilterComp>;
 let floatingFilter2: jest.Mocked<IFloatingFilterComp>;
 
-function createCombinedFloatingFilter(filterParams: any = {}): CombinedFloatingFilterComp {
+function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
     userComponentFactory.newFloatingFilterComponent
         .mockReturnValueOnce(Promise.resolve(floatingFilter1))
         .mockReturnValueOnce(Promise.resolve(floatingFilter2));
@@ -30,13 +30,13 @@ function createCombinedFloatingFilter(filterParams: any = {}): CombinedFloatingF
         filterParams,
     };
 
-    const combinedFloatingFilter = new CombinedFloatingFilterComp();
+    const multiFloatingFilter = new MultiFloatingFilterComp();
 
-    (combinedFloatingFilter as any).userComponentFactory = userComponentFactory;
+    (multiFloatingFilter as any).userComponentFactory = userComponentFactory;
 
-    combinedFloatingFilter.init(params);
+    multiFloatingFilter.init(params);
 
-    return combinedFloatingFilter;
+    return multiFloatingFilter;
 }
 
 beforeEach(() => {
@@ -60,9 +60,9 @@ describe('init', () => {
         floatingFilter2 = mock<IFloatingFilterComp>('getGui');
         floatingFilter2.getGui.mockReturnValue(setFloatingFilterElement);
 
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
 
-        expect(combinedFloatingFilter.getGui().outerHTML).toBe('<div class="ag-floating-filter-input"><div id="filter-1"></div><div id="filter-2" class="ag-hidden"></div></div>');
+        expect(multiFloatingFilter.getGui().outerHTML).toBe('<div class="ag-floating-filter-input"><div id="filter-1"></div><div id="filter-2" class="ag-hidden"></div></div>');
     });
 });
 
@@ -75,10 +75,10 @@ describe('onParentModelChanged', () => {
     });
 
     it('passes through onParentModelChanged call when model is null', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
 
-        combinedFloatingFilter.onParentModelChanged(null, event);
+        multiFloatingFilter.onParentModelChanged(null, event);
 
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledWith(null, event);
@@ -87,16 +87,16 @@ describe('onParentModelChanged', () => {
     });
 
     it('passes through onParentModelChanged call when model is present', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const filterModel1: ProvidedFilterModel = { filterType: 'text' };
         const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [filterModel1, filterModel2]
         };
 
-        combinedFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledWith(filterModel1, event);
@@ -105,58 +105,58 @@ describe('onParentModelChanged', () => {
     });
 
     it('does nothing if afterFloatingFilter is true', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
         event.afterFloatingFilter = true;
 
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };
 
-        combinedFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(0);
         expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledTimes(0);
     });
 
     it('shows first floating filter if only first filter is active', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [{ filterType: 'text' }, null]
         };
 
-        combinedFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.getGui().className).toBe('');
         expect(floatingFilter2.getGui().className).toBe('ag-hidden');
     });
 
     it('shows second floating filter if only second filter is active', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [null, { filterType: 'set', values: [] }]
         };
 
-        combinedFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.getGui().className).toBe('ag-hidden');
         expect(floatingFilter2.getGui().className).toBe('');
     });
 
     it('shows neither floating filter if both filters are active', () => {
-        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };
 
-        combinedFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.getGui().className).toBe('ag-hidden');
         expect(floatingFilter2.getGui().className).toBe('ag-hidden');

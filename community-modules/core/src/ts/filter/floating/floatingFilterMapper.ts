@@ -3,8 +3,8 @@ export class FloatingFilterMapper {
         set: 'agSetColumnFloatingFilter',
         agSetColumnFilter: 'agSetColumnFloatingFilter',
 
-        combined: 'agCombinedColumnFloatingFilter',
-        agCombinedColumnFilter: 'agCombinedColumnFloatingFilter',
+        multi: 'agMultiColumnFloatingFilter',
+        agMultiColumnFilter: 'agMultiColumnFloatingFilter',
 
         number: 'agNumberColumnFloatingFilter',
         agNumberColumnFilter: 'agNumberColumnFloatingFilter',

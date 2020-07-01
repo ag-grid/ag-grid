@@ -1,10 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', filter: 'agCombinedColumnFilter' },
-        { field: 'sport', filter: 'agCombinedColumnFilter' },
+        { field: 'athlete', filter: 'agMultiColumnFilter' },
+        { field: 'sport', filter: 'agMultiColumnFilter' },
         {
             field: 'year',
-            filter: 'agCombinedColumnFilter',
+            filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
                     {

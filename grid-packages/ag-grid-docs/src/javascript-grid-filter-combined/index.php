@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
 <?= createSnippet(<<<SNIPPET
 // ColDef
 {
-    filter: 'agCombinedColumnFilter'
+    filter: 'agMultiColumnFilter'
 }
 SNIPPET
 ) ?>
@@ -74,7 +74,6 @@ SNIPPET
 
 <?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
-
 <h2>Concurrent Filtering</h2>
 
 <p>
@@ -90,7 +89,7 @@ SNIPPET
 <?= createSnippet(<<<SNIPPET
 // ColDef
 {
-    filter: 'agCombinedColumnFilter',
+    filter: 'agMultiColumnFilter',
     filterParams: {
         allowAllFiltersConcurrently: true,
     }
@@ -118,7 +117,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Allow All Filters', 'allow-all-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Allow All Filters', 'allow-all-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Custom Filters</h2>
 
@@ -154,7 +153,7 @@ SNIPPET
 <?= createSnippet(<<<SNIPPET
 // ColDef
 {
-    filter: 'agCombinedColumnFilter',
+    filter: 'agMultiColumnFilter',
     filterParams: {
         filters: [
             {
@@ -187,7 +186,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Interacting With Sibling Filters', 'interacting-with-sibling-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Interacting With Sibling Filters', 'interacting-with-sibling-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Combined Filter Parameters</h2>
 

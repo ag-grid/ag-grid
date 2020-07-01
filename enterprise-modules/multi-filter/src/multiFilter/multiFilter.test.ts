@@ -1,4 +1,4 @@
-import { CombinedFilter, CombinedFilterParams, CombinedFilterModel } from './combinedFilter';
+import { MultiFilter, MultiFilterParams, MultiFilterModel } from './multiFilter';
 import {
     ColDef,
     IClientSideRowModel,
@@ -15,8 +15,8 @@ import {
     ProvidedFilterModel,
     ISetFilterParams,
 } from '@ag-grid-community/core';
+import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { mock } from '../test-utils/mock';
-import { SetFilterModel } from '../setFilter/setFilterModel';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
@@ -29,7 +29,7 @@ let rowModel: jest.Mocked<IRowModel>;
 let filter1: jest.Mocked<IFilterComp>;
 let filter2: jest.Mocked<IFilterComp>;
 
-function createCombinedFilter(filterParams: any = {}): CombinedFilter {
+function createFilter(filterParams: any = {}): MultiFilter {
     const baseFilterParams: IProvidedFilterParams = {
         api: null,
         column,
@@ -47,20 +47,20 @@ function createCombinedFilter(filterParams: any = {}): CombinedFilter {
         .mockReturnValueOnce(Promise.resolve(filter1))
         .mockReturnValueOnce(Promise.resolve(filter2));
 
-    const params: CombinedFilterParams = {
+    const params: MultiFilterParams = {
         ...baseFilterParams,
         ...filterParams,
     };
 
-    const combinedFilter = new CombinedFilter();
+    const multiFilter = new MultiFilter();
 
-    (combinedFilter as any).eGui = eGui;
-    (combinedFilter as any).filterManager = filterManager;
-    (combinedFilter as any).userComponentFactory = userComponentFactory;
+    (multiFilter as any).eGui = eGui;
+    (multiFilter as any).filterManager = filterManager;
+    (multiFilter as any).userComponentFactory = userComponentFactory;
 
-    combinedFilter.init(params);
+    multiFilter.init(params);
 
-    return combinedFilter;
+    return multiFilter;
 }
 
 beforeEach(() => {
@@ -91,19 +91,19 @@ describe('init', () => {
         filter2 = mock<IFilterComp>('getGui');
         filter2.getGui.mockReturnValue(filter2Element);
 
-        createCombinedFilter();
+        createFilter();
 
         expect(eGui.appendChild).toHaveBeenCalledTimes(3);
 
         const { calls } = eGui.appendChild.mock;
 
         expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
-        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-combined-filter-divider"></div>');
+        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-multi-filter-divider"></div>');
         expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
     });
 
     it('will default to text filter and set filter', () => {
-        createCombinedFilter();
+        createFilter();
 
         expect(userComponentFactory.newFilterComponent).toHaveBeenCalledTimes(2);
         expect(userComponentFactory.newFilterComponent.mock.calls[0][0]).toMatchObject({ filter: 'agTextColumnFilter' });
@@ -118,34 +118,34 @@ describe('isFilterActive', () => {
     });
 
     it('returns false if neither filter is active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(combinedFilter.isFilterActive()).toBe(false);
+        expect(multiFilter.isFilterActive()).toBe(false);
     });
 
     it('returns true if first filter is active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.isFilterActive()).toBe(true);
+        expect(multiFilter.isFilterActive()).toBe(true);
     });
 
     it('returns true if second filter is active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.isFilterActive()).toBe(true);
+        expect(multiFilter.isFilterActive()).toBe(true);
     });
 
     it('returns true if both filters are active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
         filter1.isFilterActive.mockReturnValue(true);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.isFilterActive()).toBe(true);
+        expect(multiFilter.isFilterActive()).toBe(true);
     });
 });
 
@@ -156,32 +156,32 @@ describe('doesFilterPass', () => {
     });
 
     it('returns true if no filters are active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params: IDoesFilterPassParams = { node: null, data: null };
 
-        expect(combinedFilter.doesFilterPass(params)).toBe(true);
+        expect(multiFilter.doesFilterPass(params)).toBe(true);
     });
 
     it('returns true if all active filters pass', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params: IDoesFilterPassParams = { node: null, data: null };
 
-        (combinedFilter as any).activeFilters = new Set([filter1, filter2]);
+        (multiFilter as any).activeFilters = new Set([filter1, filter2]);
         filter1.doesFilterPass.mockReturnValue(true);
         filter2.doesFilterPass.mockReturnValue(true);
 
-        expect(combinedFilter.doesFilterPass(params)).toBe(true);
+        expect(multiFilter.doesFilterPass(params)).toBe(true);
     });
 
     it('returns false if any active filters do not pass', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params: IDoesFilterPassParams = { node: null, data: null };
 
-        (combinedFilter as any).activeFilters = new Set([filter1, filter2]);
+        (multiFilter as any).activeFilters = new Set([filter1, filter2]);
         filter1.doesFilterPass.mockReturnValue(true);
         filter2.doesFilterPass.mockReturnValue(false);
 
-        expect(combinedFilter.doesFilterPass(params)).toBe(false);
+        expect(multiFilter.doesFilterPass(params)).toBe(false);
     });
 });
 
@@ -192,32 +192,32 @@ describe('getModelFromUi', () => {
     });
 
     it('returns null if neither filter is active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(combinedFilter.getModelFromUi()).toBeNull();
+        expect(multiFilter.getModelFromUi()).toBeNull();
     });
 
     it('includes model from first filter', () => {
         const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
         filter1 = providedFilter;
 
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const filterModel: ProvidedFilterModel = { filterType: 'text' };
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModelFromUi()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [filterModel, null],
         });
     });
 
     it('does not include model from first filter if does not implement getModelFromUi', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModelFromUi()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [null, null],
         });
     });
@@ -226,23 +226,23 @@ describe('getModelFromUi', () => {
         const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
         filter2 = providedFilter;
 
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const filterModel: ProvidedFilterModel = { filterType: 'text' };
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModelFromUi()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [null, filterModel],
         });
     });
 
     it('does not include model from second filter if does not implement getModelFromUi', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModelFromUi()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [null, null],
         });
     });
@@ -255,37 +255,37 @@ describe('getModel', () => {
     });
 
     it('returns null if neither filter is active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(combinedFilter.getModelFromUi()).toBeNull();
+        expect(multiFilter.getModelFromUi()).toBeNull();
     });
 
     it('includes model from first filter', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const filterModel: ProvidedFilterModel = { filterType: 'text' };
         filter1.getModel.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModel()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [filterModel, null],
         });
     });
 
     it('includes model from second filter', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const filterModel: SetFilterModel = { filterType: 'set', values: [] };
         filter2.getModel.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModel()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [null, filterModel],
         });
     });
 
     it('includes model from both filters', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
         const filterModel1: ProvidedFilterModel = { filterType: 'text' };
         filter1.getModel.mockReturnValue(filterModel1);
@@ -295,8 +295,8 @@ describe('getModel', () => {
         filter2.getModel.mockReturnValue(filterModel2);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(combinedFilter.getModel()).toStrictEqual<CombinedFilterModel>({
-            filterType: 'combined',
+        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+            filterType: 'multi',
             filterModels: [filterModel1, filterModel2],
         });
     });
@@ -309,9 +309,9 @@ describe('setModel', () => {
     });
 
     it('sets null on both filters if provided model is null', done => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        combinedFilter.setModel(null).then(() => {
+        multiFilter.setModel(null).then(() => {
             expect(filter1.setModel).toHaveBeenCalledTimes(1);
             expect(filter1.setModel).toHaveBeenCalledWith(null);
             expect(filter2.setModel).toHaveBeenCalledTimes(1);
@@ -322,16 +322,16 @@ describe('setModel', () => {
     });
 
     it('sets model on all filters if provided model is present', done => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const filterModel1: ProvidedFilterModel = { filterType: 'text' };
         const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
 
-        const model: CombinedFilterModel = {
-            filterType: 'combined',
+        const model: MultiFilterModel = {
+            filterType: 'multi',
             filterModels: [filterModel1, filterModel2]
         };
 
-        combinedFilter.setModel(model).then(() => {
+        multiFilter.setModel(model).then(() => {
             expect(filter1.setModel).toHaveBeenCalledTimes(1);
             expect(filter1.setModel).toHaveBeenCalledWith(filterModel1);
             expect(filter2.setModel).toHaveBeenCalledTimes(1);
@@ -344,18 +344,18 @@ describe('setModel', () => {
 
 describe('getFilter', () => {
     it('returns first filter', done => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        combinedFilter.getFilter(0).then(filter => {
+        multiFilter.getFilter(0).then(filter => {
             expect(filter).toBe(filter1);
             done();
         });
     });
 
     it('returns second filter', done => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        combinedFilter.getFilter(1).then(filter => {
+        multiFilter.getFilter(1).then(filter => {
             expect(filter).toBe(filter2);
             done();
         });
@@ -372,10 +372,10 @@ describe('afterGuiAttached', () => {
         filter1 = mock<IFilterComp>('getGui', 'afterGuiAttached');
         filter2 = mock<IFilterComp>('getGui', 'afterGuiAttached');
 
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params: IAfterGuiAttachedParams = {};
 
-        combinedFilter.afterGuiAttached(params);
+        multiFilter.afterGuiAttached(params);
 
         expect(filter1.afterGuiAttached).toHaveBeenCalledTimes(1);
         expect(filter1.afterGuiAttached).toHaveBeenCalledWith(params);
@@ -384,9 +384,9 @@ describe('afterGuiAttached', () => {
     });
 
     it('does not pass through to filter if afterGuiAttached function does not exist', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(() => combinedFilter.afterGuiAttached({})).not.toThrow();
+        expect(() => multiFilter.afterGuiAttached({})).not.toThrow();
     });
 });
 
@@ -400,17 +400,17 @@ describe('onAnyFilterChanged', () => {
         filter1 = mock<IFilterComp>('getGui', 'onAnyFilterChanged');
         filter2 = mock<IFilterComp>('getGui', 'onAnyFilterChanged');
 
-        const combinedFilter = createCombinedFilter();
-        combinedFilter.onAnyFilterChanged();
+        const multiFilter = createFilter();
+        multiFilter.onAnyFilterChanged();
 
         expect(filter1.onAnyFilterChanged).toHaveBeenCalledTimes(1);
         expect(filter2.onAnyFilterChanged).toHaveBeenCalledTimes(1);
     });
 
     it('does not pass through to filter if onAnyFilterChanged function does not exist', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(() => combinedFilter.onAnyFilterChanged()).not.toThrow();
+        expect(() => multiFilter.onAnyFilterChanged()).not.toThrow();
     });
 });
 
@@ -424,17 +424,17 @@ describe('onNewRowsLoaded', () => {
         filter1 = mock<IFilterComp>('getGui', 'onNewRowsLoaded');
         filter2 = mock<IFilterComp>('getGui', 'onNewRowsLoaded');
 
-        const combinedFilter = createCombinedFilter();
-        combinedFilter.onNewRowsLoaded();
+        const multiFilter = createFilter();
+        multiFilter.onNewRowsLoaded();
 
         expect(filter1.onNewRowsLoaded).toHaveBeenCalledTimes(1);
         expect(filter2.onNewRowsLoaded).toHaveBeenCalledTimes(1);
     });
 
     it('does not pass through to filter if onNewRowsLoaded function does not exist', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
 
-        expect(() => combinedFilter.onNewRowsLoaded()).not.toThrow();
+        expect(() => multiFilter.onNewRowsLoaded()).not.toThrow();
     });
 });
 
@@ -444,58 +444,58 @@ describe('onFilterChanged', () => {
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
     });
 
-    it('triggers filterChangedCallback from combined filter if first filter changes', () => {
-        const combinedFilterChangedCallback = jest.fn();
+    it('triggers filterChangedCallback from multi filter if first filter changes', () => {
+        const multiFilterChangedCallback = jest.fn();
 
-        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback });
+        createFilter({ filterChangedCallback: multiFilterChangedCallback });
 
         const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
 
         filterChangedCallback();
 
-        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(multiFilterChangedCallback).toHaveBeenCalledTimes(1);
     });
 
-    it('triggers filterChangedCallback from combined filter if second filter changes', () => {
-        const combinedFilterChangedCallback = jest.fn();
+    it('triggers filterChangedCallback from multi filter if second filter changes', () => {
+        const multiFilterChangedCallback = jest.fn();
 
-        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback });
+        createFilter({ filterChangedCallback: multiFilterChangedCallback });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1] as ISetFilterParams;
         const { filterChangedCallback } = params;
 
         filterChangedCallback();
 
-        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(multiFilterChangedCallback).toHaveBeenCalledTimes(1);
     });
 
-    it('triggers filterChangedCallback from combined filter if first filter changes and all filters are allowed', () => {
-        const combinedFilterChangedCallback = jest.fn();
+    it('triggers filterChangedCallback from multi filter if first filter changes and all filters are allowed', () => {
+        const multiFilterChangedCallback = jest.fn();
 
-        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback, allowBothFiltersConcurrently: true });
+        createFilter({ filterChangedCallback: multiFilterChangedCallback, allowBothFiltersConcurrently: true });
 
         const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
 
         filterChangedCallback();
 
-        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(multiFilterChangedCallback).toHaveBeenCalledTimes(1);
     });
 
-    it('triggers filterChangedCallback from combined filter if second filter changes and all filters are allowed', () => {
-        const combinedFilterChangedCallback = jest.fn();
+    it('triggers filterChangedCallback from multi filter if second filter changes and all filters are allowed', () => {
+        const multiFilterChangedCallback = jest.fn();
 
-        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback, allowBothFiltersConcurrently: true });
+        createFilter({ filterChangedCallback: multiFilterChangedCallback, allowBothFiltersConcurrently: true });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1];
         const { filterChangedCallback } = params;
 
         filterChangedCallback();
 
-        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(multiFilterChangedCallback).toHaveBeenCalledTimes(1);
     });
 
     it('resets second filter if first filter changes', () => {
-        createCombinedFilter();
+        createFilter();
 
         const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
         filter2.isFilterActive.mockReturnValue(true);
@@ -507,7 +507,7 @@ describe('onFilterChanged', () => {
     });
 
     it('resets first filter if second filter changes', () => {
-        createCombinedFilter();
+        createFilter();
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1];
         const { filterChangedCallback } = params;
@@ -521,7 +521,7 @@ describe('onFilterChanged', () => {
     });
 
     it('does not reset second filter if first filter changes and all filters are allowed', () => {
-        createCombinedFilter({ allowAllFiltersConcurrently: true });
+        createFilter({ allowAllFiltersConcurrently: true });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
@@ -534,7 +534,7 @@ describe('onFilterChanged', () => {
     });
 
     it('does not reset first filter if second filter changes and all filters are allowed', () => {
-        createCombinedFilter({ allowAllFiltersConcurrently: true });
+        createFilter({ allowAllFiltersConcurrently: true });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1];
         const { filterChangedCallback } = params;
@@ -547,7 +547,7 @@ describe('onFilterChanged', () => {
     });
 
     it('adds changed filter to active filters if active', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
 
@@ -555,29 +555,29 @@ describe('onFilterChanged', () => {
 
         filterChangedCallback();
 
-        expect((combinedFilter as any).activeFilters).toContain(filter1);
-        expect((combinedFilter as any).activeFilters).not.toContain(filter2);
+        expect((multiFilter as any).activeFilters).toContain(filter1);
+        expect((multiFilter as any).activeFilters).not.toContain(filter2);
     });
 
     it('removes changed filter from active filters if inactive', () => {
-        const combinedFilter = createCombinedFilter();
+        const multiFilter = createFilter();
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
 
         filter1.isFilterActive.mockReturnValue(false);
-        (combinedFilter as any).activeFilters = new Set([filter1, filter2]);
+        (multiFilter as any).activeFilters = new Set([filter1, filter2]);
 
         filterChangedCallback();
 
-        expect((combinedFilter as any).activeFilters).not.toContain(filter1);
-        expect((combinedFilter as any).activeFilters).toContain(filter2);
+        expect((multiFilter as any).activeFilters).not.toContain(filter1);
+        expect((multiFilter as any).activeFilters).toContain(filter2);
     });
 
     it('triggers onAnyFilterChanged on other filters if exists', () => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onAnyFilterChanged');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onAnyFilterChanged');
 
-        createCombinedFilter();
+        createFilter();
 
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
@@ -592,7 +592,7 @@ describe('onFilterChanged', () => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onSiblingFilterChanged');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onSiblingFilterChanged');
 
-        createCombinedFilter();
+        createFilter();
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1];
         const { filterChangedCallback } = params;

@@ -11,26 +11,26 @@ import {
     Promise,
     IFilterComp,
 } from '@ag-grid-community/core';
-import { CombinedFilterParams, CombinedFilterModel, CombinedFilter } from './combinedFilter';
+import { MultiFilterParams, MultiFilterModel, MultiFilter } from './multiFilter';
 
-export class CombinedFloatingFilterComp extends Component implements IFloatingFilterComp {
+export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private floatingFilters: IFloatingFilterComp[] = [];
 
     constructor() {
-        super('<div class="ag-floating-filter-input"></div>');
+        super('<div class="ag-multi-floating-filter ag-floating-filter-input"></div>');
     }
 
     public init(params: IFloatingFilterParams): Promise<void> {
-        const filterParams = params.filterParams as CombinedFilterParams;
+        const filterParams = params.filterParams as MultiFilterParams;
         const floatingFilterPromises: Promise<IFloatingFilterComp>[] = [];
 
-        _.forEach(CombinedFilter.getFilterDefs(filterParams), (filterDef, index) => {
+        _.forEach(MultiFilter.getFilterDefs(filterParams), (filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
                 ...params,
                 parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
-                    params.parentFilterInstance(parent => (parent as CombinedFilter).getFilter(index).then(callback));
+                    params.parentFilterInstance(parent => (parent as MultiFilter).getFilter(index).then(callback));
                 }
             };
 
@@ -56,7 +56,7 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         });
     }
 
-    public onParentModelChanged(model: CombinedFilterModel, event: FilterChangedEvent): void {
+    public onParentModelChanged(model: MultiFilterModel, event: FilterChangedEvent): void {
         // We don't want to update the floating filter if the floating filter caused the change,
         // because the UI is already in sync. if we didn't do this, the UI would behave strangely
         // as it would be updating as the user is typing

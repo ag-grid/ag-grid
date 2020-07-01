@@ -11,26 +11,25 @@ import {
     Column,
     IFilterDef,
     _,
-    ISetFilterParams,
     Component,
     IFilterParams,
 } from '@ag-grid-community/core';
 
-export interface CombinedFilterParams extends ISetFilterParams {
+export interface MultiFilterParams extends IFilterParams {
     filters?: IFilterDef[];
     allowAllFiltersConcurrently?: boolean;
 }
 
-export interface CombinedFilterModel {
+export interface MultiFilterModel {
     filterType: string;
     filterModels: any[];
 }
 
-export class CombinedFilter extends Component implements IFilterComp {
+export class MultiFilter extends Component implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private params: CombinedFilterParams;
+    private params: MultiFilterParams;
     private filters: IFilterComp[] = [];
     private activeFilters = new Set<IFilterComp>();
     private column: Column;
@@ -38,10 +37,10 @@ export class CombinedFilter extends Component implements IFilterComp {
     private allowAllFiltersConcurrently: boolean;
 
     constructor() {
-        super('<div class="combined-filter"></div>');
+        super('<div class="multi-filter"></div>');
     }
 
-    public static getFilterDefs(params: CombinedFilterParams): IFilterDef[] {
+    public static getFilterDefs(params: MultiFilterParams): IFilterDef[] {
         const { filters } = params;
 
         return filters && filters.length > 0 ?
@@ -49,7 +48,7 @@ export class CombinedFilter extends Component implements IFilterComp {
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: CombinedFilterParams): Promise<void> {
+    public init(params: MultiFilterParams): Promise<void> {
         this.params = params;
 
         const { column, filterChangedCallback, allowAllFiltersConcurrently } = params;
@@ -60,7 +59,7 @@ export class CombinedFilter extends Component implements IFilterComp {
 
         const filterPromises: Promise<IFilterComp>[] = [];
 
-        _.forEach(CombinedFilter.getFilterDefs(params), (filterDef, index) => {
+        _.forEach(MultiFilter.getFilterDefs(params), (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -72,7 +71,7 @@ export class CombinedFilter extends Component implements IFilterComp {
             _.forEach(filters, (filter, index) => {
                 if (index > 0) {
                     const divider = document.createElement('div');
-                    _.addCssClass(divider, 'ag-combined-filter-divider');
+                    _.addCssClass(divider, 'ag-multi-filter-divider');
                     this.getGui().appendChild(divider);
                 }
 
@@ -99,15 +98,15 @@ export class CombinedFilter extends Component implements IFilterComp {
     }
 
     private getFilterType(): string {
-        return 'combined';
+        return 'multi';
     }
 
-    public getModelFromUi(): CombinedFilterModel {
+    public getModelFromUi(): MultiFilterModel {
         if (!this.isFilterActive()) {
             return null;
         }
 
-        const model: CombinedFilterModel = {
+        const model: MultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 const providedFilter = filter as ProvidedFilter;
@@ -128,7 +127,7 @@ export class CombinedFilter extends Component implements IFilterComp {
             return null;
         }
 
-        const model: CombinedFilterModel = {
+        const model: MultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 if (filter.isFilterActive()) {
@@ -142,7 +141,7 @@ export class CombinedFilter extends Component implements IFilterComp {
         return model;
     }
 
-    public setModel(model: CombinedFilterModel): Promise<void> {
+    public setModel(model: MultiFilterModel): Promise<void> {
         const setFilterModel = (filter: IFilterComp, model: any) => {
             return new Promise<void>(resolve => {
                 const promise = filter.setModel(model);
@@ -224,8 +223,13 @@ export class CombinedFilter extends Component implements IFilterComp {
             doesRowPassSiblingFilters: node => this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        return this.userComponentFactory
-            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter').then(filter => filterInstance = filter);
+        const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
+
+        if (filterPromise != null) {
+            return filterPromise.then(filter => filterInstance = filter);
+        }
+
+        return filterPromise;
     }
 
     private filterChanged(index: number): void {

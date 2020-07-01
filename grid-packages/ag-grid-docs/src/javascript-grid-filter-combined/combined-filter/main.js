@@ -1,9 +1,9 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', filter: 'agCombinedColumnFilter' },
+        { field: 'athlete', filter: 'agMultiColumnFilter' },
         {
             field: 'country',
-            filter: 'agCombinedColumnFilter',
+            filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
                     {
@@ -21,7 +21,7 @@ var gridOptions = {
         },
         {
             field: 'gold',
-            filter: 'agCombinedColumnFilter',
+            filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
                     {
@@ -38,7 +38,7 @@ var gridOptions = {
         },
         {
             field: 'date',
-            filter: 'agCombinedColumnFilter',
+            filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
                     {
