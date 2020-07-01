@@ -165,20 +165,20 @@ SNIPPET
 <h2>Detail Row Height</h2>
 
 <p>
-    The height of detail rows can be configured in one of the following two ways:
+    The height of detail rows can be configured in one of the following ways:
 </p>
 
 <ol class="content">
     <li>
-        Use property <code>detailRowHeight</code> to set a fixed height for each detail row.
+        Using the <code>detailRowHeight</code> grid option property to set a fixed height for each detail row.
     </li>
     <li>
-        Use callback <code>getRowHeight()</code> to explicitly set height for each row individually.
-        The callback must work out how many pixels high each detail row should be.
+        Using the <code>getRowHeight()</code> grid option callback to explicitly set height for each row individually.
+        This callback will need to work out the pixels height of each detail row.
     </li>
     <li>
-        Set <code>detailCellRendererParams.autoHeight=true</code> to get the grid to automatically size
-        the detail grids to fit their rows.
+        Using the <code>detailCellRendererParams.autoHeight=true</code> property to let the grid automatically
+        size the detail rows / grids to fit their rows.
     </li>
 </ol>
 
@@ -204,7 +204,7 @@ masterGridOptions.getRowHeight = function(params) {
     }
 }
 
-// option 2 - use autoHeight
+// option 3 - use autoHeight
 masterGridOptions.detailCellRendererParams.autoHeight = true;
 
 SNIPPET
