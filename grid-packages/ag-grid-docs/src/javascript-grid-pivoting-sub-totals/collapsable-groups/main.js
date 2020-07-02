@@ -16,8 +16,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 180,
     },
-    pivotMode: true,
-    pivotColumnGroupsCollapsed: true,
+    pivotMode: true
 };
 
 // setup the grid after the page has finished loading

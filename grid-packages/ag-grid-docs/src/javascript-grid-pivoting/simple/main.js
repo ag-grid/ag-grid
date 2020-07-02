@@ -2,7 +2,7 @@ var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, enableRowGroup: true },
         { field: "sport", pivot: true },
-        { field: "year", pivot: true, enablePivot: true },
+        { field: "year", enablePivot: true, enablePivot: true },
         { field: "date" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },

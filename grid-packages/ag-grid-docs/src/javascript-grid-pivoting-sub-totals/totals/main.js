@@ -3,23 +3,20 @@ var gridOptions = {
         { field: "country", rowGroup: true, enableRowGroup: true },
         { field: "athlete" },
         { field: "sport", pivot: true, enablePivot: true },
-        // { field: "year", pivot: true, enablePivot: true },
-        // { field: "age", pivot: true },
+        { field: "year", pivot: true, enablePivot: true },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
     ],
     defaultColDef: {
-        // flex: 1,
-        // maxWidth: 140,
+        maxWidth: 140,
         filter: true,
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 150,
+        minWidth: 180,
     },
     pivotMode: true,
-    sideBar: true,
     pivotColumnGroupTotals: 'before',
 };
 

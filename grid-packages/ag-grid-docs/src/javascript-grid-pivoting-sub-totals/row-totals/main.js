@@ -1,29 +1,22 @@
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, enableRowGroup: true },
-        { field: "sport", rowGroup: true, enablePivot: true, enableRowGroup: true },
-        { field: "athlete", enablePivot: true, enableRowGroup: true },
+        { field: "athlete" },
+        { field: "sport", pivot: true, enablePivot: true },
         { field: "year", pivot: true, enablePivot: true },
-        { field: "age", filter: 'agNumberColumnFilter', enablePivot: true, enableRowGroup: true },
-        { field: "date" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
     ],
     defaultColDef: {
-        flex: 1,
-        minWidth: 150,
+        maxWidth: 140,
         filter: true,
-        resizable: true
+        resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 300,
+        minWidth: 180,
     },
-    sideBar: true,
     pivotMode: true,
-    rowGroupPanelShow: 'always',
-    pivotPanelShow: 'always',
-    pivotColumnGroupTotals: 'after',
     pivotRowTotals: 'before',
 };
 
