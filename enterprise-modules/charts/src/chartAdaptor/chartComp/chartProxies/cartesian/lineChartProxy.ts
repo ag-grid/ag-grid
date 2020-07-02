@@ -103,7 +103,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 };
 
                 let insertIndex = findIndex(allSeries, series => {
-                    return series.yKeys && series.yKeys[0] === previousYKey;
+                    return series.yKey === previousYKey;
                 });
                 if (insertIndex >= 0) {
                     insertIndex += 1;

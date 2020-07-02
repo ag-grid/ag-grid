@@ -2,7 +2,6 @@ import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-commu
 import {
     HistogramSeriesOptions as InternalHistogramSeriesOptions,
     CartesianChart,
-    HistogramSeries,
     AgChart
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -46,11 +45,11 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
     }
 
     public update(params: UpdateChartParams): void {
-
         const [xField] = params.fields;
+        const options: any = this.chartOptions;
+        const series = options.series[0];
 
-        const chart = this.chart;
-        const series = chart.series[0] as HistogramSeries;
+        options.theme = this.getTheme();
 
         series.data = params.data;
         series.xKey = xField.colId;
@@ -59,9 +58,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         // for now, only constant width is supported via integrated charts
         series.areaPlot = false;
 
-        const { fills, strokes } = this.getPalette();
-        series.fill = fills[0];
-        series.stroke = strokes[0];
+        AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
     }
 
     protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {
