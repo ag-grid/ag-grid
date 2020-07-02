@@ -17,7 +17,7 @@ import {
 
 export interface MultiFilterParams extends IFilterParams {
     filters?: IFilterDef[];
-    allowAllFiltersConcurrently?: boolean;
+    combineFilters?: boolean;
 }
 
 export interface MultiFilterModel {
@@ -34,7 +34,7 @@ export class MultiFilter extends Component implements IFilterComp {
     private activeFilters = new Set<IFilterComp>();
     private column: Column;
     private filterChangedCallback: () => void;
-    private allowAllFiltersConcurrently: boolean;
+    private combineFilters: boolean;
 
     constructor() {
         super('<div class="multi-filter"></div>');
@@ -51,11 +51,11 @@ export class MultiFilter extends Component implements IFilterComp {
     public init(params: MultiFilterParams): Promise<void> {
         this.params = params;
 
-        const { column, filterChangedCallback, allowAllFiltersConcurrently } = params;
+        const { column, filterChangedCallback, combineFilters } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
-        this.allowAllFiltersConcurrently = !!allowAllFiltersConcurrently;
+        this.combineFilters = !!combineFilters;
 
         const filterPromises: Promise<IFilterComp>[] = [];
 
@@ -246,7 +246,7 @@ export class MultiFilter extends Component implements IFilterComp {
         _.forEach(this.filters, filter => {
             if (filter === changedFilter) { return; }
 
-            if (!this.allowAllFiltersConcurrently && filter.isFilterActive()) {
+            if (!this.combineFilters && filter.isFilterActive()) {
                 filter.setModel(null);
             }
 

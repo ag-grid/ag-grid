@@ -520,8 +520,8 @@ describe('onFilterChanged', () => {
         expect(filter1.setModel).toHaveBeenCalledWith(null);
     });
 
-    it('does not reset second filter if first filter changes and all filters are allowed', () => {
-        createFilter({ allowAllFiltersConcurrently: true });
+    it('does not reset second filter if first filter changes and filters are combined', () => {
+        createFilter({ combineFilters: true });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
         const { filterChangedCallback } = params;
@@ -533,8 +533,8 @@ describe('onFilterChanged', () => {
         expect(filter2.setModel).toHaveBeenCalledTimes(0);
     });
 
-    it('does not reset first filter if second filter changes and all filters are allowed', () => {
-        createFilter({ allowAllFiltersConcurrently: true });
+    it('does not reset first filter if second filter changes and filters are combined', () => {
+        createFilter({ combineFilters: true });
 
         const params = userComponentFactory.newFilterComponent.mock.calls[1][1];
         const { filterChangedCallback } = params;

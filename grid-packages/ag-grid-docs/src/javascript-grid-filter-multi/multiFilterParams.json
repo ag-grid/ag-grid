@@ -1,21 +1,21 @@
 {
     "filterParams": {
-        "allowAllFiltersConcurrently": {
+        "combineFilters": {
             "default": false,
-            "description": "Set to <code>true</code> if you would like to allow all filters inside the Combined Filter to be active at the same time."
+            "description": "Set to <code>true</code> if you would like to combine filters inside the Multi Filter, allowing them to be active at the same time."
         },
         "filters[]": {
             "meta": {
                 "description": "An array of <code>filter</code> definition objects."
             },
             "filter<br />filterFramework": {
-                "description": "Filter component to wrap in the Combined Filter."
+                "description": "Child filter component to use inside the Multi Filter."
             },
             "filterParams": {
-                "description": "Custom parameters to be passed to the wrapped filter component."
+                "description": "Custom parameters to be passed to the child filter component."
             },
             "floatingFilterComponent<br />floatingFilterComponentFramework": {
-                "description": "Floating filter component to use for the wrapped filter."
+                "description": "Floating filter component to use for the child filter."
             },
             "floatingFilterComponentParams": {
                 "description": "Custom parameters to be passed to the floating filter component."

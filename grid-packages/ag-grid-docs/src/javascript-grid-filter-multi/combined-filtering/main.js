@@ -5,7 +5,7 @@ var gridOptions = {
             field: 'country',
             filter: 'agMultiColumnFilter',
             filterParams: {
-                allowAllFiltersConcurrently: true
+                combineFilters: true,
             }
         },
     ],
