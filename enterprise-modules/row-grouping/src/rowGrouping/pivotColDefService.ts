@@ -36,10 +36,13 @@ export class PivotColDefService extends BeanStub {
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
-        this.addCollapsedSubTotals(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
+        // additional group columns that contain child totals for each collapsed child column / group
+        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
 
+        // additional columns that contain the aggregated total for each value column per row
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
 
+        // additional group columns that contain an aggregated total across all child columns
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
 
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
@@ -120,11 +123,13 @@ export class PivotColDefService extends BeanStub {
         parentChildren.sort(comparator);
     }
 
-    private addCollapsedSubTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
+    private addExpandablePivotGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                                       pivotColumnDefs: ColDef[],
                                       columnIdSequence: NumberSequence) {
 
-        if (!this.gridOptionsWrapper.isPivotColumnGroupsCollapsed()) { return; }
+        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotRowTotals()) {
+            return;
+        }
 
         const recursivelyAddSubTotals = (groupDef: (ColGroupDef | ColDef),
                                          pivotColumnDefs: ColDef[],
@@ -244,7 +249,6 @@ export class PivotColDefService extends BeanStub {
                               valueColumns: Column[],
                               pivotColumns: Column[],
                               columnIdSequence: NumberSequence) {
-
         if (!this.gridOptionsWrapper.getPivotRowTotals()) { return; }
 
         const insertAfter = this.gridOptionsWrapper.getPivotRowTotals() === 'after';

@@ -299,8 +299,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.pivotTotals);
     }
 
-    public isPivotColumnGroupsCollapsed() {
-        return isTrue(this.gridOptions.pivotColumnGroupsCollapsed);
+    public isSuppressExpandablePivotGroups() {
+        return isTrue(this.gridOptions.suppressExpandablePivotGroups);
     }
 
     public getPivotColumnGroupTotals() {
