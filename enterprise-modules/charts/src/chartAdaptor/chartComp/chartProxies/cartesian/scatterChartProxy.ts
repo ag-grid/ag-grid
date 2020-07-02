@@ -1,5 +1,5 @@
 import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, ScatterSeries, AgChart } from "ag-charts-community";
+import { CartesianChart, AgChart, findIndex } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -37,13 +37,16 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public update(params: UpdateChartParams): void {
+        const options: any = this.chartOptions;
+        options.theme = this.getTheme();
+
         if (params.fields.length < 2) {
-            this.chart.removeAllSeries();
+            options.series = [];
             return;
         }
 
         const { fields } = params;
-        const { seriesDefaults } = this.chartOptions as any;
+        const { seriesDefaults } = options;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         const testDatum = params.data[0];
         const xValuesAreDates = seriesDefinitions
@@ -53,9 +56,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         this.updateAxes(xValuesAreDates ? 'time' : 'number');
 
-        const { chart } = this;
-
-        const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
+        const allSeries: any[] = options.series || (options.series = []);
+        const existingSeriesById = allSeries.reduceRight((map, series, i) => {
             const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
                 s.xField.colId === series.xKey &&
                 s.yField.colId === series.yKey &&
@@ -64,15 +66,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             if (matchingIndex === i) {
                 map.set(series.yKey, series);
             } else {
-                chart.removeSeries(series);
+                allSeries.splice(i, 1);
             }
 
             return map;
-        }, new Map<string, ScatterSeries>());
+        }, new Map<string, any>());
 
-        const { fills, strokes } = this.getPalette();
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
-        let previousSeries: ScatterSeries | undefined = undefined;
+        let previousYKey: string | undefined = undefined;
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
@@ -81,14 +82,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 marker.shape = marker.type;
                 delete marker.type;
             }
-            const series = existingSeries || AgChart.createComponent({
+            const series = existingSeries || {
                 ...seriesDefaults,
                 type: 'scatter',
                 fillOpacity: seriesDefaults.fill.opacity,
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
                 marker
-            }, 'scatter.series');
+            };
 
             if (!series) {
                 return;
@@ -106,8 +107,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.yKey = yFieldDefinition.colId;
             series.yName = yFieldDefinition.displayName;
             series.data = params.data;
-            series.fill = fills[index % fills.length];
-            series.stroke = strokes[index % strokes.length];
 
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;
@@ -124,11 +123,23 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             }
 
             if (!existingSeries) {
-                chart.addSeriesAfter(series, previousSeries);
+                // chart.addSeriesAfter(series, previousSeries);
+
+                let insertIndex = findIndex(allSeries, series => {
+                    return series.yKey === previousYKey;
+                });
+                if (insertIndex >= 0) {
+                    insertIndex += 1;
+                } else {
+                    insertIndex = index;
+                }
+                allSeries.splice(insertIndex, 0, series);
             }
 
-            previousSeries = series;
+            previousYKey = series.yKey;
         });
+
+        AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
     }
 
     public getTooltipsEnabled(): boolean {
