@@ -10,6 +10,7 @@
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "test": "jest --passWithNoTests",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -46,6 +47,9 @@
     "@ag-grid-enterprise/core": "~23.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^25.4.0",
+    "ts-jest": "^25.4.0",
     "typescript": "~3.6.5"
   },
   "publishConfig": {

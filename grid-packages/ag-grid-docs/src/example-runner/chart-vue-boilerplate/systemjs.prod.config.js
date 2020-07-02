@@ -19,7 +19,7 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: Object.assign({
+        paths: assign({
             // paths serve as alias
             "npm:": "https://unpkg.com/",
         }, sjsPaths),

@@ -30,6 +30,7 @@ git reset enterprise-modules/range-selection/dist
 git reset enterprise-modules/rich-select/dist
 git reset enterprise-modules/row-grouping/dist
 git reset enterprise-modules/server-side-row-model/dist
+git reset enterprise-modules/multi-filter/dist
 git reset enterprise-modules/set-filter/dist
 git reset enterprise-modules/set-filter/typings
 git reset enterprise-modules/side-bar/dist
