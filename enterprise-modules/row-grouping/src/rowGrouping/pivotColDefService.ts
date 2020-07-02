@@ -19,6 +19,8 @@ export interface PivotColDefServiceResult {
 @Bean('pivotColDefService')
 export class PivotColDefService extends BeanStub {
 
+    public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -36,11 +38,11 @@ export class PivotColDefService extends BeanStub {
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
-        // additional group columns that contain child totals for each collapsed child column / group
-        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
-
         // additional columns that contain the aggregated total for each value column per row
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
+
+        // additional group columns that contain child totals for each collapsed child column / group
+        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
 
         // additional group columns that contain an aggregated total across all child columns
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
@@ -127,7 +129,7 @@ export class PivotColDefService extends BeanStub {
                                       pivotColumnDefs: ColDef[],
                                       columnIdSequence: NumberSequence) {
 
-        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotRowTotals()) {
+        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotColumnGroupTotals()) {
             return;
         }
 
@@ -177,7 +179,12 @@ export class PivotColDefService extends BeanStub {
         };
 
         pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
-            recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
+            const groupId = (groupDef as ColGroupDef).groupId;
+            if (groupId && groupId.startsWith(PivotColDefService.PIVOT_ROW_TOTAL_PREFIX)) {
+                return; // ignore pivot row totals if present
+            } else {
+                recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
+            }
         });
     }
 
@@ -304,7 +311,8 @@ export class PivotColDefService extends BeanStub {
             const groupDef: ColGroupDef = {
                 children: [],
                 pivotKeys: newPivotKeys,
-                groupId: 'pivot' + columnIdSequence.next()
+                groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+                columnGroupShow: 'closed'
             };
 
             insertAfter ? parentChildren.push(groupDef) : parentChildren.unshift(groupDef);
@@ -315,7 +323,8 @@ export class PivotColDefService extends BeanStub {
             const valueGroup: ColGroupDef = {
                 children: [],
                 pivotKeys: newPivotKeys,
-                groupId: 'pivot' + columnIdSequence.next()
+                groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+                columnGroupShow: 'open'
             };
             if (measureColumns.length === 0) {
                 const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
