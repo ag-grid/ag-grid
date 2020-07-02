@@ -32,9 +32,8 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
-
-    @Autowired('aggFuncService') private gridApi: GridApi;
-    @Autowired('aggFuncService') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
