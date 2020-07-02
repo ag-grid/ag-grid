@@ -182,9 +182,8 @@ export class PivotColDefService extends BeanStub {
             const groupId = (groupDef as ColGroupDef).groupId;
             if (groupId && groupId.startsWith(PivotColDefService.PIVOT_ROW_TOTAL_PREFIX)) {
                 return; // ignore pivot row totals if present
-            } else {
-                recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
             }
+            recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
         });
     }
 
