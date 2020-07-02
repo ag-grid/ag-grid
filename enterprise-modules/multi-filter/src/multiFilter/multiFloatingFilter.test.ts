@@ -62,7 +62,7 @@ describe('init', () => {
 
         const multiFloatingFilter = createFloatingFilter();
 
-        expect(multiFloatingFilter.getGui().outerHTML).toBe('<div class="ag-floating-filter-input"><div id="filter-1"></div><div id="filter-2" class="ag-hidden"></div></div>');
+        expect(multiFloatingFilter.getGui().outerHTML).toBe('<div class="ag-multi-floating-filter ag-floating-filter-input"><div id="filter-1"></div><div id="filter-2" class="ag-hidden"></div></div>');
     });
 });
 
