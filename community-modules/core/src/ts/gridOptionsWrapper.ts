@@ -1240,7 +1240,7 @@ export class GridOptionsWrapper {
 
     public getAutoSizePadding(): number {
         const value = this.gridOptions.autoSizePadding;
-        return value!=null && value>=0 ? value : 20;
+        return value != null && value >= 0 ? value : 20;
     }
 
     // properties
