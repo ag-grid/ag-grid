@@ -57,12 +57,14 @@ export interface ColumnState {
     hide?: boolean;
     aggFunc?: string | IAggFunc | null;
     width?: number;
+    pivot?: boolean;
     pivotIndex?: number | null;
     pinned?: boolean | string | 'left' | 'right';
+    rowGroup?: boolean;
     rowGroupIndex?: number | null;
     flex?: number;
     sort?: string;
-    sortedAt?: string;
+    sortedAt?: number;
 }
 
 @Bean('columnController')
@@ -1639,16 +1641,37 @@ export class ColumnController extends BeanStub {
         const pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
 
-        return {
+        const res = {
             colId: column.getColId(),
             hide: !column.isVisible(),
             aggFunc,
             width: column.getActualWidth(),
             pivotIndex: pivotIndex,
             pinned: column.getPinned(),
-            rowGroupIndex,
-            flex: column.getFlex()
+            rowGroupIndex
         };
+
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+
+            const sort = column.getSort()!=null ? column.getSort() : null;
+            const sortedAt = column.getSortedAt()!=null ? column.getSortedAt() : null;
+
+            // new way, include these extra bits
+            Object.assign(res, {
+                rowGroup: column.isRowGroupActive(),
+                pivot: column.isPivotActive(),
+                sort: sort,
+                sortedAt: sortedAt
+            });
+
+        } else {
+            // old way, we include flex
+            Object.assign(res, {
+                flex: column.getFlex()
+            });
+        }
+
+        return res;
     }
 
     public getColumnState(): ColumnState[] {
@@ -1730,7 +1753,14 @@ export class ColumnController extends BeanStub {
         this.setColumnState(columnStates, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnStates: ColumnState[], suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnStatesOrParams: ColumnState[] | {stateItems: ColumnState[], columnOrder: boolean}, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+            return this.setColumnState_spike(columnStatesOrParams, suppressEverythingEvent, source);
+        }
+
+        const columnStates = columnStatesOrParams as ColumnState[];
+
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
 
         const columnStateBefore = this.getColumnState();
@@ -1806,6 +1836,150 @@ export class ColumnController extends BeanStub {
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
         this.putFixedColumnsFirst();
+        this.updateDisplayedColumns(source);
+
+        if (!suppressEverythingEvent) {
+            const event: ColumnEverythingChangedEvent = {
+                type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
+
+        this.raiseColumnEvents(columnStateBefore, source);
+
+        return success;
+    }
+
+    public setColumnState_spike(paramsOrState: ColumnState[] | {stateItems: ColumnState[], columnOrder: boolean}, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+        if (_.missingOrEmpty(this.primaryColumns)) { return false; }
+
+        let columnStates: ColumnState[];
+        let columnOrder: boolean;
+        if (Array.isArray(paramsOrState)) {
+            columnStates = paramsOrState;
+            columnOrder = false;
+        } else {
+            const params = paramsOrState as {stateItems: ColumnState[], columnOrder: boolean};
+            columnStates = params.stateItems;
+            columnOrder = params.columnOrder;
+        }
+
+        const columnStateBefore = this.getColumnState();
+
+        this.autoGroupsNeedBuilding = true;
+
+        // at the end below, this list will have all columns we got no state for
+        const columnsWithNoState = this.primaryColumns.slice();
+
+        let success = true;
+
+        const rowGroupIndexes: { [key: string]: number; } = {};
+        const pivotIndexes: { [key: string]: number; } = {};
+        const autoGroupColumnStates: ColumnState[] = [];
+
+        const previousRowGroupCols = this.rowGroupColumns.slice();
+        const previousPivotCols = this.pivotColumns.slice();
+
+        if (columnStates) {
+            columnStates.forEach((state: ColumnState) => {
+
+                // auto group columns are re-created so deferring syncing with ColumnState
+                if (_.exists(this.getAutoColumn(state.colId))) {
+                    autoGroupColumnStates.push(state);
+                    return;
+                }
+
+                const column = this.getPrimaryColumn(state.colId);
+
+                if (!column) {
+                    console.warn('ag-grid: column ' + state.colId + ' not found');
+                    success = false;
+                } else {
+                    this.syncColumnWithStateItem_columnSpike(column, state, rowGroupIndexes, pivotIndexes, false, source);
+                    _.removeFromArray(columnsWithNoState, column);
+                }
+            });
+
+            if (this.flexActive) {
+                this.refreshFlexedColumns(undefined, undefined, true);
+            }
+        }
+
+        // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
+        // columnsWithNoState.forEach(this.syncColumnWithNoState.bind(this));
+
+        // sort the lists according to the indexes that were provided
+        const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
+
+            const indexA = indexes[colA.getId()];
+            const indexB = indexes[colB.getId()];
+
+            const aHasIndex = indexA!=null;
+            const bHasIndex = indexB!=null;
+
+            if (aHasIndex && bHasIndex) {
+                // both a and b are new cols with index, so sort on index
+                return indexA - indexB;
+            } else if (aHasIndex) {
+                // a has an index, so it should be before a
+                return -1;
+            } else if (bHasIndex) {
+                // b has an index, so it should be before a
+                return 1;
+            } else {
+                const oldIndexA = oldList.indexOf(colA);
+                const oldIndexB = oldList.indexOf(colB);
+
+                const aHasOldIndex = oldIndexA!=null;
+                const bHasOldIndex = oldIndexB!=null;
+
+                if (aHasOldIndex && bHasOldIndex) {
+                    // both a and b are old cols, so sort based on last order
+                    return oldIndexA - oldIndexB;
+                } else if (aHasOldIndex) {
+                    // a is old, b is new, so b is first
+                    return 1;
+                } else if (bHasOldIndex) {
+                    // b is old, a is new, a is first
+                    return -1;
+                } else {
+                    // this bit does matter, means both are new cols but without index
+                    return -1;
+                }
+            }
+        }
+
+        this.rowGroupColumns.sort(comparator.bind(this, rowGroupIndexes, previousRowGroupCols));
+        this.pivotColumns.sort(comparator.bind(this, pivotIndexes, previousPivotCols));
+
+        this.updateGridColumns();
+
+        // sync newly created auto group columns with ColumnState
+        autoGroupColumnStates.forEach(stateItem => {
+            const autoCol = this.getAutoColumn(stateItem.colId);
+            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, null, null, true, source);
+        });
+
+        if (columnOrder && columnStates) {
+            const orderOfColIds = columnStates.map(stateItem => stateItem.colId);
+
+            this.gridColumns.sort((colA: Column, colB: Column) => {
+                const indexA = orderOfColIds.indexOf(colA.getId());
+                const indexB = orderOfColIds.indexOf(colB.getId());
+
+                return indexA - indexB;
+            });
+
+            // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+            // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+            // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+            // is less sexy for the code here, but it keeps consistency.
+            this.putFixedColumnsFirst();
+        }
+
         this.updateDisplayedColumns(source);
 
         if (!suppressEverythingEvent) {
@@ -2045,6 +2219,107 @@ export class ColumnController extends BeanStub {
             pivotIndexes[column.getId()] = stateItem.pivotIndex;
         } else {
             column.setPivotActive(false, source);
+        }
+    }
+
+
+    private syncColumnWithStateItem_columnSpike(
+        column: Column | null,
+        stateItem: ColumnState,
+        rowGroupIndexes: { [key: string]: number; },
+        pivotIndexes: { [key: string]: number; },
+        autoCol: boolean,
+        source: ColumnEventType
+    ): void {
+
+        if (!column) { return; }
+
+        // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
+        if (stateItem.hide!==undefined) {
+            column.setVisible(!stateItem.hide, source);
+        }
+
+        // sets pinned to 'left' or 'right'
+        if (stateItem.pinned!==undefined) {
+            column.setPinned(stateItem.pinned);
+        }
+
+        // if width provided and valid, use it, otherwise stick with the old width
+        const minColWidth = this.gridOptionsWrapper.getMinColWidth();
+
+        if (stateItem.width!==undefined) {
+            if (stateItem.width && minColWidth &&
+                (stateItem.width >= minColWidth)) {
+                column.setActualWidth(stateItem.width, source);
+            }
+        }
+
+        const sort = stateItem.sort;
+        if (sort!==undefined) {
+            if (sort===Constants.SORT_DESC || sort===Constants.SORT_ASC) {
+                column.setSort(stateItem.sort);
+            } else {
+                column.setSort(undefined);
+            }
+        }
+
+        if (stateItem.sortedAt!==undefined) {
+            column.setSortedAt(stateItem.sortedAt);
+        }
+
+        // we do not do aggFunc, rowGroup or pivot for auto cols, as you can't do these with auto col
+        if (autoCol) {
+            return;
+        }
+
+        if (stateItem.aggFunc!==undefined) {
+            if (typeof stateItem.aggFunc === 'string') {
+                column.setAggFunc(stateItem.aggFunc);
+                column.setValueActive(true, source);
+                this.valueColumns.push(column);
+            } else {
+                if (_.exists(stateItem.aggFunc)) {
+                    console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
+                        'functions, register the functions first before using them in get/set state. This is because it is ' +
+                        'intended for the column state to be stored and retrieved as simple JSON.');
+                }
+                column.setAggFunc(null);
+                column.setValueActive(false, source);
+            }
+        }
+
+        if (stateItem.rowGroup!==undefined || stateItem.rowGroupIndex!==undefined) {
+            if (typeof stateItem.rowGroupIndex === 'number' || stateItem.rowGroup) {
+                if (!column.isRowGroupActive()) {
+                    column.setRowGroupActive(true, source);
+                    this.rowGroupColumns.push(column);
+                }
+                if (typeof stateItem.rowGroupIndex === 'number') {
+                    rowGroupIndexes[column.getId()] = stateItem.rowGroupIndex;
+                }
+            } else {
+                if (column.isRowGroupActive()) {
+                    column.setRowGroupActive(false, source);
+                    _.removeFromArray(this.rowGroupColumns, column);
+                }
+            }
+        }
+
+        if (stateItem.pivot!==undefined || stateItem.pivotIndex!==undefined) {
+            if (typeof stateItem.pivotIndex === 'number' || stateItem.pivot) {
+                if (!column.isPivotActive()) {
+                    column.setPivotActive(true, source);
+                    this.pivotColumns.push(column);
+                }
+                if (typeof stateItem.pivotIndex === 'number') {
+                    pivotIndexes[column.getId()] = stateItem.pivotIndex;
+                }
+            } else {
+                if (column.isPivotActive()) {
+                    column.setPivotActive(false, source);
+                    _.removeFromArray(this.pivotColumns, column);
+                }
+            }
         }
     }
 
