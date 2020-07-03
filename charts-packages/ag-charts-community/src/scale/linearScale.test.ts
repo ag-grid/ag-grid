@@ -1,7 +1,7 @@
-import scaleLinear from "./linearScale";
+import { LinearScale } from "./linearScale";
 
 test('domain', () => {
-   const scale = scaleLinear();
+   const scale = new LinearScale();
 
    expect(scale.domain).toEqual([0, 1]);
    scale.domain = [5, 10];
@@ -9,7 +9,7 @@ test('domain', () => {
 });
 
 test('range', () => {
-    const scale = scaleLinear();
+    const scale = new LinearScale();
 
     expect(scale.range).toEqual([0, 1]);
     scale.range = [5, 10];
@@ -17,7 +17,7 @@ test('range', () => {
 });
 
 test('convert linear', () => {
-    const scale = scaleLinear();
+    const scale = new LinearScale();
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
@@ -32,7 +32,7 @@ test('convert linear', () => {
 });
 
 test('convert linear clamp', () => {
-    const scale = scaleLinear();
+    const scale = new LinearScale();
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
@@ -43,7 +43,7 @@ test('convert linear clamp', () => {
 });
 
 test('invert linear', () => {
-    const scale = scaleLinear();
+    const scale = new LinearScale();
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
@@ -58,7 +58,7 @@ test('invert linear', () => {
 });
 
 test('invert linear clamp', () => {
-    const scale = scaleLinear();
+    const scale = new LinearScale();
 
     scale.domain = [-100, 100];
     scale.range = [0, 100];
@@ -69,7 +69,7 @@ test('invert linear clamp', () => {
 });
 // TODO: re-enable when we start using polylinear scales in the wild
 // test('convert polylinear', () => {
-//     const scale = scaleLinear();
+//     const scale = new LinearScale();
 
 //     scale.domain = [-1, 0, 1];
 //     scale.range = [0, 100, 300];
@@ -82,7 +82,7 @@ test('invert linear clamp', () => {
 // });
 
 // test('invert polylinear', () => {
-//     const scale = scaleLinear();
+//     const scale = new LinearScale();
 
 //     scale.domain = [-1, 0, 1];
 //     scale.range = [0, 100, 300];

@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartPalette } from "./chartTheme";
+import { ChartThemePalette } from "./chartTheme";
 
 export class SolarDark extends DarkTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#febe76',
             '#ff7979',

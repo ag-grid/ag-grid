@@ -2,20 +2,19 @@ import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
 import { Chart } from "../chart";
 
-export interface ChartPalette {
+export interface ChartThemePalette {
     fills: string[];
     strokes: string[];
 }
 
-export interface IChartTheme {
-    baseTheme?: string | ChartTheme;
-    palette: ChartPalette;
+export interface ChartThemeOverrides {
+    palette: ChartThemePalette;
     defaults: any;
 }
 
 export class ChartTheme {
 
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#f3622d',
             '#fba71b',
@@ -549,14 +548,14 @@ export class ChartTheme {
         }
     };
 
-    constructor(config?: IChartTheme) {
+    constructor(overrides?: ChartThemeOverrides) {
         let defaults = this.getDefaults();
-        if (config) {
-            if (config.defaults) {
-                defaults = deepMerge(defaults, config.defaults, { arrayMerge });
+        if (overrides) {
+            if (overrides.defaults) {
+                defaults = deepMerge(defaults, overrides.defaults, { arrayMerge });
             }
-            if (config.palette) {
-                this.palette = config.palette;
+            if (overrides.palette) {
+                this.palette = overrides.palette;
             }
         }
         this.config = this.createAliases(defaults);

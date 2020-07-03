@@ -1,7 +1,7 @@
-import { ChartPalette, ChartTheme } from "./chartTheme";
+import { ChartThemePalette, ChartTheme } from "./chartTheme";
 
 export class PastelLight extends ChartTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#c16068',
             '#a2bf8a',

@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartPalette } from "./chartTheme";
+import { ChartThemePalette } from "./chartTheme";
 
 export class MaterialDark extends DarkTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#f44336',
             '#e91e63',

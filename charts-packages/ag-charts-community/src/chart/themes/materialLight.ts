@@ -1,7 +1,7 @@
-import { ChartPalette, ChartTheme } from "./chartTheme";
+import { ChartThemePalette, ChartTheme } from "./chartTheme";
 
 export class MaterialLight extends ChartTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#f44336',
             '#e91e63',
