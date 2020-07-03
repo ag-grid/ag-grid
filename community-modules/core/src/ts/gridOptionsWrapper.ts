@@ -1239,7 +1239,8 @@ export class GridOptionsWrapper {
     }
 
     public getAutoSizePadding(): number {
-        return this.gridOptions.autoSizePadding && this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
+        const value = this.gridOptions.autoSizePadding;
+        return value!=null && value>=0 ? value : 20;
     }
 
     // properties
