@@ -1,7 +1,7 @@
-import { ChartPalette, ChartTheme } from "./chartTheme";
+import { ChartThemePalette, ChartTheme } from "./chartTheme";
 
 export class SolarLight extends ChartTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#febe76',
             '#ff7979',

@@ -14,7 +14,7 @@ import {
     GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName, palettes } from "ag-charts-community";
+import { ChartThemeName } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -29,12 +29,16 @@ export class ChartController extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
-    private chartPaletteName: ChartPaletteName;
+    private chartThemeName: ChartThemeName;
 
-    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
+    private static lightThemes: ChartThemeName[] = ['light', 'material-light', 'pastel-light', 'solar-light', 'vivid-light'];
+    private static darkThemes: ChartThemeName[] = ['dark', 'material-dark', 'pastel-dark', 'solar-dark', 'vivid-dark'];
+    private static themes: ChartThemeName[] = ChartController.lightThemes;
+
+    public constructor(private readonly model: ChartDataModel, themeName: ChartThemeName = 'light') {
         super();
 
-        this.chartPaletteName = paletteName;
+        this.chartThemeName = themeName;
     }
 
     @PostConstruct
@@ -84,7 +88,7 @@ export class ChartController extends BeanStub {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartPalette: this.getPaletteName(),
+            chartTheme: this.getThemeName(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
@@ -105,23 +109,33 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getPaletteName(): ChartPaletteName {
-        return this.chartPaletteName;
+    public getThemeName(): ChartThemeName {
+        return this.chartThemeName;
     }
 
-    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
-        const customPalette = this.chartProxy.getCustomPalette();
+    public getThemes(): ChartThemeName[] {
+        // const customTheme = this.chartProxy.getCustomPalette();
 
-        if (customPalette) {
-            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
+        // if (customTheme) {
+        //     return [customTheme];
+        // }
 
-            map.set(undefined, customPalette);
-
-            return map;
-        }
-
-        return palettes;
+        return ChartController.themes;
     }
+
+    // public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
+    //     const customPalette = this.chartProxy.getCustomPalette();
+    //
+    //     if (customPalette) {
+    //         const map = new Map<ChartPaletteName | undefined, ChartPalette>();
+    //
+    //         map.set(undefined, customPalette);
+    //
+    //         return map;
+    //     }
+    //
+    //     return palettes;
+    // }
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
@@ -129,8 +143,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartPaletteName(palette: ChartPaletteName): void {
-        this.chartPaletteName = palette;
+    public setChartThemeName(theme: ChartThemeName): void {
+        this.chartThemeName = theme;
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

@@ -1,7 +1,7 @@
-import { ChartPalette, ChartTheme } from "./chartTheme";
+import { ChartThemePalette, ChartTheme } from "./chartTheme";
 
 export class VividLight extends ChartTheme {
-    readonly palette: ChartPalette = {
+    readonly palette: ChartThemePalette = {
         fills: [
             '#5BC0EB',
             '#FDE74C',

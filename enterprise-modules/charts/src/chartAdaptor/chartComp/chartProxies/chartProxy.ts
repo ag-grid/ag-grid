@@ -20,13 +20,10 @@ import {
     Caption,
     CategoryAxis,
     Chart,
-    ChartPalette,
-    ChartPaletteName,
     BarSeries,
     DropShadow,
     Padding,
-    palettes,
-    PieSeries
+    PieSeries, ChartThemeName
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
@@ -38,8 +35,8 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartPaletteName: () => ChartPaletteName;
-    allowPaletteOverride: boolean;
+    getChartThemeName: () => ChartThemeName;
+    allowThemeOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
     gridApi: GridApi;
@@ -70,7 +67,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customPalette: ChartPalette;
+    protected customTheme: ChartThemeName;
     protected chartOptions: TOptions;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
@@ -108,9 +105,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-    protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
+    // protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    // protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+    // protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
     protected abstract getDefaultOptions(): TOptions;
 
@@ -126,40 +123,40 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
 
-            this.overridePalette(safeOptions);
+            // this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
         } else {
             this.chartOptions = this.getDefaultOptions();
         }
     }
 
-    private overridePalette(chartOptions: TOptions): void {
-        if (!this.chartProxyParams.allowPaletteOverride) {
-            return;
-        }
-
-        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
-        const { seriesDefaults } = chartOptions;
-        const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-        const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
-        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
-
-        if (fillsOverridden || strokesOverridden) {
-            this.customPalette = {
-                fills: fillsOverridden ? fills : defaultFills,
-                strokes: strokesOverridden ? strokes : defaultStrokes
-            };
-        }
-    }
+    // private overridePalette(chartOptions: TOptions): void {
+    //     if (!this.chartProxyParams.allowPaletteOverride) {
+    //         return;
+    //     }
+    //
+    //     const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
+    //     const { seriesDefaults } = chartOptions;
+    //     const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+    //     const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
+    //     const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
+    //     const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+    //
+    //     if (fillsOverridden || strokesOverridden) {
+    //         this.customPalette = {
+    //             fills: fillsOverridden ? fills : defaultFills,
+    //             strokes: strokesOverridden ? strokes : defaultStrokes
+    //         };
+    //     }
+    // }
 
     public getChartOptions(): TOptions {
         return this.chartOptions;
     }
 
-    public getCustomPalette(): ChartPalette | undefined {
-        return this.customPalette;
-    }
+    // public getCustomPalette(): ChartPalette | undefined {
+    //     return this.customPalette;
+    // }
 
     public getChartOption<T = string>(expression: string): T {
         return _.get(this.chartOptions, expression, undefined) as T;
@@ -317,7 +314,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartTheme: this.chartProxyParams.getChartThemeName(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -390,7 +387,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.getPredefinedPalette();
         const fontOptions = this.getDefaultFontOptions();
 
         return {

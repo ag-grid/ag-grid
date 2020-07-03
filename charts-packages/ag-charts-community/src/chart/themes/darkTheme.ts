@@ -1,4 +1,4 @@
-import { ChartTheme, IChartTheme } from "./chartTheme";
+import { ChartTheme, ChartThemeOverrides } from "./chartTheme";
 
 export class DarkTheme extends ChartTheme {
 
@@ -81,7 +81,7 @@ export class DarkTheme extends ChartTheme {
         });
     }
 
-    constructor(config?: IChartTheme) {
-        super(config);
+    constructor(overrides?: ChartThemeOverrides) {
+        super(overrides);
     }
 }
