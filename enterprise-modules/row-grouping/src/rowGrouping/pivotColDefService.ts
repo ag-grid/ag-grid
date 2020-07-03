@@ -39,7 +39,7 @@ export class PivotColDefService extends BeanStub {
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
         // additional columns that contain the aggregated total for each value column per row
-        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
+        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, columnIdSequence);
 
         // additional group columns that contain child totals for each collapsed child column / group
         this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
@@ -179,10 +179,6 @@ export class PivotColDefService extends BeanStub {
         };
 
         pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
-            const groupId = (groupDef as ColGroupDef).groupId;
-            if (groupId && groupId.startsWith(PivotColDefService.PIVOT_ROW_TOTAL_PREFIX)) {
-                return; // ignore pivot row totals if present
-            }
             recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
         });
     }
@@ -253,7 +249,6 @@ export class PivotColDefService extends BeanStub {
     private addRowGroupTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
                               pivotColumnDefs: ColDef[],
                               valueColumns: Column[],
-                              pivotColumns: Column[],
                               columnIdSequence: NumberSequence) {
         if (!this.gridOptionsWrapper.getPivotRowTotals()) { return; }
 
@@ -270,8 +265,7 @@ export class PivotColDefService extends BeanStub {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            const levelsDeep = pivotColumns.length;
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, 1, [], columnIdSequence, levelsDeep, pivotColumns, valueCol, colIds, insertAfter);
+            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], columnIdSequence, valueCol, colIds, insertAfter);
         }
     }
 
@@ -295,50 +289,34 @@ export class PivotColDefService extends BeanStub {
 
     private createRowGroupTotal(parentChildren: (ColGroupDef | ColDef)[],
                                 pivotColumnDefs: ColDef[],
-                                index: number,
                                 pivotKeys: string[],
                                 columnIdSequence: NumberSequence,
-                                levelsDeep: number,
-                                primaryPivotColumns: Column[],
                                 valueColumn: Column,
                                 colIds: string[],
                                 insertAfter: boolean): void {
 
         const newPivotKeys = pivotKeys.slice(0);
-        const createGroup = index !== levelsDeep;
-        if (createGroup) {
-            const groupDef: ColGroupDef = {
-                children: [],
-                pivotKeys: newPivotKeys,
-                groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
-                columnGroupShow: 'closed'
-            };
 
-            insertAfter ? parentChildren.push(groupDef) : parentChildren.unshift(groupDef);
+        const measureColumns = this.columnController.getValueColumns();
+        const valueGroup: ColGroupDef = {
+            children: [],
+            pivotKeys: newPivotKeys,
+            groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+        };
 
-            this.createRowGroupTotal(groupDef.children, pivotColumnDefs, index + 1, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns, valueColumn, colIds, insertAfter);
+        if (measureColumns.length === 0) {
+            const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+            valueGroup.children.push(colDef);
+            pivotColumnDefs.push(colDef);
         } else {
-            const measureColumns = this.columnController.getValueColumns();
-            const valueGroup: ColGroupDef = {
-                children: [],
-                pivotKeys: newPivotKeys,
-                groupId: PivotColDefService.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
-                columnGroupShow: 'open'
-            };
-            if (measureColumns.length === 0) {
-                const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
-                valueGroup.children.push(colDef);
-                pivotColumnDefs.push(colDef);
-            } else {
-                const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
-                const colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
-                colDef.pivotTotalColumnIds = colIds;
-                valueGroup.children.push(colDef);
-                pivotColumnDefs.push(colDef);
-            }
-
-            insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
+            const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+            const colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
+            colDef.pivotTotalColumnIds = colIds;
+            valueGroup.children.push(colDef);
+            pivotColumnDefs.push(colDef);
         }
+
+        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
 
     private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, columnIdSequence: NumberSequence): ColDef {
