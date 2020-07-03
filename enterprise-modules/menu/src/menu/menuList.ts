@@ -5,31 +5,21 @@ import {
     ManagedFocusComponent,
     MenuItemDef,
     PopupService,
-    _
+    _,
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
+import { MenuSeparator } from './menuSeparator';
 
-type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
+type MenuItem = { comp: MenuItemComponent, params: MenuItemDef; };
 
 export class MenuList extends ManagedFocusComponent {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = /* html */ `
-        <div class="ag-menu-list"><div class="ag-menu-list-body"></div>`;
-
-    private static SEPARATOR_TEMPLATE = /* html */
-        `<div class="ag-menu-separator">
-            <span class="ag-menu-separator-cell"></span>
-            <span class="ag-menu-separator-cell"></span>
-            <span class="ag-menu-separator-cell"></span>
-            <span class="ag-menu-separator-cell"></span>
-        </div>`;
-
+    private static TEMPLATE = /* html */ `<div class="ag-menu-list"></div>`;
     private static HIDE_MENU_DELAY: number = 80;
 
-    
     private menuItems: MenuItem[] = [];
     private activeMenuItemParams: MenuItemDef | null;
     private activeMenuItem: MenuItemComponent | null;
@@ -86,23 +76,22 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     public addMenuItems(menuItems: (MenuItemDef | string)[] | undefined): void {
-        if (!menuItems || _.missing(menuItems)) { return; }
+        if (menuItems == null) { return; }
 
-        menuItems.forEach((menuItemOrString: MenuItemDef | string) => {
+        menuItems.forEach(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.addSeparator();
+                this.appendChild(new MenuSeparator());
             } else if (typeof menuItemOrString === 'string') {
-                console.warn(`ag-Grid: unrecognised menu item ` + menuItemOrString);
+                console.warn(`ag-Grid: unrecognised menu item ${menuItemOrString}`);
             } else {
-                const menuItem = menuItemOrString as MenuItemDef;
-                this.addItem(menuItem);
+                this.addItem(menuItemOrString);
             }
         });
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
         const cMenuItem = this.createManagedBean(new MenuItemComponent(menuItemDef));
-        this.menuItems.push({comp: cMenuItem, params: menuItemDef });
+        this.menuItems.push({ comp: cMenuItem, params: menuItemDef });
 
         this.appendChild(cMenuItem.getGui());
 
@@ -126,13 +115,13 @@ export class MenuList extends ManagedFocusComponent {
             }
 
             if (!this.subMenuHideTimer) {
-                this.mouseEnterItem(cMenuItem, menuItemParams)
+                this.mouseEnterItem(cMenuItem, menuItemParams);
             } else {
                 this.subMenuShowTimer = window.setTimeout(() => {
-                    handleMouseEnter(cMenuItem, menuItemParams)
+                    handleMouseEnter(cMenuItem, menuItemParams);
                 }, MenuList.HIDE_MENU_DELAY);
             }
-        }
+        };
 
         const handleMouseLeave = (e: MouseEvent, cMenuItem: MenuItemComponent, menuItemParams: MenuItemDef) => {
             if (this.subMenuParentComp === cMenuItem) {
@@ -145,7 +134,7 @@ export class MenuList extends ManagedFocusComponent {
             } else if (!this.subMenuHideTimer) {
                 this.mouseLeaveItem(e, cMenuItem, menuItemParams);
             }
-        }
+        };
 
         cMenuItem.addGuiEventListener('mouseenter', () => handleMouseEnter(cMenuItem, menuItemDef));
         cMenuItem.addGuiEventListener('mouseleave', (e) => handleMouseLeave(e, cMenuItem, menuItemDef));
@@ -223,7 +212,7 @@ export class MenuList extends ManagedFocusComponent {
 
     private findTopMenu(): MenuList | undefined {
         let parent = this.getParentComponent();
-        
+
         if (!parent && this instanceof MenuList) { return this; }
 
         while (true) {
@@ -278,7 +267,7 @@ export class MenuList extends ManagedFocusComponent {
             setTimeout(() => {
                 const subMenu = this.subMenuComp;
                 subMenu.activateFirstItem();
-            }, 0)
+            }, 0);
         }
     }
 
@@ -319,11 +308,6 @@ export class MenuList extends ManagedFocusComponent {
                 this.showChildMenu(menuItemComp, menuItemDef);
             }
         }, 300);
-    }
-
-    public addSeparator(): void {
-        const template = _.loadTemplate(MenuList.SEPARATOR_TEMPLATE);
-        this.appendChild(template);
     }
 
     private showChildMenu(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef): void {

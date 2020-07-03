@@ -98,7 +98,7 @@ describe('init', () => {
         const { calls } = eGui.appendChild.mock;
 
         expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
-        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-multi-filter-divider"></div>');
+        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-menu-separator"></div>');
         expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
     });
 

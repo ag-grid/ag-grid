@@ -7,19 +7,19 @@
 
     .ag-menu-list {
         cursor: default;
-        width: 100%;
-        padding-top: ag-param(grid-size);
-        padding-bottom: ag-param(grid-size);
+        padding: ag-param(grid-size) 0;
     }
 
-    .ag-menu-option-part {
-        padding-top: ag-param(grid-size) + 2;
-        padding-bottom: ag-param(grid-size) + 2;
-        line-height: ag-param(icon-size);
+    .ag-menu-option {
+        padding: (ag-param(grid-size) + 2) ag-param(grid-size);
     }
 
     .ag-menu-option-active {
         @include ag-color-property(background-color, row-hover-color);
+    }
+
+    .ag-menu-option-part {
+        line-height: ag-param(icon-size);
     }
 
     .ag-menu-option-disabled {
@@ -28,32 +28,26 @@
 
     .ag-menu-option-text {
         margin-left: ag-param(grid-size);
+        margin-right: ag-param(grid-size) * 2;
     }
 
     .ag-menu-option-icon {
-        padding-left: ag-param(grid-size) * 2;
-        padding-right: ag-param(grid-size);
-        min-width: ag-param(icon-size) + ag-param(grid-size) * 2;
+        margin-left: ag-param(grid-size);
+        width: ag-param(icon-size);
     }
 
     .ag-menu-option-shortcut {
-        padding-left: ag-param(grid-size) * 2;
-    }
-
-
-    .ag-menu-separator {
-        height: ag-param(grid-size) * 2;
-    }
-
-    .ag-menu-separator-cell:after {
-        content: "";
-        display: block;
-        @include ag-border(critical, top);
+        margin-right: ag-param(grid-size);
     }
 
     .ag-menu-option-popup-pointer {
-        width: ag-param(icon-size) + ag-param(grid-size) * 2;
-        text-align: center;
+        width: ag-param(icon-size);
+    }
+
+    .ag-menu-separator {
+        @include ag-border(critical, top);
+        margin-top: 6px;
+        padding-top: 6px;
     }
 
     ////////////////////////////////////////
@@ -90,6 +84,16 @@
 
     .ag-menu-header {
         @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    .ag-filter-wrapper, .ag-filter-menu-item {
+        border-left-style: solid;
+        border-left-width: 3px;
+        @include ag-color-property(border-color, border-color);
+
+        &--active {
+            @include ag-color-property(border-color, selected-tab-underline-color);
+        }
     }
 
     ////////////////////////////////////////
@@ -157,9 +161,5 @@
 
     .ag-filter-no-matches {
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
-    }
-
-    .ag-combined-filter-divider {
-        @include ag-border(secondary, bottom, $width: 3px);
     }
 }

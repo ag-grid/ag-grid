@@ -13,7 +13,9 @@ import {
     _,
     Component,
     IFilterParams,
+    PopupService,
 } from '@ag-grid-community/core';
+import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
 
 export interface MultiFilterParams extends IFilterParams {
     filters?: IFilterDef[];
@@ -28,16 +30,19 @@ export interface MultiFilterModel {
 export class MultiFilter extends Component implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    @Autowired('popupService') private readonly popupService: PopupService;
 
     private params: MultiFilterParams;
     private filters: IFilterComp[] = [];
+    private filterMenuItems: MenuItemComponent[] = [];
     private activeFilters = new Set<IFilterComp>();
     private column: Column;
     private filterChangedCallback: () => void;
     private combineFilters: boolean;
+    private removeChildFuncs: (() => void)[] = [];
 
     constructor() {
-        super('<div class="multi-filter"></div>');
+        super('<div class="multi-filter ag-menu-list"></div>');
     }
 
     public static getFilterDefs(params: MultiFilterParams): IFilterDef[] {
@@ -58,8 +63,9 @@ export class MultiFilter extends Component implements IFilterComp {
         this.combineFilters = !!combineFilters;
 
         const filterPromises: Promise<IFilterComp>[] = [];
+        const filterDefs = MultiFilter.getFilterDefs(params);
 
-        _.forEach(MultiFilter.getFilterDefs(params), (filterDef, index) => {
+        _.forEach(filterDefs, (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -70,15 +76,112 @@ export class MultiFilter extends Component implements IFilterComp {
         return Promise.all(filterPromises).then(filters => {
             _.forEach(filters, (filter, index) => {
                 if (index > 0) {
-                    const divider = document.createElement('div');
-                    _.addCssClass(divider, 'ag-multi-filter-divider');
-                    this.getGui().appendChild(divider);
+                    this.appendChild(new MenuSeparator());
                 }
 
                 this.filters.push(filter);
-                this.getGui().appendChild(filter.getGui());
+
+                const filterDef = filterDefs[index];
+
+                if (filterDef.filterParams && filterDef.filterParams.useSubMenu) {
+                    this.appendChild(this.insertFilterMenu(filter, index));
+                } else {
+                    this.filterMenuItems.push(null);
+                    this.appendChild(filter.getGui());
+                }
             });
         });
+    }
+
+    private insertFilterMenu(filter: IFilterComp, index: number): MenuItemComponent {
+        const params = {
+            name: `Filter ${index + 1}`,
+            subMenu: ['separator'], // dummy item, we handle the popup ourselves
+            cssClasses: ['ag-filter-menu-item'],
+        };
+
+        const menuItem = this.createManagedBean(new MenuItemComponent(params));
+
+        const icon = menuItem.getRefElement('eIcon');
+        menuItem.getGui().removeChild(icon);
+
+        this.filterMenuItems.push(menuItem);
+
+        menuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, () => this.showChildMenu(menuItem, filter));
+        menuItem.setParentComponent(this);
+
+        // const handleMouseEnter = (cMenuItem: MenuItemComponent, menuItemParams: MenuItemDef) => {
+        //     if (this.subMenuShowTimer) {
+        //         window.clearTimeout(this.subMenuShowTimer);
+        //         this.subMenuShowTimer = 0;
+        //     }
+
+        //     if (!this.subMenuHideTimer) {
+        //         this.mouseEnterItem(cMenuItem, menuItemParams);
+        //     } else {
+        //         this.subMenuShowTimer = window.setTimeout(() => {
+        //             handleMouseEnter(cMenuItem, menuItemParams);
+        //         }, MenuList.HIDE_MENU_DELAY);
+        //     }
+        // };
+
+        // const handleMouseLeave = (e: MouseEvent, cMenuItem: MenuItemComponent, menuItemParams: MenuItemDef) => {
+        //     if (this.subMenuParentComp === cMenuItem) {
+        //         if (this.subMenuHideTimer) { return; }
+
+        //         this.subMenuHideTimer = window.setTimeout(
+        //             () => this.mouseLeaveItem(e, cMenuItem, menuItemParams),
+        //             MenuList.HIDE_MENU_DELAY
+        //         );
+        //     } else if (!this.subMenuHideTimer) {
+        //         this.mouseLeaveItem(e, cMenuItem, menuItemParams);
+        //     }
+        // };
+
+        // cMenuItem.addGuiEventListener('mouseenter', () => handleMouseEnter(cMenuItem, menuItemDef));
+        // cMenuItem.addGuiEventListener('mouseleave', (e) => handleMouseLeave(e, cMenuItem, menuItemDef));
+
+        return menuItem;
+    }
+
+    private showChildMenu(menuItemComp: MenuItemComponent, filter: IFilterComp): void {
+        this.removeChildPopup();
+
+        const ePopup = _.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');
+        ePopup.appendChild(filter.getGui());
+
+        const hidePopupFunc = this.popupService.addAsModalPopup(ePopup, false);
+
+        this.popupService.positionPopupForMenu({
+            eventSource: menuItemComp.getGui(),
+            ePopup: ePopup
+        });
+
+        // this.subMenuParentComp = menuItemComp;
+        // this.subMenuComp = childMenu;
+
+        // childMenu.addManagedListener(ePopup, 'mouseover', () => {
+        //     if (this.subMenuHideTimer && menuItemComp === this.subMenuParentComp) {
+        //         window.clearTimeout(this.subMenuHideTimer);
+        //         window.clearTimeout(this.subMenuShowTimer);
+        //         this.subMenuHideTimer = 0;
+        //         this.subMenuShowTimer = 0;
+        //     }
+        // });
+
+        // const selectedListener = (event: MenuItemSelectedEvent) => {
+        //     this.dispatchEvent(event);
+        // };
+        // childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
+
+        this.removeChildFuncs.push(() => {
+            hidePopupFunc();
+        });
+    }
+
+    public removeChildPopup(): void {
+        this.removeChildFuncs.forEach(func => func());
+        this.removeChildFuncs.length = 0;
     }
 
     public isFilterActive(): boolean {
@@ -234,20 +337,24 @@ export class MultiFilter extends Component implements IFilterComp {
 
     private filterChanged(index: number): void {
         const changedFilter = this.filters[index];
+        const isActive = changedFilter.isFilterActive();
 
-        if (changedFilter.isFilterActive()) {
+        if (isActive) {
             this.activeFilters.add(changedFilter);
         } else {
             this.activeFilters.delete(changedFilter);
         }
 
+        this.changeFilterWrapperActiveClass(index, isActive);
+
         const isAnySiblingFilterActive = this.activeFilters.size > 0;
 
-        _.forEach(this.filters, filter => {
+        _.forEach(this.filters, (filter, i) => {
             if (filter === changedFilter) { return; }
 
             if (!this.combineFilters && filter.isFilterActive()) {
                 filter.setModel(null);
+                this.changeFilterWrapperActiveClass(i, false);
             }
 
             if (typeof filter.onAnyFilterChanged === 'function') {
@@ -260,5 +367,17 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.filterChangedCallback();
+    }
+
+    private changeFilterWrapperActiveClass(index: number, isActive: boolean): void {
+        const filter = this.filters[index];
+
+        _.addOrRemoveCssClass(filter.getGui(), 'ag-filter-wrapper--active', isActive);
+
+        const menuItem = this.filterMenuItems[index];
+
+        if (menuItem != null) {
+            _.addOrRemoveCssClass(menuItem.getGui(), 'ag-filter-menu-item--active', isActive);
+        }
     }
 }

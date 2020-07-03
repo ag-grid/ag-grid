@@ -725,7 +725,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-filter-filter {
     flex: 1 1 auto;
-    overflow: hidden;
 }
 
 .ag-filter-condition {
@@ -1068,20 +1067,26 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-menu-list {
-    display: table;
+    width: 100%;
 }
 
-.ag-menu-option, .ag-menu-separator {
-    display: table-row;
+.ag-menu-option {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
 }
 
-.ag-menu-separator-cell, .ag-menu-option-part {
-    display: table-cell;
-    vertical-align: middle;
+.ag-menu-option-part {
+    margin: auto 0;
 }
 
 .ag-menu-option-text {
+    flex: 1;
     white-space: nowrap;
+}
+
+.ag-menu-separator {
+    width: 100%;
 }
 
 .ag-menu-column-select-wrapper .ag-column-select {

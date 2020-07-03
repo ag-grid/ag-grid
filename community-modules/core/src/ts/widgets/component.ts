@@ -2,7 +2,19 @@ import { AgEvent } from "../events";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { _, NumberSequence } from "../utils";
+import { NumberSequence } from "../utils";
+import {
+    isNodeOrElement,
+    copyNodeList,
+    iterateNamedNodeMap,
+    loadTemplate,
+    setVisible,
+    setDisplayed,
+    addCssClass,
+    removeCssClass,
+    addOrRemoveCssClass
+} from '../utils/dom';
+import { forEach } from '../utils/array';
 
 const compIdSequence = new NumberSequence();
 
@@ -47,9 +59,9 @@ export class Component extends BeanStub {
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = copyNodeList(parentNode.childNodes);
 
-        _.forEach(childNodeList, childNode => {
+        forEach(childNodeList, childNode => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
@@ -91,7 +103,7 @@ export class Component extends BeanStub {
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {
-        _.iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
+        iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
@@ -120,7 +132,7 @@ export class Component extends BeanStub {
             const currentProtoName = _.getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                _.forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
+                forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
             }
 
             thisPrototype = Object.getPrototypeOf(thisPrototype);
@@ -128,7 +140,7 @@ export class Component extends BeanStub {
     }
 
     public setTemplate(template: string, paramsMap?: { [key: string]: any; }): void {
-        const eGui = _.loadTemplate(template as string);
+        const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
@@ -232,7 +244,7 @@ export class Component extends BeanStub {
             return;
         }
 
-        _.forEach(this.annotatedGuiListeners, e => {
+        forEach(this.annotatedGuiListeners, e => {
             e.element.removeEventListener(e.eventName, e.listener);
         });
 
@@ -274,7 +286,9 @@ export class Component extends BeanStub {
             container = this.eGui;
         }
 
-        if (_.isNodeOrElement(newChild)) {
+        if (newChild == null) { return; }
+
+        if (isNodeOrElement(newChild)) {
             container.appendChild(newChild as HTMLElement);
         } else {
             const childComponent = newChild as Component;
@@ -291,7 +305,7 @@ export class Component extends BeanStub {
         if (visible !== this.visible) {
             this.visible = visible;
 
-            _.setVisible(this.eGui, visible);
+            setVisible(this.eGui, visible);
         }
     }
 
@@ -299,7 +313,7 @@ export class Component extends BeanStub {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
 
-            _.setDisplayed(this.eGui, displayed);
+            setDisplayed(this.eGui, displayed);
 
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
@@ -321,15 +335,15 @@ export class Component extends BeanStub {
     }
 
     public addCssClass(className: string): void {
-        _.addCssClass(this.eGui, className);
+        addCssClass(this.eGui, className);
     }
 
     public removeCssClass(className: string): void {
-        _.removeCssClass(this.eGui, className);
+        removeCssClass(this.eGui, className);
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        addOrRemoveCssClass(this.eGui, className, addOrRemove);
     }
 
     public getAttribute(key: string): string | null {
