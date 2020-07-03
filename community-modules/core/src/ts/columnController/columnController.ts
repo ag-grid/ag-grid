@@ -61,6 +61,8 @@ export interface ColumnState {
     pinned?: boolean | string | 'left' | 'right';
     rowGroupIndex?: number | null;
     flex?: number;
+    sort?: string;
+    sortedAt?: string;
 }
 
 @Bean('columnController')
@@ -3130,9 +3132,10 @@ export class ColumnController extends BeanStub {
     }
 
     public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex', silent?: boolean): void {
+        this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
+
         if (!this.flexActive) { return; }
 
-        this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
         if (!this.flexViewportWidth) { return; }
 
         // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.

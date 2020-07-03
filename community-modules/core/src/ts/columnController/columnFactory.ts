@@ -318,6 +318,13 @@ export class ColumnFactory extends BeanStub {
         if (colDef.pinned!==undefined) {
             column.setPinned(colDef.pinned);
         }
+
+        // flex
+        const flex = _.attrToNumber(colDef.flex);
+        if (flex!==undefined) {
+            column.setFlex(flex);
+        }
+
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
