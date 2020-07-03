@@ -22,6 +22,7 @@
     { "path" :  "enterprise-modules/rich-select" },
     { "path" :  "enterprise-modules/server-side-row-model" },
     { "path" :  "enterprise-modules/set-filter" },
+    { "path" :  "enterprise-modules/multi-filter" },
     { "path" :  "enterprise-modules/viewport-row-model" },
     { "path" :  "enterprise-modules/all-modules" }
   ],

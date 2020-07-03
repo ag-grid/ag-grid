@@ -55,7 +55,8 @@ const main = async () => {
     fs.mkdirSync(`./${moduleDirName}`);
     fs.mkdirSync(`./${moduleDirName}/src`);
 
-    fsExtra.copySync(path.resolve(__dirname, './.gitignore'), `./${moduleDirName}/.gitignore`);
+    fsExtra.copySync(path.resolve(__dirname, './.npmignore'), `./${moduleDirName}/.npmignore`);
+    fsExtra.copySync(path.resolve(__dirname, './jest.config.js'), `./${moduleDirName}/jest.config.js`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.es6.json'), `./${moduleDirName}/tsconfig.es6.json`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.es5.json'), `./${moduleDirName}/tsconfig.json`);
     fsExtra.copySync(path.resolve(__dirname, './main.ts'), `./${moduleDirName}/src/main.ts`);
