@@ -188,14 +188,16 @@ include '../documentation-main/documentation_header.php';
         <td class="supported-filters">Number, Date</td>
     </tr>
     <tr>
-        <td class="reference__name">Empty*</td>
+        <td class="reference__name">Choose One</td>
         <td><code>empty</code></td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>
 </table>
 
 <p>
-    <i>* 'Empty' is a special filter option. When Empty is displayed, it means the filter is not active.</i>
+    Note that the <code>empty</code> filter option is primarily used when creating
+    <a href="../javascript-grid-filter-provided-simple/#customFilterOptions">Custom Filter Options</a>. When 'Choose One' is
+    displayed, the filter is not active.</i>
 </p>
 
 <h3>Default Filter Options</h3>

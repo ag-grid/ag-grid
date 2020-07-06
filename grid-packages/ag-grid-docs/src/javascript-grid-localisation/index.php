@@ -29,6 +29,7 @@ localeText: {
     filterOoo: 'Filter...',
     equals: 'Equals',
     notEqual: 'Not equal',
+    empty: 'Choose One',
 
     // Number Filter
     lessThan: 'Less than',
