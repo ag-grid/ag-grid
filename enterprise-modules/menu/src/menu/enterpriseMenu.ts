@@ -411,7 +411,7 @@ export class EnterpriseMenu extends BeanStub {
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
