@@ -19,7 +19,6 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
-    
     protected params: ICellEditorParams;
     @RefSelector('eInput') protected eInput: AgInputTextField;
 
@@ -71,9 +70,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     }
 
     public afterGuiAttached(): void {
-        if (!this.focusAfterAttached) { return; }
-
         const eInput = this.eInput;
+        eInput.setInputAriaLabel('Input Editor');
+
+        if (!this.focusAfterAttached) { return; }
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.

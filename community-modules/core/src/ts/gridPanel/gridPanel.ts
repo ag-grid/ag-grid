@@ -918,14 +918,23 @@ export class GridPanel extends Component {
 
     public updateRowCount(): void {
         const headerCount = this.headerNavigationService.getHeaderRowCount();
-        const rowCount = this.paginationProxy.getRowCount();
-        const total = (headerCount + rowCount).toString();
+        const modelType = this.paginationProxy.getType();
+        let rowCount = -1;
+
+        if (modelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            rowCount = 0;
+            this.paginationProxy.forEachNode(node => {
+                if (!node.group) { rowCount++; }
+            });
+        }
+
+        const total = rowCount === -1  ? '-1' : (headerCount + rowCount).toString();
 
         this.getGui().setAttribute('aria-rowcount', total);
     }
 
     private updateColumnCount(): void {
-        const columns = this.columnController.getAllDisplayedColumns();
+        const columns = this.columnController.getAllGridColumns();
 
         this.getGui().setAttribute('aria-colcount', columns.length.toString());
     }
