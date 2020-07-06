@@ -342,6 +342,14 @@ const mappings: any = {
                 },
                 ...axisMappings
             },
+            [GroupedCategoryAxis.type]: {
+                meta: {
+                    constructor: GroupedCategoryAxis,
+                    setAsIs: ['gridStyle', 'visibleRange'],
+                    ...axisDefaults
+                },
+                ...axisMappings
+            },
             [TimeAxis.type]: {
                 meta: {
                     constructor: TimeAxis,
@@ -511,6 +519,7 @@ const mappings: any = {
                         strokeWidth: 1,
                         fillOpacity: 1,
                         strokeOpacity: 1,
+                        areaPlot: false,
                         aggregation: 'sum',
                         tooltipRenderer: undefined,
                         highlightStyle: {

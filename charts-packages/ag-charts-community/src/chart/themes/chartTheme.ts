@@ -257,14 +257,13 @@ export class ChartTheme {
                         fontFamily: 'Verdana, sans-serif',
                         color: 'rgb(70, 70, 70)'
                     },
-                    shadow: undefined,
-                    // shadow: {
-                    //     enabled: true,
-                    //     color: 'rgba(0, 0, 0, 0.5)',
-                    //     xOffset: 0,
-                    //     yOffset: 0,
-                    //     blur: 5
-                    // }
+                    shadow: {
+                        enabled: false,
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        xOffset: 3,
+                        yOffset: 3,
+                        blur: 5
+                    }
                 },
                 bar: {
                     visible: true,
@@ -292,14 +291,13 @@ export class ChartTheme {
                         fontFamily: 'Verdana, sans-serif',
                         color: 'rgb(70, 70, 70)'
                     },
-                    shadow: undefined,
-                    // shadow: {
-                    //     enabled: true,
-                    //     color: 'rgba(0, 0, 0, 0.5)',
-                    //     xOffset: 0,
-                    //     yOffset: 0,
-                    //     blur: 5
-                    // }
+                    shadow: {
+                        enabled: false,
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        xOffset: 3,
+                        yOffset: 3,
+                        blur: 5
+                    }
                 },
                 line: {
                     visible: true,
@@ -373,7 +371,13 @@ export class ChartTheme {
                     fillOpacity: 0.8,
                     strokeOpacity: 1,
                     strokeWidth: 2,
-                    shadow: undefined,
+                    shadow: {
+                        enabled: false,
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        xOffset: 3,
+                        yOffset: 3,
+                        blur: 5
+                    },
                     tooltipRenderer: undefined,
                     highlightStyle: {
                         fill: 'yellow'
@@ -402,6 +406,7 @@ export class ChartTheme {
                     strokeWidth: 1,
                     fillOpacity: 1,
                     strokeOpacity: 1,
+                    areaPlot: false,
                     aggregation: 'sum',
                     tooltipRenderer: undefined,
                     highlightStyle: {
@@ -542,7 +547,13 @@ export class ChartTheme {
                     highlightStyle: {
                         fill: 'yellow'
                     },
-                    shadow: undefined
+                    shadow: {
+                        enabled: false,
+                        color: 'rgba(0, 0, 0, 0.5)',
+                        xOffset: 3,
+                        yOffset: 3,
+                        blur: 5
+                    }
                 }
             }
         }
@@ -606,6 +617,10 @@ export class ChartTheme {
     }
 
     updateChart(chart: Chart) {
+        this.updatePalette(chart);
+    }
+
+    protected updatePalette(chart: Chart) {
         const { palette } = this;
         const allSeries = chart.series;
         let colorIndex = 0;
@@ -622,6 +637,12 @@ export class ChartTheme {
             }
         });
     }
+
+    // protected updateAreaSeries(chart: Chart) {
+    //     const areaSeries = chart.series.filter(series => series.type === 'area');
+    //
+    //     areaSeries.forEach(series => series.fillOpacity = areaSeries.length > 1);
+    // }
 }
 
 function arrayMerge(target: any, source: any, options: any) {

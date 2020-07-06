@@ -169,21 +169,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         _.set(this.chartOptions, expression, value);
-
-        const mappings: any = {
-            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
-            'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.itemSpacing',
-            'legend.item.label.fontFamily': 'legend.fontFamily',
-            'legend.item.label.fontStyle': 'legend.fontStyle',
-            'legend.item.label.fontWeight': 'legend.fontWeight',
-            'legend.item.label.fontSize': 'legend.fontSize',
-            'legend.item.label.color': 'legend.color',
-            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
-            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
-        };
-
-        _.set(this.chart, mappings[expression] || expression, value);
+        _.set(this.chart, expression, value);
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -239,7 +225,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return (this.chartOptions.title as any)[property];
     }
 
-    public getChartPaddingOption = (property: keyof PaddingOptions): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
+    public getChartPaddingOption = (property: string): string => (this.chart.padding as any)[property] || '';
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
         let { padding } = this.chartOptions;
@@ -258,7 +244,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         this.chart.padding[property] = value;
 
-        this.chart.performLayout();
         this.raiseChartOptionsChangedEvent();
     }
 
@@ -323,33 +308,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.eventService.dispatchEvent(event);
     }
 
-    protected getDefaultFontOptions(): FontOptions {
-        return {
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            fontSize: 12,
-            fontFamily: 'Verdana, sans-serif',
-            color: this.getFontColor()
-        };
-    }
+    // protected getPredefinedPalette(): ChartPalette {
+    //     return palettes.get(this.chartProxyParams.getChartPaletteName());
+    // }
 
-    protected getDefaultDropShadowOptions(): DropShadowOptions {
-        return {
-            enabled: false,
-            blur: 5,
-            xOffset: 3,
-            yOffset: 3,
-            color: 'rgba(0, 0, 0, 0.5)',
-        };
-    }
-
-    protected getPredefinedPalette(): ChartPalette {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
-    }
-
-    protected getPalette(): ChartPalette {
-        return this.customPalette || this.getPredefinedPalette();
-    }
+    // protected getPalette(): ChartPalette {
+    //     return this.customPalette || this.getPredefinedPalette();
+    // }
 
     protected themeMap: { [key in string]: string | {} } = {
         borneo: 'default',
@@ -386,96 +351,96 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return this.themeMap[name];
     }
 
-    protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const fontOptions = this.getDefaultFontOptions();
-
-        return {
-            background: {
-                fill: this.getBackgroundColor(),
-                visible: true,
-            },
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-            },
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontWeight: 'bold',
-                fontSize: 16,
-            },
-            subtitle: {
-                ...fontOptions,
-                enabled: false,
-            },
-            legend: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                item: {
-                    label: {
-                        ...fontOptions,
-                    },
-                    marker: {
-                        shape: 'square',
-                        size: 15,
-                        padding: 8,
-                        strokeWidth: 1,
-                    },
-                    paddingX: 16,
-                    paddingY: 8,
-                },
-            },
-            navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            },
-            seriesDefaults: {
-                fill: {
-                    colors: fills,
-                    opacity: 1,
-                },
-                stroke: {
-                    colors: strokes,
-                    opacity: 1,
-                    width: 1,
-                },
-                highlightStyle: {
-                    fill: 'yellow',
-                },
-                listeners: {}
-            },
-            listeners: {}
-        };
-    }
+    // protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
+    //     const fontOptions = this.getDefaultFontOptions();
+    //
+    //     return {
+    //         background: {
+    //             fill: this.getBackgroundColor(),
+    //             visible: true,
+    //         },
+    //         padding: {
+    //             top: 20,
+    //             right: 20,
+    //             bottom: 20,
+    //             left: 20,
+    //         },
+    //         title: {
+    //             ...fontOptions,
+    //             enabled: false,
+    //             fontWeight: 'bold',
+    //             fontSize: 16,
+    //         },
+    //         subtitle: {
+    //             ...fontOptions,
+    //             enabled: false,
+    //         },
+    //         legend: {
+    //             enabled: true,
+    //             position: LegendPosition.Right,
+    //             spacing: 20,
+    //             item: {
+    //                 label: {
+    //                     ...fontOptions,
+    //                 },
+    //                 marker: {
+    //                     shape: 'square',
+    //                     size: 15,
+    //                     padding: 8,
+    //                     strokeWidth: 1,
+    //                 },
+    //                 paddingX: 16,
+    //                 paddingY: 8,
+    //             },
+    //         },
+    //         navigator: {
+    //             enabled: false,
+    //             height: 30,
+    //             min: 0,
+    //             max: 1,
+    //             mask: {
+    //                 fill: '#999999',
+    //                 stroke: '#999999',
+    //                 strokeWidth: 1,
+    //                 fillOpacity: 0.2
+    //             },
+    //             minHandle: {
+    //                 fill: '#f2f2f2',
+    //                 stroke: '#999999',
+    //                 strokeWidth: 1,
+    //                 width: 8,
+    //                 height: 16,
+    //                 gripLineGap: 2,
+    //                 gripLineLength: 8
+    //             },
+    //             maxHandle: {
+    //                 fill: '#f2f2f2',
+    //                 stroke: '#999999',
+    //                 strokeWidth: 1,
+    //                 width: 8,
+    //                 height: 16,
+    //                 gripLineGap: 2,
+    //                 gripLineLength: 8
+    //             }
+    //         },
+    //         seriesDefaults: {
+    //             fill: {
+    //                 colors: fills,
+    //                 opacity: 1,
+    //             },
+    //             stroke: {
+    //                 colors: strokes,
+    //                 opacity: 1,
+    //                 width: 1,
+    //             },
+    //             highlightStyle: {
+    //                 fill: 'yellow',
+    //             },
+    //             listeners: {}
+    //         },
+    //         listeners: {}
+    //     };
+    // }
 
     protected transformData(data: any[], categoryKey: string): any[] {
         if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {

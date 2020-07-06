@@ -1,13 +1,12 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
-    CartesianChart,
+    CartesianChart, CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
-    ChartBuilder,
     find,
     GroupedCategoryAxis,
-    GroupedCategoryChart
+    GroupedCategoryChart, NumberAxis, TimeAxis
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
 
@@ -93,6 +92,17 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         options.yAxis = this.getDefaultAxisOptions();
 
         return options;
+    }
+
+    protected axisTypeToClassMap: { [key in string]: ChartAxis } = {
+        number: NumberAxis,
+        category: CategoryAxis,
+        groupedCategory: GroupedCategoryAxis,
+        time: TimeAxis
+    };
+
+    protected getAxisClass(axisType: string) {
+        return this.axisTypeToClassMap[axisType];
     }
 
     protected updateAxes(baseAxisType: AxisType = 'category', isHorizontalChart = false): void {

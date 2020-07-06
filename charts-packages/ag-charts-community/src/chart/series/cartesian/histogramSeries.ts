@@ -59,10 +59,10 @@ export interface HistogramSeriesNodeClickEvent extends TypedEvent {
     xKey: string;
 }
 
-type AggregationName = 'count' | 'sum' | 'mean';
+export type HistogramAggregation = 'count' | 'sum' | 'mean';
 type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
-const aggregationFunctions: { [key in AggregationName]: AggregationFunction } = {
+const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction } = {
     count: bin => bin.data.length,
     sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
     mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey)
@@ -92,7 +92,7 @@ export class HistogramBin {
         return this.aggregatedValue / this.domainWidth;
     };
 
-    calculateAggregatedValue(aggregationName: AggregationName, yKey: string) {
+    calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string) {
         if (!yKey) {
             // not having a yKey forces us into a frequency plot
             aggregationName = 'count';
@@ -204,13 +204,13 @@ export class HistogramSeries extends CartesianSeries {
         return this._bins;
     }
 
-    private _aggregation: AggregationName;
-    set aggregation(aggregation: AggregationName) {
+    private _aggregation: HistogramAggregation;
+    set aggregation(aggregation: HistogramAggregation) {
         this._aggregation = aggregation;
 
         this.scheduleData();
     }
-    get aggregation(): AggregationName {
+    get aggregation(): HistogramAggregation {
         return this._aggregation;
     }
 
