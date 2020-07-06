@@ -45,7 +45,7 @@ export class PaddingPanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true
         };
-        this.setTemplate(PaddingPanel.TEMPLATE, {chartPaddingGroup: groupParams});
+        this.setTemplate(PaddingPanel.TEMPLATE, { chartPaddingGroup: groupParams });
 
         this.initGroup();
         this.initChartPaddingItems();

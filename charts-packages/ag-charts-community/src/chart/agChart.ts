@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { LegendMarker } from "./legend";
-import { ChartTheme, ChartThemeOverrides } from "./themes/chartTheme";
+import { ChartTheme } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { MaterialLight } from "./themes/materialLight";
 import { MaterialDark } from "./themes/materialDark";
@@ -14,14 +14,8 @@ import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
 import { getValue } from "../util/object";
-import mappings from './chartMappings';
-
-export type ChartThemeName = 'default' | 'undefined' | 'null'
-    | 'light' | 'material-light' | 'pastel-light' | 'solar-light' | 'vivid-light'
-    | 'dark' | 'material-dark' | 'pastel-dark' | 'solar-dark' | 'vivid-dark';
-export interface IChartTheme extends ChartThemeOverrides {
-    baseTheme?: ChartThemeName | ChartTheme;
-}
+import { AgChartOptions, ChartThemeName, IChartTheme } from "./agChartOptions";
+import mappings from './agChartMappings';
 
 const defaultTheme = new ChartTheme();
 const themes: { [key in ChartThemeName]: ChartTheme } = {
@@ -56,7 +50,7 @@ export function getChartTheme(value: ChartThemeName | ChartTheme | IChartTheme):
 }
 
 export abstract class AgChart {
-    static create(options: any, container?: HTMLElement, data?: any[]) {
+    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]) {
         options = Object.create(options); // avoid mutating user provided options
         if (container) {
             options.container = container;
@@ -79,7 +73,7 @@ export abstract class AgChart {
         return chart;
     }
 
-    static update(chart: any, options: any, container?: HTMLElement, data?: any[]) {
+    static update<T extends AgChartOptions>(chart: any, options: T, container?: HTMLElement, data?: any[]) {
         options = Object.create(options);
         if (container) {
             options.container = container;
