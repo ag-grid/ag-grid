@@ -27,7 +27,7 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public setColumnState(columnState: ColumnState[] | {stateItems: ColumnState[], columnOrder: boolean}): boolean { return this.columnController.setColumnState(columnState, false, 'api'); }
+    public setColumnState(columnState: ColumnState[] | SetColumnStateParams): boolean { return this.columnController.setColumnState(columnState, false, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
     public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
@@ -182,4 +182,10 @@ export class ColumnApi {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     }
+}
+
+export interface SetColumnStateParams {
+    columnState: ColumnState[],
+    applyOrder: boolean,
+    defaultState: ColumnState
 }

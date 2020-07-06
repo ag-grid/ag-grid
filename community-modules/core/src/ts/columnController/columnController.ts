@@ -39,7 +39,7 @@ import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
-import { ColumnApi } from './columnApi';
+import {ColumnApi, SetColumnStateParams} from './columnApi';
 import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -53,7 +53,7 @@ export interface ColumnResizeSet {
 }
 
 export interface ColumnState {
-    colId: string;
+    colId?: string;
     hide?: boolean;
     aggFunc?: string | IAggFunc | null;
     width?: number;
@@ -1753,7 +1753,7 @@ export class ColumnController extends BeanStub {
         this.setColumnState(columnStates, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnStatesOrParams: ColumnState[] | {stateItems: ColumnState[], columnOrder: boolean}, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnStatesOrParams: ColumnState[] | SetColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
 
         if (this.gridOptionsWrapper.isColumnsSpike()) {
             return this.setColumnState_spike(columnStatesOrParams, suppressEverythingEvent, source);
@@ -1853,18 +1853,21 @@ export class ColumnController extends BeanStub {
         return success;
     }
 
-    public setColumnState_spike(paramsOrState: ColumnState[] | {stateItems: ColumnState[], columnOrder: boolean}, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+    public setColumnState_spike(paramsOrState: ColumnState[] | SetColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
 
         let columnStates: ColumnState[];
         let columnOrder: boolean;
+        let defaultState: ColumnState;
         if (Array.isArray(paramsOrState)) {
             columnStates = paramsOrState;
             columnOrder = false;
+            defaultState = undefined;
         } else {
-            const params = paramsOrState as {stateItems: ColumnState[], columnOrder: boolean};
-            columnStates = params.stateItems;
-            columnOrder = params.columnOrder;
+            const params = paramsOrState as SetColumnStateParams;
+            columnStates = params.columnState;
+            columnOrder = params.applyOrder;
+            defaultState = params.defaultState;
         }
 
         const columnStateBefore = this.getColumnState();
@@ -1898,7 +1901,8 @@ export class ColumnController extends BeanStub {
                     console.warn('ag-grid: column ' + state.colId + ' not found');
                     success = false;
                 } else {
-                    this.syncColumnWithStateItem_columnSpike(column, state, rowGroupIndexes, pivotIndexes, false, source);
+                    this.syncColumnWithStateItem_columnSpike(column, state, defaultState, rowGroupIndexes,
+                        pivotIndexes, false, source);
                     _.removeFromArray(columnsWithNoState, column);
                 }
             });
@@ -1909,7 +1913,10 @@ export class ColumnController extends BeanStub {
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        // columnsWithNoState.forEach(this.syncColumnWithNoState.bind(this));
+        columnsWithNoState.forEach( col => {
+            this.syncColumnWithStateItem_columnSpike(col, null, defaultState, rowGroupIndexes,
+                pivotIndexes, false, source)
+        });
 
         // sort the lists according to the indexes that were provided
         const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
@@ -1933,21 +1940,21 @@ export class ColumnController extends BeanStub {
                 const oldIndexA = oldList.indexOf(colA);
                 const oldIndexB = oldList.indexOf(colB);
 
-                const aHasOldIndex = oldIndexA!=null;
-                const bHasOldIndex = oldIndexB!=null;
+                const aHasOldIndex = oldIndexA >= 0;
+                const bHasOldIndex = oldIndexB >= 0;
 
                 if (aHasOldIndex && bHasOldIndex) {
                     // both a and b are old cols, so sort based on last order
                     return oldIndexA - oldIndexB;
                 } else if (aHasOldIndex) {
                     // a is old, b is new, so b is first
-                    return 1;
+                    return -1;
                 } else if (bHasOldIndex) {
                     // b is old, a is new, a is first
-                    return -1;
+                    return 1;
                 } else {
                     // this bit does matter, means both are new cols but without index
-                    return -1;
+                    return 1;
                 }
             }
         }
@@ -1960,7 +1967,7 @@ export class ColumnController extends BeanStub {
         // sync newly created auto group columns with ColumnState
         autoGroupColumnStates.forEach(stateItem => {
             const autoCol = this.getAutoColumn(stateItem.colId);
-            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, null, null, true, source);
+            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, defaultState, null, null, true, source);
         });
 
         if (columnOrder && columnStates) {
@@ -2226,6 +2233,7 @@ export class ColumnController extends BeanStub {
     private syncColumnWithStateItem_columnSpike(
         column: Column | null,
         stateItem: ColumnState,
+        defaultState: ColumnState,
         rowGroupIndexes: { [key: string]: number; },
         pivotIndexes: { [key: string]: number; },
         autoCol: boolean,
@@ -2234,37 +2242,53 @@ export class ColumnController extends BeanStub {
 
         if (!column) { return; }
 
+        const getValue = (key1: string, key2?: string): {value1: any, value2: any} => {
+            const stateAny = stateItem as any;
+            const defaultAny = defaultState as any;
+            if (stateAny && (stateAny[key1]!==undefined || stateAny[key2]!==undefined) ) {
+                return {value1: stateAny[key1], value2: stateAny[key2] };
+            } else if (defaultAny && (defaultAny[key1]!==undefined || defaultAny[key2]!==undefined) ) {
+                return {value1: defaultAny[key1], value2: defaultAny[key2] };
+            } else {
+                return {value1: undefined, value2: undefined };
+            }
+        };
+
         // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-        if (stateItem.hide!==undefined) {
-            column.setVisible(!stateItem.hide, source);
+        const hide = getValue('hide').value1;
+        if (hide!==undefined) {
+            column.setVisible(!hide, source);
         }
 
         // sets pinned to 'left' or 'right'
-        if (stateItem.pinned!==undefined) {
-            column.setPinned(stateItem.pinned);
+        const pinned = getValue('pinned').value1;
+        if (pinned!==undefined) {
+            column.setPinned(pinned);
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
 
-        if (stateItem.width!==undefined) {
-            if (stateItem.width && minColWidth &&
-                (stateItem.width >= minColWidth)) {
-                column.setActualWidth(stateItem.width, source);
+        const width = getValue('width').value1;
+        if (width!=undefined) {
+            if (minColWidth &&
+                (width >= minColWidth)) {
+                column.setActualWidth(width, source);
             }
         }
 
-        const sort = stateItem.sort;
+        const sort = getValue('sort').value1;
         if (sort!==undefined) {
             if (sort===Constants.SORT_DESC || sort===Constants.SORT_ASC) {
-                column.setSort(stateItem.sort);
+                column.setSort(sort);
             } else {
                 column.setSort(undefined);
             }
         }
 
-        if (stateItem.sortedAt!==undefined) {
-            column.setSortedAt(stateItem.sortedAt);
+        const sortedAt = getValue('sortedAt').value1;
+        if (sortedAt!==undefined) {
+            column.setSortedAt(sortedAt);
         }
 
         // we do not do aggFunc, rowGroup or pivot for auto cols, as you can't do these with auto col
@@ -2272,13 +2296,14 @@ export class ColumnController extends BeanStub {
             return;
         }
 
-        if (stateItem.aggFunc!==undefined) {
-            if (typeof stateItem.aggFunc === 'string') {
-                column.setAggFunc(stateItem.aggFunc);
+        const aggFunc = getValue('aggFunc').value1;
+        if (aggFunc!==undefined) {
+            if (typeof aggFunc === 'string') {
+                column.setAggFunc(aggFunc);
                 column.setValueActive(true, source);
                 this.valueColumns.push(column);
             } else {
-                if (_.exists(stateItem.aggFunc)) {
+                if (_.exists(aggFunc)) {
                     console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
@@ -2288,14 +2313,15 @@ export class ColumnController extends BeanStub {
             }
         }
 
-        if (stateItem.rowGroup!==undefined || stateItem.rowGroupIndex!==undefined) {
-            if (typeof stateItem.rowGroupIndex === 'number' || stateItem.rowGroup) {
+        const {value1: rowGroup, value2: rowGroupIndex} = getValue('rowGroup', 'rowGroupIndex');
+        if (rowGroup!==undefined || rowGroupIndex!==undefined) {
+            if (typeof rowGroupIndex === 'number' || rowGroup) {
                 if (!column.isRowGroupActive()) {
                     column.setRowGroupActive(true, source);
                     this.rowGroupColumns.push(column);
                 }
-                if (typeof stateItem.rowGroupIndex === 'number') {
-                    rowGroupIndexes[column.getId()] = stateItem.rowGroupIndex;
+                if (typeof rowGroupIndex === 'number') {
+                    rowGroupIndexes[column.getId()] = rowGroupIndex;
                 }
             } else {
                 if (column.isRowGroupActive()) {
@@ -2305,14 +2331,15 @@ export class ColumnController extends BeanStub {
             }
         }
 
-        if (stateItem.pivot!==undefined || stateItem.pivotIndex!==undefined) {
-            if (typeof stateItem.pivotIndex === 'number' || stateItem.pivot) {
+        const {value1: pivot, value2: pivotIndex} = getValue('pivot', 'pivotIndex');
+        if (pivot!==undefined || pivotIndex!==undefined) {
+            if (typeof pivotIndex === 'number' || pivot) {
                 if (!column.isPivotActive()) {
                     column.setPivotActive(true, source);
                     this.pivotColumns.push(column);
                 }
-                if (typeof stateItem.pivotIndex === 'number') {
-                    pivotIndexes[column.getId()] = stateItem.pivotIndex;
+                if (typeof pivotIndex === 'number') {
+                    pivotIndexes[column.getId()] = pivotIndex;
                 }
             } else {
                 if (column.isPivotActive()) {
