@@ -91,7 +91,8 @@ export class SetFilterListItem extends Component {
         const params: ISetFilterCellRendererParams = {
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
         };
 
         this.renderCell(colDef, this.eFilterItemValue, params);
