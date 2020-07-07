@@ -2,6 +2,7 @@ import { FontStyle, FontWeight } from "../scene/shape/text";
 import { ChartTheme, ChartThemeOverrides } from "./themes/chartTheme";
 import { HistogramAggregation } from "./series/cartesian/histogramSeries";
 import { AxisLabelFormatterParams } from "../axis";
+import { Marker } from "./marker/marker";
 
 export type ChartThemeName = 'default' | 'undefined' | 'null'
     | 'light' | 'material-light' | 'pastel-light' | 'solar-light' | 'vivid-light'
@@ -75,6 +76,37 @@ interface AgNavigatorOptions {
     maxHandle?: AgNavigatorHandleOptions;
 }
 
+type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
+
+interface AgChartLegendMarkerOptions {
+    size?: number;
+    shape?: string | (new () => Marker);
+    padding?: number;
+    strokeWidth?: number;
+}
+
+interface AgChartLegendLabelOptions {
+    color?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize?: number;
+    fontFamily?: string;
+}
+
+interface AgChartLegendItemOptions {
+    marker?: AgChartLegendMarkerOptions;
+    label?: AgChartLegendLabelOptions;
+    paddingX?: number;
+    paddingY?: number;
+}
+
+interface AgChartLegendOptions {
+    enabled?: boolean;
+    position?: AgChartLegendPosition;
+    spacing?: number;
+    item?: AgChartLegendItemOptions;
+}
+
 interface AgBaseChartOptions {
     container?: HTMLElement;
     data?: any[];
@@ -88,6 +120,7 @@ interface AgBaseChartOptions {
     tooltipClass?: string;
     tooltipTracking?: boolean;
     navigator?: AgNavigatorOptions;
+    legend?: AgChartLegendOptions;
 }
 
 interface AgBaseAxisOptions {
@@ -133,7 +166,7 @@ interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     line?: AgAxisLineOptions;
     tick?: AgAxisTickOptions;
     label?: AgAxisLabelOptions;
-    gridStyle?: AgAxisGridStyle;
+    gridStyle?: AgAxisGridStyle[];
 }
 
 interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
