@@ -50,6 +50,13 @@ export class AxisTick {
     count: any = 10;
 }
 
+export interface AxisLabelFormatterParams {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}
+
 export class AxisLabel {
 
     fontStyle?: FontStyle;
@@ -108,7 +115,7 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
+    formatter?: (params: AxisLabelFormatterParams) => string;
 
     onFormatChange?: (format?: string) => void;
 
