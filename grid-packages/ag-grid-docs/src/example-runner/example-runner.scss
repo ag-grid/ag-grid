@@ -83,7 +83,7 @@ $border-radius: $unit;
         }
 
         &.primary > li:first-child {
-            flex: 1;
+            flex: 1 1 auto;
             font-size: $font-size + 2;
             a {
                 padding-top: $vertical-pad - 2;
@@ -171,7 +171,7 @@ $border-radius: $unit;
     }
 
     pre {
-        flex: 1;
+        flex: 1 1 auto;
         background: white;
         border: none;
         height: 450px;

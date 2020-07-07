@@ -23,6 +23,48 @@ export function toStringOrNull(value: any): string | null {
     return exists(value) && value.toString ? value.toString() : null;
 }
 
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToNumber(value: number | string): number | undefined {
+    if (value === undefined) {
+        // undefined or empty means ignore the value
+        return undefined;
+    } else if (value === null || value==='') {
+        // null or blank means clear
+        return null;
+    } else if (typeof value === 'number') {
+        return isNaN(value) ? undefined : value;
+    } else {
+        const valueParsed = parseInt(value as string);
+        return isNaN(valueParsed) ? undefined : valueParsed;
+    }
+}
+
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToBoolean(value: boolean | string): boolean | undefined {
+    if (value === undefined) {
+        // undefined or empty means ignore the value
+        return undefined;
+    } else if (value === null || value==='') {
+        // null means clear
+        return false;
+    } else if (value===true || value===false) {
+        // if simple boolean, return the boolean
+        return value;
+    } else {
+        // if equal to the string 'true' (ignoring case) then return true
+        return (/true/i).test(value);
+    }
+}
+
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToString(value: string): string | undefined {
+    if (value == null || value==='') {
+        return undefined;
+    } else {
+        return value;
+    }
+}
+
 /** @deprecated */
 export function referenceCompare<T>(left: T, right: T): boolean {
     if (left == null && right == null) {

@@ -21,7 +21,6 @@ var gridOptions = {
     animateRows: true,
     sideBar: {
         toolPanels: [
-            'filters',
             {
                 id: 'columns',
                 labelDefault: 'Columns',
@@ -33,6 +32,17 @@ var gridOptions = {
                     suppressSyncLayoutWithGrid: true
                 }
             },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+                toolPanelParams: {
+                    // prevents custom layout changing when columns are reordered in the grid
+                    suppressSyncLayoutWithGrid: true
+                }
+            }
         ]
     },
     statusBar: {

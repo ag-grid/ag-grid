@@ -18,6 +18,7 @@ import {
     RowNode
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
+import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
@@ -28,8 +29,8 @@ export class SetValueModel implements IEventEmitter {
 
     private readonly localEventService = new EventService();
     private readonly filterParams: ISetFilterParams;
-    private readonly clientSideRowModel: IClientSideRowModel;
     private readonly formatter: TextFormatter;
+    private readonly clientSideValuesExtractor: ClientSideValuesExtractor;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string = null;
@@ -57,17 +58,21 @@ export class SetValueModel implements IEventEmitter {
 
     constructor(
         rowModel: IRowModel,
+        valueGetter: (node: RowNode) => any,
         private readonly colDef: ColDef,
         private readonly column: Column,
-        private readonly valueGetter: (node: RowNode) => any,
         private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
         private readonly suppressSorting: boolean,
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
     ) {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = rowModel as IClientSideRowModel;
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(
+                rowModel as IClientSideRowModel,
+                colDef,
+                valueGetter
+            );
         }
 
         this.filterParams = this.colDef.filterParams || {};
@@ -126,10 +131,12 @@ export class SetValueModel implements IEventEmitter {
         });
     }
 
-    public refreshAfterAnyFilterChanged(): void {
+    public refreshAfterAnyFilterChanged(): Promise<void> {
         if (this.showAvailableOnly()) {
-            this.allValuesPromise.then(values => this.updateAvailableValues(values));
+            return this.allValuesPromise.then(values => this.updateAvailableValues(values));
         }
+
+        return Promise.resolve();
     }
 
     private updateAllValues(): Promise<string[]> {
@@ -225,39 +232,14 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private getValuesFromRows(removeUnavailableValues = false): string[] {
-        if (!this.clientSideRowModel) {
+        if (!this.clientSideValuesExtractor) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
 
-        const values = new Set<string>();
-        const { keyCreator } = this.colDef;
+        const predicate = (node: RowNode) => (!removeUnavailableValues || this.doesRowPassOtherFilters(node));
 
-        this.clientSideRowModel.forEachLeafNode(node => {
-            // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data || (removeUnavailableValues && !this.doesRowPassOtherFilters(node))) {
-                return;
-            }
-
-            let value = this.valueGetter(node);
-
-            if (keyCreator) {
-                value = keyCreator({ value });
-            }
-
-            value = _.makeNull(value);
-
-            if (value != null && Array.isArray(value)) {
-                _.forEach(value, x => {
-                    const formatted = _.toStringOrNull(_.makeNull(x));
-                    values.add(formatted);
-                });
-            } else {
-                values.add(_.toStringOrNull(value));
-            }
-        });
-
-        return _.values(values);
+        return this.clientSideValuesExtractor.extractUniqueValues(predicate);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */

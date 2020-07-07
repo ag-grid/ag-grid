@@ -285,8 +285,11 @@ export class GridPanel extends Component {
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
 
-        if (this.rangeController) {
-            this.rangeController.registerGridComp(this);
+        if (this.rangeController || this.gridOptionsWrapper.isRowSelectionMulti()) {
+            this.getGui().setAttribute('aria-multiselectable', 'true');
+            if (this.rangeController) {
+                this.rangeController.registerGridComp(this);
+            }
         }
 
         [this.eCenterViewport, this.eBodyViewport].forEach(viewport => {
@@ -459,9 +462,7 @@ export class GridPanel extends Component {
 
     private addMouseListeners(): void {
 
-        if (this.gridOptionsWrapper.isSuppressCellMouseEvents()) { return; }
-
-        const eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu', 'mouseover', 'mouseout'];
+        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', 'mousedown'];
 
         eventNames.forEach(eventName => {
             const listener = this.processMouseEvent.bind(this, eventName);

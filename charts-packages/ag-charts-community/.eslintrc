@@ -23,6 +23,7 @@
   },
   "settings": {
     "polyfills": [
+      "ResizeObserver", // classic Vitaly
       "Reflect",
       "Object.assign",
       "Math.sign" // we do a check for it..so allow this

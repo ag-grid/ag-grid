@@ -14,6 +14,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected className = 'ag-select';
     protected pickerIcon = 'smallDown';
     protected listComponent: AgList;
+    protected isPickerDisplayed = false;
     private hideList: (event?: any) => void;
 
     @Autowired('popupService') private popupService: PopupService;
@@ -46,7 +47,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         );
     }
 
-    protected showPicker() {
+    public showPicker() {
         const listGui = this.listComponent.getGui();
         const mouseWheelFunc = this.addManagedListener(document.body, 'wheel', (e: MouseEvent) => {
             if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
@@ -61,6 +62,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
         this.hideList = this.popupService.addPopup(true, listGui, true, () => {
             this.hideList = null;
+            this.isPickerDisplayed = false;
             focusOutFunc();
             mouseWheelFunc();
             if (this.isAlive()) {
@@ -68,6 +70,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
+        this.isPickerDisplayed = true;
         _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
         listGui.style.maxHeight = _.getInnerHeight(this.popupService.getPopupParent()) + 'px';
 

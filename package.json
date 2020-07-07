@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "22.0.0",
+  "version": "23.2.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -45,6 +45,7 @@
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",
+    "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
     "ciBuildAndTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",
@@ -53,6 +54,10 @@
   "devDependencies": {
     "archiver": "^3.0.0",
     "command-line-args": "^5.1.1",
+    "chokidar": "^3.2.2",
+    "commander": "^3.0.2",
+    "execa": "^3.2.0",
+    "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "inquirer": "^7.0.0",
     "lerna": "^3.18.3",

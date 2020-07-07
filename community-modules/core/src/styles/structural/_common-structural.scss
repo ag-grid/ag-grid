@@ -173,29 +173,27 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 @media print {
-    .ag-layout-normal {
-        // hide grid if trying to print in non-print mode
-        display: none;
-    }
-    .ag-root-wrapper,
-    .ag-root-wrapper-body,
-    .ag-root,
-    .ag-body-viewport,
-    .ag-center-cols-container,
-    .ag-center-cols-viewport,
-    .ag-center-cols-clipper,
-    .ag-body-horizontal-scroll-viewport,
-    .ag-virtual-list-viewport {
-        // Need auto height because 100% height elements with overflow hidden cause printing issues in IE and Edge
-        height: auto !important;
-        // Overflow hidden, because otherwise scroll bars print in IE
-        overflow: hidden !important;
-        // flex elements cause printing issues in Firefox
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
-        display: block !important;
-    }
-    .ag-row {
-        page-break-inside: avoid;
+    .ag-root-wrapper.ag-layout-print {
+        &,
+        .ag-root-wrapper-body,
+        .ag-root,
+        .ag-body-viewport,
+        .ag-center-cols-container,
+        .ag-center-cols-viewport,
+        .ag-center-cols-clipper,
+        .ag-body-horizontal-scroll-viewport,
+        .ag-virtual-list-viewport {
+            // Need auto height because 100% height elements with overflow hidden cause printing issues in IE and Edge
+            height: auto !important;
+            // Overflow hidden, because otherwise scroll bars print in IE
+            overflow: hidden !important;
+            // flex elements cause printing issues in Firefox
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
+            display: block !important;
+        }
+        .ag-row {
+            page-break-inside: avoid;
+        }
     }
 }
 
@@ -260,9 +258,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 100%;
 }
 
-.ag-layout-auto-height .ag-center-cols-clipper,
-.ag-layout-auto-height .ag-center-cols-container {
-    min-height: 50px;
+.ag-layout-auto-height, .ag-layout-print {
+    .ag-center-cols-clipper, .ag-center-cols-container {
+        min-height: 150px;
+    }
 }
 
 .ag-pinned-right-cols-container {
@@ -308,7 +307,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 .ag-center-cols-clipper {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
 }
@@ -529,7 +528,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    flex: 1 1 0;
+    flex: 1 1 0px;
     align-items: stretch;
 }
 
@@ -731,6 +730,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-filter-condition {
     display: flex;
+    justify-content: center;
 }
 
 /**

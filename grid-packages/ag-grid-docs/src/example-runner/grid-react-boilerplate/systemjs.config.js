@@ -154,6 +154,10 @@ defaultExtension: 'js'
 main: './dist/cjs/main.js',
 defaultExtension: 'js'
 },
+           '@ag-grid-enterprise/multi-filter': {
+main: './dist/cjs/main.js',
+defaultExtension: 'js'
+},
            '@ag-grid-enterprise/range-selection': {
 main: './dist/cjs/main.js',
 defaultExtension: 'js'

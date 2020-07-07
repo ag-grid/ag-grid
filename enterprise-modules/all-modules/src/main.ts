@@ -6,6 +6,7 @@ import { FiltersToolPanelModule } from "@ag-grid-enterprise/filter-tool-panel";
 import { GridChartsModule } from "@ag-grid-enterprise/charts";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 import { MenuModule } from "@ag-grid-enterprise/menu";
+import { MultiFilterModule } from "@ag-grid-enterprise/multi-filter";
 import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 import { RichSelectModule } from "@ag-grid-enterprise/rich-select";
 import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
@@ -43,6 +44,7 @@ export const AllEnterpriseModules: Module[] = [
     GridChartsModule,
     MasterDetailModule,
     MenuModule,
+    MultiFilterModule,
     RangeSelectionModule,
     RichSelectModule,
     RowGroupingModule,

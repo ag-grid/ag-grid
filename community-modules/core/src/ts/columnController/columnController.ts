@@ -44,6 +44,7 @@ import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { _ } from '../utils';
+import {SortController} from "../sortController";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -79,6 +80,7 @@ export class ColumnController extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('sortController') private sortController: SortController;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -219,7 +221,7 @@ export class ColumnController extends BeanStub {
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
-        this.createValueColumns(source, oldPrimaryColumns);
+        this.extractValueColumns(source, oldPrimaryColumns);
 
         this.ready = true;
 
@@ -1276,6 +1278,33 @@ export class ColumnController extends BeanStub {
         this.moveColumn(column, toIndex, source);
     }
 
+    public getColumnDefs(): (ColDef | ColGroupDef)[] {
+        const res: (ColDef | ColGroupDef)[] = [];
+
+        const cols = this.primaryColumns.slice();
+        if (this.gridColsArePrimary) {
+            cols.sort( (a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b) );
+        }
+
+        cols.forEach( col => {
+            const colDefCloned = _.deepCloneDefinition(col.getColDef());
+
+            colDefCloned.width = col.getActualWidth();
+            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : undefined;
+            colDefCloned.pivotIndex = col.isPivotActive() ? this.pivotColumns.indexOf(col) : null;
+            colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
+            colDefCloned.hide = col.isVisible() ? undefined : true;
+            colDefCloned.pinned = col.isPinned() ? col.getPinned() : undefined;
+
+            colDefCloned.sort = col.getSort() ? col.getSort() : null;
+            colDefCloned.sortedAt = col.getSortedAt() ? col.getSortedAt() : null;
+
+            res.push(colDefCloned);
+        });
+
+        return res;
+    }
+
     // used by:
     // + angularGrid -> for setting body width
     // + rowController -> setting main row widths (when inserting and resizing)
@@ -2254,19 +2283,51 @@ export class ColumnController extends BeanStub {
         return this.ready;
     }
 
-    private createValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
+    private extractValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
         this.valueColumns = this.extractColumns(oldPrimaryColumns, this.valueColumns,
             (col: Column, flag: boolean) => col.setValueActive(flag, source),
             // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
-            () => null,
+            () => undefined,
+            () => undefined,
             // aggFunc is a string, so return it's existence
-            (colDef: ColDef) => !!colDef.aggFunc,
+            (colDef: ColDef) => {
+                const aggFunc = colDef.aggFunc;
+                if (this.gridOptionsWrapper.isColumnsSpike()) {
+                    // null or empty string means clear
+                    if (aggFunc===null || aggFunc==='') {
+                        return null;
+                    } else if (aggFunc===undefined) {
+                        return undefined;
+                    } else {
+                        return aggFunc != '';
+                    }
+                } else {
+                    return !!aggFunc;
+                }
+            },
+            (colDef: ColDef) => {
+                // return false if any of the following: null, undefined, empty string
+                return colDef.defaultAggFunc!=null && colDef.defaultAggFunc!='';
+            }
         );
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
         this.valueColumns.forEach(col => {
-            if (!col.getAggFunc()) {
-                col.setAggFunc(col.getColDef().aggFunc);
+            if (this.gridOptionsWrapper.isColumnsSpike()) {
+                const colDef = col.getColDef();
+                // if aggFunc provided, we always override, as reactive property
+                if (colDef.aggFunc != null && colDef.aggFunc != '') {
+                    col.setAggFunc(colDef.aggFunc);
+                } else {
+                    // otherwise we use defaultAggFunc only if no agg func set - which happens when new column only
+                    if (!col.getAggFunc()) {
+                        col.setAggFunc(colDef.defaultAggFunc);
+                    }
+                }
+            } else {
+                if (!col.getAggFunc()) {
+                    col.setAggFunc(col.getColDef().aggFunc);
+                }
             }
         });
     }
@@ -2275,7 +2336,9 @@ export class ColumnController extends BeanStub {
         this.rowGroupColumns = this.extractColumns(oldPrimaryColumns, this.rowGroupColumns,
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
+            (colDef: ColDef) => colDef.defaultRowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
+            (colDef: ColDef) => colDef.defaultRowGroup,
         );
     }
 
@@ -2283,8 +2346,15 @@ export class ColumnController extends BeanStub {
         oldPrimaryColumns: Column[], previousCols: Column[],
         setFlagFunc: (col: Column, flag: boolean) => void,
         getIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getValueFunc: (colDef: ColDef) => boolean | undefined
+        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getValueFunc: (colDef: ColDef) => boolean | undefined,
+        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
     ): Column[] {
+
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+            return this.extractColumns_columnSpike(oldPrimaryColumns, previousCols,
+                setFlagFunc, getIndexFunc, getDefaultIndexFunc, getValueFunc, getDefaultValueFunc);
+        }
 
         if (!previousCols) { previousCols = []; }
 
@@ -2341,11 +2411,132 @@ export class ColumnController extends BeanStub {
         return res;
     }
 
+    private extractColumns_columnSpike(
+        oldPrimaryColumns: Column[] = [],
+        previousCols: Column[] = [],
+        setFlagFunc: (col: Column, flag: boolean) => void,
+        getIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getValueFunc: (colDef: ColDef) => boolean | undefined,
+        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
+    ): Column[] {
+
+        const colsWithIndex: Column[] = [];
+        const colsWithValue: Column[] = [];
+
+        // go though all cols.
+        // if value, change
+        // if default only, change only if new
+        this.primaryColumns.forEach( col => {
+            const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
+            const colDef = col.getColDef();
+
+            const value = _.attrToBoolean(getValueFunc(colDef));
+            const defaultValue = _.attrToBoolean(getDefaultValueFunc(colDef));
+            const index = _.attrToNumber(getIndexFunc(colDef));
+            const defaultIndex = _.attrToNumber(getDefaultIndexFunc(colDef));
+
+            let include: boolean;
+
+            if (colIsNew) {
+                // col is new, use values if present, otherwise use default values if present
+                const valuePresent = value!==undefined || index!==undefined;
+                if (valuePresent) {
+                    if (value!==undefined) {
+                        // if boolean value present, we take it's value, even if 'false'
+                        include = value;
+                    } else {
+                        // otherwise we based on number value. note that 'null' resets, however 'undefined' doesn't
+                        // go through this code path (undefined means 'ignore').
+                        include = index >= 0;
+                    }
+                } else {
+                    include = defaultValue == true || defaultIndex >= 0;
+                }
+            } else {
+                // col is not new, we ignore the default values, just use the values if provided
+                if (value!==undefined) { // value is never null, as attrToBoolean converts null to false
+                    include = value;
+                } else if (index!==undefined) {
+                    if (index===null) {
+                        include = false;
+                    } else {
+                        include = index >= 0;
+                    }
+                } else {
+                    // no values provided, we include if it was included last time
+                    include = previousCols.indexOf(col) >= 0;
+                }
+            }
+
+            if (include) {
+                if (index!=null || defaultIndex!=null) {
+                    colsWithIndex.push(col);
+                } else {
+                    colsWithValue.push(col);
+                }
+            }
+        });
+
+        const getIndexForCol = (col: Column): number => {
+            const index = getIndexFunc(col.getColDef());
+            const defaultIndex = getDefaultIndexFunc(col.getColDef());
+            return index != null ? index : defaultIndex;
+        };
+
+        // sort cols with index, and add these first
+        colsWithIndex.sort(function(colA: Column, colB: Column): number {
+            const indexA = getIndexForCol(colA);
+            const indexB = getIndexForCol(colB);
+            if (indexA === indexB) {
+                return 0;
+            } else if (indexA < indexB) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
+        const res: Column[] = [].concat(colsWithIndex);
+
+        // second add columns that were there before and in the same order as they were before,
+        // so we are preserving order of current grouping of columns that simply have rowGroup=true
+        previousCols.forEach(col => {
+            if (colsWithValue.indexOf(col)>=0) {
+                res.push(col);
+            }
+        });
+
+        // lastly put in all remaining cols
+        colsWithValue.forEach( col => {
+            if (res.indexOf(col)<0) {
+                res.push(col);
+            }
+        });
+
+        // set flag=false for removed cols
+        previousCols.forEach( col => {
+            if (res.indexOf(col)<0) {
+                setFlagFunc(col, false);
+            }
+        });
+        // set flag=true for newly added cols
+        res.forEach(col => {
+            if (oldPrimaryColumns.indexOf(col)<0) {
+                setFlagFunc(col, true);
+            }
+        });
+
+        return res;
+    }
+
     private extractPivotColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
         this.pivotColumns = this.extractColumns(oldPrimaryColumns, this.pivotColumns,
             (col: Column, flag: boolean) => col.setPivotActive(flag, source),
             (colDef: ColDef) => colDef.pivotIndex,
+            (colDef: ColDef) => colDef.defaultPivotIndex,
             (colDef: ColDef) => colDef.pivot,
+            (colDef: ColDef) => colDef.defaultPivot,
         );
     }
 

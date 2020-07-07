@@ -80,13 +80,14 @@ function getAllMethods(bindings: any): [string[], string[], string[]] {
     return [externalEventHandlers, instanceMethods, globalMethods];
 }
 
-export function vanillaToVue(bindings: any, componentFileNames: string[]): string {
-    const imports = getImports(componentFileNames);
-    const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
-    const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
-    const template = getTemplate(bindings, propertyAttributes);
+export function vanillaToVue(bindings: any, componentFileNames: string[]): () => string {
+    return () => {
+        const imports = getImports(componentFileNames);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
+        const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
+        const template = getTemplate(bindings, propertyAttributes);
 
-    return `${imports.join('\n')}
+        return `${imports.join('\n')}
 
 const ChartExample = {
     template: \`
@@ -120,6 +121,7 @@ new Vue({
     }
 });
 `;
+    };
 }
 
 if (typeof window !== 'undefined') {

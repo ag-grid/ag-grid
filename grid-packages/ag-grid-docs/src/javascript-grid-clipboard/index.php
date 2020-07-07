@@ -252,7 +252,7 @@ interface ProcessHeaderForExportParams {
     context: any // the context object
 }
 SNIPPET
-, 'ts_') ?>
+, 'ts') ?>
 
     <p>
         These three callbacks above are demonstrated in the example below. Note the following:

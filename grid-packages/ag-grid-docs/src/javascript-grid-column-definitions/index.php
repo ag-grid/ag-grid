@@ -354,12 +354,11 @@ SNIPPET
             row group or pivot is removed.
         </li>
         <li>
-            The <a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a>
-            and <a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a>
-            updates with the new columns. The order of columns in both tool panels
-            will always match the order of the columns supplied in the column definitions.
-            To observe this, hit the Reverse button which does same as Apply but
-            reverses the order of the columns first. This will result in the columns
+            The <a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a> and
+            <a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a> updates with the new columns
+            (as <code>suppressSyncLayoutWithGrid=true</code>). The order of columns in both tool panels will always
+            match the order of the columns supplied in the column definitions. To observe this, hit the Reverse button
+            which does same as Apply but reverses the order of the columns first. This will result in the columns
             appearing in the tool panels in reverse order.
         </li>
     </ul>

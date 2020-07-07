@@ -1,11 +1,12 @@
 {
   "name": "ag-grid-docs",
-  "version": "23.2.0",
+  "version": "23.2.1",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
     "build": "gulp generate-examples && npm run hash",
     "start": "gulp serve",
+    "serve-core-only": "gulp serve-core-only",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5 && jest",
@@ -55,7 +56,7 @@
     "mkdir-p": "0.0.7",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
-    "prettier": "~1.18.2",
+    "prettier": "2.0.5",
     "puppeteer": "1.7.0",
     "tcp-port-used": "^1.0.1",
     "ts-node": "7.0.1",

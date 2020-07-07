@@ -111,14 +111,61 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private parent: ColumnGroup;
     private originalParent: OriginalColumnGroup;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean, columnSpike: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
-        this.visible = !colDef.hide;
-        this.sort = colDef.sort;
-        this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+
+        if (columnSpike) {
+
+            // sort
+            if (colDef.sort!==undefined) {
+                if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
+                    this.sort = colDef.sort;
+                }
+            } else {
+                if (colDef.defaultSort===Constants.SORT_ASC || colDef.defaultSort===Constants.SORT_DESC) {
+                    this.sort = colDef.defaultSort;
+                }
+            }
+
+            // sortedAt
+            const sortedAt = _.attrToNumber(colDef.sortedAt);
+            const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
+            if (sortedAt!==undefined) {
+                if (sortedAt!==null) {
+                    this.sortedAt = sortedAt;
+                }
+            } else {
+                if (defaultSortedAt!==null) {
+                    this.sortedAt = defaultSortedAt;
+                }
+            }
+
+            // hide
+            const hide = _.attrToBoolean(colDef.hide);
+            const defaultHide = _.attrToBoolean(colDef.defaultHide);
+
+            if (hide!==undefined) {
+                this.visible = !hide;
+            } else {
+                this.visible = !defaultHide;
+            }
+
+            // pinned
+            if (colDef.pinned!==undefined) {
+                this.setPinned(colDef.pinned);
+            } else {
+                this.setPinned(colDef.defaultPinned);
+            }
+
+        } else {
+            this.sortedAt = colDef.sortedAt;
+            this.sort = colDef.sort;
+            this.visible = !colDef.hide;
+            this.setPinned(this.colDef.pinned);
+        }
     }
 
     // gets called when user provides an alternative colDef, eg
@@ -149,8 +196,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
-    public initialise(): void {
-        this.setPinned(this.colDef.pinned);
+    private initialise(): void {
 
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();

@@ -181,6 +181,16 @@ export function forEach<T>(list: T[], action: (value: T, index: number) => void)
     }
 }
 
+export function forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void {
+    if (list == null) {
+        return;
+    }
+
+    for (let i = list.length - 1; i >= 0; i--) {
+        action(list[i], i);
+    }
+}
+
 /**
  * The implementation of Array.prototype.map in browsers is generally the same as just using a simple for loop. However,
  * Firefox does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved

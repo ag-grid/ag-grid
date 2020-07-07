@@ -411,6 +411,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
+    public onRowHeightChanged(): void {
+        this.updateRowIndexesAndBounds();
+        const modelUpdatedEvent: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
+    }
+
     public updateRowIndexesAndBounds(): void {
         if (this.cacheExists()) {
             // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?

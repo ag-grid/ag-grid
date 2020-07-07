@@ -1,11 +1,11 @@
 import * as React from "react";
-import {Component, ReactPortal} from "react";
+import {Component, ReactElement, ReactPortal} from "react";
 import * as PropTypes from "prop-types";
 import {
     BaseComponentWrapper,
     ColumnApi,
-    ComponentUtil,
     ComponentType,
+    ComponentUtil,
     FrameworkComponentWrapper,
     Grid,
     GridApi,
@@ -16,6 +16,7 @@ import {
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
+import {AgSideBar, AgToolPanel} from "./agSideBar";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -78,9 +79,14 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             modules
         };
 
+        const children = this.extractChildren(this.props) as any;
+
         let gridOptions = this.props.gridOptions || {};
-        if (AgGridColumn.hasChildColumns(this.props)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.props);
+        if (children.columns) {
+            gridOptions.columnDefs = children.columns;
+        }
+        if (children.sideBar) {
+            gridOptions.sideBar = children.sideBar;
         }
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
@@ -91,6 +97,25 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.api = this.gridOptions.api!;
         this.columnApi = this.gridOptions.columnApi!;
     }
+
+    public extractChildren(gridProps: any) {
+        if (React.Children.count(gridProps.children) <= 0) {
+            return {}
+        }
+
+        let children = {};
+        React.Children.map(gridProps.children, (child: ReactElement<any>) => {
+            if (AgGridColumn.isColumn(child)) {
+                (children as any)['columns'] = (children as any)['columns'] || [];
+                (children as any)['columns'].push(AgGridColumn.toColDef(child.props));
+            } else if (AgSideBar.isSideBar(child)) {
+                (children as any)['sideBar'] = AgSideBar.getSideBarConfiguration(child as ReactElement<AgToolPanel>);
+            }
+        })
+
+        return children;
+    }
+
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
@@ -187,8 +212,10 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         if (AgGridColumn.hasChildColumns(nextProps)) {
             const detectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
 
+            const children = this.extractChildren(this.props) as any;
+
             const currentColDefs = this.gridOptions.columnDefs;
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
+            const newColDefs = children.columns;
             if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
                 if (debugLogging) {
                     console.log(`agGridReact: colDefs definitions changed`);
@@ -197,9 +224,15 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                 changes['columnDefs'] =
                     {
                         previousValue: this.gridOptions.columnDefs,
-                        currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
+                        currentValue: (this.extractChildren(nextProps) as any).columns
                     }
             }
+
+            changes['sideBar'] =
+                {
+                    previousValue: this.gridOptions.sideBar,
+                    currentValue: (this.extractChildren(nextProps) as any).sideBar
+                }
         }
     }
 

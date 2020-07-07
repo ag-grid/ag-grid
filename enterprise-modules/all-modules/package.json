@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/all-modules",
-  "version": "23.2.0",
+  "version": "23.2.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -75,6 +75,7 @@
     "@ag-grid-enterprise/filter-tool-panel": "~23.2.0",
     "@ag-grid-enterprise/master-detail": "~23.2.0",
     "@ag-grid-enterprise/menu": "~23.2.0",
+    "@ag-grid-enterprise/multi-filter": "~23.2.0",
     "@ag-grid-enterprise/range-selection": "~23.2.0",
     "@ag-grid-enterprise/rich-select": "~23.2.0",
     "@ag-grid-enterprise/row-grouping": "~23.2.0",

@@ -6,5 +6,5 @@
 
 #myGrid {
     padding-top: 1rem;
-    flex: 1;
+    flex: 1 1 auto;
 }

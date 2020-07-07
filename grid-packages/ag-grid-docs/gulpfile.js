@@ -19,9 +19,7 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const { updateBetweenStrings, getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const generateGridPackageExamples = require('./example-generator').generateGridPackageExamples;
-const generateGridModuleExamples = require('./example-generator').generateGridModuleExamples;
-const generateChartExamples = require('./example-generator').generateChartExamples;
+const { generateGridExamples, generateChartExamples } = require('./example-generator');
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
@@ -221,12 +219,8 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest('./dist'));
 };
 
-gulp.task('generate-grid-package-examples', (done) => {
-    generateGridPackageExamples.bind(null, '*', null, done)();
-});
-
-gulp.task('generate-grid-module-examples', (done) => {
-    generateGridModuleExamples.bind(null, '*', null, done)();
+gulp.task('generate-grid-examples', (done) => {
+    generateGridExamples.bind(null, '*', null, done)();
 });
 
 gulp.task('generate-chart-examples', (done) => {
@@ -240,10 +234,11 @@ gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('generate-examples', parallel('generate-grid-package-examples', 'generate-grid-module-examples', 'generate-chart-examples'));
+gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('generate-examples', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
 gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-gulp.task('serve',        require('./dev-server'));
+// gulp.task('serve', require('./dev-server').bind(null, false));
+// gulp.task('serve-core-only', require('./dev-server').bind(null, true));

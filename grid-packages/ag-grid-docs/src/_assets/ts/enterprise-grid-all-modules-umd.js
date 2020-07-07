@@ -29,6 +29,9 @@ const MasterDetailModule = require("../../../../../enterprise-modules/master-det
 require("../../../../../enterprise-modules/menu/dist/cjs/menuModule");
 const MenuModule = require("../../../../../enterprise-modules/menu/dist/cjs/menuModule").MenuModule;
         
+require("../../../../../enterprise-modules/multi-filter/dist/cjs/multiFilterModule");
+const MultiFilterModule = require("../../../../../enterprise-modules/multi-filter/dist/cjs/multiFilterModule").MultiFilterModule;
+        
 require("../../../../../enterprise-modules/range-selection/dist/cjs/rangeSelectionModule");
 const RangeSelectionModule = require("../../../../../enterprise-modules/range-selection/dist/cjs/rangeSelectionModule").RangeSelectionModule;
         
@@ -70,6 +73,7 @@ ModuleRegistry.ModuleRegistry.register(ExcelExportModule);
 ModuleRegistry.ModuleRegistry.register(FiltersToolPanelModule);
 ModuleRegistry.ModuleRegistry.register(MasterDetailModule);
 ModuleRegistry.ModuleRegistry.register(MenuModule);
+ModuleRegistry.ModuleRegistry.register(MultiFilterModule);
 ModuleRegistry.ModuleRegistry.register(RangeSelectionModule);
 ModuleRegistry.ModuleRegistry.register(RichSelectModule);
 ModuleRegistry.ModuleRegistry.register(RowGroupingModule);

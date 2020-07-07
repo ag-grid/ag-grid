@@ -14,6 +14,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
     protected displayTag = 'div';
     protected className = 'ag-color-picker';
     protected pickerIcon = 'colorPicker';
+    protected isPickerDisplayed = false;
 
     constructor(config?: ColorPickerConfig) {
         super();
@@ -32,7 +33,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         }
     }
 
-    protected showPicker() {
+    public showPicker() {
         const eGuiRect = this.getGui().getBoundingClientRect();
         const colorDialog = new AgDialog({
             closable: false,
@@ -44,8 +45,9 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         });
-        this.createBean(colorDialog);
 
+        this.createBean(colorDialog);
+        this.isPickerDisplayed = true;
         _.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
 
         const colorPanel = new AgColorPanel({
@@ -80,6 +82,8 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             if (this.isAlive()) {
                 this.getFocusableElement().focus();
             }
+
+            this.isPickerDisplayed = false;
         });
 
         return colorDialog;

@@ -4,11 +4,12 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { Constants } from '../constants';
-import { _ } from '../utils';
+import { addCssClass, containsClass } from '../utils/dom';
 
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
+    isRowSelected?(index: number): boolean;
 }
 
 export class VirtualList extends ManagedFocusComponent {
@@ -45,8 +46,8 @@ export class VirtualList extends ManagedFocusComponent {
         super.onFocusIn(e);
         const target = e.target as HTMLElement;
 
-        if (_.containsClass(target, 'ag-virtual-list-item')) {
-            this.lastFocusedRow = parseInt(target.getAttribute('aria-rowindex'), 10) - 1;
+        if (containsClass(target, 'ag-virtual-list-item')) {
+            this.lastFocusedRow = parseInt(target.getAttribute('aria-posinset'), 10) - 1;
         }
     }
 
@@ -74,7 +75,7 @@ export class VirtualList extends ManagedFocusComponent {
     }
 
     private navigate(up: boolean): boolean {
-        if (!_.exists(this.lastFocusedRow)) { return false; }
+        if (this.lastFocusedRow == null) { return false; }
 
         const nextRow = this.lastFocusedRow + (up ? -1 : 1);
 
@@ -91,6 +92,7 @@ export class VirtualList extends ManagedFocusComponent {
 
     public focusRow(rowNumber: number): void {
         this.ensureIndexVisible(rowNumber);
+
         window.setTimeout(() => {
             const renderedRow = this.renderedRows.get(rowNumber);
 
@@ -108,7 +110,7 @@ export class VirtualList extends ManagedFocusComponent {
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="listbox">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
@@ -169,7 +171,6 @@ export class VirtualList extends ManagedFocusComponent {
         const rowCount = this.model.getRowCount();
 
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
-        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
 
         // ensure height is applied before attempting to redraw rows
         setTimeout(() => {
@@ -206,19 +207,26 @@ export class VirtualList extends ManagedFocusComponent {
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (rowIndex < this.model.getRowCount()) {
-                const value = this.model.getRow(rowIndex);
-                this.insertRow(value, rowIndex);
+                this.insertRow(rowIndex);
             }
         }
     }
 
-    private insertRow(value: any, rowIndex: number) {
+    private insertRow(rowIndex: number): void {
+        const value = this.model.getRow(rowIndex);
         const eDiv = document.createElement('div');
 
-        _.addCssClass(eDiv, 'ag-virtual-list-item');
-        _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
-        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
+        addCssClass(eDiv, 'ag-virtual-list-item');
+        addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
+
+        eDiv.setAttribute('role', 'option');
+        eDiv.setAttribute('aria-setsize', this.model.getRowCount().toString());
+        eDiv.setAttribute('aria-posinset', (rowIndex + 1).toString());
         eDiv.setAttribute('tabindex', '-1');
+
+        if (typeof this.model.isRowSelected === 'function') {
+            eDiv.setAttribute('aria-selected', this.model.isRowSelected(rowIndex).toString());
+        }
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

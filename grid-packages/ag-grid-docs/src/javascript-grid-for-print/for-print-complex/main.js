@@ -1,11 +1,11 @@
 var columnDefs = [
     {field: 'group', rowGroup: true, hide: true},
-    {field: 'id', pinned: 'left', width: 60},
-    {field: 'model', width: 150},
+    {field: 'id', pinned: 'left', width: 70},
+    {field: 'model', width: 180},
     {field: 'color', width: 100},
     {field: 'price', valueFormatter: '"$" + value.toLocaleString()', width: 100},
     {field: 'year', width: 100},
-    {field: 'country', width: 100}
+    {field: 'country', width: 120}
 ];
 
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
@@ -62,7 +62,7 @@ function setPrinterFriendly(api) {
 
 function setNormal(api) {
     var eGridDiv = document.querySelector('#myGrid');
-    eGridDiv.style.width = '600px';
+    eGridDiv.style.width = '700px';
     eGridDiv.style.height = '200px';
 
     api.setDomLayout(null);

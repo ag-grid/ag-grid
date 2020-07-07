@@ -16,13 +16,15 @@ import {
     IAfterGuiAttachedParams,
     Promise,
     FocusController,
-    _
+    _,
+    IClientSideRowModel
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
+import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
@@ -38,6 +40,7 @@ export class SetFilter extends ProvidedFilter {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('focusController') private focusController: FocusController;
 
+    private clientSideValuesExtractor: ClientSideValuesExtractor;
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
@@ -182,7 +185,15 @@ export class SetFilter extends ProvidedFilter {
             return (values as any) as SetFilterModel;
         }
 
-        return { values, filterType: 'set' };
+        return { values, filterType: this.getFilterType() };
+    }
+
+    public getModel(): SetFilterModel {
+        return super.getModel() as SetFilterModel;
+    }
+
+    public getFilterType(): string {
+        return 'set';
     }
 
     public getValueModel(): SetValueModel {
@@ -206,25 +217,28 @@ export class SetFilter extends ProvidedFilter {
 
         this.valueModel = new SetValueModel(
             params.rowModel,
+            params.valueGetter,
             params.colDef,
             params.column,
-            params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
-            loading => this.setLoading(loading),
+            loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
             key => this.translate(key),
         );
 
         this.initialiseFilterBodyUi();
 
-        const syncValuesAfterDataChange =
-            this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            !params.values &&
-            !params.suppressSyncValuesAfterDataChange;
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(
+                params.rowModel as IClientSideRowModel,
+                params.colDef,
+                params.valueGetter
+            );
 
-        if (syncValuesAfterDataChange) {
-            this.addEventListenersForDataChanges();
+            if (!params.values && !params.suppressSyncValuesAfterDataChange) {
+                this.addEventListenersForDataChanges();
+            }
         }
     }
 
@@ -296,7 +310,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
-        let promise = Promise.resolve<void>(null);
+        let promise = Promise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
@@ -315,7 +329,11 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         _.doOnce(() => console.warn(message), 'setFilter.setLoading');
 
-        _.setDisplayed(this.eFilterLoading, loading);
+        this.showOrHideLoadingScreen(loading);
+    }
+
+    private showOrHideLoadingScreen(isLoading: boolean): void {
+        _.setDisplayed(this.eFilterLoading, isLoading);
     }
 
     private initialiseFilterBodyUi(): void {
@@ -401,7 +419,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (result) {
             // keep appliedModelValues in sync with the applied model
-            const appliedModel = this.getModel() as SetFilterModel;
+            const appliedModel = this.getModel();
 
             if (appliedModel) {
                 this.appliedModelValues = {};
@@ -478,8 +496,25 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onAnyFilterChanged(): void {
-        this.valueModel.refreshAfterAnyFilterChanged();
-        this.virtualList.refresh();
+        this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh());
+    }
+
+    public onSiblingFilterChanged(isAnySiblingFilterActive: boolean): void {
+        const { doesRowPassSiblingFilters, suppressSyncOnSiblingFilterChange } = this.setFilterParams;
+
+        if (!suppressSyncOnSiblingFilterChange && doesRowPassSiblingFilters && !this.isFilterActive()) {
+            if (isAnySiblingFilterActive) {
+                let values: string[] = [];
+
+                if (this.clientSideValuesExtractor) {
+                    values = this.clientSideValuesExtractor.extractUniqueValues(row => doesRowPassSiblingFilters(row));
+                }
+
+                this.setModelIntoUi({ filterType: 'set', values });
+            } else {
+                this.setModelIntoUi(null);
+            }
+        }
     }
 
     private updateSelectAllCheckbox(): void {
@@ -529,7 +564,7 @@ export class SetFilter extends ProvidedFilter {
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => this.onUiChanged(false, 'prevent'));
+        this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private updateSelectAllLabel() {
@@ -576,8 +611,9 @@ export class SetFilter extends ProvidedFilter {
 
         this.updateSelectAllCheckbox();
         this.onUiChanged();
+        this.virtualList.refresh();
 
-        if (_.exists(focusedRow)) {
+        if (focusedRow != null) {
             window.setTimeout(() => {
                 if (this.isAlive()) {
                     this.virtualList.focusRow(focusedRow);
@@ -707,5 +743,9 @@ class ModelWrapper implements VirtualListModel {
 
     public getRow(index: number): string {
         return this.model.getDisplayedValue(index);
+    }
+
+    public isRowSelected(index: number): boolean {
+        return this.model.isValueSelected(this.getRow(index));
     }
 }

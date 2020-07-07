@@ -5,6 +5,23 @@ import { RowNode } from '../entities/rowNode';
 import { IComponent } from './iComponent';
 import { GridApi } from '../gridApi';
 import { Promise } from '../utils';
+import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
+
+type IFilterType = string | { new(): IFilterComp; } | boolean;
+
+export interface IFilterDef {
+    /** One of the built in filter names: [set, number, text], or a filter function */
+    filter?: IFilterType;
+    filterFramework?: any;
+
+    /** The filter params are specific to each filter! */
+    filterParams?: any;
+
+    /** The custom component to be used for rendering the floating filter. If none is specified the default ag-Grid is used. **/
+    floatingFilterComponent?: string | { new(): IFloatingFilterComp; };
+    floatingFilterComponentParams?: any;
+    floatingFilterComponentFramework?: any;
+}
 
 export interface IFilter {
     /** This is used to let the grid know if the filter is active or not */
@@ -25,6 +42,9 @@ export interface IFilter {
 
     /** Called whenever any filter is changed. */
     onAnyFilterChanged?(): void;
+
+    /** Called whenever a sibling filter is changed. */
+    onSiblingFilterChanged?(isAnySiblingFilterActive: boolean): void;
 
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
@@ -64,7 +84,8 @@ export interface IFilterParams {
     filterChangedCallback: (additionalEventAttributes?: any) => void;
     filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
-    doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
+    doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
+    doesRowPassSiblingFilters?: (rowNode: RowNode) => boolean;
     context: any;
 }
 

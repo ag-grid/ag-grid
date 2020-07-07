@@ -128,77 +128,79 @@ function convertColumnDefs(rawColumnDefs) {
     return columnDefs;
 }
 
-export function vanillaToReactDeclarative(bindings: any, componentFilenames: string[], importType: ImportType): string {
+export function vanillaToReactDeclarative(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
-    const imports = getImports(bindings, componentFilenames, importType);
 
-    // for when binding a method
-    // see javascript-grid-keyboard-navigation for an example
-    // tabToNextCell needs to be bound to the react component
-    // rarely used (one example only - can be improved and this be removed)
-    const instanceBindings = [];
+    return importType => {
+        const imports = getImports(bindings, componentFilenames, importType);
 
-    // this.state values
-    const stateProperties = [];
+        // for when binding a method
+        // see javascript-grid-keyboard-navigation for an example
+        // tabToNextCell needs to be bound to the react component
+        // rarely used (one example only - can be improved and this be removed)
+        const instanceBindings = [];
 
-    // ie 'modules={this.state.modules}',
-    const componentAttributes = [];
+        // this.state values
+        const stateProperties = [];
 
-    if (importType === 'modules') {
-        componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
-    }
+        // ie 'modules={this.state.modules}',
+        const componentAttributes = [];
 
-    let rawColumnDefs = [];
-    properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-        if (componentFilenames.length > 0 && property.name === 'components') {
-            property.name = 'frameworkComponents';
+        if (importType === 'modules') {
+            componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
-        if (property.value === 'true' || property.value === 'false') {
-            componentAttributes.push(`${property.name}={${property.value}}`);
-        } else if (property.value === null) {
-            componentAttributes.push(`${property.name}={${property.name}}`);
-        } else {
-            // for when binding a method
-            // see javascript-grid-keyboard-navigation for an example
-            // tabToNextCell needs to be bound to the react component
-            if (isInstanceMethod(bindings.instanceMethods, property)) {
-                instanceBindings.push(`${property.name}=${property.value}`);
+        let rawColumnDefs = [];
+        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+            if (componentFilenames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
+            }
+
+            if (property.value === 'true' || property.value === 'false') {
+                componentAttributes.push(`${property.name}={${property.value}}`);
+            } else if (property.value === null) {
+                componentAttributes.push(`${property.name}={${property.name}}`);
             } else {
-                if (property.name === 'columnDefs') {
-                    rawColumnDefs = JSON.parse(property.value);
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if (isInstanceMethod(bindings.instanceMethods, property)) {
+                    instanceBindings.push(`${property.name}=${property.value}`);
                 } else {
-                    componentAttributes.push(`${property.name}={${property.value}}`);
+                    if (property.name === 'columnDefs') {
+                        rawColumnDefs = JSON.parse(property.value);
+                    } else {
+                        componentAttributes.push(`${property.name}={${property.value}}`);
+                    }
                 }
             }
-        }
-    });
+        });
 
-    const columnDefs = convertColumnDefs(rawColumnDefs);
+        const columnDefs = convertColumnDefs(rawColumnDefs);
 
-    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}.bind(this)}`);
+        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}.bind(this)}`);
 
-    componentAttributes.push('onGridReady={onGridReady}');
-    componentAttributes.push.apply(componentAttributes, componentEventAttributes);
+        componentAttributes.push('onGridReady={onGridReady}');
+        componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    const additionalInReady = [];
+        const additionalInReady = [];
 
-    if (data) {
-        let setRowDataBlock = data.callback;
+        if (data) {
+            let setRowDataBlock = data.callback;
 
-        if (data.callback.indexOf('api.setRowData') >= 0) {
-            if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                stateProperties.push('const [rowData, setRowData] = useState([]);');
+            if (data.callback.indexOf('api.setRowData') >= 0) {
+                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    stateProperties.push('const [rowData, setRowData] = useState([]);');
+                }
+
+                if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    componentAttributes.push('rowData={rowData}');
+                }
+
+                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
             }
 
-            if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                componentAttributes.push('rowData={rowData}');
-            }
-
-            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
-        }
-
-        additionalInReady.push(`
+            additionalInReady.push(`
             const httpRequest = new XMLHttpRequest();
             const updateData = (data) => ${setRowDataBlock};
 
@@ -209,24 +211,24 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
                     updateData(JSON.parse(httpRequest.responseText));
                 }
             };`);
-    }
+        }
 
-    if (onGridReady) {
-        const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
-        additionalInReady.push(hackedHandler);
-    }
+        if (onGridReady) {
+            const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
+            additionalInReady.push(hackedHandler);
+        }
 
-    if (resizeToFit) {
-        additionalInReady.push('params.api.sizeColumnsToFit();');
-    }
+        if (resizeToFit) {
+            additionalInReady.push('params.api.sizeColumnsToFit();');
+        }
 
-    const template = getTemplate(bindings, componentAttributes, columnDefs);
-    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler));
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body));
-    const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty);
-    const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
+        const template = getTemplate(bindings, componentAttributes, columnDefs);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler));
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body));
+        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty);
+        const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
-    return `
+        return `
 'use strict'
 
 ${imports.join('\n')}
@@ -261,6 +263,7 @@ render(
     document.querySelector('#root')
 )
 `;
+    }
 }
 
 if (typeof window !== 'undefined') {

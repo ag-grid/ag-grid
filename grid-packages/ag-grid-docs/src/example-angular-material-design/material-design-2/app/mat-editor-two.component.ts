@@ -11,6 +11,7 @@ import {ColumnAlignmentService} from "./columnAlignmentService";
 import {MatProgressSpinnerComponent} from "./mat-progress-spinner.component";
 
 @Component({
+    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-two.component.html"
 })

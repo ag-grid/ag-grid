@@ -7,7 +7,6 @@
             "description": "The name to render in the column header. If not specified and field is specified, the field name will be used as the header name."
         },
         "columnGroupShow": {
-            "default": false,
             "description": "Whether to show the column when the group is open / closed."
         },
         "headerClass": {

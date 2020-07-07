@@ -9,15 +9,16 @@ import { _ } from "../utils";
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE = /* html */
         `<div class="ag-picker-field" role="presentation">
-            <label ref="eLabel"></label>
+            <div ref="eLabel"></div>
             <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
                 <%displayField% ref="eDisplayField" class="ag-picker-field-display"></%displayField%>
                 <div ref="eIcon" class="ag-picker-field-icon"></div>
             </div>
         </div>`;
 
-    protected abstract showPicker(): Component;
+    public abstract showPicker(): Component;
     protected abstract pickerIcon: string;
+    protected abstract isPickerDisplayed: boolean;
     protected value: K;
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
@@ -64,7 +65,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 case Constants.KEY_SPACE:
                     clickHandler();
                 case Constants.KEY_ESCAPE:
-                    e.preventDefault();
+                    if (this.isPickerDisplayed) {
+                        e.preventDefault();
+                    }
                     break;
             }
         });
@@ -75,6 +78,16 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         if (this.pickerIcon) {
             this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
         }
+    }
+
+    protected refreshLabel() {
+        if (_.exists(this.getLabel())) {
+            this.eWrapper.setAttribute('aria-labelledby', this.getLabelId());
+        } else {
+            this.eWrapper.removeAttribute('aria-labelledby');
+        }
+
+        super.refreshLabel();
     }
 
     public setInputWidth(width: number | 'flex'): this {

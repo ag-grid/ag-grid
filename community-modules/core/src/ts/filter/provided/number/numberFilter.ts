@@ -2,10 +2,10 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Promise } from '../../../utils';
 import { SimpleFilter, ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
-import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -13,12 +13,11 @@ export interface NumberFilterModel extends ISimpleFilterModel {
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
+    allowedCharPattern?: string;
+    numberParser?: (text: string) => number;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
-
-    private static readonly FILTER_TYPE = 'number';
-
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.NOT_EQUAL,
@@ -29,11 +28,13 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.IN_RANGE
     ];
 
-    @RefSelector('eValueFrom1') private eValueFrom1: AgInputNumberField;
-    @RefSelector('eValueFrom2') private eValueFrom2: AgInputNumberField;
+    @RefSelector('eValueFrom1') private eValueFrom1: AgInputTextField;
+    @RefSelector('eValueTo1') private eValueTo1: AgInputTextField;
 
-    @RefSelector('eValueTo1') private eValueTo1: AgInputNumberField;
-    @RefSelector('eValueTo2') private eValueTo2: AgInputNumberField;
+    @RefSelector('eValueFrom2') private eValueFrom2: AgInputTextField;
+    @RefSelector('eValueTo2') private eValueTo2: AgInputTextField;
+
+    private numberFilterParams: INumberFilterParams;
 
     protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number, to: number; } {
         return {
@@ -67,21 +68,35 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected setValueFromFloatingFilter(value: string): void {
         this.eValueFrom1.setValue(value);
-        this.eValueFrom2.setValue(null);
         this.eValueTo1.setValue(null);
+        this.eValueFrom2.setValue(null);
         this.eValueTo2.setValue(null);
     }
 
     protected comparator(): Comparator<number> {
         return (left: number, right: number): number => {
             if (left === right) { return 0; }
-            if (left < right) { return 1; }
 
-            return -1;
+            return left < right ? 1 : -1;
         };
     }
 
     protected setParams(params: INumberFilterParams): void {
+        this.numberFilterParams = params;
+
+        const { allowedCharPattern } = params;
+
+        if (allowedCharPattern) {
+            const config = { allowedCharPattern };
+
+            this.resetTemplate({
+                eValueFrom1: config,
+                eValueTo1: config,
+                eValueFrom2: config,
+                eValueTo2: config,
+            });
+        }
+
         super.setParams(params);
 
         this.addValueChangedListeners();
@@ -91,14 +106,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const listener = () => this.onUiChanged();
 
         this.eValueFrom1.onValueChange(listener);
-        this.eValueFrom2.onValueChange(listener);
         this.eValueTo1.onValueChange(listener);
+        this.eValueFrom2.onValueChange(listener);
         this.eValueTo2.onValueChange(listener);
     }
 
     private resetPlaceholder(): void {
-        const isRange1 = this.getCondition1Type() === ScalarFilter.IN_RANGE;
-        const isRange2 = this.getCondition2Type() === ScalarFilter.IN_RANGE;
+        const isRange1 = this.showValueTo(this.getCondition1Type());
+        const isRange2 = this.showValueTo(this.getCondition2Type());
 
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
         this.eValueTo1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
@@ -121,21 +136,19 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected createValueTemplate(position: ConditionPosition): string {
         const positionOne = position === ConditionPosition.One;
         const pos = positionOne ? '1' : '2';
+        const { allowedCharPattern } = this.numberFilterParams || {};
+        const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
-        return `<div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-                    <ag-input-number-field class="ag-filter-from ag-filter-filter" ref="eValueFrom${pos}"></ag-input-number-field>
-                    <ag-input-number-field class="ag-filter-to ag-filter-filter" ref="eValueTo${pos}"></ag-input-number-field>
-                </div>`;
+        return /* html */`
+            <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
+                <${agElementTag} class="ag-filter-from ag-filter-filter" ref="eValueFrom${pos}"></${agElementTag}>
+                <${agElementTag} class="ag-filter-to ag-filter-filter" ref="eValueTo${pos}"></${agElementTag}>
+            </div>`;
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
         const positionOne = position === ConditionPosition.One;
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-
-        const value = this.stringToFloat(eValue.getValue());
-        const valueTo = this.stringToFloat(eValueTo.getValue());
 
         if (option === SimpleFilter.EMPTY) { return false; }
 
@@ -143,11 +156,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return true;
         }
 
-        if (option === SimpleFilter.IN_RANGE) {
-            return value != null && valueTo != null;
-        }
+        const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
+        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
+        const value = this.stringToFloat(eValue.getValue());
 
-        return value != null;
+        return value != null && (!this.showValueTo(option) || this.stringToFloat(eValueTo.getValue()) != null);
     }
 
     protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
@@ -156,9 +169,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             && aSimple.type === bSimple.type;
     }
 
-    // needed for creating filter model
     protected getFilterType(): string {
-        return NumberFilter.FILTER_TYPE;
+        return 'number';
     }
 
     private stringToFloat(value: string | number): number {
@@ -168,19 +180,15 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         let filterText = makeNull(value);
 
-        if (filterText && filterText.trim() === '') {
+        if (filterText != null && filterText.trim() === '') {
             filterText = null;
         }
 
-        let newFilter: number;
-
-        if (filterText !== null && filterText !== undefined) {
-            newFilter = parseFloat(filterText);
-        } else {
-            newFilter = null;
+        if (this.numberFilterParams.numberParser) {
+            return this.numberFilterParams.numberParser(filterText);
         }
 
-        return newFilter;
+        return filterText == null ? null : parseFloat(filterText);
     }
 
     protected createCondition(position: ConditionPosition): NumberFilterModel {
@@ -188,16 +196,21 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const value = this.stringToFloat(eValue.getValue());
-        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        const valueTo = this.stringToFloat(eValueTo.getValue());
+
         const model: NumberFilterModel = {
-            filterType: NumberFilter.FILTER_TYPE,
-            type: type
+            filterType: this.getFilterType(),
+            type
         };
 
         if (!this.doesFilterHaveHiddenInput(type)) {
             model.filter = value;
-            model.filterTo = valueTo; // FIX - should only populate this when filter choice has 'to' option
+
+            if (this.showValueTo(type)) {
+                const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
+                const valueTo = this.stringToFloat(eValueTo.getValue());
+
+                model.filterTo = valueTo;
+            }
         }
 
         return model;
@@ -208,16 +221,12 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         this.resetPlaceholder();
 
-        const showFrom1 = this.showValueFrom(this.getCondition1Type());
-        setDisplayed(this.eValueFrom1.getGui(), showFrom1);
+        const condition1Type = this.getCondition1Type();
+        const condition2Type = this.getCondition2Type();
 
-        const showTo1 = this.showValueTo(this.getCondition1Type());
-        setDisplayed(this.eValueTo1.getGui(), showTo1);
-
-        const showFrom2 = this.showValueFrom(this.getCondition2Type());
-        setDisplayed(this.eValueFrom2.getGui(), showFrom2);
-
-        const showTo2 = this.showValueTo(this.getCondition2Type());
-        setDisplayed(this.eValueTo2.getGui(), showTo2);
+        setDisplayed(this.eValueFrom1.getGui(), this.showValueFrom(condition1Type));
+        setDisplayed(this.eValueTo1.getGui(), this.showValueTo(condition1Type));
+        setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
+        setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
     }
 }

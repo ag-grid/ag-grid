@@ -91,7 +91,7 @@ SNIPPET
 <h3>Example: Navigator Styling</h3>
 
 <p>
-    The example below uses various nagivator configs (in a deliberately exaggerated way) to change
+    The example below uses various navigator configs (in a deliberately exaggerated way) to change
     the following visual attributes of the navigator:
     <ul>
         <li>range mask's fill, fill opacity and stroke width</li>

@@ -6,6 +6,7 @@ import { ValueFormatterService } from "../valueFormatterService";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ListOption } from "../../widgets/agList";
+import { Constants } from "../../constants";
 import { _ } from '../../utils';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
@@ -20,6 +21,8 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @RefSelector('eSelect') private eSelect: AgSelect;
 
+    private startedByEnter: boolean = false;
+
     constructor() {
         super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
     }
@@ -32,6 +35,9 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             return;
         }
 
+        this.startedByEnter = params.keyPress === Constants.KEY_ENTER;
+
+        let hasValue = false;
         params.values.forEach((value: any) => {
             const option: ListOption = { value };
             const valueFormatted = this.valueFormatterService.formatValue(params.column, null, null, value);
@@ -39,9 +45,14 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             option.text = valueFormattedExits ? valueFormatted : value;
 
             this.eSelect.addOption(option);
+            hasValue = hasValue || params.value === value;
         });
 
-        this.eSelect.setValue(params.value, true);
+        if (hasValue) {
+            this.eSelect.setValue(params.value, true);
+        } else if (params.values.length) {
+            this.eSelect.setValue(params.values[0], true);
+        }
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
@@ -53,6 +64,10 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public afterGuiAttached() {
         if (this.focusAfterAttached) {
             this.eSelect.getFocusableElement().focus();
+        }
+
+        if (this.startedByEnter) {
+            this.eSelect.showPicker();
         }
     }
 

@@ -1,7 +1,7 @@
 var options = {
     container: document.getElementById('myChart'),
     title: {
-        text: 'Try dragging the havigator\'s handles to zoom in'
+        text: 'Try dragging the Navigator\'s handles to zoom in'
     },
     subtitle: {
         text: 'or the area between them to pan around'

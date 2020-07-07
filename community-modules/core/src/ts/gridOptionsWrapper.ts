@@ -299,6 +299,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.pivotTotals);
     }
 
+    public isSuppressExpandablePivotGroups() {
+        return isTrue(this.gridOptions.suppressExpandablePivotGroups);
+    }
+
     public getPivotColumnGroupTotals() {
         return this.gridOptions.pivotColumnGroupTotals;
     }
@@ -439,10 +443,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowClickSelection);
     }
 
-    public isSuppressCellMouseEvents() {
-        return isTrue(this.gridOptions.suppressCellMouseEvents);
-    }
-
     public isSuppressCellSelection() {
         return isTrue(this.gridOptions.suppressCellSelection);
     }
@@ -461,6 +461,10 @@ export class GridOptionsWrapper {
 
     public isPivotSuppressAutoColumn() {
         return isTrue(this.gridOptions.pivotSuppressAutoColumn);
+    }
+
+    public isColumnsSpike() {
+        return isTrue(this.gridOptions.columnsSpike);
     }
 
     public isSuppressDragLeaveHidesColumns() {

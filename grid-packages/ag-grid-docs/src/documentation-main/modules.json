@@ -148,6 +148,13 @@
     "exported": "SetFilterModule"
   },
   {
+    "title": "Multi Filter",
+    "shortname": "multifilter",
+    "module": "@ag-grid-enterprise/multi-filter",
+    "enterprise": true,
+    "exported": "MultiFilterModule"
+  },
+  {
     "title": "Side Bar",
     "shortname": "sidebar",
     "module": "@ag-grid-enterprise/side-bar",
@@ -169,5 +176,3 @@
     "exported": "ViewportRowModelModule"
   }
 ]
-
-

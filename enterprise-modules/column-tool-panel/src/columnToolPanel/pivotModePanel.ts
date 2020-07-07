@@ -26,7 +26,6 @@ export class PivotModePanel extends Component {
     public init(): void {
         this.setTemplate(this.createTemplate());
 
-        this.cbPivotMode.setInputAriaLabel('Toggle Pivot Mode');
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
