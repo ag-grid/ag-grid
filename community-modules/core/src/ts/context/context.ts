@@ -1,7 +1,6 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
-import {getFunctionName} from "../utils/function";
 
 // steps in booting up:
 // 1. create all beans
@@ -110,7 +109,7 @@ export class Context {
         if (!metaData) {
             let beanName: string;
             if (Bean.prototype.constructor) {
-                beanName = getFunctionName(Bean.prototype.constructor);
+                beanName = _.getFunctionName(Bean.prototype.constructor);
             } else {
                 beanName = "" + Bean;
             }
@@ -228,7 +227,7 @@ export class Context {
             const methods = metaData[lifeCycleMethod] as string[];
             if (methods) {
                 methods.forEach(methodName => {
-                    if (methodName!=methodToIgnore) {
+                    if (methodName != methodToIgnore) {
                         allMethods[methodName] = true;
                     }
                 });
@@ -266,8 +265,8 @@ export class Context {
     public destroyBeans<T extends any>(beans: T[]): T[] {
         if (!beans) { return []; }
 
-        beans.forEach( bean => {
-            this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy')
+        beans.forEach(bean => {
+            this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy');
 
             // call destroy() explicitly if it exists
             if (bean.destroy) {
