@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The cell editor for a column is set via <code>colDef.cellRenderer</code> and can
+    The cell renderer for a column is set via <code>colDef.cellRenderer</code> and can
     be any of the following types:
     <ol class="content">
         <li><code>undefined / null</code>: Grid renders the value as a string.</li>
