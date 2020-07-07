@@ -1,13 +1,17 @@
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { ChartTheme, ChartThemeOverrides } from "./themes/chartTheme";
 import { HistogramAggregation } from "./series/cartesian/histogramSeries";
+import { AxisLabelFormatterParams } from "../axis";
 
 export type ChartThemeName = 'default' | 'undefined' | 'null'
     | 'light' | 'material-light' | 'pastel-light' | 'solar-light' | 'vivid-light'
     | 'dark' | 'material-dark' | 'pastel-dark' | 'solar-dark' | 'vivid-dark';
+
 export interface IChartTheme extends ChartThemeOverrides {
     baseTheme?: ChartThemeName | ChartTheme;
 }
+
+export type AgChartTheme = ChartThemeName | ChartTheme | IChartTheme;
 
 interface AgChartPaddingOptions {
     top?: number;
@@ -71,8 +75,6 @@ interface AgNavigatorOptions {
     maxHandle?: AgNavigatorHandleOptions;
 }
 
-export type AgChartTheme = ChartThemeName | ChartTheme | IChartTheme;
-
 interface AgBaseChartOptions {
     container?: HTMLElement;
     data?: any[];
@@ -88,9 +90,79 @@ interface AgBaseChartOptions {
     navigator?: AgNavigatorOptions;
 }
 
-interface AgCartesianAxisOptions {
-
+interface AgBaseAxisOptions {
+    keys?: string[];
 }
+
+type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
+
+interface AgAxisLineOptions {
+    width?: number;
+    color?: string;
+}
+
+interface AgAxisTickOptions {
+    width?: number;
+    size?: number;
+    color?: string;
+    count?: any;
+}
+
+interface AgAxisLabelOptions {
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize?: number;
+    fontFamily?: string;
+    padding?: number;
+    color?: string;
+    rotation?: number;
+    // mirrored?: boolean;
+    // parallel?: boolean;
+    format?: string;
+    formatter?: (params: AxisLabelFormatterParams) => string;
+}
+
+interface AgAxisGridStyle {
+    stroke?: string;
+    lineDash?: number[];
+}
+
+interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
+    position?: AgCartesianAxisPosition;
+    title?: AgChartCaptionOptions;
+    line?: AgAxisLineOptions;
+    tick?: AgAxisTickOptions;
+    label?: AgAxisLabelOptions;
+    gridStyle?: AgAxisGridStyle;
+}
+
+interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
+    type: 'number';
+    nice?: boolean;
+    min?: number;
+    max?: number;
+}
+
+interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
+    type: 'category';
+    paddingInner?: number;
+    paddingOuter?: number;
+}
+
+interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
+    type: 'groupedCategory';
+}
+
+interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
+    type: 'time';
+    nice?: boolean;
+}
+
+type AgCartesianAxisOptions =
+    AgNumberAxisOptions |
+    AgCategoryAxisOptions |
+    AgGroupedCategoryAxisOptions |
+    AgTimeAxisOptions;
 
 interface AgBaseSeriesOptions {
     tooltipEnabled?: boolean;
@@ -99,7 +171,7 @@ interface AgBaseSeriesOptions {
     showInLegend?: boolean;
 }
 
-export interface AgSeriesTooltipRendererParams {
+interface AgSeriesTooltipRendererParams {
     datum: any;
     title?: string;
     color?: string;
@@ -279,14 +351,14 @@ interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     };
 }
 
-export type AgCartesianSeriesOptions =
+type AgCartesianSeriesOptions =
     AgLineSeriesOptions |
     AgScatterSeriesOptions |
     AgAreaSeriesOptions |
     AgBarSeriesOptions |
     AgHistogramSeriesOptions;
 
-export type AgPolarSeriesOptions = AgPieSeriesOptions;
+type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
     axes?: AgCartesianAxisOptions[];
