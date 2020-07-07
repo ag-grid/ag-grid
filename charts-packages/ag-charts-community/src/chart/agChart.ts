@@ -14,8 +14,16 @@ import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
 import { getValue } from "../util/object";
-import { AgChartOptions, ChartThemeName, IChartTheme } from "./agChartOptions";
+import {
+    AgCartesianChartOptions,
+    AgChartOptions,
+    AgPolarChartOptions,
+    ChartThemeName,
+    IChartTheme
+} from "./agChartOptions";
 import mappings from './agChartMappings';
+import { CartesianChart } from "./cartesianChart";
+import { PolarChart } from "./polarChart";
 
 const defaultTheme = new ChartTheme();
 const themes: { [key in ChartThemeName]: ChartTheme } = {
@@ -49,8 +57,13 @@ export function getChartTheme(value: ChartThemeName | ChartTheme | IChartTheme):
     return themes.default;
 }
 
+type AgChartType<T> =
+    T extends AgCartesianChartOptions ? CartesianChart :
+    T extends AgPolarChartOptions ? PolarChart :
+    never;
+
 export abstract class AgChart {
-    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]) {
+    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
         if (container) {
             options.container = container;
@@ -73,7 +86,7 @@ export abstract class AgChart {
         return chart;
     }
 
-    static update<T extends AgChartOptions>(chart: any, options: T, container?: HTMLElement, data?: any[]) {
+    static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
         options = Object.create(options);
         if (container) {
             options.container = container;
