@@ -60,4 +60,6 @@ export const time = {
     utcYear
 };
 
+export * from "./chart/agChartOptions";
 export * from "./chart/agChart";
+export * from "./chart/themes/chartTheme";

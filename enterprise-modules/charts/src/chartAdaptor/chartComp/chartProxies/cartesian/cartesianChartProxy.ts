@@ -118,7 +118,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             return;
         }
 
-        const axisClass = ChartBuilder.toAxisClass(baseAxisType)
+        const axisClass = ChartBuilder.toAxisClass(baseAxisType);
 
         if (baseAxis instanceof axisClass) { return; }
 
