@@ -160,11 +160,24 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 this.setPinned(colDef.defaultPinned);
             }
 
+            // flex
+            const flex = _.attrToNumber(colDef.flex);
+            const defaultFlex = _.attrToNumber(colDef.defaultFlex);
+            if (flex!==undefined) {
+                this.flex = flex;
+            } else if (defaultFlex!==undefined) {
+                this.flex = defaultFlex;
+            }
+
         } else {
             this.sortedAt = colDef.sortedAt;
             this.sort = colDef.sort;
             this.visible = !colDef.hide;
             this.setPinned(this.colDef.pinned);
+            if (colDef.flex) {
+                this.flex = this.colDef.flex;
+            }
+
         }
     }
 
@@ -211,10 +224,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.maxWidth = this.colDef.maxWidth;
         } else {
             this.maxWidth = maxColWidth;
-        }
-
-        if (this.colDef.flex) {
-            this.flex = this.colDef.flex;
         }
 
         this.resetActualWidth();

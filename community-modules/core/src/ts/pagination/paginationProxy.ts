@@ -14,7 +14,6 @@ export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -235,7 +234,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private setPixelOffset(value: number): void {
-        if (this.pixelOffset===value) { return; }
+        if (this.pixelOffset === value) { return; }
 
         this.pixelOffset = value;
         this.eventService.dispatchEvent({type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED});
@@ -256,7 +255,7 @@ export class PaginationProxy extends BeanStub {
 
         this.masterRowCount = this.rowModel.getTopLevelRowCount();
 
-        if (this.masterRowCount===0) {
+        if (this.masterRowCount === 0) {
             this.setZeroRows();
             return;
         }

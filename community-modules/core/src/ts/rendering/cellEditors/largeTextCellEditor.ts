@@ -54,6 +54,8 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     }
 
     public afterGuiAttached(): void {
+        this.eTextArea.setInputAriaLabel('Input Editor');
+
         if (this.focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();
         }

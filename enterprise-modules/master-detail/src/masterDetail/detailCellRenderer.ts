@@ -6,6 +6,7 @@ import {
     Environment,
     Grid,
     GridOptions,
+    GridOptionsWrapper,
     ICellRenderer,
     ICellRendererParams,
     RefSelector,
@@ -23,6 +24,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     @Autowired('environment') private environment: Environment;
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private detailGridOptions: GridOptions;
 
@@ -276,7 +278,8 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             // we take data from node, rather than params.data
             // as the data could have been updated with new instance
             data: this.params.node.data,
-            successCallback: successCallback
+            successCallback: successCallback,
+            context: this.gridOptionsWrapper.getContext()
         };
         userFunc(funcParams);
     }
