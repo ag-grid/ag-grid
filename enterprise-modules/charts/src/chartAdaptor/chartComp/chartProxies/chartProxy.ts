@@ -11,7 +11,7 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions,
     GridApi,
-    ColumnApi,
+    ColumnApi, FontOptions, LegendPosition,
 } from "@ag-grid-community/core";
 import {
     AreaSeries,
@@ -21,7 +21,8 @@ import {
     BarSeries,
     DropShadow,
     Padding,
-    PieSeries, ChartThemeName
+    PieSeries,
+    ChartThemeName, ChartTheme
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
@@ -103,9 +104,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    // protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-    // protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-    // protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
+    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+    protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
     protected abstract getDefaultOptions(): TOptions;
 
@@ -309,10 +310,77 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     // protected getPredefinedPalette(): ChartPalette {
     //     return palettes.get(this.chartProxyParams.getChartPaletteName());
     // }
-
+    //
     // protected getPalette(): ChartPalette {
     //     return this.customPalette || this.getPredefinedPalette();
     // }
+
+    extractChartOptions(chart: Chart): any {
+        const defaults = ChartTheme.defaults;
+
+    }
+
+    protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
+        const { fills, strokes } = this.getPredefinedPalette();
+        const fontOptions = this.getDefaultFontOptions();
+
+        return {
+            background: {
+                fill: this.getBackgroundColor(),
+                visible: true,
+            },
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20,
+            },
+            title: {
+                ...fontOptions,
+                enabled: false,
+                fontWeight: 'bold',
+                fontSize: 16,
+            },
+            subtitle: {
+                ...fontOptions,
+                enabled: false,
+            },
+            legend: {
+                enabled: true,
+                position: LegendPosition.Right,
+                spacing: 20,
+                item: {
+                    label: {
+                        ...fontOptions,
+                    },
+                    marker: {
+                        shape: 'square',
+                        size: 15,
+                        padding: 8,
+                        strokeWidth: 1,
+                    },
+                    paddingX: 16,
+                    paddingY: 8,
+                },
+            },
+            seriesDefaults: {
+                fill: {
+                    colors: fills,
+                    opacity: 1,
+                },
+                stroke: {
+                    colors: strokes,
+                    opacity: 1,
+                    width: 1,
+                },
+                highlightStyle: {
+                    fill: 'yellow',
+                },
+                listeners: {}
+            },
+            listeners: {}
+        } as any;
+    }
 
     protected themeMap: { [key in string]: string | {} } = {
         borneo: 'default',
@@ -344,9 +412,30 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     };
 
+    protected getDefaultFontOptions(): FontOptions {
+        return {
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            fontSize: 12,
+            fontFamily: 'Verdana, sans-serif',
+            color: this.getFontColor()
+        };
+    }
+
+    protected getDefaultDropShadowOptions(): DropShadowOptions {
+        return {
+            enabled: false,
+            blur: 5,
+            xOffset: 3,
+            yOffset: 3,
+            color: 'rgba(0, 0, 0, 0.5)',
+        };
+    }
+
     protected getTheme(): any {
-        const name = this.chartProxyParams.getChartPaletteName();
-        return this.themeMap[name];
+        // const name = this.chartProxyParams.getChartPaletteName();
+        // return this.themeMap[name];
+        return 'pastel-dark';
     }
 
     // protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
