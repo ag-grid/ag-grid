@@ -7,8 +7,6 @@ import {
     DropShadowOptions,
     Events,
     EventService,
-    FontOptions,
-    LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
