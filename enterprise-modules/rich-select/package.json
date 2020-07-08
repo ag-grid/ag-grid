@@ -46,7 +46,7 @@
     "@ag-grid-enterprise/core": "~23.2.0"
   },
   "devDependencies": {
-    "typescript": "~3.6.5"
+    "typescript": "~3.9.6"
   },
   "publishConfig": {
     "access": "public"

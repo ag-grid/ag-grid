@@ -256,10 +256,9 @@ export class Context {
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
-    public destroyBean<T>(bean: T): T {
-        if (!bean) { return undefined; }
+    public destroyBean<T>(bean: T): undefined {
+        if (!bean) { return; }
         this.destroyBeans([bean]);
-        return undefined;
     }
 
     public destroyBeans<T>(beans: T[]): T[] {
