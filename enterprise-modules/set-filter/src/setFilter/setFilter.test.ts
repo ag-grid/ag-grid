@@ -46,14 +46,14 @@ beforeEach(() => {
     context = mock<Context>('createBean');
     context.createBean.mockImplementation(bean => bean);
 
-    eMiniFilter = mock<AgInputTextField>('getGui', 'getValue', 'setValue', 'onValueChange', 'getInputElement');
+    eMiniFilter = mock<AgInputTextField>('getGui', 'getValue', 'setValue', 'onValueChange', 'getInputElement', 'setInputAriaLabel');
     eMiniFilter.getGui.mockImplementation(() => mock<HTMLElement>());
     eMiniFilter.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
     eGui = mock<HTMLElement>('querySelector', 'appendChild');
     eGui.querySelector.mockImplementation(() => mock<HTMLElement>('appendChild', 'addEventListener'));
 
-    eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange');
+    eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange', 'setLabel');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
     virtualList = mock<VirtualList>('refresh');
 
