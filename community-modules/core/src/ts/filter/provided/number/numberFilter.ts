@@ -117,11 +117,13 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
         this.eValueFrom1.setInputAriaLabel(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+
         this.eValueTo1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
-        this.eValueTo1.setInputAriaLabel(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputAriaLabel(this.translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
 
         this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
         this.eValueFrom2.setInputAriaLabel(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+
         this.eValueTo2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
         this.eValueTo2.setInputAriaLabel(this.translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     }
