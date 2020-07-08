@@ -262,7 +262,7 @@ export class Context {
         return undefined;
     }
 
-    public destroyBeans<T extends any>(beans: T[]): T[] {
+    public destroyBeans<T>(beans: T[]): T[] {
         if (!beans) { return []; }
 
         beans.forEach(bean => {
