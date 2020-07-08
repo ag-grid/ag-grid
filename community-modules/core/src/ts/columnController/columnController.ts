@@ -177,7 +177,7 @@ export class ColumnController extends BeanStub {
     private flexViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
-    private flexActive = false;
+    // private flexActive = false;
 
     @PostConstruct
     public init(): void {
@@ -254,7 +254,7 @@ export class ColumnController extends BeanStub {
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
 
-        this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
+        // this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -958,9 +958,7 @@ export class ColumnController extends BeanStub {
 
         this.resizeColumnSets(sets, finished, source);
 
-        if (this.flexActive) {
-            this.refreshFlexedColumns();
-        }
+
     }
 
     private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
@@ -1116,7 +1114,15 @@ export class ColumnController extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
+        let flexedCols: Column[] = [];
+
         if (atLeastOneColChanged) {
+            let colsNotToFlex: Column[] = [];
+            resizeSets.forEach(set => {
+                colsNotToFlex = colsNotToFlex.concat(set.columns);
+            });
+            flexedCols = this.refreshFlexedColumns({colsToSkip: colsNotToFlex, skipSetLeft: true});
+
             this.setLeftValues(source);
             this.updateBodyWidths();
             this.checkDisplayedVirtualColumns();
@@ -1127,11 +1133,13 @@ export class ColumnController extends BeanStub {
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
+        const colsForEvent = allCols.concat(flexedCols);
+
         if (atLeastOneColChanged || finished) {
             const event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: allCols,
-                column: allCols.length === 1 ? allCols[0] : null,
+                columns: colsForEvent,
+                column: colsForEvent.length === 1 ? colsForEvent[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -1804,9 +1812,9 @@ export class ColumnController extends BeanStub {
                 }
             });
 
-            if (this.flexActive) {
-                this.refreshFlexedColumns(undefined, undefined, true);
-            }
+            // if (this.flexActive) {
+                this.refreshFlexedColumns();
+            // }
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
@@ -1911,9 +1919,9 @@ export class ColumnController extends BeanStub {
                 }
             });
 
-            if (this.flexActive) {
-                this.refreshFlexedColumns(undefined, undefined, true);
-            }
+            // if (this.flexActive) {
+                this.refreshFlexedColumns();
+            // }
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
@@ -2192,9 +2200,9 @@ export class ColumnController extends BeanStub {
 
         if (stateItem.flex != null) {
             column.setFlex(stateItem.flex);
-            if (!this.flexActive && stateItem.flex) {
-                this.flexActive = true;
-            }
+            // if (!this.flexActive && stateItem.flex) {
+            //     this.flexActive = true;
+            // }
         }
 
         if (stateItem.width && minColWidth &&
@@ -3242,7 +3250,7 @@ export class ColumnController extends BeanStub {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
-        this.refreshFlexedColumns(undefined, undefined, true);
+        this.refreshFlexedColumns();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
@@ -3437,22 +3445,30 @@ export class ColumnController extends BeanStub {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
 
-    public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex', silent?: boolean): void {
-        this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
+    public refreshFlexedColumns(params: {colsToSkip?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean} = {}): Column[] {
+        const source = params.source ? params.source : 'flex';
 
-        if (!this.flexActive) { return; }
+        if (params.viewportWidth!=null) {
+            this.flexViewportWidth = params.viewportWidth;
+        }
+
+        // if (!this.flexActive) { return; }
 
         if (!this.flexViewportWidth) { return; }
 
         // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
-        const knownWidthColumns = this.displayedCenterColumns.filter(col => !col.getFlex());
-        const flexingColumns = this.displayedCenterColumns.filter(col => col.getFlex());
+        const isColFlex = (col: Column) => {
+            const skip = params.colsToSkip ? params.colsToSkip.indexOf(col)>=0 : false;
+            return col.getFlex() && !skip;
+        };
+        const knownWidthColumns = this.displayedCenterColumns.filter(col => !isColFlex(col) );
+        const flexingColumns = this.displayedCenterColumns.filter(col => isColFlex(col) );
 
         if (!flexingColumns.length) {
-            this.flexActive = false;
-            return;
+            // this.flexActive = false;
+            return [];
         }
 
         const flexingColumnSizes: number[] = [];
@@ -3489,12 +3505,19 @@ export class ColumnController extends BeanStub {
             remainingSpace -= flexingColumnSizes[i];
         });
 
-        this.setLeftValues(source);
+        if (!params.skipSetLeft) {
+            this.setLeftValues(source);
+        }
 
-        if (!silent) {
+        if (params.updateBodyWidths) {
             this.updateBodyWidths();
+        }
+
+        if (params.fireResizedEvent) {
             this.fireResizedEventForColumns(flexingColumns, source);
         }
+
+        return flexingColumns;
     }
 
     // called from api
