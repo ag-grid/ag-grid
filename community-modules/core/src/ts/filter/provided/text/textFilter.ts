@@ -66,7 +66,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    };
+    }
 
     @RefSelector('eValue1') private eValue1: AgInputTextField;
     @RefSelector('eValue2') private eValue2: AgInputTextField;
@@ -154,7 +154,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     private resetPlaceholder(): void {
         const placeholder = this.translate('filterOoo');
 
-        this.forEachInput(field => field.setInputPlaceholder(placeholder));
+        this.forEachInput(field => {
+            field.setInputPlaceholder(placeholder);
+            field.setInputAriaLabel(placeholder);
+        });
     }
 
     private forEachInput(action: (field: AgInputTextField) => void): void {

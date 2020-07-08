@@ -51,9 +51,12 @@ interface IDateComp {
     // Sets the input text placeholder
     setInputPlaceholder(placeholder: string): void;
 
+    // Sets the input text aria label
+    setInputAriaLabel(label: string): void;
+
     // Gets called when the component is destroyed. If your custom component needs to do
     // any resource cleaning up, do it here.
-    destroy?(): void;
+    destroy(): void;
 }
 SNIPPET
 , 'ts') ?>

@@ -28,7 +28,6 @@ let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
 let eSelectAll: jest.Mocked<AgCheckbox>;
-let eSelectAllLabel: jest.Mocked<HTMLElement>;
 let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel>;
 
@@ -56,8 +55,6 @@ beforeEach(() => {
 
     eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
-
-    eSelectAllLabel = mock<HTMLElement>();
     virtualList = mock<VirtualList>('refresh');
 
     setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
@@ -90,7 +87,6 @@ function createSetFilter(filterParams?: any): SetFilter {
     setFilter['eGui'] = eGui;
     setFilter['eMiniFilter'] = eMiniFilter;
     setFilter['eSelectAll'] = eSelectAll;
-    setFilter['eSelectAllLabel'] = eSelectAllLabel;
 
     setFilter.setParams(params);
 

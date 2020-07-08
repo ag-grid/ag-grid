@@ -23,7 +23,7 @@ export class ComponentMetadataProvider extends BeanStub {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],

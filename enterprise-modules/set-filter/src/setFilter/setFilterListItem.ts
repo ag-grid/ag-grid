@@ -29,10 +29,10 @@ export class SetFilterListItem extends Component {
     @RefSelector('eFilterItemValue') private eFilterItemValue: HTMLElement;
 
     private static TEMPLATE = /* html */`
-        <label class="ag-set-filter-item">
+        <div class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
             <span ref="eFilterItemValue" class="ag-set-filter-item-value"></span>
-        </label>`;
+        </div>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
@@ -57,6 +57,9 @@ export class SetFilterListItem extends Component {
 
             return this.dispatchEvent(event);
         });
+
+        this.eFilterItemValue.id = this.eFilterItemValue.id || `${this.getCompId()}-filter-value`;
+        this.eCheckbox.getInputElement().setAttribute('aria-labelledby', this.eFilterItemValue.id);
     }
 
     public isSelected(): boolean {
