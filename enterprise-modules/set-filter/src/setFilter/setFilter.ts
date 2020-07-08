@@ -69,9 +69,9 @@ export class SetFilter extends ProvidedFilter {
                 <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                    <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
+                    <div ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                         <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
-                    </label>
+                    </div>
                 </div>
                 <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
