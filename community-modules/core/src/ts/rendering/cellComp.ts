@@ -157,7 +157,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
-        const colIdxSanitised = _.escape(this.getAriaColumnIndex());
+        const colIdxSanitised = _.escape(this.beans.columnController.getAriaColumnIndex(this.column).toString());
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
@@ -314,16 +314,10 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private getAriaColumnIndex(): string {
-        const allColumns = this.beans.columnController.getAllDisplayedColumns();
-
-        return (allColumns.indexOf(this.column) + 1).toString();
-    }
-
     private refreshAriaIndex(): void {
-        const colIdx = this.getAriaColumnIndex();
+        const colIdx = this.beans.columnController.getAriaColumnIndex(this.column);
 
-        this.getGui().setAttribute('aria-colindex', colIdx);
+        this.getGui().setAttribute('aria-colindex', colIdx.toString());
     }
 
     private getInitialCssClasses(): string[] {

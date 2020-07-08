@@ -649,6 +649,10 @@ export class ColumnController extends BeanStub {
         );
     }
 
+    public getAriaColumnIndex(col: Column): number {
+        return this.getAllGridColumns().indexOf(col) + 1;
+    }
+
     private isColumnInViewport(col: Column): boolean {
         const columnLeft = col.getLeft();
         const columnRight = col.getLeft() + col.getActualWidth();

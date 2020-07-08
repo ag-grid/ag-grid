@@ -216,7 +216,7 @@ export class FillHandle extends AbstractSelectionHandle {
             } else {
                 currentValue = this.processValues(e, values, initialValues, col, rowNode, idx++);
                 if (col.isCellEditable(rowNode)) {
-                    this.valueService.setValue(rowNode, col, currentValue);
+                    rowNode.setDataValue(col, currentValue);
                 }
             }
             

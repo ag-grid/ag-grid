@@ -4,6 +4,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { Constants } from "../../constants";
 import { PostConstruct } from "../../context/context";
+import { ColumnGroup } from "../../entities/columnGroup";
 import { _ } from "../../utils";
 
 export class SetLeftFeature extends BeanStub {
@@ -113,11 +114,24 @@ export class SetLeftFeature extends BeanStub {
             this.eCell.style.left = `${value}px`;
         }
 
+        let indexColumn: Column;
+
         if (this.columnOrGroup instanceof Column) {
-            const colIndex = this.beans.columnController.getAllDisplayedColumns().indexOf(this.columnOrGroup);
-            this.ariaEl.setAttribute('aria-colindex', (colIndex + 1).toString());
+            indexColumn = this.columnOrGroup;
         } else {
-            this.ariaEl.removeAttribute('aria-colindex');
+            const columnGroup = this.columnOrGroup as ColumnGroup;
+            const children = columnGroup.getLeafColumns();
+
+            if (!children.length) { return; }
+
+            if (children.length > 1) {
+                this.ariaEl.setAttribute('aria-colspan', children.length.toString());
+            }
+
+            indexColumn = children[0];
         }
+
+        const index = this.beans.columnController.getAriaColumnIndex(indexColumn);
+        this.ariaEl.setAttribute('aria-colindex', index.toString());
     }
 }
