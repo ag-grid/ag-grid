@@ -256,7 +256,7 @@ export class Context {
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
-    public destroyBean<T extends any>(bean: T): T {
+    public destroyBean<T>(bean: T): T {
         if (!bean) { return undefined; }
         this.destroyBeans([bean]);
         return undefined;
