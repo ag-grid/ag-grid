@@ -16,12 +16,16 @@ import {
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
 
-export interface MultiFilterParams extends IFilterParams {
-    filters?: IFilterDef[];
+export interface IMultiFilterDef extends IFilterDef {
+    subMenu?: boolean;
+}
+
+export interface IMultiFilterParams extends IFilterParams {
+    filters?: IMultiFilterDef[];
     combineFilters?: boolean;
 }
 
-export interface MultiFilterModel {
+export interface IMultiFilterModel {
     filterType: string;
     filterModels: any[];
 }
@@ -30,7 +34,7 @@ export class MultiFilter extends Component implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private params: MultiFilterParams;
+    private params: IMultiFilterParams;
     private filters: IFilterComp[] = [];
     private filterMenuItems: MenuItemComponent[] = [];
     private activeFilters = new Set<IFilterComp>();
@@ -42,7 +46,7 @@ export class MultiFilter extends Component implements IFilterComp {
         super(/* html */`<div class="multi-filter ag-menu-list"></div>`);
     }
 
-    public static getFilterDefs(params: MultiFilterParams): IFilterDef[] {
+    public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
         const { filters } = params;
 
         return filters && filters.length > 0 ?
@@ -50,7 +54,7 @@ export class MultiFilter extends Component implements IFilterComp {
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: MultiFilterParams): Promise<void> {
+    public init(params: IMultiFilterParams): Promise<void> {
         this.params = params;
 
         const { column, filterChangedCallback, combineFilters } = params;
@@ -80,7 +84,7 @@ export class MultiFilter extends Component implements IFilterComp {
 
                 const filterDef = filterDefs[index];
 
-                if (filterDef.filterParams && filterDef.filterParams.useSubMenu) {
+                if (filterDef.subMenu) {
                     this.appendChild(this.insertFilterMenu(filter, index));
                 } else {
                     this.filterMenuItems.push(null);
@@ -128,12 +132,12 @@ export class MultiFilter extends Component implements IFilterComp {
         return 'multi';
     }
 
-    public getModelFromUi(): MultiFilterModel {
+    public getModelFromUi(): IMultiFilterModel {
         if (!this.isFilterActive()) {
             return null;
         }
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 const providedFilter = filter as ProvidedFilter;
@@ -154,7 +158,7 @@ export class MultiFilter extends Component implements IFilterComp {
             return null;
         }
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 if (filter.isFilterActive()) {
@@ -168,7 +172,7 @@ export class MultiFilter extends Component implements IFilterComp {
         return model;
     }
 
-    public setModel(model: MultiFilterModel): Promise<void> {
+    public setModel(model: IMultiFilterModel): Promise<void> {
         const setFilterModel = (filter: IFilterComp, model: any) => {
             return new Promise<void>(resolve => {
                 const promise = filter.setModel(model);

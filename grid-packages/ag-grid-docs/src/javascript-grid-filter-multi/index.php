@@ -119,9 +119,10 @@ SNIPPET
 <h2>Sub Menus</h2>
 
 <p>
-    By default, all filters are shown in the same view, so that the user has easy immediate access. However, you might
-    wish to show some or all of the filters in sub-menus, to reduce the amount of space used for example. To do this,
-    set <code>useSubMenu</code> to <code>true</code> for the child filters you would like to be inside a sub-menu:
+    By default, all filters in the Multi Filter are shown in the same view, so that the user has easy, immediate access.
+    However, you might wish to show some or all of the filters in sub-menus, for example to reduce the height of the
+    filter. To do this, you can set <code>subMenu</code> to <code>true</code> for the filters you would like to be
+    inside a sub-menu:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -132,9 +133,7 @@ SNIPPET
         filters: [
             {
                 filter: 'agTextColumnFilter',
-                filterParams: {
-                    useSubMenu: true,
-                }
+                subMenu: true,
             },
             {
                 filter: 'agSetColumnFilter',

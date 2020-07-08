@@ -10,7 +10,7 @@ import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from
 import { MenuSeparator } from './menuSeparator';
 
 export class MenuList extends ManagedFocusComponent {
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
     private menuItems: MenuItemComponent[] = [];
     private activeMenuItem: MenuItemComponent | null;

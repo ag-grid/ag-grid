@@ -32,10 +32,10 @@ export interface MenuItemActivatedEvent extends AgEvent {
 }
 
 export class MenuItemComponent extends Component {
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('popupService') private readonly popupService: PopupService;
 
-    @RefSelector('eIcon') private eIcon: HTMLElement;
+    @RefSelector('eIcon') private readonly eIcon: HTMLElement;
 
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';

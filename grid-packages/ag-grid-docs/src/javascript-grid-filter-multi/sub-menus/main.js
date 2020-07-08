@@ -3,22 +3,6 @@ var gridOptions = {
         {
             field: 'athlete',
             filter: 'agMultiColumnFilter',
-            filterParams: {
-                filters: [
-                    {
-                        filter: 'agTextColumnFilter',
-                        filterParams: {
-                            buttons: ['apply']
-                        }
-                    },
-                    {
-                        filter: 'agSetColumnFilter',
-                        filterParams: {
-                            buttons: ['apply']
-                        }
-                    }
-                ]
-            }
         },
         {
             field: 'country',
@@ -27,16 +11,10 @@ var gridOptions = {
                 filters: [
                     {
                         filter: 'agTextColumnFilter',
-                        filterParams: {
-                            useSubMenu: true,
-                            buttons: ['apply']
-                        }
+                        subMenu: true,
                     },
                     {
                         filter: 'agSetColumnFilter',
-                        filterParams: {
-                            buttons: ['apply']
-                        }
                     }
                 ]
             }
