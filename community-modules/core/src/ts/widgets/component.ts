@@ -2,6 +2,7 @@ import { AgEvent } from "../events";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
+import { getFunctionName } from "../utils/function";
 import { _, NumberSequence } from "../utils";
 
 const compIdSequence = new NumberSequence();
@@ -117,7 +118,7 @@ export class Component extends BeanStub {
 
         while (thisPrototype != null) {
             const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = (thisPrototype.constructor).name;
+            const currentProtoName = getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 _.forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
@@ -215,19 +216,7 @@ export class Component extends BeanStub {
 
         while (thisProto != null) {
             const metaData = thisProto.__agComponentMetaData;
-            let currentProtoName = (thisProto.constructor).name;
-
-            // IE does not support Function.prototype.name, so we need to extract
-            // the name using a RegEx
-            // from: https://matt.scharley.me/2012/03/monkey-patch-name-ie.html
-            if (currentProtoName === undefined) {
-                const funcNameRegex = /function\s([^(]{1,})\(/;
-                const results = funcNameRegex.exec(thisProto.constructor.toString());
-
-                if (results && results.length > 1) {
-                    currentProtoName = results[1].trim();
-                }
-            }
+            const currentProtoName = getFunctionName(thisProto.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
