@@ -50,6 +50,23 @@
         padding-top: 6px;
     }
 
+    .ag-menu.ag-rtl {
+        .ag-menu-option-text {
+            margin-left: ag-param(grid-size) * 4;
+            margin-right: ag-param(grid-size);
+        }
+
+        .ag-menu-option-icon {
+            margin-left: 0;
+            margin-right: ag-param(grid-size);
+        }
+
+        .ag-menu-option-shortcut {
+            margin-left: ag-param(grid-size);
+            margin-right: 0;
+        }
+    }
+
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
