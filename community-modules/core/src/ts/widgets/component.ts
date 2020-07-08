@@ -15,6 +15,7 @@ import {
     addOrRemoveCssClass
 } from '../utils/dom';
 import { forEach } from '../utils/array';
+import { getFunctionName } from '../utils/function';
 
 const compIdSequence = new NumberSequence();
 
@@ -129,7 +130,7 @@ export class Component extends BeanStub {
 
         while (thisPrototype != null) {
             const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = _.getFunctionName(thisPrototype.constructor);
+            const currentProtoName = getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
@@ -227,7 +228,7 @@ export class Component extends BeanStub {
 
         while (thisProto != null) {
             const metaData = thisProto.__agComponentMetaData;
-            const currentProtoName = _.getFunctionName(thisProto.constructor);
+            const currentProtoName = getFunctionName(thisProto.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
