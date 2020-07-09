@@ -328,7 +328,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupIncludeFooter : any = undefined;
     @Input() public groupIncludeTotalFooter : any = undefined;
     @Input() public groupUseEntireRow : any = undefined;
-    @Input() public groupSuppressRow : any = undefined;
     @Input() public groupSuppressBlankHeader : any = undefined;
     @Input() public suppressMenuHide : any = undefined;
     @Input() public rowDeselection : any = undefined;

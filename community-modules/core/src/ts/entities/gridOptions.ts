@@ -299,8 +299,6 @@ export interface GridOptions {
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupRemoveLowestSingleChildren?: boolean;
-    /** @deprecated */
-    groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;

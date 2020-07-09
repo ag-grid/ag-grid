@@ -1,4 +1,4 @@
-import { RowNode } from './entities/rowNode';
+import {RowNode} from './entities/rowNode';
 import {
     ChartRef,
     FillOperationParams,
@@ -17,30 +17,30 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
-import { EventService } from './eventService';
-import { Constants } from './constants';
-import { ComponentUtil } from './components/componentUtil';
-import { GridApi } from './gridApi';
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
-import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColumnApi } from './columnController/columnApi';
-import { ColumnController } from './columnController/columnController';
-import { IViewportDatasource } from './interfaces/iViewportDatasource';
-import { IDatasource } from './interfaces/iDatasource';
-import { CellPosition } from './entities/cellPosition';
-import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
-import { AgEvent } from './events';
-import { Environment, SASS_PROPERTIES } from './environment';
-import { PropertyKeys } from './propertyKeys';
-import { ColDefUtil } from './components/colDefUtil';
-import { Events } from './eventKeys';
-import { AutoHeightCalculator } from './rendering/autoHeightCalculator';
-import { SideBarDef, SideBarDefParser, ToolPanelDef } from './entities/sideBar';
-import { ModuleNames } from './modules/moduleNames';
-import { ChartOptions } from './interfaces/iChartOptions';
-import { ModuleRegistry } from './modules/moduleRegistry';
-import { _ } from './utils';
+import {EventService} from './eventService';
+import {Constants} from './constants';
+import {ComponentUtil} from './components/componentUtil';
+import {GridApi} from './gridApi';
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from './entities/colDef';
+import {Autowired, Bean, PostConstruct, PreDestroy, Qualifier} from './context/context';
+import {ColumnApi} from './columnController/columnApi';
+import {ColumnController} from './columnController/columnController';
+import {IViewportDatasource} from './interfaces/iViewportDatasource';
+import {IDatasource} from './interfaces/iDatasource';
+import {CellPosition} from './entities/cellPosition';
+import {IServerSideDatasource} from './interfaces/iServerSideDatasource';
+import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from './interfaces/exportParams';
+import {AgEvent} from './events';
+import {Environment, SASS_PROPERTIES} from './environment';
+import {PropertyKeys} from './propertyKeys';
+import {ColDefUtil} from './components/colDefUtil';
+import {Events} from './eventKeys';
+import {AutoHeightCalculator} from './rendering/autoHeightCalculator';
+import {SideBarDef, SideBarDefParser, ToolPanelDef} from './entities/sideBar';
+import {ModuleNames} from './modules/moduleNames';
+import {ChartOptions} from './interfaces/iChartOptions';
+import {ModuleRegistry} from './modules/moduleRegistry';
+import {_} from './utils';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -727,12 +727,8 @@ export class GridOptionsWrapper {
     }
 
     public isPaginateChildRows(): boolean {
-        // if using groupSuppressRow, means we are not showing parent rows,
-        // so we always paginate on the child rows here as there are no parent rows
-        const shouldPaginate = this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
-
+        const shouldPaginate = this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
         if (shouldPaginate) { return true; }
-
         return isTrue(this.gridOptions.paginateChildRows);
     }
 
@@ -768,10 +764,6 @@ export class GridOptionsWrapper {
 
     public getAutoGroupColumnDef(): ColDef | undefined {
         return this.gridOptions.autoGroupColumnDef;
-    }
-
-    public isGroupSuppressRow() {
-        return isTrue(this.gridOptions.groupSuppressRow);
     }
 
     public getRowGroupPanelShow() {
@@ -1383,9 +1375,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.groupSuppressRow) {
-            console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
-        }
         if (options.showToolPanel === true) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
             options.showToolPanel = undefined;

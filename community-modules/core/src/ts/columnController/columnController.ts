@@ -3637,10 +3637,8 @@ export class ColumnController extends BeanStub {
         const suppressAutoColumn = this.pivotMode ?
             this.gridOptionsWrapper.isPivotSuppressAutoColumn() : this.gridOptionsWrapper.isGroupSuppressAutoColumn();
 
-        // const groupSuppressAutoColumn = this.gridOptionsWrapper.isGroupSuppressAutoColumn() && !this.pivotMode;
-        const groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
-        const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow && !groupSuppressRow;
+        const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
 
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
