@@ -21,9 +21,9 @@ import {
     BarSeries,
     DropShadow,
     Padding,
-    PieSeries,
-    ChartThemeName, ChartTheme
+    PieSeries
 } from "ag-charts-community";
+import { ChartPalette, ChartPaletteName, palettes } from "./palettes";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -34,8 +34,8 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartThemeName: () => ChartThemeName;
-    allowThemeOverride: boolean;
+    getChartPaletteName: () => ChartPaletteName;
+    allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
     gridApi: GridApi;
@@ -66,7 +66,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customTheme: ChartThemeName;
+    protected customPalette: ChartPalette;
     protected chartOptions: TOptions;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
@@ -129,25 +129,25 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    // private overridePalette(chartOptions: TOptions): void {
-    //     if (!this.chartProxyParams.allowPaletteOverride) {
-    //         return;
-    //     }
-    //
-    //     const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
-    //     const { seriesDefaults } = chartOptions;
-    //     const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-    //     const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
-    //     const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-    //     const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
-    //
-    //     if (fillsOverridden || strokesOverridden) {
-    //         this.customPalette = {
-    //             fills: fillsOverridden ? fills : defaultFills,
-    //             strokes: strokesOverridden ? strokes : defaultStrokes
-    //         };
-    //     }
-    // }
+    private overridePalette(chartOptions: TOptions): void {
+        if (!this.chartProxyParams.allowPaletteOverride) {
+            return;
+        }
+
+        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
+        const { seriesDefaults } = chartOptions;
+        const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+        const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
+        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
+        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+
+        if (fillsOverridden || strokesOverridden) {
+            this.customPalette = {
+                fills: fillsOverridden ? fills : defaultFills,
+                strokes: strokesOverridden ? strokes : defaultStrokes
+            };
+        }
+    }
 
     public getChartOptions(): TOptions {
         return this.chartOptions;
@@ -298,7 +298,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartTheme: this.chartProxyParams.getChartThemeName(),
+            chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -307,17 +307,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.eventService.dispatchEvent(event);
     }
 
-    // protected getPredefinedPalette(): ChartPalette {
-    //     return palettes.get(this.chartProxyParams.getChartPaletteName());
-    // }
-    //
-    // protected getPalette(): ChartPalette {
-    //     return this.customPalette || this.getPredefinedPalette();
-    // }
+    protected getPredefinedPalette(): ChartPalette {
+        return palettes.get(this.chartProxyParams.getChartPaletteName());
+    }
 
-    extractChartOptions(chart: Chart): any {
-        const defaults = ChartTheme.defaults;
-
+    protected getPalette(): ChartPalette {
+        return this.customPalette || this.getPredefinedPalette();
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
@@ -363,6 +358,36 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     paddingY: 8,
                 },
             },
+            navigator: {
+                enabled: false,
+                height: 30,
+                min: 0,
+                max: 1,
+                mask: {
+                    fill: '#999999',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    fillOpacity: 0.2
+                },
+                minHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                },
+                maxHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                }
+            },
             seriesDefaults: {
                 fill: {
                     colors: fills,
@@ -379,38 +404,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 listeners: {}
             },
             listeners: {}
-        } as any;
+        };
     }
-
-    protected themeMap: { [key in string]: string | {} } = {
-        borneo: 'default',
-        material: 'material-light',
-        pastel: 'pastel-light',
-        bright: 'solar-light',
-        flat: /* 'vivid-light' */ {
-            palette: {
-                fills: [
-                    '#5C2983',
-                    '#0076C5',
-                    '#21B372',
-                    '#FDDE02',
-                    '#F76700',
-                    '#D30018'
-                ],
-                strokes: ['black']
-            },
-            defaults: {
-                cartesian: {
-                    padding: {
-                        top: 100,
-                        right: 100,
-                        bottom: 100,
-                        left: 100
-                    }
-                }
-            }
-        }
-    };
 
     protected getDefaultFontOptions(): FontOptions {
         return {
@@ -431,103 +426,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             color: 'rgba(0, 0, 0, 0.5)',
         };
     }
-
-    protected getTheme(): any {
-        // const name = this.chartProxyParams.getChartPaletteName();
-        // return this.themeMap[name];
-        return 'pastel-dark';
-    }
-
-    // protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-    //     const fontOptions = this.getDefaultFontOptions();
-    //
-    //     return {
-    //         background: {
-    //             fill: this.getBackgroundColor(),
-    //             visible: true,
-    //         },
-    //         padding: {
-    //             top: 20,
-    //             right: 20,
-    //             bottom: 20,
-    //             left: 20,
-    //         },
-    //         title: {
-    //             ...fontOptions,
-    //             enabled: false,
-    //             fontWeight: 'bold',
-    //             fontSize: 16,
-    //         },
-    //         subtitle: {
-    //             ...fontOptions,
-    //             enabled: false,
-    //         },
-    //         legend: {
-    //             enabled: true,
-    //             position: LegendPosition.Right,
-    //             spacing: 20,
-    //             item: {
-    //                 label: {
-    //                     ...fontOptions,
-    //                 },
-    //                 marker: {
-    //                     shape: 'square',
-    //                     size: 15,
-    //                     padding: 8,
-    //                     strokeWidth: 1,
-    //                 },
-    //                 paddingX: 16,
-    //                 paddingY: 8,
-    //             },
-    //         },
-    //         navigator: {
-    //             enabled: false,
-    //             height: 30,
-    //             min: 0,
-    //             max: 1,
-    //             mask: {
-    //                 fill: '#999999',
-    //                 stroke: '#999999',
-    //                 strokeWidth: 1,
-    //                 fillOpacity: 0.2
-    //             },
-    //             minHandle: {
-    //                 fill: '#f2f2f2',
-    //                 stroke: '#999999',
-    //                 strokeWidth: 1,
-    //                 width: 8,
-    //                 height: 16,
-    //                 gripLineGap: 2,
-    //                 gripLineLength: 8
-    //             },
-    //             maxHandle: {
-    //                 fill: '#f2f2f2',
-    //                 stroke: '#999999',
-    //                 strokeWidth: 1,
-    //                 width: 8,
-    //                 height: 16,
-    //                 gripLineGap: 2,
-    //                 gripLineLength: 8
-    //             }
-    //         },
-    //         seriesDefaults: {
-    //             fill: {
-    //                 colors: fills,
-    //                 opacity: 1,
-    //             },
-    //             stroke: {
-    //                 colors: strokes,
-    //                 opacity: 1,
-    //                 width: 1,
-    //             },
-    //             highlightStyle: {
-    //                 fill: 'yellow',
-    //             },
-    //             listeners: {}
-    //         },
-    //         listeners: {}
-    //     };
-    // }
 
     protected transformData(data: any[], categoryKey: string): any[] {
         if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {

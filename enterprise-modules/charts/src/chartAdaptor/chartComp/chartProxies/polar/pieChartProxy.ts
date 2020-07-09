@@ -1,4 +1,4 @@
-import { PieSeries, PolarChart, AgChart } from "ag-charts-community";
+import { PieSeries, PolarChart, AgChart, AgPolarChartOptions } from "ag-charts-community";
 import { PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -12,21 +12,22 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: any): PolarChart {
-        options = options || this.chartOptions;
+    protected createChart(chartOptions?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        chartOptions = chartOptions || this.chartOptions;
+        const seriesDefaults = chartOptions.seriesDefaults;
+        const options: AgPolarChartOptions = chartOptions;
         options.autoSize = true;
-        const seriesDefaults = options.seriesDefaults;
         options.series = [{
+            type: 'pie',
             ...seriesDefaults,
             fills: seriesDefaults.fill.colors,
             fillOpacity: seriesDefaults.fill.opacity,
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
-            type: 'pie'
+            strokeWidth: seriesDefaults.stroke.width
         }];
 
-        return AgChart.create(options, this.chartProxyParams.parentElement);
+        return AgChart.create(chartOptions, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {

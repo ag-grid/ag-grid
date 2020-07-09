@@ -1,6 +1,7 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
+    AgCartesianChartOptions,
     CartesianChart, CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
@@ -94,7 +95,19 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         return options;
     }
 
-    protected axisTypeToClassMap: { [key in string]: ChartAxis } = {
+    protected getCartesianChartOptions(): AgCartesianChartOptions {
+        return {
+            legend: {
+                item: {
+                    marker: {
+                        shape: 'square'
+                    }
+                }
+            }
+        };
+    }
+
+    protected axisTypeToClassMap: any = {
         number: NumberAxis,
         category: CategoryAxis,
         groupedCategory: GroupedCategoryAxis,
@@ -118,7 +131,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             return;
         }
 
-        const axisClass = ChartBuilder.toAxisClass(baseAxisType);
+        // const axisClass = ChartBuilder.toAxisClass(baseAxisType);
+        const axisClass = this.getAxisClass(baseAxisType);
 
         if (baseAxis instanceof axisClass) { return; }
 
