@@ -160,6 +160,7 @@ const chartDefaults: any = {
     },
     title: undefined,
     subtitle: undefined,
+    listeners: undefined
 };
 
 const chartMeta = {
@@ -172,7 +173,7 @@ const chartMeta = {
     setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
 };
 
-const axisDefaults = {
+const axisDefaults: any = {
     defaults: {
         visibleRange: [0, 1],
         label: {},
@@ -186,12 +187,13 @@ const axisDefaults = {
     }
 };
 
-const seriesDefaults = {
+const seriesDefaults: any = {
     visible: true,
-    showInLegend: true
-} as any;
+    showInLegend: true,
+    listeners: undefined
+};
 
-const columnSeriesDefaults = {
+const columnSeriesDefaults: any = {
     fills: [],
     strokes: [],
     fillOpacity: 1,
@@ -207,9 +209,9 @@ const columnSeriesDefaults = {
     highlightStyle: {
         fill: 'yellow'
     }
-} as any;
+};
 
-const shadowMapping = {
+const shadowMapping: any = {
     shadow: {
         meta: {
             constructor: DropShadow,
