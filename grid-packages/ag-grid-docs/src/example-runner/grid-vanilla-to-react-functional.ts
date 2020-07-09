@@ -1,6 +1,7 @@
 import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertTemplate, getImport} from './react-utils';
+import {convertFunctionalTemplate, getImport} from './react-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import * as JSON5 from "json5";
 
 function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
     const {gridSettings} = bindings;
@@ -101,34 +102,42 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 
-    return convertTemplate(template);
+    return convertFunctionalTemplate(template);
 }
 
 function convertColumnDefs(rawColumnDefs) {
     const columnDefs = [];
-
     rawColumnDefs.forEach(rawColumnDef => {
         const columnProperties = [];
+        let children = [];
         Object.keys(rawColumnDef).forEach(columnProperty => {
-            let value = rawColumnDef[columnProperty];
-            if (typeof value === "string") {
-                columnProperties.push(
-                    `${columnProperty}="${value}"`
-                )
+            if(columnProperty === 'children') {
+                children = convertColumnDefs(rawColumnDef[columnProperty]);
             } else {
-                columnProperties.push(
-                    `${columnProperty}={${value}}`
-                )
+                let value = rawColumnDef[columnProperty];
+                if (typeof value === "string") {
+                    columnProperties.push(
+                        `${columnProperty}="${value}"`
+                    )
+                } else if (typeof value === 'object') {
+                    columnProperties.push(
+                        `${columnProperty}={${JSON.stringify(value)}}`
+                    )
+                } else {
+                    columnProperties.push(
+                        `${columnProperty}={${value}}`
+                    )
+                }
             }
         })
 
-        columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}></AgGridColumn>`)
+        columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`)
     })
 
     return columnDefs;
 }
 
-export function vanillaToReactDeclarative(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
+export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
 
     return importType => {
@@ -158,7 +167,7 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
 
             if (property.value === 'true' || property.value === 'false') {
                 componentAttributes.push(`${property.name}={${property.value}}`);
-            } else if (property.value === null) {
+            } else if (property.value === null || property.value === 'null') {
                 componentAttributes.push(`${property.name}={${property.name}}`);
             } else {
                 // for when binding a method
@@ -168,7 +177,7 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
                     instanceBindings.push(`${property.name}=${property.value}`);
                 } else {
                     if (property.name === 'columnDefs') {
-                        rawColumnDefs = JSON.parse(property.value);
+                        rawColumnDefs = JSON5.parse(property.value);
                     } else {
                         componentAttributes.push(`${property.name}={${property.value}}`);
                     }
@@ -178,7 +187,7 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
 
         const columnDefs = convertColumnDefs(rawColumnDefs);
 
-        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}.bind(this)}`);
+        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
 
         componentAttributes.push('onGridReady={onGridReady}');
         componentAttributes.push.apply(componentAttributes, componentEventAttributes);
@@ -214,7 +223,7 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
         }
 
         if (onGridReady) {
-            const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
+            const hackedHandler = onGridReady.replace(/^{|}$/g, '');
             additionalInReady.push(hackedHandler);
         }
 
@@ -222,10 +231,13 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
             additionalInReady.push('params.api.sizeColumnsToFit();');
         }
 
+        // convert this.gridApi/this.gridColumnApi to just gridApi/columnApi
+        const apiConverter = content => content.replace(/this\.gridApi/g, "gridApi").replace(/this\.gridColumnApi/g, "gridColumnApi")
+
         const template = getTemplate(bindings, componentAttributes, columnDefs);
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler));
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body));
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(apiConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(apiConverter);
+        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(apiConverter);
         const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
         return `
@@ -267,5 +279,5 @@ render(
 }
 
 if (typeof window !== 'undefined') {
-    (<any>window).vanillaToReactDeclarative = vanillaToReactDeclarative;
+    (<any>window).vanillaToReactFunctional = vanillaToReactFunctional;
 }

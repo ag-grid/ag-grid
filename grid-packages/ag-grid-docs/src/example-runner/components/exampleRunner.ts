@@ -2,8 +2,8 @@ import * as angular from "angular";
 // @ts-ignore
 import * as jQuery from "jquery";
 
-import { trackIfInViewPort, whenInViewPort } from "../lib/viewport";
-import { highlight } from "../lib/highlight";
+import {trackIfInViewPort, whenInViewPort} from "../lib/viewport";
+import {highlight} from "../lib/highlight";
 
 const docs: angular.IModule = angular.module("documentation");
 
@@ -102,10 +102,14 @@ class ExampleRunnerController {
 
         this.titles = {
             vanilla: "JavaScript",
-            react: "React",
+            react: "Class React",
             angular: "Angular",
             vue: "Vue"
         };
+
+        if (this.config.options.reactFunctional) {
+            this.titles['reactFunctional'] = "Functional React";
+        }
 
         this.titlesToRemove.forEach(titleToRemove => {
             delete this.titles[titleToRemove];
@@ -118,8 +122,6 @@ class ExampleRunnerController {
         this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
         this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
 
-
-
         this.importTypeTitles = {
             packages: "Packages",
             modules: "Modules"
@@ -128,9 +130,6 @@ class ExampleRunnerController {
         const divWrapper = jQuery(this.$element).find("div.example-wrapper");
 
         this.$timeout(() => {
-            let visibleToggle: angular.IPromise<void>;
-            let nextVisible: boolean = false;
-
             trackIfInViewPort(divWrapper, (visible: boolean) => {
                 this.$timeout(() => {
                     if (visible && !this.visible) {
@@ -170,7 +169,7 @@ class ExampleRunnerController {
     getInitialImportType(): string {
         const importType = this.$cookies.get("agGridRunnerImportType");
 
-        if(this.config.defaultImportType === undefined) {
+        if (this.config.defaultImportType === undefined) {
             if (this.importTypes.indexOf(importType) > -1) {
                 return importType;
             } else if (this.importTypes.indexOf(importType) > -1) {
@@ -277,7 +276,9 @@ class ExampleRunnerController {
 
         this.$q
             .all(this.allFiles.map((file: string) => this.loadSource(file)))
-            .then((sources: any) => { this.sources = sources; });
+            .then((sources: any) => {
+                this.sources = sources;
+            });
     }
 
     refreshSource() {

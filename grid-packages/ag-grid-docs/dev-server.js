@@ -495,7 +495,7 @@ const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
-        stdio: 'inherit',
+        // stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 

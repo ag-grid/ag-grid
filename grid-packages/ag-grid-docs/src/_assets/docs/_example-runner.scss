@@ -260,7 +260,7 @@
 
     .runner-item {
         height: 25px;
-        display: inline-block;
+        display: inline-table;
         line-height: 25px;
         width: 150px;
         text-align: left;
@@ -287,6 +287,11 @@
     }
 
     .runner-item-react {
+        background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .runner-item-reactFunctional {
         background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
         background-size: 25px 25px;
     }
