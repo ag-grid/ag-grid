@@ -1432,18 +1432,6 @@ export class GridOptionsWrapper {
             }
         }
 
-        if (options.enableStatusBar) {
-            console.warn(`ag-grid: since version 19.x, enableStatusBar is gone, please specify statusBar components`);
-            options.statusBar = options.statusBar || {
-                components: [{ component: 'agAggregationComponent' }]
-            };
-        }
-        if (options.alwaysShowStatusBar) {
-            console.warn(
-                `ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-bar css class, eg .ag-status-bar {min-height: 35px; }`
-            );
-        }
-
         if (options.enableServerSideSorting || options.enableSorting) {
             console.warn(
                 `ag-Grid: since v20, grid options enableSorting and enableServerSideSorting are gone. Instead set sortable=true on the column definition for the columns sorting are allowed on. To migrate from gridOption.enableSorting=true, set gridOptions.defaultColDef.sortable=true`
