@@ -103,15 +103,15 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         return this;
     }
 
-    public setDisabled(disabled: boolean): this {
-        setDisabled(this.eInput, disabled);
-
-        return super.setDisabled(disabled);
-    }
-
     public setInputAriaLabel(label: string): this {
         this.eInput.setAttribute('aria-label', label);
 
         return this;
+    }
+
+    public setDisabled(disabled: boolean): this {
+        setDisabled(this.eInput, disabled);
+
+        return super.setDisabled(disabled);
     }
 }

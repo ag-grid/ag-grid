@@ -26,13 +26,10 @@ export class SetFilterListItem extends Component {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    @RefSelector('eFilterItemValue') private eFilterItemValue: HTMLElement;
-
     private static TEMPLATE = /* html */`
-        <label class="ag-set-filter-item">
+        <div class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-            <span ref="eFilterItemValue" class="ag-set-filter-item-value"></span>
-        </label>`;
+        </div>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
@@ -81,7 +78,7 @@ export class SetFilterListItem extends Component {
 
             if (_.exists(this.tooltipText)) {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                    this.eFilterItemValue.title = this.tooltipText;
+                    this.getGui().setAttribute('title', this.tooltipText);
                 } else {
                     this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
                 }
@@ -95,7 +92,7 @@ export class SetFilterListItem extends Component {
             context: this.gridOptionsWrapper.getContext()
         };
 
-        this.renderCell(colDef, this.eFilterItemValue, params);
+        this.renderCell(colDef, params);
     }
 
     private getFormattedValue(colDef: ColDef, column: Column, value: any) {
@@ -105,21 +102,23 @@ export class SetFilterListItem extends Component {
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     }
 
-    private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {
+    private renderCell(target: ColDef, params: any): void {
         const filterParams = target.filterParams as ISetFilterParams;
         const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
 
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 
-            eTarget.innerText = valueToRender == null ? `(${this.translate('blanks')})` : valueToRender;
+            this.eCheckbox.setLabel(valueToRender == null ? `(${this.translate('blanks')})` : valueToRender);
 
             return;
         }
 
-        _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-
-        cellRendererPromise.then(component => this.addDestroyFunc(() => this.getContext().destroyBean(component)));
+        cellRendererPromise.then(component => {
+            const rendererGui = component.getGui();
+            this.eCheckbox.setLabel(rendererGui);
+            this.addDestroyFunc(() => this.getContext().destroyBean(component))
+        });
     }
 
     public getComponentHolder(): ColDef {

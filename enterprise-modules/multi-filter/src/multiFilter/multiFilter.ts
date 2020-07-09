@@ -14,13 +14,18 @@ import {
     Component,
     IFilterParams,
 } from '@ag-grid-community/core';
+import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
 
-export interface MultiFilterParams extends IFilterParams {
-    filters?: IFilterDef[];
+export interface IMultiFilterDef extends IFilterDef {
+    subMenu?: boolean;
+}
+
+export interface IMultiFilterParams extends IFilterParams {
+    filters?: IMultiFilterDef[];
     combineFilters?: boolean;
 }
 
-export interface MultiFilterModel {
+export interface IMultiFilterModel {
     filterType: string;
     filterModels: any[];
 }
@@ -29,18 +34,19 @@ export class MultiFilter extends Component implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private params: MultiFilterParams;
+    private params: IMultiFilterParams;
     private filters: IFilterComp[] = [];
+    private filterMenuItems: MenuItemComponent[] = [];
     private activeFilters = new Set<IFilterComp>();
     private column: Column;
     private filterChangedCallback: () => void;
     private combineFilters: boolean;
 
     constructor() {
-        super('<div class="multi-filter"></div>');
+        super(/* html */`<div class="multi-filter ag-menu-list"></div>`);
     }
 
-    public static getFilterDefs(params: MultiFilterParams): IFilterDef[] {
+    public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
         const { filters } = params;
 
         return filters && filters.length > 0 ?
@@ -48,7 +54,7 @@ export class MultiFilter extends Component implements IFilterComp {
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: MultiFilterParams): Promise<void> {
+    public init(params: IMultiFilterParams): Promise<void> {
         this.params = params;
 
         const { column, filterChangedCallback, combineFilters } = params;
@@ -58,8 +64,9 @@ export class MultiFilter extends Component implements IFilterComp {
         this.combineFilters = !!combineFilters;
 
         const filterPromises: Promise<IFilterComp>[] = [];
+        const filterDefs = MultiFilter.getFilterDefs(params);
 
-        _.forEach(MultiFilter.getFilterDefs(params), (filterDef, index) => {
+        _.forEach(filterDefs, (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -70,15 +77,39 @@ export class MultiFilter extends Component implements IFilterComp {
         return Promise.all(filterPromises).then(filters => {
             _.forEach(filters, (filter, index) => {
                 if (index > 0) {
-                    const divider = document.createElement('div');
-                    _.addCssClass(divider, 'ag-multi-filter-divider');
-                    this.getGui().appendChild(divider);
+                    this.appendChild(new MenuSeparator());
                 }
 
                 this.filters.push(filter);
-                this.getGui().appendChild(filter.getGui());
+
+                const filterDef = filterDefs[index];
+
+                if (filterDef.subMenu) {
+                    this.appendChild(this.insertFilterMenu(filter, index));
+                } else {
+                    this.filterMenuItems.push(null);
+                    this.appendChild(filter.getGui());
+                }
             });
         });
+    }
+
+    private insertFilterMenu(filter: IFilterComp, index: number): MenuItemComponent {
+        const params = {
+            name: `Filter ${index + 1}`,
+            subMenu: filter,
+            cssClasses: ['ag-filter-menu-item'],
+        };
+
+        const menuItem = this.createManagedBean(new MenuItemComponent(params));
+        menuItem.setParentComponent(this);
+
+        const icon = menuItem.getRefElement('eIcon');
+        menuItem.getGui().removeChild(icon);
+
+        this.filterMenuItems.push(menuItem);
+
+        return menuItem;
     }
 
     public isFilterActive(): boolean {
@@ -101,12 +132,12 @@ export class MultiFilter extends Component implements IFilterComp {
         return 'multi';
     }
 
-    public getModelFromUi(): MultiFilterModel {
+    public getModelFromUi(): IMultiFilterModel {
         if (!this.isFilterActive()) {
             return null;
         }
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 const providedFilter = filter as ProvidedFilter;
@@ -127,7 +158,7 @@ export class MultiFilter extends Component implements IFilterComp {
             return null;
         }
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
             filterModels: _.map(this.filters, filter => {
                 if (filter.isFilterActive()) {
@@ -141,7 +172,7 @@ export class MultiFilter extends Component implements IFilterComp {
         return model;
     }
 
-    public setModel(model: MultiFilterModel): Promise<void> {
+    public setModel(model: IMultiFilterModel): Promise<void> {
         const setFilterModel = (filter: IFilterComp, model: any) => {
             return new Promise<void>(resolve => {
                 const promise = filter.setModel(model);
@@ -234,20 +265,24 @@ export class MultiFilter extends Component implements IFilterComp {
 
     private filterChanged(index: number): void {
         const changedFilter = this.filters[index];
+        const isActive = changedFilter.isFilterActive();
 
-        if (changedFilter.isFilterActive()) {
+        if (isActive) {
             this.activeFilters.add(changedFilter);
         } else {
             this.activeFilters.delete(changedFilter);
         }
 
+        this.changeFilterWrapperActiveClass(index, isActive);
+
         const isAnySiblingFilterActive = this.activeFilters.size > 0;
 
-        _.forEach(this.filters, filter => {
+        _.forEach(this.filters, (filter, i) => {
             if (filter === changedFilter) { return; }
 
             if (!this.combineFilters && filter.isFilterActive()) {
                 filter.setModel(null);
+                this.changeFilterWrapperActiveClass(i, false);
             }
 
             if (typeof filter.onAnyFilterChanged === 'function') {
@@ -260,5 +295,17 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.filterChangedCallback();
+    }
+
+    private changeFilterWrapperActiveClass(index: number, isActive: boolean): void {
+        const filter = this.filters[index];
+
+        _.addOrRemoveCssClass(filter.getGui(), 'ag-filter-wrapper--active', isActive);
+
+        const menuItem = this.filterMenuItems[index];
+
+        if (menuItem != null) {
+            _.addOrRemoveCssClass(menuItem.getGui(), 'ag-filter-menu-item--active', isActive);
+        }
     }
 }

@@ -145,7 +145,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * space should be assigned to the column.
      */
     flex?: number;
-    defaultFlex?: number;
 
     /** True if this column should stretch rows height to fit contents */
     autoHeight?: boolean;

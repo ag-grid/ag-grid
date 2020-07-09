@@ -32,13 +32,14 @@ export function deepCloneObject<T>(object: T): T {
 // this is used for eg creating copies of Column Definitions, where we want to
 // deep copy all objects, but do not want to deep copy functions (eg when user provides
 // a function or class for colDef.cellRenderer)
-export function deepCloneDefinition<T extends any>(object: T): T {
-    if (!object) { return undefined; }
+export function deepCloneDefinition<T>(object: T): T {
+    if (!object) { return; }
 
+    const obj = object as any;
     const res: any = {};
 
-    Object.keys(object).forEach( key => {
-        const value = object[key];
+    Object.keys(obj).forEach(key => {
+        const value = obj[key];
         if (typeof value === 'object') {
             res[key] = deepCloneDefinition(value);
         } else {

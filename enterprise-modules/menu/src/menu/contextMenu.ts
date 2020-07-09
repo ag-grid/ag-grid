@@ -158,16 +158,15 @@ class ContextMenu extends Component {
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = new MenuList();
-        this.getContext().createBean(menuList);
-
+        const menuList = this.createBean(new MenuList());
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
         menuList.addMenuItems(menuItemsMapped);
 
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
+
+        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

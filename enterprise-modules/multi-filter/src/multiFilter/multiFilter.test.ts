@@ -1,4 +1,4 @@
-import { MultiFilter, MultiFilterParams, MultiFilterModel } from './multiFilter';
+import { MultiFilter, IMultiFilterParams, IMultiFilterModel } from './multiFilter';
 import {
     ColDef,
     IClientSideRowModel,
@@ -47,7 +47,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
         .mockReturnValueOnce(Promise.resolve(filter1))
         .mockReturnValueOnce(Promise.resolve(filter2));
 
-    const params: MultiFilterParams = {
+    const params: IMultiFilterParams = {
         ...baseFilterParams,
         ...filterParams,
     };
@@ -98,7 +98,7 @@ describe('init', () => {
         const { calls } = eGui.appendChild.mock;
 
         expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
-        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-multi-filter-divider"></div>');
+        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-menu-separator"></div>');
         expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
     });
 
@@ -206,7 +206,7 @@ describe('getModelFromUi', () => {
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModelFromUi()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [filterModel, null],
         });
@@ -216,7 +216,7 @@ describe('getModelFromUi', () => {
         const multiFilter = createFilter();
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModelFromUi()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [null, null],
         });
@@ -231,7 +231,7 @@ describe('getModelFromUi', () => {
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModelFromUi()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [null, filterModel],
         });
@@ -241,7 +241,7 @@ describe('getModelFromUi', () => {
         const multiFilter = createFilter();
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModelFromUi()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModelFromUi()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [null, null],
         });
@@ -266,7 +266,7 @@ describe('getModel', () => {
         filter1.getModel.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModel()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [filterModel, null],
         });
@@ -278,7 +278,7 @@ describe('getModel', () => {
         filter2.getModel.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModel()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [null, filterModel],
         });
@@ -295,7 +295,7 @@ describe('getModel', () => {
         filter2.getModel.mockReturnValue(filterModel2);
         filter2.isFilterActive.mockReturnValue(true);
 
-        expect(multiFilter.getModel()).toStrictEqual<MultiFilterModel>({
+        expect(multiFilter.getModel()).toStrictEqual<IMultiFilterModel>({
             filterType: 'multi',
             filterModels: [filterModel1, filterModel2],
         });
@@ -326,7 +326,7 @@ describe('setModel', () => {
         const filterModel1: ProvidedFilterModel = { filterType: 'text' };
         const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [filterModel1, filterModel2]
         };

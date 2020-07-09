@@ -257,21 +257,21 @@ export class Context {
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
-    public destroyBean<T extends any>(bean: T): T {
-        if (!bean) { return undefined; }
+    public destroyBean<T>(bean: T): undefined {
+        if (!bean) { return; }
         this.destroyBeans([bean]);
-        return undefined;
     }
 
-    public destroyBeans<T extends any>(beans: T[]): T[] {
+    public destroyBeans<T>(beans: T[]): T[] {
         if (!beans) { return []; }
 
         beans.forEach(bean => {
             this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy');
 
             // call destroy() explicitly if it exists
-            if (bean.destroy) {
-                bean.destroy();
+            const beanAny = bean as any;
+            if (beanAny.destroy) {
+                beanAny.destroy();
             }
         });
 

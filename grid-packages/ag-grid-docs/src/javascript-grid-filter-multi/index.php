@@ -116,6 +116,49 @@ SNIPPET
 
 <?= grid_example('Combined Filtering', 'combined-filtering', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
+<h2>Sub Menus</h2>
+
+<p>
+    By default, all filters in the Multi Filter are shown in the same view, so that the user has easy, immediate access.
+    However, you might wish to show some or all of the filters in sub-menus, for example to reduce the height of the
+    filter. To do this, you can set <code>subMenu</code> to <code>true</code> for the filters you would like to be
+    inside a sub-menu:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    filter: 'agMultiColumnFilter',
+    filterParams: {
+        filters: [
+            {
+                filter: 'agTextColumnFilter',
+                subMenu: true,
+            },
+            {
+                filter: 'agSetColumnFilter',
+            }
+        ]
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    The following example demonstrates the different behaviour.
+</p>
+
+<ul class="content">
+    <li>
+        The <strong>Athlete</strong> column shows the default behaviour, where all filters are in the main view.
+    </li>
+    <li>
+        The <strong>Country</strong> column demonstrates having the first filter inside a sub menu.
+    </li>
+</ul>
+
+<?= grid_example('Sub Menus', 'sub-menus', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
+
 <h2>Custom Filters</h2>
 
 <p>

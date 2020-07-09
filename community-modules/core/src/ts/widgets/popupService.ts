@@ -8,7 +8,9 @@ import { Column } from "../entities/column";
 import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, containsClass, addOrRemoveCssClass } from '../utils/dom';
+import { forEach, findIndex, last } from '../utils/array';
+import { isElementInEventPath } from '../utils/event';
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch;
@@ -43,15 +45,11 @@ export class PopupService extends BeanStub {
     @PostConstruct
     private init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.addCssClass(popup.element, 'ag-keyboard-focus');
-            });
+            forEach(this.popupList, popup => addCssClass(popup.element, 'ag-keyboard-focus'));
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.removeCssClass(popup.element, 'ag-keyboard-focus');
-            });
+            forEach(this.popupList, popup => removeCssClass(popup.element, 'ag-keyboard-focus'));
         });
     }
 
@@ -67,7 +65,7 @@ export class PopupService extends BeanStub {
         return this.gridCore.getRootGui();
     }
 
-    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
+    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
         const y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
@@ -123,8 +121,8 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
     }): void {
 
-        const {x, y} = this.calculatePointerAlign(params.mouseEvent);
-        const { ePopup, nudgeX, nudgeY} = params;
+        const { x, y } = this.calculatePointerAlign(params.mouseEvent);
+        const { ePopup, nudgeX, nudgeY } = params;
 
         this.positionPopup({
             ePopup: ePopup,
@@ -138,7 +136,7 @@ export class PopupService extends BeanStub {
         this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
     }
 
-    private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number } {
+    private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number; } {
         const parentRect = this.getParentRect();
 
         return {
@@ -158,7 +156,7 @@ export class PopupService extends BeanStub {
         nudgeX?: number,
         nudgeY?: number,
         alignSide?: 'left' | 'right',
-        keepWithinBounds?: boolean
+        keepWithinBounds?: boolean;
     }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const alignSide = params.alignSide || 'left';
@@ -193,7 +191,7 @@ export class PopupService extends BeanStub {
         minWidth?: number,
         nudgeX?: number,
         nudgeY?: number,
-        keepWithinBounds?: boolean
+        keepWithinBounds?: boolean;
     }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
@@ -241,7 +239,7 @@ export class PopupService extends BeanStub {
         nudgeY?: number,
         x: number,
         y: number,
-        keepWithinBounds?: boolean
+        keepWithinBounds?: boolean;
     }): void {
 
         let x = params.x;
@@ -288,7 +286,7 @@ export class PopupService extends BeanStub {
         };
     }
 
-    private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number }, y: number): number {
+    private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number; }, y: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -303,19 +301,21 @@ export class PopupService extends BeanStub {
             minHeight = params.minHeight;
         } else if (params.ePopup!.offsetHeight > 0) {
             minHeight = params.ePopup!.clientHeight;
-            diff = _.getAbsoluteHeight(params.ePopup) - minHeight;
+            diff = getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement!.scrollTop) : parentRect.height;
+        let heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement!.scrollTop) : parentRect.height;
+
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
+
         const maxY = heightOfParent - minHeight - diff;
 
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
 
-    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
+    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement; }, x: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -332,10 +332,10 @@ export class PopupService extends BeanStub {
         } else if (ePopup.offsetWidth > 0) {
             minWidth = ePopup.offsetWidth;
             ePopup.style.minWidth = `${minWidth}px`;
-            diff = _.getAbsoluteWidth(ePopup) - minWidth;
+            diff = getAbsoluteWidth(ePopup) - minWidth;
         }
 
-        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
+        let widthOfParent = isBody ? (getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
 
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
@@ -370,10 +370,10 @@ export class PopupService extends BeanStub {
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => {};
+            return () => { };
         }
 
-        const pos = _.findIndex(this.popupList, popup => popup.element === eChild);
+        const pos = findIndex(this.popupList, popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
@@ -395,12 +395,12 @@ export class PopupService extends BeanStub {
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            _.addCssClass(eWrapper, theme);
+            addCssClass(eWrapper, theme);
         }
 
-        _.addCssClass(eWrapper, 'ag-popup');
-        _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
-        _.addCssClass(eChild, 'ag-popup-child');
+        addCssClass(eWrapper, 'ag-popup');
+        addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+        addCssClass(eChild, 'ag-popup-child');
 
         eWrapper.appendChild(eChild);
 
@@ -424,13 +424,8 @@ export class PopupService extends BeanStub {
             }
         };
 
-        const hidePopupOnMouseEvent = (event: MouseEvent) => {
-            hidePopup({ mouseEvent: event });
-        };
-
-        const hidePopupOnTouchEvent = (event: TouchEvent) => {
-            hidePopup({ touchEvent: event });
-        };
+        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
+        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
         const hidePopup = (params: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = params;
@@ -455,6 +450,7 @@ export class PopupService extends BeanStub {
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
 
             if (closedCallback) {
@@ -470,6 +466,7 @@ export class PopupService extends BeanStub {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
+
             if (modal) {
                 eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
                 this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
@@ -495,7 +492,7 @@ export class PopupService extends BeanStub {
             return false;
         }
 
-        const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === target);
+        const indexOfThisChild = findIndex(this.popupList, popup => popup.element === target);
 
         if (indexOfThisChild === -1) {
             return false;
@@ -504,7 +501,7 @@ export class PopupService extends BeanStub {
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
             const popup = this.popupList[i];
 
-            if (_.isElementInEventPath(popup.element, event)) {
+            if (isElementInEventPath(popup.element, event)) {
                 return true;
             }
         }
@@ -536,6 +533,7 @@ export class PopupService extends BeanStub {
 
         // event could be mouse event or touch event.
         let mouseEventOrTouch: MouseEvent | Touch | null = null;
+
         if (mouseEvent) {
             // mouse event can be used direction, it has coordinates
             mouseEventOrTouch = mouseEvent;
@@ -561,11 +559,11 @@ export class PopupService extends BeanStub {
     }
 
     private getWrapper(ePopup: HTMLElement): HTMLElement | null {
-        while (!_.containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
+        while (!containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
             ePopup = ePopup.parentElement;
         }
 
-        return _.containsClass(ePopup, 'ag-popup') ? ePopup : null;
+        return containsClass(ePopup, 'ag-popup') ? ePopup : null;
     }
 
     public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
@@ -573,7 +571,7 @@ export class PopupService extends BeanStub {
 
         if (!eWrapper) { return; }
 
-        _.addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
+        addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
 
         if (alwaysOnTop) {
             this.bringPopupToFront(eWrapper);
@@ -593,16 +591,17 @@ export class PopupService extends BeanStub {
         const pos = popupList.indexOf(eWrapper);
 
         if (onTopLength) {
-            const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
+            const isPopupAlwaysOnTop = containsClass(eWrapper, 'ag-always-on-top');
+
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
-                    (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+                    (last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
                 }
             } else if (pos !== popupLen - onTopLength - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
         } else if (pos !== popupLen - 1) {
-            (_.last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+            (last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
         }
 
         const params = {

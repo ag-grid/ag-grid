@@ -326,7 +326,7 @@ export class GridPanel extends Component {
         if (_.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
             this.beans.columnController.refreshFlexedColumns(
-                this.getCenterWidth()
+                {viewportWidth: this.getCenterWidth(), updateBodyWidths: true, fireResizedEvent: true}
             );
         } else {
             this.bodyHeight = 0;

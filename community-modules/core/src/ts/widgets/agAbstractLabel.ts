@@ -5,7 +5,7 @@ import { _ } from "../utils";
 export type LabelAlignment = 'left' | 'right' | 'top';
 
 export interface IAgLabel {
-    label?: string;
+    label?: HTMLElement | string;
     labelWidth?: number | 'flex';
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
@@ -17,7 +17,7 @@ export abstract class AgAbstractLabel extends Component {
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
     protected config: IAgLabel = {};
-    private label: string = '';
+    private label: HTMLElement | string = '';
 
     @PostConstruct
     protected postConstruct() {
@@ -43,7 +43,14 @@ export abstract class AgAbstractLabel extends Component {
     }
 
     protected refreshLabel() {
-        this.eLabel.innerText = this.label + this.labelSeparator;
+        _.clearElement(this.eLabel);
+
+        if (typeof this.label === 'string') {
+            this.eLabel.innerText = this.label + this.labelSeparator;
+        } else {
+            this.eLabel.appendChild(this.label);
+        }
+
         _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     }
 
@@ -67,11 +74,11 @@ export abstract class AgAbstractLabel extends Component {
         return this.eLabel.id;
     }
 
-    public getLabel(): string {
+    public getLabel(): HTMLElement | string {
         return this.label;
     }
 
-    public setLabel(label: string): this {
+    public setLabel(label: HTMLElement | string): this {
         if (this.label === label) {
             return this;
         }

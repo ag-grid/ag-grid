@@ -8,7 +8,7 @@ import {
 } from '@ag-grid-community/core';
 import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
-import { MultiFilterModel } from './multiFilter';
+import { IMultiFilterModel } from './multiFilter';
 import { mock } from '../test-utils/mock';
 
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
@@ -91,7 +91,7 @@ describe('onParentModelChanged', () => {
         const event = mock<FilterChangedEvent>();
         const filterModel1: ProvidedFilterModel = { filterType: 'text' };
         const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [filterModel1, filterModel2]
         };
@@ -109,7 +109,7 @@ describe('onParentModelChanged', () => {
         const event = mock<FilterChangedEvent>();
         event.afterFloatingFilter = true;
 
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };
@@ -123,7 +123,7 @@ describe('onParentModelChanged', () => {
     it('shows first floating filter if only first filter is active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [{ filterType: 'text' }, null]
         };
@@ -137,7 +137,7 @@ describe('onParentModelChanged', () => {
     it('shows second floating filter if only second filter is active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [null, { filterType: 'set', values: [] }]
         };
@@ -151,7 +151,7 @@ describe('onParentModelChanged', () => {
     it('shows neither floating filter if both filters are active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: MultiFilterModel = {
+        const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
         };

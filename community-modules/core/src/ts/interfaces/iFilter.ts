@@ -86,6 +86,7 @@ export interface IFilterParams {
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
     doesRowPassSiblingFilters?: (rowNode: RowNode) => boolean;
+    useSubMenu?: boolean;
     context: any;
 }
 

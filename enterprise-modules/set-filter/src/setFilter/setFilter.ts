@@ -30,7 +30,6 @@ export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
 
     @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
-    @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
@@ -70,10 +69,9 @@ export class SetFilter extends ProvidedFilter {
                 <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                    <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
+                    <div ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                         <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
-                        <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
-                    </label>
+                    </div>
                 </div>
                 <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
@@ -379,6 +377,7 @@ export class SetFilter extends ProvidedFilter {
 
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
+        eMiniFilter.setInputAriaLabel('Search filter values');
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
     }
@@ -572,7 +571,7 @@ export class SetFilter extends ProvidedFilter {
             this.translate('selectAll') :
             this.translate('selectAllSearchResults');
 
-        this.eSelectAllLabel.innerText = `(${label})`;
+        this.eSelectAll.setLabel(`(${label})`);
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {

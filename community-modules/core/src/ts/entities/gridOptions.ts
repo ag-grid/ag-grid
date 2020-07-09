@@ -1,18 +1,18 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import {RowNode} from "./rowNode";
-import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnApi";
-import {Column} from "./column";
-import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {ICellRenderer, ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
-import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
-import {IDatasource} from "../interfaces/iDatasource";
-import {CellPosition} from "./cellPosition";
-import {IDateComp} from "../rendering/dateComponent";
-import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
-import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../interfaces/exportParams";
+import { RowNode } from "./rowNode";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { Column } from "./column";
+import { IViewportDatasource } from "../interfaces/iViewportDatasource";
+import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { IDatasource } from "../interfaces/iDatasource";
+import { CellPosition } from "./cellPosition";
+import { IDateComp } from "../rendering/dateComponent";
+import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
     BodyScrollEvent,
     CellClickedEvent,
@@ -80,13 +80,13 @@ import {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {IComponent} from "../interfaces/iComponent";
-import {AgGridRegisteredComponentInput} from "../components/framework/userComponentRegistry";
-import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
-import {StatusPanelDef} from "../interfaces/iStatusPanel";
-import {SideBarDef} from "./sideBar";
-import {ChartMenuOptions, ChartOptions, ChartType} from "../interfaces/iChartOptions";
+import { IComponent } from "../interfaces/iComponent";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
+import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
+import { StatusPanelDef } from "../interfaces/iStatusPanel";
+import { SideBarDef } from "./sideBar";
+import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -683,7 +683,7 @@ export interface MenuItemDef {
     action?: () => void;
     checked?: boolean;
     icon?: HTMLElement | string;
-    subMenu?: (MenuItemDef | string)[];
+    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
     cssClasses?: string[];
     tooltip?: string;
 }

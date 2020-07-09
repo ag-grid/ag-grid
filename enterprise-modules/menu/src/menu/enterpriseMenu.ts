@@ -320,15 +320,15 @@ export class EnterpriseMenu extends BeanStub {
         let result: (string | MenuItemDef)[];
 
         const userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+
         if (userFunc) {
-            const userOptions = userFunc({
+            result = userFunc({
                 column: this.column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            result = userOptions;
         } else {
             result = defaultMenuOptions;
         }
@@ -394,15 +394,7 @@ export class EnterpriseMenu extends BeanStub {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = false;
-
-        if (isInMemoryRowModel) {
-            if (usingTreeData) {
-                allowExpandAndContract = true;
-            } else {
-                allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
-            }
-        }
+        let allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
 
         if (allowExpandAndContract) {
             result.push('expandAll');
@@ -413,14 +405,13 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createMainPanel(): TabbedItem {
-        this.mainMenuList = new MenuList();
-        this.createManagedBean(this.mainMenuList);
+        this.mainMenuList = this.createManagedBean(new MenuList());
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),

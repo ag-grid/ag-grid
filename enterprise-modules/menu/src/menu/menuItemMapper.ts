@@ -45,10 +45,13 @@ export class MenuItemMapper extends BeanStub {
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) { return; }
 
-            if ((result as MenuItemDef).subMenu) {
-                const resultDef = result as MenuItemDef;
-                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu!, column);
+            const resultDef = result as MenuItemDef;
+            const { subMenu } = resultDef;
+
+            if (subMenu && subMenu instanceof Array) {
+                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu as (MenuItemDef | string)[], column);
             }
+
             if (result != null) {
                 resultList.push(result);
             }

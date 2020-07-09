@@ -249,7 +249,7 @@
         @include ag-color-property(background-color, control-panel-background-color);
         border-left: dashed 1px;
         @include ag-color-property(border-left-color, border-color);
-        margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
+        margin-left: ag-param(icon-size) / 2;
         padding-left: ag-param(icon-size) / 2;
         margin-right: ag-param(grid-size) * 2;
     }

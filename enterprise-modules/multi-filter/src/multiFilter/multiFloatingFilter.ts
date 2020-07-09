@@ -11,7 +11,7 @@ import {
     Promise,
     IFilterComp,
 } from '@ag-grid-community/core';
-import { MultiFilterParams, MultiFilterModel, MultiFilter } from './multiFilter';
+import { IMultiFilterParams, IMultiFilterModel, MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -23,7 +23,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     public init(params: IFloatingFilterParams): Promise<void> {
-        const filterParams = params.filterParams as MultiFilterParams;
+        const filterParams = params.filterParams as IMultiFilterParams;
         const floatingFilterPromises: Promise<IFloatingFilterComp>[] = [];
 
         _.forEach(MultiFilter.getFilterDefs(filterParams), (filterDef, index) => {
@@ -56,7 +56,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public onParentModelChanged(model: MultiFilterModel, event: FilterChangedEvent): void {
+    public onParentModelChanged(model: IMultiFilterModel, event: FilterChangedEvent): void {
         // We don't want to update the floating filter if the floating filter caused the change,
         // because the UI is already in sync. if we didn't do this, the UI would behave strangely
         // as it would be updating as the user is typing
