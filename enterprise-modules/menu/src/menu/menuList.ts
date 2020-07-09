@@ -67,7 +67,7 @@ export class MenuList extends ManagedFocusComponent {
 
         menuItems.forEach(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.appendChild(this.createManagedBean(new MenuSeparator()));
+                this.appendChild(new MenuSeparator().getGui());
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`ag-Grid: unrecognised menu item ${menuItemOrString}`);
             } else {

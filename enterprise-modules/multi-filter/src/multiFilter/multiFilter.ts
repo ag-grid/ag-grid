@@ -13,6 +13,7 @@ import {
     _,
     Component,
     IFilterParams,
+    RowNode,
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
 
@@ -22,7 +23,6 @@ export interface IMultiFilterDef extends IFilterDef {
 
 export interface IMultiFilterParams extends IFilterParams {
     filters?: IMultiFilterDef[];
-    combineFilters?: boolean;
 }
 
 export interface IMultiFilterModel {
@@ -37,10 +37,8 @@ export class MultiFilter extends Component implements IFilterComp {
     private params: IMultiFilterParams;
     private filters: IFilterComp[] = [];
     private filterMenuItems: MenuItemComponent[] = [];
-    private activeFilters = new Set<IFilterComp>();
     private column: Column;
     private filterChangedCallback: () => void;
-    private combineFilters: boolean;
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list"></div>`);
@@ -57,11 +55,10 @@ export class MultiFilter extends Component implements IFilterComp {
     public init(params: IMultiFilterParams): Promise<void> {
         this.params = params;
 
-        const { column, filterChangedCallback, combineFilters } = params;
+        const { column, filterChangedCallback } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
-        this.combineFilters = !!combineFilters;
 
         const filterPromises: Promise<IFilterComp>[] = [];
         const filterDefs = MultiFilter.getFilterDefs(params);
@@ -77,7 +74,7 @@ export class MultiFilter extends Component implements IFilterComp {
         return Promise.all(filterPromises).then(filters => {
             _.forEach(filters, (filter, index) => {
                 if (index > 0) {
-                    this.appendChild(new MenuSeparator());
+                    this.appendChild(new MenuSeparator().getGui());
                 }
 
                 this.filters.push(filter);
@@ -119,10 +116,10 @@ export class MultiFilter extends Component implements IFilterComp {
     public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
         let rowPasses = true;
 
-        this.activeFilters.forEach(activeFilter => {
-            if (!rowPasses || activeFilter === filterToSkip) { return; }
+        this.filters.forEach(filter => {
+            if (!rowPasses || filter === filterToSkip || !filter.isFilterActive()) { return; }
 
-            rowPasses = activeFilter.doesFilterPass(params);
+            rowPasses = filter.doesFilterPass(params);
         });
 
         return rowPasses;
@@ -223,7 +220,6 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.filters.length = 0;
-        this.activeFilters.clear();
 
         super.destroy();
     }
@@ -250,8 +246,8 @@ export class MultiFilter extends Component implements IFilterComp {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged(index),
-            doesRowPassOtherFilter,
-            doesRowPassSiblingFilters: node => this.doesFilterPass({ node, data: node.data }, filterInstance),
+            doesRowPassOtherFilter: (node: RowNode) =>
+                doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
         const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
@@ -265,36 +261,17 @@ export class MultiFilter extends Component implements IFilterComp {
 
     private filterChanged(index: number): void {
         const changedFilter = this.filters[index];
-        const isActive = changedFilter.isFilterActive();
 
-        if (isActive) {
-            this.activeFilters.add(changedFilter);
-        } else {
-            this.activeFilters.delete(changedFilter);
-        }
+        this.changeFilterWrapperActiveClass(index, changedFilter.isFilterActive());
+        this.filterChangedCallback();
 
-        this.changeFilterWrapperActiveClass(index, isActive);
-
-        const isAnySiblingFilterActive = this.activeFilters.size > 0;
-
-        _.forEach(this.filters, (filter, i) => {
+        _.forEach(this.filters, filter => {
             if (filter === changedFilter) { return; }
-
-            if (!this.combineFilters && filter.isFilterActive()) {
-                filter.setModel(null);
-                this.changeFilterWrapperActiveClass(i, false);
-            }
 
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
             }
-
-            if (typeof filter.onSiblingFilterChanged === 'function') {
-                filter.onSiblingFilterChanged(isAnySiblingFilterActive);
-            }
         });
-
-        this.filterChangedCallback();
     }
 
     private changeFilterWrapperActiveClass(index: number, isActive: boolean): void {

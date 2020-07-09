@@ -9,8 +9,7 @@ var gridOptions = {
                     {
                         filter: 'agTextColumnFilter',
                         filterParams: {
-                            alwaysShowBothConditions: true,
-                            defaultOption: 'contains',
+                            defaultOption: 'startsWith',
                         },
                     },
                     {
@@ -26,9 +25,6 @@ var gridOptions = {
                 filters: [
                     {
                         filter: 'agNumberColumnFilter',
-                        filterParams: {
-                            alwaysShowBothConditions: true,
-                        },
                     },
                     {
                         filter: 'agSetColumnFilter',
@@ -44,7 +40,6 @@ var gridOptions = {
                     {
                         filter: 'agDateColumnFilter',
                         filterParams: {
-                            alwaysShowBothConditions: true,
                             comparator: function(filterDate, cellValue) {
                                 if (cellValue == null) return -1;
 
@@ -55,7 +50,6 @@ var gridOptions = {
                     {
                         filter: 'agSetColumnFilter',
                         filterParams: {
-                            alwaysShowBothConditions: true,
                             comparator: function(a, b) {
                                 return getDate(a) - getDate(b);
                             }

@@ -1,7 +1,13 @@
-import { Component } from '@ag-grid-community/core';
+import { _ } from '@ag-grid-community/core';
 
-export class MenuSeparator extends Component {
+export class MenuSeparator {
+    private readonly eGui: HTMLElement;
+
     constructor() {
-        super(/* html */`<div class="ag-menu-separator"></div>`);
+        this.eGui = _.loadTemplate(/* html */`<div class="ag-menu-separator"></div>`);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
     }
 }

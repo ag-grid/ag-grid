@@ -39,7 +39,6 @@ export class SetFilter extends ProvidedFilter {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('focusController') private focusController: FocusController;
 
-    private clientSideValuesExtractor: ClientSideValuesExtractor;
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
@@ -227,16 +226,10 @@ export class SetFilter extends ProvidedFilter {
 
         this.initialiseFilterBodyUi();
 
-        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideValuesExtractor = new ClientSideValuesExtractor(
-                params.rowModel as IClientSideRowModel,
-                params.colDef,
-                params.valueGetter
-            );
-
-            if (!params.values && !params.suppressSyncValuesAfterDataChange) {
-                this.addEventListenersForDataChanges();
-            }
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+            !params.values &&
+            !params.suppressSyncValuesAfterDataChange) {
+            this.addEventListenersForDataChanges();
         }
     }
 
@@ -496,24 +489,6 @@ export class SetFilter extends ProvidedFilter {
 
     public onAnyFilterChanged(): void {
         this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh());
-    }
-
-    public onSiblingFilterChanged(isAnySiblingFilterActive: boolean): void {
-        const { doesRowPassSiblingFilters, suppressSyncOnSiblingFilterChange } = this.setFilterParams;
-
-        if (!suppressSyncOnSiblingFilterChange && doesRowPassSiblingFilters && !this.isFilterActive()) {
-            if (isAnySiblingFilterActive) {
-                let values: string[] = [];
-
-                if (this.clientSideValuesExtractor) {
-                    values = this.clientSideValuesExtractor.extractUniqueValues(row => doesRowPassSiblingFilters(row));
-                }
-
-                this.setModelIntoUi({ filterType: 'set', values });
-            } else {
-                this.setModelIntoUi(null);
-            }
-        }
     }
 
     private updateSelectAllCheckbox(): void {

@@ -19,7 +19,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private floatingFilters: IFloatingFilterComp[] = [];
 
     constructor() {
-        super('<div class="ag-multi-floating-filter ag-floating-filter-input"></div>');
+        super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
     public init(params: IFloatingFilterParams): Promise<void> {

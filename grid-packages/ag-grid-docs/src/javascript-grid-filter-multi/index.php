@@ -59,62 +59,12 @@ SNIPPET
         so changing which child filter you are using within a Multi Filter will change which floating filter is shown.
     </li>
     <li>
-        We recommend setting <code>alwaysShowBothConditions</code> to <code>true</code> for Provided Filters to reduce
-        the amount of UI movement when a user changes which filter within the Multi Filter they are interacting
-        with. We have therefore shown this enabled for all columns except the <strong>Athlete</strong> column, which
-        shows the default behaviour.
-    </li>
-    <li>
         You can print the current filter state to the console and save/restore it using the buttons at the top of the
         grid.
     </li>
 </ul>
 
 <?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
-
-<h2>Combined Filtering</h2>
-
-<p>
-    By default, only one filter in the Multi Filter can be active at any time. If you apply any child filter, all other
-    sibling filters will be reset.
-</p>
-
-<p>
-    If you would like to allow multiple filters to be applied at the same time, you can set <code>combineFilters</code>
-    in the <code>filterParams</code>:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// ColDef
-{
-    filter: 'agMultiColumnFilter',
-    filterParams: {
-        combineFilters: true,
-    }
-}
-SNIPPET
-) ?>
-
-<p>
-    In this case, when more than one filter is active, the floating filter will be hidden. The filters will be combined
-    using AND in the same way that filters from different columns are combined.
-</p>
-
-<p>
-    The following example demonstrates the different behaviour.
-</p>
-
-<ul class="content">
-    <li>
-        The <strong>Athlete</strong> column shows the default behaviour, where only one filter is allowed to be active
-        at any time.
-    </li>
-    <li>
-        The <strong>Country</strong> column is configured to combine filters instead.
-    </li>
-</ul>
-
-<?= grid_example('Combined Filtering', 'combined-filtering', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Sub Menus</h2>
 
@@ -171,62 +121,6 @@ SNIPPET
 </p>
 
 <?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
-
-<h2>Interacting With Sibling Filters</h2>
-
-<p>
-    When any filter in the Multi Filter is applied, other sibling filters can respond to this by implementing the
-    <code>onSiblingFilterChanged()</code> method. For example, when using the
-    <a href="../javascript-grid-filter-set/">Set Filter</a> in the Multi Filter along with the
-    <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>, when other filters in the Multi
-    Filter are active, the Set Filter will update to show the same selection as if the user had manually chosen the
-    matching items in the Set Filter instead. This allows a user to use the other filters as a starting point to create
-    a set of values that can then be tweaked in the Set Filter.
-</p>
-
-<p>
-    Each filter is in control of whether it responds to changes from sibling filters. In the Set Filter for example,
-    you can prevent the Set Filter from responding to sibling filter changes by setting
-    <code>suppressSyncOnSiblingFilterChange</code> as shown below:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// ColDef
-{
-    filter: 'agMultiColumnFilter',
-    filterParams: {
-        filters: [
-            {
-                filter: 'agTextColumnFilter',
-            },
-            {
-                filter: 'agSetColumnFilter',
-                filterParams: {
-                    suppressSyncOnSiblingFilterChange: true,
-                }
-            }
-        ]
-    }
-}
-SNIPPET
-) ?>
-
-<p>
-    The following example demonstrates this in action.
-</p>
-
-<ul class="content">
-    <li>
-        The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
-        kept in sync when the Text Filter is used.
-    </li>
-    <li>
-        The <strong>Country</strong> column has <code>suppressSyncOnSiblingFilterChange = true</code>, so that the Set
-        Filter does not respond to changes in the Text Filter.
-    </li>
-</ul>
-
-<?= grid_example('Interacting With Sibling Filters', 'interacting-with-sibling-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Multi Filter Parameters</h2>
 

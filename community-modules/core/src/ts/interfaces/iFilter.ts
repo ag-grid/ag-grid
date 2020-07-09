@@ -43,9 +43,6 @@ export interface IFilter {
     /** Called whenever any filter is changed. */
     onAnyFilterChanged?(): void;
 
-    /** Called whenever a sibling filter is changed. */
-    onSiblingFilterChanged?(isAnySiblingFilterActive: boolean): void;
-
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
@@ -85,8 +82,6 @@ export interface IFilterParams {
     filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
-    doesRowPassSiblingFilters?: (rowNode: RowNode) => boolean;
-    useSubMenu?: boolean;
     context: any;
 }
 
