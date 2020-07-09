@@ -200,8 +200,6 @@ export interface GridOptions {
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
-    /** @deprecated */
-    pivotTotals?: boolean;
     pivotColumnGroupTotals?: string;
     pivotRowTotals?: string;
     suppressExpandablePivotGroups?: boolean;

@@ -288,10 +288,6 @@
             "default": false,
             "description": "(Enterprise only) Set to <code>true</code> if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot."
         },
-        "pivotTotals": {
-            "default": false,
-            "description": "(Enterprise only) Set to <code>true</code> if you want to introduce pivot total columns when in pivot mode."
-        },
         "enableValue": {
             "default": false,
             "description": "(Enterprise only) Set to <code>true</code> if you want to be able to aggregate by this column via the GUI. This will not block the API or properties being used to achieve aggregation."

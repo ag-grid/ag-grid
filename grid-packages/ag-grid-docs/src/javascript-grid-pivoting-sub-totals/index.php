@@ -71,11 +71,6 @@ SNIPPET
     when the group is expanded.
 </p>
 
-<note>
-    <code>gridOptions.pivotTotals = true</code> has now been deprecated in favour of the new property
-    <code>gridOptions.pivotColumnGroupTotals = 'before' | 'after'</code>.
-</note>
-
 <p>
     All value columns must use the same aggregation function for the total column to make sense, otherwise the
     total column will not be included.

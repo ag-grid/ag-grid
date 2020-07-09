@@ -404,7 +404,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public deltaRowDataMode : any = undefined;
     @Input() public ensureDomOrder : any = undefined;
     @Input() public accentedSort : any = undefined;
-    @Input() public pivotTotals : any = undefined;
     @Input() public suppressChangeDetection : any = undefined;
     @Input() public valueCache : any = undefined;
     @Input() public valueCacheNeverExpires : any = undefined;

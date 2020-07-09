@@ -51,7 +51,7 @@ export class PropertyKeys {
         'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging', 'enableMultiRowDragging', 'enableGroupEdit', 'embedFullWidthRows',
         'deprecatedEmbedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter', 'groupHideOpenParents', 'groupMultiAutoColumn',
         'pagination', 'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires',
+        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires',
         'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail',
         'suppressMultiRangeSelection', 'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel', 'suppressRowHoverHighlight', 'gridAutoHeight',

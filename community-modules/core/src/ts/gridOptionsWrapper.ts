@@ -295,10 +295,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.pivotMode);
     }
 
-    public isPivotTotals() {
-        return isTrue(this.gridOptions.pivotTotals);
-    }
-
     public isSuppressExpandablePivotGroups() {
         return isTrue(this.gridOptions.suppressExpandablePivotGroups);
     }
@@ -1487,10 +1483,6 @@ export class GridOptionsWrapper {
         }
         if (options.angularCompileHeaders) {
             console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
-        }
-        if (options.pivotTotals) {
-            console.warn(`ag-grid: since version 18.x, pivotTotals has been removed, instead if using pivotTotals, set pivotColumnGroupTotals='before'|'after'.`);
-            options.pivotColumnGroupTotals = 'before';
         }
         if (options.rowModelType === 'inMemory') {
             console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);
