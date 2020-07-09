@@ -162,7 +162,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public modules: Module[];
 
     // @START@
-    @Input() public slaveGrids : any = undefined;
     @Input() public alignedGrids : any = undefined;
     @Input() public rowData : any = undefined;
     @Input() public columnDefs : any = undefined;
