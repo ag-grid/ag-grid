@@ -288,10 +288,6 @@ export interface GridOptions {
     localeText?: any;
     localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
-    /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
-    // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
-    /* a map of strings (cellEditor keys) to cellEditors */
-    // cellEditors?: {[key: string]: {new(): ICellEditor}};
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
@@ -310,8 +306,6 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
-    /** @deprecated in v11.0 substituted by autoGroupColumnDef */
-    groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;

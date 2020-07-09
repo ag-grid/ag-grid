@@ -11,11 +11,12 @@ export class PropertyKeys {
     ];
 
     public static OBJECT_PROPERTIES = [
-        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
-        'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
+        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons',
+        'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore', 'statusBar', 'sideBar'
+        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams',
+        'loadingOverlayComponentParams', 'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault',
+        'reduxStore', 'statusBar', 'sideBar'
     ];
 
     public static ARRAY_PROPERTIES = [

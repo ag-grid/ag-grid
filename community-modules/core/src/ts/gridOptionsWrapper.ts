@@ -1393,11 +1393,7 @@ export class GridOptionsWrapper {
         if (options.groupSuppressRow) {
             console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
         }
-        if (options.groupColumnDef) {
-            console.warn(
-                `ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoGroupColumnDef. Please change your configuration accordingly`
-            );
-        }
+
         if (options.slaveGrids) {
             console.warn(`ag-grid: since version 12.x, slaveGrids has been renamed, this property is now called alignedGrids. Please change your configuration accordingly`);
         }
