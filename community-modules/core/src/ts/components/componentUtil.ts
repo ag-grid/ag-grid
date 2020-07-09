@@ -109,10 +109,6 @@ export class ComponentUtil {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
         }
 
-        if (changes.showToolPanel) {
-            api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
-        }
-
         if (changes.quickFilterText) {
             api.setQuickFilter(changes.quickFilterText.currentValue);
         }

@@ -1371,17 +1371,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.showToolPanel === true) {
-            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
-            options.showToolPanel = undefined;
-            options.sideBar = options.sideBar || true;
-        }
-        if (options.showToolPanel === false) {
-            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
-            options.showToolPanel = undefined;
-            options.sideBar = options.sideBar || false;
-        }
-
         const oldToolPanelProperties: { [p: string]: string; } = {
             toolPanelSuppressRowGroups: 'suppressRowGroups',
             toolPanelSuppressValues: 'suppressValues',

@@ -901,11 +901,6 @@ export class GridApi {
         this.gridCore.setSideBarPosition(position);
     }
 
-    public showToolPanel(show: boolean) {
-        console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setSideBarVisible`);
-        this.setSideBarVisible(show);
-    }
-
     public openToolPanel(key: string) {
         this.gridCore.openToolPanel(key);
     }

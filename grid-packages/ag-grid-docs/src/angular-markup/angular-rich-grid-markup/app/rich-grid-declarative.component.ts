@@ -25,7 +25,6 @@ export class RichGridDeclarativeComponent {
     public showGrid: boolean;
     private rowData: any[];
     public rowCount: string;
-    public showToolPanel: true;
     public modules: Module[] = AllModules;
 
     public components = {

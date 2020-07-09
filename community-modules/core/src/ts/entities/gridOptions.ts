@@ -333,8 +333,6 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    /** @deprecated */
-    showToolPanel?: boolean;
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
     columnTypes?: { [key: string]: ColDef; };
