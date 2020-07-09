@@ -286,7 +286,7 @@ SNIPPET
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true]) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
