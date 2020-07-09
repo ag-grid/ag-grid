@@ -320,11 +320,8 @@ export class GridOptionsWrapper {
     }
 
     public isRowModelDefault() {
-        return (
-            _.missing(this.gridOptions.rowModelType) ||
-            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE ||
-            this.gridOptions.rowModelType === Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL
-        );
+        return (_.missing(this.gridOptions.rowModelType) ||
+            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
     }
 
     public isFullRowEdit() {
@@ -1388,14 +1385,6 @@ export class GridOptionsWrapper {
 
         if (options.groupSuppressRow) {
             console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
-        }
-        if (options.rowModelType === 'inMemory') {
-            console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);
-            options.rowModelType = 'clientSide';
-        }
-        if (options.rowModelType === 'enterprise') {
-            console.warn(`ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.`);
-            options.rowModelType = 'serverSide';
         }
         if (options.layoutInterval) {
             console.warn(`ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.`);

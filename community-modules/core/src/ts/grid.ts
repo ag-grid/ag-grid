@@ -341,17 +341,6 @@ export class Grid {
     private getRowModelClass(registeredModules: Module[]): any {
         let rowModelType = this.gridOptions.rowModelType;
 
-        //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
-        if (rowModelType === 'enterprise') {
-            console.warn(`ag-Grid: enterprise rowModel deprecated. Should now be called server side row model instead.`);
-            rowModelType = Constants.ROW_MODEL_TYPE_SERVER_SIDE;
-        }
-
-        if (rowModelType === 'normal') {
-            console.warn(`ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.`);
-            rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-        }
-
         // default to client side
         if (!rowModelType) {
             rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
