@@ -30,7 +30,6 @@ export class ComponentUtil {
     }
 
     public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
-        checkForDeprecated(component);
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -83,8 +82,6 @@ export class ComponentUtil {
         if (!changes) {
             return;
         }
-
-        checkForDeprecated(changes);
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
@@ -222,9 +219,3 @@ export class ComponentUtil {
 }
 
 ComponentUtil.EVENTS = _.values<any>(Events);
-
-function checkForDeprecated(changes: any): void {
-    if (changes.rowDeselected || changes.onRowDeselected) {
-        console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
-    }
-}

@@ -1390,10 +1390,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.onRowDeselected || options.rowDeselected) {
-            console.warn('ag-grid: since version 3.4 event rowDeselected no longer exists, please check the docs');
-        }
-
         if (options.suppressMenuFilterPanel) {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true`);
         }
