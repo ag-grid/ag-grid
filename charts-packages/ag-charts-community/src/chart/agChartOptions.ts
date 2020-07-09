@@ -121,6 +121,7 @@ interface AgBaseChartOptions {
     tooltipTracking?: boolean;
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
+    listeners?: { [key in string]: Function };
 }
 
 interface AgBaseAxisOptions {
@@ -202,6 +203,7 @@ interface AgBaseSeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
+    listeners?: { [key in string]: Function };
 }
 
 interface AgSeriesTooltipRendererParams {
@@ -356,6 +358,7 @@ interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
 }
 
 interface AgPieSeriesOptions extends AgBaseSeriesOptions {
+    type?: 'pie';
     title?: AgChartCaptionOptions;
     label?: AgPieSeriesLabelOptions;
     callout?: {
