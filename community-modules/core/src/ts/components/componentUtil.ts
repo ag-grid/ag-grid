@@ -169,10 +169,6 @@ export class ComponentUtil {
             api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
         }
 
-        if (changes.gridAutoHeight) {
-            api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
-        }
-
         if (changes.suppressClipboardPaste) {
             api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }

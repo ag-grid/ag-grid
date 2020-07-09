@@ -1386,13 +1386,6 @@ export class GridOptionsWrapper {
         if (options.groupSuppressRow) {
             console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
         }
-        if (options.layoutInterval) {
-            console.warn(`ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.`);
-        }
-        if (options.gridAutoHeight) {
-            console.warn(`ag-grid: since version 19.x, gridAutoHeight is gone, please use domLayout=autoHeight instead`);
-            options.domLayout = 'autoHeight';
-        }
         if (options.showToolPanel === true) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
             options.showToolPanel = undefined;

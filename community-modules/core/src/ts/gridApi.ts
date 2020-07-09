@@ -861,11 +861,6 @@ export class GridApi {
         this.doLayout();
     }
 
-    public setGridAutoHeight(gridAutoHeight: boolean) {
-        console.warn('api.setGridAutoHeight(boolean) is deprecated, please use api.setDomLayout() instead');
-        this.setDomLayout(gridAutoHeight ? 'autoHeight' : 'normal');
-    }
-
     public setDomLayout(domLayout: string) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }
