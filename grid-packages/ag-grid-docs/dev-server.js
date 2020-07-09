@@ -40,7 +40,7 @@ const WINDOWS = /^win/.test(os.platform());
 process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
 
 function reporter(middlewareOptions, options) {
-    const {log, state, stats} = options;
+    const { log, state, stats } = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -92,13 +92,13 @@ function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: {AG_DEV: 'true'}
+        env: { AG_DEV: 'true' }
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -147,7 +147,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -589,7 +589,7 @@ function moduleChanged(moduleRoot) {
 
 function updateModuleChangedHash(moduleRoot) {
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
-    const npm = WINDOWS ? 'npm.cmd' : 'npm';
+        const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
     cp.spawnSync(npm, ['run', 'hash'], {
         cwd: resolvedPath
@@ -734,12 +734,12 @@ module.exports = async (skipFrameworks, done ) => {
                 process.exit(0);
             });
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function (req, res, next) {
+            app.use(function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -755,6 +755,7 @@ module.exports = async (skipFrameworks, done ) => {
 
             addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
@@ -765,10 +766,18 @@ module.exports = async (skipFrameworks, done ) => {
             // PHP
             launchPhpCP(app);
 
-            app.listen(EXPRESS_PORT, function () {
+            app.listen(EXPRESS_PORT, function() {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();
         });
 };
 
+// *** Don't remove these unused vars! ***
+//     node dev-server.js generate-examples [src directory]
+// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+const [cmd, script, execFunc, exampleDir, watch] = process.argv;
+
+if (process.argv.length >= 3 && execFunc === 'generate-examples') {
+    generateExamples(exampleDir);
+}

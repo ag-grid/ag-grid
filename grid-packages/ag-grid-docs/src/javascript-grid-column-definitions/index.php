@@ -164,7 +164,7 @@ SNIPPET
     The following examples demonstrates this configuration.
 </p>
 
-<?= grid_example('Column Definition Example', 'column-definition', 'generated', ['grid' => ['height' => '100%']]) ?>
+<?= grid_example('Column Definition Example', 'column-definition', 'generated', ['grid' => ['height' => '100%'], 'reactFunctional' => true]) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -228,7 +228,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Column IDs', 'column-ids', 'generated') ?>
+<?= grid_example('Column IDs', 'column-ids', 'generated', ['reactFunctional' => true]) ?>
 
 <h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
@@ -286,7 +286,7 @@ SNIPPET
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
