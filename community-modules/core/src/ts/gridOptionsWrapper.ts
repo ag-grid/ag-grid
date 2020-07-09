@@ -793,10 +793,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.angularCompileFilters);
     }
 
-    public isAngularCompileHeaders() {
-        return isTrue(this.gridOptions.angularCompileHeaders);
-    }
-
     public isDebug() {
         return isTrue(this.gridOptions.debug);
     }
@@ -1392,21 +1388,6 @@ export class GridOptionsWrapper {
 
         if (options.groupSuppressRow) {
             console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
-        }
-        if (options.paginationStartPage) {
-            console.warn(`ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(${options.paginationStartPage}) instead.`);
-        }
-        if (options.getHeaderCellTemplate) {
-            console.warn(`ag-grid: since version 15.x, getHeaderCellTemplate is gone, please check the header documentation on how to set header templates.`);
-        }
-        if (options.headerCellTemplate) {
-            console.warn(`ag-grid: since version 15.x, headerCellTemplate is gone, please check the header documentation on how to set header templates.`);
-        }
-        if (options.headerCellRenderer) {
-            console.warn(`ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.`);
-        }
-        if (options.angularCompileHeaders) {
-            console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
         }
         if (options.rowModelType === 'inMemory') {
             console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);

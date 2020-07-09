@@ -374,13 +374,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }
         }
 
-        if (colDefAny.headerCellTemplate) {
-            warnOnce('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.', 'ColumnCheck_eroihxcm');
-        }
-        if (colDefAny.headerCellRenderer) {
-            warnOnce('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.', 'ColumnCheck_terteuh');
-        }
-
         if (colDefAny.volatile) {
             warnOnce('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.', 'ColumnCheck_weoihjxcv');
         }

@@ -177,7 +177,7 @@ export interface GridOptions {
     icons?: any; // should be typed
     angularCompileRows?: boolean;
     angularCompileFilters?: boolean;
-    angularCompileHeaders?: boolean;
+
     suppressLoadingOverlay?: boolean;
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
@@ -252,7 +252,6 @@ export interface GridOptions {
     cacheBlockSize?: number;
     blockLoadDebounceMillis?: number;
     paginationAutoPageSize?: boolean;
-    paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
 
     pagination?: boolean;

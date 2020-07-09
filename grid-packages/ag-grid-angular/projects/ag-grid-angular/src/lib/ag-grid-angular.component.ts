@@ -234,7 +234,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cacheBlockSize : any = undefined;
     @Input() public infiniteInitialRowCount : any = undefined;
     @Input() public scrollbarWidth : any = undefined;
-    @Input() public paginationStartPage : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
     @Input() public asyncTransactionWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
@@ -324,7 +323,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableServerSideFilter : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
-    @Input() public angularCompileHeaders : any = undefined;
     @Input() public groupSuppressAutoColumn : any = undefined;
     @Input() public groupSelectsChildren : any = undefined;
     @Input() public groupIncludeFooter : any = undefined;
