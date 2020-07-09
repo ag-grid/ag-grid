@@ -43,7 +43,7 @@ export class MultiFilter extends Component implements IFilterComp {
     private combineFilters: boolean;
 
     constructor() {
-        super(/* html */`<div class="multi-filter ag-menu-list"></div>`);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
