@@ -357,9 +357,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAsyncEvents : any = undefined;
     @Input() public allowContextMenuWithControlKey : any = undefined;
     @Input() public suppressContextMenu : any = undefined;
-    @Input() public suppressMenuFilterPanel : any = undefined;
-    @Input() public suppressMenuMainPanel : any = undefined;
-    @Input() public suppressMenuColumnPanel : any = undefined;
     @Input() public rememberGroupStateWhenNewData : any = undefined;
     @Input() public enableCellChangeFlash : any = undefined;
     @Input() public suppressDragLeaveHidesColumns : any = undefined;
