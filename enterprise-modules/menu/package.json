@@ -47,7 +47,7 @@
     "@ag-grid-enterprise/column-tool-panel": "~23.2.0"
   },
   "devDependencies": {
-    "typescript": "~3.9.6"
+    "typescript": "~3.6.5"
   },
   "publishConfig": {
     "access": "public"
