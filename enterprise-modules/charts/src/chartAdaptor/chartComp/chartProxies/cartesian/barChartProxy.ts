@@ -1,7 +1,7 @@
 import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
 import {
     CartesianChart,
-    AgChart
+    AgChart, AgCartesianChartOptions
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -17,31 +17,36 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
     protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
-        const isColumn = this.isColumnChart();
+        const isColumnChart = this.isColumnChart();
 
         options = options || this.chartOptions;
-        options.theme = this.getTheme();
         options.autoSize = true;
         const { seriesDefaults } = options;
         options.axes = [{
-            ...options.xAxis,
-            position: isColumn ? 'bottom' : 'left',
-            type: grouping ? 'groupedCategory' : 'category'
+            // ...options.xAxis,
+            position: isColumnChart ? 'bottom' : 'left',
+            type: grouping ? 'groupedCategory' : 'category',
+            label: {
+                rotation: isColumnChart ? 335 : 0
+            }
         }, {
-            ...options.yAxis,
-            position: isColumn ? 'left' : 'bottom',
-            type: 'number'
+            // ...options.yAxis,
+            position: isColumnChart ? 'left' : 'bottom',
+            type: 'number',
+            label: {
+                rotation: isColumnChart ? 0 : 335
+            }
         }];
         options.series = [{
             ...this.getSeriesDefaults(),
-            fills: seriesDefaults.fills || seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width
+            // fills: seriesDefaults.fills || seriesDefaults.fill.colors,
+            // fillOpacity: seriesDefaults.fill.opacity,
+            // strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
+            // strokeOpacity: seriesDefaults.stroke.opacity,
+            // strokeWidth: seriesDefaults.stroke.width
         }];
 
-        return AgChart.create(options, parentElement);
+        return AgChart.create<AgCartesianChartOptions>(options, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -50,7 +55,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.updateAxes('category', !this.isColumnChart());
 
         const options: any = this.chartOptions;
-        options.theme = this.getTheme();
 
         const series = options.series[0];
         series.data = this.transformData(params.data, params.category.id);
@@ -85,6 +89,10 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         };
 
         return options;
+    }
+
+    protected getBarChartOptions(): AgCartesianChartOptions {
+        return this.getCartesianChartOptions();
     }
 
     private isColumnChart(): boolean {

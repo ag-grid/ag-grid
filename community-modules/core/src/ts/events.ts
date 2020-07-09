@@ -179,7 +179,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
 export interface ChartOptionsChanged extends AgGridEvent {
     chartId: string;
     chartType: ChartType;
-    chartTheme: string;
+    chartPalette: string;
     chartOptions: ChartOptions<any>;
 }
 

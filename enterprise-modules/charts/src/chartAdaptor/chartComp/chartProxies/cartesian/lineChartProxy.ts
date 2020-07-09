@@ -1,5 +1,5 @@
 import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, AgChart, findIndex } from "ag-charts-community";
+import { CartesianChart, AgChart, findIndex, AgCartesianChartOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
@@ -13,20 +13,20 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options: any): CartesianChart {
+    protected createChart(chartOptions?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        options = options || this.chartOptions;
-        options.theme = this.getTheme();
+        chartOptions = chartOptions || this.chartOptions;
+        const options: AgCartesianChartOptions = chartOptions;
         options.autoSize = true;
         options.axes = [{
-            ...options.xAxis,
+            ...chartOptions.xAxis,
             position: 'bottom',
             type: grouping ? 'groupedCategory' : 'category',
             paddingInner: 1,
             paddingOuter: 0
         }, {
-            ...options.yAxis,
+            ...chartOptions.yAxis,
             position: 'left',
             type: 'number'
         }];
@@ -35,8 +35,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const options: any = this.chartOptions;
-        options.theme = this.getTheme();
+        const options: AgCartesianChartOptions = this.chartOptions;
 
         this.chartProxyParams.grouping = params.grouping;
 

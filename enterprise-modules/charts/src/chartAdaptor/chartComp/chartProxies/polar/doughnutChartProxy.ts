@@ -1,4 +1,10 @@
-import { ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart } from "ag-charts-community";
+import {
+    AgChart,
+    AgPolarChartOptions,
+    PieSeries,
+    PieSeriesOptions as PieSeriesInternalOptions,
+    PolarChart
+} from "ag-charts-community";
 import { _, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -12,8 +18,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+    protected createChart(chartOptions?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        chartOptions = chartOptions || this.chartOptions;
+
+        const options: AgPolarChartOptions = chartOptions;
+        return AgChart.create(options, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
