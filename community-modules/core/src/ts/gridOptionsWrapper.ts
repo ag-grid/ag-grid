@@ -547,10 +547,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.functionsPassive);
     }
 
-    public isSuppressTabbing() {
-        return isTrue(this.gridOptions.suppressTabbing);
-    }
-
     public isSuppressChangeDetection() {
         return isTrue(this.gridOptions.suppressChangeDetection);
     }
@@ -1472,12 +1468,6 @@ export class GridOptionsWrapper {
 
         if (options.deprecatedEmbedFullWidthRows) {
             console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
-        }
-
-        if (options.suppressTabbing) {
-            console.warn(
-                `ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.`
-            );
         }
 
         if (options.doesDataFlower) {

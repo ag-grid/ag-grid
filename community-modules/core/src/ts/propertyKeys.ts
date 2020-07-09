@@ -50,7 +50,7 @@ export class PropertyKeys {
         'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'animateRows',
         'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl', 'suppressClickEdit',
         'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging', 'enableMultiRowDragging', 'enableGroupEdit',
-        'embedFullWidthRows', 'deprecatedEmbedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
+        'embedFullWidthRows', 'deprecatedEmbedFullWidthRows', 'suppressPaginationPanel', 'floatingFilter',
         'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize',
         'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter', 'deltaRowDataMode', 'ensureDomOrder', 'accentedSort',
         'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',

@@ -379,7 +379,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableGroupEdit : any = undefined;
     @Input() public embedFullWidthRows : any = undefined;
     @Input() public deprecatedEmbedFullWidthRows : any = undefined;
-    @Input() public suppressTabbing : any = undefined;
     @Input() public suppressPaginationPanel : any = undefined;
     @Input() public floatingFilter : any = undefined;
     @Input() public groupHideOpenParents : any = undefined;
