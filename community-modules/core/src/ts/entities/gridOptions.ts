@@ -312,7 +312,6 @@ export interface GridOptions {
     /** @deprecated in v11.0 substituted by autoGroupColumnDef */
     groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
-    forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
 

@@ -1389,56 +1389,11 @@ export class GridOptionsWrapper {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
-        if (options.suppressUnSort) {
-            console.warn('ag-grid: as of v1.12.4 suppressUnSort is not used. Please use sortingOrder instead.');
-        }
-        if (options.suppressDescSort) {
-            console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortingOrder instead.');
-        }
-        if (options.groupAggFields) {
-            console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
-        }
-        if (options.groupHidePivotColumns) {
-            console.warn('ag-grid: as of v3 groupHidePivotColumns is not used as pivot columns are now called rowGroup columns. Please refer to the documentation');
-        }
-        if (options.groupKeys) {
-            console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
-        }
-        if (typeof options.groupDefaultExpanded === 'boolean') {
-            console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
-        }
+
         if (options.onRowDeselected || options.rowDeselected) {
             console.warn('ag-grid: since version 3.4 event rowDeselected no longer exists, please check the docs');
         }
-        if (options.rowsAlreadyGrouped) {
-            console.warn('ag-grid: since version 3.4 rowsAlreadyGrouped no longer exists, please use getNodeChildDetails() instead');
-        }
-        if (options.groupAggFunction) {
-            console.warn('ag-grid: since version 4.3.x groupAggFunction is now called groupRowAggNodes');
-        }
-        if (options.checkboxSelection) {
-            console.warn(
-                'ag-grid: since version 8.0.x checkboxSelection is not supported as a grid option. ' + 'If you want this on all columns, use defaultColDef instead and set it there'
-            );
-        }
-        if (options.paginationInitialRowCount) {
-            console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');
-        }
-        if (options.infinitePageSize) {
-            console.warn('ag-grid: since version 9.0.x infinitePageSize is now called cacheBlockSize');
-        }
-        if (options.infiniteBlockSize) {
-            console.warn('ag-grid: since version 10.0.x infiniteBlockSize is now called cacheBlockSize');
-        }
-        if (options.maxPagesInCache) {
-            console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
-        }
-        if (options.paginationOverflowSize) {
-            console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
-        }
-        // if (options.forPrint) {
-        //     console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
-        // }
+
         if (options.suppressMenuFilterPanel) {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true`);
         }

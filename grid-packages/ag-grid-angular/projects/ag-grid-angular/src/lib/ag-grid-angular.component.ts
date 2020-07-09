@@ -237,7 +237,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public infiniteInitialRowCount : any = undefined;
     @Input() public scrollbarWidth : any = undefined;
     @Input() public paginationStartPage : any = undefined;
-    @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
     @Input() public asyncTransactionWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
@@ -335,7 +334,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupUseEntireRow : any = undefined;
     @Input() public groupSuppressRow : any = undefined;
     @Input() public groupSuppressBlankHeader : any = undefined;
-    @Input() public forPrint : any = undefined;
     @Input() public suppressMenuHide : any = undefined;
     @Input() public rowDeselection : any = undefined;
     @Input() public unSortIcon : any = undefined;
