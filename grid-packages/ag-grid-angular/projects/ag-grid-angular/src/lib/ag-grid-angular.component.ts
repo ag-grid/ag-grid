@@ -362,7 +362,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressDragLeaveHidesColumns : any = undefined;
     @Input() public suppressMiddleClickScrolls : any = undefined;
     @Input() public suppressPreventDefaultOnMouseWheel : any = undefined;
-    @Input() public suppressUseColIdForGroups : any = undefined;
     @Input() public suppressCopyRowsToClipboard : any = undefined;
     @Input() public copyHeadersToClipboard : any = undefined;
     @Input() public pivotMode : any = undefined;
