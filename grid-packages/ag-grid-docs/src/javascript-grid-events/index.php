@@ -156,6 +156,7 @@ SNIPPET
         │   │      }</span>
         │   ├── ColumnResizedEvent <span class="event-properties">{
         │   │        <span class="event-attribute">finished</span>: boolean // set to true for last event in a sequence of move events
+        │   │        <span class="event-attribute">flexColumns</span>: Column[] // any columns resized due to flex
         │   │      }</span>
         │   ├── ColumnVisibleEvent <span class="event-properties">{
         │   │        <span class="event-attribute">visible</span>: boolean // true if column was set to visible, false if set to hide

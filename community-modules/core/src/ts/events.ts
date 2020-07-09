@@ -268,6 +268,7 @@ export interface ColumnEvent extends AgGridEvent {
 
 export interface ColumnResizedEvent extends ColumnEvent {
     finished: boolean;
+    flexColumns: Column[];
 }
 
 export interface ColumnPivotChangedEvent extends ColumnEvent { }

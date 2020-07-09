@@ -449,15 +449,20 @@ export class ColumnController extends BeanStub {
             }, source);
         }
 
-        if (columnsAutosized.length) {
+        this.fireColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
+    }
+
+    public fireColumnResizedEvent(columns: Column[], finished: boolean, source: ColumnEventType, flexColumns: Column[] = null): void {
+        if (columns && columns.length) {
             const event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: columnsAutosized,
-                column: columnsAutosized.length === 1 ? columnsAutosized[0] : null,
-                finished: true,
+                columns: columns,
+                column: columns.length === 1 ? columns[0] : null,
+                flexColumns: flexColumns,
+                finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
-                source: "autosizeColumns"
+                source: source
             };
             this.eventService.dispatchEvent(event);
         }
@@ -1003,16 +1008,7 @@ export class ColumnController extends BeanStub {
             // even though we are not going to resize beyond min/max size, we still need to raise event when finished
             if (finished) {
                 const columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
-                const event: ColumnResizedEvent = {
-                    type: Events.EVENT_COLUMN_RESIZED,
-                    columns: columns,
-                    column: columns && columns.length === 1 ? columns[0] : null,
-                    finished: finished,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
-                    source: source
-                };
-                this.eventService.dispatchEvent(event);
+                this.fireColumnResizedEvent(columns, finished, source);
             }
 
             return; // don't resize!
@@ -1114,15 +1110,13 @@ export class ColumnController extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
-        let flexedCols: Column[] = [];
+        let colsNotToFlex: Column[] = [];
+        resizeSets.forEach(set => {
+            colsNotToFlex = colsNotToFlex.concat(set.columns);
+        });
+        const flexedCols = this.refreshFlexedColumns({resizingCols: colsNotToFlex, skipSetLeft: true});
 
         if (atLeastOneColChanged) {
-            let colsNotToFlex: Column[] = [];
-            resizeSets.forEach(set => {
-                colsNotToFlex = colsNotToFlex.concat(set.columns);
-            });
-            flexedCols = this.refreshFlexedColumns({colsToSkip: colsNotToFlex, skipSetLeft: true});
-
             this.setLeftValues(source);
             this.updateBodyWidths();
             this.checkDisplayedVirtualColumns();
@@ -1136,16 +1130,7 @@ export class ColumnController extends BeanStub {
         const colsForEvent = allCols.concat(flexedCols);
 
         if (atLeastOneColChanged || finished) {
-            const event: ColumnResizedEvent = {
-                type: Events.EVENT_COLUMN_RESIZED,
-                columns: colsForEvent,
-                column: colsForEvent.length === 1 ? colsForEvent[0] : null,
-                finished: finished,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            this.eventService.dispatchEvent(event);
+            this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
         }
     }
 
@@ -2078,7 +2063,7 @@ export class ColumnController extends BeanStub {
         this.raiseColumnVisibleEvent(cols, source);
 
         const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
-        this.raiseColumnResizeEvent(getChangedColumns(resizeChangePredicate), source);
+        this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
 
         // special handling for moved column events
         this.raiseColumnMovedEvent(columnStateBefore, source);
@@ -2108,22 +2093,6 @@ export class ColumnController extends BeanStub {
             visible: undefined,
             columns: changedColumns,
             column: null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    private raiseColumnResizeEvent(changedColumns: Column[], source: ColumnEventType) {
-        if (!changedColumns.length) { return; }
-
-        const event: ColumnResizedEvent = {
-            type: Events.EVENT_COLUMN_RESIZED,
-            columns: changedColumns,
-            column: null,
-            finished: true,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source
@@ -3445,29 +3414,38 @@ export class ColumnController extends BeanStub {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
 
-    public refreshFlexedColumns(params: {colsToSkip?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean} = {}): Column[] {
+    public refreshFlexedColumns(params: {resizingCols?: Column[], skipSetLeft?: boolean, viewportWidth?: number, source?: ColumnEventType, fireResizedEvent?: boolean, updateBodyWidths?: boolean} = {}): Column[] {
         const source = params.source ? params.source : 'flex';
 
         if (params.viewportWidth!=null) {
             this.flexViewportWidth = params.viewportWidth;
         }
 
-        // if (!this.flexActive) { return; }
-
         if (!this.flexViewportWidth) { return; }
 
         // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
+
+        let flexAfterDisplayIndex = -1;
+        if (params.resizingCols) {
+            params.resizingCols.forEach( col => {
+                const indexOfCol = this.displayedCenterColumns.indexOf(col);
+                if (flexAfterDisplayIndex<indexOfCol) {
+                    flexAfterDisplayIndex = indexOfCol;
+                }
+            });
+        }
+
         const isColFlex = (col: Column) => {
-            const skip = params.colsToSkip ? params.colsToSkip.indexOf(col)>=0 : false;
-            return col.getFlex() && !skip;
+            const skipBecauseResizing = params.resizingCols ? params.resizingCols.indexOf(col)>=0 : false;
+            const skipBecauseBeforeResizingCols = this.displayedCenterColumns.indexOf(col) < flexAfterDisplayIndex;
+            return col.getFlex() && !skipBecauseResizing && !skipBecauseBeforeResizingCols;
         };
         const knownWidthColumns = this.displayedCenterColumns.filter(col => !isColFlex(col) );
         const flexingColumns = this.displayedCenterColumns.filter(col => isColFlex(col) );
 
         if (!flexingColumns.length) {
-            // this.flexActive = false;
             return [];
         }
 
@@ -3514,7 +3492,7 @@ export class ColumnController extends BeanStub {
         }
 
         if (params.fireResizedEvent) {
-            this.fireResizedEventForColumns(flexingColumns, source);
+            this.fireColumnResizedEvent(flexingColumns, true, source, flexingColumns);
         }
 
         return flexingColumns;
@@ -3597,22 +3575,7 @@ export class ColumnController extends BeanStub {
 
         if (silent) { return; }
 
-        this.fireResizedEventForColumns(colsToFireEventFor, source);
-    }
-
-    private fireResizedEventForColumns(columns: Column[], source: ColumnEventType) {
-        columns.forEach((column: Column) => {
-            const event: ColumnResizedEvent = {
-                type: Events.EVENT_COLUMN_RESIZED,
-                column: column,
-                columns: [column],
-                finished: true,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source
-            };
-            this.eventService.dispatchEvent(event);
-        });
+        this.fireColumnResizedEvent(colsToFireEventFor, true, source);
     }
 
     private buildDisplayedTrees(visibleColumns: Column[]) {
