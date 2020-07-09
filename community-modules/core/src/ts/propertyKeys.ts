@@ -20,7 +20,7 @@ export class PropertyKeys {
     ];
 
     public static ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
     ];
 
     public static NUMBER_PROPERTIES = [

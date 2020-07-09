@@ -315,8 +315,6 @@ export interface GridOptions {
     rowStyle?: any;
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
-    /** @deprecated slaveGrids, replace with alignedGrids */
-    slaveGrids?: GridOptions[];
     alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;

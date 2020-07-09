@@ -174,7 +174,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public rowStyle : any = undefined;
     @Input() public context : any = undefined;
     @Input() public autoGroupColumnDef : any = undefined;
-    @Input() public groupColumnDef : any = undefined;
     @Input() public localeText : any = undefined;
     @Input() public icons : any = undefined;
     @Input() public datasource : any = undefined;
