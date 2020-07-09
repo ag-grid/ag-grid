@@ -39,8 +39,112 @@ export class ChartTheme {
 
     private readonly config: any;
 
-    static readonly defaults: any = {
-        cartesian: {
+    private static fontFamily = 'Verdana, sans-serif';
+
+    private static getAxisDefaults(): any {
+        return {
+            title: {
+                enabled: true,
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                },
+                text: 'Axis Title',
+                fontStyle: undefined,
+                fontWeight: 'bold',
+                fontSize: 14,
+                fontFamily: this.fontFamily,
+                color: 'rgb(70, 70, 70)'
+            },
+            label: {
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: this.fontFamily,
+                padding: 5,
+                rotation: 0,
+                color: 'rgb(87, 87, 87)',
+                formatter: undefined
+            },
+            line: {
+                width: 1,
+                color: 'rgb(195, 195, 195)'
+            },
+            tick: {
+                width: 1,
+                size: 6,
+                color: 'rgb(195, 195, 195)',
+                count: 10
+            },
+            gridStyle: [{
+                stroke: 'rgb(219, 219, 219)',
+                lineDash: [4, 2]
+            }]
+        };
+    }
+
+    private static getSeriesDefaults(): any {
+        return {
+            tooltipEnabled: true,
+            visible: true,
+            showInLegend: true
+        };
+    }
+
+    private static getBarSeriesDefaults(): any {
+        return {
+            ...this.getSeriesDefaults(),
+            flipXY: false,
+            fills: [],
+            strokes: [],
+            fillOpacity: 1,
+            strokeOpacity: 1,
+            xKey: '',
+            xName: '',
+            yKeys: [],
+            yNames: [],
+            grouped: false,
+            normalizedTo: undefined,
+            strokeWidth: 1,
+            tooltipRenderer: undefined,
+            highlightStyle: {
+                fill: 'yellow'
+            },
+            label: {
+                enabled: false,
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: this.fontFamily,
+                color: 'rgb(70, 70, 70)'
+            },
+            shadow: {
+                enabled: false,
+                color: 'rgba(0, 0, 0, 0.5)',
+                xOffset: 3,
+                yOffset: 3,
+                blur: 5
+            }
+        };
+    }
+
+    private static getCartesianSeriesMarkerDefaults(): any {
+        return {
+            enabled: true,
+            shape: 'circle',
+            size: 8,
+            minSize: 8,
+            fill: undefined,
+            stroke: undefined,
+            strokeWidth: 1,
+            formatter: undefined
+        };
+    }
+
+    private static getChartDefaults(): any {
+        return {
             width: 600,
             height: 300,
             background: {
@@ -64,8 +168,8 @@ export class ChartTheme {
                 text: 'Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
-                fontFamily: 'Verdana, sans-serif',
+                fontSize: 16,
+                fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
             },
             subtitle: {
@@ -80,7 +184,7 @@ export class ChartTheme {
                 fontStyle: undefined,
                 fontWeight: undefined,
                 fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
+                fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)'
             },
             legend: {
@@ -101,207 +205,38 @@ export class ChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif'
+                        fontFamily: this.fontFamily
                     }
                 }
-            },
+            }
+        };
+    }
+
+    static readonly defaults: any = {
+        cartesian: {
+            ...ChartTheme.getChartDefaults(),
             axes: {
                 number: {
-                    title: {
-                        enabled: true,
-                        padding: {
-                            top: 10,
-                            right: 10,
-                            bottom: 10,
-                            left: 10
-                        },
-                        text: 'Axis Title',
-                        fontStyle: undefined,
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'rgb(70, 70, 70)'
-                    },
-                    label: {
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        padding: 5,
-                        rotation: 0,
-                        color: 'rgb(87, 87, 87)',
-                        formatter: undefined
-                    },
-                    line: {
-                        width: 1,
-                        color: 'rgb(195, 195, 195)'
-                    },
-                    tick: {
-                        width: 1,
-                        size: 6,
-                        color: 'rgb(195, 195, 195)',
-                        count: 10
-                    },
-                    gridStyle: [{
-                        stroke: 'rgb(219, 219, 219)',
-                        lineDash: [4, 2]
-                    }]
+                    ...ChartTheme.getAxisDefaults()
                 },
                 category: {
-                    title: {
-                        enabled: true,
-                        padding: {
-                            top: 10,
-                            right: 10,
-                            bottom: 10,
-                            left: 10
-                        },
-                        text: 'Axis Title',
-                        fontStyle: undefined,
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'rgb(70, 70, 70)'
-                    },
-                    label: {
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        padding: 5,
-                        rotation: 0,
-                        color: 'rgb(87, 87, 87)',
-                        formatter: undefined
-                    },
-                    line: {
-                        width: 1,
-                        color: 'rgb(195, 195, 195)'
-                    },
-                    tick: {
-                        width: 1,
-                        size: 6,
-                        color: 'rgb(195, 195, 195)',
-                        count: 10
-                    },
-                    gridStyle: [{
-                        stroke: 'rgb(219, 219, 219)',
-                        lineDash: [4, 2]
-                    }]
+                    ...ChartTheme.getAxisDefaults()
                 },
                 time: {
-                    title: {
-                        enabled: true,
-                        padding: {
-                            top: 10,
-                            right: 10,
-                            bottom: 10,
-                            left: 10
-                        },
-                        text: 'Axis Title',
-                        fontStyle: undefined,
-                        fontWeight: 'bold',
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'rgb(70, 70, 70)'
-                    },
-                    label: {
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        padding: 5,
-                        rotation: 0,
-                        color: 'rgb(87, 87, 87)',
-                        formatter: undefined
-                    },
-                    line: {
-                        width: 1,
-                        color: 'rgb(195, 195, 195)'
-                    },
-                    tick: {
-                        width: 1,
-                        size: 6,
-                        color: 'rgb(195, 195, 195)',
-                        count: 10
-                    },
-                    gridStyle: [{
-                        stroke: 'rgb(219, 219, 219)',
-                        lineDash: [4, 2]
-                    }]
+                    ...ChartTheme.getAxisDefaults()
                 }
             },
             series: {
                 column: {
-                    visible: true,
-                    showInLegend: true,
-                    flipXY: false,
-                    fills: [],
-                    strokes: [],
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    xKey: '',
-                    xName: '',
-                    yKeys: [],
-                    yNames: [],
-                    grouped: false,
-                    normalizedTo: undefined,
-                    strokeWidth: 1,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    label: {
-                        enabled: false,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'rgb(70, 70, 70)'
-                    },
-                    shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    }
+                    ...ChartTheme.getBarSeriesDefaults(),
+                    flipXY: false
                 },
                 bar: {
-                    visible: true,
-                    showInLegend: true,
-                    flipXY: true,
-                    fills: [],
-                    strokes: [],
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    xKey: '',
-                    xName: '',
-                    yKeys: [],
-                    yNames: [],
-                    grouped: false,
-                    normalizedTo: undefined,
-                    strokeWidth: 1,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    label: {
-                        enabled: false,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
-                        color: 'rgb(70, 70, 70)'
-                    },
-                    shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    }
+                    ...ChartTheme.getBarSeriesDefaults(),
+                    flipXY: true
                 },
                 line: {
-                    visible: true,
-                    showInLegend: true,
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -315,19 +250,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        enabled: true,
-                        shape: 'circle',
-                        size: 8,
-                        minSize: 8,
-                        fill: undefined,
-                        stroke: undefined,
-                        strokeWidth: 1,
-                        formatter: undefined
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 scatter: {
-                    visible: true,
-                    showInLegend: true,
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -347,19 +274,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        enabled: true,
-                        shape: 'circle',
-                        size: 8,
-                        minSize: 8,
-                        fill: undefined,
-                        stroke: undefined,
-                        strokeWidth: 1,
-                        formatter: undefined
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 area: {
-                    visible: true,
-                    showInLegend: true,
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -383,19 +302,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        enabled: true,
-                        shape: 'circle',
-                        size: 8,
-                        minSize: 8,
-                        fill: undefined,
-                        stroke: undefined,
-                        strokeWidth: 1,
-                        formatter: undefined
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 histogram: {
-                    visible: true,
-                    showInLegend: true,
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -446,74 +357,10 @@ export class ChartTheme {
             }
         },
         polar: {
-            width: 600,
-            height: 300,
-            background: {
-                visible: true,
-                fill: 'white'
-            },
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
-            },
-            title: {
-                enabled: true,
-                padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                },
-                text: 'Title',
-                fontStyle: undefined,
-                fontWeight: 'bold',
-                fontSize: 14,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'rgb(70, 70, 70)'
-            },
-            subtitle: {
-                enabled: true,
-                padding: {
-                    top: 10,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                },
-                text: 'Subtitle',
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'rgb(140, 140, 140)'
-            },
-            legend: {
-                enabled: true,
-                position: 'right',
-                spacing: 20,
-                item: {
-                    paddingX: 16,
-                    paddingY: 8,
-                    marker: {
-                        shape: undefined,
-                        size: 15,
-                        strokeWidth: 1,
-                        padding: 8
-                    },
-                    label: {
-                        color: 'black',
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif'
-                    }
-                }
-            },
+            ...ChartTheme.getChartDefaults(),
             series: {
                 pie: {
-                    visible: true,
-                    showInLegend: true,
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined, // Caption
                     angleKey: '',
                     angleName: '',
@@ -526,7 +373,7 @@ export class ChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif',
+                        fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)',
                         offset: 3,
                         minAngle: 20
