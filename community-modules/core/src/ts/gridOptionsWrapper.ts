@@ -1393,17 +1393,9 @@ export class GridOptionsWrapper {
         if (options.groupSuppressRow) {
             console.warn(`ag-grid: since version 18.2.x, 'groupSuppressRow' should not be used anymore. Instead remove row groups and perform custom sorting.`);
         }
-
-        if (options.floatingTopRowData) {
-            console.warn(`ag-grid: since version 12.x, floatingTopRowData is now called pinnedTopRowData`);
-        }
-        if (options.floatingBottomRowData) {
-            console.warn(`ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData`);
-        }
         if (options.paginationStartPage) {
             console.warn(`ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(${options.paginationStartPage}) instead.`);
         }
-
         if (options.getHeaderCellTemplate) {
             console.warn(`ag-grid: since version 15.x, getHeaderCellTemplate is gone, please check the header documentation on how to set header templates.`);
         }
