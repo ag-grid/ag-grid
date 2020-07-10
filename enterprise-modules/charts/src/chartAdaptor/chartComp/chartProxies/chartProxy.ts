@@ -17,11 +17,10 @@ import {
     AreaSeries,
     Caption,
     CategoryAxis,
-    Chart,
     BarSeries,
     DropShadow,
     Padding,
-    PieSeries
+    PieSeries, AgChartOptions, IChartTheme
 } from "ag-charts-community";
 import { ChartPalette, ChartPaletteName, palettes } from "./palettes";
 
@@ -57,7 +56,7 @@ export interface UpdateChartParams {
     fields: FieldDefinition[];
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+export abstract class ChartProxy {
 
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
@@ -65,9 +64,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly gridApi: GridApi;
     private readonly columnApi: ColumnApi;
 
-    protected chart: TChart;
+    protected chart: any;
     protected customPalette: ChartPalette;
-    protected chartOptions: TOptions;
+    protected chartOptions: AgChartOptions;
+    protected userTheme: IChartTheme;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -77,9 +77,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.columnApi = chartProxyParams.columnApi;
     }
 
-    protected abstract createChart(options?: TOptions): TChart;
+    protected abstract createChart(options?: AgChartOptions): any;
 
-    public recreateChart(options?: TOptions): void {
+    public recreateChart(options?: AgChartOptions): void {
         if (this.chart) {
             this.destroyChart();
         }
@@ -89,7 +89,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public abstract update(params: UpdateChartParams): void;
 
-    public getChart(): TChart {
+    public getChart(): any {
         return this.chart;
     }
 
@@ -104,52 +104,52 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-    protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
+    // protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    // protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+    // protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
-    protected abstract getDefaultOptions(): TOptions;
+    protected abstract getDefaultOptions(): AgChartOptions;
 
     protected initChartOptions(): void {
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
-            const overriddenOptions = processChartOptions(params) as TOptions;
-
-            // ensure we have everything we need, in case the processing removed necessary options
-            const safeOptions = this.getDefaultOptions();
-            _.mergeDeep(safeOptions, overriddenOptions, false);
-
-            // this.overridePalette(safeOptions);
-            this.chartOptions = safeOptions;
+            // const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
+            // const overriddenOptions = processChartOptions(params) as AgChartOptions;
+            //
+            // // ensure we have everything we need, in case the processing removed necessary options
+            // const safeOptions = this.getDefaultOptions();
+            // _.mergeDeep(safeOptions, overriddenOptions, false);
+            //
+            // // this.overridePalette(safeOptions);
+            // this.chartOptions = safeOptions;
         } else {
             this.chartOptions = this.getDefaultOptions();
         }
     }
 
-    private overridePalette(chartOptions: TOptions): void {
-        if (!this.chartProxyParams.allowPaletteOverride) {
-            return;
-        }
+    // private overridePalette(chartOptions: AgChartOptions): void {
+    //     if (!this.chartProxyParams.allowPaletteOverride) {
+    //         return;
+    //     }
+    //
+    //     const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
+    //     const { seriesDefaults } = chartOptions;
+    //     const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+    //     const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
+    //     const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
+    //     const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+    //
+    //     if (fillsOverridden || strokesOverridden) {
+    //         this.customPalette = {
+    //             fills: fillsOverridden ? fills : defaultFills,
+    //             strokes: strokesOverridden ? strokes : defaultStrokes
+    //         };
+    //     }
+    // }
 
-        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
-        const { seriesDefaults } = chartOptions;
-        const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-        const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
-        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
-
-        if (fillsOverridden || strokesOverridden) {
-            this.customPalette = {
-                fills: fillsOverridden ? fills : defaultFills,
-                strokes: strokesOverridden ? strokes : defaultStrokes
-            };
-        }
-    }
-
-    public getChartOptions(): TOptions {
+    public getChartOptions(): AgChartOptions {
         return this.chartOptions;
     }
 
@@ -174,16 +174,23 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public getSeriesOption<T = string>(expression: string): T {
-        return _.get(this.chartOptions.seriesDefaults, expression, undefined) as T;
+        return _.get(this.chartOptions.series[0], expression, undefined) as T;
+        // return _.get(this.chartOptions.seriesDefaults, expression, undefined) as T;
     }
 
     public setSeriesOption(expression: string, value: any): void {
-        if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+        // if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+        //     // option is already set to the specified value
+        //     return;
+        // }
+
+        if (_.get(this.chartOptions.series[0], expression, undefined) === value) {
             // option is already set to the specified value
             return;
         }
 
-        _.set(this.chartOptions.seriesDefaults, expression, value);
+        _.set(this.chartOptions.series[0], expression, value);
+        // _.set(this.chartOptions.seriesDefaults, expression, value);
 
         const mappings: { [key: string]: string; } = {
             'stroke.width': 'strokeWidth',
@@ -193,8 +200,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'callout.colors': 'calloutColors'
         };
 
-        const series = this.chart.series;
-        series.forEach(s => _.set(s, mappings[expression] || expression, value));
+        // const series = this.chart.series;
+        // series.forEach(s => _.set(s, mappings[expression] || expression, value));
+
+        this.chartOptions.series.forEach((s: any) => _.set(s, mappings[expression] || expression, value));
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -248,14 +257,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
 
-    public getShadowProperty(property: keyof DropShadowOptions): any {
-        const { seriesDefaults } = this.chartOptions;
+    protected getFirstSeriesOptions(): any {
+        const { series } = this.chartOptions;
+        return series && series[0];
+    }
 
-        return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
+    public getShadowProperty(property: keyof DropShadowOptions): any {
+        // const { seriesDefaults } = this.chartOptions;
+        // return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
+
+        const { seriesOptions } = this.getFirstSeriesOptions();
+        return seriesOptions.shadow ? seriesOptions.shadow[property] : '';
     }
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
-        const { seriesDefaults } = this.chartOptions;
+        // const { seriesDefaults } = this.chartOptions;
+        const { seriesOptions } = this.getFirstSeriesOptions();
 
         if (_.get(seriesDefaults.shadow, property, undefined) === value) {
             // option is already set to the specified value

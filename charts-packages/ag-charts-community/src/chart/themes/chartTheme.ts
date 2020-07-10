@@ -147,6 +147,7 @@ export class ChartTheme {
         return {
             width: 600,
             height: 300,
+            autoSize: false,
             background: {
                 visible: true,
                 fill: 'white'
