@@ -33,17 +33,14 @@ export class PropertyKeys {
     ];
 
     public static BOOLEAN_PROPERTIES = [
-        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
-        'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
-        'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection',
-        'suppressCellSelection', 'suppressHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting', 'enableFilter', 'enableServerSideFilter',
-        'angularCompileRows', 'angularCompileFilters', 'groupSuppressAutoColumn', 'groupSelectsChildren',
-        'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow', 'groupSuppressBlankHeader',
-        'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'singleClickEdit', 'suppressLoadingOverlay',
-        'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes',
-        'suppressColumnMoveAnimation', 'suppressMovableColumns', 'suppressFieldDotNotation', 'enableRangeSelection', 'enableRangeHandle',
-        'enableFillHandle', 'suppressClearOnFillReduction', 'deltaSort', 'suppressTouch', 'suppressAsyncEvents',
+        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll',
+        'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting',
+        'enableServerSideSorting', 'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
+        'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow',
+        'groupSuppressBlankHeader', 'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'singleClickEdit',
+        'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes',
+        'suppressColumnMoveAnimation', 'suppressMovableColumns', 'suppressFieldDotNotation', 'enableRangeSelection',
+        'enableRangeHandle', 'enableFillHandle', 'suppressClearOnFillReduction', 'deltaSort', 'suppressTouch', 'suppressAsyncEvents',
         'allowContextMenuWithControlKey', 'suppressContextMenu', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash',
         'suppressDragLeaveHidesColumns', 'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel',
         'suppressCopyRowsToClipboard', 'copyHeadersToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation',
@@ -55,14 +52,13 @@ export class PropertyKeys {
         'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter', 'deltaRowDataMode', 'ensureDomOrder', 'accentedSort',
         'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection', 'enterMovesDownAfterEdit',
-        'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick', 'contractColumnSelection',
-        'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel', 'suppressRowHoverHighlight',
-        'suppressRowTransform', 'suppressClipboardPaste', 'suppressLastEmptyLineOnPaste', 'serverSideSortingAlwaysResets',
-        'reactNext', 'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder',
-        'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
-        'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
-        'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
-        'columnsSpike', 'suppressExpandablePivotGroups'
+        'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick', 'suppressEnterpriseResetOnNewColumns',
+        'enableOldSetFilterModel', 'suppressRowHoverHighlight', 'suppressRowTransform', 'suppressClipboardPaste',
+        'suppressLastEmptyLineOnPaste', 'serverSideSortingAlwaysResets', 'reactNext', 'suppressSetColumnStateEvents', 'enableCharts',
+        'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver',
+        'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows',
+        'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData',
+        'immutableColumns', 'pivotSuppressAutoColumn', 'columnsSpike', 'suppressExpandablePivotGroups'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

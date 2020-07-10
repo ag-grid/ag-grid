@@ -108,24 +108,6 @@ export interface GridOptions {
     immutableColumns?: boolean;
     columnsSpike?: boolean;
     scrollbarWidth?: number;
-    /** @deprecated */
-    toolPanelSuppressRowGroups?: boolean;
-    /** @deprecated */
-    toolPanelSuppressValues?: boolean;
-    /** @deprecated */
-    toolPanelSuppressPivots?: boolean;
-    /** @deprecated */
-    toolPanelSuppressPivotMode?: boolean;
-    /** @deprecated */
-    toolPanelSuppressSideButtons?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnFilter?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnSelectAll?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnExpandAll?: boolean;
-    /** @deprecated */
-    contractColumnSelection?: boolean;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;

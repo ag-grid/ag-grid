@@ -1371,52 +1371,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        const oldToolPanelProperties: { [p: string]: string; } = {
-            toolPanelSuppressRowGroups: 'suppressRowGroups',
-            toolPanelSuppressValues: 'suppressValues',
-            toolPanelSuppressPivots: 'suppressPivots',
-            toolPanelSuppressPivotMode: 'suppressPivotMode',
-            toolPanelSuppressColumnFilter: 'suppressColumnFilter',
-            toolPanelSuppressColumnSelectAll: 'suppressColumnSelectAll',
-            toolPanelSuppressSideButtons: 'suppressSideButtons',
-            toolPanelSuppressColumnExpandAll: 'suppressColumnExpandAll',
-            contractColumnSelection: 'contractColumnSelection'
-        };
-
-        const toolPanelColumnsCompProps: any = {};
-        Object.keys(oldToolPanelProperties).forEach(key => {
-            const translation: any = oldToolPanelProperties[key];
-            const value: any = (this.gridOptions as any)[key];
-            if (value !== undefined) {
-                if (key === 'toolPanelSuppressSideButtons') {
-                    console.warn('ag-grid: since v19.0 toolPanelSuppressSideButtons has been completely removed. See https://www.ag-grid.com/javascript-grid-tool-panel/');
-                    return;
-                }
-
-                console.warn(`ag-grid: since v19.0 gridOptions.${key} is deprecated, please use gridOptions.sideBar.toolPanel[columnsIndex].componentParams.${translation}`);
-                toolPanelColumnsCompProps[translation] = value;
-            }
-        });
-
-        if (Object.keys(toolPanelColumnsCompProps).length > 0 && !_.exists(options.sideBar)) {
-            console.warn(`ag-grid: since version 19.x, sideBar is mandatory if using toolPanel related properties. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
-            options.sideBar = true;
-        }
-
-        if (options.sideBar != null) {
-            options.sideBar = SideBarDefParser.parse(options.sideBar);
-        }
-
-        const sideBarDef = this.gridOptions.sideBar as SideBarDef;
-        if (Object.keys(toolPanelColumnsCompProps).length > 0 && sideBarDef && sideBarDef.toolPanels) {
-            const columnsDef: ToolPanelDef[] = sideBarDef.toolPanels.filter((it: ToolPanelDef) => it.id === 'columns') as ToolPanelDef[];
-            if (columnsDef.length === 1) {
-                _.mergeDeep(columnsDef[0], {
-                    componentParams: toolPanelColumnsCompProps
-                });
-            }
-        }
-
         if (options.enableServerSideSorting || options.enableSorting) {
             console.warn(
                 `ag-Grid: since v20, grid options enableSorting and enableServerSideSorting are gone. Instead set sortable=true on the column definition for the columns sorting are allowed on. To migrate from gridOption.enableSorting=true, set gridOptions.defaultColDef.sortable=true`

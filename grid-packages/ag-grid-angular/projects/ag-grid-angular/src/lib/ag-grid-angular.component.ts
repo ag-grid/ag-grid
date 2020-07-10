@@ -300,14 +300,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
     @Input() public fillOperation : any = undefined;
-    @Input() public toolPanelSuppressRowGroups : any = undefined;
-    @Input() public toolPanelSuppressValues : any = undefined;
-    @Input() public toolPanelSuppressPivots : any = undefined;
-    @Input() public toolPanelSuppressPivotMode : any = undefined;
-    @Input() public toolPanelSuppressSideButtons : any = undefined;
-    @Input() public toolPanelSuppressColumnFilter : any = undefined;
-    @Input() public toolPanelSuppressColumnSelectAll : any = undefined;
-    @Input() public toolPanelSuppressColumnExpandAll : any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
@@ -405,7 +397,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enterMovesDown : any = undefined;
     @Input() public suppressPropertyNamesCheck : any = undefined;
     @Input() public rowMultiSelectWithClick : any = undefined;
-    @Input() public contractColumnSelection : any = undefined;
     @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
     @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public suppressRowHoverHighlight : any = undefined;
