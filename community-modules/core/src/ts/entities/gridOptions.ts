@@ -131,10 +131,6 @@ export interface GridOptions {
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableCellTextSelection?: boolean;
-    /** @deprecated in v20, use colDef.sortable instead */
-    enableSorting?: boolean;
-    /** @deprecated in v20,  use colDef.sortable instead */
-    enableServerSideSorting?: boolean;
     /** @deprecated in v20, use colDef.filter = true instead */
     enableFilter?: boolean;
     /** @deprecated in v20, use colDef.filter = true instead */

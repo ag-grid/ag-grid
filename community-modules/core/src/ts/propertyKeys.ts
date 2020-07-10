@@ -34,8 +34,8 @@ export class PropertyKeys {
 
     public static BOOLEAN_PROPERTIES = [
         'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll',
-        'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions', 'enableSorting',
-        'enableServerSideSorting', 'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
+        'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableColResize', 'enableCellExpressions',
+        'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
         'groupSuppressAutoColumn', 'groupSelectsChildren', 'groupIncludeFooter', 'groupIncludeTotalFooter', 'groupUseEntireRow',
         'groupSuppressBlankHeader', 'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'singleClickEdit',
         'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes',
