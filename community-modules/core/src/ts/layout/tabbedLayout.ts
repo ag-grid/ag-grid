@@ -2,6 +2,7 @@ import { Promise, _ } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { Constants } from '../constants';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 
 export class TabbedLayout extends ManagedFocusComponent {
 
@@ -9,7 +10,7 @@ export class TabbedLayout extends ManagedFocusComponent {
     @RefSelector('eBody') private eBody: HTMLElement;
 
     private params: TabbedLayoutParams;
-    private afterAttachedParams: any;
+    private afterAttachedParams: IAfterGuiAttachedParams;
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
 
@@ -82,7 +83,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         }
     }
 
-    public setAfterAttachedParams(params: any): void {
+    public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
         this.afterAttachedParams = params;
     }
 
@@ -111,6 +112,7 @@ export class TabbedLayout extends ManagedFocusComponent {
             if (minWidth < eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;
             }
+
             if (minHeight < eDummyContainer.offsetHeight) {
                 minHeight = eDummyContainer.offsetHeight;
             }
@@ -196,7 +198,7 @@ export interface TabbedItem {
     titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
-    afterAttachedCallback?: Function;
+    afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }
 
 interface TabbedItemWrapper {

@@ -125,9 +125,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             nudgeY: 1
         });
 
-        menu.afterGuiAttached({
-            hidePopup: hidePopup
-        });
+        menu.afterGuiAttached({ container: 'contextMenu', hidePopup });
 
         this.activeMenu = menu;
 

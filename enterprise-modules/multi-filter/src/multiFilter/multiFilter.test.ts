@@ -363,7 +363,7 @@ describe('afterGuiAttached', () => {
         filter2 = mock<IFilterComp>('getGui', 'afterGuiAttached');
 
         const multiFilter = createFilter();
-        const params: IAfterGuiAttachedParams = {};
+        const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
 
         multiFilter.afterGuiAttached(params);
 
@@ -376,7 +376,7 @@ describe('afterGuiAttached', () => {
     it('does not pass through to filter if afterGuiAttached function does not exist', () => {
         const multiFilter = createFilter();
 
-        expect(() => multiFilter.afterGuiAttached({})).not.toThrow();
+        expect(() => multiFilter.afterGuiAttached({ container: 'columnMenu' })).not.toThrow();
     });
 });
 

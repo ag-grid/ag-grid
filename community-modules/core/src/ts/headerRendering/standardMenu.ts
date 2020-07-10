@@ -92,11 +92,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
-                const params: IAfterGuiAttachedParams = {
-                    hidePopup
-                };
-
-                filter.afterGuiAttached(params);
+                filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
 

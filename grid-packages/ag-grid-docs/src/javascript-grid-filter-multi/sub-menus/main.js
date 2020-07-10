@@ -25,7 +25,17 @@ var gridOptions = {
         minWidth: 200,
         resizable: true,
     },
-    sideBar: ['filters']
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+    }
 };
 
 // setup the grid after the page has finished loading

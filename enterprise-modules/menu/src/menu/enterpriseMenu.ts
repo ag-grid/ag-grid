@@ -24,7 +24,8 @@ import {
     Promise,
     TabbedItem,
     TabbedLayout,
-    FocusController
+    FocusController,
+    IAfterGuiAttachedParams
 } from "@ag-grid-community/core";
 
 import { MenuList } from "./menuList";
@@ -439,7 +440,7 @@ export class EnterpriseMenu extends BeanStub {
     private createFilterPanel(): TabbedItem {
         const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
-        let afterFilterAttachedCallback: any = null;
+        let afterFilterAttachedCallback: (params: IAfterGuiAttachedParams) => void = null;
 
         // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
         // async (_unless_ in react or similar, but if so why not encountered before now?).
@@ -499,8 +500,9 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
+
         const initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
         const onBodyScroll = (event: any) => {

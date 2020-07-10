@@ -130,7 +130,7 @@ export class ToolPanelFilterComp extends Component {
                 this.agFilterToolPanelBody.appendChild(container);
 
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({});
+                    filter.afterGuiAttached({ container: 'toolPanel' });
                 }
             });
         }
