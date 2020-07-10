@@ -192,11 +192,13 @@ interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
     nice?: boolean;
 }
 
-type AgCartesianAxisOptions =
+export type AgCartesianAxisOptions =
     AgNumberAxisOptions |
     AgCategoryAxisOptions |
     AgGroupedCategoryAxisOptions |
     AgTimeAxisOptions;
+
+type AgPolarAxisOptions = any;
 
 interface AgBaseSeriesOptions {
     tooltipEnabled?: boolean;
@@ -310,7 +312,7 @@ interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
-interface AgBarSeriesOptions extends AgBaseSeriesOptions {
+export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
     xKey?: string;
     yKeys?: string[];
@@ -402,6 +404,7 @@ export interface AgCartesianChartOptions extends AgBaseChartOptions {
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
+    axes?: AgPolarAxisOptions[]; // will be supported in the future and used by radar series
     series?: AgPolarSeriesOptions[];
 }
 

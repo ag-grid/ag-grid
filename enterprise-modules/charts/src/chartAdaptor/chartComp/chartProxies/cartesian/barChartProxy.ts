@@ -1,7 +1,7 @@
 import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
 import {
     CartesianChart,
-    AgChart, AgCartesianChartOptions
+    AgChart, AgCartesianChartOptions, AgBarSeriesOptions
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -15,30 +15,31 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options: any): CartesianChart {
-        const { grouping, parentElement } = this.chartProxyParams;
+    protected createChart(options?: AgCartesianChartOptions): CartesianChart {
+        const {grouping, parentElement} = this.chartProxyParams;
         const isColumnChart = this.isColumnChart();
 
         options = options || this.chartOptions;
         options.autoSize = true;
-        const { seriesDefaults } = options;
-        options.axes = [{
-            // ...options.xAxis,
-            position: isColumnChart ? 'bottom' : 'left',
-            type: grouping ? 'groupedCategory' : 'category',
-            label: {
-                rotation: isColumnChart ? 335 : 0
+        options.axes = [
+            { // x-axis
+                position: isColumnChart ? 'bottom' : 'left',
+                type: grouping ? 'groupedCategory' : 'category',
+                label: {
+                    rotation: isColumnChart ? 335 : 0
+                }
+            },
+            { // y-axis
+                position: isColumnChart ? 'left' : 'bottom',
+                type: 'number',
+                label: {
+                    rotation: isColumnChart ? 0 : 335
+                }
             }
-        }, {
-            // ...options.yAxis,
-            position: isColumnChart ? 'left' : 'bottom',
-            type: 'number',
-            label: {
-                rotation: isColumnChart ? 0 : 335
-            }
-        }];
+        ];
         options.series = [{
-            ...this.getSeriesDefaults(),
+            ...this.getSeriesOptions(),
+            // ...this.getSeriesDefaults(),
             // fills: seriesDefaults.fills || seriesDefaults.fill.colors,
             // fillOpacity: seriesDefaults.fill.opacity,
             // strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
@@ -68,46 +69,46 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
-        const isColumnChart = this.isColumnChart();
-        const fontOptions = this.getDefaultFontOptions();
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
+    // protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
+    //     const isColumnChart = this.isColumnChart();
+    //     const fontOptions = this.getDefaultFontOptions();
+    //     const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
+    //
+    //     options.xAxis.label.rotation = isColumnChart ? 335 : 0;
+    //     options.yAxis.label.rotation = isColumnChart ? 0 : 335;
+    //
+    //     options.seriesDefaults = {
+    //         ...options.seriesDefaults,
+    //         tooltip: {
+    //             enabled: true,
+    //         },
+    //         label: {
+    //             ...fontOptions,
+    //             enabled: false,
+    //         },
+    //         shadow: this.getDefaultDropShadowOptions(),
+    //     };
+    //
+    //     return options;
+    // }
 
-        options.xAxis.label.rotation = isColumnChart ? 335 : 0;
-        options.yAxis.label.rotation = isColumnChart ? 0 : 335;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            tooltip: {
-                enabled: true,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
-
-        return options;
-    }
-
-    protected getBarChartOptions(): AgCartesianChartOptions {
-        return this.getCartesianChartOptions();
+    protected getDefaultOptions(): AgCartesianChartOptions {
+        return this.getDefaultCartesianChartOptions();
     }
 
     private isColumnChart(): boolean {
         return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
 
-    private getSeriesDefaults(): any {
+    private getSeriesOptions(): AgBarSeriesOptions {
         const { chartType } = this;
-        const isColumn = this.isColumnChart();
+        const isColumnChart = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
 
         return {
-            ...this.chartOptions.seriesDefaults,
-            type: isColumn ? 'column' : 'bar',
+            // ...this.chartOptions.seriesDefaults,
+            type: isColumnChart ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: isNormalized ? 100 : undefined,
         };
