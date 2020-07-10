@@ -35,8 +35,9 @@ export class MultiFilter extends Component implements IFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private params: IMultiFilterParams;
+    private filterDefs: IMultiFilterDef[] = [];
     private filters: IFilterComp[] = [];
-    private filterMenuItems: MenuItemComponent[] = [];
+    private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
     private filterChangedCallback: () => void;
 
@@ -54,6 +55,7 @@ export class MultiFilter extends Component implements IFilterComp {
 
     public init(params: IMultiFilterParams): Promise<void> {
         this.params = params;
+        this.filterDefs = MultiFilter.getFilterDefs(params);
 
         const { column, filterChangedCallback } = params;
 
@@ -61,9 +63,8 @@ export class MultiFilter extends Component implements IFilterComp {
         this.filterChangedCallback = filterChangedCallback;
 
         const filterPromises: Promise<IFilterComp>[] = [];
-        const filterDefs = MultiFilter.getFilterDefs(params);
 
-        _.forEach(filterDefs, (filterDef, index) => {
+        _.forEach(this.filterDefs, (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -71,24 +72,32 @@ export class MultiFilter extends Component implements IFilterComp {
             }
         });
 
-        return Promise.all(filterPromises).then(filters => {
-            _.forEach(filters, (filter, index) => {
-                if (index > 0) {
-                    this.appendChild(new MenuSeparator().getGui());
-                }
+        return Promise.all(filterPromises).then(filters => { this.filters = filters; });
+    }
 
-                this.filters.push(filter);
+    private refreshGui(container: string): void {
+        this.destroyChildren();
 
-                const filterDef = filterDefs[index];
+        _.clearElement(this.getGui());
 
-                if (filterDef.subMenu) {
-                    this.appendChild(this.insertFilterMenu(filter, index));
-                } else {
-                    this.filterMenuItems.push(null);
-                    this.appendChild(filter.getGui());
-                }
-            });
+        _.forEach(this.filters, (filter, index) => {
+            if (index > 0) {
+                this.appendChild(new MenuSeparator().getGui());
+            }
+
+            const filterDef = this.filterDefs[index];
+
+            if (filterDef.subMenu && container !== 'toolPanel') {
+                this.appendChild(this.insertFilterMenu(filter, index));
+            } else {
+                this.appendChild(filter.getGui());
+            }
         });
+    }
+
+    private destroyChildren() {
+        _.forEach(this.guiDestroyFuncs, func => func());
+        this.guiDestroyFuncs.length = 0;
     }
 
     private insertFilterMenu(filter: IFilterComp, index: number): MenuItemComponent {
@@ -101,10 +110,10 @@ export class MultiFilter extends Component implements IFilterComp {
         const menuItem = this.createManagedBean(new MenuItemComponent(params));
         menuItem.setParentComponent(this);
 
+        this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
+
         const icon = menuItem.getRefElement('eIcon');
         menuItem.getGui().removeChild(icon);
-
-        this.filterMenuItems.push(menuItem);
 
         return menuItem;
     }
@@ -202,6 +211,7 @@ export class MultiFilter extends Component implements IFilterComp {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        this.refreshGui(params.container);
         this.executeFunctionIfExists('afterGuiAttached', params);
     }
 
@@ -220,6 +230,7 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.filters.length = 0;
+        this.destroyChildren();
 
         super.destroy();
     }
