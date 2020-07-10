@@ -461,10 +461,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.pivotSuppressAutoColumn);
     }
 
-    public isColumnsSpike() {
-        return isTrue(this.gridOptions.columnsSpike);
-    }
-
     public isSuppressDragLeaveHidesColumns() {
         return isTrue(this.gridOptions.suppressDragLeaveHidesColumns);
     }

@@ -75,7 +75,7 @@ export class AutoGroupColService extends BeanStub {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
-        const newCol = new Column(defaultAutoColDef, null, colId, true, this.gridOptionsWrapper.isColumnsSpike());
+        const newCol = new Column(defaultAutoColDef, null, colId, true);
         this.context.createBean(newCol);
 
         return newCol;

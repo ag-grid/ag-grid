@@ -21,20 +21,14 @@ export class ColumnUtils extends BeanStub {
         const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || _.getMaxSafeInteger());
 
         let width : number;
-        if (this.gridOptionsWrapper.isColumnsSpike()) {
-            // new spike way
-            const colDefWidth = _.attrToNumber(colDef.width);
-            const colDefDefaultWidth = _.attrToNumber(colDef.defaultWidth);
-            if (colDefWidth!=null) {
-                width = colDefWidth;
-            } else if (colDefDefaultWidth!=null) {
-                width = colDefDefaultWidth;
-            } else {
-                width = optionsWrapper.getColWidth();
-            }
+        const colDefWidth = _.attrToNumber(colDef.width);
+        const colDefDefaultWidth = _.attrToNumber(colDef.defaultWidth);
+        if (colDefWidth!=null) {
+            width = colDefWidth;
+        } else if (colDefDefaultWidth!=null) {
+            width = colDefDefaultWidth;
         } else {
-            // old way
-            width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+            width = optionsWrapper.getColWidth();
         }
 
         return Math.max(Math.min(width, maxColWidth), minColWidth);

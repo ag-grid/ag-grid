@@ -206,6 +206,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Column State",
+            "box-title": "State",
+            "url": "javascript-grid-column-state/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Column Headers",
             "box-title": "Headers",
             "url": "javascript-grid-column-header/",

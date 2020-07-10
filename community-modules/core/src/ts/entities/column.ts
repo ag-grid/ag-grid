@@ -111,73 +111,64 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private parent: ColumnGroup;
     private originalParent: OriginalColumnGroup;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean, columnSpike: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
         this.primary = primary;
 
-        if (columnSpike) {
+        this.setState(colDef);
+    }
 
-            // sort
-            if (colDef.sort!==undefined) {
-                if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
-                    this.sort = colDef.sort;
-                }
-            } else {
-                if (colDef.defaultSort===Constants.SORT_ASC || colDef.defaultSort===Constants.SORT_DESC) {
-                    this.sort = colDef.defaultSort;
-                }
+    private setState(colDef: ColDef): void {
+        // sort
+        if (colDef.sort!==undefined) {
+            if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
+                this.sort = colDef.sort;
             }
-
-            // sortedAt
-            const sortedAt = _.attrToNumber(colDef.sortedAt);
-            const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
-            if (sortedAt!==undefined) {
-                if (sortedAt!==null) {
-                    this.sortedAt = sortedAt;
-                }
-            } else {
-                if (defaultSortedAt!==null) {
-                    this.sortedAt = defaultSortedAt;
-                }
-            }
-
-            // hide
-            const hide = _.attrToBoolean(colDef.hide);
-            const defaultHide = _.attrToBoolean(colDef.defaultHide);
-
-            if (hide!==undefined) {
-                this.visible = !hide;
-            } else {
-                this.visible = !defaultHide;
-            }
-
-            // pinned
-            if (colDef.pinned!==undefined) {
-                this.setPinned(colDef.pinned);
-            } else {
-                this.setPinned(colDef.defaultPinned);
-            }
-
-            // flex
-            const flex = _.attrToNumber(colDef.flex);
-            const defaultFlex = _.attrToNumber(colDef.defaultFlex);
-            if (flex!==undefined) {
-                this.flex = flex;
-            } else if (defaultFlex!==undefined) {
-                this.flex = defaultFlex;
-            }
-
         } else {
-            this.sortedAt = colDef.sortedAt;
-            this.sort = colDef.sort;
-            this.visible = !colDef.hide;
-            this.setPinned(this.colDef.pinned);
-            if (colDef.flex) {
-                this.flex = this.colDef.flex;
+            if (colDef.defaultSort===Constants.SORT_ASC || colDef.defaultSort===Constants.SORT_DESC) {
+                this.sort = colDef.defaultSort;
             }
+        }
 
+        // sortedAt
+        const sortedAt = _.attrToNumber(colDef.sortedAt);
+        const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
+        if (sortedAt!==undefined) {
+            if (sortedAt!==null) {
+                this.sortedAt = sortedAt;
+            }
+        } else {
+            if (defaultSortedAt!==null) {
+                this.sortedAt = defaultSortedAt;
+            }
+        }
+
+        // hide
+        const hide = _.attrToBoolean(colDef.hide);
+        const defaultHide = _.attrToBoolean(colDef.defaultHide);
+
+        if (hide!==undefined) {
+            this.visible = !hide;
+        } else {
+            this.visible = !defaultHide;
+        }
+
+        // pinned
+        if (colDef.pinned!==undefined) {
+            this.setPinned(colDef.pinned);
+        } else {
+            this.setPinned(colDef.defaultPinned);
+        }
+
+        // flex
+        const flex = _.attrToNumber(colDef.flex);
+        const defaultFlex = _.attrToNumber(colDef.defaultFlex);
+        if (flex!==undefined) {
+            this.flex = flex;
+        } else if (defaultFlex!==undefined) {
+            this.flex = defaultFlex;
         }
     }
 

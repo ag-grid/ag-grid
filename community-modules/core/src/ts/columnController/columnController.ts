@@ -39,7 +39,7 @@ import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
-import {ColumnApi, SetColumnStateParams} from './columnApi';
+import {ApplyColumnStateParams, ColumnApi} from './columnApi';
 import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
@@ -1627,36 +1627,24 @@ export class ColumnController extends BeanStub {
         const rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
+        const sort = column.getSort()!=null ? column.getSort() : null;
+        const sortedAt = column.getSortedAt()!=null ? column.getSortedAt() : null;
+        const flex = column.getFlex()!=null && column.getFlex() > 0 ? null : column.getFlex()
 
-        const res = {
+        const res: ColumnState = {
             colId: column.getColId(),
-            hide: !column.isVisible(),
-            aggFunc,
             width: column.getActualWidth(),
-            pivotIndex: pivotIndex,
+            hide: !column.isVisible(),
             pinned: column.getPinned(),
-            rowGroupIndex
+            sort,
+            sortedAt,
+            aggFunc,
+            rowGroup: column.isRowGroupActive(),
+            rowGroupIndex,
+            pivot: column.isPivotActive(),
+            pivotIndex: pivotIndex,
+            flex
         };
-
-        if (this.gridOptionsWrapper.isColumnsSpike()) {
-
-            const sort = column.getSort()!=null ? column.getSort() : null;
-            const sortedAt = column.getSortedAt()!=null ? column.getSortedAt() : null;
-
-            // new way, include these extra bits
-            Object.assign(res, {
-                rowGroup: column.isRowGroupActive(),
-                pivot: column.isPivotActive(),
-                sort: sort,
-                sortedAt: sortedAt
-            });
-
-        } else {
-            // old way, we include flex
-            Object.assign(res, {
-                flex: column.getFlex()
-            });
-        }
 
         return res;
     }
@@ -1737,125 +1725,11 @@ export class ColumnController extends BeanStub {
             });
         }
 
-        this.setColumnState(columnStates, suppressEverythingEvent, source);
+        this.applyColumnState({columnStates: columnStates, applyOrder: true}, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnStatesOrParams: ColumnState[] | SetColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
-
-        if (this.gridOptionsWrapper.isColumnsSpike()) {
-            return this.setColumnState_spike(columnStatesOrParams, suppressEverythingEvent, source);
-        }
-
-        const columnStates = columnStatesOrParams as ColumnState[];
-
+    public applyColumnState(params: ApplyColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
-
-        const columnStateBefore = this.getColumnState();
-
-        this.autoGroupsNeedBuilding = true;
-
-        // at the end below, this list will have all columns we got no state for
-        const columnsWithNoState = this.primaryColumns.slice();
-
-        this.rowGroupColumns = [];
-        this.valueColumns = [];
-        this.pivotColumns = [];
-
-        let success = true;
-
-        const rowGroupIndexes: { [key: string]: number; } = {};
-        const pivotIndexes: { [key: string]: number; } = {};
-        const autoGroupColumnStates: ColumnState[] = [];
-
-        if (columnStates) {
-            columnStates.forEach((state: ColumnState) => {
-
-                // auto group columns are re-created so deferring syncing with ColumnState
-                if (_.exists(this.getAutoColumn(state.colId))) {
-                    autoGroupColumnStates.push(state);
-                    return;
-                }
-
-                const column = this.getPrimaryColumn(state.colId);
-
-                if (!column) {
-                    console.warn('ag-grid: column ' + state.colId + ' not found');
-                    success = false;
-                } else {
-                    this.syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, source);
-                    _.removeFromArray(columnsWithNoState, column);
-                }
-            });
-
-            // if (this.flexActive) {
-                this.refreshFlexedColumns();
-            // }
-        }
-
-        // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        columnsWithNoState.forEach(this.syncColumnWithNoState.bind(this));
-
-        // sort the lists according to the indexes that were provided
-        this.rowGroupColumns.sort(this.sortColumnListUsingIndexes.bind(this, rowGroupIndexes));
-        this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
-
-        this.updateGridColumns();
-
-        // sync newly created auto group columns with ColumnState
-        autoGroupColumnStates.forEach(stateItem => {
-            const autoCol = this.getAutoColumn(stateItem.colId);
-            this.syncColumnWithStateItem(autoCol, stateItem, rowGroupIndexes, pivotIndexes, source);
-        });
-
-        if (columnStates) {
-            const orderOfColIds = columnStates.map(stateItem => stateItem.colId);
-
-            this.gridColumns.sort((colA: Column, colB: Column) => {
-                const indexA = orderOfColIds.indexOf(colA.getId());
-                const indexB = orderOfColIds.indexOf(colB.getId());
-
-                return indexA - indexB;
-            });
-        }
-
-        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
-        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-        // is less sexy for the code here, but it keeps consistency.
-        this.putFixedColumnsFirst();
-        this.updateDisplayedColumns(source);
-
-        if (!suppressEverythingEvent) {
-            const event: ColumnEverythingChangedEvent = {
-                type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            this.eventService.dispatchEvent(event);
-        }
-
-        this.raiseColumnEvents(columnStateBefore, source);
-
-        return success;
-    }
-
-    public setColumnState_spike(paramsOrState: ColumnState[] | SetColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
-        if (_.missingOrEmpty(this.primaryColumns)) { return false; }
-
-        let columnStates: ColumnState[];
-        let columnOrder: boolean;
-        let defaultState: ColumnState;
-        if (Array.isArray(paramsOrState)) {
-            columnStates = paramsOrState;
-            columnOrder = false;
-            defaultState = undefined;
-        } else {
-            const params = paramsOrState as SetColumnStateParams;
-            columnStates = params.columnState;
-            columnOrder = params.applyOrder;
-            defaultState = params.defaultState;
-        }
 
         const columnStateBefore = this.getColumnState();
 
@@ -1873,8 +1747,8 @@ export class ColumnController extends BeanStub {
         const previousRowGroupCols = this.rowGroupColumns.slice();
         const previousPivotCols = this.pivotColumns.slice();
 
-        if (columnStates) {
-            columnStates.forEach((state: ColumnState) => {
+        if (params.columnStates) {
+            params.columnStates.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState
                 if (_.exists(this.getAutoColumn(state.colId))) {
@@ -1888,20 +1762,18 @@ export class ColumnController extends BeanStub {
                     console.warn('ag-grid: column ' + state.colId + ' not found');
                     success = false;
                 } else {
-                    this.syncColumnWithStateItem_columnSpike(column, state, defaultState, rowGroupIndexes,
+                    this.syncColumnWithStateItem_columnSpike(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
                     _.removeFromArray(columnsWithNoState, column);
                 }
             });
 
-            // if (this.flexActive) {
-                this.refreshFlexedColumns();
-            // }
+            this.refreshFlexedColumns();
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         columnsWithNoState.forEach( col => {
-            this.syncColumnWithStateItem_columnSpike(col, null, defaultState, rowGroupIndexes,
+            this.syncColumnWithStateItem_columnSpike(col, null, params.defaultState, rowGroupIndexes,
                 pivotIndexes, false, source)
         });
 
@@ -1954,11 +1826,11 @@ export class ColumnController extends BeanStub {
         // sync newly created auto group columns with ColumnState
         autoGroupColumnStates.forEach(stateItem => {
             const autoCol = this.getAutoColumn(stateItem.colId);
-            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, defaultState, null, null, true, source);
+            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
-        if (columnOrder && columnStates) {
-            const orderOfColIds = columnStates.map(stateItem => stateItem.colId);
+        if (params.applyOrder && params.columnStates) {
+            const orderOfColIds = params.columnStates.map(stateItem => stateItem.colId);
 
             this.gridColumns.sort((colA: Column, colB: Column) => {
                 const indexA = orderOfColIds.indexOf(colA.getId());
@@ -2564,17 +2436,13 @@ export class ColumnController extends BeanStub {
             // aggFunc is a string, so return it's existence
             (colDef: ColDef) => {
                 const aggFunc = colDef.aggFunc;
-                if (this.gridOptionsWrapper.isColumnsSpike()) {
-                    // null or empty string means clear
-                    if (aggFunc===null || aggFunc==='') {
-                        return null;
-                    } else if (aggFunc===undefined) {
-                        return undefined;
-                    } else {
-                        return aggFunc != '';
-                    }
+                // null or empty string means clear
+                if (aggFunc===null || aggFunc==='') {
+                    return null;
+                } else if (aggFunc===undefined) {
+                    return undefined;
                 } else {
-                    return !!aggFunc;
+                    return aggFunc != '';
                 }
             },
             (colDef: ColDef) => {
@@ -2585,20 +2453,14 @@ export class ColumnController extends BeanStub {
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
         this.valueColumns.forEach(col => {
-            if (this.gridOptionsWrapper.isColumnsSpike()) {
-                const colDef = col.getColDef();
-                // if aggFunc provided, we always override, as reactive property
-                if (colDef.aggFunc != null && colDef.aggFunc != '') {
-                    col.setAggFunc(colDef.aggFunc);
-                } else {
-                    // otherwise we use defaultAggFunc only if no agg func set - which happens when new column only
-                    if (!col.getAggFunc()) {
-                        col.setAggFunc(colDef.defaultAggFunc);
-                    }
-                }
+            const colDef = col.getColDef();
+            // if aggFunc provided, we always override, as reactive property
+            if (colDef.aggFunc != null && colDef.aggFunc != '') {
+                col.setAggFunc(colDef.aggFunc);
             } else {
+                // otherwise we use defaultAggFunc only if no agg func set - which happens when new column only
                 if (!col.getAggFunc()) {
-                    col.setAggFunc(col.getColDef().aggFunc);
+                    col.setAggFunc(colDef.defaultAggFunc);
                 }
             }
         });
@@ -2615,75 +2477,6 @@ export class ColumnController extends BeanStub {
     }
 
     private extractColumns(
-        oldPrimaryColumns: Column[], previousCols: Column[],
-        setFlagFunc: (col: Column, flag: boolean) => void,
-        getIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getValueFunc: (colDef: ColDef) => boolean | undefined,
-        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
-    ): Column[] {
-
-        if (this.gridOptionsWrapper.isColumnsSpike()) {
-            return this.extractColumns_columnSpike(oldPrimaryColumns, previousCols,
-                setFlagFunc, getIndexFunc, getDefaultIndexFunc, getValueFunc, getDefaultValueFunc);
-        }
-
-        if (!previousCols) { previousCols = []; }
-
-        // remove cols that no longer exist
-        const colPresentInPrimaryFunc = (col: Column) => this.primaryColumns.indexOf(col) >= 0;
-        const colMissingFromPrimaryFunc = (col: Column) => this.primaryColumns.indexOf(col) < 0;
-        const colNewFunc = (col: Column) => !oldPrimaryColumns || oldPrimaryColumns.indexOf(col) < 0;
-        const removedCols = previousCols.filter(colMissingFromPrimaryFunc);
-        const existingCols = previousCols.filter(colPresentInPrimaryFunc);
-        const newPrimaryCols = this.primaryColumns.filter(colNewFunc);
-
-        removedCols.forEach(col => setFlagFunc(col, false));
-
-        const newCols: Column[] = [];
-
-        // we only want to work on new columns, as old columns already got processed first time around
-        // pull out items with xxxIndex
-        newPrimaryCols.forEach(col => {
-            const index = getIndexFunc(col.getColDef());
-
-            if (typeof index === 'number') {
-                newCols.push(col);
-            }
-        });
-
-        // then sort them
-        newCols.sort(function(colA: Column, colB: Column): number {
-            const indexA = getIndexFunc(colA.getColDef());
-            const indexB = getIndexFunc(colB.getColDef());
-
-            if (indexA === indexB) {
-                return 0;
-            } else if (indexA < indexB) {
-                return -1;
-            }
-
-            return 1;
-        });
-        // now just pull out items xxx (boolean value), they will be added at the end
-        // after the indexed ones, but in the order the columns appear
-        newPrimaryCols.forEach(col => {
-            const booleanValue = getValueFunc(col.getColDef());
-            if (booleanValue) {
-                // if user already specified xxxIndex then we skip it as this col already included
-                if (newCols.indexOf(col) >= 0) { return; }
-                newCols.push(col);
-            }
-        });
-
-        newCols.forEach(col => setFlagFunc(col, true));
-
-        const res = existingCols.concat(newCols);
-
-        return res;
-    }
-
-    private extractColumns_columnSpike(
         oldPrimaryColumns: Column[] = [],
         previousCols: Column[] = [],
         setFlagFunc: (col: Column, flag: boolean) => void,

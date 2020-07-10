@@ -266,34 +266,27 @@ export class ColumnFactory extends BeanStub {
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
 
-        if (this.gridOptionsWrapper.isColumnsSpike()) {
-            console.log(`id = ${colDef.colId}, field = ${colDef.field}, match = ${!!column}, rowGroup=${colDef.rowGroup}, rowGroupIndex=${colDef.rowGroupIndex}`, colDef, column);
-        }
-
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
-            column = new Column(colDefMerged, colDef, colId, primaryColumns, this.gridOptionsWrapper.isColumnsSpike());
+            column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         } else {
             column.setColDef(colDefMerged, colDef);
-
-            if (this.gridOptionsWrapper.isColumnsSpike()) {
-                this.applyColumnSpike(column, colDefMerged);
-            }
+            this.applyColumnState(column, colDefMerged);
         }
 
         return column;
     }
 
-    private applyColumnSpike(column: Column, colDef: ColDef): void {
+    private applyColumnState(column: Column, colDef: ColDef): void {
         // flex
         const flex = _.attrToNumber(colDef.flex);
         if (flex!==undefined) {
             column.setFlex(flex);
         }
 
-        // we only set width if column is not flexing
+        // width - we only set width if column is not flexing
         const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
@@ -303,7 +296,7 @@ export class ColumnFactory extends BeanStub {
             }
         }
 
-        // anything but undefined will set sort, thus null or empty string will clear the sort
+        // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort!==undefined) {
             if (colDef.sort==Constants.SORT_ASC || colDef.sort==Constants.SORT_DESC) {
                 column.setSort(colDef.sort);
@@ -312,13 +305,13 @@ export class ColumnFactory extends BeanStub {
             }
         }
 
-        // anything but undefined, thus null will clear the sortedAt
+        // sorted at - anything but undefined, thus null will clear the sortedAt
         const sortedAt = _.attrToNumber(colDef.sortedAt);
         if (sortedAt!==undefined) {
             column.setSortedAt(sortedAt);
         }
 
-        // anything but undefined, thus null will clear the hide
+        // hide - anything but undefined, thus null will clear the hide
         const hide = _.attrToBoolean(colDef.hide);
         if (hide!==undefined) {
             column.setVisible(!hide);
@@ -339,31 +332,17 @@ export class ColumnFactory extends BeanStub {
             // first check object references
             if (oldColDef === colDef) { return true; }
 
-            if (this.gridOptionsWrapper.isColumnsSpike()) {
-                /// NEW SPIKE WAY
+            const newDefHasId = colDef.colId != null;
+            const newDefHasField = colDef.field != null;
+            const oldDefHasId = oldColDef.colId != null;
 
-                const newDefHasId = colDef.colId != null;
-                const newDefHasField = colDef.field != null;
-                const oldDefHasId = oldColDef.colId != null;
+            if (newDefHasId && oldDefHasId) {
+                return oldColDef.colId === colDef.colId;
+            }
 
-                if (newDefHasId && oldDefHasId) {
-                    return oldColDef.colId === colDef.colId;
-                }
-
-                const bothIdsMissing = !newDefHasId && !oldDefHasId;
-                if (bothIdsMissing && newDefHasField) {
-                    return oldColDef.field === colDef.field;
-                }
-
-            } else {
-                /// OLD WAY
-
-                // second check id's
-                const oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
-
-                if (oldColHadId) {
-                    return oldColDef.colId === colDef.colId;
-                }
+            const bothIdsMissing = !newDefHasId && !oldDefHasId;
+            if (bothIdsMissing && newDefHasField) {
+                return oldColDef.field === colDef.field;
             }
 
             return false;

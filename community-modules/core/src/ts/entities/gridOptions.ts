@@ -107,7 +107,6 @@ export interface GridOptions {
     immutableData?: boolean;
     /** @deprecated */
     immutableColumns?: boolean;
-    columnsSpike?: boolean;
     scrollbarWidth?: number;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
