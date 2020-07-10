@@ -111,14 +111,19 @@ function convertColumnDefs(rawColumnDefs) {
         const columnProperties = [];
         let children = [];
         Object.keys(rawColumnDef).forEach(columnProperty => {
-            if(columnProperty === 'children') {
+            if (columnProperty === 'children') {
                 children = convertColumnDefs(rawColumnDef[columnProperty]);
             } else {
                 let value = rawColumnDef[columnProperty];
                 if (typeof value === "string") {
-                    columnProperties.push(
-                        `${columnProperty}="${value}"`
-                    )
+                    if (value.startsWith('AG_LITERAL_')) {
+                        // values starting with AG_LITERAL_ are actually functions
+                        // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function here
+                        // ...all of this is necessary so that we can parse the json string
+                        columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`)
+                    } else {
+                        columnProperties.push(`${columnProperty}="${value}"`)
+                    }
                 } else if (typeof value === 'object') {
                     columnProperties.push(
                         `${columnProperty}={${JSON.stringify(value)}}`
@@ -175,17 +180,13 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                 // tabToNextCell needs to be bound to the react component
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`${property.name}=${property.value}`);
-                } else {
-                    if (property.name === 'columnDefs') {
-                        rawColumnDefs = JSON5.parse(property.value);
-                    } else {
-                        componentAttributes.push(`${property.name}={${property.value}}`);
-                    }
+                } else if (property.name !== 'columnDefs') {
+                    componentAttributes.push(`${property.name}={${property.value}}`);
                 }
             }
         });
 
-        const columnDefs = convertColumnDefs(rawColumnDefs);
+        const columnDefs = convertColumnDefs(JSON5.parse(bindings.parsedColDefs));
 
         const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
 

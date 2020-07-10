@@ -286,7 +286,7 @@ SNIPPET
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
@@ -364,6 +364,8 @@ SNIPPET
     </ul>
 </p>
 
+<!--// spl to convert to manual - this sort of dynamic column manipulation is too tricky to do automatically-->
+<!--// (or rather comes up too rarely to justify trying to automate it)-->
 <?= grid_example('Column Changes', 'column-changes', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="immutable-columns">Immutable Columns</h2>
@@ -449,6 +451,8 @@ SNIPPET
     </ul>
 </p>
 
+<!--// spl to convert to manual - this sort of dynamic column manipulation is too tricky to do automatically -->
+<!--// (or rather comes up too rarely to justify trying to automate it) -->
 <?= grid_example('Immutable Columns', 'immutable-columns', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
