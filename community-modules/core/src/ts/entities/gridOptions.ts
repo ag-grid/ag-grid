@@ -105,6 +105,7 @@ export interface GridOptions {
     /** @deprecated */
     deltaColumnMode?: boolean;
     immutableData?: boolean;
+    /** @deprecated */
     immutableColumns?: boolean;
     columnsSpike?: boolean;
     scrollbarWidth?: number;

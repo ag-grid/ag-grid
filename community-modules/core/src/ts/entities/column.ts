@@ -162,11 +162,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
             // flex
             const flex = _.attrToNumber(colDef.flex);
-            // const defaultFlex = _.attrToNumber(colDef.defaultFlex);
+            const defaultFlex = _.attrToNumber(colDef.defaultFlex);
             if (flex!==undefined) {
                 this.flex = flex;
-            // } else if (defaultFlex!==undefined) {
-            //     this.flex = defaultFlex;
+            } else if (defaultFlex!==undefined) {
+                this.flex = defaultFlex;
             }
 
         } else {
@@ -722,6 +722,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
+            if (this.flex && source !== 'flex') {
+                this.flex = null;
+            }
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
     }

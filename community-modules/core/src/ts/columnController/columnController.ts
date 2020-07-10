@@ -233,10 +233,6 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
-        if (this.gridOptionsWrapper.isImmutableColumns() && colsPreviouslyExisted) {
-            this.resetColumnState(true, source);
-        }
-
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
@@ -253,8 +249,6 @@ export class ColumnController extends BeanStub {
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-
-        // this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -1015,7 +1009,7 @@ export class ColumnController extends BeanStub {
         }
 
         const changedCols: Column[] = [];
-        const allCols: Column[] = [];
+        const allResizedCols: Column[] = [];
 
         resizeSets.forEach(set => {
             const { width, columns, ratios } = set;
@@ -1025,7 +1019,7 @@ export class ColumnController extends BeanStub {
             const newWidths: { [colId: string]: number; } = {};
             const finishedCols: { [colId: string]: boolean; } = {};
 
-            columns.forEach(col => allCols.push(col));
+            columns.forEach(col => allResizedCols.push(col));
 
             // the loop below goes through each col. if a col exceeds it's min/max width,
             // it then gets set to its min/max width and the column is removed marked as 'finished'
@@ -1110,11 +1104,7 @@ export class ColumnController extends BeanStub {
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
 
-        let colsNotToFlex: Column[] = [];
-        resizeSets.forEach(set => {
-            colsNotToFlex = colsNotToFlex.concat(set.columns);
-        });
-        const flexedCols = this.refreshFlexedColumns({resizingCols: colsNotToFlex, skipSetLeft: true});
+        const flexedCols = this.refreshFlexedColumns({resizingCols: allResizedCols, skipSetLeft: true});
 
         if (atLeastOneColChanged) {
             this.setLeftValues(source);
@@ -1127,7 +1117,7 @@ export class ColumnController extends BeanStub {
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
-        const colsForEvent = allCols.concat(flexedCols);
+        const colsForEvent = allResizedCols.concat(flexedCols);
 
         if (atLeastOneColChanged || finished) {
             this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
@@ -2164,19 +2154,16 @@ export class ColumnController extends BeanStub {
         column.setVisible(!stateItem.hide, source);
         // sets pinned to 'left' or 'right'
         column.setPinned(stateItem.pinned);
-        // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = this.gridOptionsWrapper.getMinColWidth();
 
-        if (stateItem.flex != null) {
+        if (stateItem.flex != null && stateItem.flex > 0) {
             column.setFlex(stateItem.flex);
-            // if (!this.flexActive && stateItem.flex) {
-            //     this.flexActive = true;
-            // }
         }
 
-        if (stateItem.width && minColWidth &&
-            (stateItem.width >= minColWidth)) {
-            column.setActualWidth(stateItem.width, source);
+        const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
+        if (noFlexThisCol) {
+            if (stateItem.width!=null && stateItem.width>0) {
+                column.setActualWidth(stateItem.width, source);
+            }
         }
 
         if (typeof stateItem.aggFunc === 'string') {
@@ -3438,9 +3425,8 @@ export class ColumnController extends BeanStub {
         }
 
         const isColFlex = (col: Column) => {
-            const skipBecauseResizing = params.resizingCols ? params.resizingCols.indexOf(col)>=0 : false;
-            const skipBecauseBeforeResizingCols = this.displayedCenterColumns.indexOf(col) < flexAfterDisplayIndex;
-            return col.getFlex() && !skipBecauseResizing && !skipBecauseBeforeResizingCols;
+            const afterResizingCols = this.displayedCenterColumns.indexOf(col) > flexAfterDisplayIndex;
+            return col.getFlex() && afterResizingCols;
         };
         const knownWidthColumns = this.displayedCenterColumns.filter(col => !isColFlex(col) );
         const flexingColumns = this.displayedCenterColumns.filter(col => isColFlex(col) );

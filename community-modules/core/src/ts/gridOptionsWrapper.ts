@@ -676,10 +676,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.immutableData);
     }
 
-    public isImmutableColumns() {
-        return isTrue(this.gridOptions.immutableColumns);
-    }
-
     public isEnsureDomOrder() {
         return isTrue(this.gridOptions.ensureDomOrder);
     }
@@ -1431,7 +1427,12 @@ export class GridOptionsWrapper {
 
         checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
         checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
-        checkRenamedProperty('deltaColumnMode', 'immutableColumns', '23.1.x');
+
+        if (options.immutableColumns || options.deltaColumnMode) {
+            console.warn(
+                'ag-Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default.'
+            );
+        }
     }
 
     private checkForViolations() {

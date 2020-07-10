@@ -287,10 +287,20 @@ export class ColumnFactory extends BeanStub {
     }
 
     private applyColumnSpike(column: Column, colDef: ColDef): void {
-        // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-        const width = _.attrToNumber(colDef.width);
-        if (width!=null) {
-            column.setActualWidth(width);
+        // flex
+        const flex = _.attrToNumber(colDef.flex);
+        if (flex!==undefined) {
+            column.setFlex(flex);
+        }
+
+        // we only set width if column is not flexing
+        const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
+        if (noFlexThisCol) {
+            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+            const width = _.attrToNumber(colDef.width);
+            if (width!=null) {
+                column.setActualWidth(width);
+            }
         }
 
         // anything but undefined will set sort, thus null or empty string will clear the sort
@@ -318,13 +328,6 @@ export class ColumnFactory extends BeanStub {
         if (colDef.pinned!==undefined) {
             column.setPinned(colDef.pinned);
         }
-
-        // flex
-        const flex = _.attrToNumber(colDef.flex);
-        if (flex!==undefined) {
-            column.setFlex(flex);
-        }
-
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
