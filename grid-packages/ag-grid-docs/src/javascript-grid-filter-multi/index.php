@@ -66,13 +66,12 @@ SNIPPET
 
 <?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
-<h2>Sub Menus</h2>
+<h2>Display Style</h2>
 
 <p>
-    By default, all filters in the Multi Filter are shown in the same view, so that the user has easy, immediate access.
-    However, you might wish to show some or all of the filters in sub-menus, for example to reduce the height of the
-    filter. To do this, you can set <code>subMenu</code> to <code>true</code> for the filters you would like to be
-    inside a sub-menu:
+    By default, all filters in the Multi Filter are shown inline in the same view, so that the user has easy, immediate
+    access. However, you can change how filters are presented, by either using sub-menus or groups to wrap each filter.
+    To do this, you can set <code>display</code> to the style of how you would like a particular filter to be displayed:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -83,7 +82,7 @@ SNIPPET
         filters: [
             {
                 filter: 'agTextColumnFilter',
-                subMenu: true,
+                display: 'subMenu',
             },
             {
                 filter: 'agSetColumnFilter',
@@ -94,20 +93,30 @@ SNIPPET
 SNIPPET
 ) ?>
 
+<p>The options for <code>display</code> are <code>'inline'</code>, <code>'subMenu'</code> or <code>'group'</code>.</p>
+
+<p>Please note that sub-menus will be shown as groups in the tool panel.</p>
+
 <p>
-    The following example demonstrates the different behaviour.
+    The following example demonstrates the different styles.
 </p>
 
 <ul class="content">
     <li>
-        The <strong>Athlete</strong> column shows the default behaviour, where all filters are in the main view.
+        The <strong>Athlete</strong> column shows the default behaviour, where all filters are inline.
     </li>
     <li>
         The <strong>Country</strong> column demonstrates having the first filter inside a sub menu.
     </li>
+    <li>
+        The <strong>Sport</strong> column demonstrates having both filters in a group.
+    </li>
+    <li>
+        The sub-menu for the <strong>Country</strong> is shown as a group inside the Tool Panel.
+    </li>
 </ul>
 
-<?= grid_example('Sub Menus', 'sub-menus', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
+<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Custom Filters</h2>
 

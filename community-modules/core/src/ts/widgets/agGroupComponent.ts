@@ -1,18 +1,15 @@
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { AgCheckbox } from "./agCheckbox";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { Autowired, PostConstruct } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { AgCheckbox } from './agCheckbox';
+import { Constants } from '../constants';
+import { createIcon } from '../utils/icon';
+import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
 
 type GroupItem = Component | HTMLElement;
-
 type Align = 'start' | 'end' | 'center' | 'stretch';
-const defaultItemAlign: Align = 'center';
-
 type Direction = 'horizontal' | 'vertical';
-const defaultDirection = 'vertical';
 
 export interface AgGroupComponentParams {
     title?: string;
@@ -116,8 +113,8 @@ export class AgGroupComponent extends Component {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
+        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
         this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === Constants.KEY_ENTER) {
@@ -128,9 +125,10 @@ export class AgGroupComponent extends Component {
 
     private refreshChildDisplay(): void {
         const showIcon = !this.suppressOpenCloseIcons;
-        _.setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
-        _.setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
-        _.setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+
+        setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+        setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
+        setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
     }
 
     public isExpanded(): boolean {
@@ -141,13 +139,13 @@ export class AgGroupComponent extends Component {
         const eGui = this.getGui();
 
         if (this.alignItems !== alignment) {
-            _.removeCssClass(eGui, `ag-group-item-alignment-${this.alignItems}`);
+            removeCssClass(eGui, `ag-group-item-alignment-${this.alignItems}`);
         }
 
         this.alignItems = alignment;
         const newCls = `ag-group-item-alignment-${this.alignItems}`;
 
-        _.addCssClass(eGui, newCls);
+        addCssClass(eGui, newCls);
 
         return this;
     }
@@ -156,7 +154,8 @@ export class AgGroupComponent extends Component {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
             this.refreshChildDisplay();
-            _.setDisplayed(this.eContainer, true);
+            setDisplayed(this.eContainer, true);
+
             return this;
         }
 
@@ -168,13 +167,10 @@ export class AgGroupComponent extends Component {
 
         this.expanded = expanded;
         this.refreshChildDisplay();
-        _.setDisplayed(this.eContainer, expanded);
 
-        if (this.expanded) {
-            this.dispatchEvent({ type: AgGroupComponent.EVENT_EXPANDED });
-        } else {
-            this.dispatchEvent({ type: AgGroupComponent.EVENT_COLLAPSED });
-        }
+        setDisplayed(this.eContainer, expanded);
+
+        this.dispatchEvent({ type: this.expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
 
         return this;
     }
@@ -186,8 +182,9 @@ export class AgGroupComponent extends Component {
     public addItem(item: GroupItem) {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
-        _.addCssClass(el, 'ag-group-item');
-        _.addCssClass(el, `ag-${this.cssIdentifier}-group-item`);
+
+        addCssClass(el, 'ag-group-item');
+        addCssClass(el, `ag-${this.cssIdentifier}-group-item`);
 
         container.appendChild(el);
         this.items.push(el);
@@ -195,7 +192,7 @@ export class AgGroupComponent extends Component {
 
     public hideItem(hide: boolean, index: number) {
         const itemToHide = this.items[index] as HTMLElement;
-        _.addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
+        addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
     }
 
     public setTitle(title: string): this {
@@ -204,7 +201,7 @@ export class AgGroupComponent extends Component {
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        _.addCssClass(this.eTitleBar, cssClass);
+        addCssClass(this.eTitleBar, cssClass);
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
@@ -246,18 +243,21 @@ export class AgGroupComponent extends Component {
         if (hide) {
             this.toggleGroupExpand(true);
         }
+
         return this;
     }
 
     private refreshDisabledStyles() {
-        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+        addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+
         if (this.suppressEnabledCheckbox && !this.enabled) {
-            _.addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
             this.eTitleBar.removeAttribute('tabindex');
         } else {
-            _.removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
             this.eTitleBar.setAttribute('tabindex', '0');
         }
-        _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
+
+        addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     }
 }

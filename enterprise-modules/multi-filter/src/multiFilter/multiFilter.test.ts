@@ -13,7 +13,6 @@ import {
     IDoesFilterPassParams,
     ProvidedFilter,
     ProvidedFilterModel,
-    ISetFilterParams,
 } from '@ag-grid-community/core';
 import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { mock } from '../test-utils/mock';
@@ -91,14 +90,15 @@ describe('init', () => {
         filter2 = mock<IFilterComp>('getGui');
         filter2.getGui.mockReturnValue(filter2Element);
 
-        createFilter();
+        const filter = createFilter();
+        filter.afterGuiAttached({ container: 'columnMenu' });
 
         expect(eGui.appendChild).toHaveBeenCalledTimes(3);
 
         const { calls } = eGui.appendChild.mock;
 
         expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
-        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-menu-separator"></div>');
+        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-filter-separator"></div>');
         expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
     });
 

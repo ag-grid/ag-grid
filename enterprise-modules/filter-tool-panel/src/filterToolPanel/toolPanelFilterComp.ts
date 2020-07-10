@@ -159,9 +159,7 @@ export class ToolPanelFilterComp extends Component {
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
         // scroll position in the filter list panel
-        const isSetFilter = filter.refreshVirtualList as any;
-
-        if (isSetFilter) {
+        if (typeof filter.refreshVirtualList === 'function') {
             filter.refreshVirtualList();
         }
     }

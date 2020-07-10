@@ -1,4 +1,6 @@
+export type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel';
+
 export interface IAfterGuiAttachedParams {
-    container: 'columnMenu' | 'contextMenu' | 'toolPanel';
+    container: ContainerType;
     hidePopup?: () => void;
 }

@@ -11,10 +11,26 @@ var gridOptions = {
                 filters: [
                     {
                         filter: 'agTextColumnFilter',
-                        subMenu: true,
+                        display: 'subMenu',
                     },
                     {
                         filter: 'agSetColumnFilter',
+                    }
+                ]
+            }
+        },
+        {
+            field: 'sport',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        display: 'group',
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                        display: 'group',
                     }
                 ]
             }

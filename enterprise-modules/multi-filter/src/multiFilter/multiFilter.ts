@@ -14,11 +14,13 @@ import {
     Component,
     IFilterParams,
     RowNode,
+    AgGroupComponent,
+    ContainerType,
 } from '@ag-grid-community/core';
-import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
+import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
-    subMenu?: boolean;
+    display?: 'inline' | 'group' | 'subMenu';
 }
 
 export interface IMultiFilterParams extends IFilterParams {
@@ -40,9 +42,10 @@ export class MultiFilter extends Component implements IFilterComp {
     private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
     private filterChangedCallback: () => void;
+    private lastOpenedInContainer?: ContainerType;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list"></div>`);
+        super(/* html */`<div class="ag-multi-filter"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -75,24 +78,34 @@ export class MultiFilter extends Component implements IFilterComp {
         return Promise.all(filterPromises).then(filters => { this.filters = filters; });
     }
 
-    private refreshGui(container: string): void {
+    private refreshGui(container: ContainerType): void {
+        if (container === this.lastOpenedInContainer) { return; }
+
         this.destroyChildren();
 
         _.clearElement(this.getGui());
 
         _.forEach(this.filters, (filter, index) => {
             if (index > 0) {
-                this.appendChild(new MenuSeparator().getGui());
+                this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
             }
 
             const filterDef = this.filterDefs[index];
+            const filterName = `Filter ${index + 1}`;
 
-            if (filterDef.subMenu && container !== 'toolPanel') {
-                this.appendChild(this.insertFilterMenu(filter, index));
+            if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
+                // prevent sub-menu being used in tool panel
+                this.appendChild(this.insertFilterMenu(filter, filterName).getGui());
+            } else if (filterDef.display === 'subMenu' || filterDef.display === 'group') {
+                // sub-menus should appear as groups in the tool panel
+                this.appendChild(this.insertFilterGroup(filter, filterName).getGui());
             } else {
+                // display inline
                 this.appendChild(filter.getGui());
             }
         });
+
+        this.lastOpenedInContainer = container;
     }
 
     private destroyChildren() {
@@ -100,14 +113,13 @@ export class MultiFilter extends Component implements IFilterComp {
         this.guiDestroyFuncs.length = 0;
     }
 
-    private insertFilterMenu(filter: IFilterComp, index: number): MenuItemComponent {
-        const params = {
-            name: `Filter ${index + 1}`,
+    private insertFilterMenu(filter: IFilterComp, name: string): MenuItemComponent {
+        const menuItem = this.createBean(new MenuItemComponent({
+            name,
             subMenu: filter,
-            cssClasses: ['ag-filter-menu-item'],
-        };
+            cssClasses: ['ag-multi-filter-menu-item'],
+        }));
 
-        const menuItem = this.createManagedBean(new MenuItemComponent(params));
         menuItem.setParentComponent(this);
 
         this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
@@ -116,6 +128,24 @@ export class MultiFilter extends Component implements IFilterComp {
         menuItem.getGui().removeChild(icon);
 
         return menuItem;
+    }
+
+    private insertFilterGroup(filter: IFilterComp, title: string): AgGroupComponent {
+        const group = this.createBean(new AgGroupComponent({
+            title,
+            cssIdentifier: 'multi-filter'
+        }));
+
+        this.guiDestroyFuncs.push(() => this.destroyBean(group));
+
+        group.addItem(filter.getGui());
+        group.toggleGroupExpand(false);
+
+        if (typeof (filter as any).refreshVirtualList === 'function') {
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => (filter as any).refreshVirtualList());
+        }
+
+        return group;
     }
 
     public isFilterActive(): boolean {
