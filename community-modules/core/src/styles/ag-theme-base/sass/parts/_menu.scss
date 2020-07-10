@@ -103,18 +103,6 @@
         @include ag-color-property(color, secondary-foreground-color);
     }
 
-    .ag-multi-filter {
-        .ag-filter-wrapper, .ag-filter-menu-item {
-            border-left-style: solid;
-            border-left-width: 3px;
-            @include ag-color-property(border-color, border-color);
-
-            &--active {
-                @include ag-color-property(border-color, selected-tab-underline-color);
-            }
-        }
-    }
-
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////

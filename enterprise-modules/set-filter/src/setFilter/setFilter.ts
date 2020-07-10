@@ -17,14 +17,12 @@ import {
     Promise,
     FocusController,
     _,
-    IClientSideRowModel
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
-import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;

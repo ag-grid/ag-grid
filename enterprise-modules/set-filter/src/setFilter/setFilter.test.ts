@@ -11,9 +11,6 @@ import {
     EventService,
     VirtualList,
     IRowModel,
-    Promise,
-    RowNode,
-    IDoesFilterPassParams,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';

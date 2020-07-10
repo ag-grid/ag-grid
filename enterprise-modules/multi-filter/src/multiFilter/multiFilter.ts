@@ -262,7 +262,6 @@ export class MultiFilter extends Component implements IFilterComp {
     private filterChanged(index: number): void {
         const changedFilter = this.filters[index];
 
-        this.changeFilterWrapperActiveClass(index, changedFilter.isFilterActive());
         this.filterChangedCallback();
 
         _.forEach(this.filters, filter => {
@@ -272,17 +271,5 @@ export class MultiFilter extends Component implements IFilterComp {
                 filter.onAnyFilterChanged();
             }
         });
-    }
-
-    private changeFilterWrapperActiveClass(index: number, isActive: boolean): void {
-        const filter = this.filters[index];
-
-        _.addOrRemoveCssClass(filter.getGui(), 'ag-filter-wrapper--active', isActive);
-
-        const menuItem = this.filterMenuItems[index];
-
-        if (menuItem != null) {
-            _.addOrRemoveCssClass(menuItem.getGui(), 'ag-filter-menu-item--active', isActive);
-        }
     }
 }
