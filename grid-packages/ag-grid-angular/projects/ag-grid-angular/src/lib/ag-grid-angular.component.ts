@@ -309,8 +309,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableBrowserTooltips : any = undefined;
     @Input() public enableColResize : any = undefined;
     @Input() public enableCellExpressions : any = undefined;
-    @Input() public enableFilter : any = undefined;
-    @Input() public enableServerSideFilter : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
     @Input() public groupSuppressAutoColumn : any = undefined;

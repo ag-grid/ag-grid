@@ -1376,18 +1376,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.enableFilter || options.enableServerSideFilter) {
-            console.warn(
-                `ag-Grid: since v20, grid options enableFilter and enableServerSideFilter are gone. Instead set filter=true (if not already specifying a specific filter) on the column definition for the columns filtering is allowed on. To migrate from gridOptions.enableFilter=true, set gridOptions.defaultColDef.filter=true. If you are explicitly setting specific filters for each column (ie colDef.filter is already set) the you don't need to do anything.`
-            );
-            if (!options.defaultColDef) {
-                options.defaultColDef = {};
-            }
-            if (!options.defaultColDef.filter) {
-                options.defaultColDef.filter = true;
-            }
-        }
-
         if (options.enableColResize) {
             console.warn(
                 `ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`
