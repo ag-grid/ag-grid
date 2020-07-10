@@ -14,11 +14,13 @@ import {
     Component,
     IFilterParams,
     RowNode,
+    AgGroupComponent,
+    ContainerType,
 } from '@ag-grid-community/core';
-import { MenuItemComponent, MenuSeparator } from '@ag-grid-enterprise/menu';
+import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
-    subMenu?: boolean;
+    display?: 'inline' | 'group' | 'subMenu';
 }
 
 export interface IMultiFilterParams extends IFilterParams {
@@ -35,13 +37,15 @@ export class MultiFilter extends Component implements IFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private params: IMultiFilterParams;
+    private filterDefs: IMultiFilterDef[] = [];
     private filters: IFilterComp[] = [];
-    private filterMenuItems: MenuItemComponent[] = [];
+    private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
     private filterChangedCallback: () => void;
+    private lastOpenedInContainer?: ContainerType;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list"></div>`);
+        super(/* html */`<div class="ag-multi-filter"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -54,6 +58,7 @@ export class MultiFilter extends Component implements IFilterComp {
 
     public init(params: IMultiFilterParams): Promise<void> {
         this.params = params;
+        this.filterDefs = MultiFilter.getFilterDefs(params);
 
         const { column, filterChangedCallback } = params;
 
@@ -61,9 +66,8 @@ export class MultiFilter extends Component implements IFilterComp {
         this.filterChangedCallback = filterChangedCallback;
 
         const filterPromises: Promise<IFilterComp>[] = [];
-        const filterDefs = MultiFilter.getFilterDefs(params);
 
-        _.forEach(filterDefs, (filterDef, index) => {
+        _.forEach(this.filterDefs, (filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -71,42 +75,77 @@ export class MultiFilter extends Component implements IFilterComp {
             }
         });
 
-        return Promise.all(filterPromises).then(filters => {
-            _.forEach(filters, (filter, index) => {
-                if (index > 0) {
-                    this.appendChild(new MenuSeparator().getGui());
-                }
-
-                this.filters.push(filter);
-
-                const filterDef = filterDefs[index];
-
-                if (filterDef.subMenu) {
-                    this.appendChild(this.insertFilterMenu(filter, index));
-                } else {
-                    this.filterMenuItems.push(null);
-                    this.appendChild(filter.getGui());
-                }
-            });
-        });
+        return Promise.all(filterPromises).then(filters => { this.filters = filters; });
     }
 
-    private insertFilterMenu(filter: IFilterComp, index: number): MenuItemComponent {
-        const params = {
-            name: `Filter ${index + 1}`,
-            subMenu: filter,
-            cssClasses: ['ag-filter-menu-item'],
-        };
+    private refreshGui(container: ContainerType): void {
+        if (container === this.lastOpenedInContainer) { return; }
 
-        const menuItem = this.createManagedBean(new MenuItemComponent(params));
+        this.destroyChildren();
+
+        _.clearElement(this.getGui());
+
+        _.forEach(this.filters, (filter, index) => {
+            if (index > 0) {
+                this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
+            }
+
+            const filterDef = this.filterDefs[index];
+            const filterName = `Filter ${index + 1}`;
+
+            if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
+                // prevent sub-menu being used in tool panel
+                this.appendChild(this.insertFilterMenu(filter, filterName).getGui());
+            } else if (filterDef.display === 'subMenu' || filterDef.display === 'group') {
+                // sub-menus should appear as groups in the tool panel
+                this.appendChild(this.insertFilterGroup(filter, filterName).getGui());
+            } else {
+                // display inline
+                this.appendChild(filter.getGui());
+            }
+        });
+
+        this.lastOpenedInContainer = container;
+    }
+
+    private destroyChildren() {
+        _.forEach(this.guiDestroyFuncs, func => func());
+        this.guiDestroyFuncs.length = 0;
+    }
+
+    private insertFilterMenu(filter: IFilterComp, name: string): MenuItemComponent {
+        const menuItem = this.createBean(new MenuItemComponent({
+            name,
+            subMenu: filter,
+            cssClasses: ['ag-multi-filter-menu-item'],
+        }));
+
         menuItem.setParentComponent(this);
+
+        this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
         const icon = menuItem.getRefElement('eIcon');
         menuItem.getGui().removeChild(icon);
 
-        this.filterMenuItems.push(menuItem);
-
         return menuItem;
+    }
+
+    private insertFilterGroup(filter: IFilterComp, title: string): AgGroupComponent {
+        const group = this.createBean(new AgGroupComponent({
+            title,
+            cssIdentifier: 'multi-filter'
+        }));
+
+        this.guiDestroyFuncs.push(() => this.destroyBean(group));
+
+        group.addItem(filter.getGui());
+        group.toggleGroupExpand(false);
+
+        if (typeof (filter as any).refreshVirtualList === 'function') {
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => (filter as any).refreshVirtualList());
+        }
+
+        return group;
     }
 
     public isFilterActive(): boolean {
@@ -202,6 +241,7 @@ export class MultiFilter extends Component implements IFilterComp {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        this.refreshGui(params.container);
         this.executeFunctionIfExists('afterGuiAttached', params);
     }
 
@@ -220,6 +260,7 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.filters.length = 0;
+        this.destroyChildren();
 
         super.destroy();
     }

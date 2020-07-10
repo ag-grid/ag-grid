@@ -7,7 +7,6 @@ import {
     _,
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
-import { MenuSeparator } from './menuSeparator';
 
 export class MenuList extends ManagedFocusComponent {
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
@@ -67,7 +66,7 @@ export class MenuList extends ManagedFocusComponent {
 
         menuItems.forEach(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.appendChild(new MenuSeparator().getGui());
+                this.appendChild(_.loadTemplate(/* html */`<div class="ag-menu-separator"></div>`));
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`ag-Grid: unrecognised menu item ${menuItemOrString}`);
             } else {

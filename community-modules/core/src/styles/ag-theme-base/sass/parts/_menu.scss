@@ -103,6 +103,10 @@
         @include ag-color-property(color, secondary-foreground-color);
     }
 
+    .ag-filter-separator {
+        @include ag-border(critical, top);
+    }
+
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////
@@ -168,5 +172,13 @@
 
     .ag-filter-no-matches {
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-multi-filter-menu-item {
+        margin: ag-param(grid-size) 0;
+    }
+
+    .ag-multi-filter-group-title-bar {
+        padding: ag-param(grid-size) * 2 ag-param(grid-size);
     }
 }

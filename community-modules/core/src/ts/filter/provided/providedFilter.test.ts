@@ -63,10 +63,6 @@ class TestFilter extends ProvidedFilter {
         return this.uiModel;
     }
 
-    public setUiModel(model: ProvidedFilterModel): void {
-        this.uiModel = model;
-    }
-
     public setModelHasChanged(hasChanged: boolean): void {
         this.modelHasChanged = hasChanged;
     }
@@ -105,7 +101,7 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 
@@ -120,7 +116,7 @@ describe('closeOnApply', () => {
 
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.apply();
 
         expect(hidePopup).toHaveBeenCalledTimes(1);
@@ -132,7 +128,7 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 
@@ -146,7 +142,7 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply(true);
 
@@ -162,7 +158,7 @@ describe('closeOnApply', () => {
 
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 
