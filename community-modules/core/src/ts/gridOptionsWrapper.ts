@@ -134,6 +134,11 @@ export class GridOptionsWrapper {
             this.checkColumnDefProperties();
         }
 
+        // parse side bar options into correct format
+        if (this.gridOptions.sideBar != null) {
+            this.gridOptions.sideBar = SideBarDefParser.parse(this.gridOptions.sideBar);
+        }
+
         const async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
