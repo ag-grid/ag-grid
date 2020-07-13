@@ -2,19 +2,19 @@ import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
 import { Chart } from "../chart";
 
-export interface ChartThemePalette {
+export interface AgChartThemePalette {
     fills: string[];
     strokes: string[];
 }
 
-export interface ChartThemeOverrides {
-    palette: ChartThemePalette;
+export interface AgChartThemeOverrides {
+    palette: AgChartThemePalette;
     defaults: any;
 }
 
-export class ChartTheme {
+export class AgChartTheme {
 
-    readonly palette: ChartThemePalette = {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#f3622d',
             '#fba71b',
@@ -215,29 +215,29 @@ export class ChartTheme {
 
     static readonly defaults: any = {
         cartesian: {
-            ...ChartTheme.getChartDefaults(),
+            ...AgChartTheme.getChartDefaults(),
             axes: {
                 number: {
-                    ...ChartTheme.getAxisDefaults()
+                    ...AgChartTheme.getAxisDefaults()
                 },
                 category: {
-                    ...ChartTheme.getAxisDefaults()
+                    ...AgChartTheme.getAxisDefaults()
                 },
                 time: {
-                    ...ChartTheme.getAxisDefaults()
+                    ...AgChartTheme.getAxisDefaults()
                 }
             },
             series: {
                 column: {
-                    ...ChartTheme.getBarSeriesDefaults(),
+                    ...AgChartTheme.getBarSeriesDefaults(),
                     flipXY: false
                 },
                 bar: {
-                    ...ChartTheme.getBarSeriesDefaults(),
+                    ...AgChartTheme.getBarSeriesDefaults(),
                     flipXY: true
                 },
                 line: {
-                    ...ChartTheme.getSeriesDefaults(),
+                    ...AgChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -251,11 +251,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 scatter: {
-                    ...ChartTheme.getSeriesDefaults(),
+                    ...AgChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -275,11 +275,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 area: {
-                    ...ChartTheme.getSeriesDefaults(),
+                    ...AgChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -303,11 +303,11 @@ export class ChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 histogram: {
-                    ...ChartTheme.getSeriesDefaults(),
+                    ...AgChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -358,10 +358,10 @@ export class ChartTheme {
             }
         },
         polar: {
-            ...ChartTheme.getChartDefaults(),
+            ...AgChartTheme.getChartDefaults(),
             series: {
                 pie: {
-                    ...ChartTheme.getSeriesDefaults(),
+                    ...AgChartTheme.getSeriesDefaults(),
                     title: undefined, // Caption
                     angleKey: '',
                     angleName: '',
@@ -374,7 +374,7 @@ export class ChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: ChartTheme.fontFamily,
+                        fontFamily: AgChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)',
                         offset: 3,
                         minAngle: 20
@@ -407,7 +407,7 @@ export class ChartTheme {
         }
     };
 
-    constructor(overrides?: ChartThemeOverrides) {
+    constructor(overrides?: AgChartThemeOverrides) {
         let defaults = this.getDefaults();
         if (overrides) {
             if (overrides.defaults) {
@@ -447,7 +447,7 @@ export class ChartTheme {
      * ```
      */
     getDefaults(): any {
-        return deepMerge({}, ChartTheme.defaults, { arrayMerge });
+        return deepMerge({}, AgChartTheme.defaults, { arrayMerge });
     }
 
     protected mergeWithParentDefaults(defaults: any): any {
@@ -455,7 +455,7 @@ export class ChartTheme {
         const proto = Object.getPrototypeOf(Object.getPrototypeOf(this));
 
         if (proto === Object.prototype) {
-            let config: any = deepMerge({}, ChartTheme.defaults, mergeOptions);
+            let config: any = deepMerge({}, AgChartTheme.defaults, mergeOptions);
             config = deepMerge(config, defaults, mergeOptions);
             return config;
         }

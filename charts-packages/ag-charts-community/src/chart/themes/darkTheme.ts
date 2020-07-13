@@ -1,6 +1,6 @@
-import { ChartTheme, ChartThemeOverrides } from "./chartTheme";
+import { AgChartTheme, AgChartThemeOverrides } from "./agChartTheme";
 
-export class DarkTheme extends ChartTheme {
+export class DarkTheme extends AgChartTheme {
 
     getDefaults(): any {
         const fontColor = 'rgb(200, 200, 200)';
@@ -81,7 +81,7 @@ export class DarkTheme extends ChartTheme {
         });
     }
 
-    constructor(overrides?: ChartThemeOverrides) {
+    constructor(overrides?: AgChartThemeOverrides) {
         super(overrides);
     }
 }

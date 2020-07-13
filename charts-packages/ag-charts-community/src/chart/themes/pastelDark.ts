@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartThemePalette } from "./chartTheme";
+import { AgChartThemePalette } from "../../../../../charts-packages/ag-charts-community/src/chart/themes/agChartTheme";
 
 export class PastelDark extends DarkTheme {
-    readonly palette: ChartThemePalette = {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#c16068',
             '#a2bf8a',
