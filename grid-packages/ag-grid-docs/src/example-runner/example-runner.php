@@ -96,7 +96,7 @@ function getTypes($dir)
 function get_common_properties($type, $dir, $title, $options)
 {
     $multi = $type === 'multi';
-    $generated = $type === 'generated';
+    $generated = $type === 'generated' || $type === 'mixed';
 
     if ($generated) {
         $types = array('vanilla', 'angular', 'react');
@@ -138,7 +138,7 @@ function get_common_properties($type, $dir, $title, $options)
 
     return array(
         "multi" => $type === 'multi',
-        "generated" => $type === 'generated',
+        "generated" => $type === 'generated' || $type === 'mixed',
         "types" => $types,
         "query" => $query,
         "config" => $config
