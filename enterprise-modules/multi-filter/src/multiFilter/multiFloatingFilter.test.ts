@@ -4,9 +4,7 @@ import {
     IFloatingFilterParams,
     Promise,
     FilterChangedEvent,
-    ProvidedFilterModel
 } from '@ag-grid-community/core';
-import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 import { IMultiFilterModel } from './multiFilter';
 import { mock } from '../test-utils/mock';
@@ -89,8 +87,8 @@ describe('onParentModelChanged', () => {
     it('passes through onParentModelChanged call when model is present', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const filterModel1: ProvidedFilterModel = { filterType: 'text' };
-        const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
+        const filterModel1 = { filterType: 'text' };
+        const filterModel2 = { filterType: 'set', values: ['A', 'B', 'C'] };
         const model: IMultiFilterModel = {
             filterType: 'multi',
             filterModels: [filterModel1, filterModel2]

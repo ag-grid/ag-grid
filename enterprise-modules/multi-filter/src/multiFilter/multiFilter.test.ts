@@ -12,11 +12,8 @@ import {
     IAfterGuiAttachedParams,
     IDoesFilterPassParams,
     ProvidedFilter,
-    ProvidedFilterModel,
     Context,
-    AgGroupComponent,
 } from '@ag-grid-community/core';
-import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { mock } from '../test-utils/mock';
 import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
@@ -175,7 +172,7 @@ describe('getModelFromUi', () => {
         filter1 = providedFilter;
 
         const multiFilter = createFilter();
-        const filterModel: ProvidedFilterModel = { filterType: 'text' };
+        const filterModel = { filterType: 'text' };
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
@@ -200,7 +197,7 @@ describe('getModelFromUi', () => {
         filter2 = providedFilter;
 
         const multiFilter = createFilter();
-        const filterModel: ProvidedFilterModel = { filterType: 'text' };
+        const filterModel = { filterType: 'text' };
         providedFilter.getModelFromUi.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
@@ -235,7 +232,7 @@ describe('getModel', () => {
 
     it('includes model from first filter', () => {
         const multiFilter = createFilter();
-        const filterModel: ProvidedFilterModel = { filterType: 'text' };
+        const filterModel = { filterType: 'text' };
         filter1.getModel.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
@@ -247,7 +244,7 @@ describe('getModel', () => {
 
     it('includes model from second filter', () => {
         const multiFilter = createFilter();
-        const filterModel: SetFilterModel = { filterType: 'set', values: [] };
+        const filterModel = { filterType: 'set', values: ['A', 'B', 'C'] };
         filter2.getModel.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
@@ -260,11 +257,11 @@ describe('getModel', () => {
     it('includes model from both filters', () => {
         const multiFilter = createFilter();
 
-        const filterModel1: ProvidedFilterModel = { filterType: 'text' };
+        const filterModel1 = { filterType: 'text' };
         filter1.getModel.mockReturnValue(filterModel1);
         filter1.isFilterActive.mockReturnValue(true);
 
-        const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
+        const filterModel2 = { filterType: 'set', values: ['A', 'B', 'C'] };
         filter2.getModel.mockReturnValue(filterModel2);
         filter2.isFilterActive.mockReturnValue(true);
 
@@ -296,8 +293,8 @@ describe('setModel', () => {
 
     it('sets model on all filters if provided model is present', done => {
         const multiFilter = createFilter();
-        const filterModel1: ProvidedFilterModel = { filterType: 'text' };
-        const filterModel2: SetFilterModel = { filterType: 'set', values: [] };
+        const filterModel1 = { filterType: 'text' };
+        const filterModel2 = { filterType: 'set', values: ['A', 'B', 'C'] };
 
         const model: IMultiFilterModel = {
             filterType: 'multi',
