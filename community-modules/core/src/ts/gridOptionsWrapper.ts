@@ -1361,20 +1361,6 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
 
-        if (options.enableColResize) {
-            console.warn(
-                `ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`
-            );
-
-            if (!options.defaultColDef) {
-                options.defaultColDef = {};
-            }
-
-            if (!options.defaultColDef.resizable) {
-                options.defaultColDef.resizable = true;
-            }
-        }
-
         if (options.deprecatedEmbedFullWidthRows) {
             console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
         }

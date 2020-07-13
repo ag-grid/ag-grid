@@ -125,8 +125,6 @@ export interface GridOptions {
     tooltipShowDelay?: number;
     tooltipMouseTrack?: boolean;
     enableRtl?: boolean;
-    /** @deprecated in v20, use colDef.resizable instead */
-    enableColResize?: boolean;
     enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
