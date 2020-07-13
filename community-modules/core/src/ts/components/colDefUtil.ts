@@ -129,7 +129,6 @@ export class ColDefUtil {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'rowDragText',
-        'tooltip',
         'tooltipValueGetter',
         'tooltipComponent',
         'tooltipComponentFramework',

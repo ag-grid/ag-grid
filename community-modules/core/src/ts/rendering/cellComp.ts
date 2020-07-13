@@ -708,7 +708,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
         }
 
-        const valueGetter = colDef.tooltipValueGetter || colDef.tooltip;
+        const valueGetter = colDef.tooltipValueGetter;
 
         if (valueGetter) {
             return valueGetter({

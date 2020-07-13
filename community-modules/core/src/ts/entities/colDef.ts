@@ -110,9 +110,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
 
-    /** @deprecated since v20.1, use colDef.tooltipValueGetter instead*/
-    tooltip?: (params: ITooltipParams) => string;
-
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence */
     tooltipValueGetter?: (params: ITooltipParams) => string;
 

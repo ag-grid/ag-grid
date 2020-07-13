@@ -125,7 +125,7 @@
         "tooltipField": {
             "description": "The field of the tooltip to apply to the cell."
         },
-        "tooltip": {
+        "tooltipValueGetter": {
             "type": {
                 "parameters": {
                     "api": "GridApi",
@@ -141,7 +141,7 @@
                 },
                 "returnType": "string"
             },
-            "description": "Callback that should return the string used for a tooltip. <code>tooltipField</code> takes precedence."
+            "description": "Callback that should return the string used for a tooltip."
         },
         "checkboxSelection": {
             "default": false,

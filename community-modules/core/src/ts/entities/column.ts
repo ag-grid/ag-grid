@@ -329,11 +329,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (colDefAny.tooltip) {
-            warnOnce(`ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.`, 'ColumnCheck_adslknjwef', this.colDef);
-            this.colDef.tooltipValueGetter = colDefAny.tooltip;
-        }
-
         if (colDefAny.suppressToolPanel) {
             warnOnce(`ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.`, 'ColumnCheck_weihjlsjkdf', this.colDef);
             this.colDef.suppressColumnsToolPanel = true;
