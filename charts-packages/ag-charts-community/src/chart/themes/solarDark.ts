@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartThemePalette } from "./chartTheme";
+import { AgChartThemePalette } from "../../../../../charts-packages/ag-charts-community/src/chart/themes/agChartTheme";
 
 export class SolarDark extends DarkTheme {
-    readonly palette: ChartThemePalette = {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#febe76',
             '#ff7979',

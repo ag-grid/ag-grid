@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { LegendMarker } from "./legend";
-import { ChartTheme } from "./themes/chartTheme";
+import { AgChartTheme } from "./themes/agChartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { MaterialLight } from "./themes/materialLight";
 import { MaterialDark } from "./themes/materialDark";
@@ -18,15 +18,14 @@ import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
-    ChartThemeName,
-    IChartTheme
+    IAgChartTheme
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
 
-const defaultTheme = new ChartTheme();
-const themes: { [key in ChartThemeName]: ChartTheme } = {
+const defaultTheme = new AgChartTheme();
+const themes: { [key in string]: AgChartTheme } = {
     default: defaultTheme,
     undefined: defaultTheme,
     null: defaultTheme,
@@ -42,14 +41,14 @@ const themes: { [key in ChartThemeName]: ChartTheme } = {
     'vivid-dark': new VividDark()
 };
 
-export function getChartTheme(value: ChartThemeName | ChartTheme | IChartTheme): ChartTheme {
-    if (themes[value as ChartThemeName]) {
-        return themes[value as ChartThemeName];
+export function getChartTheme(value: string | AgChartTheme | IAgChartTheme): AgChartTheme {
+    if (themes[value as string]) {
+        return themes[value as string];
     }
-    if (value instanceof ChartTheme) {
+    if (value instanceof AgChartTheme) {
         return value;
     }
-    value = value as IChartTheme;
+    value = value as IAgChartTheme;
     if (value.defaults || value.palette) {
         const baseTheme: any = getChartTheme(value.baseTheme);
         return new baseTheme.constructor(value);
@@ -119,7 +118,7 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'pie.series': 'pie'
 };
 
-function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
+function create(options: any, path?: string, component?: any, theme?: AgChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
     if (component instanceof LegendMarker) {
@@ -195,7 +194,7 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
     }
 }
 
-function update(component: any, options: any, path?: string, theme?: ChartTheme) {
+function update(component: any, options: any, path?: string, theme?: AgChartTheme) {
     if (!(options && typeof options === 'object')) {
         return;
     }
@@ -269,7 +268,7 @@ function update(component: any, options: any, path?: string, theme?: ChartTheme)
     }
 }
 
-function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
+function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: AgChartTheme) {
     const allSeries = chart.series;
     let prevSeries: Series | undefined;
     let i = 0;
@@ -301,7 +300,7 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: Cha
     }
 }
 
-function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
+function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: AgChartTheme) {
     const axes = chart.axes as ChartAxis[];
     const axesToAdd: ChartAxis[] = [];
     const axesToUpdate: ChartAxis[] = [];

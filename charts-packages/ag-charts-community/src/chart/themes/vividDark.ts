@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartThemePalette } from "./chartTheme";
+import { AgChartThemePalette } from "./agChartTheme";
 
 export class VividDark extends DarkTheme {
-    readonly palette: ChartThemePalette = {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#5BC0EB',
             '#FDE74C',

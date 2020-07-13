@@ -1,7 +1,7 @@
-import { ChartThemePalette, ChartTheme } from "./chartTheme";
+import { AgChartThemePalette, AgChartTheme } from "./agChartTheme";
 
-export class VividLight extends ChartTheme {
-    readonly palette: ChartThemePalette = {
+export class VividLight extends AgChartTheme {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#5BC0EB',
             '#FDE74C',

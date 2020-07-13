@@ -1,8 +1,8 @@
 import { DarkTheme } from "./darkTheme";
-import { ChartThemePalette } from "./chartTheme";
+import { AgChartThemePalette } from "./agChartTheme";
 
 export class MaterialDark extends DarkTheme {
-    readonly palette: ChartThemePalette = {
+    readonly palette: AgChartThemePalette = {
         fills: [
             '#f44336',
             '#e91e63',

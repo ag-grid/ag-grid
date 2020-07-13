@@ -1,18 +1,13 @@
-import { FontStyle, FontWeight } from "../scene/shape/text";
-import { ChartTheme, ChartThemeOverrides } from "./themes/chartTheme";
-import { HistogramAggregation } from "./series/cartesian/histogramSeries";
 import { AxisLabelFormatterParams } from "../axis";
 import { Marker } from "./marker/marker";
+import { AgChartTheme, AgChartThemeOverrides } from "./themes/agChartTheme";
 
-export type ChartThemeName = 'default' | 'undefined' | 'null'
-    | 'light' | 'material-light' | 'pastel-light' | 'solar-light' | 'vivid-light'
-    | 'dark' | 'material-dark' | 'pastel-dark' | 'solar-dark' | 'vivid-dark';
+type FontStyle = 'normal' | 'italic' | 'oblique';
+type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-export interface IChartTheme extends ChartThemeOverrides {
-    baseTheme?: ChartThemeName | ChartTheme;
+export interface IAgChartTheme extends AgChartThemeOverrides {
+    baseTheme?: string | AgChartTheme;
 }
-
-export type AgChartTheme = ChartThemeName | ChartTheme | IChartTheme;
 
 interface AgChartPaddingOptions {
     top?: number;
@@ -110,7 +105,7 @@ interface AgChartLegendOptions {
 interface AgBaseChartOptions {
     container?: HTMLElement;
     data?: any[];
-    theme?: AgChartTheme;
+    theme?: string | AgChartTheme | IAgChartTheme;
     width?: number;
     height?: number;
     autoSize?: boolean;
@@ -345,7 +340,7 @@ interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     areaPlot?: boolean;
     bins?: [number, number][];
     binCount?: number;
-    aggregation?: HistogramAggregation;
+    aggregation?: 'count' | 'sum' | 'mean';
     shadow?: AgDropShadowOptions;
     highlightStyle?: {
         fill?: string;
