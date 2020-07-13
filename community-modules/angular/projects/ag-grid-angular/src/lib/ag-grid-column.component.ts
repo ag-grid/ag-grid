@@ -137,13 +137,11 @@ export class AgGridColumn {
     @Input() public headerCheckboxSelectionFilteredOnly: any;
     @Input() public suppressMenu: any;
     @Input() public suppressMovable: any;
-    @Input() public suppressFilter: any;
     @Input() public lockPosition: any;
     @Input() public lockVisible: any;
     @Input() public lockPinned: any;
     @Input() public unSortIcon: any;
     @Input() public suppressSizeToFit: any;
-    @Input() public suppressResize: any;
     @Input() public suppressAutoSize: any;
     @Input() public enableRowGroup: any;
     @Input() public enablePivot: any;

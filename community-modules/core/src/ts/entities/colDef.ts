@@ -261,17 +261,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
 
-    /** @deprecated since v20, use colDef.filter=false instead */
-    suppressFilter?: boolean;
-
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
 
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
-
-    /** @deprecated since v20, use colDef.resizable=false instead */
-    suppressResize?: boolean;
 
     /** Set to true if this column should be resizable */
     resizable?: boolean;
