@@ -329,13 +329,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (colDefAny.cellFormatter) {
-            warnOnce('ag-Grid: since v12, cellFormatter is now valueFormatter', 'ColumnCheck_eoireknml');
-            if (_.missing(this.colDef.valueFormatter)) {
-                this.colDef.valueFormatter = colDefAny.cellFormatter;
-            }
-        }
-
         if (colDefAny.volatile) {
             warnOnce('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.', 'ColumnCheck_weoihjxcv');
         }
