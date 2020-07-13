@@ -93,7 +93,6 @@ export class BarChartProxy extends CartesianChartProxy {
     // }
 
     protected getDefaultOptions(): AgCartesianChartOptions {
-        debugger;
         return this.getDefaultCartesianChartOptions();
     }
 

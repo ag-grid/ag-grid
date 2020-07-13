@@ -80,35 +80,35 @@ export class PieChartProxy extends PolarChartProxy {
         chart.addSeries(pieSeries);
     }
 
-    protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
+    protected getDefaultOptions(): AgPolarChartOptions {
         const { strokes } = this.getPredefinedPalette();
-        const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
+        const options = this.getDefaultChartOptions() as AgPolarChartOptions;
         const fontOptions = this.getDefaultFontOptions();
 
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontSize: 12,
-                fontWeight: 'bold',
-            },
-            callout: {
-                colors: strokes,
-                length: 10,
-                strokeWidth: 2,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-                offset: 3,
-                minRequiredAngle: 0,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
+        // options.seriesDefaults = {
+        //     ...options.seriesDefaults,
+        //     title: {
+        //         ...fontOptions,
+        //         enabled: false,
+        //         fontSize: 12,
+        //         fontWeight: 'bold',
+        //     },
+        //     callout: {
+        //         colors: strokes,
+        //         length: 10,
+        //         strokeWidth: 2,
+        //     },
+        //     label: {
+        //         ...fontOptions,
+        //         enabled: false,
+        //         offset: 3,
+        //         minRequiredAngle: 0,
+        //     },
+        //     tooltip: {
+        //         enabled: true,
+        //     },
+        //     shadow: this.getDefaultDropShadowOptions(),
+        // };
 
         return options;
     }

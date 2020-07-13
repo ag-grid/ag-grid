@@ -1,4 +1,3 @@
-import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
 import { CartesianChart, AgChart, findIndex, AgCartesianChartOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -120,27 +119,27 @@ export class LineChartProxy extends CartesianChartProxy {
         this.updateLabelRotation(params.category.id);
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;
+    protected getDefaultOptions(): AgCartesianChartOptions {
+        const options = this.getDefaultCartesianChartOptions();
 
-        options.xAxis.label.rotation = 335;
+        // options.xAxis.label.rotation = 335;
 
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                enabled: true,
-                shape: 'circle',
-                size: 6,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            }
-        };
+        // options.seriesDefaults = {
+        //     ...options.seriesDefaults,
+        //     stroke: {
+        //         ...options.seriesDefaults.stroke,
+        //         width: 3,
+        //     },
+        //     marker: {
+        //         enabled: true,
+        //         shape: 'circle',
+        //         size: 6,
+        //         strokeWidth: 1,
+        //     },
+        //     tooltip: {
+        //         enabled: true,
+        //     }
+        // };
 
         return options;
     }
