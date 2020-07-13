@@ -10,7 +10,6 @@ import {
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
-    NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
@@ -36,7 +35,7 @@ import {PropertyKeys} from './propertyKeys';
 import {ColDefUtil} from './components/colDefUtil';
 import {Events} from './eventKeys';
 import {AutoHeightCalculator} from './rendering/autoHeightCalculator';
-import {SideBarDef, SideBarDefParser, ToolPanelDef} from './entities/sideBar';
+import {SideBarDef, SideBarDefParser} from './entities/sideBar';
 import {ModuleNames} from './modules/moduleNames';
 import {ChartOptions} from './interfaces/iChartOptions';
 import {ModuleRegistry} from './modules/moduleRegistry';
@@ -1036,10 +1035,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup);
     }
 
-    public getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails) | undefined {
-        return this.gridOptions.getNodeChildDetails;
-    }
-
     public getDataPathFunc(): ((dataItem: any) => string[]) | undefined {
         return this.gridOptions.getDataPath;
     }
@@ -1194,14 +1189,7 @@ export class GridOptionsWrapper {
     }
 
     public addEventListener(key: string, listener: Function): void {
-        GridOptionsWrapper.checkEventDeprecation(key);
         this.propertyEventService.addEventListener(key, listener);
-    }
-
-    public static checkEventDeprecation(eventName: string): void {
-        if (eventName === 'floatingRowDataChanged') {
-            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
-        }
     }
 
     public removeEventListener(key: string, listener: Function): void {
@@ -1367,20 +1355,6 @@ export class GridOptionsWrapper {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
         const options: any = this.gridOptions;
-
-        if (options.enableColResize) {
-            console.warn(
-                `ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`
-            );
-
-            if (!options.defaultColDef) {
-                options.defaultColDef = {};
-            }
-
-            if (!options.defaultColDef.resizable) {
-                options.defaultColDef.resizable = true;
-            }
-        }
 
         if (options.deprecatedEmbedFullWidthRows) {
             console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);

@@ -38,11 +38,6 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public execute(params: StageExecuteParams): any {
-
-        // we don't do aggregation if doing legacy tree good
-        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) { return null; }
-
         // if changed path is active, it means we came from a) change detection or b) transaction update.
         // for both of these, if no value columns are present, it means there is nothing to aggregate now
         // and there is no cleanup to be done (as value columns don't change between transactions or change

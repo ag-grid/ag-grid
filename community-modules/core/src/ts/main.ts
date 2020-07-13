@@ -291,7 +291,6 @@ export {
     IsRowMaster,
     IsRowSelectable,
     MenuItemDef,
-    GetNodeChildDetails,
     NodeChildDetails,
     GetMainMenuItemsParams,
     GetMainMenuItems,

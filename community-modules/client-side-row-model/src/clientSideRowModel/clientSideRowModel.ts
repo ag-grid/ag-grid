@@ -1,6 +1,8 @@
 import {
+    _,
     Autowired,
     Bean,
+    BeanStub,
     ChangedPath,
     ColumnApi,
     ColumnController,
@@ -8,9 +10,11 @@ import {
     Constants,
     Events,
     ExpandCollapseAllEvent,
+    FilterChangedEvent,
     FilterManager,
     GridApi,
     GridOptionsWrapper,
+    IClientSideRowModel,
     IRowNodeStage,
     ModelUpdatedEvent,
     Optional,
@@ -24,13 +28,9 @@ import {
     RowNodeTransaction,
     SelectionController,
     ValueCache,
-    ValueService,
-    IClientSideRowModel,
-    FilterChangedEvent,
-    BeanStub,
-    _
+    ValueService
 } from "@ag-grid-community/core";
-import { ClientSideNodeManager } from "./clientSideNodeManager";
+import {ClientSideNodeManager} from "./clientSideNodeManager";
 
 enum RecursionType { Normal, AfterFilter, AfterFilterAndSort, PivotNodes }
 
@@ -437,18 +437,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isEmpty(): boolean {
-        let rowsMissing: boolean;
-
-        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) {
-            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
-        } else {
-            rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        }
-
-        const empty = _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
-
-        return empty;
+        const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        return _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
     }
 
     public isRowsToRender(): boolean {
@@ -456,7 +446,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-
         // if lastSelectedNode is missing, we start at the first row
         let firstRowHit = !lastInRange;
         let lastRowHit = false;
@@ -467,7 +456,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
         this.forEachNodeAfterFilterAndSort(rowNode => {
-
             const lookingForLastRow = firstRowHit && !lastRowHit;
 
             // check if we need to flip the select switch
@@ -689,10 +677,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
     ) {
-        // grouping is enterprise only, so if service missing, skip the step
-        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) { return; }
-
         if (this.groupStage) {
 
             if (rowNodeTransactions) {

@@ -84,7 +84,7 @@ function minAndMaxAggFunction(values) {
         min: null,
         max: null,
         // because we are returning back an object, this would get rendered as [Object,Object]
-        // in the browser. we could get around this by providing a cellFormatter, OR we could
+        // in the browser. we could get around this by providing a valueFormatter, OR we could
         // get around it in a customer cellRenderer, however this is a trick that will also work
         // with clipboard.
         toString: function() {

@@ -125,8 +125,6 @@ export interface GridOptions {
     tooltipShowDelay?: number;
     tooltipMouseTrack?: boolean;
     enableRtl?: boolean;
-    /** @deprecated in v20, use colDef.resizable instead */
-    enableColResize?: boolean;
     enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
@@ -238,7 +236,8 @@ export interface GridOptions {
 
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
-    /** @deprecated Use floatingFilter on the colDef instead */ floatingFilter?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */
+    floatingFilter?: boolean;
     suppressExcelExport?: boolean;
     suppressCsvExport?: boolean;
 
@@ -376,9 +375,6 @@ export interface GridOptions {
     groupRowAggNodes?(nodes: RowNode[]): any;
 
     getBusinessKeyForNode?(node: RowNode): string;
-
-    /** @deprecated */
-    getNodeChildDetails?: GetNodeChildDetails;
 
     getDataPath?: GetDataPath;
     treeData?: boolean;
@@ -582,10 +578,6 @@ export interface IsServerSideGroup {
 
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
-}
-
-export interface GetNodeChildDetails {
-    (dataItem: any): NodeChildDetails;
 }
 
 export interface IsRowMaster {

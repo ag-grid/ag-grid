@@ -16,11 +16,9 @@ import {
     ColDef,
     ColumnApi,
     ComponentUtil,
-    Events,
     Grid,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     GridParams,
     Module,
     Promise,
@@ -71,8 +69,6 @@ export class AgGridAngular implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.checkForDeprecatedEvents();
-
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.gridParams = {
@@ -124,14 +120,6 @@ export class AgGridAngular implements AfterViewInit {
                 this.api.destroy();
             }
         }
-    }
-
-    private checkForDeprecatedEvents() {
-        _.iterateObject<any>(Events, (key, eventName) => {
-            if (this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
-                GridOptionsWrapper.checkEventDeprecation(eventName);
-            }
-        });
     }
 
     private globalEventListener(eventType: string, event: any): void {
@@ -259,7 +247,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getMainMenuItems : any = undefined;
     @Input() public processRowPostCreate : any = undefined;
     @Input() public processCellForClipboard : any = undefined;
-    @Input() public getNodeChildDetails : any = undefined;
     @Input() public groupRowAggNodes : any = undefined;
     @Input() public getRowNodeId : any = undefined;
     @Input() public isFullWidthCell : any = undefined;
@@ -307,7 +294,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public alwaysShowVerticalScroll : any = undefined;
     @Input() public debug : any = undefined;
     @Input() public enableBrowserTooltips : any = undefined;
-    @Input() public enableColResize : any = undefined;
     @Input() public enableCellExpressions : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
