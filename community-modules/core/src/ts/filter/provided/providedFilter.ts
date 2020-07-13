@@ -9,6 +9,7 @@ import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
+import { IFilterLocaleText, DEFAULT_FILTER_LOCALE_TEXT, IFilterNameLocaleText } from '../filterLocaleText';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -35,11 +36,24 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private applyActive = false;
     private hidePopup: (params: PopupEventParams) => void = null;
+    // a debounce of the onBtApply method
+    private onBtApplyDebounce: () => void;
+
+    // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
+    // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
+    // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
+    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
+    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+    // not active) then this appliedModel will be null/undefined.
+    private appliedModel: ProvidedFilterModel | null = null;
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
 
-    // part of IFilter interface, hence public
+    constructor(private readonly filterNameKey: keyof IFilterNameLocaleText) {
+        super();
+    }
+
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     protected abstract updateUiVisibility(): void;
@@ -56,16 +70,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public abstract getModelFromUi(): ProvidedFilterModel | null;
 
-    // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
-    // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
-    // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
-    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
-    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
-    // not active) then this appliedModel will be null/undefined.
-    private appliedModel: ProvidedFilterModel | null = null;
-
-    // a debounce of the onBtApply method
-    private onBtApplyDebounce: () => void;
+    public getFilterName(): string {
+        return this.translate(this.filterNameKey);
+    }
 
     /** @deprecated */
     public onFilterChanged(): void {
@@ -130,7 +137,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         if (!buttons || buttons.length < 1) { return; }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const eButtonsPanel = document.createElement('div');
 
         addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
@@ -141,19 +147,19 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
             switch (type) {
                 case 'apply':
-                    text = translate('applyFilter', 'Apply Filter');
+                    text = this.translate('applyFilter');
                     clickListener = (e) => this.onBtApply(false, false, e);
                     break;
                 case 'clear':
-                    text = translate('clearFilter', 'Clear Filter');
+                    text = this.translate('clearFilter');
                     clickListener = () => this.onBtClear();
                     break;
                 case 'reset':
-                    text = translate('resetFilter', 'Reset Filter');
+                    text = this.translate('resetFilter');
                     clickListener = () => this.onBtReset();
                     break;
                 case 'cancel':
-                    text = translate('cancelFilter', 'Cancel Filter');
+                    text = this.translate('cancelFilter');
                     clickListener = (e) => { this.onBtCancel(e); };
                     break;
                 default:
@@ -364,5 +370,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.hidePopup = null;
 
         super.destroy();
+    }
+
+    protected translate(key: keyof IFilterLocaleText | keyof IFilterNameLocaleText): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }
 }

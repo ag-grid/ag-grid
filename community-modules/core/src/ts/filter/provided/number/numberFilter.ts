@@ -36,6 +36,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     private numberFilterParams: INumberFilterParams;
 
+    constructor() {
+        super('numberFilter');
+    }
+
     protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number, to: number; } {
         return {
             from: filterModel.filter,
@@ -140,8 +144,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected createValueTemplate(position: ConditionPosition): string {
-        const positionOne = position === ConditionPosition.One;
-        const pos = positionOne ? '1' : '2';
+        const pos = position === ConditionPosition.One ? '1' : '2';
         const { allowedCharPattern } = this.numberFilterParams || {};
         const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 

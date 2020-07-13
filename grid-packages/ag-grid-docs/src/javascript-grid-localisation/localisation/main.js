@@ -6,7 +6,22 @@ var columnDefs = [
     { field: 'country', enableRowGroup: true },
     { field: 'year', filter: 'agNumberColumnFilter' },
     { field: 'date' },
-    { field: 'sport', filter: 'agTextColumnFilter' },
+    {
+        field: 'sport',
+        filter: 'agMultiColumnFilter',
+        filterParams: {
+            filters: [
+                {
+                    filter: 'agTextColumnFilter',
+                    display: 'accordion'
+                },
+                {
+                    filter: 'agSetColumnFilter',
+                    display: 'accordion'
+                }
+            ]
+        }
+    },
     { field: 'gold', enableValue: true },
     { field: 'silver', enableValue: true },
     { field: 'bronze', enableValue: true },
@@ -81,6 +96,12 @@ var gridOptions = {
         resetFilter: 'daReset',
         clearFilter: 'daClear',
         cancelFilter: 'daCancel',
+
+        // Filter Titles
+        textFilter: 'daText Filter',
+        numberFilter: 'daNumber Filter',
+        dateFilter: 'daDate Filter',
+        setFilter: 'daSet Filter',
 
         // Side Bar
         columns: 'laColumns',

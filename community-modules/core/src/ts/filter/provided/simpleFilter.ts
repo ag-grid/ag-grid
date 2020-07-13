@@ -7,6 +7,9 @@ import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { forEach, every, some } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
+import { IFilterLocaleText } from '../filterLocaleText';
+
+export type JoinOperator = 'AND' | 'OR';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
@@ -20,52 +23,12 @@ export interface ISimpleFilterModel extends ProvidedFilterModel {
 }
 
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
-    operator: string;
+    operator: JoinOperator;
     condition1: M;
     condition2: M;
 }
 
 export enum ConditionPosition { One, Two }
-
-interface ISimpleFilterTranslations {
-    filterOoo: string;
-    empty: string;
-    equals: string;
-    notEqual: string;
-    lessThan: string;
-    greaterThan: string;
-    inRange: string;
-    inRangeStart: string;
-    inRangeEnd: string;
-    lessThanOrEqual: string;
-    greaterThanOrEqual: string;
-    contains: string;
-    notContains: string;
-    startsWith: string;
-    endsWith: string;
-    andCondition: string;
-    orCondition: string;
-}
-
-const DEFAULT_TRANSLATIONS: ISimpleFilterTranslations = {
-    filterOoo: 'Filter...',
-    empty: 'Choose One',
-    equals: 'Equals',
-    notEqual: 'Not equal',
-    lessThan: 'Less than',
-    greaterThan: 'Greater than',
-    inRange: 'In range',
-    inRangeStart: 'From',
-    inRangeEnd: 'To',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
-    contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
-    endsWith: 'Ends with',
-    andCondition: 'AND',
-    orCondition: 'OR',
-};
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -171,7 +134,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return this.eType2.getValue();
     }
 
-    protected getJoinOperator(): string {
+    protected getJoinOperator(): JoinOperator {
         return this.eJoinOperatorOr.getValue() === true ? 'OR' : 'AND';
     }
 
@@ -282,13 +245,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
             if (typeof option === 'string') {
                 value = option;
-                text = this.translate(value as keyof ISimpleFilterTranslations);
+                text = this.translate(value as keyof IFilterLocaleText);
             } else {
                 value = option.displayKey;
 
                 const customOption = this.optionsFactory.getCustomOption(value);
 
-                text = customOption ? customOption.displayName : this.translate(value as keyof ISimpleFilterTranslations);
+                text = customOption ? customOption.displayName : this.translate(value as keyof IFilterLocaleText);
             }
 
             const createOption = () => ({ value, text });
@@ -363,12 +326,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             .setLabel(this.translate('orCondition'));
 
         return Promise.resolve();
-    }
-
-    protected translate(toTranslate: keyof ISimpleFilterTranslations): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
     private addChangedListeners() {

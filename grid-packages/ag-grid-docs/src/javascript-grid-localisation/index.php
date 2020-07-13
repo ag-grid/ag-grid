@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 <p> The example below shows all the locale keys with default values:</p>
 
 <?= createSnippet(<<<SNIPPET
-localeText: {     
+localeText: {
     // Set Filter
     selectAll: 'Select All',
     selectAllSearchResults: 'Select All Search Results',
@@ -47,7 +47,7 @@ localeText: {
     endsWith: 'Ends with',
 
     // Date Filter
-    dateFormatOoo: 'Yyyy-mm-dd',
+    dateFormatOoo: 'yyyy-mm-dd',
 
     // Filter Conditions
     andCondition: 'AND',
@@ -57,24 +57,30 @@ localeText: {
     applyFilter: 'Apply',
     resetFilter: 'Reset',
     clearFilter: 'Clear',
-    cancelFilter: 'Cancel',    
-   
+    cancelFilter: 'Cancel',
+
+    // Filter Titles
+    textFilter: 'Text Filter',
+    numberFilter: 'Number Filter',
+    dateFilter: 'Date Filter',
+    setFilter: 'Set Filter',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',
-    
+
     // columns tool panel
-    pivotMode: 'Pivot Mode',    
+    pivotMode: 'Pivot Mode',
     groups: 'Row Groups',
-    rowGroupColumnsEmptyMessage: 'Drag here to set row groups',    
-    values: 'Values',    
-    valueColumnsEmptyMessage: 'Drag here to aggregate',   
+    rowGroupColumnsEmptyMessage: 'Drag here to set row groups',
+    values: 'Values',
+    valueColumnsEmptyMessage: 'Drag here to aggregate',
     pivots: 'Column Labels',
-    pivotColumnsEmptyMessage: 'Drag here to set column labels',    
+    pivotColumnsEmptyMessage: 'Drag here to set column labels',
 
     // Header of the Default Group Column
     group: 'Group',
-    
+
     // Other
     loadingOoo: 'Loading...',
     noRowsToShow: 'No Rows To Show',
@@ -95,7 +101,7 @@ localeText: {
     collapseAll: 'Close All',
     copy: 'Copy',
     ctrlC: 'Ctrl+C',
-    copyWithHeaders: 'Copy With Headers',    
+    copyWithHeaders: 'Copy With Headers',
     paste: 'Paste',
     ctrlV: 'Ctrl+V',
     export: 'Export',
@@ -121,12 +127,12 @@ localeText: {
     next: 'Next',
     last: 'Last',
     first: 'First',
-    previous: 'Previous', 
+    previous: 'Previous',
 
     // Enterprise Menu (Charts)
     pivotChartAndPivotMode: 'Pivot Chart & Pivot Mode',
     pivotChart: 'Pivot Chart',
-    chartRange: 'Chart Range',     
+    chartRange: 'Chart Range',
 
     columnChart: 'Column',
     groupedColumn: 'Grouped',

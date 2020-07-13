@@ -26,11 +26,11 @@ var gridOptions = {
                 filters: [
                     {
                         filter: 'agTextColumnFilter',
-                        display: 'group',
+                        display: 'accordion',
                     },
                     {
                         filter: 'agSetColumnFilter',
-                        display: 'group',
+                        display: 'accordion',
                     }
                 ]
             }

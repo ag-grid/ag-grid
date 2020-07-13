@@ -46,6 +46,10 @@ export class SetFilter extends ProvidedFilter {
     // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
     private appliedModelValues: { [key: string]: boolean; } | null = null;
 
+    constructor() {
+        super('setFilter');
+    }
+
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void { }
@@ -63,14 +67,14 @@ export class SetFilter extends ProvidedFilter {
     protected createBodyTemplate(): string {
         return /* html */`
             <div>
-                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
+                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                     <div ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                         <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
                     </div>
                 </div>
-                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
+                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
@@ -219,7 +223,7 @@ export class SetFilter extends ProvidedFilter {
             params.suppressSorting,
             loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
-            key => this.translate(key),
+            key => this.translateForSetFilter(key),
         );
 
         this.initialiseFilterBodyUi();
@@ -350,7 +354,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translate(key)));
+        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translateForSetFilter(key)));
         const selected = this.valueModel.isValueSelected(value);
 
         listItem.setSelected(selected);
@@ -394,7 +398,7 @@ export class SetFilter extends ProvidedFilter {
 
         const { eMiniFilter } = this;
 
-        eMiniFilter.setInputPlaceholder(this.translate('searchOoo'));
+        eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
         eMiniFilter.getFocusableElement().focus();
     }
 
@@ -541,8 +545,8 @@ export class SetFilter extends ProvidedFilter {
 
     private updateSelectAllLabel() {
         const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            this.translate('selectAll') :
-            this.translate('selectAllSearchResults');
+            this.translateForSetFilter('selectAll') :
+            this.translateForSetFilter('selectAllSearchResults');
 
         this.eSelectAll.setLabel(`(${label})`);
     }
@@ -698,7 +702,7 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    private translate(key: keyof ISetFilterLocaleText): string {
+    private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);

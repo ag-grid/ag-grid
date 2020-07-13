@@ -11,7 +11,7 @@ class TestFilter extends ProvidedFilter {
     private modelHasChanged = false;
 
     constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-        super();
+        super('textFilter');
 
         const eGui = mock<HTMLElement>('appendChild');
         this.setGui(eGui);

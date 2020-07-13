@@ -91,7 +91,9 @@ export class MultiFilter extends Component implements IFilterComp {
             }
 
             const filterDef = this.filterDefs[index];
-            const filterName = `Filter ${index + 1}`;
+            const filterWithoutType = filter as any;
+            const filterName = typeof filterWithoutType.getFilterName === 'function' ?
+                filterWithoutType.getFilterName() : 'Filter';
 
             if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                 // prevent sub-menu being used in tool panel

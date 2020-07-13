@@ -44,10 +44,13 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     private dateCondition2FromComp: DateCompWrapper;
     private dateCondition2ToComp: DateCompWrapper;
 
-    @Autowired('userComponentFactory')
-    private userComponentFactory: UserComponentFactory;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private dateFilterParams: IDateFilterParams;
+
+    constructor() {
+        super('dateFilter');
+    }
 
     protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date; to: Date; } {
         // unlike the other filters, we do two things here:
@@ -192,8 +195,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     }
 
     private resetPlaceholder(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const placeholder = translate('dateFormatOoo', 'yyyy-mm-dd');
+        const placeholder = this.translate('dateFormatOoo');
 
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
         this.dateCondition1FromComp.setInputAriaLabel(placeholder);
