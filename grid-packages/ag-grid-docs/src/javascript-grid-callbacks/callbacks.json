@@ -34,9 +34,6 @@
         "getHeaderCellTemplate": {
             "description": "Function to use instead of <code>headerCellTemplate</code>. Should return string or HTML DOM element."
         },
-        "getNodeChildDetails(callback)": {
-            "description": "Allows you to pass tree structure data to the grid, or row data that is already grouped."
-        },
         "getChildCount(data)": {
             "description": "(For <a href='../javascript-grid-server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
         },

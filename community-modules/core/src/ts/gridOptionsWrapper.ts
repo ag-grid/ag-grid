@@ -10,7 +10,6 @@ import {
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
-    NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
@@ -1034,10 +1033,6 @@ export class GridOptionsWrapper {
 
     public isSuppressMakeColumnVisibleAfterUnGroup() {
         return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup);
-    }
-
-    public getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails) | undefined {
-        return this.gridOptions.getNodeChildDetails;
     }
 
     public getDataPathFunc(): ((dataItem: any) => string[]) | undefined {

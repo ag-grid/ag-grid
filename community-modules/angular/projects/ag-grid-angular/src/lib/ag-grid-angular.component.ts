@@ -247,7 +247,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getMainMenuItems : any = undefined;
     @Input() public processRowPostCreate : any = undefined;
     @Input() public processCellForClipboard : any = undefined;
-    @Input() public getNodeChildDetails : any = undefined;
     @Input() public groupRowAggNodes : any = undefined;
     @Input() public getRowNodeId : any = undefined;
     @Input() public isFullWidthCell : any = undefined;
