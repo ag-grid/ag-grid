@@ -15,6 +15,19 @@
             },
             "floatingFilterComponentParams": {
                 "description": "Custom parameters to be passed to the floating filter component."
+            },
+            "display": {
+                "default": "inline",
+                "options": [
+                    "inline",
+                    "subMenu",
+                    "accordion"
+                ],
+                "description": "Configures how the filter is shown in the Multi Filter.",
+                "more": {
+                    "url": "../javascript-grid-filter-multi/#display-style",
+                    "name": "Display Style"
+                }
             }
         }
     }

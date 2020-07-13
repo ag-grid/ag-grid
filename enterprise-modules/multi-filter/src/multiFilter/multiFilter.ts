@@ -20,7 +20,7 @@ import {
 import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
-    display?: 'inline' | 'group' | 'subMenu';
+    display?: 'inline' | 'accordion' | 'subMenu';
 }
 
 export interface IMultiFilterParams extends IFilterParams {
@@ -96,7 +96,7 @@ export class MultiFilter extends Component implements IFilterComp {
             if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                 // prevent sub-menu being used in tool panel
                 this.appendChild(this.insertFilterMenu(filter, filterName).getGui());
-            } else if (filterDef.display === 'subMenu' || filterDef.display === 'group') {
+            } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                 // sub-menus should appear as groups in the tool panel
                 this.appendChild(this.insertFilterGroup(filter, filterName).getGui());
             } else {

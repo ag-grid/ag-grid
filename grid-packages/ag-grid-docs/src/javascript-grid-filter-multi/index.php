@@ -93,9 +93,9 @@ SNIPPET
 SNIPPET
 ) ?>
 
-<p>The options for <code>display</code> are <code>'inline'</code>, <code>'subMenu'</code> or <code>'group'</code>.</p>
+<p>The options for <code>display</code> are <code>'inline'</code>, <code>'subMenu'</code> or <code>'accordion'</code>.</p>
 
-<p>Please note that sub-menus will be shown as groups in the tool panel.</p>
+<p>Please note that sub-menus will be shown as accordions in the tool panel.</p>
 
 <p>
     The following example demonstrates the different styles.
@@ -109,10 +109,10 @@ SNIPPET
         The <strong>Country</strong> column demonstrates having the first filter inside a sub menu.
     </li>
     <li>
-        The <strong>Sport</strong> column demonstrates having both filters in a group.
+        The <strong>Sport</strong> column demonstrates having both filters as accordions.
     </li>
     <li>
-        The sub-menu for the <strong>Country</strong> is shown as a group inside the Tool Panel.
+        The sub-menu for the <strong>Country</strong> is shown as an accordion inside the Tool Panel.
     </li>
 </ul>
 
