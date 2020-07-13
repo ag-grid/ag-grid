@@ -81,7 +81,6 @@ export class ColDefUtil {
         'headerCheckboxSelection',
         'headerCheckboxSelectionFilteredOnly',
         'suppressMenu',
-        'suppressSorting',
         'suppressMovable',
         'suppressFilter',
         'lockPosition',

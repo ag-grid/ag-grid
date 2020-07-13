@@ -588,14 +588,6 @@ export interface IsRowSelectable {
     (node: RowNode): boolean;
 }
 
-export interface NodeChildDetails {
-    group: boolean;
-    children?: any[];
-    expanded?: boolean;
-    field?: string;
-    key?: any;
-}
-
 export interface ProcessChartOptionsParams {
     type: ChartType;
     options: ChartOptions<any>;

@@ -329,11 +329,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (colDefAny.suppressSorting) {
-            warnOnce(`ag-Grid: since v20, colDef.suppressSorting is gone, instead use colDef.sortable=false.`, 'ColumnCheck_43ljrer', this.colDef);
-            this.colDef.sortable = false;
-        }
-
         if (colDefAny.suppressFilter) {
             warnOnce(`ag-Grid: since v20, colDef.suppressFilter is gone, instead use colDef.filter=false.`, 'ColumnCheck_erlkhfdm', this.colDef);
             this.colDef.filter = false;

@@ -246,9 +246,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true if sorting allowed for this column. */
     sortable?: boolean;
 
-    /** @deprecated since v20, use colDef.sortable=false instead */
-    suppressSorting?: boolean;
-
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
 

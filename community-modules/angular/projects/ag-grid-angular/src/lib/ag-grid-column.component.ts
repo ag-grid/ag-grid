@@ -136,7 +136,6 @@ export class AgGridColumn {
     @Input() public headerCheckboxSelection: any;
     @Input() public headerCheckboxSelectionFilteredOnly: any;
     @Input() public suppressMenu: any;
-    @Input() public suppressSorting: any;
     @Input() public suppressMovable: any;
     @Input() public suppressFilter: any;
     @Input() public lockPosition: any;
