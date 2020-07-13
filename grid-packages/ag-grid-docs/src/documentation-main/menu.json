@@ -206,7 +206,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Column State",
+            "title": "Updating Columns",
             "box-title": "State",
             "url": "javascript-grid-column-state/",
             "showInCollapsed": true
