@@ -98,6 +98,11 @@ SNIPPET
 <p>Please note that sub-menus will be shown as accordions in the tool panel.</p>
 
 <p>
+    You can also provide a title that will be used in the menu item or accordion title by using the <code>title</code>
+    property.
+</p>
+
+<p>
     The following example demonstrates the different styles.
 </p>
 
@@ -109,10 +114,13 @@ SNIPPET
         The <strong>Country</strong> column demonstrates having the first filter inside a sub menu.
     </li>
     <li>
+        The sub-menu for the <strong>Country</strong> is shown as an accordion inside the Tool Panel.
+    </li>
+    <li>
         The <strong>Sport</strong> column demonstrates having both filters as accordions.
     </li>
     <li>
-        The sub-menu for the <strong>Country</strong> is shown as an accordion inside the Tool Panel.
+        A custom title is used for the first filter in the <strong>Sport</strong> column.
     </li>
 </ul>
 

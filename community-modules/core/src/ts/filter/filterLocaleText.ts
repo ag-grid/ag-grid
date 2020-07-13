@@ -23,14 +23,14 @@ export interface IFilterLocaleText {
     dateFormatOoo: string;
 }
 
-export interface IFilterNameLocaleText {
+export interface IFilterTitleLocaleText {
     textFilter: string;
     numberFilter: string;
     dateFilter: string;
     setFilter: string;
 }
 
-export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterNameLocaleText = {
+export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterTitleLocaleText = {
     applyFilter: 'Apply Filter',
     clearFilter: 'Clear Filter',
     resetFilter: 'Reset Filter',

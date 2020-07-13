@@ -21,6 +21,7 @@ import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
     display?: 'inline' | 'accordion' | 'subMenu';
+    title?: string;
 }
 
 export interface IMultiFilterParams extends IFilterParams {
@@ -91,16 +92,14 @@ export class MultiFilter extends Component implements IFilterComp {
             }
 
             const filterDef = this.filterDefs[index];
-            const filterWithoutType = filter as any;
-            const filterName = typeof filterWithoutType.getFilterName === 'function' ?
-                filterWithoutType.getFilterName() : 'Filter';
+            const filterTitle = this.getFilterTitle(filter, filterDef);
 
             if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                 // prevent sub-menu being used in tool panel
-                this.appendChild(this.insertFilterMenu(filter, filterName).getGui());
+                this.appendChild(this.insertFilterMenu(filter, filterTitle).getGui());
             } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                 // sub-menus should appear as groups in the tool panel
-                this.appendChild(this.insertFilterGroup(filter, filterName).getGui());
+                this.appendChild(this.insertFilterGroup(filter, filterTitle).getGui());
             } else {
                 // display inline
                 this.appendChild(filter.getGui());
@@ -108,6 +107,16 @@ export class MultiFilter extends Component implements IFilterComp {
         });
 
         this.lastOpenedInContainer = container;
+    }
+
+    private getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef): string {
+        if (filterDef.title != null) {
+            return filterDef.title;
+        }
+
+        const filterWithoutType = filter as any;
+
+        return typeof filterWithoutType.getFilterTitle === 'function' ? filterWithoutType.getFilterTitle() : 'Filter';
     }
 
     private destroyChildren() {

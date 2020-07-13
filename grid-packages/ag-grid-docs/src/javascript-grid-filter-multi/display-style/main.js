@@ -27,6 +27,7 @@ var gridOptions = {
                     {
                         filter: 'agTextColumnFilter',
                         display: 'accordion',
+                        title: 'Expand Me for Text Filters'
                     },
                     {
                         filter: 'agSetColumnFilter',

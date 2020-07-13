@@ -9,7 +9,7 @@ import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
-import { IFilterLocaleText, DEFAULT_FILTER_LOCALE_TEXT, IFilterNameLocaleText } from '../filterLocaleText';
+import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -50,7 +50,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
 
-    constructor(private readonly filterNameKey: keyof IFilterNameLocaleText) {
+    constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
     }
 
@@ -70,7 +70,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public abstract getModelFromUi(): ProvidedFilterModel | null;
 
-    public getFilterName(): string {
+    public getFilterTitle(): string {
         return this.translate(this.filterNameKey);
     }
 
@@ -372,7 +372,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         super.destroy();
     }
 
-    protected translate(key: keyof IFilterLocaleText | keyof IFilterNameLocaleText): string {
+    protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);

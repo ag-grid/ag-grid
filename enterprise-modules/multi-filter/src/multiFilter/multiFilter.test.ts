@@ -13,9 +13,12 @@ import {
     IDoesFilterPassParams,
     ProvidedFilter,
     ProvidedFilterModel,
+    Context,
+    AgGroupComponent,
 } from '@ag-grid-community/core';
 import { SetFilterModel } from '@ag-grid-enterprise/set-filter';
 import { mock } from '../test-utils/mock';
+import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
@@ -24,6 +27,7 @@ let userComponentFactory: jest.Mocked<UserComponentFactory>;
 let colDef: jest.Mocked<ColDef>;
 let column: jest.Mocked<Column>;
 let rowModel: jest.Mocked<IRowModel>;
+let context: jest.Mocked<Context>;
 
 let filter1: jest.Mocked<IFilterComp>;
 let filter2: jest.Mocked<IFilterComp>;
@@ -34,7 +38,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
         column,
         colDef,
         rowModel,
-        context: null,
+        context,
         doesRowPassOtherFilter: () => true,
         filterChangedCallback: () => { },
         filterModifiedCallback: () => { },
@@ -56,6 +60,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
     (multiFilter as any).eGui = eGui;
     (multiFilter as any).filterManager = filterManager;
     (multiFilter as any).userComponentFactory = userComponentFactory;
+    (multiFilter as any).context = context;
 
     multiFilter.init(params);
 
@@ -66,6 +71,7 @@ beforeEach(() => {
     eGui = mock<HTMLElement>('appendChild');
     filterManager = mock<FilterManager>('createFilterParams');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
+    context = mock<Context>('createBean');
 
     colDef = mock<ColDef>();
     column = mock<Column>('getColDef');
@@ -77,29 +83,6 @@ describe('init', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui');
         filter2 = mock<IFilterComp>('getGui');
-    });
-
-    it('presents the first filter then the second filter with a menu separator in-between', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1 = mock<IFilterComp>('getGui');
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2 = mock<IFilterComp>('getGui');
-        filter2.getGui.mockReturnValue(filter2Element);
-
-        const filter = createFilter();
-        filter.afterGuiAttached({ container: 'columnMenu' });
-
-        expect(eGui.appendChild).toHaveBeenCalledTimes(3);
-
-        const { calls } = eGui.appendChild.mock;
-
-        expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
-        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-filter-separator"></div>');
-        expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
     });
 
     it('will default to text filter and set filter', () => {
@@ -377,6 +360,188 @@ describe('afterGuiAttached', () => {
         const multiFilter = createFilter();
 
         expect(() => multiFilter.afterGuiAttached({ container: 'columnMenu' })).not.toThrow();
+    });
+
+    it('presents the first filter then the second filter with a separator in-between', () => {
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter();
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        expect(eGui.appendChild).toHaveBeenCalledTimes(3);
+
+        const { calls } = eGui.appendChild.mock;
+
+        expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
+        expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-filter-separator"></div>');
+        expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
+    });
+
+    it('refreshes the UI if the container changes', () => {
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter();
+        filter.afterGuiAttached({ container: 'columnMenu' });
+        filter.afterGuiAttached({ container: 'toolPanel' });
+
+        expect(eGui.appendChild).toHaveBeenCalledTimes(6);
+    });
+
+    it('does not refresh the UI if the container does not change', () => {
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter();
+        filter.afterGuiAttached({ container: 'columnMenu' });
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        expect(eGui.appendChild).toHaveBeenCalledTimes(3);
+    });
+
+    it('presents the filter inside a sub-menu if configured', () => {
+        context.createBean.mockImplementation(bean => bean);
+
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter({
+            filters: [{
+                filter: 'agTextColumnFilter',
+                display: 'subMenu',
+            }]
+        });
+
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        const { calls } = eGui.appendChild.mock;
+
+        expect((calls[0][0] as HTMLElement).classList).toContain('ag-menu-option');
+    });
+
+    it('presents the filter inside an accordion if sub-menu is configured but filter is opened in tool panel', () => {
+        context.createBean.mockImplementation(bean => bean);
+
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter({
+            filters: [{
+                filter: 'agTextColumnFilter',
+                display: 'subMenu',
+            }]
+        });
+
+        filter.afterGuiAttached({ container: 'toolPanel' });
+
+        const { calls } = eGui.appendChild.mock;
+
+        expect((calls[0][0] as HTMLElement).classList).toContain('ag-multi-filter-group');
+    });
+
+    it('presents the filter inside an accordion if configured', () => {
+        context.createBean.mockImplementation(bean => bean);
+
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter({
+            filters: [{
+                filter: 'agTextColumnFilter',
+                display: 'accordion',
+            }]
+        });
+
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        const { calls } = eGui.appendChild.mock;
+
+        expect((calls[0][0] as HTMLElement).classList).toContain('ag-multi-filter-group');
+    });
+
+    it('presents the filter inside an sub-menu with custom title if configured', () => {
+        context.createBean.mockImplementation(bean => bean);
+
+        const title = 'Filter Title';
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter({
+            filters: [{
+                filter: 'agTextColumnFilter',
+                display: 'subMenu',
+                title
+            }]
+        });
+
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        const { calls } = context.createBean.mock;
+
+        expect((calls[0][0] as MenuItemComponent).getGui().getElementsByClassName('ag-menu-option-text')[0].innerHTML).toBe(title);
+    });
+
+    it('presents the filter inside an accordion with custom title if configured', () => {
+        context.createBean.mockImplementation(bean => bean);
+
+        const title = 'Filter Title';
+        const filter1Element = document.createElement('div');
+        filter1Element.id = 'filter-1';
+        filter1.getGui.mockReturnValue(filter1Element);
+
+        const filter2Element = document.createElement('div');
+        filter2Element.id = 'filter-2';
+        filter2.getGui.mockReturnValue(filter2Element);
+
+        const filter = createFilter({
+            filters: [{
+                filter: 'agTextColumnFilter',
+                display: 'accordion',
+                title
+            }]
+        });
+
+        filter.afterGuiAttached({ container: 'columnMenu' });
+
+        const { calls } = context.createBean.mock;
+
+        expect((calls[0][0] as any).title).toBe(title);
     });
 });
 
