@@ -6,7 +6,7 @@ import {
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
+export class BarChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -19,7 +19,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const {grouping, parentElement} = this.chartProxyParams;
         const isColumnChart = this.isColumnChart();
 
-        options = options || this.chartOptions;
+        options = options || this.chartOptions as AgCartesianChartOptions;
         options.autoSize = true;
         options.axes = [
             { // x-axis

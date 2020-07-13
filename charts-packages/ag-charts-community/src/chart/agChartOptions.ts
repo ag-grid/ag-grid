@@ -309,6 +309,8 @@ interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
 
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
+    grouped?: boolean;
+    normalizedTo?: number;
     xKey?: string;
     yKeys?: string[];
     xName?: string;
