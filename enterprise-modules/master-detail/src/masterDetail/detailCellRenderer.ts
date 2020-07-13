@@ -141,7 +141,11 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         const checkRowSizeFunc = () => {
             const clientHeight = this.getGui().clientHeight;
 
-            if (clientHeight != null) {
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight!=null && clientHeight>0) {
                 this.params.node.setRowHeight(clientHeight);
                 onRowHeightChangedDebounced();
             }
