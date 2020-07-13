@@ -38,11 +38,11 @@ export class AreaChartProxy extends CartesianChartProxy {
         options.series = [{
             ...seriesDefaults,
             type: 'area',
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
+            // fills: seriesDefaults.fill.colors,
+            // fillOpacity: seriesDefaults.fill.opacity,
+            // strokes: seriesDefaults.stroke.colors,
+            // strokeOpacity: seriesDefaults.stroke.opacity,
+            // strokeWidth: seriesDefaults.stroke.width,
             marker
         }];
 
@@ -73,11 +73,11 @@ export class AreaChartProxy extends CartesianChartProxy {
                 }
                 series = {
                     ...seriesDefaults,
-                    fills: seriesDefaults.fill.colors,
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokes: seriesDefaults.stroke.colors,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
+                    // fills: seriesDefaults.fill.colors,
+                    // fillOpacity: seriesDefaults.fill.opacity,
+                    // strokes: seriesDefaults.stroke.colors,
+                    // strokeOpacity: seriesDefaults.stroke.opacity,
+                    // strokeWidth: seriesDefaults.stroke.width,
                     marker
                 };
                 options.series = [series];
@@ -142,9 +142,9 @@ export class AreaChartProxy extends CartesianChartProxy {
                     xName: params.category.name,
                     yKeys: [f.colId],
                     yNames: [f.displayName],
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
+                    // fillOpacity: seriesDefaults.fill.opacity,
+                    // strokeOpacity: seriesDefaults.stroke.opacity,
+                    // strokeWidth: seriesDefaults.stroke.width,
                     marker
                 };
 
@@ -163,32 +163,32 @@ export class AreaChartProxy extends CartesianChartProxy {
         });
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<AreaSeriesOptions>;
+    protected getDefaultOptions(): AgCartesianChartOptions {
+        const options = this.getDefaultCartesianChartOptions();
 
-        options.xAxis.label.rotation = 335;
+        // options.xAxis.label.rotation = 335;
 
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            fill: {
-                ...options.seriesDefaults.fill,
-                opacity: this.chartType === ChartType.Area ? 0.7 : 1,
-            },
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                shape: 'circle',
-                enabled: true,
-                size: 6,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
+        // options.seriesDefaults = {
+        //     ...options.seriesDefaults,
+        //     fill: {
+        //         ...options.seriesDefaults.fill,
+        //         opacity: this.chartType === ChartType.Area ? 0.7 : 1,
+        //     },
+        //     stroke: {
+        //         ...options.seriesDefaults.stroke,
+        //         width: 3,
+        //     },
+        //     marker: {
+        //         shape: 'circle',
+        //         enabled: true,
+        //         size: 6,
+        //         strokeWidth: 1,
+        //     },
+        //     tooltip: {
+        //         enabled: true,
+        //     },
+        //     shadow: this.getDefaultDropShadowOptions(),
+        // };
 
         return options;
     }

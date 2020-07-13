@@ -85,9 +85,9 @@ export class ScatterChartProxy extends CartesianChartProxy {
             const series = existingSeries || {
                 ...seriesDefaults,
                 type: 'scatter',
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
+                // fillOpacity: seriesDefaults.fill.opacity,
+                // strokeOpacity: seriesDefaults.stroke.opacity,
+                // strokeWidth: seriesDefaults.stroke.width,
                 marker
             };
 
@@ -149,32 +149,32 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
-    protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions> {
+    protected getDefaultOptions(): AgCartesianChartOptions {
         const isBubble = this.chartType === ChartType.Bubble;
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<ScatterSeriesOptions>;
+        const options = this.getDefaultCartesianChartOptions();
 
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            fill: {
-                ...options.seriesDefaults.fill,
-                opacity: isBubble ? 0.7 : 1,
-            },
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                shape: 'circle',
-                enabled: true,
-                size: isBubble ? 30 : 6,
-                minSize: isBubble ? 6 : undefined,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            paired: false,
-        };
+        // options.seriesDefaults = {
+        //     ...options.seriesDefaults,
+        //     fill: {
+        //         ...options.seriesDefaults.fill,
+        //         opacity: isBubble ? 0.7 : 1,
+        //     },
+        //     stroke: {
+        //         ...options.seriesDefaults.stroke,
+        //         width: 3,
+        //     },
+        //     marker: {
+        //         shape: 'circle',
+        //         enabled: true,
+        //         size: isBubble ? 30 : 6,
+        //         minSize: isBubble ? 6 : undefined,
+        //         strokeWidth: 1,
+        //     },
+        //     tooltip: {
+        //         enabled: true,
+        //     },
+        //     paired: false,
+        // };
 
         return options;
     }

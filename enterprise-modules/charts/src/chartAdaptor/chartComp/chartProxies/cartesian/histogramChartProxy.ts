@@ -60,26 +60,26 @@ export class HistogramChartProxy extends CartesianChartProxy {
         AgChart.update(this.chart, options, this.chartProxyParams.parentElement);
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {
+    protected getDefaultOptions(): AgCartesianChartOptions {
 
         const fontOptions = this.getDefaultFontOptions();
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<HistogramSeriesOptions>;
+        const options = this.getDefaultCartesianChartOptions();
 
-        options.xAxis.label.rotation = 0;
-        options.yAxis.label.rotation = 0;
+        // options.xAxis.label.rotation = 0;
+        // options.yAxis.label.rotation = 0;
 
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            tooltip: {
-                enabled: true,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-            binCount: 10
-        };
+        // options.seriesDefaults = {
+        //     ...options.seriesDefaults,
+        //     tooltip: {
+        //         enabled: true,
+        //     },
+        //     label: {
+        //         ...fontOptions,
+        //         enabled: false,
+        //     },
+        //     shadow: this.getDefaultDropShadowOptions(),
+        //     binCount: 10
+        // };
 
         return options;
     }
