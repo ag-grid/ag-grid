@@ -59,14 +59,6 @@ export class ComponentUtil {
             .filter(keyExists)
             .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(component[key]));
 
-        // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
-        if (!skipEventDeprecationCheck) {
-            ComponentUtil.EVENTS
-                // React uses onXXX, not sure why this is different to the other frameworks
-                .filter(event => keyExists(event) || keyExists(ComponentUtil.getCallbackForEvent(event)))
-                .forEach(event => GridOptionsWrapper.checkEventDeprecation(event));
-        }
-
         return gridOptions;
     }
 

@@ -36,7 +36,7 @@ import {PropertyKeys} from './propertyKeys';
 import {ColDefUtil} from './components/colDefUtil';
 import {Events} from './eventKeys';
 import {AutoHeightCalculator} from './rendering/autoHeightCalculator';
-import {SideBarDef, SideBarDefParser, ToolPanelDef} from './entities/sideBar';
+import {SideBarDef, SideBarDefParser} from './entities/sideBar';
 import {ModuleNames} from './modules/moduleNames';
 import {ChartOptions} from './interfaces/iChartOptions';
 import {ModuleRegistry} from './modules/moduleRegistry';
@@ -1194,14 +1194,7 @@ export class GridOptionsWrapper {
     }
 
     public addEventListener(key: string, listener: Function): void {
-        GridOptionsWrapper.checkEventDeprecation(key);
         this.propertyEventService.addEventListener(key, listener);
-    }
-
-    public static checkEventDeprecation(eventName: string): void {
-        if (eventName === 'floatingRowDataChanged') {
-            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
-        }
     }
 
     public removeEventListener(key: string, listener: Function): void {

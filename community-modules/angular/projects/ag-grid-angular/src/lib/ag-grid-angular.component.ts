@@ -16,11 +16,9 @@ import {
     ColDef,
     ColumnApi,
     ComponentUtil,
-    Events,
     Grid,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     GridParams,
     Module,
     Promise,
@@ -71,8 +69,6 @@ export class AgGridAngular implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.checkForDeprecatedEvents();
-
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.gridParams = {
@@ -124,14 +120,6 @@ export class AgGridAngular implements AfterViewInit {
                 this.api.destroy();
             }
         }
-    }
-
-    private checkForDeprecatedEvents() {
-        _.iterateObject<any>(Events, (key, eventName) => {
-            if (this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
-                GridOptionsWrapper.checkEventDeprecation(eventName);
-            }
-        });
     }
 
     private globalEventListener(eventType: string, event: any): void {
