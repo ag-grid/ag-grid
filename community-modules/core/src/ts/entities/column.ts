@@ -330,10 +330,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
-            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup', 'ColumnCheck_sksldjf');
-        }
-
         if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
             warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator', 'ColumnCheck_ieiruhgdf');
         }

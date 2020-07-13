@@ -6,10 +6,7 @@ var columnDefs = [
     // pivot column
     {
         headerName: 'Year',
-        // cellRenderer:'agGroupCellRenderer',
         // to mix it up a bit, here we are using a valueGetter for the year column.
-        // this demonstrates that groupHideOpenParents and restrictToOneGroup works
-        // with value getters also.
         valueGetter: 'data.year',
         pivot: true
     },
