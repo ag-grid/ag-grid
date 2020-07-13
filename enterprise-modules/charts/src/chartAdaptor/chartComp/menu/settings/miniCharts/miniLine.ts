@@ -1,6 +1,6 @@
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, ClipRect, Path } from "ag-charts-community";
+import { LinearScale, ClipRect, Path } from "ag-charts-community";
 
 export class MiniLine extends MiniChartWithAxes {
 
@@ -13,11 +13,11 @@ export class MiniLine extends MiniChartWithAxes {
         const size = this.size;
         const padding = this.padding;
 
-        const xScale = linearScale();
+        const xScale = new LinearScale();
         xScale.domain = [0, 4];
         xScale.range = [padding, size - padding];
 
-        const yScale = linearScale();
+        const yScale = new LinearScale();
         yScale.domain = [0, 10];
         yScale.range = [size - padding, padding];
 

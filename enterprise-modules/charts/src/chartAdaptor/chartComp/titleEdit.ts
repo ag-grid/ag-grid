@@ -21,7 +21,7 @@ export class TitleEdit extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ChartProxy<Chart, any>;
+    private chartProxy: ChartProxy;
     private destroyableChartListeners: (() => void)[];
 
     constructor(private readonly chartMenu: ChartMenu) {
@@ -39,7 +39,7 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public setChartProxy(chartProxy: ChartProxy<Chart, any>) {
+    public setChartProxy(chartProxy: ChartProxy) {
         if (this.chartProxy) {
             for (let i = 0; i++; i < this.destroyableChartListeners.length) {
                 this.destroyableChartListeners[i]();

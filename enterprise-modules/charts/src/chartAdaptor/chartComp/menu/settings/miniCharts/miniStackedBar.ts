@@ -1,6 +1,6 @@
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, BandScale, Rect } from "ag-charts-community";
+import { LinearScale, BandScale, Rect } from "ag-charts-community";
 
 export class MiniStackedBar extends MiniChartWithAxes {
 
@@ -31,7 +31,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         yScale.paddingInner = 0.3;
         yScale.paddingOuter = 0.3;
 
-        const xScale = linearScale();
+        const xScale = new LinearScale();
         xScale.domain = xScaleDomain;
         xScale.range = [size - padding, padding];
 

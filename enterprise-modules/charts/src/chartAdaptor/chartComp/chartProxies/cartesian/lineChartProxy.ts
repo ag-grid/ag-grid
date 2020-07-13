@@ -4,7 +4,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
 
-export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
+export class LineChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -13,20 +13,20 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(chartOptions?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    protected createChart(chartOptions?: AgCartesianChartOptions): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        chartOptions = chartOptions || this.chartOptions;
+        chartOptions = chartOptions || this.chartOptions as AgCartesianChartOptions;
         const options: AgCartesianChartOptions = chartOptions;
         options.autoSize = true;
         options.axes = [{
-            ...chartOptions.xAxis,
+            // ...chartOptions.xAxis,
             position: 'bottom',
             type: grouping ? 'groupedCategory' : 'category',
             paddingInner: 1,
             paddingOuter: 0
         }, {
-            ...chartOptions.yAxis,
+            // ...chartOptions.yAxis,
             position: 'left',
             type: 'number'
         }];
@@ -35,7 +35,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const options: AgCartesianChartOptions = this.chartOptions;
+        const options = this.chartOptions as AgCartesianChartOptions;
 
         this.chartProxyParams.grouping = params.grouping;
 
@@ -78,16 +78,16 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 series.yKey = f.colId;
                 series.yName = f.displayName;
             } else {
-                const { seriesDefaults } = this.chartOptions;
+                // const { seriesDefaults } = this.chartOptions;
                 const marker = {
-                    ...seriesDefaults.marker
+                    // ...seriesDefaults.marker
                 } as any;
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
                 }
                 series = {
-                    ...seriesDefaults,
+                    // ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
                     data,
@@ -95,9 +95,9 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     xName: params.category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
+                    // fillOpacity: seriesDefaults.fill.opacity,
+                    // strokeOpacity: seriesDefaults.stroke.opacity,
+                    // strokeWidth: seriesDefaults.stroke.width,
                     marker
                 };
 

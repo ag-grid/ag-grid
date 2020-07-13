@@ -32,14 +32,14 @@ import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartThemeName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
-    chartThemeName: ChartThemeName;
+    chartThemeName: string;
+    chartPaletteName: string;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -77,7 +77,7 @@ export class GridChartComp extends Component {
     private model: ChartDataModel;
     private chartController: ChartController;
 
-    private chartProxy: ChartProxy<any, any>;
+    private chartProxy: ChartProxy;
     private chartType: ChartType;
 
     constructor(private readonly params: GridChartParams) {
@@ -142,8 +142,12 @@ export class GridChartComp extends Component {
             chartId: this.model.getChartId(),
             chartType,
             processChartOptions: processChartOptionsFunc,
-            getChartThemeName: this.getChartThemeName.bind(this),
-            allowThemeOverride: !this.params.chartThemeName,
+            getChartPaletteName: () => 'borneo',
+            allowPaletteOverride: false,
+            // getChartPaletteName: this.getChartPaletteName.bind(this),
+            // allowPaletteOverride: !this.params.chartPaletteName,
+            // getChartThemeName: this.getChartThemeName.bind(this),
+            // allowThemeOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -164,11 +168,11 @@ export class GridChartComp extends Component {
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getChartThemeName(): ChartThemeName {
+    private getChartThemeName(): string {
         return this.chartController.getThemeName();
     }
 
-    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
+    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
         switch (chartProxyParams.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:

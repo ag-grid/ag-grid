@@ -1,13 +1,12 @@
 import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import {
-    HistogramSeriesOptions as InternalHistogramSeriesOptions,
     CartesianChart,
-    AgChart
+    AgChart, AgCartesianChartOptions, AgHistogramSeriesOptions
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
+export class HistogramChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -16,28 +15,28 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         this.recreateChart();
     }
 
-    protected createChart(options: any): CartesianChart {
+    protected createChart(options?: AgCartesianChartOptions): CartesianChart {
         const { parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
 
-        options = options || this.chartOptions;
+        options = options || this.chartOptions as AgCartesianChartOptions;
         options.autoSize = true;
         options.axes = [{
-            ...options.xAxis,
+            // ...options.xAxis,
             position: 'bottom',
             type: 'number'
         }, {
-            ...options.yAxis,
+            // ...options.yAxis,
             position: 'left',
             type: 'number'
         }];
         options.series = [{
             ...seriesDefaults,
-            fill: seriesDefaults.fill.color,
-            fillOpacity: seriesDefaults.fill.opacity,
-            stroke: seriesDefaults.stroke.color,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
+            // fill: seriesDefaults.fill.color,
+            // fillOpacity: seriesDefaults.fill.opacity,
+            // stroke: seriesDefaults.stroke.color,
+            // strokeOpacity: seriesDefaults.stroke.opacity,
+            // strokeWidth: seriesDefaults.stroke.width,
             type: 'histogram'
         }];
 
@@ -49,7 +48,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const options: any = this.chartOptions;
         const series = options.series[0];
 
-        options.theme = this.getTheme();
+        // options.theme = this.getTheme();
 
         series.data = params.data;
         series.xKey = xField.colId;
@@ -85,10 +84,10 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         return options;
     }
 
-    private getSeriesDefaults(): InternalHistogramSeriesOptions {
+    private getSeriesDefaults(): AgHistogramSeriesOptions {
 
         return {
-            ...this.chartOptions.seriesDefaults,
+            // ...this.chartOptions.seriesDefaults,
             type: 'histogram'
         };
     }

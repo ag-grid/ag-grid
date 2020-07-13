@@ -10,7 +10,6 @@ import {
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CaptionOptions } from "ag-charts-community";
 
 export default class TitlePanel extends Component {
 
@@ -37,7 +36,7 @@ export default class TitlePanel extends Component {
 
     private hasTitle(): boolean {
         const chartProxy = this.chartController.getChartProxy();
-        const title = chartProxy.getChartOption<CaptionOptions>('title');
+        const title: any = chartProxy.getChartOption('title'); // TODO: fix this
         const text = title && title.text ? title.text : '';
 
         return _.exists(text);

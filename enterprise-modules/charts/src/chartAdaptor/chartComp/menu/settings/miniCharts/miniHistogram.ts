@@ -1,6 +1,6 @@
 import { ChartType} from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, Rect } from "ag-charts-community";
+import { LinearScale, Rect } from "ag-charts-community";
 
 export class MiniHistogram extends MiniChartWithAxes {
     static chartType = ChartType.Histogram;
@@ -16,11 +16,11 @@ export class MiniHistogram extends MiniChartWithAxes {
         // approx normal curve
         const data = [2,5,11,13,10,6,1];
 
-        const xScale = linearScale();
+        const xScale = new LinearScale();
         xScale.domain = [0, data.length];
         xScale.range = [padding, size - padding];
 
-        const yScale = linearScale();
+        const yScale = new LinearScale();
         yScale.domain = [0, data.reduce((a, b) => Math.max(a,b), 0)];
         yScale.range = [size - padding, padding];
 

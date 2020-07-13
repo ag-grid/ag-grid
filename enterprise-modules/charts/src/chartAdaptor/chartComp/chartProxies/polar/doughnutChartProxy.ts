@@ -1,8 +1,7 @@
 import {
-    AgChart,
+    AgChart, AgPieSeriesOptions,
     AgPolarChartOptions,
     PieSeries,
-    PieSeriesOptions as PieSeriesInternalOptions,
     PolarChart
 } from "ag-charts-community";
 import { _, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
@@ -18,8 +17,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(chartOptions?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        chartOptions = chartOptions || this.chartOptions;
+    protected createChart(chartOptions?: AgPolarChartOptions): PolarChart {
+        chartOptions = chartOptions || this.chartOptions as AgPolarChartOptions;
 
         const options: AgPolarChartOptions = chartOptions;
         return AgChart.create(options, this.chartProxyParams.parentElement);
@@ -35,7 +34,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const fieldIds = params.fields.map(f => f.colId);
         const seriesMap: { [id: string]: PieSeries } = {};
 
-        doughnutChart.series.forEach(series => {
+        doughnutChart.series.forEach((series: PieSeries) => {
             const pieSeries = series as PieSeries;
             const id = pieSeries.angleKey;
 
@@ -44,28 +43,29 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        const { seriesDefaults } = this.chartOptions;
+        // const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
         let offset = 0;
 
         params.fields.forEach((f, index) => {
             const existingSeries = seriesMap[f.colId];
 
-            const seriesOptions: PieSeriesInternalOptions = {
-                ...seriesDefaults,
-                type: "pie",
-                field: {
-                    angleKey: f.colId,
-                },
+            const seriesOptions: AgPieSeriesOptions = {
+                // ...seriesDefaults,
+                type: 'pie',
+                // field: {
+                //     angleKey: f.colId,
+                // },
                 showInLegend: index === 0, // show legend items for the first series only
                 title: {
-                    ...seriesDefaults.title,
-                    text: seriesDefaults.title.text || f.displayName,
+                    // ...seriesDefaults.title,
+                    // text: seriesDefaults.title.text || f.displayName,
                 }
             };
 
             const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            const pieSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as PieSeries;
+            // TODO: fix the code below
+            const pieSeries = {} as any;// existingSeries || ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
             pieSeries.angleName = f.displayName;
             pieSeries.labelKey = params.category.id;
@@ -82,7 +82,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             if (index === 0) {
                 pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
                     if (doughnutChart) {
-                        doughnutChart.series.forEach(series => {
+                        doughnutChart.series.forEach((series: any) => {
                             (series as PieSeries).seriesItemEnabled[itemId] = enabled;
                         });
                     }

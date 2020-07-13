@@ -1,7 +1,7 @@
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 import { ICoordinate } from "./miniArea";
-import { linearScale, BandScale, Path } from "ag-charts-community";
+import { LinearScale, BandScale, Path } from "ag-charts-community";
 
 export class MiniStackedArea extends MiniChartWithAxes {
 
@@ -26,7 +26,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
         xScale.paddingOuter = 0;
         xScale.range = [padding + 0.5, size - padding - 0.5];
 
-        const yScale = linearScale();
+        const yScale = new LinearScale();
         yScale.domain = [0, 16];
         yScale.range = [size - padding + 0.5, padding + 0.5];
 

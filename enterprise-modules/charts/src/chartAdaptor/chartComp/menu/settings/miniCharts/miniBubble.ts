@@ -1,6 +1,6 @@
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, Arc, ClipRect, Shape } from "ag-charts-community";
+import { LinearScale, Arc, ClipRect, Shape } from "ag-charts-community";
 
 export class MiniBubble extends MiniChartWithAxes {
 
@@ -18,11 +18,11 @@ export class MiniBubble extends MiniChartWithAxes {
             [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
         ];
 
-        const xScale = linearScale();
+        const xScale = new LinearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
 
-        const yScale = linearScale();
+        const yScale = new LinearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
 
