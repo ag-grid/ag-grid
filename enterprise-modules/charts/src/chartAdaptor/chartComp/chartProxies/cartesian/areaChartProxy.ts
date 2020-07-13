@@ -1,9 +1,9 @@
 import { AreaSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
-import { CartesianChart, AgChart, findIndex } from "ag-charts-community";
+import { CartesianChart, AgChart, findIndex, AgChartOptions, AgCartesianChartOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
+export class AreaChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -12,7 +12,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options: any): CartesianChart {
+    protected createChart(options?: AgCartesianChartOptions): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
         const marker = { ...seriesDefaults.marker } as any;
@@ -21,17 +21,17 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             delete marker.type;
         }
 
-        options = options || this.chartOptions;
-        options.theme = this.getTheme();
+        options = options || this.chartOptions as AgCartesianChartOptions;
+        // options.theme = this.getTheme();
         options.autoSize = true;
         options.axes = [{
-            ...options.xAxis,
+            //...options.xAxis,
             position: 'bottom',
             type: grouping ? 'groupedCategory' : 'category',
             paddingInner: 1,
             paddingOuter: 0
         }, {
-            ...options.yAxis,
+            //...options.yAxis,
             position: 'left',
             type: 'number'
         }];
@@ -54,8 +54,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.updateAxes();
 
-        const options: any = this.chartOptions;
-        options.theme = this.getTheme();
+        const options = this.chartOptions as AgCartesianChartOptions;
+        // options.theme = this.getTheme();
 
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
@@ -195,7 +195,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
     private getSeriesDefaults(): any /*InternalAreaSeriesOptions*/ {
         return {
-            ...this.chartOptions.seriesDefaults,
+            // ...this.chartOptions.seriesDefaults,
             type: 'area',
             normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
         };
