@@ -317,8 +317,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (this.gridOptionsWrapper.isTreeData()) {
-            const itemsNotAllowedWithTreeData =
-                ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
+            const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     warnOnce(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
@@ -330,22 +329,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
-        if (colDefAny.floatingCellRenderer) {
-            warnOnce('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer', 'ColumnCheck_soihwewe');
-            this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
-        }
-        if (colDefAny.floatingRendererFramework) {
-            warnOnce('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework', 'ColumnCheck_zdkiouhwer');
-            this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
-        }
-        if (colDefAny.floatingRendererParams) {
-            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams', 'ColumnCheck_retiuhjs');
-            this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
-        }
-        if (colDefAny.floatingValueFormatter) {
-            warnOnce('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter', 'ColumnCheck_qwroeihjdf');
-            this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
-        }
         if (colDefAny.cellFormatter) {
             warnOnce('ag-Grid: since v12, cellFormatter is now valueFormatter', 'ColumnCheck_eoireknml');
             if (_.missing(this.colDef.valueFormatter)) {
