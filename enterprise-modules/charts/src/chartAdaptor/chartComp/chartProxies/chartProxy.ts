@@ -20,7 +20,7 @@ import {
     BarSeries,
     DropShadow,
     Padding,
-    PieSeries, AgChartOptions, IChartTheme
+    PieSeries, AgChartOptions, IAgChartTheme, AgChartPaddingOptions
 } from "ag-charts-community";
 import { ChartPalette, ChartPaletteName, palettes } from "./palettes";
 
@@ -67,7 +67,7 @@ export abstract class ChartProxy {
     protected chart: any;
     protected customPalette: ChartPalette;
     protected chartOptions: AgChartOptions;
-    protected userTheme: IChartTheme;
+    protected userTheme: IAgChartTheme;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -114,19 +114,21 @@ export abstract class ChartProxy {
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
-        if (processChartOptions) {
-            // const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
-            // const overriddenOptions = processChartOptions(params) as AgChartOptions;
-            //
-            // // ensure we have everything we need, in case the processing removed necessary options
-            // const safeOptions = this.getDefaultOptions();
-            // _.mergeDeep(safeOptions, overriddenOptions, false);
-            //
-            // // this.overridePalette(safeOptions);
-            // this.chartOptions = safeOptions;
-        } else {
-            this.chartOptions = this.getDefaultOptions();
-        }
+        // if (processChartOptions) {
+        //     // const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
+        //     // const overriddenOptions = processChartOptions(params) as AgChartOptions;
+        //     //
+        //     // // ensure we have everything we need, in case the processing removed necessary options
+        //     // const safeOptions = this.getDefaultOptions();
+        //     // _.mergeDeep(safeOptions, overriddenOptions, false);
+        //     //
+        //     // // this.overridePalette(safeOptions);
+        //     // this.chartOptions = safeOptions;
+        // } else {
+        //     this.chartOptions = this.getDefaultOptions();
+        // }
+
+        this.chartOptions = this.getDefaultOptions();
     }
 
     // private overridePalette(chartOptions: AgChartOptions): void {
@@ -235,8 +237,8 @@ export abstract class ChartProxy {
 
     public getChartPaddingOption = (property: string): string => (this.chart.padding as any)[property] || '';
 
-    public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
-        let { padding } = this.chartOptions;
+    public setChartPaddingOption(property: keyof AgChartPaddingOptions, value: number): void {
+        let { padding } = this.chartOptions as AgChartOptions;
 
         if (_.get(padding, property, undefined) === value) {
             // option is already set to the specified value
@@ -274,22 +276,22 @@ export abstract class ChartProxy {
         // const { seriesDefaults } = this.chartOptions;
         const { seriesOptions } = this.getFirstSeriesOptions();
 
-        if (_.get(seriesDefaults.shadow, property, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        if (!seriesDefaults.shadow) {
-            seriesDefaults.shadow = {
-                enabled: false,
-                blur: 0,
-                xOffset: 0,
-                yOffset: 0,
-                color: 'rgba(0,0,0,0.5)'
-            };
-        }
-
-        seriesDefaults.shadow[property] = value;
+        // if (_.get(seriesDefaults.shadow, property, undefined) === value) {
+        //     // option is already set to the specified value
+        //     return;
+        // }
+        //
+        // if (!seriesDefaults.shadow) {
+        //     seriesDefaults.shadow = {
+        //         enabled: false,
+        //         blur: 0,
+        //         xOffset: 0,
+        //         yOffset: 0,
+        //         color: 'rgba(0,0,0,0.5)'
+        //     };
+        // }
+        //
+        // seriesDefaults.shadow[property] = value;
 
         const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
 
@@ -316,7 +318,7 @@ export abstract class ChartProxy {
             chartId: this.chartId,
             chartType: this.chartType,
             chartPalette: this.chartProxyParams.getChartPaletteName(),
-            chartOptions: this.chartOptions,
+            chartOptions: this.chartOptions as ChartOptions<any>, // TODO: get rid of the (improper) cast
             api: this.gridApi,
             columnApi: this.columnApi,
         });
@@ -332,105 +334,105 @@ export abstract class ChartProxy {
         return this.customPalette || this.getPredefinedPalette();
     }
 
-    protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
+    protected getDefaultChartOptions(): AgChartOptions {
         const { fills, strokes } = this.getPredefinedPalette();
         const fontOptions = this.getDefaultFontOptions();
 
         return {
-            background: {
-                fill: this.getBackgroundColor(),
-                visible: true,
-            },
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-            },
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontWeight: 'bold',
-                fontSize: 16,
-            },
-            subtitle: {
-                ...fontOptions,
-                enabled: false,
-            },
-            legend: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                item: {
-                    label: {
-                        ...fontOptions,
-                    },
-                    marker: {
-                        shape: 'square',
-                        size: 15,
-                        padding: 8,
-                        strokeWidth: 1,
-                    },
-                    paddingX: 16,
-                    paddingY: 8,
-                },
-            },
-            navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            },
-            seriesDefaults: {
-                fill: {
-                    colors: fills,
-                    opacity: 1,
-                },
-                stroke: {
-                    colors: strokes,
-                    opacity: 1,
-                    width: 1,
-                },
-                highlightStyle: {
-                    fill: 'yellow',
-                },
-                listeners: {}
-            },
-            listeners: {}
+            // background: {
+            //     fill: this.getBackgroundColor(),
+            //     visible: true,
+            // },
+            // padding: {
+            //     top: 20,
+            //     right: 20,
+            //     bottom: 20,
+            //     left: 20,
+            // },
+            // title: {
+            //     ...fontOptions,
+            //     enabled: false,
+            //     fontWeight: 'bold',
+            //     fontSize: 16,
+            // },
+            // subtitle: {
+            //     ...fontOptions,
+            //     enabled: false,
+            // },
+            // legend: {
+            //     enabled: true,
+            //     position: LegendPosition.Right,
+            //     spacing: 20,
+            //     item: {
+            //         label: {
+            //             ...fontOptions,
+            //         },
+            //         marker: {
+            //             shape: 'square',
+            //             size: 15,
+            //             padding: 8,
+            //             strokeWidth: 1,
+            //         },
+            //         paddingX: 16,
+            //         paddingY: 8,
+            //     },
+            // },
+            // navigator: {
+            //     enabled: false,
+            //     height: 30,
+            //     min: 0,
+            //     max: 1,
+            //     mask: {
+            //         fill: '#999999',
+            //         stroke: '#999999',
+            //         strokeWidth: 1,
+            //         fillOpacity: 0.2
+            //     },
+            //     minHandle: {
+            //         fill: '#f2f2f2',
+            //         stroke: '#999999',
+            //         strokeWidth: 1,
+            //         width: 8,
+            //         height: 16,
+            //         gripLineGap: 2,
+            //         gripLineLength: 8
+            //     },
+            //     maxHandle: {
+            //         fill: '#f2f2f2',
+            //         stroke: '#999999',
+            //         strokeWidth: 1,
+            //         width: 8,
+            //         height: 16,
+            //         gripLineGap: 2,
+            //         gripLineLength: 8
+            //     }
+            // },
+            // seriesDefaults: {
+            //     fill: {
+            //         colors: fills,
+            //         opacity: 1,
+            //     },
+            //     stroke: {
+            //         colors: strokes,
+            //         opacity: 1,
+            //         width: 1,
+            //     },
+            //     highlightStyle: {
+            //         fill: 'yellow',
+            //     },
+            //     listeners: {}
+            // },
+            // listeners: {}
         };
     }
 
-    protected getDefaultFontOptions(): FontOptions {
+    protected getDefaultFontOptions(): any /* FontOptions */ {
         return {
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            fontSize: 12,
-            fontFamily: 'Verdana, sans-serif',
-            color: this.getFontColor()
+            // fontStyle: 'normal',
+            // fontWeight: 'normal',
+            // fontSize: 12,
+            // fontFamily: 'Verdana, sans-serif',
+            // color: this.getFontColor()
         };
     }
 
@@ -445,7 +447,7 @@ export abstract class ChartProxy {
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
-        if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {
+        if (this.chart.axes.filter((a: any) => a instanceof CategoryAxis).length < 1) {
             return data;
         }
 

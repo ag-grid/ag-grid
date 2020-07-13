@@ -11,7 +11,7 @@ interface SeriesDefinition {
     sizeField?: FieldDefinition;
 }
 
-export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions> {
+export class ScatterChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -20,16 +20,16 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
-    protected createChart(chartOptions?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        chartOptions = chartOptions || this.chartOptions;
+    protected createChart(chartOptions?: AgCartesianChartOptions): CartesianChart {
+        chartOptions = chartOptions || this.chartOptions as AgCartesianChartOptions;
         const options: AgCartesianChartOptions = chartOptions;
         options.autoSize = true;
         options.axes = [{
-            ...chartOptions.xAxis,
+            // ...chartOptions.xAxis,
             position: 'bottom',
             type: 'number'
         }, {
-            ...chartOptions.yAxis,
+            // ...chartOptions.yAxis,
             position: 'left',
             type: 'number'
         }];
@@ -38,7 +38,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public update(params: UpdateChartParams): void {
-        const options: AgCartesianChartOptions = this.chartOptions;
+        const options = this.chartOptions as AgCartesianChartOptions;
 
         if (params.fields.length < 2) {
             options.series = [];
@@ -143,7 +143,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
+        return true;
+        // return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
     }
 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts

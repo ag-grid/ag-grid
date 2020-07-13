@@ -12,19 +12,19 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(chartOptions?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        chartOptions = chartOptions || this.chartOptions;
-        const seriesDefaults = chartOptions.seriesDefaults;
+    protected createChart(chartOptions?: AgPolarChartOptions): PolarChart {
+        chartOptions = chartOptions || this.chartOptions as AgPolarChartOptions;
+        // const seriesDefaults = chartOptions.seriesDefaults;
         const options: AgPolarChartOptions = chartOptions;
         options.autoSize = true;
         options.series = [{
             type: 'pie',
-            ...seriesDefaults,
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width
+            // ...seriesDefaults,
+            // fills: seriesDefaults.fill.colors,
+            // fillOpacity: seriesDefaults.fill.opacity,
+            // strokes: seriesDefaults.stroke.colors,
+            // strokeOpacity: seriesDefaults.stroke.opacity,
+            // strokeWidth: seriesDefaults.stroke.width
         }];
 
         return AgChart.create(chartOptions, this.chartProxyParams.parentElement);
@@ -42,27 +42,27 @@ export class PieChartProxy extends PolarChartProxy {
         const existingSeriesId = existingSeries && existingSeries.angleKey;
         const pieSeriesField = params.fields[0];
         const { fills, strokes } = this.getPalette();
-        const { seriesDefaults } = this.chartOptions;
+        // const { seriesDefaults } = this.chartOptions;
 
         let pieSeries = existingSeries;
-        let calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
+        // let calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
 
             pieSeries = AgChart.createComponent({
-                ...seriesDefaults,
+                // ...seriesDefaults,
                 type: 'pie',
                 angleKey: pieSeriesField.colId,
                 title: {
-                    ...seriesDefaults.title,
-                    text: seriesDefaults.title.text || params.fields[0].displayName,
+                    // ...seriesDefaults.title,
+                    // text: seriesDefaults.title.text || params.fields[0].displayName,
                 },
-                fills: seriesDefaults.fill.colors,
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokes: seriesDefaults.stroke.colors,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
+                // fills: seriesDefaults.fill.colors,
+                // fillOpacity: seriesDefaults.fill.opacity,
+                // strokes: seriesDefaults.stroke.colors,
+                // strokeOpacity: seriesDefaults.stroke.opacity,
+                // strokeWidth: seriesDefaults.stroke.width,
             }, 'pie.series');
         }
 
@@ -73,9 +73,9 @@ export class PieChartProxy extends PolarChartProxy {
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;
 
-        if (calloutColors) {
-            pieSeries.callout.colors = calloutColors;
-        }
+        // if (calloutColors) {
+        //     pieSeries.callout.colors = calloutColors;
+        // }
 
         chart.addSeries(pieSeries);
     }

@@ -11,10 +11,9 @@ import {
     GridApi,
     IRangeController,
     PostConstruct,
-    GetChartImageDataUrlParams,
+    GetChartImageDataUrlParams, ChartOptions,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartThemeName } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -28,14 +27,14 @@ export class ChartController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
-    private chartProxy: ChartProxy<any, any>;
-    private chartThemeName: ChartThemeName;
+    private chartProxy: ChartProxy;
+    private chartThemeName: string;
 
-    private static lightThemes: ChartThemeName[] = ['light', 'material-light', 'pastel-light', 'solar-light', 'vivid-light'];
-    private static darkThemes: ChartThemeName[] = ['dark', 'material-dark', 'pastel-dark', 'solar-dark', 'vivid-dark'];
-    private static themes: ChartThemeName[] = ChartController.lightThemes;
+    private static lightThemes: string[] = ['light', 'material-light', 'pastel-light', 'solar-light', 'vivid-light'];
+    private static darkThemes: string[] = ['dark', 'material-dark', 'pastel-dark', 'solar-dark', 'vivid-dark'];
+    private static themes: string[] = ChartController.lightThemes;
 
-    public constructor(private readonly model: ChartDataModel, themeName: ChartThemeName = 'light') {
+    public constructor(private readonly model: ChartDataModel, themeName: string = 'light') {
         super();
 
         this.chartThemeName = themeName;
@@ -89,7 +88,7 @@ export class ChartController extends BeanStub {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
             chartTheme: this.getThemeName(),
-            chartOptions: this.chartProxy.getChartOptions(),
+            chartOptions: this.chartProxy.getChartOptions() as ChartOptions<any>, // TODO: remove this cast
             cellRange: this.model.getCellRangeParams(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
                 return this.chartProxy.getChartImageDataURL(params.type);
@@ -109,11 +108,11 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getThemeName(): ChartThemeName {
+    public getThemeName(): string {
         return this.chartThemeName;
     }
 
-    public getThemes(): ChartThemeName[] {
+    public getThemes(): string[] {
         // const customTheme = this.chartProxy.getCustomPalette();
 
         // if (customTheme) {
@@ -143,7 +142,7 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartThemeName(theme: ChartThemeName): void {
+    public setChartThemeName(theme: string): void {
         this.chartThemeName = theme;
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
@@ -182,11 +181,11 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
+    public setChartProxy(chartProxy: ChartProxy): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy<any, any> {
+    public getChartProxy(): ChartProxy {
         return this.chartProxy;
     }
 

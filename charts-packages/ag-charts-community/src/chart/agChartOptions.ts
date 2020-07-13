@@ -9,7 +9,7 @@ export interface IAgChartTheme extends AgChartThemeOverrides {
     baseTheme?: string | AgChartTheme;
 }
 
-interface AgChartPaddingOptions {
+export interface AgChartPaddingOptions {
     top?: number;
     right?: number;
     bottom?: number;
@@ -105,11 +105,14 @@ interface AgChartLegendOptions {
 interface AgBaseChartOptions {
     container?: HTMLElement;
     data?: any[];
-    theme?: string | AgChartTheme | IAgChartTheme;
     width?: number;
     height?: number;
     autoSize?: boolean;
     padding?: AgChartPaddingOptions;
+    background?: {
+        visible?: boolean;
+        fill?: string;
+    },
     title?: AgChartCaptionOptions;
     subtitle?: AgChartCaptionOptions;
     tooltipClass?: string;
@@ -117,6 +120,7 @@ interface AgBaseChartOptions {
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
     listeners?: { [key in string]: Function };
+    theme?: string | AgChartTheme | IAgChartTheme;
 }
 
 interface AgBaseAxisOptions {
@@ -249,7 +253,7 @@ interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
 }
 
-interface AgLineSeriesOptions extends AgBaseSeriesOptions {
+export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     type?: 'line';
     marker?: AgCartesianSeriesMarker;
     xKey?: string;
@@ -267,7 +271,7 @@ interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
-interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
+export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     type?: 'scatter';
     marker?: AgCartesianSeriesMarker;
     xKey?: string;
@@ -287,7 +291,7 @@ interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     tooltipRender?: (params: AgScatterSeriesTooltipRendererParams) => string;
 }
 
-interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
+export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
     xKey?: string;
@@ -328,7 +332,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
-interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
+export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     type?: 'histogram';
     fill?: string;
     stroke?: string;
@@ -356,7 +360,7 @@ interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     minAngle?: number;
 }
 
-interface AgPieSeriesOptions extends AgBaseSeriesOptions {
+export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
     title?: AgChartCaptionOptions;
     label?: AgPieSeriesLabelOptions;

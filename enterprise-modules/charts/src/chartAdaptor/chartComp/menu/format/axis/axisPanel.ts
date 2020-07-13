@@ -18,7 +18,7 @@ import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartAxisPosition, find } from "ag-charts-community";
+import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
@@ -165,14 +165,14 @@ export class AxisPanel extends Component {
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
             const chartProxy = this.getChartProxy();
             const chart = chartProxy.getChart();
-            const axis = find(chart.axes, axis => axis.position === axisPosition);
+            const axis = find(chart.axes as AgCartesianAxisOptions[], axis => axis.position === axisPosition);
 
             if (axis) {
                 axis.label.rotation = newValue;
                 if (axis.position === ChartAxisPosition.Bottom) {
-                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                    // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue); // TODO: fix this
                 } else if (axis.position === ChartAxisPosition.Left) {
-                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                    // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
                 }
                 chart.performLayout();
             }
@@ -202,8 +202,8 @@ export class AxisPanel extends Component {
         });
     }
 
-    private getChartProxy(): CartesianChartProxy<any> {
-        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
+    private getChartProxy(): CartesianChartProxy {
+        return this.chartController.getChartProxy() as CartesianChartProxy;
     }
 
     protected destroy(): void {

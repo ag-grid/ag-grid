@@ -105,6 +105,8 @@ export abstract class AgChart {
             }
         }
     }
+
+    static createComponent = create; // TODO: remove this
 }
 
 const pathToSeriesTypeMap: { [key in string]: string } = {

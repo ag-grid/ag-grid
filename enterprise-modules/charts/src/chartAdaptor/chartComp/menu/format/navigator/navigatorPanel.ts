@@ -75,8 +75,8 @@ export class NavigatorPanel extends Component {
         });
     }
 
-    private getChartProxy(): CartesianChartProxy<any> {
-        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
+    private getChartProxy(): CartesianChartProxy {
+        return this.chartController.getChartProxy() as CartesianChartProxy;
     }
 
     protected destroy(): void {

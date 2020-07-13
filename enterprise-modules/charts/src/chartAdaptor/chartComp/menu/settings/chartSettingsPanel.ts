@@ -7,7 +7,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { ChartThemeName, getChartTheme } from "ag-charts-community";
+import { getChartTheme } from "ag-charts-community";
 import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
@@ -41,9 +41,9 @@ export class ChartSettingsPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    private activeTheme?: ChartThemeName;
-    private themes: ChartThemeName[];
-    private themeNames: (ChartThemeName | undefined)[];
+    private activeTheme?: string;
+    private themes: string[];
+    private themeNames: (string | undefined)[];
 
     private isAnimating: boolean;
 
@@ -115,7 +115,7 @@ export class ChartSettingsPanel extends Component {
         _.radioCssClass(this.cardItems[themeIndex], 'ag-selected', 'ag-not-selected');
     }
 
-    private addCardLink(themeName: ChartThemeName): void {
+    private addCardLink(themeName: string): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
@@ -169,7 +169,7 @@ export class ChartSettingsPanel extends Component {
         this.setActiveTheme(this.themeNames[this.getNext()], 'right');
     }
 
-    private setActiveTheme(themeName: ChartThemeName, animationDirection: AnimationDirection) {
+    private setActiveTheme(themeName: string, animationDirection: AnimationDirection) {
         const themeIndex = this.themeNames.indexOf(themeName);
 
         _.radioCssClass(this.cardItems[themeIndex], 'ag-selected', 'ag-not-selected');
