@@ -46,7 +46,27 @@ include '../documentation-main/documentation_header.php';
     <li>Sort Country column. Note changing columns doesn't impact it's sort.</li>
 </ul>
 
-<h2 id="forcing-column-columns">Forcing Column Order</h2>
+<h2 id="applying-column-order">Applying Column Order</h2>
+
+<p>
+    When Column Definitions are provided for existing Columns, the order of the Columns inside the grid
+    is not changed to match the order of the newly provided Column Definitions. This is by design so
+    that any reordering of the columns a user does to the grid is not lost when the Column Definitions
+    get updated.
+</p>
+
+<p>
+    If the desired behaviour is that Columns should be ordered to match the new set of Column Definitions,
+    then set the grid property <code>applyColumnDefOrder=true</code>.
+</p>
+
+<p>
+    The example below demonstrates applying the Column Definitions order to the grid Columns after
+    new Column Definitions are set. Both buttons Medals First and Medals Last set the same Columns but
+    in a different order.
+</p>
+
+<?= grid_example('Column Definition Order', 'col-def-order', 'generated') ?>
 
 <h2 id="changing-column-definition">Changing Column Definition</h2>
 

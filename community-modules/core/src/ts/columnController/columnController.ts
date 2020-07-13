@@ -230,6 +230,9 @@ export class ColumnController extends BeanStub {
         this.ready = true;
 
         this.updateGridColumns();
+        if (colsPreviouslyExisted && this.gridColsArePrimary && this.gridOptionsWrapper.isApplyColumnDefOrder()) {
+            this.orderGridColumnsLikePrimary();
+        }
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
@@ -249,6 +252,32 @@ export class ColumnController extends BeanStub {
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    }
+
+    private orderGridColumnsLikePrimary(): void {
+        this.gridColumns.sort((colA: Column, colB: Column) => {
+            const primaryIndexA = this.primaryColumns.indexOf(colA);
+            const primaryIndexB = this.primaryColumns.indexOf(colB);
+            // if both cols are present in primary, then we just return the position,
+            // so position is maintained.
+            const indexAPresent = primaryIndexA >= 0;
+            const indexBPresent = primaryIndexB >= 0;
+            if (indexAPresent && indexBPresent) {
+                return primaryIndexA - primaryIndexB;
+            } else if (indexAPresent) {
+                // B is auto group column, so put B first
+                return 1;
+            } else if (indexBPresent) {
+                // A is auto group column, so put A first
+                return -1;
+            } else {
+                // otherwise both A and B are auto-group columns. so we just keep the order
+                // as they were already in.
+                const gridIndexA = this.gridColumns.indexOf(colA);
+                const gridIndexB = this.gridColumns.indexOf(colB);
+                return gridIndexA - gridIndexB;
+            }
+        });
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -1829,7 +1858,7 @@ export class ColumnController extends BeanStub {
             this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
-        if (params.applyOrder && params.columnStates) {
+        if (this.gridColsArePrimary && params.applyOrder && params.columnStates) {
             const orderOfColIds = params.columnStates.map(stateItem => stateItem.colId);
 
             this.gridColumns.sort((colA: Column, colB: Column) => {

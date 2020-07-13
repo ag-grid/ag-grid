@@ -104,6 +104,7 @@ export interface GridOptions {
     deltaRowDataMode?: boolean;
     /** @deprecated */
     deltaColumnMode?: boolean;
+    applyColumnDefOrder?: boolean;
     immutableData?: boolean;
     /** @deprecated */
     immutableColumns?: boolean;

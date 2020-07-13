@@ -360,6 +360,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressTouch);
     }
 
+    public isApplyColumnDefOrder() {
+        return isTrue(this.gridOptions.applyColumnDefOrder);
+    }
+
     public isSuppressRowTransform() {
         return isTrue(this.gridOptions.suppressRowTransform);
     }

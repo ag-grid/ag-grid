@@ -405,6 +405,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public immutableColumns : any = undefined;
     @Input() public pivotSuppressAutoColumn : any = undefined;
     @Input() public suppressExpandablePivotGroups : any = undefined;
+    @Input() public applyColumnDefOrder : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
