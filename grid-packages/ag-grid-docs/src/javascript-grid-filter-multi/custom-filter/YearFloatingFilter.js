@@ -5,11 +5,11 @@ YearFloatingFilter.prototype.init = function(params) {
     this.parentFilterInstance = params.parentFilterInstance;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
-        '<div style="display: flex; justify-content: center;">' +
-        '<label style="padding: 0.5rem;">' +
+        '<div class="year-filter">' +
+        '<label>' +
         '  <input type="radio" name="yearFloatingFilter" checked="checked" id="rbFloatingYearAll" /> All' +
         '</label>' +
-        '<label style="padding: 0.5rem;">' +
+        '<label>' +
         '  <input type="radio" name="yearFloatingFilter" id="rbFloatingYearAfter2004" /> After 2004' +
         '</label>' +
         '</div>';

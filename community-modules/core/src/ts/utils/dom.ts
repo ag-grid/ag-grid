@@ -1,7 +1,6 @@
 import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
-import { forEach } from './array';
 
 export function addCssClass(element: HTMLElement, className: string) {
     if (!element || !className || className.length === 0) { return; }
@@ -116,7 +115,7 @@ export function setDisabled(element: HTMLElement, disabled: boolean) {
 
     addOrRemoveDisabledAttribute(element);
 
-    forEach(Array.from(element.querySelectorAll('input')), input => addOrRemoveDisabledAttribute(input));
+    nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
 }
 
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
@@ -126,7 +125,9 @@ export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest
         if (containsClass(element, cls)) {
             return true;
         }
+
         element = element.parentElement;
+
         if (maxNest && ++counter > maxNest) { break; }
     }
 
@@ -473,14 +474,13 @@ export function isNodeOrElement(o: any) {
  * @returns {Node[]}
  */
 export function copyNodeList(nodeList: NodeList): Node[] {
-    const childCount = nodeList ? nodeList.length : 0;
-    const res: Node[] = [];
+    if (nodeList == null) { return []; }
 
-    for (let i = 0; i < childCount; i++) {
-        res.push(nodeList[i]);
-    }
+    const result: Node[] = [];
 
-    return res;
+    nodeListForEach(nodeList, node => result.push(node));
+
+    return result;
 }
 
 export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
@@ -509,5 +509,13 @@ export function addOrRemoveAttribute(element: HTMLElement, name: string, value: 
         element.removeAttribute(name);
     } else {
         element.setAttribute(name, value.toString());
+    }
+}
+
+export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T>, action: (value: T) => void): void {
+    if (nodeList == null) { return; }
+
+    for (let i = 0; i < nodeList.length; i++) {
+        action(nodeList[i]);
     }
 }

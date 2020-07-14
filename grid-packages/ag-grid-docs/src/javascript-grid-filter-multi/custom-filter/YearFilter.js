@@ -5,11 +5,11 @@ YearFilter.prototype.init = function(params) {
     this.filterChangedCallback = params.filterChangedCallback.bind(this);
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
-        '<div style="display: flex; justify-content: center;">' +
-        '<label style="padding: 0.5rem;">' +
+        '<div class="year-filter">' +
+        '<label>' +
         '  <input type="radio" name="yearFilter" checked="checked" id="rbYearAll" /> All' +
         '</label>' +
-        '<label style="padding: 0.5rem;">' +
+        '<label>' +
         '  <input type="radio" name="yearFilter" id="rbYearAfter2004" /> After 2004' +
         '</label>' +
         '</div>';
