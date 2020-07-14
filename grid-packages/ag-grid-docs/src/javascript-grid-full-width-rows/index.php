@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
+<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Understanding Full Width</h2>
 
