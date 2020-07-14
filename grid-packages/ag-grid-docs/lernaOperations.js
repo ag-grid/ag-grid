@@ -2,6 +2,7 @@ const cp = require('child_process');
 const os = require('os');
 const path = require("path");
 const fs = require("fs");
+const fsExtra = require("fs-extra");
 const execa = require("execa");
 const chokidar = require("chokidar");
 
@@ -16,7 +17,7 @@ const buildDependencies = async (dependencies, command = 'build-css', arguments=
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
-    await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
+    return await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
 };
 
 const buildDependencyChain = async (packageName, buildChains, command = "build-css") => {
@@ -233,7 +234,7 @@ const buildCss = async () => {
 };
 
 const buildPackages = async (packageNames, command='build', arguments) => {
-    await buildDependencies(packageNames, command, arguments)
+    return await buildDependencies(packageNames, command, arguments)
 }
 
 /* To be extracted/refactored */
@@ -289,6 +290,14 @@ const readModulesState = () => {
     return modulesState;
 }
 
+let getLastBuild = function () {
+    const lastBuild = fsExtra.readJsonSync('./.last.build.json', {throws: false});
+    if(lastBuild) {
+        return JSON.parse(lastBuild);
+    }
+    return null;
+};
+
 const rebuildPackagesBasedOnChangeState = async () => {
     const buildChain = await getAgBuildChain();
     const modulesState = readModulesState();
@@ -300,15 +309,34 @@ const rebuildPackagesBasedOnChangeState = async () => {
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
+    const lastBuild = getLastBuild();
+    if(lastBuild) {
+        fs.unlinkSync('./.last.build.json');
+
+        lastBuild.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+    }
+
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
         console.log(lernaPackagesToRebuild);
 
         const packagesToRun = Array.from(lernaPackagesToRebuild);
-        await buildPackages(packagesToRun)
-        await buildPackages(packagesToRun, 'package', '--parallel')
-        await buildPackages(packagesToRun, 'test')
-        await buildPackages(packagesToRun, 'test:e2e')
+        // await buildPackages(packagesToRun)
+        // await buildPackages(packagesToRun, 'package', '--parallel')
+        let testsFailed = false;
+        try {
+            let result = await buildPackages(packagesToRun, 'test')
+            testsFailed = result.exitCode !== 0 || result.failed === 1;
+
+            result = await buildPackages(packagesToRun, 'test:e2e')
+            testsFailed = result.exitCode !== 0 || result.failed === 1 || testsFailed;
+        } catch (e) {
+            testsFailed = true;
+        }
+
+        if(testsFailed) {
+            fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`)
+        }
     } else {
         console.log("No changed packages to process!");
     }

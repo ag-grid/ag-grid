@@ -28,3 +28,5 @@ screenshots
 !src/javascript-grid-cell-editor/polymer-editor/node_modules
 
 package-lock.json
+
+.last.build.json
