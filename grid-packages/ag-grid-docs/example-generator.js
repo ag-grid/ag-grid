@@ -227,7 +227,7 @@ function createExampleGenerator(prefix, importTypes) {
         const indexHtml = getFileContents(document);
         const bindings = parser(mainJs, indexHtml, options, type, providedExamples);
 
-        const writeExampleFiles = (importType, framework, frameworkScripts, files, subdirectory, componentPostfix = '') => {
+        const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
@@ -241,7 +241,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(scripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix);
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {
@@ -271,7 +271,7 @@ function createExampleGenerator(prefix, importTypes) {
                 throw e;
             }
 
-            importTypes.forEach(importType => writeExampleFiles(importType, 'react', reactScripts, reactConfigs.get(importType)));
+            importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
 
         if(type === 'mixed' && providedExamples['reactFunctional']) {
@@ -289,7 +289,7 @@ function createExampleGenerator(prefix, importTypes) {
                     throw e;
                 }
 
-                importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
+                importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', 'react', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
             }
         }
 
@@ -313,7 +313,7 @@ function createExampleGenerator(prefix, importTypes) {
                 throw e;
             }
 
-            importTypes.forEach(importType => writeExampleFiles(importType, 'angular', angularScripts, angularConfigs.get(importType), 'app'));
+            importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
         }
 
         if(type === 'mixed' && providedExamples['vue']) {
@@ -332,12 +332,12 @@ function createExampleGenerator(prefix, importTypes) {
 
             // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
             // from index.html will still including other non-component files
-            importTypes.forEach(importType => writeExampleFiles(importType, 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+            importTypes.forEach(importType => writeExampleFiles(importType, 'vue', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
         }
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
         const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
-        importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', vanillaScripts, {}));
+        importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {}));
     };
 }
 
