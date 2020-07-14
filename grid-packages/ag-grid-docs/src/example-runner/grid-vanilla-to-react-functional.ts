@@ -57,7 +57,7 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const imports = [
         "import React, { useState } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgGridReact } from 'ag-grid-react';"
+        "import { AgGridReact, AgGridColumn } from 'ag-grid-react';"
     ];
 
     if (gridSettings.enterprise) {

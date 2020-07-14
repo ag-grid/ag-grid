@@ -44,7 +44,7 @@ export default Vue.extend({
 
         setInputPlaceholder(placeholder) {
             this.eInput.setAttribute('placeholder', placeholder);
-        }
+        },
 
         setInputAriaLabel(label) {
             this.eInput.setAttribute('aria-label', label);
