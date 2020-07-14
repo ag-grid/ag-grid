@@ -1,13 +1,15 @@
+function rowSpan(params) {
+    if (params.data.show) {
+        return 4;
+    } else {
+        return 1;
+    }
+}
+
 var columnDefs = [
     {field: 'localTime'},
     {field: 'show', cellRenderer: 'showCellRenderer',
-        rowSpan: function(params) {
-            if (params.data.show) {
-                return 4;
-            } else {
-                return 1;
-            }
-        },
+        rowSpan: rowSpan,
         cellClassRules: {
             'show-cell': 'value !== undefined'
         },
