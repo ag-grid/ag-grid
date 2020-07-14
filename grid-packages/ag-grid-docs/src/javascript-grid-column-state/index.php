@@ -188,11 +188,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<!--// spl to convert to manual - this sort of dynamic column manipulation is too tricky to do automatically-->
-<!--// (or rather comes up too rarely to justify trying to automate it)-->
-<?= grid_example('Column Changes', 'column-changes', 'generated', ['enterprise' => true]) ?>
-
-
+<?= grid_example('Column Changes', 'column-changes', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2>Column Metadata vs Column State</h2>
 
@@ -302,15 +298,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-
-<!--// spl to convert to manual - this sort of dynamic column manipulation is too tricky to do automatically -->
-<!--// (or rather comes up too rarely to justify trying to automate it) -->
 <?= grid_example('Immutable Columns', 'immutable-columns', 'generated', ['enterprise' => true]) ?>
-
-
-
-
-
 
 <h2>Updating Column Definitions</h2>
 

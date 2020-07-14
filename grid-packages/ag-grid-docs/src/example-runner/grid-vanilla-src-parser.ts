@@ -58,7 +58,14 @@ function generateWithReplacedGridOptions(node, options?) {
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
 
-export function parser(js, html, exampleSettings) {
+function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
+    if(propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+         return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
+    }
+    return false;
+}
+
+export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -211,7 +218,7 @@ export function parser(js, html, exampleSettings) {
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
 
@@ -226,7 +233,7 @@ export function parser(js, html, exampleSettings) {
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => {
-                if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }
 

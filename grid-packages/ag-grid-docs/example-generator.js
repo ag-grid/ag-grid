@@ -223,7 +223,7 @@ function createExampleGenerator(prefix, importTypes) {
         // read the main script (js) and the associated index.html
         const mainJs = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
-        const bindings = parser(mainJs, indexHtml, options);
+        const bindings = parser(mainJs, indexHtml, options, type, providedExamples);
 
         const writeExampleFiles = (importType, framework, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
