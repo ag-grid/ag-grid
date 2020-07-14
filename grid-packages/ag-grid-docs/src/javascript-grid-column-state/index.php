@@ -222,8 +222,27 @@ SNIPPET
 <h2>Column Group State</h2>
 
 <p>
-    (work in progress)
+    Column Group State is concerned with the state of Column Groups. There is only one state item for Column Groups,
+    which is whether the group is open or closed.
 </p>
+
+<p>
+    To get the state of Column Groups use the API method <code>columnApi.getColumnGroupState()</code>. To
+    set the Column Group state use the API method <code>columnApi.setColumnGroupState(state)</code>.
+</p>
+
+<p>
+    The example below demonstrates getting and setting Column Group State. Note the following:
+</p>
+
+<ul>
+    <li>Clicking 'Save State' will save the opened / closed state of column groups.</li>
+    <li>Clicking 'Restore State' will restore the previously saved state.</li>
+    <li>
+        Clicking 'Reset State' will reset the column state to match the Column Definitions,
+        i.e. all Column Groups will be closed.
+    </li>
+</ul>
 
 <?= grid_example('Column Group State', 'column-group-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 

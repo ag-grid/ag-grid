@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Updating Columns</h1>
+<h1>Updating Column Definitions</h1>
 
 <p class="lead">
     The section <a href="../javascript-grid-column-definitions/">Column Definitions</a> explained how to
