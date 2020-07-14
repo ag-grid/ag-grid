@@ -1754,7 +1754,7 @@ export class ColumnController extends BeanStub {
             });
         }
 
-        this.applyColumnState({columnStates: columnStates, applyOrder: true}, suppressEverythingEvent, source);
+        this.applyColumnState({state: columnStates, applyOrder: true}, suppressEverythingEvent, source);
     }
 
     public applyColumnState(params: ApplyColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
@@ -1776,8 +1776,8 @@ export class ColumnController extends BeanStub {
         const previousRowGroupCols = this.rowGroupColumns.slice();
         const previousPivotCols = this.pivotColumns.slice();
 
-        if (params.columnStates) {
-            params.columnStates.forEach((state: ColumnState) => {
+        if (params.state) {
+            params.state.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState
                 if (_.exists(this.getAutoColumn(state.colId))) {
@@ -1858,8 +1858,8 @@ export class ColumnController extends BeanStub {
             this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
-        if (this.gridColsArePrimary && params.applyOrder && params.columnStates) {
-            const orderOfColIds = params.columnStates.map(stateItem => stateItem.colId);
+        if (this.gridColsArePrimary && params.applyOrder && params.state) {
+            const orderOfColIds = params.state.map(stateItem => stateItem.colId);
 
             this.gridColumns.sort((colA: Column, colB: Column) => {
                 const indexA = orderOfColIds.indexOf(colA.getId());

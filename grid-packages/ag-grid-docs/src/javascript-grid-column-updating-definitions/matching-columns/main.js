@@ -7,6 +7,7 @@ var colDefsMedalsIncluded = [
     athleteColumn,
     {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
     {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
     {field: 'gold'},
@@ -19,6 +20,7 @@ var colDefsMedalsExcluded = [
     athleteColumn,
     {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
     {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'}
 ];

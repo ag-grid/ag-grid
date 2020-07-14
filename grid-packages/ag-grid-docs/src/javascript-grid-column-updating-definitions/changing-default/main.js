@@ -2,6 +2,7 @@ var columnDefs = [
     {field: 'athlete', defaultWidth: 100, defaultSort: 'asc'},
     {field: 'age'},
     {field: 'country', defaultPinned: 'left'},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
     {field: 'gold'},

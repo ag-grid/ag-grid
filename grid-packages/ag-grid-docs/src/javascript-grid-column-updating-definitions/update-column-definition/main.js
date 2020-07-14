@@ -2,6 +2,7 @@ var columnDefs = [
     {field: 'athlete'},
     {field: 'age'},
     {field: 'country'},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
     {field: 'gold'},

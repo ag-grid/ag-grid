@@ -184,13 +184,13 @@ export class ColumnApi {
     }
 
     public setColumnState(columnState: ColumnState[]): boolean {
-        return this.columnController.applyColumnState({columnStates: columnState, applyOrder: true}, false, 'api');
+        return this.columnController.applyColumnState({state: columnState, applyOrder: true}, false, 'api');
     }
 
 }
 
 export interface ApplyColumnStateParams {
-    columnStates?: ColumnState[],
+    state?: ColumnState[],
     applyOrder?: boolean,
     defaultState?: ColumnState
 }

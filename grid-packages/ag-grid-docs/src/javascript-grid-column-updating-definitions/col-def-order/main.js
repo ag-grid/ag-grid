@@ -2,6 +2,7 @@ var medalsLast = [
     {field: 'athlete'},
     {field: 'age'},
     {field: 'country'},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
     {field: 'gold'},
@@ -17,6 +18,7 @@ var medalsFirst = [
     {field: 'total'},
     {field: 'athlete'},
     {field: 'age'},
+    {field: 'sport'},
     {field: 'country'},
     {field: 'year'},
     {field: 'date'}

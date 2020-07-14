@@ -2,6 +2,7 @@ var colDefsMedalsIncluded = [
     {field: 'athlete'},
     {field: 'age'},
     {field: 'country'},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
     {field: 'gold'},
@@ -14,6 +15,7 @@ var colDefsMedalsExcluded = [
     {field: 'athlete'},
     {field: 'age'},
     {field: 'country'},
+    {field: 'sport'},
     {field: 'year'},
     {field: 'date'}
 ];
