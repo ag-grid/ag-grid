@@ -14,11 +14,6 @@
     margin-bottom: 1rem;
 }
 
-.test-header label {
-    margin-right: 0.5rem;
-}
-
-.test-header input {
-    position: relative;
-    top: 2px;
+.country-header {
+    background-color: antiquewhite;
 }

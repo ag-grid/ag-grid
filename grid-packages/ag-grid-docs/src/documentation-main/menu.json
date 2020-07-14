@@ -206,7 +206,13 @@
             "showInCollapsed": true
           },
           {
-            "title": "Updating Columns",
+            "title": "Updating Definitions",
+            "box-title": "State",
+            "url": "javascript-grid-column-updating-definitions/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column State",
             "box-title": "State",
             "url": "javascript-grid-column-state/",
             "showInCollapsed": true
