@@ -321,8 +321,8 @@ const rebuildPackagesBasedOnChangeState = async () => {
         console.log(lernaPackagesToRebuild);
 
         const packagesToRun = Array.from(lernaPackagesToRebuild);
-        // await buildPackages(packagesToRun)
-        // await buildPackages(packagesToRun, 'package', '--parallel')
+        await buildPackages(packagesToRun)
+        await buildPackages(packagesToRun, 'package', '--parallel')
         let testsFailed = false;
         try {
             let result = await buildPackages(packagesToRun, 'test')
