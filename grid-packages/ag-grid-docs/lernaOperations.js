@@ -320,21 +320,25 @@ const rebuildPackagesBasedOnChangeState = async () => {
         console.log("Rebuilding changed packages...");
         console.log(lernaPackagesToRebuild);
 
+        let buildFailed = false;
         const packagesToRun = Array.from(lernaPackagesToRebuild);
-        await buildPackages(packagesToRun)
-        await buildPackages(packagesToRun, 'package', '--parallel')
-        let testsFailed = false;
         try {
-            let result = await buildPackages(packagesToRun, 'test')
-            testsFailed = result.exitCode !== 0 || result.failed === 1;
+            let result = await buildPackages(packagesToRun);
+            buildFailed = result.exitCode !== 0 || result.failed === 1;
+
+            result = await buildPackages(packagesToRun, 'package', '--parallel')
+            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+
+            result = await buildPackages(packagesToRun, 'test')
+            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
 
             result = await buildPackages(packagesToRun, 'test:e2e')
-            testsFailed = result.exitCode !== 0 || result.failed === 1 || testsFailed;
+            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
         } catch (e) {
-            testsFailed = true;
+            buildFailed = true;
         }
 
-        if(testsFailed) {
+        if(buildFailed) {
             fsExtra.writeJsonSync('./.last.build.json', `[${packagesToRun.map(packageName => `"${packageName}"`)}]`)
         }
     } else {
