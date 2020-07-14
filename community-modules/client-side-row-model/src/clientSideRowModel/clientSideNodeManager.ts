@@ -19,7 +19,10 @@ export class ClientSideNodeManager {
 
     private static TOP_LEVEL = 0;
 
-    private rootNode: RowNode;
+    private readonly columnApi: ColumnApi;
+    private readonly gridApi: GridApi;
+    private readonly rootNode: RowNode;
+
     private gridOptionsWrapper: GridOptionsWrapper;
     private context: Context;
     private eventService: EventService;
@@ -30,7 +33,6 @@ export class ClientSideNodeManager {
 
     private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-    private doesDataFlower: (data: any) => boolean;
     private isRowMasterFunc: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
 
@@ -39,8 +41,6 @@ export class ClientSideNodeManager {
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
-    private columnApi: ColumnApi;
-    private gridApi: GridApi;
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
                 columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
@@ -70,7 +70,6 @@ export class ClientSideNodeManager {
     public postConstruct(): void {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
@@ -281,10 +280,6 @@ export class ClientSideNodeManager {
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 
-        // support for backwards compatibility, canFlow is now called 'master'
-        /** @deprecated is now 'master' */
-        node.canFlower = node.master;
-
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -309,9 +304,7 @@ export class ClientSideNodeManager {
             }
         } else {
             // this is the default, for when doing grid data
-            if (this.doesDataFlower) {
-                rowNode.setMaster(this.doesDataFlower(data));
-            } else if (this.doingMasterDetail) {
+            if (this.doingMasterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
                 if (this.isRowMasterFunc) {

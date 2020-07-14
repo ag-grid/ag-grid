@@ -388,8 +388,6 @@ export interface GridOptions {
 
     getChildCount?(dataItem: any): number;
 
-    doesDataFlower?(dataItem: any): boolean;
-
     processRowPostCreate?(params: ProcessRowParams): void;
 
     processCellForClipboard?(params: ProcessCellForExportParams): any;

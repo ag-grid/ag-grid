@@ -86,64 +86,80 @@ export class RowNode implements IEventEmitter {
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     public id: string;
+
     /** The group data */
     public groupData: any;
+
     /** The aggregated data */
     public aggData: any;
+
     /** The user provided data */
     public data: any;
+
     /** The parent node to this node, or empty if top level */
     public parent: RowNode | null;
+
     /** How many levels this node is from the top */
     public level: number;
+
     /** How many levels this node is from the top in the UI (different to the level when removing parents)*/
     public uiLevel: number;
+
     /** If doing in memory grouping, this is the index of the group column this cell is for.
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
     public rowGroupIndex: number | null;
+
     /** True if this node is a group node (ie has children) */
     public group: boolean | undefined;
+
     /** True if this row is getting dragged */
     public dragging: boolean;
 
     /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
     public master: boolean;
+
     /** True if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
     public detail: boolean;
+
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
+
     /** If master detail, this contains details about the detail grid */
     public detailGridInfo: DetailGridInfo | null;
 
-    /** Same as master, kept for legacy reasons */
-    public canFlower: boolean;
-    /** Same as detail, kept for legacy reasons */
-    public flower: boolean;
-    /** Same as detailNode, kept for legacy reasons */
-    public childFlower: RowNode;
-
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
+
     /** True if this is the first child in this group */
     public firstChild: boolean;
+
     /** True if this is the last child in this group */
     public lastChild: boolean;
+
     /** The index of this node in the group */
     public childIndex: number;
+
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     public rowIndex: number;
+
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     public rowPinned: string;
+
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string;
+
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     public footer: boolean;
+
     /** Groups only - The field we are grouping on eg Country*/
     public field: string | null;
+
     /** Groups only - the row group column for this group */
     public rowGroupColumn: Column | null;
+
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
+
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
@@ -152,10 +168,13 @@ export class RowNode implements IEventEmitter {
 
     /** Groups only - Children of this group */
     public childrenAfterGroup: RowNode[];
+
     /** Groups only - Filtered children of this group */
     public childrenAfterFilter: RowNode[];
+
     /** Groups only - Sorted children of this group */
     public childrenAfterSort: RowNode[];
+
     /** Groups only - Number of children and grand children */
     public allChildrenCount: number | null;
 
@@ -167,6 +186,7 @@ export class RowNode implements IEventEmitter {
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
+
     /** Groups only - If doing footers, reference to the footer node for this group */
     public sibling: RowNode;
 
@@ -181,9 +201,11 @@ export class RowNode implements IEventEmitter {
 
     /** The top pixel for this row */
     public rowTop: number;
+
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number;
+
     /** True if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
      * representing a different entity, so the selection controller, if the node is selected, takes
@@ -683,8 +705,7 @@ export class RowNode implements IEventEmitter {
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (this.footer) {
-            const count = this.sibling.setSelectedParams(params);
-            return count;
+            return this.sibling.setSelectedParams(params);
         }
 
         if (rangeSelect) {
@@ -878,7 +899,6 @@ export class RowNode implements IEventEmitter {
 
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
-
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
 }

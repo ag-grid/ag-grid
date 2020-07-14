@@ -627,10 +627,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.postProcessPopup;
     }
 
-    public getDoesDataFlowerFunc(): ((data: any) => boolean) | undefined {
-        return this.gridOptions.doesDataFlower;
-    }
-
     public getPaginationNumberFormatterFunc(): ((params: PaginationNumberFormatterParams) => string) | undefined {
         return this.gridOptions.paginationNumberFormatter;
     }
@@ -1362,12 +1358,6 @@ export class GridOptionsWrapper {
 
         if (options.deprecatedEmbedFullWidthRows) {
             console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
-        }
-
-        if (options.doesDataFlower) {
-            console.warn(
-                'ag-Grid: since v21.1, doesDataFlower is deprecated. Master/Detail is the new way for showing child data for a row and was introduced over a year ago. Please migrate your code to use master/detail instead.'
-            );
         }
 
         if (options.enableOldSetFilterModel) {

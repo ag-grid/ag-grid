@@ -252,7 +252,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public isFullWidthCell : any = undefined;
     @Input() public fullWidthCellRenderer : any = undefined;
     @Input() public fullWidthCellRendererFramework : any = undefined;
-    @Input() public doesDataFlower : any = undefined;
     @Input() public processSecondaryColDef : any = undefined;
     @Input() public processSecondaryColGroupDef : any = undefined;
     @Input() public getBusinessKeyForNode : any = undefined;

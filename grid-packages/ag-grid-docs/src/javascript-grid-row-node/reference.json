@@ -24,12 +24,6 @@
         "rowPinned": {
             "description": "<code>'top'</code> or <code>'bottom'</code> if pinned row, otherwise <code>null</code> or <code>undefined</code>."
         },
-        "canFlower": {
-            "description": "<code>true</code> if this node can flower (i.e. can be expanded, but has no direct children)."
-        },
-        "childFlower": {
-            "description": "The child flower of this node."
-        },
         "childIndex": {
             "description": "Index of this row with respect to its parent when grouping. Changes when data is sorted."
         },

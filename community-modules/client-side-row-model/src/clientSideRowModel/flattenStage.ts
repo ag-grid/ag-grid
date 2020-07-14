@@ -162,8 +162,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
         detailNode.detail = true;
         detailNode.selectable = false;
-        // flower was renamed to 'detail', but keeping for backwards compatibility
-        detailNode.flower = detailNode.detail;
         detailNode.parent = masterNode;
 
         if (_.exists(masterNode.id)) {
@@ -173,7 +171,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         detailNode.data = masterNode.data;
         detailNode.level = masterNode.level + 1;
         masterNode.detailNode = detailNode;
-        masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
 
         return detailNode;
     }
