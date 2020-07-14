@@ -46,6 +46,7 @@
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
+    "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
     "ciBuildAndTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",

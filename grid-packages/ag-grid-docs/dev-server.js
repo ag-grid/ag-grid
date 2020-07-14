@@ -36,9 +36,6 @@ const WINDOWS = /^win/.test(os.platform());
 //     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 // }
 
-// Formatting code when generating examples takes ages, so disable it for local development.
-process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
-
 function reporter(middlewareOptions, options) {
     const { log, state, stats } = options;
 
@@ -718,7 +715,7 @@ const readModulesState = () => {
     return modulesState;
 };
 
-module.exports = async (skipFrameworks, done ) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -733,6 +730,12 @@ module.exports = async (skipFrameworks, done ) => {
                 console.log("Docs process killed. Safe to restart.");
                 process.exit(0);
             });
+
+            // Formatting code when generating examples takes ages, so disable it for local development.
+            if(skipExampleFormatting) {
+                console.log("Skipping example formatting");
+                process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
+            }
 
             const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 

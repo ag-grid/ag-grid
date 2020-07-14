@@ -135,6 +135,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         const processedExamples = new Set();
 
+        let errorInGeneration = false;
         examplesToProcess.forEach(({ file, section, example, options, type }) => {
             try {
                 const examplePath = path.join('./src', section, example);
@@ -144,6 +145,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
                 generateExample(examplePath, type, phpArrayToJSON(options));
                 processedExamples.add(examplePath);
             } catch (error) {
+                errorInGeneration = true;
                 console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
                 console.error(error);
             }
@@ -154,7 +156,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
         console.log(`\u2714 ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
 
         if (done) {
-            done();
+            done(errorInGeneration ? "Error in example generation" : undefined);
         }
     });
 }
