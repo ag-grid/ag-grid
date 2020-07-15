@@ -98,12 +98,18 @@ SNIPPET
 <h2>Fine Grained State Control</h2>
 
 <p>
-    So far consideration has only been given to saving the entire state or restoring the entire state.
-    It is possible to only focus on particular columns and / or particular fields. The following rules
+    So far consideration has only been given to getting and then applying state for all state attributes
+    and all columns.
+    It is possible to only focus on particular columns and / or particular attributes. The following rules
     enable this.
 </p>
 
 <ul>
+    <li>
+        If state for a column missing attributes, or the attribute is provided as <code>undefined</code>,
+        then that attribute is not updated. For example if a Column has a State item with just <code>pinned</code>,
+        then Pinned is applied to that Column but other attributes, such as Sort, are left intact.
+    </li>
     <li>
         When state is applied and there are additional columns in the grid that do not appear in the provided
         state, then the <code>params.defaultState</code> is applied to those additional columns.
@@ -111,10 +117,6 @@ SNIPPET
     <li>
         If <code>params.defaultState</code> is not provided, then any additional columns in the grid will not
         be updated.
-    </li>
-    <li>
-        If a particular state item is missing attributes, or the attribute is provided as <code>undefined</code>,
-        then that attribute is not updated.
     </li>
 </ul>
 
@@ -214,6 +216,68 @@ SNIPPET
 </p>
 
 <?= grid_example('Selective State', 'selective-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+
+<h2>Special Considerations</h2>
+
+<p>
+    There are a few items to note on specifie state attributes. The are as follows:
+</p>
+
+<ul>
+    <li>
+        <p><b>Null vs Undefined</b></p>
+
+        <p>
+            For all state items, <code>undefined</code> means <i>"do not apply this attribute"</i> and <code>null</code>
+            means <i>"clear this attribute"</i>.
+        </p>
+
+        <p>
+            For example, setting <code>sort=null</code> will clear sort on a column whereas setting <code>sort=undefined</code>
+            will leave whatever sort, if any, is currently present.
+        </p>
+
+        <p>
+            The only exception is with regards Column With. For Width, both <code>undefined</code> and <code>null</code>
+            will skip the state item. This is because Width is mandatory - there is no such things as a column with no width.
+        </p>
+    </li>
+    <li>
+        <p><b>Width and Flex</b></p>
+
+        <p>
+            When Flex is active on a Column, the grid ignores the <code>width</code> attribute when setting the Width.
+        </p>
+
+        <p>
+            When <code>getColumnState()</code> is called, both <code>width</code> and <code>flex</code> are set. When
+            <code>applyColumnState()</code> is called, if <code>flex</code> is present then <code>width</code> is
+            ignored.
+        </p>
+
+        <p>
+            If you want to restore Column Width's to the exact same pixel with as specified in the Column State,
+            set <code>flex=undefined</code> in the State item.
+        </p>
+    </li>
+    <li>
+        <p><b>Row Group and Pivot</b></p>
+
+        <p>
+            There are two attributes representing both Row Group and Pivot. First using the boolean attributes
+            <code>rowGroup</code> and <code>pivot</code> and then secondly using the index attributes <code>rowGroupIndex</code>
+            and <code>pivotIndex</code>.
+        </p>
+
+        <p>
+            When <code>getColumnState()</code> is called, all of <code>rowGroup</code>, <code>pivot</code>,
+            <code>rowGroupIndex</code> and <code>pivotIndex</code> are set. When
+            <code>applyColumnState()</code> is called, preference is given to the index variants. For example
+            if both <code>rowGroup</code> and <code>rowGroupIndex</code> is present, <code>rowGroupIndex</code>
+            is applied.
+        </p>
+    </li>
+</ul>
 
 <h2>Column Events</h2>
 
