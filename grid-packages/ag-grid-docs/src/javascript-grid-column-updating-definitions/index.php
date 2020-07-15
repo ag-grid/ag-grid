@@ -316,4 +316,25 @@ SNIPPET
     not know that the columns are in fact the same columns.
 </note>
 
+<h2>Column Events</h2>
+
+<p>
+    Column Events will get raised when setting new Column Definitions that update the current Columns.
+    For example Column Pinned event will get raised if applying the state results in a column getting
+    pinned or unpinned.
+</p>
+
+<p>
+    The example below demonstrates events getting raised based on Column Definition changes.
+    The example logs event information to the console, so best open the example in
+    a new tab and observe the dev console.
+</p>
+
+<?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+
+<p>
+    To suppress events raised when invoking <code>applyColumnState()</code>
+    set the grid property <code>suppressSetColumnStateEvents=true</code>.
+</p>
+
 <?php include '../documentation-main/documentation_footer.php';?>

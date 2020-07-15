@@ -195,6 +195,26 @@ SNIPPET
 
 <?= grid_example('Fine Grained State', 'fine-grained-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
+<h2>Saving Partial State</h2>
+
+<p>
+    Using the techniques above, it is possible to save and restore a subset of the parameters in the state.
+    The example below demonstrates this by selectively saving and restoring a) sort state and
+    b) column visibility and order state.
+</p>
+
+<p>
+    Note than when saving and restoring sort state, other Column State items (width, row group, column order etc)
+    are not impacted.
+</p>
+
+<p>
+    Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
+    re-applying the state.
+</p>
+
+<?= grid_example('Selective State', 'selective-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+
 <h2>Column Events</h2>
 
 <p>

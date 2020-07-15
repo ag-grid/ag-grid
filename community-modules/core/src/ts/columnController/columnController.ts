@@ -204,6 +204,8 @@ export class ColumnController extends BeanStub {
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
         const colsPreviouslyExisted = !!this.columnDefs;
 
+        const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
+
         this.columnDefs = columnDefs;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
@@ -250,6 +252,8 @@ export class ColumnController extends BeanStub {
             api: this.gridApi,
             columnApi: this.columnApi
         };
+
+        raiseEventsFunc();
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
     }
@@ -1760,7 +1764,7 @@ export class ColumnController extends BeanStub {
     public applyColumnState(params: ApplyColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
 
-        const raiseEventsFunc = this.takeColumnStateSnapshot(source);
+        const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
 
         this.autoGroupsNeedBuilding = true;
 
@@ -1892,7 +1896,7 @@ export class ColumnController extends BeanStub {
         return success;
     }
 
-    private takeColumnStateSnapshot(source: ColumnEventType): ()=>void {
+    private compareColumnStatesAndRaiseEvents(source: ColumnEventType): ()=>void {
 
         const startState = {
             rowGroupColumns: this.rowGroupColumns.slice(),
