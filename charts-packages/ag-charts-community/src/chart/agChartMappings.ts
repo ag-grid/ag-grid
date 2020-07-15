@@ -145,6 +145,8 @@ const chartDefaults: any = {
     width: 600,
     height: 300,
     data: [],
+    title: undefined,
+    subtitle: undefined,
     padding: {},
     background: {},
     legend: {
@@ -158,8 +160,6 @@ const chartDefaults: any = {
         minHandle: {},
         maxHandle: {}
     },
-    title: undefined,
-    subtitle: undefined,
     listeners: undefined
 };
 
