@@ -1967,15 +1967,19 @@ export class ColumnController extends BeanStub {
                 columnIdMapper
             );
 
-            const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
+            const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width != c.getActualWidth();
             this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
 
-            const pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned !== c.getPinned();
+            const pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned != c.getPinned();
             this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
 
-            const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
-            const cols = getChangedColumns(visibilityChangePredicate);
-            this.raiseColumnVisibleEvent(cols, source);
+            const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide == c.isVisible();
+            this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
+
+            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort();
+            if (getChangedColumns(sortChangePredicate).length>0) {
+                this.sortController.dispatchSortChangedEvents();
+            }
 
             // special handling for moved column events
             this.raiseColumnMovedEvent(columnStateBefore, source);

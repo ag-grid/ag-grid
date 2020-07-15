@@ -57,7 +57,7 @@ export class SortController extends BeanStub {
         this.dispatchSortChangedEvents();
     }
 
-    private dispatchSortChangedEvents(): void {
+    public dispatchSortChangedEvents(): void {
         const event: SortChangedEvent = {
             type: Events.EVENT_SORT_CHANGED,
             api: this.gridApi,
