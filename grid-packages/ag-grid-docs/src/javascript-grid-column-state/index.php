@@ -161,7 +161,8 @@ columnApi.applyColumnState({
     ]
 });
 
-// Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
+// Clear sorting, row group, pivot and pinned on all columns,
+// leave all other attributes untouched
 columnApi.applyColumnState({
     defaultState: [
         {
@@ -197,8 +198,18 @@ SNIPPET
 <h2>Column Events</h2>
 
 <p>
-    (work in progress)
+    Column Events will get raised when applying Column State as these events would
+    normally get raised. For example Column Pinned event will get raised if applying
+    the state results in a column getting pinned or unpinned.
 </p>
+
+<p>
+    The example below demonstrates events getting raised based on Column State changes.
+    The example logs event information to the console, so best open the example in
+    a new tab and observe the dev console.
+</p>
+
+<?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <note>
     To suppress events raised when invoking <code>columnApi.setColumnState(state)</code>, and also

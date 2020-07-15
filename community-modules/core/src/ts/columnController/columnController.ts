@@ -1760,7 +1760,7 @@ export class ColumnController extends BeanStub {
     public applyColumnState(params: ApplyColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
 
-        const columnStateBefore = this.getColumnState();
+        const raiseEventsFunc = this.takeColumnStateSnapshot(source);
 
         this.autoGroupsNeedBuilding = true;
 
@@ -1791,7 +1791,7 @@ export class ColumnController extends BeanStub {
                     console.warn('ag-grid: column ' + state.colId + ' not found');
                     success = false;
                 } else {
-                    this.syncColumnWithStateItem_columnSpike(column, state, params.defaultState, rowGroupIndexes,
+                    this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
                     _.removeFromArray(columnsWithNoState, column);
                 }
@@ -1802,7 +1802,7 @@ export class ColumnController extends BeanStub {
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         columnsWithNoState.forEach( col => {
-            this.syncColumnWithStateItem_columnSpike(col, null, params.defaultState, rowGroupIndexes,
+            this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
                 pivotIndexes, false, source)
         });
 
@@ -1855,7 +1855,7 @@ export class ColumnController extends BeanStub {
         // sync newly created auto group columns with ColumnState
         autoGroupColumnStates.forEach(stateItem => {
             const autoCol = this.getAutoColumn(stateItem.colId);
-            this.syncColumnWithStateItem_columnSpike(autoCol, stateItem, params.defaultState, null, null, true, source);
+            this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
         if (this.gridColsArePrimary && params.applyOrder && params.state) {
@@ -1887,77 +1887,97 @@ export class ColumnController extends BeanStub {
             this.eventService.dispatchEvent(event);
         }
 
-        this.raiseColumnEvents(columnStateBefore, source);
+        raiseEventsFunc();
 
         return success;
     }
 
-    private raiseColumnEvents(columnStateBefore: ColumnState[], source: ColumnEventType) {
-        if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents()) { return; }
+    private takeColumnStateSnapshot(source: ColumnEventType): ()=>void {
 
-        const columnStateAfter = this.getColumnState();
+        const startState = {
+            rowGroupColumns: this.rowGroupColumns.slice(),
+            pivotColumns: this.pivotColumns.slice(),
+            valueColumns: this.valueColumns.slice()
+        };
 
-        // raises generic ColumnEvents where all columns are returned rather than what has changed
-        const raiseEventWithAllColumns = (eventType: string, idMapper: (cs: ColumnState) => string, columns: Column[]) => {
-            const unchanged = areEqual(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
+        const columnStateBefore = this.getColumnState();
+        const columnStateBeforeMap: { [colId: string]: ColumnState; } = {};
 
-            if (unchanged) { return; }
+        columnStateBefore.forEach(col => {
+            columnStateBeforeMap[col.colId] = col;
+        });
 
-            // returning all columns rather than what has changed!
-            const event: ColumnEvent = {
-                type: eventType,
-                columns: columns,
-                column: columns.length === 1 ? columns[0] : null,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
+        return () => {
+
+            // raises generic ColumnEvents where all columns are returned rather than what has changed
+            const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
+
+                const beforeList = colsBefore.map(idMapper).sort();
+                const afterList = colsAfter.map(idMapper).sort();
+                const unchanged = areEqual(beforeList, afterList);
+
+                if (unchanged) { return; }
+
+                // returning all columns rather than what has changed!
+                const event: ColumnEvent = {
+                    type: eventType,
+                    columns: colsAfter,
+                    column: colsAfter.length === 1 ? colsAfter[0] : null,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    source: source
+                };
+
+                this.eventService.dispatchEvent(event);
             };
 
-            this.eventService.dispatchEvent(event);
+            // determines which columns have changed according to supplied predicate
+            const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
+                const changedColumns: Column[] = [];
+
+                this.gridColumns.forEach(column => {
+                    const colStateBefore = columnStateBeforeMap[column.getColId()];
+                    if (colStateBefore && changedPredicate(colStateBefore, column)) {
+                        changedColumns.push(column);
+                    }
+                });
+
+                return changedColumns;
+            };
+
+            const columnIdMapper = (c: Column) => c.getColId();
+
+            raiseWhenListsDifferent(Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+                startState.rowGroupColumns,
+                this.rowGroupColumns,
+                columnIdMapper
+            );
+
+            raiseWhenListsDifferent(Events.EVENT_COLUMN_PIVOT_CHANGED,
+                startState.pivotColumns,
+                this.pivotColumns,
+                columnIdMapper
+            );
+
+            raiseWhenListsDifferent(Events.EVENT_COLUMN_VALUE_CHANGED,
+                startState.valueColumns,
+                this.valueColumns,
+                columnIdMapper
+            );
+
+            const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
+            this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
+
+            const pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned !== c.getPinned();
+            this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
+
+            const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
+            const cols = getChangedColumns(visibilityChangePredicate);
+            this.raiseColumnVisibleEvent(cols, source);
+
+            // special handling for moved column events
+            this.raiseColumnMovedEvent(columnStateBefore, source);
         };
-
-        // determines which columns have changed according to supplied predicate
-        const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
-            const changedColumns: Column[] = [];
-            const columnStateBeforeMap: { [colId: string]: ColumnState; } = {};
-
-            columnStateBefore.forEach(col => {
-                columnStateBeforeMap[col.colId] = col;
-            });
-
-            this.gridColumns.forEach(column => {
-                const colStateBefore = columnStateBeforeMap[column.getColId()];
-                if (!colStateBefore || changedPredicate(colStateBefore, column)) {
-                    changedColumns.push(column);
-                }
-            });
-
-            return changedColumns;
-        };
-
-        // generic ColumnEvents which return current column list
-        const valueColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.aggFunc;
-        raiseEventWithAllColumns(Events.EVENT_COLUMN_VALUE_CHANGED, valueColumnIdMapper, this.valueColumns);
-
-        const pivotColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.pivotIndex;
-        raiseEventWithAllColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, pivotColumnIdMapper, this.pivotColumns);
-
-        const rowGroupColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.rowGroupIndex;
-        raiseEventWithAllColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, rowGroupColumnIdMapper, this.rowGroupColumns);
-
-        // specific ColumnEvents which return what's changed
-        const pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned !== c.getPinned();
-        this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
-
-        const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
-        const cols = getChangedColumns(visibilityChangePredicate);
-        this.raiseColumnVisibleEvent(cols, source);
-
-        const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
-        this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
-
-        // special handling for moved column events
-        this.raiseColumnMovedEvent(columnStateBefore, source);
     }
 
     private raiseColumnPinnedEvent(changedColumns: Column[], source: ColumnEventType) {
@@ -1992,23 +2012,35 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private raiseColumnMovedEvent(columnStateBefore: ColumnState[], source: ColumnEventType) {
-        const movedColumns: Column[] = [];
-        const columnStateAfter = this.getColumnState();
+    private raiseColumnMovedEvent(colStateBefore: ColumnState[], source: ColumnEventType) {
 
-        for (let i = 0; i < columnStateAfter.length; i++) {
-            const before = columnStateBefore[i];
-            const after = columnStateAfter[i];
+        // we are only interested in columns that were both present and visible before and after
 
-            // don't consider column if reintroduced or hidden
-            if (!before || after.hide) { continue; }
+        const colStateAfter = this.getColumnState();
 
-            if (before.colId !== after.colId) {
-                const predicate = (column: Column) => column.getColId() === after.colId;
-                const movedColumn = _.find(this.allDisplayedColumns, predicate);
-                movedColumns.push(movedColumn);
+        const colStateAfterMapped: {[id: string]: ColumnState} = {};
+        colStateAfter.forEach( s => colStateAfterMapped[s.colId] = s);
+
+        // get id's of cols in both before and after lists
+        const colsIntersectIds: {[id: string]: boolean} = {};
+        colStateBefore.forEach( s => {
+            if (colStateAfterMapped[s.colId]) {
+                colsIntersectIds[s.colId] = true;
             }
-        }
+        });
+
+        // filter state lists, so we only have cols that were present before and after
+        const beforeFiltered = _.filter(colStateBefore, c => colsIntersectIds[c.colId]);
+        const afterFiltered = _.filter(colStateAfter, c => colsIntersectIds[c.colId]);
+
+        // see if any cols are in a different location
+        const movedColumns: Column[] = [];
+        afterFiltered.forEach( (csAfter: ColumnState, index: number) => {
+            const csBefore = beforeFiltered[index];
+            if (csBefore.colId !== csAfter.colId) {
+                movedColumns.push(this.getGridColumn(csBefore.colId));
+            }
+        });
 
         if (!movedColumns.length) { return; }
 
@@ -2041,6 +2073,7 @@ export class ColumnController extends BeanStub {
         column.setValueActive(false, source);
     }
 
+/*
     private syncColumnWithStateItem(
         column: Column | null,
         stateItem: ColumnState,
@@ -2097,9 +2130,9 @@ export class ColumnController extends BeanStub {
             column.setPivotActive(false, source);
         }
     }
+*/
 
-
-    private syncColumnWithStateItem_columnSpike(
+    private syncColumnWithStateItem(
         column: Column | null,
         stateItem: ColumnState,
         defaultState: ColumnState,
@@ -2179,6 +2212,7 @@ export class ColumnController extends BeanStub {
                 }
                 column.setAggFunc(null);
                 column.setValueActive(false, source);
+                _.removeFromArray(this.valueColumns, column);
             }
         }
 
