@@ -170,6 +170,10 @@ export class PivotColDefService extends BeanStub {
 
             } else {
                 const def: ColDef = groupDef as ColDef;
+
+                // check that value column exists, i.e. aggFunc is supplied
+                if (!def.pivotValueColumn) return;
+
                 const pivotValueColId = def.pivotValueColumn.getColId();
 
                 const arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
