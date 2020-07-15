@@ -1909,6 +1909,8 @@ export class ColumnController extends BeanStub {
 
         return () => {
 
+            if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents()) { return; }
+
             // raises generic ColumnEvents where all columns are returned rather than what has changed
             const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
 

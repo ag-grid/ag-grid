@@ -190,7 +190,7 @@ export class ColumnApi {
 }
 
 export interface ApplyColumnStateParams {
-    state?: ColumnState[],
-    applyOrder?: boolean,
-    defaultState?: ColumnState
+    state?: ColumnState[];
+    applyOrder?: boolean;
+    defaultState?: ColumnState;
 }

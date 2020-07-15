@@ -211,10 +211,17 @@ SNIPPET
 
 <?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
-<note>
-    To suppress events raised when invoking <code>columnApi.setColumnState(state)</code>, and also
-    <code>columnApi.resetColumnState()</code>, use: <code>gridOptions.suppressSetColumnStateEvents = true</code>.
-</note>
+<p>
+    To suppress events raised when invoking <code>applyColumnState()</code>
+    set the grid property <code>suppressSetColumnStateEvents=true</code>.
+</p>
+
+<p>
+    The example below is similar to the example above, except no events are
+    raised when the state is changed via the buttons.
+</p>
+
+<?= grid_example('Suppress Events', 'suppress-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2>State vs ColDef Comparison</h2>
 
