@@ -117,7 +117,6 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-SPL!!! create functional version here
 <?= grid_example('Basic Full Width', 'basic-full-width', 'mixed', ['exampleHeight' => 595, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

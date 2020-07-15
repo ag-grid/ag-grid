@@ -71,6 +71,6 @@ include '../documentation-main/documentation_header.php';
     The example below shows the animations by the JavaScript calling the grid's API. So no touching, just looking!!!
 </p>
 
-<?= grid_example('Animation', 'animation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel']]) ?>
+<?= grid_example('Animation', 'animation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -76,7 +76,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated', ['modules' => true]) ?>
+<?//= g rid_example('Row Drag Simple Managed', 'simple-managed', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>The logic for managed dragging is simple and has the following constraints:</p>
 
@@ -114,7 +114,7 @@ SNIPPET
     design. To prevent this default behaviour, set <code>suppressMoveWhenRowDragging</code> to <code>true</code> in the <code>gridOptions</code>.
 </p>
 
-<?= grid_example('Row Drag with SuppressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Drag with SuppressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Multi-Row Dragging</h3>
 
@@ -132,7 +132,7 @@ SNIPPET
     <li>When you drag an item that is not selected while other items are selected, only the unselected item will be dragged</li>
 </ul>
 
-<?= grid_example('Row Drag with Multi Row Drag', 'managed-with-multi-row-drag', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Drag with Multi Row Drag', 'managed-with-multi-row-drag', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Suppress Row Drag</h2>
 
@@ -151,7 +151,7 @@ SNIPPET
     <li>Applying a sort or a filter to the grid will also suppress the drag icons.</li>
 </ul>
 
-<?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated', ['modules' => true]) ?>
+<?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Custom Row Drag Text</h2>
 
@@ -197,7 +197,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Unmanaged Dragging</h2>
 
@@ -324,7 +324,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Row Drag Events', 'dragging-events', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Drag Events', 'dragging-events', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Simple Unmanaged Example</h2>
 
@@ -354,7 +354,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', ['modules' => true]) ?>
+<?//= g rid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>
     The simple example doesn't add anything that managed dragging gives (the first
@@ -410,7 +410,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Row Dragging & Tree Data</h2>
 
@@ -449,7 +449,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h3>Example Highlighted Tree Data</h3>
 
@@ -487,7 +487,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>Dragging Multiple Rows</h2>
 

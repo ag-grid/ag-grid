@@ -1,13 +1,15 @@
+var rowDragText = function(params) {
+    if (params.rowNode.data.year === '2012') {
+        return params.defaultTextValue + ' (London Olympics)';
+    }
+    return params.defaultTextValue;
+}
+
 var columnDefs = [
     {
         field: "athlete",
         rowDrag: true,
-        rowDragText: function(params) {
-            if (params.rowNode.data.year == '2012') {
-                return params.defaultTextValue + ' (London Olympics)';
-            }
-            return params.defaultTextValue;
-        }
+        rowDragText: rowDragText
     },
     { field: "country" },
     { field: "year", width: 100 },
