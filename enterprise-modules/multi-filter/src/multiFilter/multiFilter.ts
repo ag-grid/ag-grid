@@ -44,6 +44,7 @@ export class MultiFilter extends Component implements IFilterComp {
     private column: Column;
     private filterChangedCallback: () => void;
     private lastOpenedInContainer?: ContainerType;
+    private activeFilterIndices: number[] = [];
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter"></div>`);
@@ -161,6 +162,10 @@ export class MultiFilter extends Component implements IFilterComp {
 
     public isFilterActive(): boolean {
         return _.some(this.filters, filter => filter.isFilterActive());
+    }
+
+    public getLastActiveFilterIndex(): number | null {
+        return this.activeFilterIndices.length > 0 ? this.activeFilterIndices[this.activeFilterIndices.length - 1] : null;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
@@ -313,6 +318,12 @@ export class MultiFilter extends Component implements IFilterComp {
 
     private filterChanged(index: number): void {
         const changedFilter = this.filters[index];
+
+        _.removeFromArray(this.activeFilterIndices, index);
+
+        if (changedFilter.isFilterActive()) {
+            this.activeFilterIndices.push(index);
+        }
 
         this.filterChangedCallback();
 

@@ -118,7 +118,7 @@ SNIPPET
 <h2>Date Model vs Comparison Types</h2>
 
 <p>
-    It should be noted that the Date Filter Model represents the Date as a string in format <code>'YYYY-DD-MM'</code>,
+    It should be noted that the Date Filter Model represents the Date as a string in format <code>'YYYY-MM-DD'</code>,
     however when doing comparisons the date is provided as a JavaScript <code>Date</code> object as that's what date
     pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone
     issues.

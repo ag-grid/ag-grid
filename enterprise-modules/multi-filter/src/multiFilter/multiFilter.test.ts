@@ -623,3 +623,51 @@ describe('onFilterChanged', () => {
         expect(filter2.onAnyFilterChanged).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('getLastActiveFilterIndex', () => {
+    beforeEach(() => {
+        filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
+        filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
+    });
+
+    it('returns null if no filter is active', () => {
+        const filter = createFilter();
+
+        expect(filter.getLastActiveFilterIndex()).toBeNull();
+    });
+
+    it('returns the index of the filter that was most recently made active', () => {
+        const filter = createFilter();
+
+        const { filterChangedCallback: filter1ChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
+        const { filterChangedCallback: filter2ChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[1][1];
+
+        filter1.isFilterActive.mockReturnValue(true);
+        filter2.isFilterActive.mockReturnValue(true);
+
+        filter1ChangedCallback();
+        filter2ChangedCallback();
+        filter1ChangedCallback();
+
+        expect(filter.getLastActiveFilterIndex()).toBe(0);
+    });
+
+    it('returns the previously active index if the most recently active filter becomes inactive', () => {
+        const filter = createFilter();
+
+        const { filterChangedCallback: filter1ChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
+        const { filterChangedCallback: filter2ChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[1][1];
+
+        filter1.isFilterActive.mockReturnValue(true);
+        filter2.isFilterActive.mockReturnValue(true);
+
+        filter2ChangedCallback();
+        filter1ChangedCallback();
+
+        filter1.isFilterActive.mockReturnValue(false);
+
+        filter1ChangedCallback();
+
+        expect(filter.getLastActiveFilterIndex()).toBe(1);
+    });
+});

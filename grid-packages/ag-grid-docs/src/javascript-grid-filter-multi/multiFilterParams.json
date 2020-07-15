@@ -28,6 +28,9 @@
                     "url": "../javascript-grid-filter-multi/#display-style",
                     "name": "Display Style"
                 }
+            },
+            "title": {
+                "description": "The title to be used when a filter is displayed inside a sub-menu or accordion."
             }
         }
     }

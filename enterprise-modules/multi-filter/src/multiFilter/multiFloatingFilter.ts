@@ -17,12 +17,15 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private floatingFilters: IFloatingFilterComp[] = [];
+    private params: IFloatingFilterParams;
 
     constructor() {
         super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
     public init(params: IFloatingFilterParams): Promise<void> {
+        this.params = params;
+
         const filterParams = params.filterParams as IMultiFilterParams;
         const floatingFilterPromises: Promise<IFloatingFilterComp>[] = [];
 
@@ -62,24 +65,26 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         // as it would be updating as the user is typing
         if (event && event.afterFloatingFilter) { return; }
 
-        if (model == null) {
-            _.forEach(this.floatingFilters, (filter, i) => {
-                filter.onParentModelChanged(null, event);
-                _.setDisplayed(filter.getGui(), i === 0);
-            });
-        } else {
-            const activeFiltersCount = _.filter(model.filterModels, f => f != null).length;
+        this.params.parentFilterInstance((parent: MultiFilter) => {
+            if (model == null) {
+                _.forEach(this.floatingFilters, (filter, i) => {
+                    filter.onParentModelChanged(null, event);
+                    _.setDisplayed(filter.getGui(), i === 0);
+                });
+            } else {
+                const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
-            _.forEach(this.floatingFilters, (filter, i) => {
-                const filterModel = model.filterModels.length > i ? model.filterModels[i] : null;
+                _.forEach(this.floatingFilters, (filter, i) => {
+                    const filterModel = model.filterModels.length > i ? model.filterModels[i] : null;
 
-                filter.onParentModelChanged(filterModel, event);
+                    filter.onParentModelChanged(filterModel, event);
 
-                const shouldShow = activeFiltersCount === 0 ? i === 0 : activeFiltersCount === 1 && filterModel != null;
+                    const shouldShow = lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
 
-                _.setDisplayed(filter.getGui(), shouldShow);
-            });
-        }
+                    _.setDisplayed(filter.getGui(), shouldShow);
+                });
+            }
+        });
     }
 
     public destroy(): void {

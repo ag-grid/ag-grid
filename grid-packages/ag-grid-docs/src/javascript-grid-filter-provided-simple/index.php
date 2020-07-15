@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Simple Filters</h1>
 
 <p class="lead">
-    The grid provides three simple filters for filtering strings, numbers and dates.
+    The grid provides three Simple Filters for filtering strings, numbers and dates.
 </p>
 
 <style>
@@ -39,18 +39,17 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Each of the filters works in a similar way.
-    This page describes the common parts of the simple provided filters.
+    Each of the filters works in a similar way. This page describes the common parts of the Simple Filters.
 </p>
 
 <h3>Example: Simple Filters</h3>
 
 <p>
-    The example below demonstrates all three simple filters working. Note the following:
+    The example below demonstrates all three Simple Filters working. Note the following:
 </p>
 
 <ul class="content">
-    <li>Three filter types: 1) text filter, 2) number filter and 3) date filter.</li>
+    <li>Three filter types: 1) Text Filter, 2) Number Filter and 3) Date Filter.</li>
     <li><code>filter=false</code> is set on Total to hide the filter on this column.</li>
 </ul>
 
@@ -63,9 +62,9 @@ include '../documentation-main/documentation_header.php';
 <h2>Simple Filter Parts</h2>
 
 <p>
-    Each simple filter follows the same layout. The only layout difference is the type of input field
-    presented to the user: for text and number filters a text field is displayed, whereas for date filters
-    a date selector is displayed.
+    Each Simple Filter follows the same layout. The only layout difference is the type of input field
+    presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters
+    a date picker field is displayed.
 </p>
 
 <div style="text-align: center;">
@@ -238,8 +237,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Simple Filter Models</h2>
 
 <p>
-    When saving or restoring state on a filter, the filter model is used. The filter model represents the
-    state of the filter. For example, the code below first gets and then sets the filter model for the Athlete column:
+    When saving or restoring state on a filter, the Filter Model is used. The Filter Model represents the
+    state of the filter. For example, the code below first gets and then sets the Filter Model for the Athlete column:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -264,13 +263,13 @@ SNIPPET
 ) ?>
 
 <p>
-    This section explains what the filter model looks like for each of the simple
+    This section explains what the Filter Model looks like for each of the simple
     filters. The interface used by each filter type is as follows:
 </p>
 
 <note>
-    The best way to understand what the filter models look like is to set a filter via the
-    UI and call <code>api.getFilterModel()</code> in your console. You can then see what the filter model looks like
+    The best way to understand what the Filter Models look like is to set a filter via the
+    UI and call <code>api.getFilterModel()</code> in your console. You can then see what the model looks like
     for different variations of the filters.
 </note>
 
@@ -289,7 +288,7 @@ interface TextFilterModel {
     filter?: string;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <?= createSnippet(<<<SNIPPET
 // number filter uses this filter model
@@ -307,7 +306,7 @@ interface NumberFilterModel {
     filterTo?: number;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <?= createSnippet(<<<SNIPPET
 // date filter uses this filter model
@@ -322,11 +321,11 @@ interface DateFilterModel {
     // the type is string and format is always YYYY-MM-DD e.g. 2019-05-24
     // custom filters can have no values (hence both are optional).
     // range filter has two values (from and to).
-    dateFrom: string;
-    dateTo: string;
+    dateFrom?: string;
+    dateTo?: string;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     Examples of filter model instances are as follows:
@@ -372,15 +371,16 @@ interface ICombinedSimpleModel<M> {
     // the filter type: date, number or text
     filterType: string;
 
-    // one of 'AND' or 'OR'
-    operator: string;
+    operator: JoinOperator;
 
     // two instances of the filter model
     condition1: M;
     condition2: M;
 }
+
+type JoinOperator = 'AND' | 'OR';
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     An example of a filter model with two conditions is as follows:
@@ -481,21 +481,21 @@ SNIPPET
 </p>
 
 <ul class="content">
-    <li>The 'Athlete' column contains two custom filter options: <code>Starts with "A"</code> and
+    <li>The <strong>Athlete</strong> column contains two custom filter options: <code>Starts with "A"</code> and
         <code>Starts with "N"</code>. Both these options take no text filter input.
     </li>
-    <li>The 'Age' column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
+    <li>The <strong>Age</strong> column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also uses the built-in <code>'empty'</code> filter along with <code>suppressAndOrCondition=true</code>.
     </li>
-    <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
+    <li>The <strong>Date</strong> column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
-    <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
-    <li>The 'Country' columns also demonstrates how localisation can be achieved via the
+    <li>The <strong>Country</strong> column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
+    <li>The <strong>Country</strong> columns also demonstrates how localisation can be achieved via the
         <code>gridOptions.localeTextFunc()</code> callback function, where the default value is replaced for the filter
         option <code>'notEqualNoNulls'</code>.
     </li>
-    <li>Saving and Restoring custom filter options via <code>api.getFilterModel()</code> and <code>api.setFilterModel()</code>
-        can also be tested using the provided buttons.
+    <li>Saving and restoring custom filter options via <code>api.getFilterModel()</code> and <code>api.setFilterModel()</code>
+        can be tested using the provided buttons.
     </li>
 </ul>
 
@@ -531,8 +531,8 @@ SNIPPET
 
 <ul>
     <li>
-        Columns Age and Date have both <code>null</code> and <code>undefined</code> values
-        resulting in blank cells.
+        Columns <strong>Age</strong> and <strong>Date</strong> have both <code>null</code> and <code>undefined</code>
+        values resulting in blank cells.
     </li>
     <li>
         Toggle the controls on the top to see how <code>includeBlanksInEquals</code>,

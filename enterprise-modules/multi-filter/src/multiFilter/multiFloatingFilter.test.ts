@@ -4,12 +4,14 @@ import {
     IFloatingFilterParams,
     Promise,
     FilterChangedEvent,
+    IFilterComp,
 } from '@ag-grid-community/core';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
-import { IMultiFilterModel } from './multiFilter';
+import { IMultiFilterModel, MultiFilter } from './multiFilter';
 import { mock } from '../test-utils/mock';
 
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
+let parentFilter: jest.Mocked<MultiFilter>;
 let floatingFilter1: jest.Mocked<IFloatingFilterComp>;
 let floatingFilter2: jest.Mocked<IFloatingFilterComp>;
 
@@ -22,7 +24,7 @@ function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
         column: null,
         api: null,
         currentParentModel: null,
-        parentFilterInstance: null,
+        parentFilterInstance: (callback: (filter: IFilterComp) => void) => callback(parentFilter),
         suppressFilterButton: false,
         onFloatingFilterChanged: () => true,
         filterParams,
@@ -39,6 +41,7 @@ function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
 
 beforeEach(() => {
     userComponentFactory = mock<UserComponentFactory>('newFloatingFilterComponent', 'createUserComponentFromConcreteClass');
+    parentFilter = mock<MultiFilter>('getLastActiveFilterIndex');
 });
 
 describe('init', () => {
@@ -118,21 +121,16 @@ describe('onParentModelChanged', () => {
         expect(floatingFilter2.onParentModelChanged).toHaveBeenCalledTimes(0);
     });
 
-    it('shows first floating filter if only first filter is active', () => {
+    it('shows first floating filter if no first filter is active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
-        const model: IMultiFilterModel = {
-            filterType: 'multi',
-            filterModels: [{ filterType: 'text' }, null]
-        };
-
-        multiFloatingFilter.onParentModelChanged(model, event);
+        multiFloatingFilter.onParentModelChanged(null, event);
 
         expect(floatingFilter1.getGui().className).toBe('');
         expect(floatingFilter2.getGui().className).toBe('ag-hidden');
     });
 
-    it('shows second floating filter if only second filter is active', () => {
+    it('shows floating filter for last active filter if any filter is active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const model: IMultiFilterModel = {
@@ -140,23 +138,11 @@ describe('onParentModelChanged', () => {
             filterModels: [null, { filterType: 'set', values: [] }]
         };
 
+        parentFilter.getLastActiveFilterIndex.mockReturnValue(1);
+
         multiFloatingFilter.onParentModelChanged(model, event);
 
         expect(floatingFilter1.getGui().className).toBe('ag-hidden');
         expect(floatingFilter2.getGui().className).toBe('');
-    });
-
-    it('shows neither floating filter if both filters are active', () => {
-        const multiFloatingFilter = createFloatingFilter();
-        const event = mock<FilterChangedEvent>();
-        const model: IMultiFilterModel = {
-            filterType: 'multi',
-            filterModels: [{ filterType: 'text' }, { filterType: 'set', values: [] }]
-        };
-
-        multiFloatingFilter.onParentModelChanged(model, event);
-
-        expect(floatingFilter1.getGui().className).toBe('ag-hidden');
-        expect(floatingFilter2.getGui().className).toBe('ag-hidden');
     });
 });

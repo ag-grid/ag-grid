@@ -33,9 +33,15 @@ SNIPPET
 ) ?>
 
 <p>
-    By default the Multi Filter will show a <a href="../javascript-grid-filter-text/">Text Filter</a>
-    and <a href="../javascript-grid-filter-set/">Set Filter</a>, but you can specify which filters
-    you would like to use in the <code>filters</code> array.
+    By default the Multi Filter will show a <a href="../javascript-grid-filter-text/">Text Filter</a> and
+    <a href="../javascript-grid-filter-set/">Set Filter</a>, but you can specify which filters you would like to use in
+    the <code>filters</code> array.
+</p>
+
+<p>
+    When <a href="../javascript-grid-floating-filters/">Floating Filters</a> are used, the Floating Filter shown is for
+    the filter in the Multi Filter that was most recently applied and is still active. If no filters are active, the
+    Floating Filter for the first filter in the Multi Filter is shown instead.
 </p>
 
 <p>
@@ -55,8 +61,8 @@ SNIPPET
         Different <code>filterParams</code> can be supplied to each child filter.
     </li>
     <li>
-        Floating filters are enabled for all columns. The floating filter reflects the active filter for that column,
-        so changing which child filter you are using within a Multi Filter will change which floating filter is shown.
+        Floating Filters are enabled for all columns. The Floating Filter changes when you apply different filters
+        from the Multi Filter.
     </li>
     <li>
         You can print the current filter state to the console and save/restore it using the buttons at the top of the
@@ -70,8 +76,9 @@ SNIPPET
 
 <p>
     By default, all filters in the Multi Filter are shown inline in the same view, so that the user has easy, immediate
-    access. However, you can change how filters are presented, by either using sub-menus or groups to wrap each filter.
-    To do this, you can set <code>display</code> to the style of how you would like a particular filter to be displayed:
+    access. However, you can change how filters are presented, by either using sub-menus or accordions to wrap each
+    filter. To do this, you can set <code>display</code> to the style of how you would like a particular filter to be
+    displayed:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -95,7 +102,7 @@ SNIPPET
 
 <p>The options for <code>display</code> are <code>'inline'</code>, <code>'subMenu'</code> or <code>'accordion'</code>.</p>
 
-<p>Please note that sub-menus will be shown as accordions in the tool panel.</p>
+<p>Please note that sub-menus will be shown as accordions in the Tool Panel.</p>
 
 <p>
     You can also provide a title that will be used in the menu item or accordion title by using the <code>title</code>
@@ -103,7 +110,7 @@ SNIPPET
 </p>
 
 <p>
-    The following example demonstrates the different styles.
+    The following example demonstrates the different display styles.
 </p>
 
 <ul class="content">
@@ -111,10 +118,10 @@ SNIPPET
         The <strong>Athlete</strong> column shows the default behaviour, where all filters are inline.
     </li>
     <li>
-        The <strong>Country</strong> column demonstrates having the first filter inside a sub menu.
+        The <strong>Country</strong> column demonstrates having the first filter inside a sub-menu.
     </li>
     <li>
-        The sub-menu for the <strong>Country</strong> is shown as an accordion inside the Tool Panel.
+        The sub-menu for the <strong>Country</strong> filter is shown as an accordion inside the Tool Panel.
     </li>
     <li>
         The <strong>Sport</strong> column demonstrates having both filters as accordions.
