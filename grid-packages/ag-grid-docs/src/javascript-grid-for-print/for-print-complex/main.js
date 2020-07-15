@@ -3,7 +3,7 @@ var columnDefs = [
     {field: 'id', pinned: 'left', width: 70},
     {field: 'model', width: 180},
     {field: 'color', width: 100},
-    {field: 'price', valueFormatter: '"$" + value.toLocaleString()', width: 100},
+    {field: 'price', valueFormatter: '\'$\' + value.toLocaleString()', width: 100},
     {field: 'year', width: 100},
     {field: 'country', width: 120}
 ];
@@ -44,13 +44,13 @@ var gridOptions = {
 };
 
 function onBtPrint() {
-    var gridApi = gridOptions.api;
+    var api = gridOptions.api;
 
-    setPrinterFriendly(gridApi);
+    setPrinterFriendly(api);
 
     setTimeout( function( ) {
         print();
-        setNormal(gridApi);
+        setNormal(api);
     }, 2000);
 }
 

@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('For Print Simple', 'for-print-simple', 'generated') ?>
+<!--    --><?//= gri d_example('For Print Simple', 'for-print-simple', 'generated', [ 'modules' => true, 'reactFunctional' => true]) ?>
 
     <h2>Toggling Print Layout</h2>
 
@@ -101,7 +101,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('For Print Complex', 'for-print-complex', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('For Print Complex', 'for-print-complex', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
     <h2>Animations & Redraw</h2>
 
