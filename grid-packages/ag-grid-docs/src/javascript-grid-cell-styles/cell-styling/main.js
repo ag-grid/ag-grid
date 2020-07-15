@@ -1,5 +1,5 @@
 var columnDefs = [
-    { field: "athlete" },
+    {field: "athlete"},
     {
         field: "age",
         maxWidth: 90,
@@ -10,26 +10,18 @@ var columnDefs = [
             'rag-red': 'x >= 25'
         }
     },
-    { field: "country" },
+    {field: "country"},
     {
         field: "year",
         maxWidth: 90,
         valueParser: numberParser,
-        cellClassRules: {
-            'rag-green-outer': function(params) { return params.value === 2008; },
-            'rag-amber-outer': function(params) { return params.value === 2004; },
-            'rag-red-outer': function(params) { return params.value === 2000; }
-        },
-        cellRenderer: function(params) {
-            return '<span class="rag-element">' + params.value + '</span>';
-        }
+        cellClassRules: ragCellClassRules,
+        cellRenderer: ragRenderer
     },
-    { field: "date", cellClass: 'rag-amber' },
+    {field: "date", cellClass: 'rag-amber'},
     {
         field: "sport",
-        cellClass: function(params) {
-            return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
-        }
+        cellClass: cellClass
     },
     {
         field: "gold",
@@ -44,26 +36,39 @@ var columnDefs = [
         valueParser: numberParser,
         // when cellStyle is a func, we can have the style change
         // dependent on the data, eg different colors for different values
-        cellStyle: function(params) {
-            var color = numberToColor(params.value);
-            return {
-                backgroundColor: color
-            };
-        }
+        cellStyle: cellStyle
     },
     {
         field: "bronze",
         valueParser: numberParser,
         // same as above, but demonstrating dashes in the style, grid takes care of converting to/from camel case
-        cellStyle: function(params) {
-            var color = numberToColor(params.value);
-            return {
-                // dash here
-                'background-color': color
-            };
-        }
+        cellStyle: cellStyle
     }
 ];
+
+var ragCellClassRules = {
+    'rag-green-outer': function (params) {
+        return params.value === 2008;
+    },
+    'rag-amber-outer': function (params) {
+        return params.value === 2004;
+    },
+    'rag-red-outer': function (params) {
+        return params.value === 2000;
+    }
+}
+
+function cellStyle(params) {
+    var color = numberToColor(params.value);
+    return {
+        backgroundColor: color
+    };
+}
+
+function cellClass(params) {
+    return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
+}
+
 
 function numberToColor(val) {
     if (val === 0) {
@@ -73,6 +78,10 @@ function numberToColor(val) {
     } else {
         return '#aaffaa';
     }
+}
+
+function ragRenderer(params) {
+    return '<span class="rag-element">' + params.value + '</span>';
 }
 
 function numberParser(params) {
@@ -96,12 +105,12 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
-        .then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
+        .then(function (data) {
             gridOptions.api.setRowData(data);
         });
 });
