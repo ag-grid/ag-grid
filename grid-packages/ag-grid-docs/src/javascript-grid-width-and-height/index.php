@@ -115,7 +115,7 @@ SNIPPET
     Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
 </note>
 
-<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'noStyle' => 1, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'noStyle' => 1, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>DOM Layout</h2>
 
@@ -167,14 +167,14 @@ SNIPPET
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
-<?= grid_example('Grid Inside a Flexbox Container', 'flexbox', 'generated', ['modules' => true]) ?>
+<?= grid_example('Grid Inside a Flexbox Container', 'flexbox', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Inside CSS Grid Container</h3>
 <p>By default the grid watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
-<?= grid_example('Grid Inside a CSS Grid Container', 'css-grid', 'generated', ['modules' => true]) ?>
+<?= grid_example('Grid Inside a CSS Grid Container', 'css-grid', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Dynamic Resizing with Horizontal Scroll</h3>
 
@@ -184,7 +184,7 @@ SNIPPET
     will simply be hidden and available to the right via the scrollbar.
 </p>
 
-<?= grid_example('Dynamic horizontal resizing with scroll', 'example', 'generated', ['modules' => true]) ?>
+<?= grid_example('Dynamic horizontal resizing with scroll', 'example', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Dynamic Resizing without Horizontal Scroll</h3>
 
@@ -197,13 +197,13 @@ SNIPPET
 <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
     columns hide/show based on the current grid size.</p>
 
-<?= grid_example('Dynamic horizontal resizing without scroll', 'example1', 'generated', ['modules' => true]) ?>
+<?= grid_example('Dynamic horizontal resizing without scroll', 'example1', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Dynamic Vertical Resizing</h3>
 
 <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
     set the row heights to fill the available height as the following example shows:</p>
 
-<?= grid_example('Dynamic vertical resizing', 'example2', 'generated', ['modules' => true]) ?>
+<?= grid_example('Dynamic vertical resizing', 'example2', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
