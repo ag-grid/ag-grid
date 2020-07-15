@@ -228,7 +228,7 @@ include '../documentation-main/documentation_header.php';
 processCellForClipboard(params: ProcessCellForExportParams): any;
 
 // for processing header cell during a copy / cut operation
-processHeaderForClipboard?params: ProcessHeaderForExportParams): any;
+processHeaderForClipboard(params: ProcessHeaderForExportParams): any;
 
 // for processing a cell during a paste operation
 processCellFromClipboard(params: ProcessCellForExportParams): any;
