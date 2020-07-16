@@ -144,7 +144,15 @@
     }
 
     function createDocumentationFromFile($path, $expression = null, $names = []) {
-        $properties = getJsonFromFile($path);
+        createDocumentationFromFiles([$path], $expression, $names);
+    }
+
+    function createDocumentationFromFiles($paths, $expression = null, $names = []) {
+        if (count($paths) === 0) {
+            return;
+        }
+
+        $propertiesFromFiles = array_map(function($path) { return getJsonFromFile($path); }, $paths);
 
         if (isset($expression)) {
             $keys = explode('.', $expression);
@@ -152,15 +160,36 @@
 
             while (count($keys) > 0) {
                 $key = array_shift($keys);
-                $properties = $properties->$key;
+
+                foreach ($propertiesFromFiles as &$propertiesFromFile) {
+                    $propertiesFromFile = $propertiesFromFile->$key;
+                }
+
+                unset($propertiesFromFile);
             }
+
+            $properties = mergeObjects($propertiesFromFiles);
 
             createPropertyTable($key, $properties, $expression, true, $names);
         } else {
+            $properties = mergeObjects($propertiesFromFiles);
+
             foreach ($properties as $key => $val) {
                 createPropertyTable($key, $val);
             }
         }
+    }
+
+    function mergeObjects($objects) {
+        $result = $objects[0];
+
+        foreach (array_slice($objects, 1) as $object) {
+            foreach ($object as $key => $val) {
+                $result->$key = $val;
+            }
+        }
+
+        return $result;
     }
 
     function formatJson($value) {

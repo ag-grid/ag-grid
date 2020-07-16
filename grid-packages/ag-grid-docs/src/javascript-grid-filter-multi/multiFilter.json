@@ -33,5 +33,10 @@
                 "description": "The title to be used when a filter is displayed inside a sub-menu or accordion."
             }
         }
+    },
+    "api": {
+        "getFilter(index)": {
+            "description": "Returns the child filter at the specified index."
+        }
     }
 }

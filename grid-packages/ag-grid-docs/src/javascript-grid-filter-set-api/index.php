@@ -41,11 +41,10 @@ SNIPPET
 <h2>Set Filter API</h2>
 
 <p>
-    The Set Filter has the following API (in addition to the
-    <a href="../javascript-grid-filter-provided/#providedFilterApi">API</a> common to all provided filters):
+    The Set Filter has the following API:
 </p>
 
-<?php createDocumentationFromFile('setFilterApi.json', 'api') ?>
+<?php createDocumentationFromFiles(['../javascript-grid-filter-api/filterApi.json', '../javascript-grid-filter-provided/providedFilters.json', 'setFilterApi.json'], 'api') ?>
 
 <p>
     It is important to note that when updating the Set Filter through the API, it is up to the developer to call

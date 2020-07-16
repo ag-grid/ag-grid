@@ -66,10 +66,10 @@ include '../documentation-main/documentation_header.php';
 <h2 id="providedFilterApi">Provided Filter API</h2>
 
 <p>
-    All of the provided filters have the following methods:
+    Provided Filters provide the following methods:
 </p>
 
-<?php createDocumentationFromFile('providedFilters.json', 'api') ?>
+<?php createDocumentationFromFiles(['../javascript-grid-filter-api/filterApi.json', 'providedFilters.json'], 'api') ?>
 
 <h2>Apply, Clear, Reset and Cancel Buttons</h2>
 

@@ -70,7 +70,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
+<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
 
 <h2>Display Style</h2>
 
@@ -148,6 +148,10 @@ SNIPPET
 
 <h2>Multi Filter Parameters</h2>
 
-<?php createDocumentationFromFile('multiFilterParams.json', 'filterParams') ?>
+<?php createDocumentationFromFile('multiFilter.json', 'filterParams') ?>
+
+<h2>Multi Filter API</h2>
+
+<?php createDocumentationFromFiles(['../javascript-grid-filter-api/filterApi.json', 'multiFilter.json'], 'api') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
