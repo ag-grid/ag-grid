@@ -31,10 +31,10 @@ export interface IFilterTitleLocaleText {
 }
 
 export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterTitleLocaleText = {
-    applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter',
-    resetFilter: 'Reset Filter',
-    cancelFilter: 'Cancel Filter',
+    applyFilter: 'Apply',
+    clearFilter: 'Clear',
+    resetFilter: 'Reset',
+    cancelFilter: 'Cancel',
     textFilter: 'Text Filter',
     numberFilter: 'Number Filter',
     dateFilter: 'Date Filter',
