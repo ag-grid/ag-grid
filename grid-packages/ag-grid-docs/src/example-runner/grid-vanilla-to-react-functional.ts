@@ -232,13 +232,14 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             additionalInReady.push('params.api.sizeColumnsToFit();');
         }
 
-        // convert this.gridApi/this.gridColumnApi to just gridApi/columnApi
-        const apiConverter = content => content.replace(/this\.gridApi/g, "gridApi").replace(/this\.gridColumnApi/g, "gridColumnApi")
+        // convert this.xxx to just xxx
+        // no real need for  "this" in hooks
+        const thisReferenceConverter = content => content.replace(/this\./g, "");
 
         const template = getTemplate(bindings, componentAttributes, columnDefs);
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(apiConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(apiConverter);
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(apiConverter);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter);
+        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter);
         const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
         return `

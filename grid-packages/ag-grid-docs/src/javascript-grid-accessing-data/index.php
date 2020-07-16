@@ -119,6 +119,6 @@ SNIPPET
     In the example, try applying some sorts and filters, and see how this impacts the different operations.
 </p>
 
-<?= grid_example('Using For-Each', 'using-for-each', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+<?= grid_example('Using For-Each', 'using-for-each', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
