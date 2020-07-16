@@ -35,7 +35,7 @@ SNIPPET
 <p>
     By default the Multi Filter will show a <a href="../javascript-grid-filter-text/">Text Filter</a> and
     <a href="../javascript-grid-filter-set/">Set Filter</a>, but you can specify which filters you would like to use in
-    the <code>filters</code> array.
+    the <code>filters</code> array. The filters will be displayed in the same order as they are specified.
 </p>
 
 <p>
@@ -70,7 +70,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
+<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard']]) ?>
 
 <h2>Display Style</h2>
 
@@ -131,7 +131,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu']]) ?>
+<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard']]) ?>
 
 <h2>Custom Filters</h2>
 
@@ -145,6 +145,57 @@ SNIPPET
 </p>
 
 <?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
+
+<h2>Accessing Child Filters</h2>
+
+<p>
+    The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order
+    as they are specified in the <code>filters</code> array in the <code>filterParams</code>. If you want to interact
+    with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling
+    <code>getFilter(index)</code>,  where <code>index</code> is the same as the index in the <code>filters</code> array.
+    You can then call any API methods that are available on that particular child filter instance.
+</p>
+
+<h2>Multi Filter Model</h2>
+
+<p>
+    The model for the Multi Filter wraps the models for all the child filters inside it. It has the following interface:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+interface IMultiFilterModel {
+    filterType: string;
+    filterModels: any[];
+}
+SNIPPET
+, 'ts') ?>
+
+<p>
+    The <code>filterType</code> will always be set to <code>'multi'</code>. The models array is the same length as the
+    number of child filters, containing the models for the child filters in the same order as the filters were specified
+    in the <code>filterParams</code>. Each array entry will either be set to <code>null</code> if the corresponding child
+    filter is not active, or to the current model for the child filter if it is active.
+</p>
+
+<p>
+    For example, if the Multi Filter has the default Text Filter and Set Filter, and the Set Filter is active, the Multi
+    Filter model might look something like this:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+{
+    filterType: 'multi'
+    filterModels: [
+        null,
+        { filterType: 'set', values: ['A', 'B', 'C'] }
+    ]
+}
+SNIPPET
+) ?>
+
+<p>
+    The <a href="#example-multi-filter">example above</a> allows you to see the Multi Filter model in use.
+</p>
 
 <h2>Multi Filter Parameters</h2>
 
