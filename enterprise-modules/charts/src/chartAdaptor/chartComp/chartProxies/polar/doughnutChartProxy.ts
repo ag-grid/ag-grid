@@ -17,11 +17,12 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(chartOptions?: AgPolarChartOptions): PolarChart {
-        chartOptions = chartOptions || this.chartOptions as AgPolarChartOptions;
+    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        options = options || this.chartOptions;
+        const agChartOptions = options as AgPolarChartOptions;
+        agChartOptions.type = 'pie';
 
-        const options: AgPolarChartOptions = chartOptions;
-        return AgChart.create(options, this.chartProxyParams.parentElement);
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -43,7 +44,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        // const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
         let offset = 0;
 
@@ -51,21 +52,23 @@ export class DoughnutChartProxy extends PolarChartProxy {
             const existingSeries = seriesMap[f.colId];
 
             const seriesOptions: AgPieSeriesOptions = {
-                // ...seriesDefaults,
+                ...seriesDefaults,
                 type: 'pie',
-                // field: {
-                //     angleKey: f.colId,
-                // },
+                angleKey: f.colId,
                 showInLegend: index === 0, // show legend items for the first series only
                 title: {
-                    // ...seriesDefaults.title,
-                    // text: seriesDefaults.title.text || f.displayName,
-                }
+                    ...seriesDefaults.title,
+                    text: seriesDefaults.title.text || f.displayName,
+                },
+                fills: seriesDefaults.fill.colors,
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokes: seriesDefaults.stroke.colors,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
             };
 
             const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            // TODO: fix the code below
-            const pieSeries = {} as any;// existingSeries || ChartBuilder.createSeries(seriesOptions) as PieSeries;
+            const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
             pieSeries.angleName = f.displayName;
             pieSeries.labelKey = params.category.id;

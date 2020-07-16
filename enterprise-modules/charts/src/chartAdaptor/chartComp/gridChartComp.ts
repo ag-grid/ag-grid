@@ -32,14 +32,14 @@ import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
+import { ChartPaletteName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
-    chartThemeName: string;
-    chartPaletteName: string;
+    chartPaletteName: ChartPaletteName;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -77,7 +77,7 @@ export class GridChartComp extends Component {
     private model: ChartDataModel;
     private chartController: ChartController;
 
-    private chartProxy: ChartProxy;
+    private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
 
     constructor(private readonly params: GridChartParams) {
@@ -98,7 +98,7 @@ export class GridChartComp extends Component {
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartThemeName));
+        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -142,12 +142,8 @@ export class GridChartComp extends Component {
             chartId: this.model.getChartId(),
             chartType,
             processChartOptions: processChartOptionsFunc,
-            getChartPaletteName: () => 'borneo',
-            allowPaletteOverride: false,
-            // getChartPaletteName: this.getChartPaletteName.bind(this),
-            // allowPaletteOverride: !this.params.chartPaletteName,
-            // getChartThemeName: this.getChartThemeName.bind(this),
-            // allowThemeOverride: !this.params.chartThemeName,
+            getChartPaletteName: this.getChartPaletteName.bind(this),
+            allowPaletteOverride: !this.params.chartPaletteName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -168,11 +164,11 @@ export class GridChartComp extends Component {
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getChartThemeName(): string {
-        return this.chartController.getThemeName();
+    private getChartPaletteName(): ChartPaletteName {
+        return this.chartController.getPaletteName();
     }
 
-    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
+    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
