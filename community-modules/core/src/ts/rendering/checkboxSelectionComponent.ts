@@ -21,7 +21,7 @@ export class CheckboxSelectionComponent extends Component {
 
     constructor() {
         super(/* html*/`
-            <div class="ag-selection-checkbox" aria-hidden="true">
+            <div class="ag-selection-checkbox">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
             </div>`
         );
@@ -41,6 +41,7 @@ export class CheckboxSelectionComponent extends Component {
         const state = this.rowNode.isSelected();
 
         this.eCheckbox.setValue(state, true);
+        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${state ? 'checked' : 'unchecked'})`);
     }
 
     private onCheckedClicked(): number {
@@ -86,7 +87,7 @@ export class CheckboxSelectionComponent extends Component {
             this.showOrHideSelect();
         }
 
-        this.eCheckbox.setInputAriaLabel('Toggle Row Selection');
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
     }
 
     private showOrHideSelect(): void {

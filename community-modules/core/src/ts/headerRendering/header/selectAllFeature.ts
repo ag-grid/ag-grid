@@ -44,6 +44,7 @@ export class SelectAllFeature extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
     }
 
     private showOrHideSelectAll(): void {
@@ -97,6 +98,7 @@ export class SelectAllFeature extends BeanStub {
         const allSelected = this.getNextCheckboxState(selectionCount);
 
         this.cbSelectAll.setValue(allSelected);
+        this.cbSelectAll.setInputAriaLabel(`Press Space to toggle all rows selection (${allSelected ? 'checked' : 'unchecked'})`);
 
         this.processingEventFromCheckbox = false;
     }
