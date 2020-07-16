@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Fill Handle', 'fill-handle', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Fill Handle', 'fill-handle', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
     <h3>Example: Reducing the Range Size</h3>
 
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
         If the behaviour for decreasing selection needs to be prevented, the flag <code>suppressClearOnFillReduction</code> should be set to <code>true</code>.
     </p>
 
-    <?= grid_example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
     <h2>Custom User Function</h2>
 
@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
     use the default operation for any other column.
     </p>
 
-    <?= grid_example('Custom Fill Operation', 'custom-fill-operation', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Custom Fill Operation', 'custom-fill-operation', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
 </div>
 
