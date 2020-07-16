@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AgGridReact } from '../agGridReact';
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
-import { ensureGridApiHasBeenSet, waitForAsyncCondition } from "./utils"
+import { ensureGridApiHasBeenSet, waitForAsyncCondition } from "./utils";
 
 import { mount } from 'enzyme';
 
@@ -68,7 +68,7 @@ class CellRenderer extends Component {
     render() {
         return (
             <div>Age: {this.props.value}</div>
-        )
+        );
     }
 
     getValue() {
@@ -82,18 +82,18 @@ class EditorComponent extends Component {
 
         this.state = {
             value: this.props.value
-        }
+        };
     }
 
     render() {
         return (
             <input type="text" value={this.state.value} onChange={this.handleChange} style={{ width: "100%" }} />
-        )
+        );
     }
 
     handleChange = (event) => {
         this.setState({ value: event.target.value });
-    }
+    };
 
     getValue() {
         return this.state.value;
@@ -103,7 +103,7 @@ class EditorComponent extends Component {
     setValue(newValue) {
         this.setState({
             value: newValue
-        })
+        });
     }
 
     isCancelBeforeStart() {

@@ -34,10 +34,10 @@ export class HeaderRowComp extends Component {
     private readonly type: HeaderRowType;
     private rowIndex: number;
 
-    private headerComps: { [key: string]: AbstractHeaderWrapper } = {};
+    private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
-        super(/* html */`<div class="ag-header-row" role="row" />`);
+        super(/* html */`<div class="ag-header-row" role="row"></div>`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;
@@ -292,7 +292,7 @@ export class HeaderRowComp extends Component {
         return result;
     }
 
-    public getHeaderComps(): { [key: string]: AbstractHeaderWrapper }  {
+    public getHeaderComps(): { [key: string]: AbstractHeaderWrapper; } {
         return this.headerComps;
     }
 }

@@ -1,17 +1,17 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+import React, { Component } from 'react';
+import { AgGridReact } from '../agGridReact';
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
-import {ensureGridApiHasBeenSet, wait} from "./utils"
+import { ensureGridApiHasBeenSet, wait } from "./utils";
 
-import {mount} from 'enzyme';
-import {AgGridColumn} from "../agGridColumn";
+import { mount } from 'enzyme';
+import { AgGridColumn } from "../agGridColumn";
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<DeclarativeColumnsGrid/>));
+    component = mount((<DeclarativeColumnsGrid />));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20));
@@ -69,7 +69,7 @@ class DeclarativeColumnsGrid extends Component {
         super(props);
 
         this.state = {
-            rowData: [{name: 24, country: 'South Africa'}],
+            rowData: [{ name: 24, country: 'South Africa' }],
             pinName: true,
             hideCountry: false
         };
@@ -82,16 +82,15 @@ class DeclarativeColumnsGrid extends Component {
     render() {
         return (
             <div
-                style={{height: 200, width: 500}}
+                style={{ height: 200, width: 500 }}
                 className="ag-theme-balham">
                 <AgGridReact
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     modules={[ClientSideRowModelModule]}>
-                    <AgGridColumn field="name" width={150} pinned={this.state.pinName} editable/>
-                    <AgGridColumn field="country" width={150} hide={this.state.hideCountry}/>
+                    <AgGridColumn field="name" width={150} pinned={this.state.pinName} editable />
+                    <AgGridColumn field="country" width={150} hide={this.state.hideCountry} />
                 </AgGridReact>
-                />
             </div>
         );
     }
