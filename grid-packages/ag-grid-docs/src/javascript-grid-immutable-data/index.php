@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
         selected items to that group. Notice how the rows animate to the new position.</li>
 </ul>
 
-<?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
+<?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>Example: Immutable Store - Large Dataset</h2>
 
@@ -149,7 +149,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+<?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>Comparison to Transaction Updates</h2>
 
