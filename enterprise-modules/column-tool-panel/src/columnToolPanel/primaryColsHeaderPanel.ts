@@ -23,6 +23,8 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     @RefSelector('eSelect') private eSelect: AgCheckbox;
     @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
+    private static DEBOUNCE_DELAY = 300;
+
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
@@ -146,7 +148,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
             this.onFilterTextChangedDebounced = _.debounce(() => {
                 const filterText = this.eFilterTextField.getValue();
                 this.dispatchEvent({ type: "filterChanged", filterText: filterText });
-            }, 300);
+            }, PrimaryColsHeaderPanel.DEBOUNCE_DELAY);
         }
 
         this.onFilterTextChangedDebounced();
@@ -154,7 +156,9 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.onSelectClicked();
+            // we need to add a delay that corresponds to the filter text debounce delay to ensure
+            // the text filtering has happened, otherwise all columns will be deselected
+            setTimeout(() => this.onSelectClicked(), PrimaryColsHeaderPanel.DEBOUNCE_DELAY)
         }
     }
 
