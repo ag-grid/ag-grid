@@ -61,6 +61,18 @@ type AgChartType<T> =
     T extends AgPolarChartOptions ? PolarChart :
     never;
 
+// Without this, if options don't explicitly specify the lack of series or axes
+// the defaults will be taken from the current theme, which is not correct
+// when it comes to these special properties.
+function fixOptions(options: any) {
+    if (!options.axes) {
+        options.axes = [];
+    }
+    if (!options.series) {
+        options.series = [];
+    }
+}
+
 export abstract class AgChart {
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
@@ -70,6 +82,7 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
+        fixOptions(options);
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
         const theme = getChartTheme(options.theme);
@@ -93,6 +106,7 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
+        fixOptions(options);
         const autoSize = options && options.autoSize;
         const theme = getChartTheme(options.theme);
         update(chart, options, undefined, theme);
