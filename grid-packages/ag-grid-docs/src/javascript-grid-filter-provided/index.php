@@ -117,6 +117,6 @@ include '../documentation-main/documentation_header.php';
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
     Remember Filtering works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Simple Filter Parts</h2>
 
@@ -499,7 +499,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true]) ?>
+<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Blank Cells (Date and Number Filters)</h2>
 
@@ -541,7 +541,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true]) ?>
+<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Style Header on Filter</h2>
 
@@ -555,6 +555,6 @@ SNIPPET
     when you filter a column you will notice the column header change.
 </p>
 
-<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520]) ?>
+<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

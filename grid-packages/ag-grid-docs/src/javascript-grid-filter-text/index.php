@@ -167,6 +167,6 @@ SNIPPET
     <li>The <strong>Sport</strong> column filter is case-sensitive (<code>caseSensitive = true</code>)</li>
 </ul>
 
-<?= grid_example('Text Filter', 'text-filter', 'generated', ['exampleHeight' => 555, 'modules' => true]) ?>
+<?= grid_example('Text Filter', 'text-filter', 'generated', ['exampleHeight' => 555, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
