@@ -36,7 +36,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: createRowData(),
     animateRows: true,
-    toolPanelSuppressSideButtons: true,
     groupUseEntireRow: true,
     onGridReady: function(params) {
         params.api.expandAll();
