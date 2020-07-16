@@ -1223,6 +1223,14 @@ export class GridApi {
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
     }
 
+    public flushAsyncTransactions(): void {
+        if (!this.clientSideRowModel) {
+            console.error('ag-Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
+            return;
+        }
+        this.clientSideRowModel.flushAsyncTransactions();
+    }
+
     /** @deprecated */
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         const message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';

@@ -17,6 +17,7 @@ export interface IClientSideRowModel extends IRowModel {
     resetRowHeights(): void;
     onRowHeightChanged(): void;
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    flushAsyncTransactions(): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;

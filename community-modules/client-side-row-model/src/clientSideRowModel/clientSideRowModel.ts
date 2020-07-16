@@ -774,16 +774,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         });
     }
 
+    private applyAsyncTransactionsTimeout: number;
+
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
-        if (!this.rowDataTransactionBatch) {
+        if (this.applyAsyncTransactionsTimeout==null) {
             this.rowDataTransactionBatch = [];
             const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
-            window.setTimeout(() => {
+            this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
-                this.rowDataTransactionBatch = null;
             }, waitMillis);
         }
         this.rowDataTransactionBatch.push({ rowDataTransaction: rowDataTransaction, callback: callback });
+    }
+
+    public flushAsyncTransactions(): void {
+        if (this.applyAsyncTransactionsTimeout!=null) {
+            clearTimeout(this.applyAsyncTransactionsTimeout);
+            this.executeBatchUpdateRowData();
+        }
     }
 
     private executeBatchUpdateRowData(): void {
@@ -810,6 +818,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 callbackFuncsBound.forEach(func => func());
             }, 0);
         }
+
+        this.rowDataTransactionBatch = null;
+        this.applyAsyncTransactionsTimeout = undefined;
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null {

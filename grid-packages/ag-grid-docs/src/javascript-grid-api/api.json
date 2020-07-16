@@ -26,6 +26,9 @@
         "applyTransactionAsync(transaction, callback)": {
             "description": "Same as applyTransaction except executes asynchronous for efficiency."
         },
+        "flushAsyncTransactions()": {
+            "description": "Executes any remaining grid async transaction, if any are waiting to be executed."
+        },
         "setPinnedTopRowData(rowData)<br />setPinnedBottomRowData()<br />getPinnedTopRowCount()<br />getPinnedBottomRowCount()<br />getPinnedTopRow(index)<br />getPinnedBottomRow(index)": {
             "description": "Methods for getting and setting the data and getting the Row Nodes of the pinned rows."
         },
