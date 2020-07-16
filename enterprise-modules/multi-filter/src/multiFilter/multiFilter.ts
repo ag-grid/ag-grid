@@ -145,7 +145,7 @@ export class MultiFilter extends Component implements IFilterComp {
     private insertFilterGroup(filter: IFilterComp, title: string): AgGroupComponent {
         const group = this.createBean(new AgGroupComponent({
             title,
-            cssIdentifier: 'multi-filter'
+            cssIdentifier: 'multi-filter',
         }));
 
         this.guiDestroyFuncs.push(() => this.destroyBean(group));

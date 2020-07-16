@@ -12,7 +12,8 @@
     .ag-status-bar,
     .ag-header-row,
     .ag-panel-title-bar-title,
-    .ag-side-button-button {
+    .ag-side-button-button,
+    .ag-multi-filter-group-title-bar {
         font-size: ag-param(font-size) - 1;
         font-weight: 600;
         @include ag-color-property(color, header-foreground-color);
@@ -67,7 +68,7 @@
         margin-left: 0;
     }
 
-    .ag-set-filter-select-all {
+    .ag-filter-header-container {
         border-bottom: solid 1px;
         @include ag-color-property(border-bottom-color, border-color);
     }

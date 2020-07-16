@@ -736,14 +736,25 @@ var desktopDefaultCols = [
         headerName: 'Game of Choice',
         children: [
             {
-                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
+                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agMultiColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function() {
                     return 'alphabet';
                 },
                 filterParams: {
-                    newRowsAction: 'keep',
-                    buttons: ['reset'],
+                    filters: [
+                        {
+                            filter: 'agTextColumnFilter',
+                            display: 'subMenu'
+                        },
+                        {
+                            filter: 'agSetColumnFilter',
+                            filterParams: {
+                                newRowsAction: 'keep',
+                                buttons: ['reset'],
+                            }
+                        }
+                    ]
                 },
                 enableRowGroup: true,
                 enablePivot: true,
