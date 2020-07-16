@@ -83,6 +83,6 @@ SNIPPET
     second column uses commas for decimals and allows a dollar sign ($) to be included.
 </p>
 
-<?= grid_example('Number Filter', 'number-filter', 'generated') ?>
+<?= grid_example('Number Filter', 'number-filter', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
