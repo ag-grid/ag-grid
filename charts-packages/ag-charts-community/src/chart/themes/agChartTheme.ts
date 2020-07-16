@@ -44,7 +44,7 @@ export class AgChartTheme {
     private static getAxisDefaults(): any {
         return {
             title: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -159,7 +159,7 @@ export class AgChartTheme {
                 left: 20
             },
             title: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
@@ -174,7 +174,7 @@ export class AgChartTheme {
                 color: 'rgb(70, 70, 70)'
             },
             subtitle: {
-                enabled: true,
+                enabled: false,
                 padding: {
                     top: 10,
                     right: 10,
