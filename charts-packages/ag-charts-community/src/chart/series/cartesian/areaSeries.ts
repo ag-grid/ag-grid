@@ -345,6 +345,7 @@ export class AreaSeries extends CartesianSeries {
 
         const enterAreas = updateAreas.enter.append(Path)
             .each(path => {
+                path.lineJoin = 'round';
                 path.stroke = undefined;
                 path.pointerEvents = PointerEvents.None;
             });

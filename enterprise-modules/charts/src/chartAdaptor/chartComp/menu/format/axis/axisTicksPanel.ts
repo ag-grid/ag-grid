@@ -73,7 +73,7 @@ export class AxisTicksPanel extends Component {
         initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
     }
 
-    private getChartProxy(): CartesianChartProxy {
-        return this.chartController.getChartProxy() as CartesianChartProxy;
+    private getChartProxy(): CartesianChartProxy<any> {
+        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 }
