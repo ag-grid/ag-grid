@@ -400,11 +400,13 @@ type AgCartesianSeriesOptions =
 type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
+    type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
     axes?: AgCartesianAxisOptions[];
     series?: AgCartesianSeriesOptions[];
 }
 
 export interface AgPolarChartOptions extends AgBaseChartOptions {
+    type?: 'polar' | 'pie';
     axes?: AgPolarAxisOptions[]; // will be supported in the future and used by radar series
     series?: AgPolarSeriesOptions[];
 }
