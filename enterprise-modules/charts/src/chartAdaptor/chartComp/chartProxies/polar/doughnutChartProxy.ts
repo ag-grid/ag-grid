@@ -21,6 +21,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         options = options || this.chartOptions;
         const agChartOptions = options as AgPolarChartOptions;
         agChartOptions.type = 'pie';
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [];
 
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
