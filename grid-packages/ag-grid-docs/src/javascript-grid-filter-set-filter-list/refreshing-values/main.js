@@ -44,6 +44,7 @@ function onFirstDataRendered(params) {
     params.api.getToolPanelInstance('filters').expandFilters();
 }
 
+// inScope[useList]
 function useList(list) {
     console.log('Updating values to ' + list);
     valuesArray.length = 0;
@@ -56,11 +57,11 @@ function useList(list) {
 }
 
 function useList1() {
-    useList(list1);
+    this.useList(list1);
 }
 
 function useList2() {
-    useList(list2);
+    this.useList(list2);
 }
 
 // setup the grid after the page has finished loading

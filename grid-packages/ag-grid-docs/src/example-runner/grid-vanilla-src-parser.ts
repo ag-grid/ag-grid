@@ -1,7 +1,7 @@
-import {generate} from 'escodegen';
+import { generate } from 'escodegen';
 import * as esprima from 'esprima';
-import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
-import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
+import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
+import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
 import {
     collect,
@@ -59,8 +59,8 @@ function generateWithReplacedGridOptions(node, options?) {
 }
 
 function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
-    if(propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
-         return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
+    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
     }
     return false;
 }
@@ -71,11 +71,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tree = esprima.parseScript(js, {comment: true});
+    const tree = esprima.parseScript(js, { comment: true });
     const collectors = [];
     const gridOptionsCollectors = [];
     const onReadyCollectors = [];
-    const indentOne = {format: {indent: {base: 1}, quotes: 'double'}};
+    const indentOne = { format: { indent: { base: 1 }, quotes: 'double' } };
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -104,7 +104,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
         matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(generate(node, indentOne))
+        apply: (bindings, node) => bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne))
     });
 
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
@@ -126,7 +126,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            bindings.data = {url, callback};
+            bindings.data = { url, callback };
         }
     });
 
@@ -137,7 +137,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             const url = node.expression.callee.object.arguments[0].properties[0].value.raw;
             const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
 
-            bindings.data = {url, callback};
+            bindings.data = { url, callback };
         }
     });
 
@@ -185,7 +185,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsFunctionWithName(node, functionName),
             apply: (bindings, node) => {
                 bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne));
-                bindings.properties.push({name: functionName, value: null});
+                bindings.properties.push({ name: functionName, value: null });
             }
         });
     });
@@ -201,8 +201,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
                 const columnDefProperty = columnDef.properties[colDefPropertyIndex];
                 if (columnDefProperty.value.type === 'Identifier') {
-                    columnDefProperty.value.type = 'Literal'
-                    columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`
+                    columnDefProperty.value.type = 'Literal';
+                    columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
                 }
             }
         }
@@ -223,7 +223,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     }
 
                     const code = generate(node.declarations[0].init, indentOne);
-                    bindings.properties.push({name: propertyName, value: code});
+                    bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                 }
@@ -240,7 +240,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 bindings.properties.push({
                     name: propertyName,
                     value: generate(node.value, indentOne)
-                })
+                });
             }
         });
     });
