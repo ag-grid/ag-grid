@@ -307,20 +307,6 @@ SNIPPET
 
 <?= grid_example('Suppress Events', 'suppress-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
-<h2>State vs ColDef Comparison</h2>
-
-<p>
-    (work in progress)
-</p>
-
-<ul>
-    <li>State can modify auto cols.</li>
-    <li>State better for storing, as don't have noise.</li>
-    <li>State doesn't bother with column groups.</li>
-    <li>Col Defs adds/removes columns, state only applies to current columns.</li>
-    <li>Events</li>
-</ul>
-
 <h2>Column Group State</h2>
 
 <p>

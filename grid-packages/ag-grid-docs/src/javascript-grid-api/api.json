@@ -196,12 +196,6 @@
         },
         "onSortChanged()": {
             "description": "Gets the grid to act as if the sort was changed. Useful if you update some values and want to get the grid to reorder them according to the new values."
-        },
-        "setSortModel(model)": {
-            "description": "Sets the sort state."
-        },
-        "getSortModel()": {
-            "description": "Returns the sort state."
         }
     },
     "navigation": {

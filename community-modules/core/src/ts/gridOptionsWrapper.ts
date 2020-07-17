@@ -1394,7 +1394,7 @@ export class GridOptionsWrapper {
 
         if (options.immutableColumns || options.deltaColumnMode) {
             console.warn(
-                'ag-Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default.'
+                'ag-Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default. To keep column order maintained, set grid property applyColumnDefOrder=true'
             );
         }
 

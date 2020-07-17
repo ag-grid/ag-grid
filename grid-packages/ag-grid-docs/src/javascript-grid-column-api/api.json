@@ -25,8 +25,8 @@
         "getColumnState()": {
             "description": "Gets the state of the columns. Typically used when saving column state."
         },
-        "setColumnState(columnState)": {
-            "description": "Sets the state of the columns from a previous state. Returns <code>false</code> if one or more columns could not be found."
+        "applyColumnState(params)": {
+            "description": "Applies the state of the columns from a previous state. Returns <code>false</code> if one or more columns could not be found."
         },
         "resetColumnState()": {
             "description": "Sets the state back to match the originally provided column definitions."
