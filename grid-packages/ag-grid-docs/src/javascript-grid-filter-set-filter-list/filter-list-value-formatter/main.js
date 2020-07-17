@@ -1,3 +1,7 @@
+var countryFilterParams = {
+    valueFormatter: countryValueFormatter,
+};
+
 var gridOptions = {
     columnDefs: [
         {
@@ -14,9 +18,7 @@ var gridOptions = {
             field: 'country',
             valueFormatter: countryValueFormatter,
             filter: 'agSetColumnFilter',
-            filterParams: {
-                valueFormatter: countryValueFormatter,
-            },
+            filterParams: countryFilterParams,
         }
     ],
     defaultColDef: {

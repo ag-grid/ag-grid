@@ -1,3 +1,15 @@
+var valueGetter = function(params) {
+    return params.data['animalsString'].split('|');
+}
+
+var valueFormatter = function(params) {
+    return params.value.map(function(animal) { return animal.name; }).join(', ');
+}
+
+var keyCreator = function(params) {
+    return params.value.map(function(animal) { return animal.name; });
+}
+
 var gridOptions = {
     columnDefs: [
         {
@@ -8,20 +20,14 @@ var gridOptions = {
         {
             headerName: 'Animals (string)',
             filter: 'agSetColumnFilter',
-            valueGetter: function(params) {
-                return params.data['animalsString'].split('|');
-            }
+            valueGetter: valueGetter
         },
         {
             headerName: 'Animals (objects)',
             field: 'animalsObjects',
             filter: 'agSetColumnFilter',
-            valueFormatter: function(params) {
-                return params.value.map(function(animal) { return animal.name; }).join(', ');
-            },
-            keyCreator: function(params) {
-                return params.value.map(function(animal) { return animal.name; });
-            }
+            valueFormatter: valueFormatter,
+            keyCreator: keyCreator
         }
     ],
     defaultColDef: {

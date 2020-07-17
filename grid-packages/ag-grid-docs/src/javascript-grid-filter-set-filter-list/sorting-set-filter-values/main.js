@@ -1,3 +1,12 @@
+var filterParams = {
+    comparator: function(a, b) {
+        var valA = parseInt(a);
+        var valB = parseInt(b);
+        if (valA === valB) return 0;
+        return valA > valB ? 1 : -1;
+    }
+};
+
 var gridOptions = {
     columnDefs: [
         {
@@ -9,14 +18,7 @@ var gridOptions = {
             headerName: 'Age (With Comparator)',
             field: 'age',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                comparator: function(a, b) {
-                    var valA = parseInt(a);
-                    var valB = parseInt(b);
-                    if (valA === valB) return 0;
-                    return valA > valB ? 1 : -1;
-                }
-            }
+            filterParams: filterParams
         }
     ],
     defaultColDef: {

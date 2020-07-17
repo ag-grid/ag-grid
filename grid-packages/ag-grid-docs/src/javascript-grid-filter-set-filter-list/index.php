@@ -70,7 +70,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+<?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Formatting Values</h2>
 
@@ -133,7 +133,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+<?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h3>Cell Renderer</h3>
 
@@ -192,7 +192,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Supplying Filter Values</h2>
 
@@ -252,7 +252,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h3>Asynchronous Values</h3>
 
@@ -320,7 +320,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h3>Refreshing Values</h3>
 
@@ -400,7 +400,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 755, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 755, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Missing Values</h2>
 
@@ -470,7 +470,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Multiple Values Per Cell</h2>
 
@@ -504,7 +504,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
 
 <h2>Default State</h2>
 
@@ -544,7 +544,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Default State', 'default-state', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Default State', 'default-state', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
 
 <h2>Filter Value Tooltips</h2>
 
@@ -581,7 +581,7 @@ SNIPPET
     <li><b>Col C</b> has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.</li>
 </ul>
 
-<?= grid_example('Filter Value Tooltips', 'filter-value-tooltips', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Filter Value Tooltips', 'filter-value-tooltips', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Next Up</h2>
 
