@@ -39,12 +39,6 @@ SNIPPET
 </p>
 
 <p>
-    When <a href="../javascript-grid-floating-filters/">Floating Filters</a> are used, the Floating Filter shown is for
-    the filter in the Multi Filter that was most recently applied and is still active. If no filters are active, the
-    Floating Filter for the first filter in the Multi Filter is shown instead.
-</p>
-
-<p>
     The example below shows the Multi Filter in action. Note the following:
 </p>
 
@@ -60,17 +54,24 @@ SNIPPET
     <li>
         Different <code>filterParams</code> can be supplied to each child filter.
     </li>
-    <li>
-        Floating Filters are enabled for all columns. The Floating Filter changes when you apply different filters
-        from the Multi Filter.
-    </li>
-    <li>
-        You can print the current filter state to the console and save/restore it using the buttons at the top of the
-        grid.
-    </li>
 </ul>
 
 <?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+
+<h2>Floating Filters</h2>
+
+<p>
+    When <a href="../javascript-grid-floating-filters/">Floating Filters</a> are used, the Floating Filter shown is for
+    the child filter in the Multi Filter that was most recently applied and is still active. If no child filters are
+    active, the Floating Filter for the first child filter in the Multi Filter is shown instead.
+</p>
+
+<p>
+    The example below shows Floating Filters enabled for all columns. Note how the Floating Filters change when you
+    apply different child filters from the Multi Filter.
+</p>
+
+<?= grid_example('Floating Filters', 'floating-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Display Style</h2>
 
@@ -194,8 +195,11 @@ SNIPPET
 ) ?>
 
 <p>
-    The <a href="#example-multi-filter">example above</a> allows you to see the Multi Filter model in use.
+    The example below allows you to see the Multi Filter Model in use. You can print the current filter state to the
+    console and save/restore it using the buttons at the top of the grid
 </p>
+
+<?= grid_example('Multi Filter Model', 'multi-filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Multi Filter Parameters</h2>
 
