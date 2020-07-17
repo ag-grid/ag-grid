@@ -400,7 +400,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 755, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
+<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 755, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Missing Values</h2>
 

@@ -8,6 +8,15 @@ function valuesCallback(params) {
     setTimeout(function() { params.success(valuesCallbackList); }, 1000);
 }
 
+var arrayFilterParams = {
+    values: valuesArray
+};
+
+var callbackFilterParams = {
+    values: valuesCallback,
+    refreshValuesOnOpen: true
+};
+
 var gridOptions = {
     columnDefs: [
         {
@@ -15,19 +24,14 @@ var gridOptions = {
             headerName: 'Values Array',
             field: 'animal',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                values: valuesArray
-            }
+            filterParams: arrayFilterParams
         },
         {
             colId: 'callback',
             headerName: 'Values Callback',
             field: 'animal',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                values: valuesCallback,
-                refreshValuesOnOpen: true
-            }
+            filterParams: callbackFilterParams
         },
     ],
     defaultColDef: {
