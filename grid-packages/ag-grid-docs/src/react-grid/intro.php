@@ -13,37 +13,39 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet language="jsx">
-import { AgGridReact } from 'ag-grid-react';
-
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      columnDefs: [
-        { headerName: "Make", field: "make" },
-        { headerName: "Model", field: "model" },
-        { headerName: "Price", field: "price" }],
-      rowData: [
-        { make: "Toyota", model: "Celica", price: 35000 },
-        { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxter", price: 72000 }]
-    }
-  }
+const GridExample = () => {
+    const [gridApi, setGridApi] = useState(null);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
 
-  render() {
+    const [rowData, setRowData] = useState([
+        {make: "Toyota", model: "Celica", price: 35000},
+        {make: "Ford", model: "Mondeo", price: 32000},
+        {make: "Porsche", model: "Boxter", price: 72000}
+    ]);
+
+    function onGridReady(params) {
+        setGridApi(params.api);
+        setGridColumnApi(params.columnApi);
+    }
+
     return (
-      &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
-        &lt;AgGridReact
-            columnDefs={this.state.columnDefs}
-            rowData={this.state.rowData}&gt;
-        &lt;/AgGridReact&gt;
-      &lt;/div&gt;
+        &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+            &lt;AgGridReact
+                onGridReady={onGridReady}
+                rowData={rowData}&gt;
+                &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
+                &lt;AgGridColumn field="model"&gt;&lt;/AgGridColumn&gt;
+                &lt;AgGridColumn field="price"&gt;&lt;/AgGridColumn&gt;
+            &lt;/AgGridReact&gt;
+        &lt;/div&gt;
     );
-  }
-}
+};
 
 render(&lt;App /&gt;, document.getElementById('root'));
 </snippet>

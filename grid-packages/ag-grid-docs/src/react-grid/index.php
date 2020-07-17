@@ -72,49 +72,32 @@ npm install --save ag-grid-community ag-grid-react
 
 <snippet language="jsx">
 <div ng-non-bindable>
-import React, { Component } from 'react';
-import './App.css';
-import { AgGridReact } from 'ag-grid-react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      columnDefs: [{
-        headerName: "Make", field: "make"
-      }, {
-        headerName: "Model", field: "model"
-      }, {
-        headerName: "Price", field: "price"
-      }],
-      rowData: [{
-        make: "Toyota", model: "Celica", price: 35000
-      }, {
-        make: "Ford", model: "Mondeo", price: 32000
-      }, {
-        make: "Porsche", model: "Boxter", price: 72000
-      }]
-    }
-  }
+const App = () => {
+    const [gridApi, setGridApi] = useState(null);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
 
-  render() {
+    const [rowData, setRowData] = useState([
+        {make: "Toyota", model: "Celica", price: 35000},
+        {make: "Ford", model: "Mondeo", price: 32000},
+        {make: "Porsche", model: "Boxter", price: 72000}
+    ]);
+
     return (
-      &lt;div
-        className="ag-theme-alpine"
-        style={{
-        height: '250px',
-        width: '600px' }}
-      &gt;
-        &lt;AgGridReact
-          columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}&gt;
-        &lt;/AgGridReact&gt;
-      &lt;/div&gt;
+        &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+            &lt;AgGridReact
+                rowData={rowData}&gt;
+                &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
+                &lt;AgGridColumn field="model"&gt;&lt;/AgGridColumn&gt;
+                &lt;AgGridColumn field="price"&gt;&lt;/AgGridColumn&gt;
+            &lt;/AgGridReact&gt;
+        &lt;/div&gt;
     );
-  }
-}
+};
 
 export default App;
 </div>
@@ -135,68 +118,57 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customise it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <snippet language="jsx">
-constructor(props) {
-super(props);
-this.state = {
-  columnDefs: [{
-    headerName: "Make", field: "make"
-  }, {
-    headerName: "Model", field: "model"
-  },{
-    headerName: "Price", field: "price"
-  }],
-  rowData: [{
-    make: "Toyota", model: "Celica", price: 35000
-  },{
-    make: "Ford", model: "Mondeo", price: 32000
-  },{
-    make: "Porsche", model: "Boxter", price: 72000
-  }]
-}
-  </snippet>
+const [rowData, setRowData] = useState([
+    {make: "Toyota", model: "Celica", price: 35000},
+    {make: "Ford", model: "Mondeo", price: 32000},
+    {make: "Porsche", model: "Boxter", price: 72000}
+]);
 
-  <p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns;
+...
+
+&lt;AgGridReact
+    rowData={rowData}&gt;
+    &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
+    &lt;AgGridColumn field="model"&gt;&lt;/AgGridColumn&gt;
+    &lt;AgGridColumn field="price"&gt;&lt;/AgGridColumn&gt;
+&lt;/AgGridReact&gt;
+</snippet>
+
+  <p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/react-column-configuration/"><strong>the column definitions</strong></a> (<code>AgGridColumn</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns;
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p>
-<p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p>
+<p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>AgGridColumn</code> configuration objects.</p>
 
 <snippet language="jsx">
 <div ng-non-bindable>
-&lt;div style={{ height: '250px', width: '600px' }} className="ag-theme-alpine"&gt;
+&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
     &lt;AgGridReact
-        columnDefs={this.state.columnDefs}
-        rowData={this.state.rowData}&gt;
+        rowData={rowData}&gt;
+        &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="model"&gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="price"&gt;&lt;/AgGridColumn&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;
 </div>
 </snippet>
 
 <p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-alpine</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
-<p>Inside the container, we place an <code>AgGridReact</code> component with the configuration objects (<code>columnDefs</code> and <code>rowData</code>) from the component's constructor passed as properties.</p>
 <h2 id="enable-sorting-and-filtering">Enable Sorting And Filtering</h2>
-<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property on the column definitions.</p>
 
 <snippet language="jsx">
-columnDefs: [{
-  headerName: "Make", field: "make", sortable: true
-}, {
-  headerName: "Model", field: "model", sortable: true
-}, {
-  headerName: "Price", field: "price", sortable: true
-}]
+&lt;AgGridColumn field="make" sortable={true} &gt;&lt;/AgGridColumn&gt;
+&lt;AgGridColumn field="model" sortable={true} &gt;&lt;/AgGridColumn&gt;
+&lt;AgGridColumn field="price" sortable={true} &gt;&lt;/AgGridColumn&gt;
 </snippet>
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows, with many columns. In a data set like this filtering is your friend.</p>
 <p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 
-<snippet language="js">
-columnDefs: [{
-  headerName: "Make", field: "make", sortable: true, filter: true
-}, {
-  headerName: "Model", field: "model", sortable: true, filter: true
-  },{
-  headerName: "Price", field: "price", sortable: true, filter: true
-}]
+<snippet language="jsx">
+&lt;AgGridColumn field="make" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
+&lt;AgGridColumn field="model" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
+&lt;AgGridColumn field="price" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
 </snippet>
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
@@ -206,27 +178,20 @@ columnDefs: [{
 Notice that the actual data fetching is performed outside of the grid component - We are using the HTML5 <code>fetch</code> API.</p>
 
 <snippet language="diff">
-    }, {
-      headerName: "Price", field: "price"
-    }]
+- const [rowData, setRowData] = useState([
+-     {make: "Toyota", model: "Celica", price: 35000},
+-     {make: "Ford", model: "Mondeo", price: 32000},
+-     {make: "Porsche", model: "Boxter", price: 72000}
+- ]);
 
--   rowData: [{
--   make: "Toyota", model: "Celica", price: 35000
--   }, {
--   make: "Ford", model: "Mondeo", price: 32000
--   }, {
--   make: "Porsche", model: "Boxter", price: 72000
--   }]
-  }
-}
++ const [rowData, setRowData] = useState([]);
 
 + componentDidMount() {
 +   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
 +     .then(result =&gt; result.json())
-+     .then(rowData =&gt; this.setState({rowData}))
++     .then(rowData =&gt; setRowData(rowData))
 + }
 +
-  render() {
 </snippet>
 
 <p>Here, we replaced the <code>rowData</code> assignment in the constructor with a data fetch from a remote service. The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid.</p>
@@ -237,16 +202,8 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <p>Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a matter of adding and changing couple of properties:</p>
 
 <snippet language="diff">
-this.state = {
-  columnDefs: [{
--   headerName: "Make", field: "make"
-- }, {
-+   headerName: "Make",
-+   field: "make",
-+   checkboxSelection: true
-+ }, {
-  headerName: "Model", field: "model"
-},
+-&lt;AgGridColumn field="make" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
++&lt;AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true} &gt;&lt;/AgGridColumn&gt;
 </snippet>
 
 <snippet language="diff">
@@ -257,12 +214,14 @@ this.state = {
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
 
 <snippet language="jsx">
-&lt;div style=<span>{</span>{ height: '250px', width: '600px' }<span>}</span> className="ag-theme-alpine"&gt;
-      &lt;button onClick=<span>{</span>this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
-      &lt;AgGridReact
-        onGridReady={ params =&gt; this.gridApi = params.api }
-        columnDefs={this.state.columnDefs}
-        rowData={this.state.rowData}&gt;
+&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+    &lt;button onClick=<span>{</span>onButtonClick}&gt;Get selected rows&lt;/button&gt;
+    &lt;AgGridReact
+        rowData={rowData}
+        rowSelection="multiple"&gt;
+        &lt;AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true} &gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="model" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="price" sortable={true} filter={true} &gt;&lt;/AgGridColumn&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;
 </snippet>
@@ -270,8 +229,8 @@ this.state = {
 <p>Afterwards, add the following event handler at the end of the component class:</p>
 
 <snippet language="jsx">
-onButtonClick = e =&gt; {
-    const selectedNodes = this.gridApi.getSelectedNodes()
+const onButtonClick = e =&gt; {
+    const selectedNodes = gridApi.getSelectedNodes()
     const selectedData = selectedNodes.map( node =&gt; node.data )
     const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
     alert(`Selected nodes: ${selectedDataStringPresentation}`)
@@ -329,35 +288,27 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
-<p>Now, let's enable grouping! Change the <code>state</code> assignment to this:</p>
+<p>Now, let's enable grouping! Update the <code>AgGridReact</code> configuration to this:</p>
 
 <snippet language="jsx">
-this.state = {
-  columnDefs: [{
-    headerName: "Make", field: "make", rowGroup: true
-  },{
-    headerName: "Price", field: "price"
-  }],
-  rowData: null,
-  autoGroupColumnDef: {
-    headerName: "Model",
-    field: "model",
-    cellRenderer:'agGroupCellRenderer',
-    cellRendererParams: {
-      checkbox: true
-    }
-  }
-}
+&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+    &lt;button onClick=<span>{</span>onButtonClick}&gt;Get selected rows&lt;/button&gt;
+    &lt;AgGridReact
+        onGridReady={onGridReady}
+        rowData={rowData}
+        rowSelection="multiple"
+        groupSelectsChildren={true}
+        autoGroupColumnDef=<span>{</span>{
+            headerName: "Model",
+            field: "model",
+            cellRenderer:'agGroupCellRenderer',
+            cellRendererParams: {
+              checkbox: true
+            }
+        }}&gt;
 </snippet>
 
-<p>Then, change the component definition to receive the <code>autoGroupColumnDef</code> property and the <code>groupSelectsChildren</code>:</p>
-
-<snippet language="diff">
-columnDefs={this.state.columnDefs}
-+  groupSelectsChildren={true}
-+  autoGroupColumnDef={this.state.autoGroupColumnDef}
-rowData={this.state.rowData}
-</snippet>
+<p>Here we've updated the component definition and set the <code>autoGroupColumnDef</code> and <code>groupSelectsChildren</code> properties.</p>
 
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
 <div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
