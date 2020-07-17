@@ -26,11 +26,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            ...options.xAxis,
+            ...(isColumn ? options.xAxis : options.yAxis),
             position: isColumn ? 'bottom' : 'left',
             type: grouping ? 'groupedCategory' : 'category'
         }, {
-            ...options.yAxis,
+            ...(isColumn ? options.yAxis : options.xAxis),
             position: isColumn ? 'left' : 'bottom',
             type: 'number'
         }];
