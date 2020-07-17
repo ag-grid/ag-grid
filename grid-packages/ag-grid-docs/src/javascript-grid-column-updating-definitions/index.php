@@ -113,9 +113,10 @@ include '../documentation-main/documentation_header.php';
     </tr>
     <?=addItemToTable('width','defaultWidth','Width of the column.')?>
     <?=addItemToTable('flex','defaultFlex','The flex value for setting this columns width.')?>
-    <?=addItemToTable('sort','defaultSort','The sort to apply to this column.')?>
     <?=addItemToTable('hide','defaultHide','Whether this column should be hidden.')?>
     <?=addItemToTable('pinned','defaultPinned','Whethe this column should be pinned.')?>
+    <?=addItemToTable('sort','defaultSort','The sort to apply to this column.')?>
+    <?=addItemToTable('sortIndex','defaultSortIndex','The order to apply sorting, if multi column sorting.')?>
     <?=addItemToTable('rowGroup','defaultRowGroup','If this column should be a row group.')?>
     <?=addItemToTable('rowGroupIndex','defaultRowGroupIndex','If this column should be a row group and in what order.')?>
     <?=addItemToTable('pivot','defaultPivot','If this column should be a pivot.')?>

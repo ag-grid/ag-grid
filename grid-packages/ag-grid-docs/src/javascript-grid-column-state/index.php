@@ -74,7 +74,7 @@ interface ColumnState {
     flex?: number; // column's flex if flex is set
     hide?: boolean; // true if column is hidden
     sort?: string; // sort applied to the columns
-    sortedAt?: number; // the order of the sort, if sorting by many columns
+    sortIndex?: number; // the order of the sort, if sorting by many columns
     aggFunc?: string | IAggFunc; // the aggregation function applied
     pivot?: boolean; // true if pivot active
     pivotIndex?: number; // the order of the pivot, if pivoting by many columns

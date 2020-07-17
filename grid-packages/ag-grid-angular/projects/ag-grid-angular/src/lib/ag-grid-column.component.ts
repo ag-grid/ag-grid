@@ -94,6 +94,8 @@ export class AgGridColumn {
     @Input() public defaultPinned: any;
     @Input() public chartDataType: any;
     @Input() public sortedAt: any;
+    @Input() public sortIndex: any;
+    @Input() public defaultSortIndex: any;
     @Input() public flex: any;
     @Input() public defaultFlex: any;
     @Input() public width: any;

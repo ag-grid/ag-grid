@@ -64,7 +64,7 @@ export interface ColumnState {
     rowGroupIndex?: number | null;
     flex?: number | null;
     sort?: string | null;
-    sortedAt?: number | null;
+    sortIndex?: number | null;
 }
 
 @Bean('columnController')
@@ -1314,14 +1314,16 @@ export class ColumnController extends BeanStub {
             const colDefCloned = _.deepCloneDefinition(col.getColDef());
 
             colDefCloned.width = col.getActualWidth();
-            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : undefined;
+            colDefCloned.rowGroup = col.isRowGroupActive();
+            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : null;
+            colDefCloned.pivot = col.isPivotActive();
             colDefCloned.pivotIndex = col.isPivotActive() ? this.pivotColumns.indexOf(col) : null;
             colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
             colDefCloned.hide = col.isVisible() ? undefined : true;
-            colDefCloned.pinned = col.isPinned() ? col.getPinned() : undefined;
+            colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
 
             colDefCloned.sort = col.getSort() ? col.getSort() : null;
-            colDefCloned.sortedAt = col.getSortedAt() ? col.getSortedAt() : null;
+            colDefCloned.sortIndex = col.getSortIndex()!=null ? col.getSortIndex() : null;
 
             res.push(colDefCloned);
         });
@@ -1661,7 +1663,7 @@ export class ColumnController extends BeanStub {
         const pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sort = column.getSort()!=null ? column.getSort() : null;
-        const sortedAt = column.getSortedAt()!=null ? column.getSortedAt() : null;
+        const sortIndex = column.getSortIndex()!=null ? column.getSortIndex() : null;
         const flex = column.getFlex()!=null && column.getFlex() > 0 ? null : column.getFlex()
 
         const res: ColumnState = {
@@ -1670,7 +1672,7 @@ export class ColumnController extends BeanStub {
             hide: !column.isVisible(),
             pinned: column.getPinned(),
             sort,
-            sortedAt,
+            sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),
             rowGroupIndex,
@@ -2198,9 +2200,9 @@ export class ColumnController extends BeanStub {
             }
         }
 
-        const sortedAt = getValue('sortedAt').value1;
-        if (sortedAt!==undefined) {
-            column.setSortedAt(sortedAt);
+        const sortIndex = getValue('sortIndex').value1;
+        if (sortIndex!==undefined) {
+            column.setSortIndex(sortIndex);
         }
 
         // we do not do aggFunc, rowGroup or pivot for auto cols, as you can't do these with auto col

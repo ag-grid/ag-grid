@@ -64,6 +64,8 @@ export class ColDefUtil {
 
     public static NUMBER_PROPERTIES = [
         'sortedAt',
+        'sortIndex',
+        'defaultSortIndex',
         'flex',
         'defaultFlex',
         'width',

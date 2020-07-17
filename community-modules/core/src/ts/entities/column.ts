@@ -84,7 +84,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private oldLeft: number;
     private aggFunc: string | IAggFunc | null;
     private sort: string;
-    private sortedAt: number;
+    private sortIndex: number;
     private moving = false;
     private menuVisible = false;
 
@@ -132,16 +132,16 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }
         }
 
-        // sortedAt
-        const sortedAt = _.attrToNumber(colDef.sortedAt);
-        const defaultSortedAt = _.attrToNumber(colDef.defaultSortedAt);
-        if (sortedAt!==undefined) {
-            if (sortedAt!==null) {
-                this.sortedAt = sortedAt;
+        // sortIndex
+        const sortIndex = _.attrToNumber(colDef.sortIndex);
+        const defaultSortIndex = _.attrToNumber(colDef.defaultSortIndex);
+        if (sortIndex!==undefined) {
+            if (sortIndex!==null) {
+                this.sortIndex = sortIndex;
             }
         } else {
-            if (defaultSortedAt!==null) {
-                this.sortedAt = defaultSortedAt;
+            if (defaultSortIndex!==null) {
+                this.sortIndex = defaultSortIndex;
             }
         }
 
@@ -475,12 +475,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return _.exists(this.sort);
     }
 
-    public getSortedAt(): number {
-        return this.sortedAt;
+    public getSortIndex(): number {
+        return this.sortIndex;
     }
 
-    public setSortedAt(sortedAt: number | null): void {
-        this.sortedAt = sortedAt;
+    public setSortIndex(sortOrder: number | null): void {
+        this.sortIndex = sortOrder;
     }
 
     public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {

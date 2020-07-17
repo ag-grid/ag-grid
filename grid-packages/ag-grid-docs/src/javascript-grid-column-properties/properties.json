@@ -40,6 +40,9 @@
         "width": {
             "description": "Initial width in pixels for the cell."
         },
+        "defaultWidth": {
+            "description": "Same as 'width', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "minWidth": {
             "description": "Minimum width in pixels for the cell."
         },
@@ -52,6 +55,9 @@
                 "name": "Column Flex",
                 "url": "../javascript-grid-resizing/#column-flex"
             }
+        },
+        "defaultFlex": {
+            "description": "Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "filter<br />filterFramework": {
             "description": "Filter component to use for this column. Set to <code>true</code> to use the default filter."
@@ -73,12 +79,18 @@
             "default": false,
             "description": "Set to <code>true</code> for this column to be hidden. You might think it would make more sense to call this field <code>visible</code> and mark it <code>false</code> to hide, but we want all default values to be <code>false</code> and we want columns to be visible by default."
         },
+        "defaultHide": {
+            "description": "Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "pinned": {
             "options": [
                 "left",
                 "right"
             ],
             "description": "Pin a column to one side."
+        },
+        "defaultPinned": {
+            "description": "Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "lockPosition": {
             "default": false,
@@ -102,10 +114,16 @@
                 "asc",
                 "desc"
             ],
-            "description": "Set to sort this column by default."
+            "description": "Set to sort this column."
         },
-        "sortedAt": {
-            "description": "If doing multi-sort by default, this property should say when the sort for each column was performed in milliseconds, so the grid knows which order to execute the sort."
+        "defaultSort": {
+            "description": "Same as 'sort', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "sortIndex": {
+            "description": "If doing multi-sort by default, the order which column sorts are applied."
+        },
+        "defaultSortIndex": {
+            "description": "Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "sortingOrder": {
             "options": [
@@ -261,14 +279,35 @@
             ],
             "description": "Name of function to use for aggregation. You can also provide your own agg function."
         },
+        "defaultAggFunc": {
+            "description": "Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "allowedAggFuncs": {
             "description": "Aggregation functions allowed on this column e.g. <code>['sum', 'avg']</code>. If missing, all installed functions are allowed. This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API."
+        },
+        "rowGroup": {
+            "description": "Set to true to row group by this column"
+        },
+        "defaultRowGroup": {
+            "description": "Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "rowGroupIndex": {
             "description": "Set this in columns you want to group by. If only grouping by one column, set this to any number (e.g. <code>0</code>). If grouping by multiple columns, set this to where you want this column to be in the group (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
         },
+        "defaultRowGroupIndex": {
+            "description": "Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "pivot": {
+            "description": "Set to true to pivot by this column"
+        },
+        "defaultPivot": {
+            "description": "Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "pivotIndex": {
             "description": "Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (e.g. <code>0</code>). If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
+        },
+        "defaultPivotIndex": {
+            "description": "Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "comparator(valueA, valueB, nodeA, nodeB, isInverted)": {
             "description": "Comparator function for custom sorting."

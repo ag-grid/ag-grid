@@ -33,14 +33,6 @@ export class SortController extends BeanStub {
         // update sort on current col
         column.setSort(sort, source);
 
-        // sortedAt used for knowing order of cols when multi-col sort
-        if (column.getSort()) {
-            const sortedAt = Number(new Date().valueOf());
-            column.setSortedAt(sortedAt);
-        } else {
-            column.setSortedAt(null);
-        }
-
         const doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
 
         // clear sort on all columns except this one, and update the icons
@@ -48,7 +40,30 @@ export class SortController extends BeanStub {
             this.clearSortBarThisColumn(column, source);
         }
 
+        // sortIndex used for knowing order of cols when multi-col sort
+        this.updateSortIndex(column);
+
         this.dispatchSortChangedEvents();
+    }
+
+    private updateSortIndex(lastColToChange: Column) {
+        // update sortIndex on all sorting cols
+        const allSortedCols = this.getColumnsWithSortingOrdered();
+        let sortIndex = 0;
+        allSortedCols.forEach( col => {
+            if (col!==lastColToChange) {
+                col.setSortIndex(sortIndex);
+                sortIndex++;
+            }
+        });
+        // last col to change always gets the last sort index, it's added to the end
+        if (lastColToChange.getSort()) {
+            lastColToChange.setSortIndex(sortIndex);
+        }
+
+        // clear sort index on all cols not sorting
+        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        allCols.filter(col=>col.getSort()==null).forEach( col => col.setSortIndex(undefined) );
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -133,7 +148,7 @@ export class SortController extends BeanStub {
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: any, b: any) => a.sortedAt - b.sortedAt);
+        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex() - b.getSortIndex());
 
         return columnsWithSorting;
     }

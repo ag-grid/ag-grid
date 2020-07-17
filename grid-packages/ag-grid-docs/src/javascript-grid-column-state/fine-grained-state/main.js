@@ -41,8 +41,8 @@ function onBtSortAthlete() {
 function onBtSortCountryThenSportClearOthers() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'country', sort: 'asc', sortedAt: 0},
-            {colId: 'sport', sort: 'asc', sortedAt: 1}
+            {colId: 'country', sort: 'asc', sortIndex: 0},
+            {colId: 'sport', sort: 'asc', sortIndex: 1}
         ],
         defaultState: {sort: null}
     });

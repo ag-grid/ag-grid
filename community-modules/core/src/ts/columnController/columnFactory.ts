@@ -305,10 +305,10 @@ export class ColumnFactory extends BeanStub {
             }
         }
 
-        // sorted at - anything but undefined, thus null will clear the sortedAt
-        const sortedAt = _.attrToNumber(colDef.sortedAt);
-        if (sortedAt!==undefined) {
-            column.setSortedAt(sortedAt);
+        // sorted at - anything but undefined, thus null will clear the sortIndex
+        const sortIndex = _.attrToNumber(colDef.sortIndex);
+        if (sortIndex!==undefined) {
+            column.setSortIndex(sortIndex);
         }
 
         // hide - anything but undefined, thus null will clear the hide

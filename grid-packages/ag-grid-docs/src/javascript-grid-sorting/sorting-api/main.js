@@ -39,8 +39,8 @@ function sortByAthleteDesc() {
 function sortByCountryThenSport() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'country', sort: 'asc', sortedAt: 0 },
-            { colId: 'sport', sort: 'asc', sortedAt: 1 }
+            { colId: 'country', sort: 'asc', sortIndex: 0 },
+            { colId: 'sport', sort: 'asc', sortIndex: 1 }
         ],
         defaultState: { sort: null }
     });
@@ -49,8 +49,8 @@ function sortByCountryThenSport() {
 function sortBySportThenCountry() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'country', sort: 'asc', sortedAt: 1 },
-            { colId: 'sport', sort: 'asc', sortedAt: 0 }
+            { colId: 'country', sort: 'asc', sortIndex: 1 },
+            { colId: 'sport', sort: 'asc', sortIndex: 0 }
         ],
         defaultState: { sort: null }
     });
@@ -71,7 +71,7 @@ function saveSort() {
             return s.sort != null;
         })
         .map( function(s) {
-            return {colId: s.colId, sort: s.sort, sortedAt: s.sortedAt}
+            return {colId: s.colId, sort: s.sort, sortIndex: s.sortIndex}
         });
     savedSort = sortState;
     console.log('saved sort', sortState);

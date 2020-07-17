@@ -32,7 +32,7 @@ var gridOptions = {
 
 function onBtSaveSortState() {
     var allState = gridOptions.columnApi.getColumnState();
-    var sortState = allState.map(function(state) { return {colId: state.colId, sort: state.sort} });
+    var sortState = allState.map(function(state) { return {colId: state.colId, sort: state.sort, sortIndex: state.sortIndex} });
     window.sortState = sortState;
     console.log('sort state saved', sortState);
 }

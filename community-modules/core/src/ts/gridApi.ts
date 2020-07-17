@@ -808,7 +808,7 @@ export class GridApi {
                 columnState.push({
                     colId: item.colId,
                     sort: item.sort,
-                    sortedAt: index
+                    sortIndex: index
                 });
             });
         }
@@ -821,7 +821,7 @@ export class GridApi {
         const filteredStates = columnState.filter( item => item.sort != null);
 
         const indexes: {[colId: string]: number} = {};
-        filteredStates.forEach( state => indexes[state.colId] = state.sortedAt);
+        filteredStates.forEach( state => indexes[state.colId] = state.sortIndex);
 
         const res = filteredStates.map( s => {
             return {colId: s.colId, sort: s.sort}
