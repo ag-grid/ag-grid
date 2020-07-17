@@ -35,8 +35,12 @@
         }
     },
     "api": {
-        "getFilter(index)": {
-            "description": "Returns the child filter at the specified index."
+        "getChildFilterInstance(index)": {
+            "description": "Returns the child filter instance at the specified index.",
+            "more": {
+                "url": "../javascript-grid-filter-multi/#accessing-child-filters",
+                "name": "Accessing Child Filters"
+            }
         }
     }
 }

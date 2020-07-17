@@ -153,9 +153,27 @@ SNIPPET
     The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order
     as they are specified in the <code>filters</code> array in the <code>filterParams</code>. If you want to interact
     with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling
-    <code>getFilter(index)</code>,  where <code>index</code> is the same as the index in the <code>filters</code> array.
-    You can then call any API methods that are available on that particular child filter instance.
+    <code>getChildFilterInstance(index)</code>,  where <code>index</code> is the same as the index in the
+    <code>filters</code> array. You can then call any API methods that are available on that particular child filter
+    instance.
 </p>
+
+<p>
+    The example below shows how you can access child filter instances and call methods on them:
+</p>
+
+<ul class="content">
+    <li>
+        Clicking the <strong>Print Text Filter model</strong> button will access the Text Filter inside the Multi Filter
+        and print the model from the current UI to the console.
+    </li>
+    <li>
+        Clicking the <strong>Print Mini Filter text</strong> button will access the Set Filter inside the Multi Filter
+        and print the current Mini Filter text to the console.
+    </li>
+</ul>
+
+<?= grid_example('Accessing Child Filters', 'accessing-child-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Multi Filter Model</h2>
 

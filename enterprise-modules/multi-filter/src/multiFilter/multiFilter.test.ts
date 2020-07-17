@@ -312,23 +312,17 @@ describe('setModel', () => {
     });
 });
 
-describe('getFilter', () => {
-    it('returns first filter', done => {
+describe('getChildFilterInstance', () => {
+    it('returns first filter', () => {
         const multiFilter = createFilter();
 
-        multiFilter.getFilter(0).then(filter => {
-            expect(filter).toBe(filter1);
-            done();
-        });
+        expect(multiFilter.getChildFilterInstance(0)).toBe(filter1);
     });
 
-    it('returns second filter', done => {
+    it('returns second filter', () => {
         const multiFilter = createFilter();
 
-        multiFilter.getFilter(1).then(filter => {
-            expect(filter).toBe(filter2);
-            done();
-        });
+        expect(multiFilter.getChildFilterInstance(1)).toBe(filter2);
     });
 });
 

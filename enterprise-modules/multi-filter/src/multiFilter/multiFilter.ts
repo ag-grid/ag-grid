@@ -252,8 +252,8 @@ export class MultiFilter extends Component implements IFilterComp {
         return Promise.all(promises).then(() => { });
     }
 
-    public getFilter(index: number): Promise<IFilterComp> {
-        return Promise.resolve(this.filters[index]);
+    public getChildFilterInstance(index: number): IFilterComp {
+        return this.filters[index];
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
