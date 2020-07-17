@@ -66,7 +66,12 @@ export class MenuList extends ManagedFocusComponent {
 
         menuItems.forEach(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.appendChild(_.loadTemplate(/* html */`<div class="ag-menu-separator"></div>`));
+                this.appendChild(_.loadTemplate(/* html */`<div class="ag-menu-separator">
+                    <div class="ag-menu-separator-part"></div>
+                    <div class="ag-menu-separator-part"></div>
+                    <div class="ag-menu-separator-part"></div>
+                    <div class="ag-menu-separator-part"></div>
+                </div>`));
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`ag-Grid: unrecognised menu item ${menuItemOrString}`);
             } else {

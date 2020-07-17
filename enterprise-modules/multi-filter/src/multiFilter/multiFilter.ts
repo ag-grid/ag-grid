@@ -47,7 +47,7 @@ export class MultiFilter extends Component implements IFilterComp {
     private activeFilterIndices: number[] = [];
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter"></div>`);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -130,14 +130,11 @@ export class MultiFilter extends Component implements IFilterComp {
             name,
             subMenu: filter,
             cssClasses: ['ag-multi-filter-menu-item'],
-        }));
+        }, true));
 
         menuItem.setParentComponent(this);
 
         this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
-
-        const icon = menuItem.getRefElement('eIcon');
-        menuItem.getGui().removeChild(icon);
 
         return menuItem;
     }

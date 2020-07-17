@@ -330,6 +330,8 @@ describe('afterGuiAttached', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui');
         filter2 = mock<IFilterComp>('getGui');
+
+        context.createBean.mockImplementation(bean => bean);
     });
 
     it('passes through to filter if it has afterGuiAttached function', () => {
@@ -407,8 +409,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside a sub-menu if configured', () => {
-        context.createBean.mockImplementation(bean => bean);
-
         const filter1Element = document.createElement('div');
         filter1Element.id = 'filter-1';
         filter1.getGui.mockReturnValue(filter1Element);
@@ -432,8 +432,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside an accordion if sub-menu is configured but filter is opened in tool panel', () => {
-        context.createBean.mockImplementation(bean => bean);
-
         const filter1Element = document.createElement('div');
         filter1Element.id = 'filter-1';
         filter1.getGui.mockReturnValue(filter1Element);
@@ -457,8 +455,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside an accordion if configured', () => {
-        context.createBean.mockImplementation(bean => bean);
-
         const filter1Element = document.createElement('div');
         filter1Element.id = 'filter-1';
         filter1.getGui.mockReturnValue(filter1Element);
@@ -482,8 +478,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside an sub-menu with custom title if configured', () => {
-        context.createBean.mockImplementation(bean => bean);
-
         const title = 'Filter Title';
         const filter1Element = document.createElement('div');
         filter1Element.id = 'filter-1';
@@ -505,12 +499,10 @@ describe('afterGuiAttached', () => {
 
         const { calls } = context.createBean.mock;
 
-        expect((calls[0][0] as MenuItemComponent).getGui().getElementsByClassName('ag-menu-option-text')[0].innerHTML).toBe(title);
+        expect((calls[0][0] as any).params.name).toBe(title);
     });
 
     it('presents the filter inside an accordion with custom title if configured', () => {
-        context.createBean.mockImplementation(bean => bean);
-
         const title = 'Filter Title';
         const filter1Element = document.createElement('div');
         filter1Element.id = 'filter-1';

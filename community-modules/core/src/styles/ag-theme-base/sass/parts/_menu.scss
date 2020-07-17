@@ -10,60 +10,56 @@
         padding: ag-param(grid-size) 0;
     }
 
-    .ag-menu-option {
-        padding: (ag-param(grid-size) + 2) ag-param(grid-size);
-    }
-
     .ag-menu-option-active {
         @include ag-color-property(background-color, row-hover-color);
     }
 
     .ag-menu-option-part {
         line-height: ag-param(icon-size);
+        padding: (ag-param(grid-size) + 2) 0;
     }
 
     .ag-menu-option-disabled {
         opacity: 0.5;
     }
 
-    .ag-menu-option-text {
-        margin-left: ag-param(grid-size);
-        margin-right: ag-param(grid-size) * 4;
+    .ag-menu-option-icon {
+        padding-left: ag-param(grid-size) * 2;
+        width: ag-param(icon-size);
     }
 
-    .ag-menu-option-icon {
-        margin-left: ag-param(grid-size);
-        width: ag-param(icon-size);
+    .ag-menu-option-text {
+        padding-left: ag-param(grid-size) * 2;
+        padding-right: ag-param(grid-size) * 2;
     }
 
     .ag-menu-option-shortcut {
-        margin-right: ag-param(grid-size);
+        padding-right: ag-param(grid-size);
     }
 
     .ag-menu-option-popup-pointer {
-        width: ag-param(icon-size);
+        padding-right: ag-param(grid-size);
     }
 
     .ag-menu-separator {
-        @include ag-border(critical, top);
-        margin-top: 6px;
-        padding-top: 6px;
+        height: (ag-param(grid-size) * 2) + 1;
     }
 
-    .ag-menu.ag-rtl {
-        .ag-menu-option-text {
-            margin-left: ag-param(grid-size) * 4;
-            margin-right: ag-param(grid-size);
-        }
+    .ag-menu-separator-part:after {
+        content: "";
+        display: block;
+        @include ag-border(critical, top);
+    }
 
+    .ag-rtl {
         .ag-menu-option-icon {
-            margin-left: 0;
-            margin-right: ag-param(grid-size);
+            padding-left: 0;
+            padding-right: ag-param(grid-size) * 2;
         }
 
         .ag-menu-option-shortcut {
-            margin-left: ag-param(grid-size);
-            margin-right: 0;
+            padding-left: ag-param(grid-size);
+            padding-right: 0;
         }
     }
 

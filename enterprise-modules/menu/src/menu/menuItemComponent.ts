@@ -6,7 +6,6 @@ import {
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
-    RefSelector,
     TooltipFeature,
     _,
     PopupService,
@@ -35,33 +34,25 @@ export class MenuItemComponent extends Component {
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('popupService') private readonly popupService: PopupService;
 
-    @RefSelector('eIcon') private readonly eIcon: HTMLElement;
-
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     private static ACTIVE_CLASS = 'ag-menu-option-active';
 
-    private params: MenuItemDef;
     private tooltip: string;
     private hideSubMenu: () => void;
     private subMenuComponent: IComponent<any> | Component;
 
-    constructor(params: MenuItemDef) {
-        super(/* html */`
-            <div class="ag-menu-option" tabindex="-1" role="listitem">
-                <span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
-                <span ref="eName" class="ag-menu-option-part ag-menu-option-text">${params.name}</span>
-            </div>`);
-
-        this.params = params;
+    constructor(private readonly params: MenuItemDef, private readonly excludeUnusedItems = false) {
+        super(/* html */`<div class="ag-menu-option" tabindex="-1" role="listitem"></div>`);
     }
 
     @PostConstruct
     private init() {
         this.addIcon();
-        this.addTooltip();;
+        this.addName();
         this.addShortcut();
         this.addSubMenu();
+        this.addTooltip();
 
         if (this.params.disabled) {
             this.addCssClass('ag-menu-option-disabled');
@@ -169,16 +160,32 @@ export class MenuItemComponent extends Component {
     }
 
     private addIcon(): void {
-        if (this.params.checked) {
-            this.eIcon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
-        } else if (this.params.icon) {
-            if (_.isNodeOrElement(this.params.icon)) {
-                this.eIcon.appendChild(this.params.icon as HTMLElement);
-            } else if (typeof this.params.icon === 'string') {
-                this.eIcon.innerHTML = this.params.icon;
-            } else {
-                console.warn('ag-Grid: menu item icon must be DOM node or string');
+        if (this.params.checked || this.params.icon || !this.excludeUnusedItems) {
+            const icon = _.loadTemplate(/* html */
+                `<span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>`);
+
+            if (this.params.checked) {
+                icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
+            } else if (this.params.icon) {
+                if (_.isNodeOrElement(this.params.icon)) {
+                    icon.appendChild(this.params.icon as HTMLElement);
+                } else if (typeof this.params.icon === 'string') {
+                    icon.innerHTML = this.params.icon;
+                } else {
+                    console.warn('ag-Grid: menu item icon must be DOM node or string');
+                }
             }
+
+            this.getGui().appendChild(icon);
+        }
+    }
+
+    private addName(): void {
+        if (this.params.name || !this.excludeUnusedItems) {
+            const name = _.loadTemplate(/* html */
+                `<span ref="eName" class="ag-menu-option-part ag-menu-option-text">${this.params.name || ''}</span>`);
+
+            this.getGui().appendChild(name);
         }
     }
 
@@ -195,22 +202,24 @@ export class MenuItemComponent extends Component {
     }
 
     private addShortcut(): void {
-        if (this.params.shortcut) {
+        if (this.params.shortcut || !this.excludeUnusedItems) {
             const shortcut = _.loadTemplate(/* html */
-                `<span ref="eShortcut" class="ag-menu-option-part ag-menu-option-shortcut">${this.params.shortcut}</span>`);
+                `<span ref="eShortcut" class="ag-menu-option-part ag-menu-option-shortcut">${this.params.shortcut || ''}</span>`);
 
             this.getGui().appendChild(shortcut);
         }
     }
 
     private addSubMenu(): void {
-        if (this.params.subMenu) {
+        if (this.params.subMenu || !this.excludeUnusedItems) {
             const pointer = _.loadTemplate(/* html */
                 `<span ref="ePopupPointer" class="ag-menu-option-part ag-menu-option-popup-pointer"></span>`);
 
-            const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
+            if (this.params.subMenu) {
+                const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
 
-            pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper));
+                pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper));
+            }
 
             this.getGui().appendChild(pointer);
         }

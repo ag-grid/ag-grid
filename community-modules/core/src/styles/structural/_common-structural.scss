@@ -1044,7 +1044,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     opacity: 0 !important;
 }
 
-
 /**
  ****************************
  * Menu
@@ -1060,33 +1059,46 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-menu-column-select-wrapper {
     height: 265px;
     overflow: auto;
+
+    .ag-column-select {
+        height: 100%;
+    }
 }
 
 .ag-menu-list {
+    display: table;
     width: 100%;
 }
 
-.ag-menu-option {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
+.ag-menu-option, .ag-menu-separator {
+    display: table-row;
 }
 
-.ag-menu-option-part {
-    margin: auto 0;
+.ag-menu-option-part, .ag-menu-separator-part {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .ag-menu-option-text {
-    flex: 1 1 auto;
     white-space: nowrap;
 }
 
-.ag-menu-separator {
-    width: 100%;
-}
+.ag-menu-list-compact {
+    display: block;
 
-.ag-menu-column-select-wrapper .ag-column-select {
-    height: 100%;
+    .ag-menu-option {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .ag-menu-option-part {
+        display: block;
+    }
+
+    .ag-menu-option-text {
+        flex: 1 1 auto;
+    }
 }
 
 /**
