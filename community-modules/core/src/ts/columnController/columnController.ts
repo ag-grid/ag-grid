@@ -54,17 +54,17 @@ export interface ColumnResizeSet {
 
 export interface ColumnState {
     colId?: string;
-    hide?: boolean;
+    hide?: boolean | null;
     aggFunc?: string | IAggFunc | null;
-    width?: number;
-    pivot?: boolean;
-    pivotIndex?: number | null;
-    pinned?: boolean | string | 'left' | 'right';
-    rowGroup?: boolean;
+    width?: number | undefined;
+    pivot?: boolean | null;
+    pivotIndex?: number |null;
+    pinned?: boolean | string | 'left' | 'right' | null;
+    rowGroup?: boolean | null;
     rowGroupIndex?: number | null;
-    flex?: number;
-    sort?: string;
-    sortedAt?: number;
+    flex?: number | null;
+    sort?: string | null;
+    sortedAt?: number | null;
 }
 
 @Bean('columnController')

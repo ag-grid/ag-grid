@@ -19,62 +19,69 @@ var gridOptions = {
 };
 
 function sortByAthleteAsc() {
-    var sort = [
-        { colId: 'athlete', sort: 'asc' }
-    ];
-    gridOptions.api.setSortModel(sort);
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            { colId: 'athlete', sort: 'asc' }
+        ],
+        defaultState: { sort: null }
+    });
 }
 
 function sortByAthleteDesc() {
-    var sort = [
-        { colId: 'athlete', sort: 'desc' }
-    ];
-    gridOptions.api.setSortModel(sort);
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            { colId: 'athlete', sort: 'desc' }
+        ],
+        defaultState: { sort: null }
+    });
 }
 
 function sortByCountryThenSport() {
-    var sort = [
-        { colId: 'country', sort: 'asc' },
-        { colId: 'sport', sort: 'asc' }
-    ];
-    gridOptions.api.setSortModel(sort);
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            { colId: 'country', sort: 'asc', sortedAt: 0 },
+            { colId: 'sport', sort: 'asc', sortedAt: 1 }
+        ],
+        defaultState: { sort: null }
+    });
 }
 
 function sortBySportThenCountry() {
-    var sort = [
-        { colId: 'sport', sort: 'asc' },
-        { colId: 'country', sort: 'asc' }
-    ];
-    gridOptions.api.setSortModel(sort);
-}
-
-function printSortStateToConsole() {
-    var sortState = gridOptions.api.getSortModel();
-    if (sortState.length == 0) {
-        console.log('No sort active');
-    } else {
-        console.log('State of sorting is:');
-        for (var i = 0; i < sortState.length; i++) {
-            var item = sortState[i];
-            console.log(i + ' = {colId: ' + item.colId + ', sort: ' + item.sort + '}');
-        }
-    }
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            { colId: 'country', sort: 'asc', sortedAt: 1 },
+            { colId: 'sport', sort: 'asc', sortedAt: 0 }
+        ],
+        defaultState: { sort: null }
+    });
 }
 
 function clearSort() {
-    // pass null or undefined or empty list
-    gridOptions.api.setSortModel(null);
+    gridOptions.columnApi.applyColumnState({
+        defaultState: { sort: null }
+    });
 }
 
 var savedSort;
 
 function saveSort() {
-    savedSort = gridOptions.api.getSortModel();
-    console.log('Saved sort: ' + JSON.stringify(savedSort));
+    var colState = gridOptions.columnApi.getColumnState();
+    var sortState = colState
+        .filter( function(s) {
+            return s.sort != null;
+        })
+        .map( function(s) {
+            return {colId: s.colId, sort: s.sort, sortedAt: s.sortedAt}
+        });
+    savedSort = sortState;
+    console.log('saved sort', sortState);
 }
 
 function restoreFromSave() {
-    gridOptions.api.setSortModel(savedSort);
+    gridOptions.columnApi.applyColumnState({
+        state: savedSort,
+        defaultState: { sort: null }
+    });
 }
 
 // setup the grid after the page has finished loading

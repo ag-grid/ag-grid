@@ -82,8 +82,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private onSortChanged(): void {
-        const sortModel = this.sortController.getSortModel();
-        this.isGridSorted = !_.missingOrEmpty(sortModel);
+        this.isGridSorted = this.sortController.isSortActive();
     }
 
     private onFilterChanged(): void {

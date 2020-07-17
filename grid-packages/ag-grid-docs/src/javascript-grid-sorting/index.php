@@ -146,32 +146,9 @@ SNIPPET
 <h2>Sorting API</h2>
 
 <p>
-    Sorting can be controlled via the Sorting API via the following methods:
-</p>
-    <ul class="content">
-    <li><code>setSortModel(sortModel)</code>: To set the sort.</li>
-    <li><code>getSortModel():</code> To return the state of the currently active sort.</li>
-</ul>
-
-<p>
-    Both methods work with a list of sort objects, each object containing a sort field
-    and direction. The order of the sort objects depicts the order in which the columns
-    are sorted. For example, the below array represents the model of firstly sorting
-    by Country ascending, and then by Sport descending.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-[
-    { colId: 'country', sort: 'asc' },
-    { colId: 'sport', sort: 'desc' }
-]
-SNIPPET
-) ?>
-
-<h2>Example: Sorting API</h2>
-
-<p>
-    The example below shows the API in action.
+    What sorting is applied is controlled via
+    <a href="../javascript-grid-column-state/">Column State</a>. The below examples uses
+    the Column State API to control column sorting.
 </p>
 
 <?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>

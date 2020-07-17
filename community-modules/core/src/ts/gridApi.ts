@@ -1,6 +1,6 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { ColumnController } from "./columnController/columnController";
+import {ColumnController, ColumnState} from "./columnController/columnController";
 import { ColumnApi } from "./columnController/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -801,11 +801,35 @@ export class GridApi {
     }
 
     public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        this.sortController.setSortModel(sortModel, source);
+        console.warn('ag-Grid: as of version 24.0.0, setSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.applyColumnState() instead.');
+        const columnState: ColumnState[] = [];
+        if (sortModel) {
+            sortModel.forEach( (item: any, index: number) => {
+                columnState.push({
+                    colId: item.colId,
+                    sort: item.sort,
+                    sortedAt: index
+                });
+            });
+        }
+        this.columnController.applyColumnState({state: columnState, defaultState: {sort: null} } );
     }
 
     public getSortModel() {
-        return this.sortController.getSortModel();
+        console.warn('ag-Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
+        const columnState = this.columnController.getColumnState();
+        const filteredStates = columnState.filter( item => item.sort != null);
+
+        const indexes: {[colId: string]: number} = {};
+        filteredStates.forEach( state => indexes[state.colId] = state.sortedAt);
+
+        const res = filteredStates.map( s => {
+            return {colId: s.colId, sort: s.sort}
+        } );
+
+        res.sort( (a: any, b: any) => { return indexes[a.colId] - indexes[b.colId] } );
+
+        return res;
     }
 
     public setFilterModel(model: any) {

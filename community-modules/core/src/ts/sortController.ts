@@ -57,6 +57,13 @@ export class SortController extends BeanStub {
         this.dispatchSortChangedEvents();
     }
 
+    public isSortActive(): boolean {
+        // pull out all the columns that have sorting set
+        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const sortedCols = allCols.filter(column => !!column.getSort());
+        return sortedCols && sortedCols.length > 0;
+    }
+
     public dispatchSortChangedEvents(): void {
         const event: SortChangedEvent = {
             type: Events.EVENT_SORT_CHANGED,
@@ -110,50 +117,6 @@ export class SortController extends BeanStub {
         }
 
         return result;
-    }
-
-    // used by the public api, for saving the sort model
-    public getSortModel = () => {
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            colId: column.getColId(),
-            sort: column.getSort()
-        }));
-    }
-
-    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        // first up, clear any previous sort
-        const sortModelProvided = sortModel && sortModel.length > 0;
-
-        const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allColumnsIncludingAuto.forEach((column: Column) => {
-            let sortForCol: any = null;
-            let sortedAt = -1;
-            if (sortModelProvided && column.getColDef().sortable) {
-                for (let j = 0; j < sortModel.length; j++) {
-                    const sortModelEntry = sortModel[j];
-                    if (typeof sortModelEntry.colId === 'string'
-                        && typeof column.getColId() === 'string'
-                        && this.compareColIds(sortModelEntry, column)) {
-                        sortForCol = sortModelEntry.sort;
-                        sortedAt = j;
-                    }
-                }
-            }
-
-            if (sortForCol) {
-                column.setSort(sortForCol, source);
-                column.setSortedAt(sortedAt);
-            } else {
-                column.setSort(null, source);
-                column.setSortedAt(null);
-            }
-        });
-
-        this.dispatchSortChangedEvents();
-    }
-
-    private compareColIds(sortModelEntry: any, column: Column) {
-        return sortModelEntry.colId === column.getColId();
     }
 
     public getColumnsWithSortingOrdered(): Column[] {
