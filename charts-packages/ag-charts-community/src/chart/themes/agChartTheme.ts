@@ -223,6 +223,9 @@ export class AgChartTheme {
                 category: {
                     ...AgChartTheme.getAxisDefaults()
                 },
+                groupedCategory: {
+                    ...AgChartTheme.getAxisDefaults()
+                },
                 time: {
                     ...AgChartTheme.getAxisDefaults()
                 }
