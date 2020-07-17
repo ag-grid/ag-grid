@@ -25,23 +25,6 @@ var gridOptions = {
     columnDefs: [
         { field: 'athlete', filter: 'agMultiColumnFilter' },
         {
-            field: 'country',
-            filter: 'agMultiColumnFilter',
-            filterParams: {
-                filters: [
-                    {
-                        filter: 'agTextColumnFilter',
-                        filterParams: {
-                            defaultOption: 'startsWith',
-                        },
-                    },
-                    {
-                        filter: 'agSetColumnFilter',
-                    }
-                ]
-            }
-        },
-        {
             field: 'gold',
             filter: 'agMultiColumnFilter',
             filterParams: {
@@ -65,9 +48,7 @@ var gridOptions = {
         flex: 1,
         minWidth: 200,
         resizable: true,
-    },
-    sideBar: {
-        toolPanels: ['filters'],
+        floatingFilter: true,
     }
 };
 

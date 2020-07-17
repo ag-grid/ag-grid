@@ -66,15 +66,34 @@ var gridOptions = {
         minWidth: 200,
         resizable: true,
     },
-    sideBar: {
-        toolPanels: ['filters'],
-    }
 };
 
 function getDate(value) {
     var dateParts = value.split('/');
     return new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 };
+
+var savedFilterState;
+
+function printState() {
+    var filterState = gridOptions.api.getFilterModel();
+    console.log('Current filter state: ', filterState);
+}
+
+function saveState() {
+    savedFilterState = gridOptions.api.getFilterModel();
+    console.log('Filter state saved');
+}
+
+function restoreState() {
+    gridOptions.api.setFilterModel(savedFilterState);
+    console.log('Filter state restored');
+}
+
+function resetState() {
+    gridOptions.api.setFilterModel(null);
+    console.log('Filter state reset');
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

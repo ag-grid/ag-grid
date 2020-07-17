@@ -32,8 +32,12 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         _.forEach(MultiFilter.getFilterDefs(filterParams), (filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
                 ...params,
+                // set the parent filter instance for each floating filter to the relevant child filter instance
                 parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
-                    params.parentFilterInstance(parent => (parent as MultiFilter).getFilter(index).then(callback));
+                    params.parentFilterInstance(parent => {
+                        const childFilterInstance = (parent as MultiFilter).getChildFilterInstance(index);
+                        callback(childFilterInstance);
+                    });
                 }
             };
 
