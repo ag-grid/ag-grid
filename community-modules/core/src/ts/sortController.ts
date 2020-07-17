@@ -57,6 +57,14 @@ export class SortController extends BeanStub {
         this.dispatchSortChangedEvents();
     }
 
+    // used by server side row models, to send sorting to server
+    public getSortModel = () => {
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            colId: column.getColId(),
+            sort: column.getSort()
+        }));
+    }
+
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set
         const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
