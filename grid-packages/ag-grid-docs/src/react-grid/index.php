@@ -72,7 +72,6 @@ npm install --save ag-grid-community ag-grid-react
 
 <snippet language="jsx">
 <div ng-non-bindable>
-import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
