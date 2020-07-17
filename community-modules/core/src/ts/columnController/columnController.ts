@@ -1913,7 +1913,7 @@ export class ColumnController extends BeanStub {
 
         return () => {
 
-            if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents()) { return; }
+            if (this.gridOptionsWrapper.isSuppressColumnStateEvents()) { return; }
 
             // raises generic ColumnEvents where all columns are returned rather than what has changed
             const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
@@ -3495,8 +3495,8 @@ export class ColumnController extends BeanStub {
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            // we force recreate when suppressSetColumnStateEvents changes, so new group cols pick up the new
-            // definitions. otherwise we could ignore the new cols becasue they appear to be the same.
+            // we force recreate when suppressColumnStateEvents changes, so new group cols pick up the new
+            // definitions. otherwise we could ignore the new cols because they appear to be the same.
             if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
             }

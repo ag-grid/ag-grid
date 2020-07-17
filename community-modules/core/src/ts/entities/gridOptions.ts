@@ -211,6 +211,7 @@ export interface GridOptions {
     asyncTransactionWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
+    suppressColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
     excludeChildrenWhenTreeDataFiltering?: boolean;

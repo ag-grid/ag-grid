@@ -17,7 +17,7 @@ var gridOptions = {
         enablePivot: true,
         enableValue: true
     },
-    suppressSetColumnStateEvents: true,
+    suppressColumnStateEvents: true,
     debug: true,
     columnDefs: columnDefs,
     rowData: null,

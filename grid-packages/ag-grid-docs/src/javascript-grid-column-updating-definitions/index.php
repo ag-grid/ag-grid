@@ -334,7 +334,7 @@ SNIPPET
 
 <p>
     To suppress events raised when invoking <code>applyColumnState()</code>
-    set the grid property <code>suppressSetColumnStateEvents=true</code>.
+    set the grid property <code>suppressColumnStateEvents=true</code>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

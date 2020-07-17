@@ -368,8 +368,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowTransform);
     }
 
-    public isSuppressSetColumnStateEvents() {
-        return isTrue(this.gridOptions.suppressSetColumnStateEvents);
+    public isSuppressColumnStateEvents() {
+        return isTrue(this.gridOptions.suppressColumnStateEvents);
     }
 
     public isAllowDragFromColumnsToolPanel() {
@@ -1397,6 +1397,8 @@ export class GridOptionsWrapper {
                 'ag-Grid: since v24.0, immutableColumns and deltaColumnMode properties are gone. The grid now works like this as default.'
             );
         }
+
+        checkRenamedProperty('suppressSetColumnStateEvents', 'suppressColumnStateEvents', '24.0.x');
     }
 
     private checkForViolations() {

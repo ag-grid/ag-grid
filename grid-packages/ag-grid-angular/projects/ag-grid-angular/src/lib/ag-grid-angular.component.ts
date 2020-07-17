@@ -387,6 +387,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
+    @Input() public suppressColumnStateEvents : any = undefined;
     @Input() public enableCharts : any = undefined;
     @Input() public deltaColumnMode : any = undefined;
     @Input() public suppressMaintainUnsortedOrder : any = undefined;
