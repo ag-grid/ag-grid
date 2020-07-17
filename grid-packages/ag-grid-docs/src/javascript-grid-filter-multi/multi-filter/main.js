@@ -1,3 +1,26 @@
+var dateFilterParams = {
+    filters: [
+        {
+            filter: 'agDateColumnFilter',
+            filterParams: {
+                comparator: function(filterDate, cellValue) {
+                    if (cellValue == null) return -1;
+
+                    return getDate(cellValue) - filterDate;
+                },
+            },
+        },
+        {
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                comparator: function(a, b) {
+                    return getDate(a) - getDate(b);
+                }
+            }
+        }
+    ]
+};
+
 var gridOptions = {
     columnDefs: [
         { field: 'athlete', filter: 'agMultiColumnFilter' },
@@ -35,28 +58,7 @@ var gridOptions = {
         {
             field: 'date',
             filter: 'agMultiColumnFilter',
-            filterParams: {
-                filters: [
-                    {
-                        filter: 'agDateColumnFilter',
-                        filterParams: {
-                            comparator: function(filterDate, cellValue) {
-                                if (cellValue == null) return -1;
-
-                                return getDate(cellValue) - filterDate;
-                            },
-                        },
-                    },
-                    {
-                        filter: 'agSetColumnFilter',
-                        filterParams: {
-                            comparator: function(a, b) {
-                                return getDate(a) - getDate(b);
-                            }
-                        }
-                    }
-                ]
-            }
+            filterParams: dateFilterParams
         },
     ],
     defaultColDef: {
