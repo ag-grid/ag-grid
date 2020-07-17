@@ -1,14 +1,15 @@
+var filterParams = {
+    textFormatter: replaceAccents,
+}
+
 var gridOptions = {
     columnDefs: [
         // set filter
         {
             field: 'athlete',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                textFormatter: replaceAccents,
-            }
+            filterParams: filterParams
         },
-
         // number filters
         { field: 'gold', filter: 'agNumberColumnFilter' },
         { field: 'silver', filter: 'agNumberColumnFilter' },

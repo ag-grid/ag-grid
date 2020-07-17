@@ -236,7 +236,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         // no real need for  "this" in hooks
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
-        const template = getTemplate(bindings, componentAttributes, columnDefs);
+        const template = getTemplate(bindings, componentAttributes.map(thisReferenceConverter), columnDefs);
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter);
         const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter);
