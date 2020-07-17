@@ -48,8 +48,8 @@ export class MenuItemComponent extends Component {
 
     constructor(params: MenuItemDef) {
         super(/* html */`
-            <div class="ag-menu-option" tabindex="-1">
-                <span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon"></span>
+            <div class="ag-menu-option" tabindex="-1" role="listitem">
+                <span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>
                 <span ref="eName" class="ag-menu-option-part ag-menu-option-text">${params.name}</span>
             </div>`);
 

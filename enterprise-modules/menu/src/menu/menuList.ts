@@ -15,7 +15,7 @@ export class MenuList extends ManagedFocusComponent {
     private activeMenuItem: MenuItemComponent | null;
 
     constructor() {
-        super(/* html */`<div class="ag-menu-list"></div>`);
+        super(/* html */`<div class="ag-menu-list" role="list"></div>`);
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
@@ -44,7 +44,7 @@ export class MenuList extends ManagedFocusComponent {
                 const topMenu = this.findTopMenu();
 
                 if (topMenu) {
-                    topMenu.getGui().focus();
+                    this.focusController.focusFirstFocusableElement(topMenu.getGui());
                 }
 
                 break;
