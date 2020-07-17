@@ -68,6 +68,6 @@ SNIPPET
     end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
 </p>
 
-<?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
+<?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
