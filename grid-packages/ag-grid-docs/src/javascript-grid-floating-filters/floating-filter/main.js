@@ -78,8 +78,32 @@ function getPersonFilter() {
     return PersonFilter;
 }
 
+var dateFilterParams = {
+    comparator: function(filterLocalDateAtMidnight, cellValue) {
+        var dateAsString = cellValue;
+        if (dateAsString == null) return -1;
+        var dateParts = dateAsString.split('/');
+        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+
+        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+            return 0;
+        }
+
+        if (cellDate < filterLocalDateAtMidnight) {
+            return -1;
+        }
+
+        if (cellDate > filterLocalDateAtMidnight) {
+            return 1;
+        }
+    },
+    browserDatePicker: true
+};
+
+var athleteFilter = getPersonFilter();
+
 var columnDefs = [
-    { field: 'athlete', filter: getPersonFilter(), suppressMenu: true },
+    { field: 'athlete', filter: athleteFilter, suppressMenu: true },
     { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
     { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
     { field: 'year', maxWidth: 120, filter: 'agNumberColumnFilter', floatingFilter: false, },
@@ -87,27 +111,7 @@ var columnDefs = [
         field: 'date',
         minWidth: 215,
         filter: 'agDateColumnFilter',
-        filterParams: {
-            comparator: function(filterLocalDateAtMidnight, cellValue) {
-                var dateAsString = cellValue;
-                if (dateAsString == null) return -1;
-                var dateParts = dateAsString.split('/');
-                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-
-                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                    return 0;
-                }
-
-                if (cellDate < filterLocalDateAtMidnight) {
-                    return -1;
-                }
-
-                if (cellDate > filterLocalDateAtMidnight) {
-                    return 1;
-                }
-            },
-            browserDatePicker: true
-        },
+        filterParams: dateFilterParams,
         suppressMenu: true
     },
     { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter' },
