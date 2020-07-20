@@ -66,12 +66,7 @@ export class MenuList extends ManagedFocusComponent {
 
         menuItems.forEach(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.appendChild(_.loadTemplate(/* html */`<div class="ag-menu-separator">
-                    <div class="ag-menu-separator-part"></div>
-                    <div class="ag-menu-separator-part"></div>
-                    <div class="ag-menu-separator-part"></div>
-                    <div class="ag-menu-separator-part"></div>
-                </div>`));
+                this.addSeparator();
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`ag-Grid: unrecognised menu item ${menuItemOrString}`);
             } else {
@@ -81,7 +76,11 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const menuItem = this.createManagedBean(new MenuItemComponent(menuItemDef));
+        const menuItem = this.createManagedBean(new MenuItemComponent({
+            ...menuItemDef,
+            isAnotherSubMenuOpen: () => _.some(this.menuItems, m => m.isSubMenuOpen())
+        }));
+
         menuItem.setParentComponent(this);
 
         this.menuItems.push(menuItem);
@@ -106,6 +105,18 @@ export class MenuList extends ManagedFocusComponent {
         if (!item) { return; }
 
         item.activate();
+    }
+
+    private addSeparator() {
+        const separatorHtml = /* html */`
+            <div class="ag-menu-separator">
+                <div class="ag-menu-separator-part"></div>
+                <div class="ag-menu-separator-part"></div>
+                <div class="ag-menu-separator-part"></div>
+                <div class="ag-menu-separator-part"></div>
+            </div>`;
+
+        this.appendChild(_.loadTemplate(separatorHtml));
     }
 
     private findTopMenu(): MenuList | undefined {

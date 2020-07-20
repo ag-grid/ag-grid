@@ -130,7 +130,9 @@ export class MultiFilter extends Component implements IFilterComp {
             name,
             subMenu: filter,
             cssClasses: ['ag-multi-filter-menu-item'],
-        }, true));
+            excludeUnusedItems: true,
+            isAnotherSubMenuOpen: () => false,
+        }));
 
         menuItem.setParentComponent(this);
 

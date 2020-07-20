@@ -30,19 +30,27 @@ export interface MenuItemActivatedEvent extends AgEvent {
     menuItem: MenuItemComponent;
 }
 
+export interface MenuItemComponentParams extends MenuItemDef {
+    excludeUnusedItems?: boolean;
+    isAnotherSubMenuOpen: () => boolean;
+}
+
 export class MenuItemComponent extends Component {
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('popupService') private readonly popupService: PopupService;
 
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
+    public static ACTIVATION_DELAY = 80;
     private static ACTIVE_CLASS = 'ag-menu-option-active';
 
     private tooltip: string;
     private hideSubMenu: () => void;
-    private subMenuComponent: IComponent<any> | Component;
+    private subMenuIsOpen = false;
+    private activateTimeoutId: number;
+    private deactivateTimeoutId: number;
 
-    constructor(private readonly params: MenuItemDef, private readonly excludeUnusedItems = false) {
+    constructor(private readonly params: MenuItemComponentParams) {
         super(/* html */`<div class="ag-menu-option" tabindex="-1" role="listitem"></div>`);
     }
 
@@ -57,19 +65,21 @@ export class MenuItemComponent extends Component {
         if (this.params.disabled) {
             this.addCssClass('ag-menu-option-disabled');
         } else {
-            this.addGuiEventListener('click', this.onItemSelected.bind(this));
+            this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
                 if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
                     this.onItemSelected(e);
                 }
             });
 
-            this.addGuiEventListener('mouseenter', () => this.activate(true));
-            this.addGuiEventListener('mouseleave', e => this.handleMouseLeave(e));
+            this.addGuiEventListener('mouseenter', () => this.onMouseEnter());
+            this.addGuiEventListener('mouseleave', () => this.onMouseLeave());
         }
 
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
+            const gui = this.getGui();
+
+            this.params.cssClasses.forEach(it => _.addCssClass(gui, it));
         }
     }
 
@@ -91,7 +101,7 @@ export class MenuItemComponent extends Component {
         if (!this.params.subMenu) { return; }
 
         const ePopup = _.loadTemplate(/* html */`<div class="ag-menu" tabindex="-1"></div>`);
-        let destroySubComponent = () => { };
+        let destroySubMenu: () => void;
 
         if (this.params.subMenu instanceof Array) {
             const childMenu = this.createBean(new MenuList());
@@ -102,26 +112,32 @@ export class MenuItemComponent extends Component {
 
             // bubble menu item selected events
             this.addManagedListener(childMenu, MenuItemComponent.EVENT_MENU_ITEM_SELECTED, e => this.dispatchEvent(e));
+            childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
 
-            destroySubComponent = () => this.destroyBean(childMenu);
+            destroySubMenu = () => this.destroyBean(childMenu);
 
             if (activateFirstItem) {
                 setTimeout(() => childMenu.activateFirstItem(), 0);
             }
-
-            this.subMenuComponent = childMenu;
         } else {
-            ePopup.appendChild(this.params.subMenu.getGui());
+            const subMenuGui = this.params.subMenu.getGui();
+            const mouseEnterListener = () => { console.log(`Hello!`); this.cancelDeactivate(); };
 
-            this.subMenuComponent = this.params.subMenu;
+            subMenuGui.addEventListener('mouseenter', mouseEnterListener);
+
+            destroySubMenu = () => subMenuGui.removeEventListener('mouseenter', mouseEnterListener);
+
+            ePopup.appendChild(this.params.subMenu.getGui());
         }
 
         const closePopup = this.popupService.addAsModalPopup(ePopup, false);
 
+        this.subMenuIsOpen = true;
+
         this.hideSubMenu = () => {
             closePopup();
-            destroySubComponent();
-            this.subMenuComponent = null;
+            this.subMenuIsOpen = false;
+            destroySubMenu();
         };
 
         this.popupService.positionPopupForMenu({ eventSource: this.getGui(), ePopup });
@@ -134,7 +150,17 @@ export class MenuItemComponent extends Component {
         }
     }
 
+    public isActive(): boolean {
+        return _.containsClass(this.getGui(), MenuItemComponent.ACTIVE_CLASS);
+    }
+
+    public isSubMenuOpen(): boolean {
+        return this.subMenuIsOpen;
+    }
+
     public activate(openSubMenu?: boolean): void {
+        this.cancelActivate();
+
         if (this.params.disabled) { return; }
 
         this.addCssClass(MenuItemComponent.ACTIVE_CLASS);
@@ -142,7 +168,7 @@ export class MenuItemComponent extends Component {
 
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(() => {
-                if (this.isAlive() && _.containsClass(this.getGui(), MenuItemComponent.ACTIVE_CLASS)) {
+                if (this.isAlive() && this.isActive()) {
                     this.openSubMenu();
                 }
             }, 300);
@@ -152,15 +178,16 @@ export class MenuItemComponent extends Component {
     }
 
     public deactivate() {
+        this.cancelDeactivate();
         this.removeCssClass(MenuItemComponent.ACTIVE_CLASS);
 
-        if (this.subMenuComponent) {
+        if (this.subMenuIsOpen) {
             this.hideSubMenu();
         }
     }
 
     private addIcon(): void {
-        if (this.params.checked || this.params.icon || !this.excludeUnusedItems) {
+        if (this.params.checked || this.params.icon || !this.params.excludeUnusedItems) {
             const icon = _.loadTemplate(/* html */
                 `<span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>`);
 
@@ -181,7 +208,7 @@ export class MenuItemComponent extends Component {
     }
 
     private addName(): void {
-        if (this.params.name || !this.excludeUnusedItems) {
+        if (this.params.name || !this.params.excludeUnusedItems) {
             const name = _.loadTemplate(/* html */
                 `<span ref="eName" class="ag-menu-option-part ag-menu-option-text">${this.params.name || ''}</span>`);
 
@@ -202,7 +229,7 @@ export class MenuItemComponent extends Component {
     }
 
     private addShortcut(): void {
-        if (this.params.shortcut || !this.excludeUnusedItems) {
+        if (this.params.shortcut || !this.params.excludeUnusedItems) {
             const shortcut = _.loadTemplate(/* html */
                 `<span ref="eShortcut" class="ag-menu-option-part ag-menu-option-shortcut">${this.params.shortcut || ''}</span>`);
 
@@ -211,7 +238,7 @@ export class MenuItemComponent extends Component {
     }
 
     private addSubMenu(): void {
-        if (this.params.subMenu || !this.excludeUnusedItems) {
+        if (this.params.subMenu || !this.params.excludeUnusedItems) {
             const pointer = _.loadTemplate(/* html */
                 `<span ref="ePopupPointer" class="ag-menu-option-part ag-menu-option-popup-pointer"></span>`);
 
@@ -260,14 +287,41 @@ export class MenuItemComponent extends Component {
         this.dispatchEvent(event);
     }
 
-    private handleMouseLeave(e: MouseEvent): void {
-        const subMenuGui = this.subMenuComponent && this.subMenuComponent.getGui();
-        const relatedTarget = (e.relatedTarget as HTMLElement);
-
-        if (relatedTarget && subMenuGui && (subMenuGui.contains(relatedTarget))) {
-            return;
+    private cancelActivate(): void {
+        if (this.activateTimeoutId) {
+            window.clearTimeout(this.activateTimeoutId);
+            this.activateTimeoutId = 0;
         }
+    }
 
-        this.deactivate();
+    private cancelDeactivate(): void {
+        if (this.deactivateTimeoutId) {
+            window.clearTimeout(this.deactivateTimeoutId);
+            this.deactivateTimeoutId = 0;
+        }
+    }
+
+    private onMouseEnter(): void {
+        this.cancelDeactivate();
+
+        if (this.params.isAnotherSubMenuOpen()) {
+            // wait to see if the user enters the open sub-menu
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), MenuItemComponent.ACTIVATION_DELAY);
+        } else {
+            // activate immediately
+            this.activate(true);
+        }
+    }
+
+    private onMouseLeave(): void {
+        this.cancelActivate();
+
+        if (this.isSubMenuOpen()) {
+            // wait to see if the user enters the sub-menu
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), MenuItemComponent.ACTIVATION_DELAY);
+        } else {
+            // de-activate immediately
+            this.deactivate();
+        }
     }
 }
