@@ -100,6 +100,50 @@ interface AgChartLegendOptions {
     position?: AgChartLegendPosition;
     spacing?: number;
     item?: AgChartLegendItemOptions;
+    /**
+     * @deprecated
+     */
+    layoutHorizontalSpacing?: number;
+    /**
+     * @deprecated
+     */
+    layoutVerticalSpacing?: number;
+    /**
+     * @deprecated
+     */
+    itemSpacing?: number;
+    /**
+     * @deprecated
+     */
+    markerShape?: string | (new () => Marker);
+    /**
+     * @deprecated
+     */
+    markerSize?: number;
+    /**
+     * @deprecated
+     */
+    strokeWidth?: number;
+    /**
+     * @deprecated
+     */
+    color?: string;
+    /**
+     * @deprecated
+     */
+    fontStyle?: FontStyle;
+    /**
+     * @deprecated
+     */
+    fontWeight?: FontWeight;
+    /**
+     * @deprecated
+     */
+    fontSize?: number;
+    /**
+     * @deprecated
+     */
+    fontFamily?: string;
 }
 
 interface AgBaseChartOptions {

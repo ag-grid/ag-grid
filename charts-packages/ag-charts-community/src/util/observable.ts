@@ -126,6 +126,17 @@ export class Observable {
     }
 }
 
+interface DeprecatedParams {
+    since?: string;
+    note?: string;
+}
+
+export function deprecated(params?: DeprecatedParams) {
+    return function (target: any, key: string) {
+
+    }
+}
+
 export function reactive(...events: string[]) {
     // let debug = events.indexOf('debugger') >= 0;
     return function (target: any, key: string) {
