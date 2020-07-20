@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
 
-import {AgChart, Chart} from 'ag-charts-community';
+import { Chart, AgChart, AgChartOptions } from 'ag-charts-community';
 
 // noinspection AngularIncorrectTemplateDefinition
 @Component({
@@ -17,7 +17,7 @@ export class AgChartsAngular implements AfterViewInit {
     private _chart!: Chart;
 
     @Input()
-    public options!: any;
+    public options!: AgChartOptions;
 
     constructor(elementDef: ElementRef) {
         this._nativeElement = elementDef.nativeElement;
@@ -47,7 +47,7 @@ export class AgChartsAngular implements AfterViewInit {
         }
     }
 
-    private applyContainerIfNotSet(propsOptions: any) {
+    private applyContainerIfNotSet(propsOptions: AgChartOptions) {
         if (propsOptions.container) {
             return propsOptions;
         }

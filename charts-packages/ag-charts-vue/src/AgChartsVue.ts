@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator';
-import { AgChart, Chart } from 'ag-charts-community';
+import { AgChart, Chart, AgChartOptions } from 'ag-charts-community';
 
 @Component({
     props: {
@@ -12,7 +12,7 @@ export class AgChartsVue extends Vue {
 
     private chart!: Chart;
 
-    private options!: any;
+    private options!: AgChartOptions;
 
     public render(h: any) {
         return h('div', { style: { height: '100%' } });
@@ -46,11 +46,11 @@ export class AgChartsVue extends Vue {
         }
     }
 
-    private applyContainerIfNotSet(propsOptions: any) {
+    private applyContainerIfNotSet(propsOptions: AgChartOptions): AgChartOptions {
         if (propsOptions.container) {
             return propsOptions;
         }
 
-        return { ...propsOptions, container: this.$el };
+        return { ...propsOptions, container: this.$el as HTMLElement };
     }
 }
