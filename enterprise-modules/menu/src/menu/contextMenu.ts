@@ -150,7 +150,7 @@ class ContextMenu extends Component {
     private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
-        super('<div class="ag-menu"></div>');
+        super('<div class="ag-menu" role="presentation"></div>');
         this.menuItems = menuItems;
     }
 

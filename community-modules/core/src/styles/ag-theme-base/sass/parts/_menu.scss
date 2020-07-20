@@ -24,7 +24,7 @@
     }
 
     .ag-menu-option-icon {
-        padding-left: ag-param(grid-size) * 2;
+        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
         width: ag-param(icon-size);
     }
 
@@ -34,7 +34,7 @@
     }
 
     .ag-menu-option-shortcut {
-        padding-right: ag-param(grid-size);
+        @include ag-theme-rtl((padding-right: ag-param(grid-size)));
     }
 
     .ag-menu-option-popup-pointer {
@@ -49,18 +49,6 @@
         content: "";
         display: block;
         @include ag-border(critical, top);
-    }
-
-    .ag-rtl {
-        .ag-menu-option-icon {
-            padding-left: 0;
-            padding-right: ag-param(grid-size) * 2;
-        }
-
-        .ag-menu-option-shortcut {
-            padding-left: ag-param(grid-size);
-            padding-right: 0;
-        }
     }
 
     ////////////////////////////////////////

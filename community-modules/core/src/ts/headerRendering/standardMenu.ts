@@ -52,6 +52,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         const eMenu = document.createElement('div');
 
+        eMenu.setAttribute('role', 'presentation');
         _.addCssClass(eMenu, 'ag-menu');
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));

@@ -123,6 +123,7 @@ export class ManagedFocusComponent extends Component {
         const tabGuard = document.createElement('div');
         tabGuard.classList.add('ag-tab-guard');
         tabGuard.classList.add(`ag-tab-guard-${side}`);
+        tabGuard.setAttribute('role', 'presentation');
 
         return tabGuard as HTMLElement;
     }
