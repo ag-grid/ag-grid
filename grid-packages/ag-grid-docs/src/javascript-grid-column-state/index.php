@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Column State</h1>
 
 <p class="lead">
-    Column State refers to the properties of a Column that can change. This section goes through how to query for
+    Column State refers to the attributes of a Column that can change. This section goes through how to query for
     and subsequently set the Column State.
 </p>
 
@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     There are two API methods provided for getting and setting Column State.
     <code>columnApi.getColumnState()</code> gets the current column state and
-    <code>columnApi.setColumnState()</code> sets the column state.
+    <code>columnApi.applyColumnState()</code> sets the column state.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 let savedState = columnApi.getColumnState();
 
 // restore the column state
-columnApi.setColumnsState({state: savedState});
+columnApi.applyColumnsState({state: savedState});
 
 SNIPPET
 ) ?>
@@ -39,7 +39,7 @@ SNIPPET
 <p>
     The example below demonstrates saving and restoring column state. Try the following:
 </p>
-<ol>
+<ol class="content">
     <li>Click 'Save State' to save the Column State.</li>
     <li>Change some column state e.g. resize columns, move columns around, apply column sorting or row grouping e.t.c.</li>
     <li>Click 'Restore State' and the columns state is set back to where it was when you clicked 'Save State'.</li>
@@ -48,12 +48,12 @@ SNIPPET
 
 <?= grid_example('Save and Apply State', 'save-apply-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
-<h2>State vs Non-State Items</h2>
+<h2>State vs Non-State Attributes</h2>
 
 <p>
     <a href="../javascript-grid-column-definitions/">Column Definitions</a> contain both stateful and non-stateful
-    items. Stateful items can have their properties changed by the grid (eg width, sort etc). Non-stateful items
-    do not change from what is set in the Column Definition. For example once the Header Name is set as
+    attributes. Stateful attributes can have their values changed by the grid (eg width, sort etc). Non-stateful
+    attributes do not change from what is set in the Column Definition. For example once the Header Name is set as
     part of a Column Definition, it will remain the same unless the application updates the Column Definition.
 </p>
 
@@ -95,27 +95,34 @@ interface ApplyColumnStateParams {
 SNIPPET
 ) ?>
 
-<h2>Fine Grained State Control</h2>
+<h2>Partial State</h2>
 
 <p>
-    So far consideration has only been given to getting and then applying state for all state attributes
-    and all columns.
-    It is possible to only focus on particular columns and / or particular attributes. The following rules
-    enable this.
+    It is possible to focus on particular columns and / or particular attributes when getting and / or
+    applying Column State. This allows fine grained control over the Column State, eg setting what Columns
+    are Pinned, without impacting any other state attribute.
 </p>
 
-<ul>
+<h3>Applying Partial State</h3>
+
+<p>
+    When applying column state, and some state attributes or columns are missing from the Column State,
+    then the following rules apply:
+</p>
+
+<ul class="content">
     <li>
-        If state for a column missing attributes, or the attribute is provided as <code>undefined</code>,
-        then that attribute is not updated. For example if a Column has a State item with just <code>pinned</code>,
-        then Pinned is applied to that Column but other attributes, such as Sort, are left intact.
+        If a Column State is missing attributes, or attributes are provided as <code>undefined</code>,
+        then those missing / undefined attributes are not updated. For example if a Column has a
+        Column State with just <code>pinned</code>, then Pinned is applied to that Column but other
+        attributes, such as Sort, are left intact.
     </li>
     <li>
-        When state is applied and there are additional columns in the grid that do not appear in the provided
-        state, then the <code>params.defaultState</code> is applied to those additional columns.
+        When state is applied and there are additional Columns in the grid that do not appear in the provided
+        state, then the <code>params.defaultState</code> is applied to those additional Columns.
     </li>
     <li>
-        If <code>params.defaultState</code> is not provided, then any additional columns in the grid will not
+        If <code>params.defaultState</code> is not provided, then any additional Columns in the grid will not
         be updated.
     </li>
 </ul>
@@ -197,7 +204,7 @@ SNIPPET
 
 <?= grid_example('Fine Grained State', 'fine-grained-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
-<h2>Saving Partial State</h2>
+<h3>Saving Partial State</h3>
 
 <p>
     Using the techniques above, it is possible to save and restore a subset of the parameters in the state.
@@ -206,7 +213,7 @@ SNIPPET
 </p>
 
 <p>
-    Note than when saving and restoring sort state, other Column State items (width, row group, column order etc)
+    Note than when saving and restoring Sort state, other state attributes (width, row group, column order etc)
     are not impacted.
 </p>
 
@@ -217,30 +224,32 @@ SNIPPET
 
 <?= grid_example('Selective State', 'selective-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
-<h2>Special Considerations</h2>
+<h2>Considerations</h2>
 
 <p>
-    There are a few items to note on specifie state attributes. The are as follows:
+    There are a few items to note on specific state attributes. The are as follows:
 </p>
 
-<ul>
+<h2>Null vs Undefined</h2>
+
+<p>
+    For all state attributes, <code>undefined</code> means <i>"do not apply this attribute"</i>
+    and <code>null</code> means <i>"clear this attribute"</i>.
+</p>
+
+<p>
+    For example setting <code>sort=null</code> will clear sort on a column whereas setting
+    <code>sort=undefined</code> will leave whatever sort, if any, that is currently present.
+</p>
+
+<p>
+    The only exception is with regards Column Width. For Width, both <code>undefined</code>
+    and <code>null</code> will skip the attribute. This is because Width is mandatory - there
+    is no such things as a Column with no width.
+</p>
+
+<ul class="content">
     <li>
-        <p><b>Null vs Undefined</b></p>
-
-        <p>
-            For all state items, <code>undefined</code> means <i>"do not apply this attribute"</i> and <code>null</code>
-            means <i>"clear this attribute"</i>.
-        </p>
-
-        <p>
-            For example, setting <code>sort=null</code> will clear sort on a column whereas setting <code>sort=undefined</code>
-            will leave whatever sort, if any, is currently present.
-        </p>
-
-        <p>
-            The only exception is with regards Column With. For Width, both <code>undefined</code> and <code>null</code>
-            will skip the state item. This is because Width is mandatory - there is no such things as a column with no width.
-        </p>
     </li>
     <li>
         <p><b>Width and Flex</b></p>
@@ -250,14 +259,14 @@ SNIPPET
         </p>
 
         <p>
-            When <code>getColumnState()</code> is called, both <code>width</code> and <code>flex</code> are set. When
-            <code>applyColumnState()</code> is called, if <code>flex</code> is present then <code>width</code> is
+            When <code>getColumnState()</code> is called, both <code>width</code> and <code>flex</code> are returned.
+            When <code>applyColumnState()</code> is called, if <code>flex</code> is present then <code>width</code> is
             ignored.
         </p>
 
         <p>
-            If you want to restore Column Width's to the exact same pixel with as specified in the Column State,
-            set <code>flex=undefined</code> in the State item.
+            If you want to restore a Column's width to the exact same pixel width as specified in the Column State,
+            set <code>flex=null</code> for that Column's state to turn Flex off.
         </p>
     </li>
     <li>
@@ -271,9 +280,9 @@ SNIPPET
 
         <p>
             When <code>getColumnState()</code> is called, all of <code>rowGroup</code>, <code>pivot</code>,
-            <code>rowGroupIndex</code> and <code>pivotIndex</code> are set. When
+            <code>rowGroupIndex</code> and <code>pivotIndex</code> are returned. When
             <code>applyColumnState()</code> is called, preference is given to the index variants. For example
-            if both <code>rowGroup</code> and <code>rowGroupIndex</code> is present, <code>rowGroupIndex</code>
+            if both <code>rowGroup</code> and <code>rowGroupIndex</code> are present, <code>rowGroupIndex</code>
             is applied.
         </p>
     </li>
@@ -310,7 +319,7 @@ SNIPPET
 <h2>Column Group State</h2>
 
 <p>
-    Column Group State is concerned with the state of Column Groups. There is only one state item for Column Groups,
+    Column Group State is concerned with the state of Column Groups. There is only one state attribute for Column Groups,
     which is whether the group is open or closed.
 </p>
 
@@ -323,7 +332,7 @@ SNIPPET
     The example below demonstrates getting and setting Column Group State. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>Clicking 'Save State' will save the opened / closed state of column groups.</li>
     <li>Clicking 'Restore State' will restore the previously saved state.</li>
     <li>
