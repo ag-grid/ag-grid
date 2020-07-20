@@ -9,13 +9,31 @@ include '../documentation-main/documentation_header.php';
 <h1>Column State</h1>
 
 <p class="lead">
-    Column State refers to the attributes of a Column that can change. This section goes through how to query for
-    and subsequently set the Column State.
+    <a href="../javascript-grid-column-definitions/">Column Definitions</a> contain both stateful and non-stateful
+    attributes. Stateful attributes can have their values changed by the grid (eg Column sort can be changed
+    by the user clicking on the column header).
+    Non-stateful attributes do not change from what is set in the Column Definition (eg once the Header
+    Name is set as part of a Column Definition, it typically does not change).
 </p>
 
 <p>
-    The full list of Column stateful attributes are: Column Width, Column Flex, Column Pinned, Column Sort,
-    Column Visibility, Column Row Group, Column Pivot, Column Agg Func, Column Order.
+    The full list of stateful attributes of Columns are as follows:
+</p>
+
+<ul class="content">
+    <li>Width</li>
+    <li>Flex</li>
+    <li>Pinned</li>
+    <li>Sort</li>
+    <li>Hide</li>
+    <li>AggFunc</li>
+    <li>Row Group</li>
+    <li>Pivot</li>
+    <li>Column Order</li>
+</ul>
+
+<p>
+    This section details how such state items can be changed.
 </p>
 
 <h2 id="save-and-apply">Save and Apply State</h2>
@@ -47,15 +65,6 @@ SNIPPET
 </ol>
 
 <?= grid_example('Save and Apply State', 'save-apply-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
-
-<h2>State vs Non-State Attributes</h2>
-
-<p>
-    <a href="../javascript-grid-column-definitions/">Column Definitions</a> contain both stateful and non-stateful
-    attributes. Stateful attributes can have their values changed by the grid (eg width, sort etc). Non-stateful
-    attributes do not change from what is set in the Column Definition. For example once the Header Name is set as
-    part of a Column Definition, it will remain the same unless the application updates the Column Definition.
-</p>
 
 <h2>Column State Interface</h2>
 
@@ -230,7 +239,7 @@ SNIPPET
     There are a few items to note on specific state attributes. The are as follows:
 </p>
 
-<h2>Null vs Undefined</h2>
+<h3>Null vs Undefined</h3>
 
 <p>
     For all state attributes, <code>undefined</code> means <i>"do not apply this attribute"</i>
@@ -243,56 +252,49 @@ SNIPPET
 </p>
 
 <p>
-    The only exception is with regards Column Width. For Width, both <code>undefined</code>
+    The only exception is with regards to Column width. For width, both <code>undefined</code>
     and <code>null</code> will skip the attribute. This is because Width is mandatory - there
     is no such things as a Column with no width.
 </p>
 
-<ul class="content">
-    <li>
-    </li>
-    <li>
-        <p><b>Width and Flex</b></p>
+<h3>Width and Flex</h3>
 
-        <p>
-            When Flex is active on a Column, the grid ignores the <code>width</code> attribute when setting the Width.
-        </p>
+<p>
+    When Flex is active on a Column, the grid ignores the <code>width</code> attribute when setting the Width.
+</p>
 
-        <p>
-            When <code>getColumnState()</code> is called, both <code>width</code> and <code>flex</code> are returned.
-            When <code>applyColumnState()</code> is called, if <code>flex</code> is present then <code>width</code> is
-            ignored.
-        </p>
+<p>
+    When <code>getColumnState()</code> is called, both <code>width</code> and <code>flex</code> are returned.
+    When <code>applyColumnState()</code> is called, if <code>flex</code> is present then <code>width</code> is
+    ignored.
+</p>
 
-        <p>
-            If you want to restore a Column's width to the exact same pixel width as specified in the Column State,
-            set <code>flex=null</code> for that Column's state to turn Flex off.
-        </p>
-    </li>
-    <li>
-        <p><b>Row Group and Pivot</b></p>
+<p>
+    If you want to restore a Column's width to the exact same pixel width as specified in the Column State,
+    set <code>flex=null</code> for that Column's state to turn Flex off.
+</p>
 
-        <p>
-            There are two attributes representing both Row Group and Pivot. First using the boolean attributes
-            <code>rowGroup</code> and <code>pivot</code> and then secondly using the index attributes <code>rowGroupIndex</code>
-            and <code>pivotIndex</code>.
-        </p>
+<h3>Row Group and Pivot</h3>
 
-        <p>
-            When <code>getColumnState()</code> is called, all of <code>rowGroup</code>, <code>pivot</code>,
-            <code>rowGroupIndex</code> and <code>pivotIndex</code> are returned. When
-            <code>applyColumnState()</code> is called, preference is given to the index variants. For example
-            if both <code>rowGroup</code> and <code>rowGroupIndex</code> are present, <code>rowGroupIndex</code>
-            is applied.
-        </p>
-    </li>
-</ul>
+<p>
+    There are two attributes representing both Row Group and Pivot. First using the boolean attributes
+    <code>rowGroup</code> and <code>pivot</code> and then secondly using the index attributes <code>rowGroupIndex</code>
+    and <code>pivotIndex</code>.
+</p>
+
+<p>
+    When <code>getColumnState()</code> is called, all of <code>rowGroup</code>, <code>pivot</code>,
+    <code>rowGroupIndex</code> and <code>pivotIndex</code> are returned. When
+    <code>applyColumnState()</code> is called, preference is given to the index variants. For example
+    if both <code>rowGroup</code> and <code>rowGroupIndex</code> are present, <code>rowGroupIndex</code>
+    is applied.
+</p>
 
 <h2>Column Events</h2>
 
 <p>
     Column Events will get raised when applying Column State as these events would
-    normally get raised. For example Column Pinned event will get raised if applying
+    normally get raised. For example <code>columnPinned</code> event will get raised if applying
     the state results in a column getting pinned or unpinned.
 </p>
 
