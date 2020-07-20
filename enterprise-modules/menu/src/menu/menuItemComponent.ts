@@ -121,7 +121,7 @@ export class MenuItemComponent extends Component {
             }
         } else {
             const subMenuGui = this.params.subMenu.getGui();
-            const mouseEnterListener = () => { console.log(`Hello!`); this.cancelDeactivate(); };
+            const mouseEnterListener = () => this.cancelDeactivate();
 
             subMenuGui.addEventListener('mouseenter', mouseEnterListener);
 
