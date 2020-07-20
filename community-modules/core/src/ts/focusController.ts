@@ -133,7 +133,15 @@ export class FocusController extends BeanStub {
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
-        const column = _.makeNull(this.columnController.getGridColumn(colKey));
+        const gridColumn = this.columnController.getGridColumn(colKey);
+        // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
+        // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
+        // to re-focus the focused cell.
+        if (!gridColumn) {
+            this.focusedCellPosition = null;
+            return;
+        }
+        const column = _.makeNull(gridColumn);
         this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
         this.onCellFocused(forceBrowserFocus);
     }
