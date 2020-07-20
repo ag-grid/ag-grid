@@ -665,14 +665,14 @@ export class RowComp extends Component {
         const eligibleToBeRemoved = colIdsToRemove.filter(this.isCellEligibleToBeRemoved.bind(this));
 
         // remove old cells from gui, but we don't destroy them, we might use them again
-        this.removeRenderedCells(eligibleToBeRemoved);
+        this.destroyCells(eligibleToBeRemoved);
     }
 
     private onColumnMoved() {
         this.elementOrderChanged = true;
     }
 
-    private removeRenderedCells(colIds: string[]): void {
+    private destroyCells(colIds: string[]): void {
         colIds.forEach((key: string) => {
             const cellComp = this.cellComps[key];
             // could be old reference, ie removed cell
@@ -751,9 +751,16 @@ export class RowComp extends Component {
             const colId = col.getId();
             const existingCell = this.cellComps[colId];
 
-            if (existingCell) {
+            // need to check the column is the same one, not a new column with the same ID
+            if (existingCell && existingCell.getColumn()==col) {
                 this.ensureCellInCorrectContainer(existingCell);
             } else {
+                if (existingCell) {
+                    // here there is a col with the same id, so need to destroy the old cell first,
+                    // as the old column no longer exists. this happens often with pivoting, where
+                    // id's are pivot_1, pivot_2 etc, so common for new cols with same ID's
+                    this.destroyCells([colId]);
+                }
                 this.createNewCell(col, eRow, cellTemplates, newCellComps);
             }
 
@@ -1431,7 +1438,8 @@ export class RowComp extends Component {
     }
 
     private destroyContainingCells(): void {
-        this.forEachCellComp(renderedCell => renderedCell.destroy());
+        const cellsToDestroy = Object.keys(this.cellComps);
+        this.destroyCells(cellsToDestroy);
         this.destroyFullWidthComponents();
     }
 
