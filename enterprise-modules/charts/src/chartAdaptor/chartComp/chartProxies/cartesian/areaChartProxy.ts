@@ -26,15 +26,15 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            ...options.xAxis,
-            position: 'bottom',
             type: grouping ? 'groupedCategory' : 'category',
+            position: 'bottom',
             paddingInner: 1,
-            paddingOuter: 0
+            paddingOuter: 0,
+            ...options.xAxis
         }, {
-            ...options.yAxis,
+            type: 'number',
             position: 'left',
-            type: 'number'
+            ...options.yAxis
         }];
         agChartOptions.series = [{
             ...seriesDefaults,

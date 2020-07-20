@@ -20,15 +20,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            ...options.xAxis,
+            type: 'category',
             position: 'bottom',
-            type: grouping ? 'groupedCategory' : 'category',
-            paddingInner: 1,
-            paddingOuter: 0
+            ...options.xAxis
         }, {
-            ...options.yAxis,
+            type: 'number',
             position: 'left',
-            type: 'number'
+            ...options.yAxis
         }];
 
         return AgChart.create(agChartOptions, parentElement);

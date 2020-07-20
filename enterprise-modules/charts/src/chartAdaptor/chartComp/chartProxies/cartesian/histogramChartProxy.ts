@@ -25,13 +25,13 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            ...options.xAxis,
+            type: 'number',
             position: 'bottom',
-            type: 'number'
+            ...options.xAxis
         }, {
-            ...options.yAxis,
+            type: 'number',
             position: 'left',
-            type: 'number'
+            ...options.yAxis
         }];
         agChartOptions.series = [{
             ...seriesDefaults,

@@ -25,13 +25,13 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            ...options.xAxis,
+            type: 'number',
             position: 'bottom',
-            type: 'number'
+            ...options.xAxis,
         }, {
-            ...options.yAxis,
+            type: 'number',
             position: 'left',
-            type: 'number'
+            ...options.yAxis,
         }];
 
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);

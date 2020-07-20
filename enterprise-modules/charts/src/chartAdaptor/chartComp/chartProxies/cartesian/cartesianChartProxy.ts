@@ -129,16 +129,16 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             options = {
                 ...options,
                 yAxis: {
-                    ...options.yAxis,
                     type: baseAxisType,
+                    ...options.yAxis
                 }
             };
         } else if (!isHorizontalChart && !options.xAxis.type) {
             options = {
                 ...options,
                 xAxis: {
-                    ...options.xAxis,
                     type: baseAxisType,
+                    ...options.xAxis
                 }
             };
         }
