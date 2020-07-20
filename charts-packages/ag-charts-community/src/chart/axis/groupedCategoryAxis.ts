@@ -275,14 +275,16 @@ export class GroupedCategoryAxis extends ChartAxis {
                 node.textAlign = 'center';
                 node.translationX = datum.screenY - label.fontSize * 0.25;
                 node.translationY = datum.screenX;
-                if (title && index === 0) { // use the phantom root as the axis title
-                    node.text = title.text;
-                    node.fontSize = title.fontSize;
-                    node.fontStyle = title.fontStyle;
-                    node.fontWeight = title.fontWeight;
-                    node.fontFamily = title.fontFamily;
-                    node.textBaseline = 'hanging';
-                    node.visible = labels.length > 0;
+                if (index === 0) { // use the phantom root as the axis title
+                    node.visible = title && title.enabled && labels.length > 0;
+                    if (node.visible) {
+                        node.text = title.text;
+                        node.fontSize = title.fontSize;
+                        node.fontStyle = title.fontStyle;
+                        node.fontWeight = title.fontWeight;
+                        node.fontFamily = title.fontFamily;
+                        node.textBaseline = 'hanging';
+                    }
                 } else {
                     node.text = labelFormatter
                         ? labelFormatter({
