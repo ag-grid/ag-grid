@@ -428,7 +428,7 @@ describe('afterGuiAttached', () => {
 
         const { calls } = eGui.appendChild.mock;
 
-        expect((calls[0][0] as HTMLElement).classList).toContain('ag-menu-option');
+        expect((calls[0][0] as HTMLElement).classList).toContain('ag-compact-menu-option');
     });
 
     it('presents the filter inside an accordion if sub-menu is configured but filter is opened in tool panel', () => {

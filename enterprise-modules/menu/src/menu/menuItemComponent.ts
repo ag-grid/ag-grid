@@ -31,7 +31,7 @@ export interface MenuItemActivatedEvent extends AgEvent {
 }
 
 export interface MenuItemComponentParams extends MenuItemDef {
-    excludeUnusedItems?: boolean;
+    isCompact?: boolean;
     isAnotherSubMenuOpen: () => boolean;
 }
 
@@ -42,8 +42,8 @@ export class MenuItemComponent extends Component {
     public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
     public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     public static ACTIVATION_DELAY = 80;
-    private static ACTIVE_CLASS = 'ag-menu-option-active';
 
+    private isActive = false;
     private tooltip: string;
     private hideSubMenu: () => void;
     private subMenuIsOpen = false;
@@ -51,7 +51,9 @@ export class MenuItemComponent extends Component {
     private deactivateTimeoutId: number;
 
     constructor(private readonly params: MenuItemComponentParams) {
-        super(/* html */`<div class="ag-menu-option" tabindex="-1" role="treeitem"></div>`);
+        super();
+
+        this.setTemplate(/* html */`<div class="${this.getClassName()}" tabindex="-1" role="treeitem"></div>`);
     }
 
     @PostConstruct
@@ -65,7 +67,7 @@ export class MenuItemComponent extends Component {
         const eGui = this.getGui();
 
         if (this.params.disabled) {
-            this.addCssClass('ag-menu-option-disabled');
+            this.addCssClass(this.getClassName('disabled'));
             _.setAriaDisabled(eGui, true);
         } else {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
@@ -163,10 +165,6 @@ export class MenuItemComponent extends Component {
         _.setAriaExpanded(this.getGui(), false);
     }
 
-    public isActive(): boolean {
-        return _.containsClass(this.getGui(), MenuItemComponent.ACTIVE_CLASS);
-    }
-
     public isSubMenuOpen(): boolean {
         return this.subMenuIsOpen;
     }
@@ -176,12 +174,13 @@ export class MenuItemComponent extends Component {
 
         if (this.params.disabled) { return; }
 
-        this.addCssClass(MenuItemComponent.ACTIVE_CLASS);
+        this.isActive = true;
+        this.addCssClass(this.getClassName('active'));
         this.getGui().focus();
 
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(() => {
-                if (this.isAlive() && this.isActive()) {
+                if (this.isAlive() && this.isActive) {
                     this.openSubMenu();
                 }
             }, 300);
@@ -192,7 +191,8 @@ export class MenuItemComponent extends Component {
 
     public deactivate() {
         this.cancelDeactivate();
-        this.removeCssClass(MenuItemComponent.ACTIVE_CLASS);
+        this.removeCssClass(this.getClassName('active'));
+        this.isActive = false;
 
         if (this.subMenuIsOpen) {
             this.hideSubMenu();
@@ -200,10 +200,10 @@ export class MenuItemComponent extends Component {
     }
 
     private addIcon(): void {
-        if (!this.params.checked && !this.params.icon && this.params.excludeUnusedItems) { return; }
+        if (!this.params.checked && !this.params.icon && this.params.isCompact) { return; }
 
         const icon = _.loadTemplate(/* html */
-            `<span ref="eIcon" class="ag-menu-option-part ag-menu-option-icon" role="presentation"></span>`);
+            `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`);
 
         if (this.params.checked) {
             icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
@@ -221,10 +221,10 @@ export class MenuItemComponent extends Component {
     }
 
     private addName(): void {
-        if (!this.params.name && this.params.excludeUnusedItems) { return; }
+        if (!this.params.name && this.params.isCompact) { return; }
 
         const name = _.loadTemplate(/* html */
-            `<span ref="eName" class="ag-menu-option-part ag-menu-option-text">${this.params.name || ''}</span>`);
+            `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`);
 
         this.getGui().appendChild(name);
     }
@@ -242,18 +242,18 @@ export class MenuItemComponent extends Component {
     }
 
     private addShortcut(): void {
-        if (!this.params.shortcut && this.params.excludeUnusedItems) { return; }
+        if (!this.params.shortcut && this.params.isCompact) { return; }
         const shortcut = _.loadTemplate(/* html */
-            `<span ref="eShortcut" class="ag-menu-option-part ag-menu-option-shortcut">${this.params.shortcut || ''}</span>`);
+            `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`);
 
         this.getGui().appendChild(shortcut);
     }
 
     private addSubMenu(): void {
-        if (!this.params.subMenu && this.params.excludeUnusedItems) { return; }
+        if (!this.params.subMenu && this.params.isCompact) { return; }
 
         const pointer = _.loadTemplate(/* html */
-            `<span ref="ePopupPointer" class="ag-menu-option-part ag-menu-option-popup-pointer"></span>`);
+            `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`);
 
         const eGui = this.getGui();
 
@@ -338,5 +338,11 @@ export class MenuItemComponent extends Component {
             // de-activate immediately
             this.deactivate();
         }
+    }
+
+    private getClassName(suffix?: string) {
+        const prefix = this.params.isCompact ? 'ag-compact-menu-option' : 'ag-menu-option';
+
+        return suffix ? `${prefix}-${suffix}` : prefix;
     }
 }

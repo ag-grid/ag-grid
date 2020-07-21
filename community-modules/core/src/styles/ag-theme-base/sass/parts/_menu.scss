@@ -10,37 +10,6 @@
         padding: ag-param(grid-size) 0;
     }
 
-    .ag-menu-option-active {
-        @include ag-color-property(background-color, row-hover-color);
-    }
-
-    .ag-menu-option-part {
-        line-height: ag-param(icon-size);
-        padding: (ag-param(grid-size) + 2) 0;
-    }
-
-    .ag-menu-option-disabled {
-        opacity: 0.5;
-    }
-
-    .ag-menu-option-icon {
-        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
-        width: ag-param(icon-size);
-    }
-
-    .ag-menu-option-text {
-        padding-left: ag-param(grid-size) * 2;
-        padding-right: ag-param(grid-size) * 2;
-    }
-
-    .ag-menu-option-shortcut {
-        @include ag-theme-rtl((padding-right: ag-param(grid-size)));
-    }
-
-    .ag-menu-option-popup-pointer {
-        padding-right: ag-param(grid-size);
-    }
-
     .ag-menu-separator {
         height: (ag-param(grid-size) * 2) + 1;
     }
@@ -49,6 +18,37 @@
         content: "";
         display: block;
         @include ag-border(critical, top);
+    }
+
+    .ag-menu-option-active, .ag-compact-menu-option-active {
+        @include ag-color-property(background-color, row-hover-color);
+    }
+
+    .ag-menu-option-part, .ag-compact-menu-option-part {
+        line-height: ag-param(icon-size);
+        padding: (ag-param(grid-size) + 2) 0;
+    }
+
+    .ag-menu-option-disabled, .ag-compact-menu-option-disabled {
+        opacity: 0.5;
+    }
+
+    .ag-menu-option-icon, .ag-compact-menu-option-icon {
+        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
+        width: ag-param(icon-size);
+    }
+
+    .ag-menu-option-text, .ag-compact-menu-option-text {
+        padding-left: ag-param(grid-size) * 2;
+        padding-right: ag-param(grid-size) * 2;
+    }
+
+    .ag-menu-option-shortcut, .ag-compact-menu-option-shortcut {
+        @include ag-theme-rtl((padding-right: ag-param(grid-size)));
+    }
+
+    .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
+        padding-right: ag-param(grid-size);
     }
 
     ////////////////////////////////////////
