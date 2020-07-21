@@ -9,6 +9,7 @@ import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
+import { escapeString } from "../utils/string";
 
 export interface DragItem {
     /**
@@ -411,7 +412,7 @@ export class DragAndDropService extends BeanStub {
             dragItemName = (dragItemName as () => string)();
         }
 
-        eText.innerHTML = _.escape(dragItemName as string);
+        eText.innerHTML = escapeString(dragItemName as string);
 
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';

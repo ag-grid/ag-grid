@@ -25,7 +25,9 @@ import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
 import { Beans } from "../../rendering/beans";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
-import { _ } from "../../utils";
+import { setAriaExpanded } from "../../utils/aria";
+import { removeFromArray } from "../../utils/array";
+import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -137,7 +139,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         if (!expandable) {
             eGui.removeAttribute('aria-expanded');
         } else {
-            eGui.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            setAriaExpanded(eGui, expanded);
         }
     }
 
@@ -177,7 +179,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
     }
 
     private addAttributes(): void {
@@ -277,7 +279,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.columnController.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
-                _.removeFromArray(allColumnsOriginalOrder, column);
+                removeFromArray(allColumnsOriginalOrder, column);
             }
         });
 
@@ -354,7 +356,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.eHeaderCellResize = this.getRefElement('agResize');
 
         if (!this.column.isResizable()) {
-            _.removeFromParent(this.eHeaderCellResize);
+            removeFromParent(this.eHeaderCellResize);
             return;
         }
 
@@ -416,7 +418,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             this.resizeTakeFromRatios = null;
         }
 
-        _.addCssClass(this.getGui(), 'ag-column-resizing');
+        addCssClass(this.getGui(), 'ag-column-resizing');
 
     }
 
@@ -441,7 +443,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
 
         if (finished) {
-            _.removeCssClass(this.getGui(), 'ag-column-resizing');
+            removeCssClass(this.getGui(), 'ag-column-resizing');
         }
     }
 

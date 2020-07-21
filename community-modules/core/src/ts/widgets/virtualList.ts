@@ -5,6 +5,7 @@ import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { Constants } from '../constants';
 import { addCssClass, containsClass } from '../utils/dom';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected } from '../utils/aria';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -47,7 +48,7 @@ export class VirtualList extends ManagedFocusComponent {
         const target = e.target as HTMLElement;
 
         if (containsClass(target, 'ag-virtual-list-item')) {
-            this.lastFocusedRow = parseInt(target.getAttribute('aria-posinset'), 10) - 1;
+            this.lastFocusedRow = getAriaPosInSet(target) - 1;
         }
     }
 
@@ -220,12 +221,12 @@ export class VirtualList extends ManagedFocusComponent {
         addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
         eDiv.setAttribute('role', 'option');
-        eDiv.setAttribute('aria-setsize', this.model.getRowCount().toString());
-        eDiv.setAttribute('aria-posinset', (rowIndex + 1).toString());
+        setAriaSetSize(eDiv, this.model.getRowCount());
+        setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
 
         if (typeof this.model.isRowSelected === 'function') {
-            eDiv.setAttribute('aria-selected', this.model.isRowSelected(rowIndex).toString());
+            setAriaSelected(eDiv, this.model.isRowSelected(rowIndex));
         }
 
         eDiv.style.height = `${this.rowHeight}px`;

@@ -17,6 +17,7 @@ import { removeFromArray } from '../utils/array';
 import { setDomChildOrder } from '../utils/dom';
 import { FocusController } from '../focusController';
 import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
+import { setAriaRowIndex } from '../utils/aria';
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -61,7 +62,7 @@ export class HeaderRowComp extends Component {
 
     public setRowIndex(idx: number) {
         this.rowIndex = idx;
-        this.getGui().setAttribute('aria-rowindex', (idx + 1).toString());
+        setAriaRowIndex(this.getGui(), idx + 1);
     }
 
     public getRowIndex(): number {

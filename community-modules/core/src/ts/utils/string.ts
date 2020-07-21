@@ -124,7 +124,7 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
-export function escape(toEscape: string | null): string | null {
+export function escapeString(toEscape: string | null): string | null {
     return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
 }
 

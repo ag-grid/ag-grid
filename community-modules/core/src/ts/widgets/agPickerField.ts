@@ -4,7 +4,10 @@ import { Component } from "./component";
 import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
-import { _ } from "../utils";
+import { setAriaLabelledBy } from "../utils/aria";
+import { createIconNoSpan } from "../utils/icon";
+import { exists } from "../utils/generic";
+import { setElementWidth, isVisible } from "../utils/dom";
 
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE = /* html */
@@ -50,7 +53,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 !this.skipClick &&
                 this.pickerComponent &&
                 this.pickerComponent.isAlive() &&
-                _.isVisible(this.pickerComponent.getGui()) &&
+                isVisible(this.pickerComponent.getGui()) &&
                 eGui.contains(e.target as HTMLElement)
             ) {
                 this.skipClick = true;
@@ -76,13 +79,13 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
         }
     }
 
     protected refreshLabel() {
-        if (_.exists(this.getLabel())) {
-            this.eWrapper.setAttribute('aria-labelledby', this.getLabelId());
+        if (exists(this.getLabel())) {
+            setAriaLabelledBy(this.eWrapper, this.getLabelId());
         } else {
             this.eWrapper.removeAttribute('aria-labelledby');
         }
@@ -91,7 +94,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        _.setElementWidth(this.eWrapper, width);
+        setElementWidth(this.eWrapper, width);
         return this;
     }
 

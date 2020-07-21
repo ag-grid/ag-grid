@@ -28,7 +28,8 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
-import { _ } from "../../utils";
+import { setAriaSort } from "../../utils/aria";
+import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -173,7 +174,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private onColumnHover(): void {
         const isHovered = this.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
     private setupSortableClass(enableSorting: boolean): void {
@@ -181,18 +182,15 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const eGui = this.getGui();
 
-        _.addCssClass(eGui, 'ag-header-cell-sortable');
-        eGui.setAttribute('aria-sort', this.getSortState());
-
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => {
-            eGui.setAttribute('aria-sort', this.getSortState());
-        });
+        addCssClass(eGui, 'ag-header-cell-sortable');
+        setAriaSort(eGui, this.getSortState());
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => setAriaSort(eGui, this.getSortState()));
 
         this.sortable = true;
     }
 
-    private getSortState(): string {
-        let sort;
+    private getSortState(): 'ascending' | 'descending' | 'none' {
+        let sort: 'ascending' | 'descending' | 'none';
 
         if (this.column.isSortAscending()) {
             sort = 'ascending';
@@ -207,7 +205,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private onFilterChanged(): void {
         const filterPresent = this.column.isFilterActive();
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
     private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): void {
@@ -250,9 +248,9 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            addCssClass(this.getGui(), 'ag-header-cell-moving');
         } else {
-            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     }
 
@@ -302,7 +300,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         if (!this.eResize) { return; }
 
         if (!this.column.isResizable()) {
-            _.removeFromParent(this.eResize);
+            removeFromParent(this.eResize);
             return;
         }
 
@@ -339,7 +337,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
 
         if (finished) {
-            _.removeCssClass(this.getGui(), 'ag-column-resizing');
+            removeCssClass(this.getGui(), 'ag-column-resizing');
         }
     }
 
@@ -347,7 +345,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
 
-        _.addCssClass(this.getGui(), 'ag-column-resizing');
+        addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
     public getTooltipText(): string | undefined {

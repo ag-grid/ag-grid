@@ -146,7 +146,7 @@ export class DropZoneColumnComp extends Component {
             displayValue = this.displayName;
         }
 
-        const displayValueSanitised: any = _.escape(displayValue);
+        const displayValueSanitised: any = _.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     }
 

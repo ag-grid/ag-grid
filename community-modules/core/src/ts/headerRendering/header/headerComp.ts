@@ -10,7 +10,12 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
 import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
-import { _ } from "../../utils";
+import { escapeString } from "../../utils/string";
+import { createIconNoSpan } from "../../utils/icon";
+import { exists } from "../../utils/generic";
+import { isIOSUserAgent } from "../../utils/browser";
+import { removeFromParent, addOrRemoveCssClass, setDisplayed, clearElement } from "../../utils/dom";
+import { firstExistingValue } from "../../utils/array";
 
 export interface IHeaderParams {
     column: Column;
@@ -72,7 +77,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public init(params: IHeaderParams): void {
-        let template:string = _.firstExistingValue(
+        let template:string = firstExistingValue(
             params.template,
             HeaderComp.TEMPLATE
         );
@@ -92,7 +97,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupText(displayName: string): void {
-        const displayNameSanitised = _.escape(displayName);
+        const displayNameSanitised = escapeString(displayName);
         if (this.eText) {
             this.eText.innerHTML = displayNameSanitised;
         }
@@ -109,7 +114,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 
@@ -120,7 +125,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = options.isSuppressMenuHide();
-        const tapMenuButton = suppressMenuHide && _.exists(this.eMenu);
+        const tapMenuButton = suppressMenuHide && exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
@@ -161,10 +166,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        const hideShowMenu = !this.params.enableMenu || (_.isIOSUserAgent() && !suppressMenuHide);
+        const hideShowMenu = !this.params.enableMenu || (isIOSUserAgent() && !suppressMenuHide);
 
         if (hideShowMenu) {
-            _.removeFromParent(this.eMenu);
+            removeFromParent(this.eMenu);
             return;
         }
 
@@ -192,10 +197,10 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private removeSortIcons(): void {
-        _.removeFromParent(this.eSortAsc);
-        _.removeFromParent(this.eSortDesc);
-        _.removeFromParent(this.eSortNone);
-        _.removeFromParent(this.eSortOrder);
+        removeFromParent(this.eSortAsc);
+        removeFromParent(this.eSortDesc);
+        removeFromParent(this.eSortNone);
+        removeFromParent(this.eSortOrder);
     }
 
     public setupSort(): void {
@@ -242,21 +247,21 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
 
         if (this.eSortAsc) {
-            _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
+            addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
         }
 
         if (this.eSortDesc) {
-            _.addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
+            addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-            _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
+            addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     }
 
@@ -273,12 +278,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         const moreThanOneColSorting = allColumnsWithSorting.length > 1;
         const showIndex = col.isSorting() && moreThanOneColSorting;
 
-        _.setDisplayed(this.eSortOrder, showIndex);
+        setDisplayed(this.eSortOrder, showIndex);
 
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         } else {
-            _.clearElement(this.eSortOrder);
+            clearElement(this.eSortOrder);
         }
     }
 
@@ -292,6 +297,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         const filterPresent = this.params.column.isFilterActive();
-        _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
+        addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
 }

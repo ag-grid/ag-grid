@@ -74,7 +74,7 @@ export class SetFilterListItem extends Component {
         const formattedValue = this.getFormattedValue(colDef, column, value);
 
         if (this.params.showTooltips) {
-            this.tooltipText = _.escape(formattedValue != null ? formattedValue : value);
+            this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
 
             if (_.exists(this.tooltipText)) {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {

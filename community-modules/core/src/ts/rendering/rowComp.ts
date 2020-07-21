@@ -22,7 +22,14 @@ import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Constants } from "../constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
-import { _ } from "../utils";
+import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../utils/aria";
+import { escapeString } from "../utils/string";
+import { removeCssClass, addCssClass, addOrRemoveCssClass, setDomChildOrder, appendHtml, isElementChildOfClass, addStylesToElement } from "../utils/dom";
+import { removeFromArray, pushAll } from "../utils/array";
+import { missing, exists } from "../utils/generic";
+import { isStopPropagationForAgGrid } from "../utils/event";
+import { iterateObject, assign } from "../utils/object";
+import { cssStyleObjectToMarkup } from "../utils/general";
 
 interface CellTemplate {
     template: string;
@@ -160,7 +167,7 @@ export class RowComp extends Component {
         }
         if (this.fadeRowIn) {
             this.createSecondPassFuncs.push(() => {
-                this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
+                this.eAllRowContainers.forEach(eRow => removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
     }
@@ -169,10 +176,10 @@ export class RowComp extends Component {
         const templateParts: string[] = [];
         const rowHeight = this.rowNode.rowHeight;
         const rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        const rowIdSanitised = _.escape(this.rowNode.id);
+        const rowIdSanitised = escapeString(this.rowNode.id);
         const userRowStyles = this.preProcessStylesFromGridOptions();
         const businessKey = this.getRowBusinessKey();
-        const businessKeySanitised = _.escape(businessKey);
+        const businessKeySanitised = escapeString(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
@@ -414,7 +421,7 @@ export class RowComp extends Component {
 
     private setAnimateFlags(animateIn: boolean): void {
         if (animateIn) {
-            const oldRowTopExists = _.exists(this.rowNode.oldRowTop);
+            const oldRowTopExists = exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
             // if the row had no previous position, we fade it in (animate
@@ -536,10 +543,10 @@ export class RowComp extends Component {
         const highlighted = this.rowNode.highlighted;
 
         this.eAllRowContainers.forEach(row => {
-            _.removeCssClass(row, 'ag-row-highlight-above');
-            _.removeCssClass(row, 'ag-row-highlight-below');
+            removeCssClass(row, 'ag-row-highlight-above');
+            removeCssClass(row, 'ag-row-highlight-below');
             if (highlighted) {
-                _.addCssClass(row, 'ag-row-highlight-' + highlighted);
+                addCssClass(row, 'ag-row-highlight-' + highlighted);
             }
         });
     }
@@ -550,7 +557,7 @@ export class RowComp extends Component {
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
+        this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
     }
 
     private onExpandedChanged(): void {
@@ -559,9 +566,9 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach(row => {
             const expanded = rowNode.expanded;
 
-            _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded);
-            _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded);
-            row.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded);
+            addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded);
+            setAriaExpanded(row, expanded);
         });
     }
 
@@ -656,9 +663,9 @@ export class RowComp extends Component {
         this.elementOrderChanged = false;
 
         const colIdsToRemove = Object.keys(this.cellComps);
-        centerCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
-        leftCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
-        rightCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
+        centerCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
+        leftCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
+        rightCols.forEach(col => removeFromArray(colIdsToRemove, col.getId()));
 
         // we never remove editing cells, as this would cause the cells to loose their values while editing
         // as the grid is scrolling horizontally.
@@ -676,7 +683,7 @@ export class RowComp extends Component {
         colIds.forEach((key: string) => {
             const cellComp = this.cellComps[key];
             // could be old reference, ie removed cell
-            if (_.missing(cellComp)) { return; }
+            if (missing(cellComp)) { return; }
 
             cellComp.detach();
             cellComp.destroy();
@@ -767,13 +774,13 @@ export class RowComp extends Component {
         });
 
         if (cellTemplates.length > 0) {
-            _.appendHtml(eRow, cellTemplates.join(''));
+            appendHtml(eRow, cellTemplates.join(''));
             this.callAfterRowAttachedOnCells(newCellComps, eRow);
         }
 
         if (this.elementOrderChanged && this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
             const correctChildOrder = cols.map(col => this.getCellForCol(col));
-            _.setDomChildOrder(eRow, correctChildOrder);
+            setDomChildOrder(eRow, correctChildOrder);
         }
     }
 
@@ -830,7 +837,7 @@ export class RowComp extends Component {
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         const agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
@@ -838,11 +845,11 @@ export class RowComp extends Component {
     }
 
     private onRowMouseDown(mouseEvent: MouseEvent) {
-        this.lastMouseDownOnDragger = _.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+        this.lastMouseDownOnDragger = isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
-        const stop = _.isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
+        const stop = isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
 
         if (stop) { return; }
 
@@ -972,7 +979,7 @@ export class RowComp extends Component {
         const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
         const rowNode = this.rowNode;
 
-        if (_.exists(extraCssClass)) {
+        if (exists(extraCssClass)) {
             classes.push(extraCssClass);
         }
 
@@ -1027,8 +1034,8 @@ export class RowComp extends Component {
             classes.push('ag-row-dragging');
         }
 
-        _.pushAll(classes, this.processClassesFromGridOptions());
-        _.pushAll(classes, this.preProcessRowClassRules());
+        pushAll(classes, this.processClassesFromGridOptions());
+        pushAll(classes, this.preProcessRowClassRules());
 
         // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
@@ -1061,11 +1068,11 @@ export class RowComp extends Component {
 
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst));
+            this.eAllRowContainers.forEach((row) => addOrRemoveCssClass(row, 'ag-row-first', newFirst));
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast));
+            this.eAllRowContainers.forEach((row) => addOrRemoveCssClass(row, 'ag-row-last', newLast));
         }
     }
 
@@ -1117,7 +1124,7 @@ export class RowComp extends Component {
 
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-editing', value));
+        this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-editing', value));
 
         const event: RowEvent = value ?
             this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent
@@ -1142,7 +1149,7 @@ export class RowComp extends Component {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        _.iterateObject(this.cellComps, (key: any, cellComp: CellComp) => {
+        iterateObject(this.cellComps, (key: any, cellComp: CellComp) => {
             if (!cellComp) { return; }
 
             callback(cellComp);
@@ -1154,17 +1161,17 @@ export class RowComp extends Component {
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
-            this.eAllRowContainers.forEach(row => _.addCssClass(row, classStr));
+            this.eAllRowContainers.forEach(row => addCssClass(row, classStr));
         });
     }
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
             (className: string) => {
-                this.eAllRowContainers.forEach(row => _.addCssClass(row, className));
+                this.eAllRowContainers.forEach(row => addCssClass(row, className));
             },
             (className: string) => {
-                this.eAllRowContainers.forEach(row => _.removeCssClass(row, className));
+                this.eAllRowContainers.forEach(row => removeCssClass(row, className));
             }
         );
     }
@@ -1210,12 +1217,12 @@ export class RowComp extends Component {
 
     private preProcessStylesFromGridOptions(): string {
         const rowStyles = this.processStylesFromGridOptions();
-        return _.cssStyleObjectToMarkup(rowStyles);
+        return cssStyleObjectToMarkup(rowStyles);
     }
 
     private postProcessStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.eAllRowContainers.forEach(row => _.addStylesToElement(row, rowStyles));
+        this.eAllRowContainers.forEach(row => addStylesToElement(row, rowStyles));
     }
 
     private processStylesFromGridOptions(): any {
@@ -1242,7 +1249,7 @@ export class RowComp extends Component {
             rowStyleFuncResult = rowStyleFunc(params);
         }
 
-        return _.assign({}, rowStyle, rowStyleFuncResult);
+        return assign({}, rowStyle, rowStyleFuncResult);
     }
 
     private createCells(cols: Column[]): {template: string, cellComps: CellComp[]} {
@@ -1268,8 +1275,8 @@ export class RowComp extends Component {
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected();
         this.eAllRowContainers.forEach((row) => {
-            row.setAttribute('aria-selected', selected ? 'true' : 'false');
-            _.addOrRemoveCssClass(row, 'ag-row-selected', selected);
+            setAriaSelected(row, selected);
+            addOrRemoveCssClass(row, 'ag-row-selected', selected);
             this.refreshAriaLabel(row, selected);
         });
     }
@@ -1280,7 +1287,7 @@ export class RowComp extends Component {
             return;
         }
 
-        node.setAttribute('aria-label', `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`);
+        setAriaLabel(node, `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`);
     }
 
     // called:
@@ -1307,7 +1314,7 @@ export class RowComp extends Component {
         });
 
         this.removeFirstPassFuncs.push(() => {
-            if (_.exists(this.rowNode.rowTop)) {
+            if (exists(this.rowNode.rowTop)) {
                 // the row top is updated anyway, however we set it here again
                 // to something more reasonable for the animation - ie if the
                 // row top is 10000px away, the row will flash out, so this
@@ -1315,7 +1322,7 @@ export class RowComp extends Component {
                 const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
                 this.setRowTop(rowTop);
             } else {
-                _.addCssClass(eRow, 'ag-opacity-zero');
+                addCssClass(eRow, 'ag-opacity-zero');
             }
         });
 
@@ -1357,12 +1364,12 @@ export class RowComp extends Component {
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
             if (!this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
-                _.addCssClass(eRow, 'ag-row-hover');
+                addCssClass(eRow, 'ag-row-hover');
             }
         });
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
-            _.removeCssClass(eRow, 'ag-row-hover');
+            removeCssClass(eRow, 'ag-row-hover');
         });
     }
 
@@ -1386,7 +1393,7 @@ export class RowComp extends Component {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
-        if (_.exists(this.rowNode.rowHeight)) {
+        if (exists(this.rowNode.rowHeight)) {
             const heightPx = `${this.rowNode.rowHeight}px`;
 
             this.eAllRowContainers.forEach(row => row.style.height = heightPx);
@@ -1454,8 +1461,8 @@ export class RowComp extends Component {
         const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused));
+            this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
+            this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused));
             this.rowFocused = rowFocused;
         }
 
@@ -1504,7 +1511,7 @@ export class RowComp extends Component {
 
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
-        if (_.exists(pixels)) {
+        if (exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
             const afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
@@ -1562,11 +1569,11 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
-            eRow.setAttribute('aria-rowindex', (headerRowCount + this.rowNode.rowIndex + 1).toString());
+            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex + 1);
 
             if (!rowIsEvenChanged) { return; }
-            _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
-            _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
+            addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
+            addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
         });
     }
 

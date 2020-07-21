@@ -2,7 +2,9 @@ import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { Constants } from "../constants";
-import { _ } from "../utils";
+import { escapeString } from "../utils/string";
+import { addCssClass, radioCssClass, removeCssClass } from "../utils/dom";
+import { findIndex } from "../utils/array";
 
 export interface ListOption {
     value: string;
@@ -69,7 +71,7 @@ export class AgList extends Component {
 
     public addOption(listOption: ListOption): this {
         const { value, text } = listOption;
-        const sanitisedText = _.escape(text === undefined ? value : text);
+        const sanitisedText = escapeString(text === undefined ? value : text);
 
         this.options.push({ value, text: sanitisedText });
         this.renderOption(sanitisedText);
@@ -81,8 +83,8 @@ export class AgList extends Component {
         const itemEl = document.createElement('div');
         const itemContentEl = document.createElement('span');
 
-        _.addCssClass(itemEl, 'ag-list-item');
-        _.addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
+        addCssClass(itemEl, 'ag-list-item');
+        addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
 
         itemEl.tabIndex = -1;
         itemContentEl.innerHTML = innerText;
@@ -110,7 +112,7 @@ export class AgList extends Component {
             return this;
         }
 
-        const idx = _.findIndex(this.options, option => option.value === value);
+        const idx = findIndex(this.options, option => option.value === value);
 
         if (idx !== -1) {
             const option = this.options[idx];
@@ -141,7 +143,7 @@ export class AgList extends Component {
 
     public refreshHighlighted(): void {
         this.clearHighlighted();
-        const idx = _.findIndex(this.options, option => option.value === this.value);
+        const idx = findIndex(this.options, option => option.value === this.value);
 
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
@@ -157,14 +159,14 @@ export class AgList extends Component {
 
     private highlightItem(el: HTMLElement): void {
         if (!el.offsetParent) { return; }
-        _.radioCssClass(el, 'ag-active-item');
+        radioCssClass(el, 'ag-active-item');
         this.highlightedEl = el;
         this.highlightedEl.focus();
     }
 
     private clearHighlighted(): void {
         if (!this.highlightedEl || !this.highlightedEl.offsetParent) { return; }
-        _.removeCssClass(this.highlightedEl, 'ag-active-item');
+        removeCssClass(this.highlightedEl, 'ag-active-item');
         this.highlightedEl = null;
     }
 

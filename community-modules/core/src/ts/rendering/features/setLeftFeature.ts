@@ -5,7 +5,9 @@ import { Beans } from "../beans";
 import { Constants } from "../../constants";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { _ } from "../../utils";
+import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
+import { last } from "../../utils/array";
+import { exists } from "../../utils/generic";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -40,7 +42,7 @@ export class SetLeftFeature extends BeanStub {
 
     public getColumnOrGroup(): ColumnGroupChild {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            return _.last(this.colsSpanning);
+            return last(this.colsSpanning);
         }
         return this.columnOrGroup;
     }
@@ -53,7 +55,7 @@ export class SetLeftFeature extends BeanStub {
 
     private setLeftFirstTime(): void {
         const suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
-        const oldLeftExists = _.exists(this.columnOrGroup.getOldLeft());
+        const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -110,7 +112,7 @@ export class SetLeftFeature extends BeanStub {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (_.exists(value)) {
+        if (exists(value)) {
             this.eCell.style.left = `${value}px`;
         }
 
@@ -125,13 +127,13 @@ export class SetLeftFeature extends BeanStub {
             if (!children.length) { return; }
 
             if (children.length > 1) {
-                this.ariaEl.setAttribute('aria-colspan', children.length.toString());
+                setAriaColSpan(this.ariaEl, children.length);
             }
 
             indexColumn = children[0];
         }
 
         const index = this.beans.columnController.getAriaColumnIndex(indexColumn);
-        this.ariaEl.setAttribute('aria-colindex', index.toString());
+        setAriaColIndex(this.ariaEl, index);
     }
 }

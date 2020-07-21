@@ -109,7 +109,7 @@ export class ChartDataPanel extends Component {
         columns.forEach(col => {
             const comp = this.categoriesGroupComp!.createManagedBean(new AgRadioButton());
 
-            comp.setLabel(_.escape(col.displayName)!);
+            comp.setLabel(_.escapeString(col.displayName)!);
             comp.setValue(col.selected);
             comp.setInputName(inputName);
 
@@ -200,7 +200,7 @@ export class ChartDataPanel extends Component {
 
     private generateGetSeriesLabel(): (col: ColState) => string {
         if (!this.chartController.isActiveXYChart()) {
-            return col => _.escape(col.displayName)!;
+            return col => _.escapeString(col.displayName)!;
         }
 
         const isBubble = this.chartType === ChartType.Bubble;
@@ -213,7 +213,7 @@ export class ChartDataPanel extends Component {
         indexToAxisLabel.set(2, 'size');
 
         return (col: ColState): string => {
-            const escapedLabel = _.escape(col.displayName)!;
+            const escapedLabel = _.escapeString(col.displayName)!;
 
             if (!col.selected) {
                 return escapedLabel;

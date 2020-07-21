@@ -67,7 +67,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        const displayNameSanitised: any = _.escape(this.displayName);
+        const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 

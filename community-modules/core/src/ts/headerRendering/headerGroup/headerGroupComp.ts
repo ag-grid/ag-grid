@@ -9,7 +9,11 @@ import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { GridApi } from "../../gridApi";
-import { _ } from "../../utils";
+import { escapeString } from "../../utils/string";
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
+import { setDisplayed } from "../../utils/dom";
+import { createIconNoSpan } from "../../utils/icon";
+import { exists } from "../../utils/generic";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -64,7 +68,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addInIcon("columnGroupClosed", "agClosed");
 
         const expandAction = (event: MouseEvent) => {
-            if (_.isStopPropagationForAgGrid(event)) {
+            if (isStopPropagationForAgGrid(event)) {
                 return;
             }
 
@@ -76,7 +80,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
-            _.stopPropagationForAgGrid(event);
+            stopPropagationForAgGrid(event);
         };
 
         // adding stopPropagation to the double click for the icons prevents double click action happening
@@ -108,23 +112,23 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             const expanded = this.params.columnGroup.isExpanded();
-            _.setDisplayed(this.eOpenIcon, expanded);
-            _.setDisplayed(this.eCloseIcon, !expanded);
+            setDisplayed(this.eOpenIcon, expanded);
+            setDisplayed(this.eCloseIcon, !expanded);
         } else {
-            _.setDisplayed(this.eOpenIcon, false);
-            _.setDisplayed(this.eCloseIcon, false);
+            setDisplayed(this.eOpenIcon, false);
+            setDisplayed(this.eCloseIcon, false);
         }
     }
 
     private addInIcon(iconName: string, refName: string): void {
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
+        const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     }
 
     private addGroupExpandIcon() {
         if (!this.params.columnGroup.isExpandable()) {
-            _.setDisplayed(this.eOpenIcon, false);
-            _.setDisplayed(this.eCloseIcon, false);
+            setDisplayed(this.eOpenIcon, false);
+            setDisplayed(this.eCloseIcon, false);
             return;
         }
     }
@@ -133,8 +137,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // no renderer, default text render
         const displayName = this.params.displayName;
 
-        if (_.exists(displayName)) {
-            const displayNameSanitised = _.escape(displayName);
+        if (exists(displayName)) {
+            const displayNameSanitised = escapeString(displayName);
             this.getRefElement("agLabel").innerHTML = displayNameSanitised;
         }
     }

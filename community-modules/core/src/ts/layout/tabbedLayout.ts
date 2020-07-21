@@ -1,8 +1,12 @@
-import { Promise, _ } from '../utils';
+import { Promise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { Constants } from '../constants';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
+import { setAriaLabel } from '../utils/aria';
+import { find } from '../utils/generic';
+import { callIfPresent } from '../utils/function';
 
 export class TabbedLayout extends ManagedFocusComponent {
 
@@ -102,7 +106,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         let minHeight = 0;
 
         this.items.forEach((itemWrapper: TabbedItemWrapper) => {
-            _.clearElement(eDummyBody);
+            clearElement(eDummyBody);
 
             const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body.cloneNode(true)) as HTMLElement;
             if (eClone == null) { return; }
@@ -133,9 +137,9 @@ export class TabbedLayout extends ManagedFocusComponent {
         const eHeaderButton = document.createElement('span');
         eHeaderButton.tabIndex = -1;
         eHeaderButton.appendChild(item.title);
-        _.addCssClass(eHeaderButton, 'ag-tab');
+        addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
-        eHeaderButton.setAttribute('aria-label', item.titleLabel);
+        setAriaLabel(eHeaderButton, item.titleLabel);
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
@@ -147,7 +151,7 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        const itemWrapper = _.find(this.items, wrapper => {
+        const itemWrapper = find(this.items, wrapper => {
             return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
@@ -161,11 +165,11 @@ export class TabbedLayout extends ManagedFocusComponent {
         }
 
         if (this.activeItem === wrapper) {
-            _.callIfPresent(this.params.onActiveItemClicked);
+            callIfPresent(this.params.onActiveItemClicked);
             return;
         }
 
-        _.clearElement(this.eBody);
+        clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusController.isKeyboardFocus();
@@ -174,9 +178,9 @@ export class TabbedLayout extends ManagedFocusComponent {
         });
 
         if (this.activeItem) {
-            _.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
+            removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
-        _.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+        addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
 
         this.activeItem = wrapper;
 
