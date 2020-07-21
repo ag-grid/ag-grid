@@ -132,7 +132,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.eValueTo2.setInputAriaLabel(this.translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();

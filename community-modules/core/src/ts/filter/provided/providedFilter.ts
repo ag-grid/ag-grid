@@ -342,7 +342,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (params == null) { return; }
+
         this.hidePopup = params.hidePopup;
     }
 

@@ -152,8 +152,8 @@ export class MultiFilter extends Component implements IFilterComp {
         group.addItem(filter.getGui());
         group.toggleGroupExpand(false);
 
-        if (typeof (filter as any).refreshVirtualList === 'function') {
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => (filter as any).refreshVirtualList());
+        if (filter.afterGuiAttached) {
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached());
         }
 
         return group;
@@ -255,8 +255,11 @@ export class MultiFilter extends Component implements IFilterComp {
         return this.filters[index];
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        this.refreshGui(params.container);
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (params) {
+            this.refreshGui(params.container);
+        }
+
         this.executeFunctionIfExists('afterGuiAttached', params);
     }
 

@@ -196,7 +196,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         setDisplayed(this.eValue2.getGui(), showValue2);
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams) {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams) {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();

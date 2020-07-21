@@ -123,14 +123,20 @@ export class MenuItemComponent extends Component {
                 setTimeout(() => childMenu.activateFirstItem(), 0);
             }
         } else {
-            const subMenuGui = this.params.subMenu.getGui();
+            const { subMenu } = this.params;
+            const subMenuGui = subMenu.getGui();
+            const mouseEvent = 'mouseenter';
             const mouseEnterListener = () => this.cancelDeactivate();
 
-            subMenuGui.addEventListener('mouseenter', mouseEnterListener);
+            subMenuGui.addEventListener(mouseEvent, mouseEnterListener);
 
-            destroySubMenu = () => subMenuGui.removeEventListener('mouseenter', mouseEnterListener);
+            destroySubMenu = () => subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
 
-            ePopup.appendChild(this.params.subMenu.getGui());
+            ePopup.appendChild(subMenuGui);
+
+            if (subMenu.afterGuiAttached) {
+                setTimeout(() => subMenu.afterGuiAttached(), 0);
+            }
         }
 
         const closePopup = this.popupService.addAsModalPopup(ePopup, false);
