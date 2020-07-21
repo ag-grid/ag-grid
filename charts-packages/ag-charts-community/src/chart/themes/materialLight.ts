@@ -1,4 +1,5 @@
-import { AgChartThemePalette, AgChartTheme } from "./agChartTheme";
+import { AgChartTheme } from "./agChartTheme";
+import { AgChartThemePalette } from "../agChartOptions";
 
 export class MaterialLight extends AgChartTheme {
     readonly palette: AgChartThemePalette = {

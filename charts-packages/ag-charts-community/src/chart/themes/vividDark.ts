@@ -1,5 +1,5 @@
 import { DarkTheme } from "./darkTheme";
-import { AgChartThemePalette } from "./agChartTheme";
+import { AgChartThemePalette } from "../agChartOptions";
 
 export class VividDark extends DarkTheme {
     readonly palette: AgChartThemePalette = {

@@ -18,7 +18,7 @@ import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
-    IAgChartTheme
+    AgChartThemeOptions
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
@@ -41,14 +41,14 @@ const themes: { [key in string]: AgChartTheme } = {
     'vivid-dark': new VividDark()
 };
 
-export function getChartTheme(value: string | AgChartTheme | IAgChartTheme): AgChartTheme {
+export function getChartTheme(value: string | AgChartTheme | AgChartThemeOptions): AgChartTheme {
     if (themes[value as string]) {
         return themes[value as string];
     }
     if (value instanceof AgChartTheme) {
         return value;
     }
-    value = value as IAgChartTheme;
+    value = value as AgChartThemeOptions;
     if (value.defaults || value.palette) {
         const baseTheme: any = getChartTheme(value.baseTheme);
         return new baseTheme.constructor(value);

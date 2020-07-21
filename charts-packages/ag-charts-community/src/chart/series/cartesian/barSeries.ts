@@ -20,6 +20,16 @@ import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 
+export interface BarSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: BarSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+}
+
+export { BarTooltipRendererParams };
+
 interface BarNodeDatum extends SeriesNodeDatum {
     yKey: string;
     yValue: number;
@@ -42,29 +52,13 @@ interface BarNodeDatum extends SeriesNodeDatum {
     };
 }
 
-export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-}
-
-export { BarTooltipRendererParams };
-
-export interface BarLabelFormatterParams {
-    value: number;
-}
-
-export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
-
 enum BarSeriesNodeTag {
     Bar,
     Label
 }
 
 class BarSeriesLabel extends Label {
-    @reactive('change') formatter?: BarLabelFormatter;
+    @reactive('change') formatter?: (params: { value: number }) => string;
 }
 
 export class BarSeries extends CartesianSeries {

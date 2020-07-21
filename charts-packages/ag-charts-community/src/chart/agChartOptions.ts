@@ -1,12 +1,25 @@
-import { AxisLabelFormatterParams } from "../axis";
-import { Marker } from "./marker/marker";
-import { AgChartTheme, AgChartThemeOverrides } from "./themes/agChartTheme";
-
 type FontStyle = 'normal' | 'italic' | 'oblique';
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-export interface IAgChartTheme extends AgChartThemeOverrides {
-    baseTheme?: string | AgChartTheme;
+type AgChartThemeName = 'default'
+    | 'light' | 'dark'
+    | 'material-light' | 'material-dark'
+    | 'pastel-light' | 'pastel-dark'
+    | 'solar-light' | 'solar-dark'
+    | 'vivid-light' | 'vivid-dark';
+
+export interface AgChartThemePalette {
+    fills: string[];
+    strokes: string[];
+}
+
+export interface AgChartThemeOverrides {
+    palette: AgChartThemePalette;
+    defaults: any;
+}
+
+export interface AgChartThemeOptions extends AgChartThemeOverrides {
+    baseTheme?: AgChartThemeName; // | AgChartTheme;
 }
 
 export interface AgChartPaddingOptions {
@@ -75,7 +88,7 @@ type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 interface AgChartLegendMarkerOptions {
     size?: number;
-    shape?: string | (new () => Marker);
+    shape?: string | (new () => any); // Remove the (new () => any) eventually.
     padding?: number;
     strokeWidth?: number;
 }
@@ -115,7 +128,7 @@ interface AgChartLegendOptions {
     /**
      * @deprecated
      */
-    markerShape?: string | (new () => Marker);
+    markerShape?: string | (new () => any);
     /**
      * @deprecated
      */
@@ -164,7 +177,7 @@ interface AgBaseChartOptions {
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
     listeners?: { [key in string]: Function };
-    theme?: string | AgChartTheme | IAgChartTheme;
+    theme?: string | AgChartThemeOptions; // | AgChartTheme
 }
 
 interface AgBaseAxisOptions {
@@ -185,6 +198,13 @@ interface AgAxisTickOptions {
     count?: any;
 }
 
+interface AgAxisLabelFormatterParams {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}
+
 interface AgAxisLabelOptions {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
@@ -196,7 +216,7 @@ interface AgAxisLabelOptions {
     // mirrored?: boolean;
     // parallel?: boolean;
     format?: string;
-    formatter?: (params: AxisLabelFormatterParams) => string;
+    formatter?: (params: AgAxisLabelFormatterParams) => string;
 }
 
 interface AgAxisGridStyle {
@@ -373,6 +393,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    label?: AgBarSeriesLabelOptions;
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
@@ -402,6 +423,14 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
 interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     offset?: number;
     minAngle?: number;
+}
+
+interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: number }) => string;
+}
+
+interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: number }) => string;
 }
 
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {

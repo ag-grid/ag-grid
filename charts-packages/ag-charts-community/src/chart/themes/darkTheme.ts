@@ -1,4 +1,5 @@
-import { AgChartTheme, AgChartThemeOverrides } from "./agChartTheme";
+import { AgChartTheme } from "./agChartTheme";
+import { AgChartThemeOverrides } from "../agChartOptions";
 
 export class DarkTheme extends AgChartTheme {
 

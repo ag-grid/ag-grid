@@ -1,16 +1,7 @@
 import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
 import { Chart } from "../chart";
-
-export interface AgChartThemePalette {
-    fills: string[];
-    strokes: string[];
-}
-
-export interface AgChartThemeOverrides {
-    palette: AgChartThemePalette;
-    defaults: any;
-}
+import { AgChartThemeOverrides, AgChartThemePalette } from "../agChartOptions";
 
 export class AgChartTheme {
 
@@ -118,7 +109,8 @@ export class AgChartTheme {
                 fontWeight: undefined,
                 fontSize: 12,
                 fontFamily: this.fontFamily,
-                color: 'rgb(70, 70, 70)'
+                color: 'rgb(70, 70, 70)',
+                formatter: undefined
             },
             shadow: {
                 enabled: false,
@@ -326,6 +318,15 @@ export class AgChartTheme {
                     tooltipRenderer: undefined,
                     highlightStyle: {
                         fill: 'yellow'
+                    },
+                    label: {
+                        enabled: false,
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: AgChartTheme.fontFamily,
+                        color: 'rgb(70, 70, 70)',
+                        formatter: undefined
                     }
                 }
             },

@@ -1,5 +1,5 @@
 import { DarkTheme } from "./darkTheme";
-import { AgChartThemePalette } from "../../../../../charts-packages/ag-charts-community/src/chart/themes/agChartTheme";
+import { AgChartThemePalette } from "../agChartOptions";
 
 export class SolarDark extends DarkTheme {
     readonly palette: AgChartThemePalette = {

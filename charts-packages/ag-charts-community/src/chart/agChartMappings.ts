@@ -235,11 +235,12 @@ const labelDefaults: any = {
     color: 'rgb(70, 70, 70)'
 };
 
-const labelMapping: any = {
+const barLabelMapping: any = {
     label: {
         meta: {
             defaults: {
-                ...labelDefaults
+                ...labelDefaults,
+                formatter: undefined
             }
         }
     }
@@ -372,7 +373,7 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
-                ...labelMapping,
+                ...barLabelMapping,
                 ...shadowMapping
             },
             [BarSeries.type]: {
@@ -385,7 +386,7 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
-                ...labelMapping,
+                ...barLabelMapping,
                 ...shadowMapping
             },
             [LineSeries.type]: {
@@ -530,6 +531,14 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                label: {
+                    meta: {
+                        defaults: {
+                            ...labelDefaults,
+                            formatter: undefined
+                        }
+                    }
+                },
                 ...shadowMapping
             }
         },
