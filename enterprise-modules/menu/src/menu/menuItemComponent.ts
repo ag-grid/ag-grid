@@ -66,7 +66,7 @@ export class MenuItemComponent extends Component {
 
         if (this.params.disabled) {
             this.addCssClass('ag-menu-option-disabled');
-            eGui.setAttribute('aria-disabled', 'true');
+            _.setAriaDisabled(eGui, true);
         } else {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
@@ -105,7 +105,7 @@ export class MenuItemComponent extends Component {
         let destroySubMenu: () => void;
 
         if (this.params.subMenu instanceof Array) {
-            const currentLevel = parseInt(this.getGui().getAttribute('aria-level'), 10);
+            const currentLevel = _.getAriaLevel(this.getGui());
             const nextLevel = isNaN(currentLevel) ? 1 : (currentLevel + 1);
             const childMenu = this.createBean(new MenuList(nextLevel));
 
@@ -146,14 +146,15 @@ export class MenuItemComponent extends Component {
         const eGui = this.getGui();
 
         this.popupService.positionPopupForMenu({ eventSource: eGui, ePopup });
-        eGui.setAttribute('aria-expanded', 'true');
+
+        _.setAriaExpanded(eGui, true);
     }
 
     public closeSubMenu(): void {
         if (!this.hideSubMenu) { return; }
-            this.hideSubMenu();
-            this.hideSubMenu = null;
-            this.getGui().setAttribute('aria-expanded', 'false');
+        this.hideSubMenu();
+        this.hideSubMenu = null;
+        _.setAriaExpanded(this.getGui(), false);
     }
 
     public isActive(): boolean {
@@ -247,12 +248,12 @@ export class MenuItemComponent extends Component {
 
         const pointer = _.loadTemplate(/* html */
             `<span ref="ePopupPointer" class="ag-menu-option-part ag-menu-option-popup-pointer"></span>`);
-            
+
         const eGui = this.getGui();
 
         if (this.params.subMenu) {
             const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
-            eGui.setAttribute('aria-expanded', 'false');
+            _.setAriaExpanded(eGui, false);
 
             pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper));
         }

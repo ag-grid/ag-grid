@@ -13,11 +13,9 @@ export class MenuList extends ManagedFocusComponent {
 
     private menuItems: MenuItemComponent[] = [];
     private activeMenuItem: MenuItemComponent | null;
-    private readonly level: number;
 
-    constructor(level = 1) {
+    constructor(private readonly level = 1) {
         super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
-        this.level = level;
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
@@ -84,7 +82,8 @@ export class MenuList extends ManagedFocusComponent {
         }));
 
         menuItem.setParentComponent(this);
-        menuItem.getGui().setAttribute('aria-level', this.level.toString());
+
+        _.setAriaLevel(menuItem.getGui(), this.level);
 
         this.menuItems.push(menuItem);
         this.appendChild(menuItem.getGui());
