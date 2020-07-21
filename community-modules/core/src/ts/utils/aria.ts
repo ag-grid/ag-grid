@@ -1,7 +1,27 @@
+import { Column } from "../entities/column";
+
+type ColumnSortState = 'ascending' | 'descending' | 'none';
+
+// ARIA HELPER FUNCTIONS
 function setAriaAttribute(element: HTMLElement, attribute: string, value: number | boolean | string): void {
     element.setAttribute(`aria-${attribute}`, value.toString());
 }
 
+export function getAriaSortState(column: Column): ColumnSortState {
+    let sort: ColumnSortState;
+
+    if (column.isSortAscending()) {
+        sort = 'ascending';
+    } else if (column.isSortDescending()) {
+        sort = 'descending';
+    } else {
+        sort = 'none';
+    }
+
+    return sort;
+}
+
+// ARIA ATTRIBUTE GETTERS
 export function getAriaLevel(element: HTMLElement): number {
     return parseInt(element.getAttribute('aria-level'), 10);
 }
@@ -10,6 +30,7 @@ export function getAriaPosInSet(element: HTMLElement): number {
     return parseInt(element.getAttribute('aria-posinset'), 10);
 }
 
+// ARIA ATTRIBUTE SETTERS
 export function setAriaLabel(element: HTMLElement, label: string): void {
     setAriaAttribute(element, 'label', label);
 }
@@ -38,16 +59,16 @@ export function setAriaPosInSet(element: HTMLElement, position: number): void {
     setAriaAttribute(element, 'posinset', position);
 }
 
-export function setAriaMultiSelectable(element: HTMLElement, multiselectable: boolean): void {
-    setAriaAttribute(element, 'multiselectable', multiselectable);
+export function setAriaMultiSelectable(element: HTMLElement, multiSelectable: boolean): void {
+    setAriaAttribute(element, 'multiselectable', multiSelectable);
 }
 
 export function setAriaRowCount(element: HTMLElement, rowCount: number): void {
     setAriaAttribute(element, 'rowcount', rowCount);
 }
 
-export function setAriaRowIndex(element: HTMLElement, rowCount: number): void {
-    setAriaAttribute(element, 'rowindex', rowCount);
+export function setAriaRowIndex(element: HTMLElement, rowIndex: number): void {
+    setAriaAttribute(element, 'rowindex', rowIndex);
 }
 
 export function setAriaColCount(element: HTMLElement, colCount: number): void {
@@ -58,11 +79,11 @@ export function setAriaColIndex(element: HTMLElement, colIndex: number): void {
     setAriaAttribute(element, 'colindex', colIndex);
 }
 
-export function setAriaColSpan(element: HTMLElement, span: number): void {
-    setAriaAttribute(element, 'colspan', span);
+export function setAriaColSpan(element: HTMLElement, colSpan: number): void {
+    setAriaAttribute(element, 'colspan', colSpan);
 }
 
-export function setAriaSort(element: HTMLElement, sort: 'ascending' | 'descending' | 'none'): void {
+export function setAriaSort(element: HTMLElement, sort: ColumnSortState): void {
     setAriaAttribute(element, 'sort', sort);
 }
 

@@ -28,7 +28,7 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
-import { setAriaSort } from "../../utils/aria";
+import { setAriaSort, getAriaSortState } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
@@ -183,24 +183,9 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const eGui = this.getGui();
 
         addCssClass(eGui, 'ag-header-cell-sortable');
-        setAriaSort(eGui, this.getSortState());
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => setAriaSort(eGui, this.getSortState()));
-
+        setAriaSort(eGui, getAriaSortState(this.column));
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, () => setAriaSort(eGui, getAriaSortState(this.column)));
         this.sortable = true;
-    }
-
-    private getSortState(): 'ascending' | 'descending' | 'none' {
-        let sort: 'ascending' | 'descending' | 'none';
-
-        if (this.column.isSortAscending()) {
-            sort = 'ascending';
-        } else if (this.column.isSortDescending()) {
-            sort = 'descending';
-        } else {
-            sort = 'none';
-        }
-
-        return sort;
     }
 
     private onFilterChanged(): void {
