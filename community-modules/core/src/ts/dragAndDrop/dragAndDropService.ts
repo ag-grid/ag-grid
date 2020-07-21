@@ -8,8 +8,13 @@ import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
-import { _ } from "../utils";
 import { escapeString } from "../utils/string";
+import { createIcon } from "../utils/icon";
+import { removeFromArray } from "../utils/array";
+import { find } from "../utils/generic";
+import { getBodyHeight, getBodyWidth } from "../utils/browser";
+import { loadTemplate, addCssClass, clearElement, addOrRemoveCssClass } from "../utils/dom";
+import { isFunction } from "../utils/function";
 
 export interface DragItem {
     /**
@@ -142,15 +147,15 @@ export class DragAndDropService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.eHideIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
-        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
-        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
-        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
-        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
-        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
-        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
-        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
+        this.ePinnedIcon = createIcon('columnMovePin', this.gridOptionsWrapper, null);
+        this.eHideIcon = createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eMoveIcon = createIcon('columnMoveMove', this.gridOptionsWrapper, null);
+        this.eLeftIcon = createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
+        this.eRightIcon = createIcon('columnMoveRight', this.gridOptionsWrapper, null);
+        this.eGroupIcon = createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
+        this.eAggregateIcon = createIcon('columnMoveValue', this.gridOptionsWrapper, null);
+        this.ePivotIcon = createIcon('columnMovePivot', this.gridOptionsWrapper, null);
+        this.eDropNotAllowedIcon = createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -168,11 +173,11 @@ export class DragAndDropService extends BeanStub {
     }
 
     public removeDragSource(dragSource: DragSource): void {
-        const sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
+        const sourceAndParams = find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
 
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
-            _.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+            removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
         }
     }
 
@@ -229,7 +234,7 @@ export class DragAndDropService extends BeanStub {
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        const dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        const dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
 
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
@@ -314,7 +319,7 @@ export class DragAndDropService extends BeanStub {
     public findExternalZone(params: RowDropZoneParams): DropTarget {
         const externalTargets = this.dropTargets.filter(target => target.external);
 
-        return _.find(externalTargets, zone => zone.getContainer() === params.getContainer());
+        return find(externalTargets, zone => zone.getContainer() === params.getContainer());
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
@@ -354,8 +359,8 @@ export class DragAndDropService extends BeanStub {
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
-        const browserWidth = _.getBodyWidth() - 2;
-        const browserHeight = _.getBodyHeight() - 2;
+        const browserWidth = getBodyWidth() - 2;
+        const browserHeight = getBodyHeight() - 2;
 
         let top = event.pageY - (ghostHeight / 2);
         let left = event.pageX - 10;
@@ -394,11 +399,11 @@ export class DragAndDropService extends BeanStub {
     }
 
     private createGhost(): void {
-        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost = loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            _.addCssClass(this.eGhost, theme);
+            addCssClass(this.eGhost, theme);
         }
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
@@ -408,7 +413,7 @@ export class DragAndDropService extends BeanStub {
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
 
-        if (_.isFunction(dragItemName)) {
+        if (isFunction(dragItemName)) {
             dragItemName = (dragItemName as () => string)();
         }
 
@@ -429,7 +434,7 @@ export class DragAndDropService extends BeanStub {
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
-        _.clearElement(this.eGhostIcon);
+        clearElement(this.eGhostIcon);
 
         let eIcon: HTMLElement;
 
@@ -449,7 +454,7 @@ export class DragAndDropService extends BeanStub {
             case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
         }
 
-        _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+        addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
 
         if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
             return;
