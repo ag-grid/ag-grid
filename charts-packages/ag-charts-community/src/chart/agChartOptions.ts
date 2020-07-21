@@ -375,6 +375,10 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
+interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: number }) => string;
+}
+
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
     grouped?: boolean;
@@ -395,6 +399,10 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     };
     label?: AgBarSeriesLabelOptions;
     tooltipRender?: (params: AgCartesianSeriesTooltipRendererParams) => string;
+}
+
+interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: number }) => string;
 }
 
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
@@ -423,14 +431,6 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
 interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     offset?: number;
     minAngle?: number;
-}
-
-interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
-}
-
-interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
 }
 
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
