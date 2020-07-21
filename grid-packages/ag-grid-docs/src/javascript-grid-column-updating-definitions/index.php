@@ -268,9 +268,8 @@ SNIPPET
 </ol>
 
 <p>
-    In other words, to have the grid correctly match columns you should provide a <code>colId</code>
-    for the column if a) there is no <code>field</code> attribute, or b) the <code>field</code> attribute
-    is not unique.
+    In other words, to have the grid correctly match Columns make sure each Column has either a
+    <code>field</code> or <code>colId</code>.
 </p>
 
 <p>
@@ -301,21 +300,6 @@ SNIPPET
 </ul>
 
 <?= grid_example('Matching Columns', 'matching-columns', 'generated') ?>
-
-<p>
-    Comparison of column definitions is done on 1) object reference comparison and 2)
-    column ID eg <code>colDef.colId</code>. If either the object reference matches, or
-    the column ID matches, then the grid treats the columns as the same column. For example
-    if the grid has a column with ID <code>'country'</code> and the user sets new columns, one of which
-    also has ID of <code>'country'</code>, then the old country column is kept in place of the new one
-    keeping its internal state such as width, position, sort and filter.
-</p>
-
-<note>
-    If you are updating the columns (not replacing the entire set) then you must either
-    provide column ID's or reuse the column definition object instances. Otherwise the grid will
-    not know that the columns are in fact the same columns.
-</note>
 
 <h2>Column Events</h2>
 
