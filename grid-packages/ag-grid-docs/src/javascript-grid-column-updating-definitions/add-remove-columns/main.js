@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
+            this.onBtIncludeMedalColumns();
             gridOptions.api.setRowData(data);
         });
 });

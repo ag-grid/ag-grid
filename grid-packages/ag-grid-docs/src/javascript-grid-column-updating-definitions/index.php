@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Add & Remove Columns', 'add-remove-columns', 'generated') ?>
+<?= grid_example('Add & Remove Columns', 'add-remove-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>
     In the example above, note that any state applied to any column (eg sort, filter, width, column position) will
@@ -81,7 +81,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Updating Column Definition', 'update-column-definition', 'generated') ?>
+<?= grid_example('Updating Column Definition', 'update-column-definition', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>
     It is not possible to update the Column Definition of just one column in isolation. Only a new set of
@@ -178,17 +178,18 @@ SNIPPET
 </ul>
 <?= grid_example('Updating Column Defaults', 'changing-default', 'generated') ?>
 
+<br/>
 <p>
     The following example shows Column Definitions using <b>stateful attributes</b>. Note the following:
 </p>
 <ul>
     <li>
         The <code>width</code>, <code>sort</code> and <code>pinned</code>
-        is applied whenever Column Definitions are set.
+        <code>stateful attributes</code> are applied whenever Column Definitions are set.
     </li>
     <li>
         If you update the width, sort or pinned of a column by interacting with the grid's UI
-        and then hit 'Set Columns with State', the columns state will change.
+        and then hit 'Set Columns with State', the columns state will change and the changes made via the UI will be lost.
     </li>
     <li>
         Note the <code>defaultColDef</code> is used to remove state. For example <code>sort=null</code>
