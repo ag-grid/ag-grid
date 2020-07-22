@@ -25,7 +25,7 @@ enum HistogramSeriesNodeTag {
 }
 
 class HistogramSeriesLabel extends Label {
-    @reactive('change') formatter?: (bin: HistogramBin) => string;
+    @reactive('change') formatter?: (params: { value: number }) => string;
 }
 
 const defaultBinCount = 10;
@@ -427,7 +427,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const nodeData: HistogramNodeDatum[] = [];
 
-        const defaultLabelFormatter = (b: HistogramBin) => String(b.aggregatedValue);
+        const defaultLabelFormatter = (params: { value: number }) => String(params.value);
         const {
             label: {
                 formatter: labelFormatter = defaultLabelFormatter,
@@ -453,7 +453,7 @@ export class HistogramSeries extends CartesianSeries {
                 h = Math.abs(yMaxPx - yZeroPx);
 
             const selectionDatumLabel = y !== 0 && {
-                text: labelFormatter(binOfData),
+                text: labelFormatter({ value: binOfData.aggregatedValue }),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
