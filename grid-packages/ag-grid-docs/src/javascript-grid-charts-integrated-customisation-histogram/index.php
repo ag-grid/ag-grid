@@ -32,7 +32,7 @@ interface HistogramChartOptions {
         // bin count
         shadow: DropShadowOptions;
 
-        label: BarSeriesLabelOptions;
+        label: HistogramSeriesLabelOptions;
 
         // The style to apply to a bar when it is hovered over or tapped
         highlightStyle: HighlightOptions;
@@ -66,7 +66,7 @@ interface DropShadowOptions {
     blur: number; // default: 5
 }
 
-interface BarSeriesLabelOptions {
+interface HistogramSeriesLabelOptions {
     enabled: boolean; // default: false
     fontStyle: FontStyle; // default: 'normal'
     fontWeight: FontWeight; // default: 'normal'
