@@ -60,6 +60,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     protected readonly pinned: string;
 
     private headerComp: IHeaderComp;
+    private headerCompGui: HTMLElement;
+
     private headerCompVersion = 0;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
@@ -69,6 +71,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefVersion: number;
     private refreshFunctions: (()=>void) [] = [];
     private moveDragSource: DragSource;
+    private displayName: string;
+    private movable: boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -115,6 +119,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private updateState(): void {
         const colDef = this.column.getColDef();
         this.sortable = colDef.sortable;
+        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
+        this.movable = this.workOutMovable()
     }
 
     private onNewColumnsLoaded(): void {
@@ -140,13 +146,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @PreDestroy
     private destroyHeaderComp(): void {
         if (this.headerComp) {
-            this.getGui().removeChild(this.headerComp.getGui());
+            this.getGui().removeChild(this.headerCompGui);
             this.headerComp = this.destroyBean(this.headerComp);
+            this.headerCompGui = undefined;
         }
-        this.removeDragSource();
+        this.removeMoveDragSource();
     }
 
-    private removeDragSource(): void {
+    private removeMoveDragSource(): void {
         if (this.moveDragSource) {
             this.dragAndDropService.removeDragSource(this.moveDragSource)
             this.moveDragSource = undefined;
@@ -272,7 +279,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private appendHeaderComp(): void {
         this.headerCompVersion++;
         const params = this.createParams();
-        const callback = this.afterHeaderCompCreated.bind(this, params.displayName, this.headerCompVersion);
+        const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
         this.userComponentFactory.newHeaderComponent(params).then(callback);
     }
 
@@ -280,13 +287,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const colDef = this.column.getColDef();
 
-        const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         const enableSorting = colDef.sortable;
         const enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
 
         const params = {
             column: this.column,
-            displayName: displayName,
+            displayName: this.displayName,
             enableSorting: enableSorting,
             enableMenu: enableMenu,
             showColumnMenu: (source: HTMLElement) => {
@@ -305,7 +311,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         return params;
     }
 
-    private afterHeaderCompCreated(displayName: string, version: number, headerComp: IHeaderComp): void {
+    private afterHeaderCompCreated(version: number, headerComp: IHeaderComp): void {
 
         if (version!=this.headerCompVersion || !this.isAlive()) {
             this.destroyBean(headerComp);
@@ -315,10 +321,10 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.destroyHeaderComp();
 
         this.headerComp = headerComp;
-        const eHeaderGui = headerComp.getGui();
-        this.getGui().appendChild(eHeaderGui);
+        this.headerCompGui = headerComp.getGui();
+        this.getGui().appendChild(this.headerCompGui);
 
-        this.addMoveToHeaderComp(eHeaderGui, displayName);
+        this.refreshMoveDragSource();
     }
 
     private onColumnMovingChanged(): void {
@@ -342,16 +348,18 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         return movable;
     }
 
-    private addMoveToHeaderComp(eHeaderComp: HTMLElement, displayName: string): void {
+    private refreshMoveDragSource(): void {
 
-        if (!this.workOutMovable()) { return; }
+        this.removeMoveDragSource();
+
+        if (!this.movable) { return; }
 
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
-            eElement: eHeaderComp,
+            eElement: this.headerCompGui,
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
-            dragItemName: displayName,
+            dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
