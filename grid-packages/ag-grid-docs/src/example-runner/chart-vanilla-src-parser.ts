@@ -23,8 +23,7 @@ const PROPERTIES = [optionsVariableName];
 
 function generateWithOptionReferences(node, options?) {
     return generate(node, options)
-        .replace(new RegExp(`${chartVariableName}\\.performLayout\\(\\);?`, 'g'), '')
-        .replace(new RegExp(`${chartVariableName}\\.`, 'g'), `${optionsVariableName}.`);
+        .replace(new RegExp(`agCharts\\.AgChart\\.update\\(chart, options\\);?`, 'g'), '');
 }
 
 export function parser(js, html) {
