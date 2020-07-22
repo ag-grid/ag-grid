@@ -451,9 +451,6 @@ const getLernaChainBuildInfo = async (skipFrameworks) => {
 
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
-            if(packageName === '@ag-grid-community/all-modules') {
-                debugger
-            }
             lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName].filter(filter);
         });
     };
