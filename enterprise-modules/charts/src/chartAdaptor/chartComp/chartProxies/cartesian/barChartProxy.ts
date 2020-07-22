@@ -40,7 +40,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             fillOpacity: seriesDefaults.fill.opacity,
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width
+            strokeWidth: seriesDefaults.stroke.width,
+            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
         }];
 
         return AgChart.create(options, parentElement);
