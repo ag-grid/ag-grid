@@ -1546,6 +1546,10 @@
                 "url": "javascript-charts-legend/"
               },
               {
+                "title": "Themes",
+                "url": "javascript-charts-themes"
+              },
+              {
                 "title": "Navigator",
                 "url": "javascript-charts-navigator/"
               },
