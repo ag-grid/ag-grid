@@ -27,7 +27,7 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, false, 'api'); }
+    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
     public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
@@ -184,7 +184,7 @@ export class ColumnApi {
     }
 
     public setColumnState(columnState: ColumnState[]): boolean {
-        return this.columnController.applyColumnState({state: columnState, applyOrder: true}, false, 'api');
+        return this.columnController.applyColumnState({state: columnState, applyOrder: true}, 'api');
     }
 
 }
