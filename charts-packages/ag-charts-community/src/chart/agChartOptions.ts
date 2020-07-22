@@ -1,7 +1,8 @@
 type FontStyle = 'normal' | 'italic' | 'oblique';
-type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
+    | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-type AgChartThemeName = 'default'
+export type AgChartThemeName = 'default'
     | 'light' | 'dark'
     | 'material-light' | 'material-dark'
     | 'pastel-light' | 'pastel-dark'
