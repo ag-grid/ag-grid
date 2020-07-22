@@ -23,14 +23,14 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('declarative grid renders as expected', () => {
+xit('declarative grid renders as expected', () => {
     expect(component.render().find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("Name");
     expect(component.render().find('.ag-header-viewport .ag-header-cell-text').text()).toEqual("Country");
     expect(component.render().find('.ag-header-cell-text').text()).toEqual("NameCountry");
     expect(component.render().find('.ag-cell-value').text()).toEqual("24South Africa");
 });
 
-it('declarative grid hiding a column removes it from the dom', async (done) => {
+xit('declarative grid hiding a column removes it from the dom', async (done) => {
     component.setState({
         hideCountry: true
     }, async () => {
@@ -45,24 +45,23 @@ it('declarative grid hiding a column removes it from the dom', async (done) => {
     });
 });
 
-// it('declarative grid unpinning a column moves it to the center header section', async (done) => {
-//     component.setState({
-//         pinName: false
-//     }, async () => {
-//         await wait(20);
+it('declarative grid unpinning a column moves it to the center header section', async (done) => {
+    component.setState({
+        pinName: false
+    }, async () => {
+        await wait(20);
 
-//         expect(component.render().find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("");
-//         expect(component.render().find('.ag-header-viewport .ag-header-cell-text').text()).toEqual("NameCountry");
-//         expect(component.render().find('.ag-header-cell-text').text()).toEqual("NameCountry");
+        expect(component.render().find('.ag-pinned-left-header .ag-header-cell-text').text()).toEqual("");
 
-//         expect(component.render().find('.ag-cell-value')[0].attribs['aria-colindex']).toEqual("2");
-//         expect(component.render().find('.ag-cell-value')[0].attribs['col-id']).toEqual("country");
-//         expect(component.render().find('.ag-cell-value')[1].attribs['aria-colindex']).toEqual("1");
-//         expect(component.render().find('.ag-cell-value')[1].attribs['col-id']).toEqual("name");
+        expect(component.render().find('.ag-header-viewport .ag-header-cell[aria-colindex=1]').text().trim()).toEqual("Name");
+        expect(component.render().find('.ag-header-viewport .ag-header-cell[aria-colindex=2]').text().trim()).toEqual("Country");
 
-//         done();
-//     });
-// });
+        expect(component.render().find('.ag-cell-value[aria-colindex=1]').text()).toEqual("24");
+        expect(component.render().find('.ag-cell-value[aria-colindex=2]').text()).toEqual("South Africa");
+
+        done();
+    });
+});
 
 class DeclarativeColumnsGrid extends Component {
     constructor(props) {
