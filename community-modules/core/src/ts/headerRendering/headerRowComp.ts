@@ -28,18 +28,17 @@ export class HeaderRowComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('focusController') private focusController: FocusController;
 
-    private readonly dept: number;
     private readonly pinned: string;
 
     private readonly dropTarget: DropTarget;
     private readonly type: HeaderRowType;
-    private rowIndex: number;
+    private dept: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.dept = dept;
+        this.setRowIndex(dept);
         this.type = type;
         this.pinned = pinned;
         this.dropTarget = dropTarget;
@@ -60,13 +59,13 @@ export class HeaderRowComp extends Component {
         });
     }
 
-    public setRowIndex(idx: number) {
-        this.rowIndex = idx;
-        setAriaRowIndex(this.getGui(), idx + 1);
+    private setRowIndex(rowIndex: number) {
+        this.dept = rowIndex;
+        setAriaRowIndex(this.getGui(), rowIndex + 1);
     }
 
     public getRowIndex(): number {
-        return this.rowIndex;
+        return this.dept;
     }
 
     public getType(): HeaderRowType {
@@ -153,7 +152,7 @@ export class HeaderRowComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     }
 
     private onColumnResized(): void {
@@ -184,14 +183,14 @@ export class HeaderRowComp extends Component {
         return this.columnController.getContainerWidth(this.pinned);
     }
 
-    private onGridColumnsChanged(): void {
-        this.removeAndDestroyAllChildComponents();
-    }
+    // private onGridColumnsChanged(): void {
+    //     this.removeAndDestroyAllChildComponents();
+    // }
 
-    private removeAndDestroyAllChildComponents(): void {
-        const idsOfAllChildren = Object.keys(this.headerComps);
-        this.destroyChildComponents(idsOfAllChildren);
-    }
+    // private removeAndDestroyAllChildComponents(): void {
+    //     const idsOfAllChildren = Object.keys(this.headerComps);
+    //     this.destroyChildComponents(idsOfAllChildren);
+    // }
 
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
@@ -247,12 +246,21 @@ export class HeaderRowComp extends Component {
             const eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
-            const colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
+            const previousComp = this.headerComps[idOfChild];
+            const colAlreadyInDom = previousComp && this.headerComps[idOfChild].getColumn() == child;
+
             let headerComp: AbstractHeaderWrapper;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 removeFromArray(currentChildIds, idOfChild);
             } else {
+                // it's possible there is a new Column with the same ID, but it's for a different Column.
+                // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
+                // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
+                // about to replace it in the this.headerComps map.
+                if (previousComp) {
+                    this.destroyChildComponents([idOfChild]);
+                }
                 headerComp = this.createHeaderComp(child);
                 this.headerComps[idOfChild] = headerComp;
                 eHeaderCompGui = headerComp.getGui();

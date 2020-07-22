@@ -31,7 +31,10 @@ export interface IHeaderParams {
     template: string;
 }
 
-export interface IHeader { }
+export interface IHeader {
+    /** Get the header to refresh. Gets called whenever Column Defs are reset. */
+    refresh(params: IHeaderParams): boolean;
+}
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
 
@@ -68,36 +71,67 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private lastMovingChanged = 0;
 
+    private currentDisplayName: string;
+    private currentTemplate: string;
+    private currentShowMenu: boolean;
+    private currentSort: boolean;
+
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
         super.destroy();
+        console.log('HeaderComp.destroy()');
     }
 
-    public init(params: IHeaderParams): void {
+    public refresh(params: IHeaderParams): boolean {
+
+        this.params = params;
+
+        // if template changed, then recreate the whole comp, the code required to manage
+        // a changing template is to difficult for what it's worth.
+        if (this.workOutTemplate()!=this.currentTemplate) { return false; }
+        if (this.workOutShowMenu()!=this.currentShowMenu) { return false; }
+        if (this.workOutSort()!=this.currentSort) { return false; }
+
+        this.setDisplayName(params);
+
+        console.log('headerComp.refresh()');
+        return true;
+    }
+
+    private workOutTemplate(): string {
         let template:string = firstExistingValue(
-            params.template,
+            this.params.template,
             HeaderComp.TEMPLATE
         );
 
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
-
-        this.setTemplate(template);
-        this.params = params;
-
-        this.setupTap();
-        this.setupIcons(params.column);
-        this.setupMenu();
-        this.setupSort();
-        this.setupFilterIcon();
-        this.setupText(params.displayName);
+        return template;
     }
 
-    private setupText(displayName: string): void {
-        const displayNameSanitised = escapeString(displayName);
-        if (this.eText) {
-            this.eText.innerHTML = displayNameSanitised;
+    public init(params: IHeaderParams): void {
+        console.log('headerComp.init()');
+
+        this.params = params;
+
+        this.currentTemplate = this.workOutTemplate();
+        this.setTemplate(this.currentTemplate);
+        this.setupTap();
+        this.setupIcons(params.column);
+        this.setMenu();
+        this.setupSort();
+        this.setupFilterIcon();
+        this.setDisplayName(params);
+    }
+
+    private setDisplayName(params: IHeaderParams): void {
+        if (this.currentDisplayName!=params.displayName) {
+            this.currentDisplayName = params.displayName;
+            const displayNameSanitised = escapeString(this.currentDisplayName);
+            if (this.eText) {
+                this.eText.innerHTML = displayNameSanitised;
+            }
         }
     }
 
@@ -156,21 +190,32 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private setupMenu(): void {
-        // if no menu provided in template, do nothing
-        if (!this.eMenu) { return; }
-
-        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
-        // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+    private workOutShowMenu(): boolean {
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
+        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
+        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
-        const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        const hideShowMenu = !this.params.enableMenu || (isIOSUserAgent() && !suppressMenuHide);
+        const menuHides = !this.gridOptionsWrapper.isSuppressMenuHide();
 
-        if (hideShowMenu) {
+        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
+        const showMenu = this.params.enableMenu && !onIpadAndMenuHides;
+
+        return showMenu;
+    }
+
+    private setMenu(): void {
+        // if no menu provided in template, do nothing
+        if (!this.eMenu) {
+            return;
+        }
+
+        this.currentShowMenu = this.workOutShowMenu();
+        if (!this.currentShowMenu) {
             removeFromParent(this.eMenu);
             return;
         }
 
+        const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
         addOrRemoveCssClass(this.eMenu, 'ag-header-menu-always-show', suppressMenuHide);
     }
@@ -189,10 +234,14 @@ export class HeaderComp extends Component implements IHeaderComp {
         removeFromParent(this.eSortOrder);
     }
 
-    public setupSort(): void {
-        const enableSorting = this.params.enableSorting;
+    private workOutSort(): boolean {
+        return this.params.enableSorting;
+    }
 
-        if (!enableSorting) {
+    public setupSort(): void {
+        this.currentSort = this.params.enableSorting;
+
+        if (!this.currentSort) {
             this.removeSortIcons();
             return;
         }

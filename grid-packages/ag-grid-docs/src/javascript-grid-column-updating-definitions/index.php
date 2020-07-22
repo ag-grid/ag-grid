@@ -302,6 +302,10 @@ SNIPPET
 
 <?= grid_example('Matching Columns', 'matching-columns', 'generated') ?>
 
+<h2>Refreshing Columns</h2>
+
+<?= grid_example('Refreshing Headers', 'refreshing-headers', 'generated', ['enterprise' => true]) ?>
+
 <h2>Column Events</h2>
 
 <p>

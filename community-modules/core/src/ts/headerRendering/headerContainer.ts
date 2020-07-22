@@ -11,6 +11,7 @@ import { Constants } from '../constants';
 import { setFixedWidth, clearElement } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
 import { GridPanel } from '../gridPanel/gridPanel';
+import {NumberSequence} from "../utils";
 
 export class HeaderContainer extends BeanStub {
 
@@ -20,10 +21,14 @@ export class HeaderContainer extends BeanStub {
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
-    private headerRowComps: HeaderRowComp[] = [];
+
     private pinned: string;
     private scrollWidth: number;
     private dropTarget: DropTarget;
+
+    private filtersRowComp: HeaderRowComp;
+    private columnsRowComp: HeaderRowComp;
+    private groupsRowComps: HeaderRowComp[] = [];
 
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
         super();
@@ -33,7 +38,15 @@ export class HeaderContainer extends BeanStub {
     }
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
-        this.headerRowComps.forEach(headerRowComp => headerRowComp.forEachHeaderElement(callback));
+        if (this.groupsRowComps) {
+            this.groupsRowComps.forEach(c => c.forEachHeaderElement(callback));
+        }
+        if (this.columnsRowComp) {
+            this.columnsRowComp.forEachHeaderElement(callback);
+        }
+        if (this.filtersRowComp) {
+            this.columnsRowComp.forEachHeaderElement(callback);
+        }
     }
 
     @PostConstruct
@@ -42,9 +55,11 @@ export class HeaderContainer extends BeanStub {
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+
+        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -53,12 +68,12 @@ export class HeaderContainer extends BeanStub {
     // if row group changes, that means we may need to add aggFuncs to the column headers,
     // if the grid goes from no aggregation (ie no grouping) to grouping
     private onColumnRowGroupChanged(): void {
-        this.onGridColumnsChanged();
+        this.refresh();
     }
 
     // if the agg func of a column changes, then we may need to update the agg func in columns header
     private onColumnValueChanged(): void {
-        this.onGridColumnsChanged();
+        this.refresh();
     }
 
     private onColumnResized(): void {
@@ -97,23 +112,28 @@ export class HeaderContainer extends BeanStub {
     }
 
     public getRowComps(): HeaderRowComp[] {
-        return this.headerRowComps;
+        let res: HeaderRowComp[] = [];
+        if (this.groupsRowComps) {
+            res = res.concat(this.groupsRowComps);
+        }
+        if (this.columnsRowComp) {
+            res.push(this.columnsRowComp);
+        }
+        if (this.filtersRowComp) {
+            res.push(this.filtersRowComp);
+        }
+        return res;
     }
 
     // grid cols have changed - this also means the number of rows in the header can have
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     private onGridColumnsChanged() {
-        this.removeAndCreateAllRowComps();
-    }
-
-    private removeAndCreateAllRowComps(): void {
-        this.removeHeaderRowComps();
-        this.createHeaderRowComps();
+        this.refresh(true);
     }
 
     // we expose this for gridOptions.api.refreshHeader() to call
-    public refresh(): void {
-        this.removeAndCreateAllRowComps();
+    public refresh(keepColumns = false): void {
+        this.refreshRowComps(keepColumns);
     }
 
     public setupDragAndDrop(gridComp: GridPanel): void {
@@ -124,34 +144,113 @@ export class HeaderContainer extends BeanStub {
     }
 
     @PreDestroy
-    private removeHeaderRowComps(): void {
-        this.headerRowComps.forEach(headerRowComp => this.destroyBean(headerRowComp) );
-        this.headerRowComps.length = 0;
+    private destroyRowComps(keepColumns = false): void {
 
-        clearElement(this.eContainer);
+        this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
+        this.groupsRowComps = [];
+
+        this.destroyRowComp(this.filtersRowComp);
+        this.filtersRowComp = undefined;
+
+        if (!keepColumns) {
+            this.destroyRowComp(this.columnsRowComp);
+            this.columnsRowComp = undefined;
+        }
     }
 
-    private createHeaderRowComps(): void {
+    private destroyRowComp(rowComp: HeaderRowComp): void {
+        if (rowComp) {
+            this.destroyBean(rowComp);
+            this.eContainer.removeChild(rowComp.getGui());
+        }
+    }
+
+    private refreshRowComps(keepColumns = false): void {
+
+        const sequence = new NumberSequence();
+
+        const refreshColumnGroups = ()=> {
+            const groupRowCount = this.columnController.getHeaderRowCount() - 1;
+
+            this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
+            this.groupsRowComps = [];
+
+            for (let i = 0; i < groupRowCount; i++) {
+                const rowComp = this.createBean(
+                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned, this.dropTarget));
+                this.groupsRowComps.push(rowComp);
+            }
+        };
+
+        const refreshColumns = () => {
+            const rowIndex = sequence.next();
+
+            if (this.columnsRowComp) {
+                const rowIndexMismatch = this.columnsRowComp.getRowIndex() !== rowIndex;
+                if (!keepColumns || rowIndexMismatch) {
+                    this.destroyRowComp(this.columnsRowComp);
+                    this.columnsRowComp = undefined;
+                }
+            }
+
+            if (!this.columnsRowComp) {
+                this.columnsRowComp = this.createBean(
+                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned, this.dropTarget));
+            }
+        };
+
+        const refreshFilters = () => {
+            this.destroyRowComp(this.filtersRowComp);
+            this.filtersRowComp = undefined;
+
+            const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
+            if (includeFloatingFilter) {
+                this.filtersRowComp = this.createBean(
+                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget));
+            }
+        };
+
+        refreshColumnGroups();
+        refreshColumns();
+        refreshFilters();
+
+        // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
+        // taking it out of the last position and re-inserting relative to the other rows.
+        this.getRowComps().forEach( rowComp => this.eContainer.appendChild(rowComp.getGui()) );
+    }
+
+    private createRowComps(): void {
+
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
-        const rowCount = this.columnController.getHeaderRowCount();
+        const rowsWithGroupsCount = this.columnController.getHeaderRowCount() - 1;
+        let rowIndex = 0;
 
-        for (let dept = 0; dept < rowCount; dept++) {
-            const groupRow = dept !== (rowCount - 1);
-            const type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
-            const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
-            this.createBean(headerRowComp);
-            this.headerRowComps.push(headerRowComp);
-            headerRowComp.setRowIndex(this.headerRowComps.length - 1);
-            this.eContainer.appendChild(headerRowComp.getGui());
+        const createHeaderRowComp = (type: HeaderRowType, index: number): HeaderRowComp => {
+            return this.createBean(new HeaderRowComp(index, type, this.pinned, this.dropTarget));
+        };
+
+        for (let i = 0; i < rowsWithGroupsCount; i++) {
+            const rowComp = createHeaderRowComp(HeaderRowType.COLUMN_GROUP, rowIndex++);
+            this.groupsRowComps.push(rowComp);
         }
 
-        if (!this.columnController.isPivotMode() && this.columnController.hasFloatingFilters()) {
-            const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
-            this.createBean(headerRowComp);
-            this.headerRowComps.push(headerRowComp);
-            headerRowComp.setRowIndex(this.headerRowComps.length - 1);
-            this.eContainer.appendChild(headerRowComp.getGui());
+        if (this.columnsRowComp && this.columnsRowComp.getRowIndex() !== rowIndex) {
+            this.destroyRowComp(this.columnsRowComp);
+            this.columnsRowComp = undefined;
         }
+
+        if (!this.columnsRowComp) {
+            this.columnsRowComp = createHeaderRowComp(HeaderRowType.COLUMN, rowIndex++);
+        }
+
+        const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
+        if (includeFloatingFilter) {
+            this.filtersRowComp = createHeaderRowComp(HeaderRowType.FLOATING_FILTER, rowIndex++);
+        }
+
+        // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
+        // taking it out of the last position and re-inserting relative to the other rows.
+        this.getRowComps().forEach( rowComp => this.eContainer.appendChild(rowComp.getGui()) );
     }
 }

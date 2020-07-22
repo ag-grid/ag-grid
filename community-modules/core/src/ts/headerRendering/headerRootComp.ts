@@ -75,7 +75,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.headerNavigationService.registerHeaderRoot(this);
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes

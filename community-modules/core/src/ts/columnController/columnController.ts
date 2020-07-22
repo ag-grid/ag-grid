@@ -177,7 +177,8 @@ export class ColumnController extends BeanStub {
     private flexViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
-    // private flexActive = false;
+
+    private colDefVersion = 0;
 
     @PostConstruct
     public init(): void {
@@ -201,8 +202,14 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns('gridOptionsChanged');
     }
 
+    public getColDefVersion(): number {
+        return this.colDefVersion;
+    }
+
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
         const colsPreviouslyExisted = !!this.columnDefs;
+
+        this.colDefVersion++;
 
         const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
 
@@ -1760,10 +1767,10 @@ export class ColumnController extends BeanStub {
             });
         }
 
-        this.applyColumnState({state: columnStates, applyOrder: true}, suppressEverythingEvent, source);
+        this.applyColumnState({state: columnStates, applyOrder: true}, source);
     }
 
-    public applyColumnState(params: ApplyColumnStateParams, suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+    public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) { return false; }
 
         const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
@@ -1883,15 +1890,13 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        if (!suppressEverythingEvent) {
-            const event: ColumnEverythingChangedEvent = {
-                type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            this.eventService.dispatchEvent(event);
-        }
+        const event: ColumnEverythingChangedEvent = {
+            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            source: source
+        };
+        this.eventService.dispatchEvent(event);
 
         raiseEventsFunc();
 

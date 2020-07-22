@@ -73,6 +73,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private nodeManager: ClientSideNodeManager;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
+    private applyAsyncTransactionsTimeout: number;
 
     @PostConstruct
     public init(): void {
@@ -773,8 +774,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             newData: true
         });
     }
-
-    private applyAsyncTransactionsTimeout: number;
 
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (this.applyAsyncTransactionsTimeout==null) {

@@ -4,7 +4,15 @@ type ColumnSortState = 'ascending' | 'descending' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function setAriaAttribute(element: HTMLElement, attribute: string, value: number | boolean | string): void {
-    element.setAttribute(`aria-${attribute}`, value.toString());
+    element.setAttribute(ariaAttributeName(attribute), value.toString());
+}
+
+function removeAriaAttribute(element: HTMLElement, attribute: string): void {
+    element.removeAttribute(ariaAttributeName(attribute));
+}
+
+function ariaAttributeName(attribute: string) {
+    return `aria-${attribute}`
 }
 
 export function getAriaSortState(column: Column): ColumnSortState {
@@ -85,6 +93,10 @@ export function setAriaColSpan(element: HTMLElement, colSpan: number): void {
 
 export function setAriaSort(element: HTMLElement, sort: ColumnSortState): void {
     setAriaAttribute(element, 'sort', sort);
+}
+
+export function removeAriaSort(element: HTMLElement): void {
+    removeAriaAttribute(element, 'sort');
 }
 
 export function setAriaSelected(element: HTMLElement, selected: boolean): void {
