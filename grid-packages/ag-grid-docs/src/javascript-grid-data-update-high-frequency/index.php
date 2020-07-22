@@ -43,7 +43,7 @@ SNIPPET
 
 <p>
     Use Async Transactions if you have a high volume of streaming data going into the grid and
-    want don't want the grid's rendering and recalculating to be a bottleneck.
+    don't want the grid's rendering and recalculating to be a bottleneck.
 </p>
 
 <note>

@@ -20,8 +20,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         ag-Grid can be as fast as demonstrated in the demo application <a href="../example.php">Demo Application</a>.
-        You can resize the demo application to the same size as the grid in your application by resizing the browser.
-        Then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own
+        You can resize the demo application to the same size as the grid in your application by resizing the browser,
+        then navigate around the grid (scroll, filter etc) and see how fast the demo grid is compared to your own
         implementation. If the demo grid is going faster, then there is room for performance improvements.
     </p>
 
@@ -43,13 +43,14 @@ include '../documentation-main/documentation_header.php';
         The grid rendering is highly customised and plain JavaScript cell renderers will work faster than framework
         equivalents. It is still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc)
         however because there are so many cells getting created and destroyed, the additional layer the frameworks
-        add do not help performance and should be provided if you are having performance concerns.
+        add do not help performance. Plain JavaScript cell renderers should be considered if you are having performance
+        concerns.
     </note>
 
    <p>
        Not everyone needs blazing fast cell renderers (eg maybe you have users on fast machines with fast browsers, or
        maybe your grids have few columns) in which case framework cell renderers may work fine. The suggestion of not
-       using frameworks for cells is only applicable when you are looking to squeeze for performance gains.
+       using frameworks for cells is only applicable when you are looking to squeeze performance gains.
     </p>
 
     <note>Using frameworks for cell renderers can be slower because of the large number of cells getting
@@ -88,7 +89,7 @@ include '../documentation-main/documentation_header.php';
         The grid works fastest on Google Chrome. If you can, tell your users.
     </p>
 
-    <h2>7. Understand</h2>
+    <h2>7. Understand Data Updates</h2>
 
     <p>
         For fast changing data, consider using
@@ -100,7 +101,7 @@ include '../documentation-main/documentation_header.php';
         </a> that shows hundreds of thousands of updates per second.
     </p>
 
-    <h2>8. Understand</h2>
+    <h2>8. See Also</h2>
 
     <p>
         Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>
