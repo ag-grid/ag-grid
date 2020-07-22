@@ -165,6 +165,6 @@ export class ManagedFocusComponent extends Component {
     }
 
     private deactivateTabGuards(): void {
-        this.forEachTabGuard(tabGuards => tabGuards.removeAttribute('tabindex'));
+        this.forEachTabGuard(tabGuards => tabGuards.removeAttribute('tabIndex'));
     }
 }
