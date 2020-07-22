@@ -384,6 +384,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     height: 100%;
 }
 
+.ag-header-cell.ag-header-active .ag-header-cell-menu-button {
+    opacity: 1;
+}
+
+.ag-header-cell-menu-button:not(.ag-header-menu-always-show) {
+    transition: opacity 0.2s;
+    opacity: 0;
+}
+
 .ag-header-group-cell-label, .ag-header-cell-label {
     display: flex;
     flex: 1 1 auto;

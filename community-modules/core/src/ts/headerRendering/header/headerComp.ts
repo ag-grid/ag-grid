@@ -33,9 +33,7 @@ export interface IHeaderParams {
 
 export interface IHeader { }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-    setActiveParent?(activeParent: boolean): void;
-}
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
 
 export class HeaderComp extends Component implements IHeaderComp {
 
@@ -174,19 +172,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
-
-        if (!suppressMenuHide) {
-            this.eMenu.style.opacity = '0';
-        }
-        const style = this.eMenu.style as any;
-        style.transition = 'opacity 0.2s, border 0.2s';
-        style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
-    }
-
-    public setActiveParent(activeParent: boolean): void {
-        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            this.eMenu.style.opacity = activeParent ? '1' : '0';
-        }
+        addOrRemoveCssClass(this.eMenu, 'ag-header-menu-always-show', suppressMenuHide);
     }
 
     public showMenu(eventSource?: HTMLElement) {

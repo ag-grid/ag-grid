@@ -109,10 +109,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.addGuiEventListener('mouseleave', mouseListener);
     }
 
+    private setActiveHeader(active: boolean): void {
+        addOrRemoveCssClass(this.getGui(), 'ag-header-active', active);
+    }
+
     private onMouseOverOut(e: MouseEvent): void {
-        if (this.headerComp && this.headerComp.setActiveParent) {
-            this.headerComp.setActiveParent(e.type === 'mouseenter');
-        }
+        this.setActiveHeader(e.type === 'mouseenter');
     }
 
     protected onFocusIn(e: FocusEvent) {
@@ -124,19 +126,15 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             );
         }
 
-        if (this.headerComp && this.headerComp.setActiveParent) {
-            this.headerComp.setActiveParent(true);
-        }
+        this.setActiveHeader(true);
     }
 
     protected onFocusOut(e: FocusEvent) {
         if (
-            !this.headerComp ||
-            !this.headerComp.setActiveParent ||
             this.getGui().contains(e.relatedTarget as HTMLElement)
         ) { return; }
 
-        this.headerComp.setActiveParent(false);
+        this.setActiveHeader(false);
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
