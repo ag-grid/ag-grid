@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
     externals: {
         angular: 'angular',
         react: 'react',
