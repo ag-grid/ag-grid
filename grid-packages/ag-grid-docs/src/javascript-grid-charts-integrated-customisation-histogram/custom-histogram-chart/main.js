@@ -78,7 +78,7 @@ function processChartOptions(params) {
     options.seriesDefaults.label.fontSize = 15;
     options.seriesDefaults.label.fontFamily = 'Arial, sans-serif';
     options.seriesDefaults.label.color = 'green';
-    options.seriesDefaults.label.formatter = function(params) {
+    options.seriesDefaults.label.formatter = function (params) {
         return '<' + params.value + '>';
     };
 
@@ -92,7 +92,7 @@ function processChartOptions(params) {
         var binMax = bin.domain[1];
         var medalColour = params.xKey;
 
-        return '<spam style="color: ' + params.color + '">' + binSize + (binSize >= 2? ' countries' : ' country') +
+        return '<spam style="color: ' + params.color + '">' + binSize + (binSize >= 2 ? ' countries' : ' country') +
                 ' got between ' + binMin + ' and ' + binMax + ' ' + medalColour + ' medals</span> ';
     };
 
