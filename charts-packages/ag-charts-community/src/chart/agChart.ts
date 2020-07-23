@@ -61,18 +61,6 @@ type AgChartType<T> =
     T extends AgPolarChartOptions ? PolarChart :
     never;
 
-// Without this, if options don't explicitly specify the lack of series or axes
-// the defaults will be taken from the current theme, which is not correct
-// when it comes to these special properties.
-function fixOptions(options: any) {
-    if (!options.axes) {
-        options.axes = [];
-    }
-    if (!options.series) {
-        options.series = [];
-    }
-}
-
 export abstract class AgChart {
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
@@ -82,7 +70,6 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
-        fixOptions(options);
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
         const theme = getChartTheme(options.theme);
@@ -106,7 +93,6 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
-        fixOptions(options);
         const autoSize = options && options.autoSize;
         const theme = getChartTheme(options.theme);
         update(chart, options, undefined, theme);
@@ -152,10 +138,10 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
         }
     }
 
-    const mapping = getValue(mappings, path);
+    const mapping = path && getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping, theme && theme.getConfig(path));
+        options = provideDefaultOptions(path, options, mapping, theme);
 
         const meta = mapping.meta || {};
         const constructorParams = meta.constructorParams || [];
@@ -234,7 +220,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
     const mapping = getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping, theme && theme.getConfig(path));
+        options = provideDefaultOptions(path, options, mapping, theme);
 
         const meta = mapping.meta || {};
         const constructorParams = meta && meta.constructorParams || [];
@@ -381,14 +367,16 @@ function provideDefaultType(options: any, path?: string): any {
     return options;
 }
 
+function skipThemeKey(key: string): boolean {
+    return ['axes', 'series'].indexOf(key) >= 0;
+}
 /**
  * If certain options were not provided by the user, use the defaults from the theme and the mapping.
  * All three objects are provided for the current path in the config tree, not necessarily top-level.
- * @param options
- * @param mapping
- * @param themeDefaults
  */
-function provideDefaultOptions(options: any, mapping: any, themeDefaults?: any): any {
+function provideDefaultOptions(path: string, options: any, mapping: any, theme?: AgChartTheme): any {
+    const isChartConfig = path.indexOf('.') < 0;
+    const themeDefaults = theme && theme.getConfig(path);
     const defaults = mapping && mapping.meta && mapping.meta.defaults;
 
     if (defaults || themeDefaults) {
@@ -396,13 +384,17 @@ function provideDefaultOptions(options: any, mapping: any, themeDefaults?: any):
     }
     // Fill in the gaps for properties not configured by the user using theme provided values.
     for (const key in themeDefaults) {
+        // The default values for these special chart configs always come from the mappings, not theme.
+        if (isChartConfig && skipThemeKey(key)) {
+            continue;
+        }
         if (!(key in options)) {
             options[key] = themeDefaults[key];
         }
     }
     // Fill in the gaps for properties not configured by the user, nor theme using chart mappings.
     for (const key in defaults) {
-        if ((!themeDefaults || !(key in themeDefaults)) && !(key in options)) {
+        if ((!themeDefaults || !(key in themeDefaults) || skipThemeKey(key)) && !(key in options)) {
             options[key] = defaults[key];
         }
     }
