@@ -31,7 +31,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             headerComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             headerGroupComponent: {
                 mandatoryMethodList: [],
