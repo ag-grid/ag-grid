@@ -77,8 +77,8 @@ export function getTabIndex(el: HTMLElement): string | null {
     const numberTabIndex = el.tabIndex;
     const tabIndex = el.getAttribute('tabIndex');
 
-    if (isBrowserIE() && numberTabIndex === 0 && el.getAttribute('tabIndex') === null) {
-        const map:{ [key: string]: boolean; } = {
+    if (isBrowserIE() && numberTabIndex === 0 && tabIndex === null) {
+        const map: { [key: string]: boolean; } = {
             a: true,
             body: true,
             button: true,

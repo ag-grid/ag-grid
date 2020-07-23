@@ -15,7 +15,6 @@ import {
     VirtualListModel,
     IAfterGuiAttachedParams,
     Promise,
-    FocusController,
     _,
 } from '@ag-grid-community/core';
 
@@ -25,18 +24,16 @@ import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFilter extends ProvidedFilter {
+    @RefSelector('eSelectAll') private readonly eSelectAll: AgCheckbox;
+    @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
+    @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
+    @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
+    @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
+    @RefSelector('eSelectAllContainer') private readonly eSelectAllContainer: HTMLElement;
+
+    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+
     private valueModel: SetValueModel;
-
-    @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
-    @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
-    @RefSelector('eFilterLoading') private eFilterLoading: HTMLElement;
-    @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
-    @RefSelector('eFilterNoMatches') private eNoMatches: HTMLElement;
-    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
-
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('focusController') private focusController: FocusController;
-
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
@@ -54,19 +51,9 @@ export class SetFilter extends ProvidedFilter {
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void { }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-
-        const focusableEl = this.getFocusableElement();
-
-        if (focusableEl) {
-            this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
-        }
-    }
-
     protected createBodyTemplate(): string {
         return /* html */`
-            <div>
+            <div class="ag-set-filter">
                 <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
@@ -79,13 +66,10 @@ export class SetFilter extends ProvidedFilter {
             </div>`;
     }
 
-    private handleKeyDown(e: KeyboardEvent) {
+    protected handleKeyDown(e: KeyboardEvent): void {
         if (e.defaultPrevented) { return; }
 
         switch (e.which || e.keyCode) {
-            case Constants.KEY_TAB:
-                this.handleKeyTab(e);
-                break;
             case Constants.KEY_SPACE:
                 this.handleKeySpace(e);
                 break;
@@ -95,36 +79,12 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    private handleKeyTab(e: KeyboardEvent): void {
-        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
-
-        const focusableElement = this.getFocusableElement();
-        const method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
-
-        let currentRoot = this.eSetFilterList;
-        let nextRoot: HTMLElement;
-
-        while (currentRoot !== focusableElement && !nextRoot) {
-            nextRoot = currentRoot[method] as HTMLElement;
-            currentRoot = currentRoot.parentElement;
-        }
-
-        if (!nextRoot) { return; }
-
-        if (
-            (e.shiftKey && this.focusController.focusLastFocusableElement(nextRoot)) ||
-            (!e.shiftKey && this.focusController.focusFirstFocusableElement(nextRoot))
-        ) {
-            e.preventDefault();
-        }
-    }
-
     private handleKeySpace(e: KeyboardEvent): void {
         if (!this.eSetFilterList.contains(document.activeElement)) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
 
-        if (_.exists(currentItem)) {
+        if (currentItem != null) {
             const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
 
             if (component) {

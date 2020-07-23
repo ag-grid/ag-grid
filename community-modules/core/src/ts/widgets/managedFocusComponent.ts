@@ -1,8 +1,8 @@
-import { PostConstruct, Autowired } from "../context/context";
-import { Component } from "./component";
-import { Constants } from "../constants";
-import { FocusController } from "../focusController";
-import { addCssClass, isNodeOrElement } from "../utils/dom";
+import { PostConstruct, Autowired } from '../context/context';
+import { Component } from './component';
+import { Constants } from '../constants';
+import { FocusController } from '../focusController';
+import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
 
 /**
  * This provides logic to override the default browser focus logic.
@@ -20,16 +20,25 @@ export class ManagedFocusComponent extends Component {
     protected handleKeyDown?(e: KeyboardEvent): void;
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+
     private topTabGuard: HTMLElement;
     private bottomTabGuard: HTMLElement;
-    private skipTabGuardFocus:boolean = false;
+    private skipTabGuardFocus: boolean = false;
 
-    @Autowired('focusController') protected focusController: FocusController;
+    @Autowired('focusController') protected readonly focusController: FocusController;
+
+    /*
+     * Set isFocusableContainer to true if this component will contain multiple focus-managed
+     * elements within. When set to true, this component will add tabGuards that will be responsible
+     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
+     */
+    constructor(template?: string, private readonly isFocusableContainer = false) {
+        super(template);
+    }
 
     @PostConstruct
     protected postConstruct(): void {
-        const focusableElement = this.getFocusableElement();
-        if (!focusableElement) { return; }
+        if (!this.getFocusableElement()) { return; }
 
         this.wireFocusManagement();
     }
@@ -39,14 +48,12 @@ export class ManagedFocusComponent extends Component {
 
         addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
-        if (this.isFocusableContainer()) {
+        if (this.isFocusableContainer) {
             this.topTabGuard = this.createTabGuard('top');
             this.bottomTabGuard = this.createTabGuard('bottom');
             this.addTabGuards();
             this.activateTabGuards();
-            this.forEachTabGuard(tabGuards => {
-                this.addManagedListener(tabGuards, 'focus', this.onFocus.bind(this));
-            });
+            this.forEachTabGuard(guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this)));
         }
 
         if (this.onTabKeyDown || this.handleKeyDown) {
@@ -55,15 +62,6 @@ export class ManagedFocusComponent extends Component {
 
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
-    }
-
-    /*
-     * Override this method to return true if this component will contain multiple focus-managed
-     * elements within. When set to true, this component will add tabGuards that will be responsible
-     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
-     */
-    protected isFocusableContainer(): boolean {
-        return false;
     }
 
     /*
@@ -78,17 +76,15 @@ export class ManagedFocusComponent extends Component {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
+        if (!this.isFocusableContainer) { return; }
 
         this.deactivateTabGuards();
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
+        if (!this.isFocusableContainer) { return; }
 
-        const focusEl = this.getFocusableElement();
-
-        if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
+        if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.activateTabGuards();
         }
     }
@@ -98,11 +94,10 @@ export class ManagedFocusComponent extends Component {
 
         this.skipTabGuardFocus = true;
         this.bottomTabGuard.focus();
-
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
-        if (!this.isFocusableContainer()) {
+        if (!this.isFocusableContainer) {
             super.appendChild(newChild, container);
         } else {
             if (!isNodeOrElement(newChild)) {
@@ -121,15 +116,15 @@ export class ManagedFocusComponent extends Component {
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
-        tabGuard.classList.add('ag-tab-guard');
-        tabGuard.classList.add(`ag-tab-guard-${side}`);
+        tabGuard.classList.add('ag-tab-guard', `ag-tab-guard-${side}`);
         tabGuard.setAttribute('role', 'presentation');
 
-        return tabGuard as HTMLElement;
+        return tabGuard;
     }
 
     private addTabGuards(): void {
         const focusableEl = this.getFocusableElement();
+
         focusableEl.insertAdjacentElement('afterbegin', this.topTabGuard);
         focusableEl.insertAdjacentElement('beforeend', this.bottomTabGuard);
     }
@@ -151,7 +146,8 @@ export class ManagedFocusComponent extends Component {
     }
 
     private onFocus(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
+        if (!this.isFocusableContainer) { return; }
+
         if (this.skipTabGuardFocus) {
             this.skipTabGuardFocus = false;
             return;
@@ -161,10 +157,10 @@ export class ManagedFocusComponent extends Component {
     }
 
     private activateTabGuards(): void {
-        this.forEachTabGuard(tabGuard => tabGuard.setAttribute('tabIndex', '0'));
+        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', '0'));
     }
 
     private deactivateTabGuards(): void {
-        this.forEachTabGuard(tabGuards => tabGuards.removeAttribute('tabIndex'));
+        this.forEachTabGuard(guard => guard.removeAttribute('tabIndex'));
     }
 }

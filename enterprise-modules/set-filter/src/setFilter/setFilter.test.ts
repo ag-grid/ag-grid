@@ -76,14 +76,14 @@ function createSetFilter(filterParams?: any): SetFilter {
     colDef.filterParams = params;
 
     const setFilter = new SetFilter();
-    setFilter['eventService'] = eventService;
-    setFilter['gridOptionsWrapper'] = gridOptionsWrapper;
-    setFilter['valueFormatterService'] = valueFormatterService;
-    setFilter['rowModel'] = rowModel;
-    setFilter['context'] = context;
-    setFilter['eGui'] = eGui;
-    setFilter['eMiniFilter'] = eMiniFilter;
-    setFilter['eSelectAll'] = eSelectAll;
+    (setFilter as any).eventService = eventService;
+    (setFilter as any).gridOptionsWrapper = gridOptionsWrapper;
+    (setFilter as any).valueFormatterService = valueFormatterService;
+    (setFilter as any).rowModel = rowModel;
+    (setFilter as any).context = context;
+    (setFilter as any).eGui = eGui;
+    (setFilter as any).eMiniFilter = eMiniFilter;
+    (setFilter as any).eSelectAll = eSelectAll;
 
     setFilter.setParams(params);
 

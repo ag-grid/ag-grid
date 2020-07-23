@@ -5,7 +5,6 @@ import {
     RefSelector,
     IPrimaryColsPanel,
     ManagedFocusComponent,
-    _
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
@@ -27,18 +26,18 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @RefSelector('primaryColsHeaderPanel')
-    private primaryColsHeaderPanel: PrimaryColsHeaderPanel;
-
-    @RefSelector('primaryColsListPanel')
-    private primaryColsListPanel: PrimaryColsListPanel;
+    @RefSelector('primaryColsHeaderPanel') private readonly primaryColsHeaderPanel: PrimaryColsHeaderPanel;
+    @RefSelector('primaryColsListPanel') private readonly primaryColsListPanel: PrimaryColsListPanel;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
 
+    constructor() {
+        super(PrimaryColsPanel.TEMPLATE, true);
+    }
+
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     public init(allowDragging: boolean, params: ToolPanelColumnCompParams): void {
-        this.setTemplate(PrimaryColsPanel.TEMPLATE);
         this.allowDragging = allowDragging;
         this.params = params;
 
@@ -63,10 +62,6 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
         this.wireFocusManagement();
-    }
-
-    protected isFocusableContainer(): boolean {
-        return true;
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {

@@ -56,6 +56,10 @@ export class GridCore extends ManagedFocusComponent {
     private doingVirtualPaging: boolean;
     private logger: Logger;
 
+    constructor() {
+        super(undefined, true);
+    }
+
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
@@ -140,10 +144,6 @@ export class GridCore extends ManagedFocusComponent {
             </div>`;
 
         return template;
-    }
-
-    protected isFocusableContainer(): boolean {
-        return true;
     }
 
     protected getFocusableContainers(): HTMLElement[] {

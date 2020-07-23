@@ -29,7 +29,7 @@ export class Component extends BeanStub {
     private eGui: HTMLElement;
     private annotatedGuiListeners: any[] = [];
 
-    @Autowired('agStackComponentsRegistry') protected agStackComponentsRegistry: AgStackComponentsRegistry;
+    @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
