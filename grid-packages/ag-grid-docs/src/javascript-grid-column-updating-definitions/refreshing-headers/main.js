@@ -16,7 +16,7 @@ var gridOptions = {
         defaultWidth: 100,
         sortable: true,
         resizable: true,
-        headerComponent: 'MyHeaderRenderer'
+        // headerComponent: 'MyHeaderRenderer'
     },
     columnDefs: colDefs,
     components: {
@@ -62,6 +62,18 @@ function onMoveOn() {
 
 function onMoveOff() {
     changeCols('moveOff', function(c) {c.suppressMovable = true})
+}
+
+function onTooltipA() {
+    changeCols('onTooltipA', function(c) {c.headerTooltip = 'A ' + c.field; });
+}
+
+function onTooltipB() {
+    changeCols('onTooltipB', function(c) {c.headerTooltip = 'B ' + c.field; });
+}
+
+function onTooltipOff() {
+    changeCols('onTooltipOff', function(c) {c.headerTooltip = undefined; });
 }
 
 function changeCols(name, callback) {

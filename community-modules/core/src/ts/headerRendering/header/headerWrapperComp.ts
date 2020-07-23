@@ -74,6 +74,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private displayName: string;
     private draggable: boolean;
 
+    private tooltipText: string;
+
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
         this.column = column;
@@ -441,22 +443,55 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     public getTooltipText(): string | undefined {
-        const colDef = this.getComponentHolder();
-
-        return colDef.headerTooltip;
+        return this.column.getColDef().headerTooltip;
     }
 
     private setupTooltip(): void {
-        const tooltipText = this.getTooltipText();
 
-        // add tooltip if exists
-        if (tooltipText == null) { return; }
+        let tooltipFeature: TooltipFeature;
 
-        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.getGui().setAttribute('title', tooltipText);
-        } else {
-            this.createManagedBean(new TooltipFeature(this, 'header'));
-        }
+        const usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
+
+        const removeTooltip = () => {
+            if (usingBrowserTooltips) {
+                this.getGui().removeAttribute('title');
+            } else {
+                if (tooltipFeature) {
+                    tooltipFeature = this.destroyBean(tooltipFeature);
+                }
+            }
+        };
+
+        const addTooltip = () => {
+            if (usingBrowserTooltips) {
+                this.getGui().setAttribute('title', this.tooltipText);
+            } else {
+                tooltipFeature = this.createBean(new TooltipFeature(this, 'header'));
+            }
+        };
+
+        const refresh = () => {
+
+            const tooltipText = this.getTooltipText();
+
+            if (this.tooltipText != tooltipText) {
+
+                if (this.tooltipText) {
+                    removeTooltip();
+                }
+
+                this.tooltipText = tooltipText;
+
+                if (this.tooltipText) {
+                    addTooltip();
+                }
+            }
+
+        };
+
+        refresh();
+        this.addDestroyFunc(removeTooltip);
+        this.refreshFunctions.push(refresh);
     }
 
     private setupMovingCss(): void {
