@@ -153,7 +153,7 @@ export class ClientSideNodeManager {
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
         const {add, addIndex} = rowDataTran;
-        if (!add) { return; }
+        if (_.missingOrEmpty(add)) { return; }
 
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
         if (useIndex) {
@@ -173,7 +173,7 @@ export class ClientSideNodeManager {
     private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {remove} = rowDataTran;
 
-        if (!remove) { return; }
+        if (_.missingOrEmpty(remove)) { return; }
 
         const rowIdsRemoved: {[key: string]: boolean} = {};
 
@@ -205,7 +205,7 @@ export class ClientSideNodeManager {
 
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
-        if (!update) { return; }
+        if (_.missingOrEmpty(update)) { return; }
 
         update.forEach(item => {
             const rowNode = this.lookupRowNode(item);
