@@ -116,7 +116,8 @@ export class ManagedFocusComponent extends Component {
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
-        tabGuard.classList.add('ag-tab-guard', `ag-tab-guard-${side}`);
+        tabGuard.classList.add('ag-tab-guard');
+        tabGuard.classList.add(`ag-tab-guard-${side}`);
         tabGuard.setAttribute('role', 'presentation');
 
         return tabGuard;
