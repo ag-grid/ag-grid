@@ -76,6 +76,14 @@ function onTooltipOff() {
     changeCols('onTooltipOff', function(c) {c.headerTooltip = undefined; });
 }
 
+function onResizeOn() {
+    changeCols('onResizeOn', function(c) {c.resizable = true; });
+}
+
+function onResizeOff() {
+    changeCols('onResizeOff', function(c) {c.resizable = false; });
+}
+
 function changeCols(name, callback) {
     console.log('>> ' + name);
     colDefs.forEach(callback);
