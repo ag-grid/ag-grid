@@ -71,11 +71,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private colDefVersion: number;
     private refreshFunctions: (()=>void) [] = [];
+
     private moveDragSource: DragSource;
     private displayName: string;
     private draggable: boolean;
 
-    private tooltipText: string;
+    private colDefHeaderComponent?: string | { new(): any; };
+    private colDefHeaderComponentFramework?: any;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -100,7 +102,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.setupMenuClass();
         this.setupSortableClass();
         this.addColumnHoverListener();
-        this.addDisplayMenuListeners();
+        this.addActiveHeaderMouseListeners();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
@@ -108,9 +110,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.onFilterChanged();
 
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
-
-        const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        this.createManagedBean(setLeftFeature);
+        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
@@ -138,7 +138,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.updateState();
 
-        const headerCompRefreshed = this.attemptHeaderCompRefresh();
+        const colDef = this.column.getColDef();
+        const newHeaderCompConfigured =
+            this.colDefHeaderComponent != colDef.headerComponent
+            || this.colDefHeaderComponentFramework != colDef.headerComponentFramework;
+
+        const headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
         if (headerCompRefreshed) {
             const dragSourceIsMissing = this.draggable && !this.dragAndDropService;
             const dragSourceNeedsRemoving = !this.draggable && this.dragAndDropService;
@@ -183,18 +188,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         return res;
     }
 
-    private addDisplayMenuListeners(): void {
-        const mouseListener = this.onMouseOverOut.bind(this);
-        this.addGuiEventListener('mouseenter', mouseListener);
-        this.addGuiEventListener('mouseleave', mouseListener);
+    private addActiveHeaderMouseListeners(): void {
+        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
+        this.addManagedListener(this.getGui(), 'mouseenter', listener);
+        this.addManagedListener(this.getGui(), 'mouseleave', listener);
     }
 
     private setActiveHeader(active: boolean): void {
         addOrRemoveCssClass(this.getGui(), 'ag-header-active', active);
-    }
-
-    private onMouseOverOut(e: MouseEvent): void {
-        this.setActiveHeader(e.type === 'mouseenter');
     }
 
     protected onFocusIn(e: FocusEvent) {
@@ -287,6 +288,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private appendHeaderComp(): void {
         this.headerCompVersion++;
+
+        const colDef = this.column.getColDef();
+        this.colDefHeaderComponent = colDef.headerComponent;
+        this.colDefHeaderComponentFramework = colDef.headerComponentFramework;
+
         const params = this.createParams();
         const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
         this.userComponentFactory.newHeaderComponent(params).then(callback);
@@ -474,6 +480,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private setupTooltip(): void {
 
         let tooltipFeature: TooltipFeature;
+        let tooltipText: string;
 
         const usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
@@ -489,7 +496,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const addTooltip = () => {
             if (usingBrowserTooltips) {
-                this.getGui().setAttribute('title', this.tooltipText);
+                this.getGui().setAttribute('title', tooltipText);
             } else {
                 tooltipFeature = this.createBean(new TooltipFeature(this, 'header'));
             }
@@ -497,17 +504,17 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const refresh = () => {
 
-            const tooltipText = this.getTooltipText();
+            const newTooltipText = this.getTooltipText();
 
-            if (this.tooltipText != tooltipText) {
+            if (tooltipText != newTooltipText) {
 
-                if (this.tooltipText) {
+                if (tooltipText) {
                     removeTooltip();
                 }
 
-                this.tooltipText = tooltipText;
+                tooltipText = newTooltipText;
 
-                if (this.tooltipText) {
+                if (tooltipText) {
                     addTooltip();
                 }
             }
@@ -535,7 +542,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private setupMenuClass(): void {
         this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
-        this.onColumnWidthChanged();
     }
 
     private onMenuVisible(): void {

@@ -13,6 +13,11 @@ MyHeaderRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
+MyHeaderRenderer.prototype.refresh = function() {
+    console.log('MyHeaderRenderer.refresh ' + this.id, this.params);
+    return true;
+};
+
 MyHeaderRenderer.prototype.destroy = function() {
     console.log('MyHeaderRenderer.destroy ' + this.id, this.params);
     return this.eGui;

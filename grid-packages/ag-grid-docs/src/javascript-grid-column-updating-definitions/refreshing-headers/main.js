@@ -21,7 +21,8 @@ var gridOptions = {
     columnDefs: colDefs,
     components: {
         MyHeaderRenderer: MyHeaderRenderer
-    }
+    },
+    rowSelection: 'multiple'
 };
 
 function onShowTotal() {
@@ -82,6 +83,14 @@ function onResizeOn() {
 
 function onResizeOff() {
     changeCols('onResizeOff', function(c) {c.resizable = false; });
+}
+
+function onHeaderCompOn() {
+    changeCols('onHeaderCompOn', function(c) {c.headerComponent = 'MyHeaderRenderer'; });
+}
+
+function onHeaderCompOff() {
+    changeCols('onHeaderCompOff', function(c) {c.headerComponent = null; });
 }
 
 function changeCols(name, callback) {
