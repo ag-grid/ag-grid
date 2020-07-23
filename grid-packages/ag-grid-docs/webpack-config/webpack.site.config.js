@@ -9,7 +9,7 @@ let docs = './src/_assets/docs/docs.ts';
 
 module.exports = {
     mode: 'development',
-    devtool: 'eval-source-map',
+    devtool: 'inline-source-map',
 
     entry: {
         homepage: homepage,
