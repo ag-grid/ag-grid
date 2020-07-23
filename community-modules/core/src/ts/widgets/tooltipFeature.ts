@@ -11,7 +11,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { _ } from "../utils";
+import { addCssClass, containsClass } from "../utils/dom";
 
 export interface TooltipParentComp extends Component {
     getTooltipText(): string;
@@ -141,7 +141,7 @@ export class TooltipFeature extends BeanStub {
 
     private destroyTooltipComp(): void {
         // add class to fade out the tooltip
-        _.addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
+        addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
 
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
@@ -207,8 +207,8 @@ export class TooltipFeature extends BeanStub {
 
         this.tooltipComp = tooltipComp;
 
-        if (!_.containsClass(eGui, 'ag-tooltip')) {
-            _.addCssClass(eGui, 'ag-tooltip-custom');
+        if (!containsClass(eGui, 'ag-tooltip')) {
+            addCssClass(eGui, 'ag-tooltip-custom');
         }
 
         this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);

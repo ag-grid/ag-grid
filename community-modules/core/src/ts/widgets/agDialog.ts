@@ -2,7 +2,8 @@ import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
-import { _ } from "../utils";
+import { addCssClass, addOrRemoveCssClass } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
 
 export type ResizableSides = 'topLeft' |
     'top' |
@@ -88,7 +89,7 @@ export class AgDialog extends AgPanel {
         const eGui = this.getGui();
         const { movable, resizable, maximizable } = this.config;
 
-        _.addCssClass(eGui, 'ag-dialog');
+        addCssClass(eGui, 'ag-dialog');
         this.moveElement = this.eTitleBar;
 
         super.postConstruct();
@@ -279,8 +280,8 @@ export class AgDialog extends AgPanel {
     }
 
     private refreshMaximizeIcon() {
-        _.addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
-        _.addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
+        addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
+        addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -384,12 +385,12 @@ export class AgDialog extends AgPanel {
         this.getContext().createBean(maximizeButtonComp);
 
         const eGui = maximizeButtonComp.getGui();
-        eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
-        _.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
-        eGui.appendChild(this.minimizeIcon = _.createIconNoSpan('minimize', this.gridOptionsWrapper));
-        _.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
+        eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper));
+        addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
+        eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper));
+        addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
 
-        _.addCssClass(this.minimizeIcon, 'ag-hidden');
+        addCssClass(this.minimizeIcon, 'ag-hidden');
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);

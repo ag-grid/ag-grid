@@ -18,8 +18,10 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
-import { _ } from "./utils";
 import { GridCore } from "./gridCore";
+import { makeNull, missing, exists } from "./utils/generic";
+import { last, findIndex } from "./utils/array";
+import { getTabIndex } from "./utils/browser";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -141,13 +143,13 @@ export class FocusController extends BeanStub {
             this.focusedCellPosition = null;
             return;
         }
-        const column = _.makeNull(gridColumn);
-        this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
+        const column = makeNull(gridColumn);
+        this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: makeNull(floating), column: column};
         this.onCellFocused(forceBrowserFocus);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
-        if (_.missing(this.focusedCellPosition)) { return false; }
+        if (missing(this.focusedCellPosition)) { return false; }
         return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     }
 
@@ -156,7 +158,7 @@ export class FocusController extends BeanStub {
     }
 
     public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
-        if (_.missing(this.focusedHeaderPosition)) { return false; }
+        if (missing(this.focusedHeaderPosition)) { return false; }
         const column = headerWrapper.getColumn();
         const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
         const pinned = headerWrapper.getPinned();
@@ -203,8 +205,8 @@ export class FocusController extends BeanStub {
     }
 
     public isRowFocused(rowIndex: number, floating: string): boolean {
-        if (_.missing(this.focusedCellPosition)) { return false; }
-        const floatingOrNull = _.makeNull(floating);
+        if (missing(this.focusedCellPosition)) { return false; }
+        const floatingOrNull = makeNull(floating);
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
@@ -242,7 +244,7 @@ export class FocusController extends BeanStub {
     }
 
     public focusLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
-        const focusable = _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
+        const focusable = last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
 
         if (focusable) {
             focusable.focus();
@@ -257,7 +259,7 @@ export class FocusController extends BeanStub {
         let currentIndex: number;
 
         if (onlyManaged) {
-            currentIndex = _.findIndex(focusable, el => el.contains(document.activeElement));
+            currentIndex = findIndex(focusable, el => el.contains(document.activeElement));
         } else {
             currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
         }
@@ -288,11 +290,11 @@ export class FocusController extends BeanStub {
     public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {
         let counter = 0;
 
-        while (node && _.getTabIndex(node) === null && ++counter <= limit) {
+        while (node && getTabIndex(node) === null && ++counter <= limit) {
             node = node.parentElement;
         }
 
-        if (_.getTabIndex(node) === null) { return null; }
+        if (getTabIndex(node) === null) { return null; }
 
         return node;
     }
@@ -330,11 +332,11 @@ export class FocusController extends BeanStub {
             column = focusedHeader.column as Column;
         }
 
-        if (!_.exists(rowIndex)) { return false; }
+        if (!exists(rowIndex)) { return false; }
 
         this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
 
-        this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+        this.setFocusedCell(rowIndex, column, makeNull(rowPinned), true);
 
         if (this.rangeController) {
             const cellPosition = { rowIndex, rowPinned, column };

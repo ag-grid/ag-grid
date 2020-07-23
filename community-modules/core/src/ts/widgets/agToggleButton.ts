@@ -1,5 +1,5 @@
 import { AgRadioButton } from './agRadioButton';
-import { _ } from '../utils';
+import { addOrRemoveCssClass } from '../utils/dom';
 
 export class AgToggleButton extends AgRadioButton {
     protected className = 'ag-toggle-button';
@@ -7,7 +7,7 @@ export class AgToggleButton extends AgRadioButton {
 
     public setValue(value: boolean, silent?: boolean): this {
         super.setValue(value, silent);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
+        addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
 
         return this;
     }

@@ -8,7 +8,8 @@ import { GridPanel } from "../gridPanel/gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
-import { _ } from "../utils";
+import { missing, exists } from "../utils/generic";
+import { sortNumerically, last, includes } from "../utils/array";
 
 export class MoveColumnController implements DropListener {
 
@@ -40,7 +41,7 @@ export class MoveColumnController implements DropListener {
     constructor(pinned: string, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
-        this.centerContainer = !_.exists(pinned);
+        this.centerContainer = !exists(pinned);
     }
 
     public registerGridComp(gridPanel: GridPanel): void {
@@ -152,7 +153,7 @@ export class MoveColumnController implements DropListener {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (_.missing(draggingEvent.hDirection)) {
+        if (missing(draggingEvent.hDirection)) {
             return;
         }
 
@@ -200,9 +201,9 @@ export class MoveColumnController implements DropListener {
     // each other. if the cols are not beside each other, then returns null
     private calculateOldIndex(movingCols: Column[]): number {
         const gridCols: Column[] = this.columnController.getAllGridColumns();
-        const indexes = _.sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
+        const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
-        const lastIndex = _.last(indexes);
+        const lastIndex = last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
@@ -270,9 +271,9 @@ export class MoveColumnController implements DropListener {
         // so the result we return has to be and index location for this list
         const allGridCols = this.columnController.getAllGridColumns();
 
-        const movingDisplayedCols = allDisplayedCols.filter(col => _.includes(movingCols, col));
-        const otherDisplayedCols = allDisplayedCols.filter(col => !_.includes(movingCols, col));
-        const otherGridCols = allGridCols.filter(col => !_.includes(movingCols, col));
+        const movingDisplayedCols = allDisplayedCols.filter(col => includes(movingCols, col));
+        const otherDisplayedCols = allDisplayedCols.filter(col => !includes(movingCols, col));
+        const otherGridCols = allGridCols.filter(col => !includes(movingCols, col));
 
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving

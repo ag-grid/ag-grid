@@ -3,7 +3,8 @@ import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
-import { _ } from "../../utils";
+import { loadTemplate, addCssClass, clearElement } from "../../utils/dom";
+import { missing, exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
@@ -47,7 +48,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             this.getGui().removeChild(this.ePrevious);
         }
 
-        this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
+        this.ePrevious = loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
 
@@ -56,7 +57,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // complex set of setTimeout below creates the animation
         window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            _.addCssClass(this.ePrevious, 'ag-value-slide-out-end');
+            addCssClass(this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
 
         window.setTimeout(() => {
@@ -70,7 +71,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         let value = params.value;
 
-        if (_.missing(value)) {
+        if (missing(value)) {
             value = '';
         }
 
@@ -88,12 +89,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         this.lastValue = value;
 
-        if (_.exists(params.valueFormatted)) {
+        if (exists(params.valueFormatted)) {
             this.eCurrent.innerHTML = params.valueFormatted;
-        } else if (_.exists(params.value)) {
+        } else if (exists(params.value)) {
             this.eCurrent.innerHTML = value;
         } else {
-            _.clearElement(this.eCurrent);
+            clearElement(this.eCurrent);
         }
 
         return true;

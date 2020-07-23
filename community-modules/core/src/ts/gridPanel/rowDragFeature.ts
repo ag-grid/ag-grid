@@ -19,7 +19,8 @@ import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { missingOrEmpty } from "../utils/generic";
+import { doOnce } from "../utils/function";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -91,7 +92,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private onRowGroupChanged(): void {
         const rowGroups = this.columnController.getRowGroupColumns();
-        this.isRowGroupActive = !_.missingOrEmpty(rowGroups);
+        this.isRowGroupActive = !missingOrEmpty(rowGroups);
     }
 
     public getContainer(): HTMLElement {
@@ -328,7 +329,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams): void {
         if (!params.getContainer()) {
-            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
+            doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
             return;
         }
 

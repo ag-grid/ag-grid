@@ -86,7 +86,8 @@ import { Component } from "./widgets/component";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
-import { _ } from "./utils";
+import { missing, exists } from "./utils/generic";
+import { assign, iterateObject } from "./utils/object";
 
 export interface GridParams {
     // used by Web Components
@@ -112,17 +113,15 @@ export interface GridParams {
 export class Grid {
 
     private context: Context;
-
     protected logger: Logger;
-
     private readonly gridOptions: GridOptions;
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-
         if (!eGridDiv) {
             console.error('ag-Grid: no div element provided to the grid');
             return;
         }
+
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
             return;
@@ -137,9 +136,7 @@ export class Grid {
         const beanClasses = this.createBeansList(registeredModules);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
 
-        if (!beanClasses) {
-            return;
-        } // happens when no row model found
+        if (!beanClasses) { return; } // happens when no row model found
 
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
@@ -220,7 +217,7 @@ export class Grid {
 
     private createProvidedBeans(eGridDiv: HTMLElement, params: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
-        if (_.missing(frameworkOverrides)) {
+        if (missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
@@ -234,7 +231,7 @@ export class Grid {
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {
-            _.assign(seed, params.providedBeanInstances);
+            assign(seed, params.providedBeanInstances);
         }
 
         return seed;
@@ -271,11 +268,9 @@ export class Grid {
     }
 
     private createBeansList(registeredModules: Module[]): any[] {
-
         const rowModelClass = this.getRowModelClass(registeredModules);
-        if (!rowModelClass) {
-            return undefined;
-        }
+
+        if (!rowModelClass) { return; }
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
@@ -315,12 +310,11 @@ export class Grid {
     }
 
     private setColumnsAndData(): void {
-
         const gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
         const columnController: ColumnController = this.context.getBean('columnController');
         const columnDefs = gridOptionsWrapper.getColumnDefs();
 
-        if (_.exists(columnDefs)) {
+        if (exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
 
@@ -348,34 +342,34 @@ export class Grid {
 
         const rowModelClasses: { [name: string]: { new(): IRowModel } } = {};
         registeredModules.forEach(module => {
-            _.iterateObject(module.rowModels, (key: string, value: { new(): IRowModel }) => {
+            iterateObject(module.rowModels, (key: string, value: { new(): IRowModel }) => {
                 rowModelClasses[key] = value;
             });
         });
 
         const rowModelClass = rowModelClasses[rowModelType];
-        if (_.exists(rowModelClass)) {
-            return rowModelClass;
-        } else {
-            if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-                console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
-            }
-            console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
-            if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                console.error(`ag-Grid: Row Model "Viewport" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
-            }
-            if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                console.error(`ag-Grid: Row Model "Server Side" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
-            }
-            if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
-            }
-            return undefined;
+
+        if (exists(rowModelClass)) { return rowModelClass; }
+
+        if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
+            console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
+        }
+
+        console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
+        if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
+            console.error(`ag-Grid: Row Model "Viewport" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
+        }
+
+        if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+            console.error(`ag-Grid: Row Model "Server Side" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
+        }
+
+        if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
         }
     }
 
     public destroy(): void {
         this.gridOptions.api.destroy();
     }
-
 }

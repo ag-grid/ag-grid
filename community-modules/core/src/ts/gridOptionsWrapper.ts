@@ -39,7 +39,12 @@ import {SideBarDef, SideBarDefParser} from './entities/sideBar';
 import {ModuleNames} from './modules/moduleNames';
 import {ChartOptions} from './interfaces/iChartOptions';
 import {ModuleRegistry} from './modules/moduleRegistry';
-import {_} from './utils';
+import { exists, values, missing } from './utils/generic';
+import { fuzzyCheckStrings } from './utils/fuzzyMatch';
+import { iterateObject } from './utils/object';
+import { doOnce } from './utils/function';
+import { addOrRemoveCssClass } from './utils/dom';
+import { getScrollbarWidth } from './utils/browser';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -52,9 +57,8 @@ function isTrue(value: any): boolean {
 }
 
 function zeroOrGreater(value: any, defaultValue: number): number {
-    if (value >= 0) {
-        return value;
-    }
+    if (value >= 0) { return value; }
+
     // zero gets returned if number is missing or the wrong type
     return defaultValue;
 }
@@ -105,7 +109,7 @@ export class GridOptionsWrapper {
 
     private layoutElements: HTMLElement[] = [];
 
-    // we store this locally, so we are not calling _.getScrollWidth() multiple times as it's an expensive operation
+    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollWidth: number;
     private updateLayoutClassesListener: any;
 
@@ -166,13 +170,13 @@ export class GridOptionsWrapper {
 
         if (this.isRowModelServerSide()) {
             const msg = (prop: string) => `ag-Grid: '${prop}' is not supported on the Server-Side Row Model`;
-            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupDefaultExpanded'));
             }
-            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupIncludeFooter'));
             }
-            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+            if (exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupIncludeTotalFooter'));
             }
         }
@@ -223,7 +227,7 @@ export class GridOptionsWrapper {
         const validProperties: string[] = [
             ...PropertyKeys.ALL_PROPERTIES,
             ...PropertyKeys.FRAMEWORK_PROPERTIES,
-            ..._.values<any>(Events).map(event => ComponentUtil.getCallbackForEvent(event))
+            ...values<any>(Events).map(event => ComponentUtil.getCallbackForEvent(event))
         ];
 
         const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi'];
@@ -244,13 +248,13 @@ export class GridOptionsWrapper {
         containerName: string,
         docsUrl: string
     ) {
-        const invalidProperties: { [p: string]: string[]; } = _.fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[]; } = fuzzyCheckStrings(
             userProperties,
             validPropertiesAndExceptions,
             validProperties
         );
 
-        _.iterateObject<any>(invalidProperties, (key, value) => {
+        iterateObject<any>(invalidProperties, (key, value) => {
             console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
@@ -268,7 +272,7 @@ export class GridOptionsWrapper {
 
     public setDomData(element: Element, key: string, value: any): any {
         let domData = (element as any)[this.domDataKey];
-        if (_.missing(domData)) {
+        if (missing(domData)) {
             domData = {};
             (element as any)[this.domDataKey] = domData;
         }
@@ -324,7 +328,7 @@ export class GridOptionsWrapper {
     }
 
     public isRowModelDefault() {
-        return (_.missing(this.gridOptions.rowModelType) ||
+        return (missing(this.gridOptions.rowModelType) ||
             this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
     }
 
@@ -498,7 +502,7 @@ export class GridOptionsWrapper {
         ];
 
         if (validLayouts.indexOf(domLayout) === -1) {
-            _.doOnce(
+            doOnce(
                 () =>
                     console.warn(
                         `ag-Grid: ${domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`
@@ -867,7 +871,7 @@ export class GridOptionsWrapper {
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
-        return _.exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
+        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
 
     public isSuppressMovableColumns() {
@@ -1150,7 +1154,7 @@ export class GridOptionsWrapper {
     }
 
     public getClipboardDeliminator() {
-        return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+        return exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     }
 
     public setProperty(key: string, value: any, force = false): void {
@@ -1182,9 +1186,9 @@ export class GridOptionsWrapper {
         const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         this.layoutElements.forEach(e => {
-            _.addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
-            _.addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
-            _.addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
+            addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
+            addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
+            addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
         });
     }
 
@@ -1265,7 +1269,7 @@ export class GridOptionsWrapper {
     public getTooltipShowDelay(): number {
         const { tooltipShowDelay } = this.gridOptions;
 
-        if (_.exists(tooltipShowDelay)) {
+        if (exists(tooltipShowDelay)) {
             if (tooltipShowDelay < 0) {
                 console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
             }
@@ -1284,10 +1288,10 @@ export class GridOptionsWrapper {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
         let result: Document | null = null;
-        if (this.gridOptions.getDocument && _.exists(this.gridOptions.getDocument)) {
+        if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
         }
-        if (result && _.exists(result)) {
+        if (result && exists(result)) {
             return result;
         }
 
@@ -1323,7 +1327,7 @@ export class GridOptionsWrapper {
 
         if (typeof rowBuffer === 'number') {
             if (rowBuffer < 0) {
-                _.doOnce(() => console.warn(`ag-Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
+                doOnce(() => console.warn(`ag-Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
                 this.gridOptions.rowBuffer = rowBuffer = 0;
             }
         } else {
@@ -1346,7 +1350,7 @@ export class GridOptionsWrapper {
     public getScrollbarWidth() {
         if (this.scrollWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _.getScrollbarWidth();
+            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
         }
         return this.scrollWidth;
     }
@@ -1407,7 +1411,7 @@ export class GridOptionsWrapper {
 
     private treeDataViolations() {
         if (this.isRowModelDefault()) {
-            if (_.missing(this.getDataPathFunc())) {
+            if (missing(this.getDataPathFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
                     'provide getDataPath function, please provide getDataPath function if using tree data.'
@@ -1415,13 +1419,13 @@ export class GridOptionsWrapper {
             }
         }
         if (this.isRowModelServerSide()) {
-            if (_.missing(this.getIsServerSideGroupFunc())) {
+            if (missing(this.getIsServerSideGroupFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
-            if (_.missing(this.getServerSideGroupKeyFunc())) {
+            if (missing(this.getServerSideGroupKeyFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
                     'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'
@@ -1452,9 +1456,11 @@ export class GridOptionsWrapper {
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
-        if (!this.gridOptions.rowHeight || _.missing(this.gridOptions.rowHeight)) {
+        if (!this.gridOptions.rowHeight || missing(this.gridOptions.rowHeight)) {
             return this.getDefaultRowHeight();
-        } else if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
+        }
+
+        if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         }
 

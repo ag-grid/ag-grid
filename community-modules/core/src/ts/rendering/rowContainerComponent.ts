@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
+import { appendHtml, insertTemplateWithDomOrder, ensureDomOrder, setDisplayed } from "../utils/dom";
 
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
@@ -88,7 +88,7 @@ export class RowContainerComponent {
         // or if no rows added since last time also empty.
         if (this.rowTemplatesToAdd.length !== 0) {
             const htmlToAdd = this.rowTemplatesToAdd.join('');
-            _.appendHtml(this.eContainer, htmlToAdd);
+            appendHtml(this.eContainer, htmlToAdd);
             this.rowTemplatesToAdd.length = 0;
         }
 
@@ -104,7 +104,7 @@ export class RowContainerComponent {
                              callback: () => void) {
 
         if (this.domOrder) {
-            this.lastPlacedElement = _.insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
+            this.lastPlacedElement = insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
         } else {
             this.rowTemplatesToAdd.push(rowTemplate);
         }
@@ -122,7 +122,7 @@ export class RowContainerComponent {
 
     public ensureDomOrder(eRow: HTMLElement): void {
         if (this.domOrder) {
-            _.ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
             this.lastPlacedElement = eRow;
         }
     }
@@ -143,7 +143,7 @@ export class RowContainerComponent {
             this.visible = visible;
             this.lastMadeVisibleTime = new Date().getTime();
 
-            _.setDisplayed(eGui, visible);
+            setDisplayed(eGui, visible);
             // if we are showing the viewport, then the scroll is always zero,
             // so we need to align with the other sections (ie if this is full
             // width container, and first time showing a full width row, we need to

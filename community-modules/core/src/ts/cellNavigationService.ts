@@ -9,7 +9,8 @@ import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { RowPosition } from "./entities/rowPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-import { _ } from "./utils";
+import { missing } from "./utils/generic";
+import { last } from "./utils/array";
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
@@ -90,14 +91,10 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) {
-            return null;
-        }
+        if (!lastCell) { return null; }
 
         const colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
-        if (!colToLeft) {
-            return null;
-        }
+        if (!colToLeft) { return null; }
 
         return {
             rowIndex: lastCell.rowIndex,
@@ -107,15 +104,11 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) {
-            return null;
-        }
+        if (!lastCell) { return null; }
 
         const colToRight = this.columnController.getDisplayedColAfter(lastCell.column);
         // if already on right, do nothing
-        if (!colToRight) {
-            return null;
-        }
+        if (!colToRight) { return null; }
 
         return {
             rowIndex: lastCell.rowIndex,
@@ -138,7 +131,9 @@ export class CellNavigationService extends BeanStub {
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
                         return {rowIndex: 0, rowPinned: null} as RowPosition;
-                    } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
+                    }
+
+                    if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
                         return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
                     }
 
@@ -156,9 +151,7 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) {
-            return null;
-        }
+        if (!lastCell) { return null; }
 
         const rowBelow = this.getRowBelow(lastCell);
         if (rowBelow) {
@@ -179,7 +172,9 @@ export class CellNavigationService extends BeanStub {
         if (pinned === Constants.PINNED_TOP) {
             const lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex <= index;
-        } else if (pinned === Constants.PINNED_BOTTOM) {
+        }
+
+        if (pinned === Constants.PINNED_BOTTOM) {
             const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
         }
@@ -194,33 +189,35 @@ export class CellNavigationService extends BeanStub {
             const pinned = rowPosition.rowPinned;
         // if already on top row, do nothing
         if (index === 0) {
-            if (pinned === Constants.PINNED_TOP) {
-                return null;
-            } else if (!pinned) {
+            if (pinned === Constants.PINNED_TOP) { return null; }
+
+            if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
                 return null;
-            } else {
-                // last floating bottom
-                if (this.rowModel.isRowsToRender()) {
-                    return this.getLastBodyCell();
-                } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
-                    return this.getLastFloatingTopRow();
-                }
-                return null;
             }
-        }
 
-        return {rowIndex: index - 1, rowPinned: pinned} as RowPosition;
-    }
+            // last floating bottom
+            if (this.rowModel.isRowsToRender()) {
+                return this.getLastBodyCell();
+            }
 
-    private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
-        if (!lastCell) {
+            if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
+                return this.getLastFloatingTopRow();
+            }
+
             return null;
         }
 
+        return { rowIndex: index - 1, rowPinned: pinned } as RowPosition;
+    }
+
+    private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
+        if (!lastCell) { return null; }
+
         const rowAbove = this.getRowAbove({ rowIndex: lastCell.rowIndex, rowPinned: lastCell.rowPinned });
+
         if (rowAbove) {
             return {
                 rowIndex: rowAbove.rowIndex,
@@ -234,11 +231,13 @@ export class CellNavigationService extends BeanStub {
 
     private getLastBodyCell(): RowPosition {
         const lastBodyRow = this.rowModel.getRowCount() - 1;
+
         return {rowIndex: lastBodyRow, rowPinned: null} as RowPosition;
     }
 
     private getLastFloatingTopRow(): RowPosition {
         const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+
         return {rowIndex: lastFloatingRow, rowPinned: Constants.PINNED_TOP} as RowPosition;
     }
 
@@ -264,7 +263,7 @@ export class CellNavigationService extends BeanStub {
             newColumn = displayedColumns[0];
 
             const rowBelow = this.getRowBelow(gridCell);
-            if (_.missing(rowBelow)) {
+            if (missing(rowBelow)) {
                 return null;
             }
             newRowIndex = rowBelow ? rowBelow.rowIndex : null;
@@ -286,12 +285,12 @@ export class CellNavigationService extends BeanStub {
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = _.last(displayedColumns);
+            newColumn = last(displayedColumns);
 
             const rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
-            if (_.missing(rowAbove)) {
-                return null;
-            }
+
+            if (missing(rowAbove)) { return null; }
+
             newRowIndex = rowAbove ? rowAbove.rowIndex : null;
             newFloating = rowAbove ? rowAbove.rowPinned : null;
         }

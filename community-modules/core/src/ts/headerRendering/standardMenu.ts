@@ -4,10 +4,9 @@ import { IMenuFactory } from '../interfaces/iMenuFactory';
 import { FilterManager } from '../filter/filterManager';
 import { Column } from '../entities/column';
 import { PopupService } from '../widgets/popupService';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
-import { _ } from '../utils';
+import { addCssClass, isVisible } from '../utils/dom';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -53,7 +52,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const eMenu = document.createElement('div');
 
         eMenu.setAttribute('role', 'presentation');
-        _.addCssClass(eMenu, 'ag-menu');
+        addCssClass(eMenu, 'ag-menu');
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));
 
@@ -79,7 +78,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 this.tabListener = this.tabListener();
             }
 
-            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
                 const focusableEl = this.focusController.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }

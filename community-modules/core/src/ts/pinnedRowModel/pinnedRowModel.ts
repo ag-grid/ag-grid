@@ -1,13 +1,13 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, Context, PostConstruct } from "../context/context";
-import { EventService } from "../eventService";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { Constants } from "../constants";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { _ } from '../utils';
 import { BeanStub } from "../context/beanStub";
+import { missingOrEmpty } from "../utils/generic";
+import { last } from "../utils/array";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
@@ -27,7 +27,7 @@ export class PinnedRowModel extends BeanStub {
 
     public isEmpty(floating: string): boolean {
         const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        return _.missingOrEmpty(rows);
+        return missingOrEmpty(rows);
     }
 
     public isRowsToRender(floating: string): boolean {
@@ -36,7 +36,7 @@ export class PinnedRowModel extends BeanStub {
 
     public getRowAtPixel(pixel: number, floating: string): number {
         const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (_.missingOrEmpty(rows)) {
+        if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
@@ -123,14 +123,14 @@ export class PinnedRowModel extends BeanStub {
     }
 
     public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (_.missingOrEmpty(this.pinnedTopRows)) {
+        if (missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     }
 
     public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (_.missingOrEmpty(this.pinnedBottomRows)) {
+        if (missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -141,12 +141,10 @@ export class PinnedRowModel extends BeanStub {
     }
 
     private getTotalHeight(rowNodes: RowNode[]): number {
-        if (!rowNodes || rowNodes.length === 0) {
-            return 0;
-        } else {
-            const lastNode = _.last(rowNodes);
-            return lastNode.rowTop + lastNode.rowHeight;
-        }
+        if (!rowNodes || rowNodes.length === 0) { return 0; }
+
+        const lastNode = last(rowNodes);
+        return lastNode.rowTop + lastNode.rowHeight;
     }
 
 }

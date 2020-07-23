@@ -5,7 +5,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { _ } from "../utils";
+import { exists } from "../utils/generic";
 
 export interface RowPosition {
     rowIndex: number;
@@ -67,7 +67,7 @@ export class RowPositionUtils extends BeanStub {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (_.exists(rowB.rowPinned)) {
+                if (exists(rowB.rowPinned)) {
                     return rowB.rowPinned !== Constants.PINNED_TOP;
                 }
                 break;

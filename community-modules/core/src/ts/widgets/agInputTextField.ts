@@ -1,6 +1,6 @@
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
-import { _ } from '../utils';
 import { some } from '../utils/array';
+import { exists } from '../utils/generic';
 
 export interface ITextInputField extends IInputField {
     allowedCharPattern?: string;
@@ -34,7 +34,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         const ret = super.setValue(value, silent);
 
         if (this.eInput.value !== value) {
-            this.eInput.value = _.exists(value) ? value : '';
+            this.eInput.value = exists(value) ? value : '';
         }
 
         return ret;

@@ -5,7 +5,7 @@ import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadat
 import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { BeanStub } from "../../context/beanStub";
-import { _ } from "../../utils";
+import { loadTemplate } from "../../utils/dom";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils extends BeanStub {
@@ -52,10 +52,9 @@ export class AgComponentUtils extends BeanStub {
                 const callbackResult: string | HTMLElement = callback(this.params);
                 const type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    return _.loadTemplate('<span>' + callbackResult + '</span>');
-                } else {
-                    return callbackResult as HTMLElement;
+                    return loadTemplate('<span>' + callbackResult + '</span>');
                 }
+                return callbackResult as HTMLElement;
             }
 
             init?(params: ICellRendererParams): void {

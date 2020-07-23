@@ -7,7 +7,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ListOption } from "../../widgets/agList";
 import { Constants } from "../../constants";
-import { _ } from '../../utils';
+import { missing } from "../../utils/generic";
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];
@@ -30,7 +30,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public init(params: ISelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        if (_.missing(params.values)) {
+        if (missing(params.values)) {
             console.warn('ag-Grid: no values found for select cellEditor');
             return;
         }

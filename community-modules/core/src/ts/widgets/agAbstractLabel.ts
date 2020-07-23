@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -21,8 +21,8 @@ export abstract class AgAbstractLabel extends Component {
 
     @PostConstruct
     protected postConstruct() {
-        _.addCssClass(this.getGui(), 'ag-labeled');
-        _.addCssClass(this.eLabel, 'ag-label');
+        addCssClass(this.getGui(), 'ag-labeled');
+        addCssClass(this.eLabel, 'ag-label');
 
         const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
 
@@ -43,7 +43,7 @@ export abstract class AgAbstractLabel extends Component {
     }
 
     protected refreshLabel() {
-        _.clearElement(this.eLabel);
+        clearElement(this.eLabel);
 
         if (typeof this.label === 'string') {
             this.eLabel.innerText = this.label + this.labelSeparator;
@@ -51,7 +51,7 @@ export abstract class AgAbstractLabel extends Component {
             this.eLabel.appendChild(this.label);
         }
 
-        _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+        addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     }
 
     public setLabelSeparator(labelSeparator: string): this {
@@ -93,9 +93,9 @@ export abstract class AgAbstractLabel extends Component {
     public setLabelAlignment(alignment: LabelAlignment): this {
         const eGui = this.getGui();
 
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
+        addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
+        addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
+        addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
 
         return this;
     }
@@ -105,7 +105,7 @@ export abstract class AgAbstractLabel extends Component {
             return this;
         }
 
-        _.setElementWidth(this.eLabel, width);
+        setElementWidth(this.eLabel, width);
 
         return this;
     }

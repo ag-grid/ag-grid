@@ -3,8 +3,8 @@ import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
 import { ColumnApi } from '../columnController/columnApi';
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from '../utils';
+import { iterateObject } from '../utils/object';
+import { values } from '../utils/generic';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
@@ -172,7 +172,7 @@ export class ComponentUtil {
             columnApi: gridOptions.columnApi
         };
 
-        _.iterateObject(changes, (key: string, value: any) => {
+        iterateObject(changes, (key: string, value: any) => {
             (event as any)[key] = value;
         });
 
@@ -202,4 +202,4 @@ export class ComponentUtil {
     }
 }
 
-ComponentUtil.EVENTS = _.values<any>(Events);
+ComponentUtil.EVENTS = values<any>(Events);

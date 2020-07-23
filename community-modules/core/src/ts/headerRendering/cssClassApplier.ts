@@ -3,19 +3,20 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { _ } from '../utils';
+import { missing } from "../utils/generic";
+import { addCssClass } from "../utils/dom";
 
 export class CssClassApplier {
 
     public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: ColumnGroup) {
-        if (_.missing(abstractColDef)) {
+        if (missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
     public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
-        if (_.missing(abstractColDef)) {
+        if (missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
@@ -27,7 +28,7 @@ export class CssClassApplier {
                                               gridOptionsWrapper: GridOptionsWrapper,
                                               column: Column,
                                               columnGroup: ColumnGroup | OriginalColumnGroup) {
-        if (_.missing(classesOrFunc)) {
+        if (missing(classesOrFunc)) {
             return;
         }
         let classToUse: string | string[];
@@ -49,10 +50,10 @@ export class CssClassApplier {
         }
 
         if (typeof classToUse === 'string') {
-            _.addCssClass(eHeaderCell, classToUse);
+            addCssClass(eHeaderCell, classToUse);
         } else if (Array.isArray(classToUse)) {
             classToUse.forEach((cssClassItem: any): void => {
-                _.addCssClass(eHeaderCell, cssClassItem);
+                addCssClass(eHeaderCell, cssClassItem);
             });
         }
     }

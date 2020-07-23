@@ -1,6 +1,6 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import {ColumnController, ColumnState} from "./columnController/columnController";
+import { ColumnController, ColumnState } from "./columnController/columnController";
 import { ColumnApi } from "./columnController/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -58,7 +58,10 @@ import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
-import { _ } from "./utils";
+import { iterateObject } from "./utils/object";
+import { exists, missing } from "./utils/generic";
+import { camelCaseToHumanText } from "./utils/string";
+import { doOnce } from "./utils/function";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -205,9 +208,9 @@ export class GridApi {
 
     public forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void) {
         let index = 0;
-        _.iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
+        iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
             // check for undefined, as old references will still be lying around
-            if (_.exists(gridInfo)) {
+            if (exists(gridInfo)) {
                 callback(gridInfo, index);
                 index++;
             }
@@ -513,8 +516,8 @@ export class GridApi {
     }
 
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
-        if (_.missing(this.clientSideRowModel)) { console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
-        if (_.exists(deprecated_refreshFromIndex)) { console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
+        if (missing(this.clientSideRowModel)) { console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
+        if (exists(deprecated_refreshFromIndex)) { console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
@@ -528,7 +531,7 @@ export class GridApi {
     }
 
     public refreshClientSideRowModel(step?: string): any {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
 
         let paramsStep = Constants.STEP_EVERYTHING;
         const stepsMapped: any = {
@@ -540,10 +543,10 @@ export class GridApi {
             pivot: Constants.STEP_PIVOT
         };
 
-        if (_.exists(step)) {
+        if (exists(step)) {
             paramsStep = stepsMapped[step];
         }
-        if (_.missing(paramsStep)) {
+        if (missing(paramsStep)) {
             console.error(`ag-Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return;
         }
@@ -574,7 +577,7 @@ export class GridApi {
     }
 
     public expandAll() {
-        if (_.missing(this.clientSideRowModel)) {
+        if (missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');
             return;
         }
@@ -582,7 +585,7 @@ export class GridApi {
     }
 
     public collapseAll() {
-        if (_.missing(this.clientSideRowModel)) {
+        if (missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
             return;
         }
@@ -661,7 +664,7 @@ export class GridApi {
     }
 
     public recomputeAggregates(): void {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
         this.clientSideRowModel.refreshModel({ step: Constants.STEP_AGGREGATE });
     }
@@ -727,7 +730,7 @@ export class GridApi {
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
@@ -736,12 +739,12 @@ export class GridApi {
     }
 
     public forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void) {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void) {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
+        if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
@@ -958,7 +961,7 @@ export class GridApi {
     }
 
     public resetRowHeights() {
-        if (_.exists(this.clientSideRowModel)) {
+        if (exists(this.clientSideRowModel)) {
             this.clientSideRowModel.resetRowHeights();
         }
     }
@@ -981,10 +984,10 @@ export class GridApi {
 
     public getValue(colKey: string | Column, rowNode: RowNode): any {
         let column = this.columnController.getPrimaryColumn(colKey);
-        if (_.missing(column)) {
+        if (missing(column)) {
             column = this.columnController.getGridColumn(colKey);
         }
-        if (_.missing(column)) {
+        if (missing(column)) {
             return null;
         }
         return this.valueService.getValue(column, rowNode);
@@ -1047,7 +1050,7 @@ export class GridApi {
     }
 
     public camelCaseToHumanReadable(camelCase: string): string {
-        return _.camelCaseToHumanText(camelCase);
+        return camelCaseToHumanText(camelCase);
     }
 
     public addRangeSelection(deprecatedNoLongerUsed: any): void {
@@ -1178,7 +1181,7 @@ export class GridApi {
             rowPinned: params.rowPinned,
             column: column
         };
-        const notPinned = _.missing(params.rowPinned);
+        const notPinned = missing(params.rowPinned);
         if (notPinned) {
             this.gridPanel.ensureIndexVisible(params.rowIndex);
         }
@@ -1208,12 +1211,12 @@ export class GridApi {
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
                 const message = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
-                _.doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
+                doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
             const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            _.doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
+            doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
 
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
@@ -1234,7 +1237,7 @@ export class GridApi {
     /** @deprecated */
     public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         const message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
-        _.doOnce(() => console.warn(message), 'updateRowData deprecated');
+        doOnce(() => console.warn(message), 'updateRowData deprecated');
 
         return this.applyTransaction(rowDataTransaction);
     }
@@ -1258,7 +1261,7 @@ export class GridApi {
     /** @deprecated */
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         const message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
-        _.doOnce(() => console.warn(message), 'batchUpdateRowData deprecated');
+        doOnce(() => console.warn(message), 'batchUpdateRowData deprecated');
 
         this.applyTransactionAsync(rowDataTransaction, callback);
     }

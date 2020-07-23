@@ -4,7 +4,8 @@ import { Autowired } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { exists } from "../utils/generic";
+import { setFixedWidth } from "../utils/dom";
 
 export class AgAngleSelect extends AgAbstractLabel {
 
@@ -75,7 +76,7 @@ export class AgAngleSelect extends AgAbstractLabel {
 
         this.updateNumberInput();
 
-        if (_.exists(this.getValue())) {
+        if (exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
@@ -224,7 +225,7 @@ export class AgAngleSelect extends AgAbstractLabel {
     }
 
     public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
+        setFixedWidth(this.getGui(), width);
         return this;
     }
 

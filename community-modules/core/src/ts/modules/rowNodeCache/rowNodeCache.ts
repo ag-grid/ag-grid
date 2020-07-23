@@ -4,10 +4,11 @@ import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
-import { NumberSequence,  _ } from "../../utils";
+import { NumberSequence } from "../../utils";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { RowRenderer } from "../../rendering/rowRenderer";
+import { exists, missing } from "../../utils/generic";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -223,7 +224,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.virtualRowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(maxRowFound)) {
+        if (exists(maxRowFound)) {
             this.maxRowFound = maxRowFound;
         }
 
@@ -339,7 +340,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         const numberSequence: NumberSequence = new NumberSequence();
 
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (missing(firstInRange)) {
             inActiveRange = true;
         }
 

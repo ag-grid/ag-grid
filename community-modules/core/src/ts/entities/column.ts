@@ -11,7 +11,6 @@ import {
     RowSpanParams
 } from "./colDef";
 import { EventService } from "../eventService";
-import { _ } from "../utils";
 import { Autowired, Context, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columnController/columnUtils";
@@ -25,6 +24,9 @@ import { OriginalColumnGroup } from "./originalColumnGroup";
 import { Constants } from "../constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
+import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
+import { doOnce } from "../utils/function";
+import { mergeDeep } from "../utils/object";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -133,38 +135,38 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         // sortIndex
-        const sortIndex = _.attrToNumber(colDef.sortIndex);
-        const defaultSortIndex = _.attrToNumber(colDef.defaultSortIndex);
-        if (sortIndex!==undefined) {
-            if (sortIndex!==null) {
+        const sortIndex = attrToNumber(colDef.sortIndex);
+        const defaultSortIndex = attrToNumber(colDef.defaultSortIndex);
+        if (sortIndex !== undefined) {
+            if (sortIndex !== null) {
                 this.sortIndex = sortIndex;
             }
         } else {
-            if (defaultSortIndex!==null) {
+            if (defaultSortIndex !== null) {
                 this.sortIndex = defaultSortIndex;
             }
         }
 
         // hide
-        const hide = _.attrToBoolean(colDef.hide);
-        const defaultHide = _.attrToBoolean(colDef.defaultHide);
+        const hide = attrToBoolean(colDef.hide);
+        const defaultHide = attrToBoolean(colDef.defaultHide);
 
-        if (hide!==undefined) {
+        if (hide !== undefined) {
             this.visible = !hide;
         } else {
             this.visible = !defaultHide;
         }
 
         // pinned
-        if (colDef.pinned!==undefined) {
+        if (colDef.pinned !== undefined) {
             this.setPinned(colDef.pinned);
         } else {
             this.setPinned(colDef.defaultPinned);
         }
 
         // flex
-        const flex = _.attrToNumber(colDef.flex);
-        const defaultFlex = _.attrToNumber(colDef.defaultFlex);
+        const flex = attrToNumber(colDef.flex);
+        const defaultFlex = attrToNumber(colDef.defaultFlex);
         if (flex!==undefined) {
             this.flex = flex;
         } else if (defaultFlex!==undefined) {
@@ -220,8 +222,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.resetActualWidth();
 
         const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
-        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
 
         this.validate();
     }
@@ -235,7 +237,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) {
+        if (missing(this.colDef) || missing(this.colDef.showRowGroup)) {
             return false;
         }
 
@@ -273,11 +275,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         const colDefAny = this.colDef as any;
 
         function warnOnce(msg: string, key: string, obj?: any) {
-            _.doOnce(() => {
+            doOnce(() => {
                 if (obj) {
                     console.warn(msg, obj);
                 } else {
-                    _.doOnce(() => console.warn(msg), key);
+                    doOnce(() => console.warn(msg), key);
                 }
             }, key);
         }
@@ -286,7 +288,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             const rowGroupingItems =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
-                if (_.exists(colDefAny[item])) {
+                if (exists(colDefAny[item])) {
                     if (ModuleRegistry.isPackageBased()) {
                         warnOnce(`ag-Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing' + item);
                     } else {
@@ -319,13 +321,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (this.gridOptionsWrapper.isTreeData()) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
-                if (_.exists(colDefAny[item])) {
+                if (exists(colDefAny[item])) {
                     warnOnce(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
                 }
             });
         }
 
-        if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
+        if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
@@ -468,11 +470,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isSortNone(): boolean {
-        return _.missing(this.sort);
+        return missing(this.sort);
     }
 
     public isSorting(): boolean {
-        return _.exists(this.sort);
+        return exists(this.sort);
     }
 
     public getSortIndex(): number {
@@ -523,7 +525,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
         const filterChangedEvent = this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source);
         if (additionalEventAttributes) {
-            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
+            mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
     }
@@ -626,7 +628,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public getColSpan(rowNode: RowNode): number {
-        if (_.missing(this.colDef.colSpan)) { return 1; }
+        if (missing(this.colDef.colSpan)) { return 1; }
         const params: ColSpanParams = this.createBaseColDefParams(rowNode);
         const colSpan = this.colDef.colSpan(params);
         // colSpan must be number equal to or greater than 1
@@ -635,7 +637,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public getRowSpan(rowNode: RowNode): number {
-        if (_.missing(this.colDef.rowSpan)) { return 1; }
+        if (missing(this.colDef.rowSpan)) { return 1; }
         const params: RowSpanParams = this.createBaseColDefParams(rowNode);
         const rowSpan = this.colDef.rowSpan(params);
         // rowSpan must be number equal to or greater than 1

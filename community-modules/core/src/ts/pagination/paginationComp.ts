@@ -8,7 +8,9 @@ import { PaginationProxy } from "./paginationProxy";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
-import { _ } from "../utils";
+import { createIconNoSpan } from "../utils/icon";
+import { formatNumberCommas } from "../utils/number";
+import { addOrRemoveCssClass } from "../utils/dom";
 
 export class PaginationComp extends Component {
 
@@ -43,10 +45,10 @@ export class PaginationComp extends Component {
     private postConstruct(): void {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
@@ -96,7 +98,7 @@ export class PaginationComp extends Component {
         if (userFunc) {
             return userFunc({value: value});
         } else {
-            return _.formatNumberCommas(value);
+            return formatNumberCommas(value);
         }
     }
 
@@ -168,17 +170,17 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
-        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
+        addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
 
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
+        addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
     }
 
     private updateRowLabels() {

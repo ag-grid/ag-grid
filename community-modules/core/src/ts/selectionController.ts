@@ -14,7 +14,8 @@ import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
-import { _ } from './utils';
+import { iterateObject } from "./utils/object";
+import { exists } from "./utils/generic";
 
 @Bean('selectionController')
 export class SelectionController extends BeanStub {
@@ -57,7 +58,7 @@ export class SelectionController extends BeanStub {
 
     public getSelectedNodes() {
         const selectedNodes: RowNode[] = [];
-        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+        iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode) {
                 selectedNodes.push(rowNode);
             }
@@ -67,7 +68,7 @@ export class SelectionController extends BeanStub {
 
     public getSelectedRows() {
         const selectedRows: any[] = [];
-        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+        iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
@@ -76,7 +77,7 @@ export class SelectionController extends BeanStub {
     }
 
     public removeGroupsFromSelection(): void {
-        _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
+        iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
             if (rowNode && rowNode.group) {
                 this.selectedNodes[rowNode.id] = undefined;
             }
@@ -124,7 +125,7 @@ export class SelectionController extends BeanStub {
     public clearOtherNodes(rowNodeToKeepSelected: RowNode): number {
         const groupsToRefresh: any = {};
         let updatedCount = 0;
-        _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
+        iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 const rowNode = this.selectedNodes[otherRowNode.id];
                 updatedCount += rowNode!.setSelectedParams({
@@ -137,7 +138,7 @@ export class SelectionController extends BeanStub {
                 }
             }
         });
-        _.iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
+        iterateObject(groupsToRefresh, (key: string, group: RowNode) => {
             group.calculateSelectedFromChildren();
         });
         return updatedCount;
@@ -175,9 +176,9 @@ export class SelectionController extends BeanStub {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode): void {
-        const oldNodeHasDifferentId = _.exists(oldNode) && (rowNode.id !== oldNode.id);
+        const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId) {
-            const oldNodeSelected = _.exists(this.selectedNodes[oldNode.id]);
+            const oldNodeSelected = exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;
             }
@@ -185,7 +186,7 @@ export class SelectionController extends BeanStub {
     }
 
     private syncInNewRowNode(rowNode: RowNode): void {
-        if (_.exists(this.selectedNodes[rowNode.id])) {
+        if (exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         } else {
@@ -248,7 +249,7 @@ export class SelectionController extends BeanStub {
 
     public isEmpty(): boolean {
         let count = 0;
-        _.iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
+        iterateObject(this.selectedNodes, (nodeId: string, rowNode: RowNode) => {
             if (rowNode) {
                 count++;
             }
@@ -268,7 +269,7 @@ export class SelectionController extends BeanStub {
             const clientSideRowModel = this.rowModel as IClientSideRowModel;
             clientSideRowModel.forEachNodeAfterFilter(callback);
         } else {
-            _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
+            iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
                 // remember the reference can be to null, as we never 'delete' from the map
                 if (rowNode) {
                     callback(rowNode);

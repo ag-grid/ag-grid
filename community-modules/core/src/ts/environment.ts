@@ -1,6 +1,7 @@
 import { Bean, Autowired } from './context/context';
 import { BeanStub } from "./context/beanStub";
-import { _ } from './utils';
+import { addCssClass } from './utils/dom';
+import { doOnce } from './utils/function';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 
@@ -91,12 +92,12 @@ export class Environment extends BeanStub {
             div.style.position = 'absolute';
             const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
                 if (idx === 0) {
-                    _.addCssClass(el, theme);
+                    addCssClass(el, theme);
                 }
 
                 const div = document.createElement('div');
                 div.style.position = 'static';
-                _.addCssClass(div, currentClass);
+                addCssClass(div, currentClass);
                 el.appendChild(div);
 
                 return div;
@@ -146,7 +147,7 @@ export class Environment extends BeanStub {
 
         if (usingOldTheme) {
             const newTheme = theme.replace('ag-', 'ag-theme-');
-            _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
+            doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
         return { theme, el, themeFamily: theme.replace(/-dark$/, '') };

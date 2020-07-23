@@ -12,7 +12,7 @@ import { Constants } from '../constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
-import { _ } from '../utils';
+import { exists } from '../utils/generic';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -118,7 +118,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             case Constants.KEY_LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case Constants.KEY_RIGHT:
-                if (!_.exists(direction)) {
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction);
@@ -126,7 +126,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             case Constants.KEY_UP:
                 direction = HeaderNavigationDirection.UP;
             case Constants.KEY_DOWN:
-                if (!_.exists(direction)) {
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction)) {

@@ -11,7 +11,8 @@ import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { exists } from "../utils/generic";
+import { last } from "../utils/array";
 
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
@@ -180,11 +181,11 @@ export class NavigationService extends BeanStub {
     // scrollColumn - what column to horizontally scroll to
     // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
     private navigateTo(scrollIndex: number, scrollType: string, scrollColumn: Column, focusIndex: number, focusColumn: Column): void {
-        if (_.exists(scrollColumn)) {
+        if (exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }
 
-        if (_.exists(scrollIndex)) {
+        if (exists(scrollIndex)) {
             this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
         }
 
@@ -213,7 +214,7 @@ export class NavigationService extends BeanStub {
     private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
         const leftKey = key === Constants.KEY_LEFT;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect: Column = leftKey ? allColumns[0] : _.last(allColumns);
+        const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
 
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     }
@@ -223,7 +224,7 @@ export class NavigationService extends BeanStub {
     private onHomeOrEndKey(key: number): void {
         const homeKey = key === Constants.KEY_PAGE_HOME;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect = homeKey ? allColumns[0] : _.last(allColumns);
+        const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
         const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);

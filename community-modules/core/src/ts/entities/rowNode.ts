@@ -14,7 +14,8 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
 import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
-import { _ } from "../utils";
+import { exists, missing, missingOrEmpty } from "../utils/generic";
+import { assign, getAllKeysInObjects } from "../utils/object";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -315,7 +316,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setDataAndId(data: any, id: string | undefined): void {
-        const oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
+        const oldNode = exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
 
         this.data = data;
@@ -331,7 +332,7 @@ export class RowNode implements IEventEmitter {
 
     private checkRowSelectable() {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        const shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
+        const shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
 
         this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     }
@@ -501,7 +502,7 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+        const event = assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
             expanded
         });
 
@@ -547,7 +548,7 @@ export class RowNode implements IEventEmitter {
     public setGroupValue(colKey: string | Column, newValue: any): void {
         const column = this.columnController.getGridColumn(colKey);
 
-        if (_.missing(this.groupData)) { this.groupData = {}; }
+        if (missing(this.groupData)) { this.groupData = {}; }
 
         const columnId = column.getColId();
         const oldValue = this.groupData[columnId];
@@ -561,7 +562,7 @@ export class RowNode implements IEventEmitter {
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
         // find out all keys that could potentially change
-        const colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
+        const colIds = getAllKeysInObjects([this.aggData, newAggData]);
         const oldAggData = this.aggData;
 
         this.aggData = newAggData;
@@ -585,7 +586,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isEmptyRowGroupNode(): boolean {
-        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
+        return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any, oldValue: any): void {
@@ -835,7 +836,7 @@ export class RowNode implements IEventEmitter {
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         const children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
 
-        if (_.missing(children)) { return; }
+        if (missing(children)) { return; }
 
         let updatedCount = 0;
 
@@ -880,7 +881,7 @@ export class RowNode implements IEventEmitter {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             const parentRowNode = currentRowNode.parent;
-            const firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
+            const firstChild = exists(parentRowNode) && currentRowNode.firstChild;
 
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {

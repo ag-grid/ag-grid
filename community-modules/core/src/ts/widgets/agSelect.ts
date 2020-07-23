@@ -4,7 +4,7 @@ import { IAgLabel } from "./agAbstractLabel";
 import { ListOption, AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
-import { _ } from "../utils";
+import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 
 type AgSelectConfig = ListOption & IAgLabel;
 
@@ -71,8 +71,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         });
 
         this.isPickerDisplayed = true;
-        _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
-        listGui.style.maxHeight = _.getInnerHeight(this.popupService.getPopupParent()) + 'px';
+        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
 
         listGui.style.position = 'absolute';
 

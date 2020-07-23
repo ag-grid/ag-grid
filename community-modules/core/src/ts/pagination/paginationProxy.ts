@@ -4,10 +4,10 @@ import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { SelectionController } from "../selectionController";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { _ } from "../utils";
+import { missing, exists } from "../utils/generic";
+import { isNumeric } from "../utils/number";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
@@ -104,7 +104,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getCurrentPageHeight(): number {
-        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) {
+        if (missing(this.topRowBounds) || missing(this.bottomRowBounds)) {
             return 0;
         }
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
@@ -230,7 +230,7 @@ export class PaginationProxy extends BeanStub {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
 
-        this.setPixelOffset(_.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+        this.setPixelOffset(exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
     }
 
     private setPixelOffset(value: number): void {
@@ -268,7 +268,7 @@ export class PaginationProxy extends BeanStub {
             this.currentPage = this.totalPages - 1;
         }
 
-        if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
+        if (!isNumeric(this.currentPage) || this.currentPage < 0) {
             this.currentPage = 0;
         }
 
@@ -314,7 +314,7 @@ export class PaginationProxy extends BeanStub {
             this.currentPage = this.totalPages - 1;
         }
 
-        if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
+        if (!isNumeric(this.currentPage) || this.currentPage < 0) {
             this.currentPage = 0;
         }
 

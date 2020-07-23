@@ -3,7 +3,7 @@ import { Constants } from "../../constants";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from "../../utils";
+import { exists } from "../../utils/generic";
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
@@ -35,7 +35,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
 
-        if (_.exists(params.value)) {
+        if (exists(params.value)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
 

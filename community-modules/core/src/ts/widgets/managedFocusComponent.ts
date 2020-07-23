@@ -2,7 +2,7 @@ import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { Constants } from "../constants";
 import { FocusController } from "../focusController";
-import { _ } from "../utils";
+import { addCssClass, isNodeOrElement } from "../utils/dom";
 
 /**
  * This provides logic to override the default browser focus logic.
@@ -37,7 +37,7 @@ export class ManagedFocusComponent extends Component {
     protected wireFocusManagement() {
         const focusableElement = this.getFocusableElement();
 
-        _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
+        addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
         if (this.isFocusableContainer()) {
             this.topTabGuard = this.createTabGuard('top');
@@ -105,7 +105,7 @@ export class ManagedFocusComponent extends Component {
         if (!this.isFocusableContainer()) {
             super.appendChild(newChild, container);
         } else {
-            if (!_.isNodeOrElement(newChild)) {
+            if (!isNodeOrElement(newChild)) {
                 newChild = (newChild as Component).getGui();
             }
 

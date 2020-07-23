@@ -2,7 +2,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { _ } from "../../utils";
+import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 
 export class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
 
@@ -20,7 +20,7 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        if (!_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
+        if (!isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
             this.params.onKeyDown(event);
         }
     }

@@ -8,9 +8,11 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
-import {Constants} from "../constants";
+import { Constants } from "../constants";
+import { assign, iterateObject } from '../utils/object';
+import { attrToNumber, attrToBoolean, find } from '../utils/generic';
+import { removeFromArray } from '../utils/array';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -245,8 +247,8 @@ export class ColumnFactory extends BeanStub {
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        _.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
-        _.assign(colGroupDefMerged, colGroupDef);
+        assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
 
         return colGroupDefMerged;
@@ -281,17 +283,17 @@ export class ColumnFactory extends BeanStub {
 
     private applyColumnState(column: Column, colDef: ColDef): void {
         // flex
-        const flex = _.attrToNumber(colDef.flex);
-        if (flex!==undefined) {
+        const flex = attrToNumber(colDef.flex);
+        if (flex !== undefined) {
             column.setFlex(flex);
         }
 
         // width - we only set width if column is not flexing
-        const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
+        const noFlexThisCol = column.getFlex() != null && column.getFlex() <= 0;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-            const width = _.attrToNumber(colDef.width);
-            if (width!=null) {
+            const width = attrToNumber(colDef.width);
+            if (width != null) {
                 column.setActualWidth(width);
             }
         }
@@ -306,25 +308,25 @@ export class ColumnFactory extends BeanStub {
         }
 
         // sorted at - anything but undefined, thus null will clear the sortIndex
-        const sortIndex = _.attrToNumber(colDef.sortIndex);
-        if (sortIndex!==undefined) {
+        const sortIndex = attrToNumber(colDef.sortIndex);
+        if (sortIndex !== undefined) {
             column.setSortIndex(sortIndex);
         }
 
         // hide - anything but undefined, thus null will clear the hide
-        const hide = _.attrToBoolean(colDef.hide);
-        if (hide!==undefined) {
+        const hide = attrToBoolean(colDef.hide);
+        if (hide !== undefined) {
             column.setVisible(!hide);
         }
 
         // pinned - anything but undefined, thus null or empty string will remove pinned
-        if (colDef.pinned!==undefined) {
+        if (colDef.pinned !== undefined) {
             column.setPinned(colDef.pinned);
         }
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
-        const res: Column = _.find(existingColsCopy, col => {
+        const res: Column = find(existingColsCopy, col => {
             const oldColDef = col.getUserProvidedColDef();
 
             if (!oldColDef) { return false; }
@@ -351,7 +353,7 @@ export class ColumnFactory extends BeanStub {
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (res) {
-            _.removeFromArray(existingColsCopy, res);
+            removeFromArray(existingColsCopy, res);
         }
 
         return res;
@@ -362,7 +364,7 @@ export class ColumnFactory extends BeanStub {
         const colDefMerged: ColDef = {} as ColDef;
 
         // merge properties from default column definitions
-        _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
+        assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
 
         // merge properties from column type properties
         if (colDef.type) {
@@ -370,7 +372,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge properties from column definitions
-        _.assign(colDefMerged, colDef);
+        assign(colDefMerged, colDef);
 
         return colDefMerged;
     }
@@ -393,10 +395,10 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge user defined with default column types
-        const allColumnTypes = _.assign({}, DefaultColumnTypes);
+        const allColumnTypes = assign({}, DefaultColumnTypes);
         const userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
 
-        _.iterateObject(userTypes, (key, value) => {
+        iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {
                 console.warn(`ag-Grid: the column type '${key}' is a default column type and cannot be overridden.`);
             } else {
@@ -407,7 +409,7 @@ export class ColumnFactory extends BeanStub {
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                _.assign(colDefMerged, typeColDef);
+                assign(colDefMerged, typeColDef);
             } else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }

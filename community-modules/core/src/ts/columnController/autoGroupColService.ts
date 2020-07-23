@@ -6,7 +6,8 @@ import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { mergeDeep, assign } from "../utils/object";
+import { missing } from "../utils/generic";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
@@ -54,7 +55,7 @@ export class AutoGroupColService extends BeanStub {
         }
 
         const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-        _.mergeDeep(defaultAutoColDef, userAutoColDef);
+        mergeDeep(defaultAutoColDef, userAutoColDef);
 
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
 
@@ -64,7 +65,7 @@ export class AutoGroupColService extends BeanStub {
         if (!this.gridOptionsWrapper.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            const noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
+            const noFieldOrValueGetter = missing(defaultAutoColDef.field) && missing(defaultAutoColDef.valueGetter) && missing(defaultAutoColDef.filterValueGetter);
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.filter = false;
             }
@@ -102,14 +103,14 @@ export class AutoGroupColService extends BeanStub {
 
         if (rowGroupCol) {
             const rowGroupColDef = rowGroupCol.getColDef();
-            _.assign(defaultAutoColDef, {
+            assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
             if (rowGroupColDef.cellRenderer) {
-                _.assign(defaultAutoColDef, {
+                assign(defaultAutoColDef, {
                     cellRendererParams:{
                         innerRenderer: rowGroupColDef.cellRenderer,
                         innerRendererParams: rowGroupColDef.cellRendererParams

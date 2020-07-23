@@ -24,6 +24,8 @@ import { ColumnController } from "./columnController/columnController";
 import { ColumnGroup } from "./entities/columnGroup";
 import { Column } from "./entities/column";
 import { _ } from "./utils";
+import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
+import { findIndex, last } from "./utils/array";
 
 export class GridCore extends ManagedFocusComponent {
 
@@ -100,11 +102,11 @@ export class GridCore extends ManagedFocusComponent {
         const eGui = this.getGui();
 
         this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
-            _.addCssClass(eGui, 'ag-keyboard-focus');
+            addCssClass(eGui, 'ag-keyboard-focus');
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
-            _.removeCssClass(eGui, 'ag-keyboard-focus');
+            removeCssClass(eGui, 'ag-keyboard-focus');
         });
 
         super.postConstruct();
@@ -155,12 +157,12 @@ export class GridCore extends ManagedFocusComponent {
             );
         }
 
-        return focusableContainers.filter(el => _.isVisible(el));
+        return focusableContainers.filter(el => isVisible(el));
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
-        const idxWithFocus = _.findIndex(focusableContainers, container => container.contains(document.activeElement));
+        const idxWithFocus = findIndex(focusableContainers, container => container.contains(document.activeElement));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
@@ -178,7 +180,7 @@ export class GridCore extends ManagedFocusComponent {
     public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
         if (fromBottom && focusableContainers.length > 1) {
-            return this.focusController.focusFirstFocusableElement(_.last(focusableContainers));
+            return this.focusController.focusFirstFocusableElement(last(focusableContainers));
         }
 
         return this.focusGridHeader();
@@ -213,7 +215,7 @@ export class GridCore extends ManagedFocusComponent {
 
     private addRtlSupport(): void {
         const cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
-        _.addCssClass(this.getGui(), cssClass);
+        addCssClass(this.getGui(), cssClass);
     }
 
     public getRootGui(): HTMLElement {

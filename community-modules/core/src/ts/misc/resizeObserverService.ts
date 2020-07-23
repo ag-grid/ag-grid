@@ -1,7 +1,8 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { debounce } from "../utils/function";
+import { offsetHeight, offsetWidth } from "../utils/dom";
 
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
@@ -13,7 +14,7 @@ export class ResizeObserverService extends BeanStub {
         const frameworkFactory = this.getFrameworkOverrides();
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        const debouncedCallback = _.debounce(callback, debounceDelay);
+        const debouncedCallback = debounce(callback, debounceDelay);
         const useBrowserResizeObserver = () => {
             const resizeObserver = new (window as any).ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
@@ -23,8 +24,8 @@ export class ResizeObserverService extends BeanStub {
         const usePolyfill = () => {
 
             // initialise to the current width and height, so first call will have no changes
-            let widthLastTime = _.offsetWidth(element);
-            let heightLastTime = _.offsetHeight(element);
+            let widthLastTime = offsetWidth(element);
+            let heightLastTime = offsetHeight(element);
 
             // when finished, this gets turned to false.
             let running = true;
@@ -32,8 +33,8 @@ export class ResizeObserverService extends BeanStub {
             const periodicallyCheckWidthAndHeight = () => {
                 if (running) {
 
-                    const newWidth = _.offsetWidth(element);
-                    const newHeight = _.offsetHeight(element);
+                    const newWidth = offsetWidth(element);
+                    const newHeight = offsetHeight(element);
 
                     const changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {

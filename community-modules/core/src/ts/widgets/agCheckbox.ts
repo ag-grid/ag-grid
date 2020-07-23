@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
-import { _ } from '../utils';
+import { addOrRemoveCssClass } from '../utils/dom';
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
@@ -45,13 +45,13 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setReadOnly(readOnly: boolean): void {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
+        addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
     }
 
     public setDisabled(disabled: boolean): this {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
 
         return super.setDisabled(disabled);
     }
@@ -123,7 +123,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     private refreshSelectedClass(value?: boolean | null) {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
+        addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     }
 }

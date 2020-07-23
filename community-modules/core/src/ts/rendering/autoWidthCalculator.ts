@@ -6,8 +6,8 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { containsClass, addCssClass } from "../utils/dom";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
@@ -103,12 +103,12 @@ export class AutoWidthCalculator extends BeanStub {
         // out one per line
         const eCloneParent = document.createElement('div');
 
-        if (_.containsClass(eCellClone, 'ag-header-cell')) {
-            _.addCssClass(eCloneParent, 'ag-header');
-            _.addCssClass(eCloneParent, 'ag-header-row');
+        if (containsClass(eCellClone, 'ag-header-cell')) {
+            addCssClass(eCloneParent, 'ag-header');
+            addCssClass(eCloneParent, 'ag-header-row');
             eCloneParent.style.position = 'static';
         } else {
-            _.addCssClass(eCloneParent, 'ag-row');
+            addCssClass(eCloneParent, 'ag-row');
         }
 
         // table-row, so that each cell is on a row. i also tried display='block', but this

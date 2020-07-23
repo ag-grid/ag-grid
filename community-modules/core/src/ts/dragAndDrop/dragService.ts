@@ -4,8 +4,11 @@ import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { find, exists } from "../utils/generic";
+import { removeFromArray } from "../utils/array";
+import { addOrRemoveCssClass } from "../utils/dom";
+import { areEventsNear } from "../utils/mouse";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -53,21 +56,21 @@ export class DragService extends BeanStub {
     }
 
     public removeDragSource(params: DragListenerParams): void {
-        const dragSourceAndListener = _.find(this.dragSources, item => item.dragSource === params);
+        const dragSourceAndListener = find(this.dragSources, item => item.dragSource === params);
 
         if (!dragSourceAndListener) { return; }
 
         this.removeListener(dragSourceAndListener);
-        _.removeFromArray(this.dragSources, dragSourceAndListener);
+        removeFromArray(this.dragSources, dragSourceAndListener);
     }
 
     private setNoSelectToBody(noSelect: boolean): void {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const eBody = eDocument.querySelector('body') as HTMLElement;
-        if (_.exists(eBody)) {
+        if (exists(eBody)) {
             // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
-            _.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
+            addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
     }
 
@@ -194,8 +197,8 @@ export class DragService extends BeanStub {
     private isEventNearStartEvent(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
         const {dragStartPixels} = this.currentDragParams;
-        const requiredPixelDiff = _.exists(dragStartPixels) ? dragStartPixels : 4;
-        return _.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        const requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
+        return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
     private getFirstActiveTouch(touchList: TouchList): Touch {

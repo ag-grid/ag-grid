@@ -5,8 +5,8 @@ import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
-import { _ } from "../utils";
 import { forEach } from '../utils/array';
+import { addSafePassiveEventListener } from "../utils/event";
 
 export class BeanStub implements IEventEmitter {
 
@@ -93,7 +93,7 @@ export class BeanStub implements IEventEmitter {
         }
 
         if (object instanceof HTMLElement) {
-            _.addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
+            addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
         } else {
             object.addEventListener(event, listener);
         }

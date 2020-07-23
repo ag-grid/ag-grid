@@ -16,7 +16,15 @@ import {
     ComponentSource,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
-import { _, Promise } from "../../utils";
+import { Promise } from "../../utils";
+import { doOnce } from "../../utils/function";
+import { get, cloneObject } from "../../utils/object";
+import { bindCellRendererToHtmlElement } from "../../utils/general";
+import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
+import { createIconNoSpan } from "../../utils/icon";
+import { isKeyPressed } from "../../utils/keyboard";
+import { missing, exists } from "../../utils/generic";
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
@@ -167,7 +175,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
-        _.doOnce(() => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
+        doOnce(() => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
 
         const paddingPx = paddingCount * padding;
         const eGui = this.getGui();
@@ -197,8 +205,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             this.createFooterCell();
         } else if (
             rowNode.hasChildren() ||
-            _.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            _.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
+            get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
+            get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
         ) {
             this.createGroupCell();
             if (rowNode.hasChildren()) {
@@ -215,7 +223,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone: any = _.cloneObject(this.params);
+            const paramsClone: any = cloneObject(this.params);
             paramsClone.value = this.params.value;
 
             if (typeof footerValueGetter === 'function') {
@@ -302,7 +310,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             } else if (
                 groupColumnRendererClass &&
                 groupColumnRendererClass.source == ComponentSource.DEFAULT &&
-                (_.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))
+                (get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))
             ) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
@@ -319,7 +327,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                     this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
                 }
-                _.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
+                bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
             });
         } else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -332,7 +340,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
-            _.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
+            bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
         } else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
@@ -358,7 +366,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private createLeafCell(): void {
-        if (_.exists(this.params.value)) {
+        if (exists(this.params.value)) {
             this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     }
@@ -390,14 +398,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
         }
 
-        _.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
+        addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
     }
 
     private addExpandAndContract(): void {
         const params = this.params;
         const eGroupCell = params.eGridCell;
-        const eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
-        const eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
+        const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
@@ -432,7 +440,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const enterKeyPressed = _.isKeyPressed(event, Constants.KEY_ENTER);
+        const enterKeyPressed = isKeyPressed(event, Constants.KEY_ENTER);
 
         if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
 
@@ -471,7 +479,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             let pointer = rowNode.parent;
 
             while (true) {
-                if (_.missing(pointer)) {
+                if (missing(pointer)) {
                     break;
                 }
                 if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
@@ -483,30 +491,30 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         // if we didn't find a displayed group, set it to the row node
-        if (_.missing(this.displayedGroup)) {
+        if (missing(this.displayedGroup)) {
             this.displayedGroup = rowNode;
         }
     }
 
     public onExpandClicked(mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // so if we expand a node, it does not also get selected.
-        _.stopPropagationForAgGrid(mouseEvent);
+        stopPropagationForAgGrid(mouseEvent);
 
         this.onExpandOrContract();
     }
 
     public onCellDblClicked(mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
         const targetIsExpandIcon
-            = _.isElementInEventPath(this.eExpanded, mouseEvent)
-            || _.isElementInEventPath(this.eContracted, mouseEvent);
+            = isElementInEventPath(this.eExpanded, mouseEvent)
+            || isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();
@@ -535,12 +543,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             const expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
-            _.setDisplayed(this.eContracted, !expanded);
-            _.setDisplayed(this.eExpanded, expanded);
+            setDisplayed(this.eContracted, !expanded);
+            setDisplayed(this.eExpanded, expanded);
         } else {
             // it not expandable, show neither
-            _.setDisplayed(this.eExpanded, false);
-            _.setDisplayed(this.eContracted, false);
+            setDisplayed(this.eExpanded, false);
+            setDisplayed(this.eContracted, false);
         }
 
         const displayedGroup = this.displayedGroup;

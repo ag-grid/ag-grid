@@ -6,7 +6,8 @@ import { Events } from "../eventKeys";
 import { Beans } from "./beans";
 import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
+import { createIconNoSpan } from "../utils/icon";
+import { doOnce, isFunction } from "../utils/function";
 
 export interface IRowDragItem extends DragItem {
     defaultTextValue: string;
@@ -30,7 +31,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         const eGui = this.getGui();
 
-        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
 
         this.checkCompatibility();
@@ -57,7 +58,7 @@ export class RowDragComp extends Component {
         const treeData = this.beans.gridOptionsWrapper.isTreeData();
 
         if (treeData && managed) {
-            _.doOnce(() =>
+            doOnce(() =>
                 console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
                 'RowDragComp.managedAndTreeData'
             );
@@ -110,7 +111,7 @@ class VisibilityStrategy extends BeanStub {
             this.parent.setDisplayed(false);
         } else {
             const shown = this.column.isRowDrag(this.rowNode);
-            const isShownSometimes = _.isFunction(this.column.getColDef().rowDrag);
+            const isShownSometimes = isFunction(this.column.getColDef().rowDrag);
 
             // if shown sometimes, them some rows can have drag handle while other don't,
             // so we use setVisible to keep the handles horizontally aligned (as setVisible

@@ -3,7 +3,8 @@ import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { PopupService } from "./popupService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
+import { addCssClass, setFixedHeight, getAbsoluteHeight, setFixedWidth, getAbsoluteWidth, getInnerHeight, getInnerWidth } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
 
 export interface PanelOptions {
     component?: Component;
@@ -98,7 +99,7 @@ export class AgPanel extends Component {
             if (title) { this.setTitle(title); }
             this.setClosable(closable != null ? closable : this.closable);
         } else {
-            _.addCssClass(this.eTitleBar, 'ag-hidden');
+            addCssClass(this.eTitleBar, 'ag-hidden');
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
@@ -285,8 +286,8 @@ export class AgPanel extends Component {
         const eGui = this.getGui();
         let isPercent = false;
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            _.setFixedHeight(eGui, height);
-            height = _.getAbsoluteHeight(eGui);
+            setFixedHeight(eGui, height);
+            height = getAbsoluteHeight(eGui);
             isPercent = true;
         } else {
             height = Math.max(this.minHeight, height as number);
@@ -301,7 +302,7 @@ export class AgPanel extends Component {
         this.size.height = height;
 
         if (!isPercent) {
-            _.setFixedHeight(eGui, height);
+            setFixedHeight(eGui, height);
         } else {
             eGui.style.maxHeight = 'unset';
             eGui.style.minHeight = 'unset';
@@ -316,8 +317,8 @@ export class AgPanel extends Component {
         const eGui = this.getGui();
         let isPercent = false;
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            _.setFixedWidth(eGui, width);
-            width = _.getAbsoluteWidth(eGui);
+            setFixedWidth(eGui, width);
+            width = getAbsoluteWidth(eGui);
             isPercent = true;
         } else {
             width = Math.max(this.minWidth, width as number);
@@ -332,7 +333,7 @@ export class AgPanel extends Component {
 
         this.size.width = width;
         if (!isPercent) {
-            _.setFixedWidth(eGui, width);
+            setFixedWidth(eGui, width);
         } else {
             eGui.style.maxWidth = 'unset';
             eGui.style.minWidth = 'unset';
@@ -358,8 +359,8 @@ export class AgPanel extends Component {
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            eGui.appendChild(_.addCssClass(
-                _.createIconNoSpan('close', this.gridOptionsWrapper),
+            eGui.appendChild(addCssClass(
+                createIconNoSpan('close', this.gridOptionsWrapper),
                 'ag-panel-title-bar-button-icon')
             );
 
@@ -391,7 +392,7 @@ export class AgPanel extends Component {
 
         const eGui = button.getGui();
 
-        _.addCssClass(eGui, 'ag-panel-title-bar-button');
+        addCssClass(eGui, 'ag-panel-title-bar-button');
 
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
@@ -405,11 +406,11 @@ export class AgPanel extends Component {
     }
 
     public getBodyHeight(): number {
-        return _.getInnerHeight(this.eContentWrapper);
+        return getInnerHeight(this.eContentWrapper);
     }
 
     public getBodyWidth(): number {
-        return _.getInnerWidth(this.eContentWrapper);
+        return getInnerWidth(this.eContentWrapper);
     }
 
     public setTitle(title: string) {

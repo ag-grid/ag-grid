@@ -1,6 +1,8 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
-import { _ } from "../utils";
+import { values, exists } from "../utils/generic";
+import { iterateObject } from "../utils/object";
+import { getFunctionName } from "../utils/function";
 
 // steps in booting up:
 // 1. create all beans
@@ -56,7 +58,7 @@ export class Context {
     }
 
     private getBeanInstances(): any[] {
-        return _.values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
+        return values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
     }
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
@@ -75,7 +77,7 @@ export class Context {
 
         // the callback sets the attributes, so the component has access to attributes
         // before postConstruct methods in the component are executed
-        if (_.exists(afterPreCreateCallback)) {
+        if (exists(afterPreCreateCallback)) {
             beanInstances.forEach(afterPreCreateCallback);
         }
 
@@ -88,7 +90,7 @@ export class Context {
         // register override beans, these will overwrite beans above of same name
 
         // instantiate all beans - overridden beans will be left out
-        _.iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
+        iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
             let constructorParamsMeta: any;
             if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
@@ -109,7 +111,7 @@ export class Context {
         if (!metaData) {
             let beanName: string;
             if (Bean.prototype.constructor) {
-                beanName = _.getFunctionName(Bean.prototype.constructor);
+                beanName = getFunctionName(Bean.prototype.constructor);
             } else {
                 beanName = "" + Bean;
             }
@@ -145,7 +147,7 @@ export class Context {
     private methodWireBeans(beanInstances: any[]): void {
         beanInstances.forEach(beanInstance => {
             this.forEachMetaDataInHierarchy(beanInstance, (metaData: any, beanName: string) => {
-                _.iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
+                iterateObject(metaData.autowireMethods, (methodName: string, wireParams: any[]) => {
                     // skip constructor, as this is dealt with elsewhere
                     if (methodName === "agConstructor") {
                         return;
@@ -187,7 +189,7 @@ export class Context {
     private getBeansForParameters(parameters: any, beanName: string): any[] {
         const beansList: any[] = [];
         if (parameters) {
-            _.iterateObject(parameters, (paramIndex: string, otherBeanName: string) => {
+            iterateObject(parameters, (paramIndex: string, otherBeanName: string) => {
                 const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
                 beansList[Number(paramIndex)] = otherBean;
             });

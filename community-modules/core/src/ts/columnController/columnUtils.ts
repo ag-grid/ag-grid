@@ -6,8 +6,9 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { getMaxSafeInteger } from "../utils/number";
+import { attrToNumber } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
@@ -18,14 +19,14 @@ export class ColumnUtils extends BeanStub {
     public calculateColInitialWidth(colDef: any): number {
         const optionsWrapper = this.gridOptionsWrapper;
         const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
-        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || _.getMaxSafeInteger());
+        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || getMaxSafeInteger());
 
         let width : number;
-        const colDefWidth = _.attrToNumber(colDef.width);
-        const colDefDefaultWidth = _.attrToNumber(colDef.defaultWidth);
-        if (colDefWidth!=null) {
+        const colDefWidth = attrToNumber(colDef.width);
+        const colDefDefaultWidth = attrToNumber(colDef.defaultWidth);
+        if (colDefWidth != null) {
             width = colDefWidth;
-        } else if (colDefDefaultWidth!=null) {
+        } else if (colDefDefaultWidth != null) {
             width = colDefDefaultWidth;
         } else {
             width = optionsWrapper.getColWidth();

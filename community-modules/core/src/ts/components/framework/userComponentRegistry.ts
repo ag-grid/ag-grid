@@ -1,5 +1,4 @@
 import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
-
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
@@ -18,7 +17,6 @@ import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlay
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
-import { _ } from "../../utils";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
 import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { TextFilter } from "../../filter/provided/text/textFilter";
@@ -26,6 +24,7 @@ import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatin
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { BeanStub } from "../../context/beanStub";
 import { iterateObject } from '../../utils/object';
+import { doOnce } from "../../utils/function";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -256,7 +255,7 @@ export class UserComponentRegistry extends BeanStub {
         const deprecatedInfo = this.agDeprecatedNames[raw];
 
         if (deprecatedInfo != null) {
-            _.doOnce(() => {
+            doOnce(() => {
                 console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
             }, 'DEPRECATE_COMPONENT_' + raw);
 

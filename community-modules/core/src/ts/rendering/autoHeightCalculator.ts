@@ -4,8 +4,8 @@ import { Beans } from "./beans";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
 import { ColumnController } from "../columnController/columnController";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { addCssClass, clearElement } from "../utils/dom";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
@@ -28,7 +28,7 @@ export class AutoHeightCalculator extends BeanStub {
 
             // so any styles on row also get applied in dummy, otherwise
             // the content in dummy may differ to the real
-            _.addCssClass(this.eDummyContainer, 'ag-row ag-row-no-focus');
+            addCssClass(this.eDummyContainer, 'ag-row ag-row-no-focus');
         }
 
         // we put the dummy into the body container, so it will inherit all the
@@ -81,7 +81,7 @@ export class AutoHeightCalculator extends BeanStub {
         });
 
         // in case anything left over from last time
-        _.clearElement(this.eDummyContainer);
+        clearElement(this.eDummyContainer);
 
         return maxCellHeight;
     }

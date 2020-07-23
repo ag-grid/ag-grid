@@ -39,12 +39,14 @@ import { AutoGroupColService } from './autoGroupColService';
 import { RowNode } from '../entities/rowNode';
 import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
-import {ApplyColumnStateParams, ColumnApi} from './columnApi';
+import { ApplyColumnStateParams, ColumnApi } from './columnApi';
 import { Constants } from '../constants';
-import { areEqual } from '../utils/array';
+import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { _ } from '../utils';
-import {SortController} from "../sortController";
+import { SortController } from "../sortController";
+import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
+import { deepCloneDefinition } from '../utils/object';
+import { camelCaseToHumanText } from '../utils/string';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -58,7 +60,7 @@ export interface ColumnState {
     aggFunc?: string | IAggFunc | null;
     width?: number | undefined;
     pivot?: boolean | null;
-    pivotIndex?: number |null;
+    pivotIndex?: number | null;
     pinned?: boolean | string | 'left' | 'right' | null;
     rowGroup?: boolean | null;
     rowGroupIndex?: number | null;
@@ -273,21 +275,26 @@ export class ColumnController extends BeanStub {
             // so position is maintained.
             const indexAPresent = primaryIndexA >= 0;
             const indexBPresent = primaryIndexB >= 0;
+
             if (indexAPresent && indexBPresent) {
                 return primaryIndexA - primaryIndexB;
-            } else if (indexAPresent) {
+            }
+
+            if (indexAPresent) {
                 // B is auto group column, so put B first
                 return 1;
-            } else if (indexBPresent) {
+            }
+
+            if (indexBPresent) {
                 // A is auto group column, so put A first
                 return -1;
-            } else {
-                // otherwise both A and B are auto-group columns. so we just keep the order
-                // as they were already in.
-                const gridIndexA = this.gridColumns.indexOf(colA);
-                const gridIndexB = this.gridColumns.indexOf(colB);
-                return gridIndexA - gridIndexB;
             }
+
+            // otherwise both A and B are auto-group columns. so we just keep the order
+            // as they were already in.
+            const gridIndexA = this.gridColumns.indexOf(colA);
+            const gridIndexB = this.gridColumns.indexOf(colB);
+            return gridIndexA - gridIndexB;
         });
     }
 
@@ -428,9 +435,9 @@ export class ColumnController extends BeanStub {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
-            firstRight = this.displayedRightColumns ? _.last(this.displayedRightColumns) : null;
+            firstRight = this.displayedRightColumns ? last(this.displayedRightColumns) : null;
         } else {
-            lastLeft = this.displayedLeftColumns ? _.last(this.displayedLeftColumns) : null;
+            lastLeft = this.displayedLeftColumns ? last(this.displayedLeftColumns) : null;
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
 
@@ -730,7 +737,7 @@ export class ColumnController extends BeanStub {
         source: ColumnEventType = "api"
     ) {
 
-        if (!keys || _.missingOrEmpty(keys)) { return; }
+        if (!keys || missingOrEmpty(keys)) { return; }
 
         let atLeastOne = false;
 
@@ -743,7 +750,7 @@ export class ColumnController extends BeanStub {
                 masterList.push(columnToAdd);
             } else {
                 if (masterList.indexOf(columnToAdd) < 0) { return; }
-                _.removeFromArray(masterList, columnToAdd);
+                removeFromArray(masterList, columnToAdd);
             }
 
             columnCallback(columnToAdd);
@@ -855,7 +862,7 @@ export class ColumnController extends BeanStub {
 
         masterList.length = 0;
 
-        if (_.exists(colKeys)) {
+        if (exists(colKeys)) {
             colKeys.forEach(key => {
                 const column = this.getPrimaryColumn(key);
                 if (column) {
@@ -1212,7 +1219,7 @@ export class ColumnController extends BeanStub {
 
         if (failedRules) { return; }
 
-        _.moveInArray(this.gridColumns, columnsToMove, toIndex);
+        moveInArray(this.gridColumns, columnsToMove, toIndex);
         this.updateDisplayedColumns(source);
 
         const event: ColumnMovedEvent = {
@@ -1232,7 +1239,7 @@ export class ColumnController extends BeanStub {
     public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
         // make a copy of what the grid columns would look like after the move
         const proposedColumnOrder = this.gridColumns.slice();
-        _.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        moveInArray(proposedColumnOrder, columnsToMove, toIndex);
 
         // then check that the new proposed order of the columns passes all rules
         if (!this.doesMovePassMarryChildren(proposedColumnOrder)) {
@@ -1318,7 +1325,7 @@ export class ColumnController extends BeanStub {
         }
 
         cols.forEach( col => {
-            const colDefCloned = _.deepCloneDefinition(col.getColDef());
+            const colDefCloned = deepCloneDefinition(col.getColDef());
 
             colDefCloned.width = col.getActualWidth();
             colDefCloned.rowGroup = col.isRowGroupActive();
@@ -1450,11 +1457,11 @@ export class ColumnController extends BeanStub {
     }
 
     public isEmpty(): boolean {
-        return _.missingOrEmpty(this.gridColumns);
+        return missingOrEmpty(this.gridColumns);
     }
 
     public isRowGroupEmpty(): boolean {
-        return _.missingOrEmpty(this.rowGroupColumns);
+        return missingOrEmpty(this.rowGroupColumns);
     }
 
     public setColumnVisible(key: string | Column, visible: boolean, source: ColumnEventType = "api"): void {
@@ -1542,7 +1549,7 @@ export class ColumnController extends BeanStub {
         source: ColumnEventType,
         createEvent?: () => ColumnEvent): void {
 
-        if (_.missingOrEmpty(keys)) { return; }
+        if (missingOrEmpty(keys)) { return; }
 
         const updatedColumns: Column[] = [];
 
@@ -1562,7 +1569,7 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        if (_.exists(createEvent) && createEvent) {
+        if (exists(createEvent) && createEvent) {
             const event = createEvent();
 
             event.columns = updatedColumns;
@@ -1608,7 +1615,7 @@ export class ColumnController extends BeanStub {
         // pick the last displayed column in this group
         const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
-        const col: Column | null = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const col: Column | null = direction === 'After' ? last(colGroupLeafColumns) : colGroupLeafColumns[0];
         const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
 
         while (true) {
@@ -1654,7 +1661,7 @@ export class ColumnController extends BeanStub {
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
         const result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
 
-        if (this.groupAutoColumns && _.exists(this.groupAutoColumns)) {
+        if (this.groupAutoColumns && exists(this.groupAutoColumns)) {
             this.groupAutoColumns.forEach(col => result.push(col));
         }
 
@@ -1692,7 +1699,7 @@ export class ColumnController extends BeanStub {
     }
 
     public getColumnState(): ColumnState[] {
-        if (_.missing(this.primaryColumns)) { return []; }
+        if (missing(this.primaryColumns)) { return []; }
 
         const primaryColumnState: ColumnState[]
             = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
@@ -1755,11 +1762,11 @@ export class ColumnController extends BeanStub {
                     width: column.getColDef().width
                 };
 
-                if (_.missing(rowGroupIndex) && rowGroup) {
+                if (missing(rowGroupIndex) && rowGroup) {
                     stateItem.rowGroupIndex = letRowGroupIndex++;
                 }
 
-                if (_.missing(pivotIndex) && pivot) {
+                if (missing(pivotIndex) && pivot) {
                     stateItem.pivotIndex = letPivotIndex++;
                 }
 
@@ -1771,7 +1778,7 @@ export class ColumnController extends BeanStub {
     }
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType = "api"): boolean {
-        if (_.missingOrEmpty(this.primaryColumns)) { return false; }
+        if (missingOrEmpty(this.primaryColumns)) { return false; }
 
         const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
 
@@ -1793,7 +1800,7 @@ export class ColumnController extends BeanStub {
             params.state.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                if (_.exists(this.getAutoColumn(state.colId))) {
+                if (exists(this.getAutoColumn(state.colId))) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
@@ -1806,7 +1813,7 @@ export class ColumnController extends BeanStub {
                 } else {
                     this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
                         pivotIndexes, false, source);
-                    _.removeFromArray(columnsWithNoState, column);
+                    removeFromArray(columnsWithNoState, column);
                 }
             });
 
@@ -2047,8 +2054,8 @@ export class ColumnController extends BeanStub {
         });
 
         // filter state lists, so we only have cols that were present before and after
-        const beforeFiltered = _.filter(colStateBefore, c => colsIntersectIds[c.colId]);
-        const afterFiltered = _.filter(colStateAfter, c => colsIntersectIds[c.colId]);
+        const beforeFiltered = filter(colStateBefore, c => colsIntersectIds[c.colId]);
+        const afterFiltered = filter(colStateAfter, c => colsIntersectIds[c.colId]);
 
         // see if any cols are in a different location
         const movedColumns: Column[] = [];
@@ -2122,7 +2129,7 @@ export class ColumnController extends BeanStub {
             column.setValueActive(true, source);
             this.valueColumns.push(column);
         } else {
-            if (_.exists(stateItem.aggFunc)) {
+            if (exists(stateItem.aggFunc)) {
                 console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                     'functions, register the functions first before using them in get/set state. This is because it is ' +
                     'intended for the column state to be stored and retrieved as simple JSON.');
@@ -2222,14 +2229,14 @@ export class ColumnController extends BeanStub {
                 column.setValueActive(true, source);
                 this.valueColumns.push(column);
             } else {
-                if (_.exists(aggFunc)) {
+                if (exists(aggFunc)) {
                     console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
                 }
                 column.setAggFunc(null);
                 column.setValueActive(false, source);
-                _.removeFromArray(this.valueColumns, column);
+                removeFromArray(this.valueColumns, column);
             }
         }
 
@@ -2246,13 +2253,13 @@ export class ColumnController extends BeanStub {
             } else {
                 if (column.isRowGroupActive()) {
                     column.setRowGroupActive(false, source);
-                    _.removeFromArray(this.rowGroupColumns, column);
+                    removeFromArray(this.rowGroupColumns, column);
                 }
             }
         }
 
         const {value1: pivot, value2: pivotIndex} = getValue('pivot', 'pivotIndex');
-        if (pivot!==undefined || pivotIndex!==undefined) {
+        if (pivot !== undefined || pivotIndex !== undefined) {
             if (typeof pivotIndex === 'number' || pivot) {
                 if (!column.isPivotActive()) {
                     column.setPivotActive(true, source);
@@ -2264,7 +2271,7 @@ export class ColumnController extends BeanStub {
             } else {
                 if (column.isPivotActive()) {
                     column.setPivotActive(false, source);
-                    _.removeFromArray(this.pivotColumns, column);
+                    removeFromArray(this.pivotColumns, column);
                 }
             }
         }
@@ -2325,11 +2332,11 @@ export class ColumnController extends BeanStub {
     private getAutoColumn(key: string | Column): Column | null {
         if (
             !this.groupAutoColumns ||
-            !_.exists(this.groupAutoColumns) ||
-            _.missing(this.groupAutoColumns)
+            !exists(this.groupAutoColumns) ||
+            missing(this.groupAutoColumns)
         ) { return null; }
 
-        return _.find(this.groupAutoColumns, groupCol => this.columnsMatch(groupCol, key));
+        return find(this.groupAutoColumns, groupCol => this.columnsMatch(groupCol, key));
     }
 
     private columnsMatch(column: Column, key: string | Column): boolean {
@@ -2403,7 +2410,7 @@ export class ColumnController extends BeanStub {
         } else if (colDef.headerName != null) {
             return colDef.headerName;
         } else if ((colDef as ColDef).field) {
-            return _.camelCaseToHumanText((colDef as ColDef).field);
+            return camelCaseToHumanText((colDef as ColDef).field);
         }
 
         return '';
@@ -2443,7 +2450,7 @@ export class ColumnController extends BeanStub {
 
         // only columns with aggregation active can have aggregations
         const pivotValueColumn = column.getColDef().pivotValueColumn;
-        const pivotActiveOnThisColumn = _.exists(pivotValueColumn);
+        const pivotActiveOnThisColumn = exists(pivotValueColumn);
         let aggFunc: string | IAggFunc | null = null;
         let aggFuncFound: boolean;
 
@@ -2576,10 +2583,10 @@ export class ColumnController extends BeanStub {
             const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
             const colDef = col.getColDef();
 
-            const value = _.attrToBoolean(getValueFunc(colDef));
-            const defaultValue = _.attrToBoolean(getDefaultValueFunc(colDef));
-            const index = _.attrToNumber(getIndexFunc(colDef));
-            const defaultIndex = _.attrToNumber(getDefaultIndexFunc(colDef));
+            const value = attrToBoolean(getValueFunc(colDef));
+            const defaultValue = attrToBoolean(getDefaultValueFunc(colDef));
+            const index = attrToNumber(getIndexFunc(colDef));
+            const defaultIndex = attrToNumber(getDefaultIndexFunc(colDef));
 
             let include: boolean;
 
@@ -2792,8 +2799,8 @@ export class ColumnController extends BeanStub {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
             columnsForDisplay = this.gridColumns.filter(column => {
-                const isAutoGroupCol = this.groupAutoColumns && _.includes(this.groupAutoColumns, column);
-                const isValueCol = this.valueColumns && _.includes(this.valueColumns, column);
+                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
+                const isValueCol = this.valueColumns && includes(this.valueColumns, column);
                 return isAutoGroupCol || isValueCol;
             });
 
@@ -2802,7 +2809,7 @@ export class ColumnController extends BeanStub {
             // or secondary columns, whatever the gridColumns are set to
             columnsForDisplay = this.gridColumns.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
-                const isAutoGroupCol = this.groupAutoColumns && _.includes(this.groupAutoColumns, column);
+                const isAutoGroupCol = this.groupAutoColumns && includes(this.groupAutoColumns, column);
                 return isAutoGroupCol || column.isVisible();
             });
         }
@@ -2814,7 +2821,7 @@ export class ColumnController extends BeanStub {
         let result = false;
 
         columns.forEach(col => {
-            if (_.exists(col.getColDef().colSpan)) {
+            if (exists(col.getColDef().colSpan)) {
                 result = true;
             }
         });
@@ -2827,7 +2834,7 @@ export class ColumnController extends BeanStub {
 
         const checkFunc = (col: Column) => {
             const colDef = col.getColDef();
-            if (colDef && _.exists(colDef.showRowGroup)) {
+            if (colDef && exists(colDef.showRowGroup)) {
                 this.groupDisplayColumns.push(col);
             }
         };
@@ -2893,7 +2900,7 @@ export class ColumnController extends BeanStub {
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
             colDefs2.forEach(function(abstractColDef: AbstractColDef) {
-                const isGroup = _.exists((abstractColDef as any).children);
+                const isGroup = exists((abstractColDef as any).children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
                     if (groupCallback) {
@@ -2957,7 +2964,7 @@ export class ColumnController extends BeanStub {
     }
 
     private orderGridColsLikeLastPrimary(): void {
-        if (_.missing(this.lastPrimaryOrder)) { return; }
+        if (missing(this.lastPrimaryOrder)) { return; }
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
@@ -3012,7 +3019,7 @@ export class ColumnController extends BeanStub {
             const indexes = siblings.map(col => newGridColumns.indexOf(col));
             const lastIndex = Math.max(...indexes);
 
-            _.insertIntoArray(newGridColumns, newCol, lastIndex + 1);
+            insertIntoArray(newGridColumns, newCol, lastIndex + 1);
         });
 
         this.gridColumns = newGridColumns;
@@ -3045,7 +3052,7 @@ export class ColumnController extends BeanStub {
         // add in auto-group here
         this.createGroupAutoColumnsIfNeeded();
 
-        if (_.missing(this.groupAutoColumns)) { return; }
+        if (missing(this.groupAutoColumns)) { return; }
 
         this.gridColumns = this.groupAutoColumns ? this.groupAutoColumns.concat(this.gridColumns) : this.gridColumns;
 
@@ -3144,7 +3151,7 @@ export class ColumnController extends BeanStub {
                     left += column.getActualWidth();
                 });
             }
-            _.removeAllFromArray(allColumns, columns);
+            removeAllFromArray(allColumns, columns);
         });
 
         // items left in allColumns are columns not displayed, so remove the left position. this is
@@ -3219,7 +3226,7 @@ export class ColumnController extends BeanStub {
                 break;
         }
 
-        if (_.missing(result)) {
+        if (missing(result)) {
             result = [];
         }
 
@@ -3327,7 +3334,7 @@ export class ColumnController extends BeanStub {
                     // This column is not in fact flexing as it is being constrained to a specific size
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
-                    _.removeFromArray(flexingColumns, col);
+                    removeFromArray(flexingColumns, col);
                     knownWidthColumns.push(col);
                     continue outer;
                 }
@@ -3380,7 +3387,7 @@ export class ColumnController extends BeanStub {
         let finishedResizing = false;
 
         const moveToNotSpread = (column: Column) => {
-            _.removeFromArray(colsToSpread, column);
+            removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         };
 
@@ -3546,7 +3553,7 @@ export class ColumnController extends BeanStub {
         for (let i = 0; i < queryOrder.length; i++) {
             const container = this[queryOrder[i]]();
             if (container.length) {
-                return isRtl ? _.last(container) : container[0];
+                return isRtl ? last(container) : container[0];
             }
         }
 
