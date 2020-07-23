@@ -4,8 +4,8 @@ import * as PropTypes from "prop-types";
 import {
     BaseComponentWrapper,
     ColumnApi,
-    ComponentUtil,
     ComponentType,
+    ComponentUtil,
     FrameworkComponentWrapper,
     Grid,
     GridApi,
@@ -21,6 +21,7 @@ export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    columnDefsChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
 }
@@ -142,19 +143,32 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     private getStrategyTypeForProp(propKey: string) {
-        if (propKey === 'rowData') {
-            // for row data we either return the supplied strategy, or:
-            // if deltaRowDataMode/immutableData we default to IdentityChecks,
-            // if not we default to DeepValueChecks (with the rest of the properties)
-            if (!!this.props.rowDataChangeDetectionStrategy) {
-                return this.props.rowDataChangeDetectionStrategy;
-            } else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
-                return ChangeDetectionStrategyType.IdentityCheck;
+        switch (propKey) {
+            case 'rowData': {
+                // for row data we either return the supplied strategy, or:
+                // if deltaRowDataMode/immutableData we default to IdentityChecks,
+                // if not we default to DeepValueChecks (with the rest of the properties)
+                if (!!this.props.rowDataChangeDetectionStrategy) {
+                    return this.props.rowDataChangeDetectionStrategy;
+                } else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
+                    return ChangeDetectionStrategyType.IdentityCheck;
+                }
+
+                return ChangeDetectionStrategyType.DeepValueCheck;
+            }
+            case 'columnDefs': {
+                // we let the grid do any checking/updates now by default, but still allow the user to override this
+                // to maintain backward compatibility
+                if (!!this.props.columnDefsChangeDetectionStrategy) {
+                    return this.props.columnDefsChangeDetectionStrategy;
+                }
+                return ChangeDetectionStrategyType.NoCheck;
+            }
+            default: {
+                // all other data properties will default to DeepValueCheck
+                return ChangeDetectionStrategyType.DeepValueCheck;
             }
         }
-
-        // all non row data properties will default to DeepValueCheck
-        return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
     shouldComponentUpdate(nextProps: any) {
@@ -182,10 +196,16 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
+        // if columnDefs are provided on gridOptions we use those - you can't combine both
+        // we also skip if columnDefs are provided as a prop directly on AgGridReact
+        if((this.props.gridOptions && this.props.gridOptions.columnDefs) ||  this.props.columnDefs) {
+            return;
+        }
+
         let debugLogging = !!nextProps.debug;
 
         if (AgGridColumn.hasChildColumns(nextProps)) {
-            const detectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
+            const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
 
             const currentColDefs = this.gridOptions.columnDefs;
             const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
@@ -200,6 +220,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                         currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
                     }
             }
+        } else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
+            changes['columnDefs'] =
+                {
+                    previousValue: this.gridOptions.columnDefs,
+                    currentValue: []
+                }
         }
     }
 

@@ -8,7 +8,7 @@ export class ChangeDetectionService {
     private strategyMap: { [key in ChangeDetectionStrategyType]: ChangeDetectionStrategy } = {
         [ChangeDetectionStrategyType.DeepValueCheck]: new DeepValueStrategy(),
         [ChangeDetectionStrategyType.IdentityCheck]: new SimpleFunctionalStrategy((a, b) => a === b),
-        [ChangeDetectionStrategyType.NoCheck]: new SimpleFunctionalStrategy((a, b) => true)
+        [ChangeDetectionStrategyType.NoCheck]: new SimpleFunctionalStrategy((a, b) => false)
     };
 
     public getStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {

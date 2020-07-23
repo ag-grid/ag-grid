@@ -176,7 +176,7 @@ SNIPPET
         Removing the columns first and then setting them again will use the default values again.
     </li>
 </ul>
-<?= grid_example('Updating Column Defaults', 'changing-default', 'generated') ?>
+<?= grid_example('Updating Column Defaults', 'changing-default', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <br/>
 <p>
@@ -199,7 +199,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Updating Column State', 'changing-state', 'generated') ?>
+<?= grid_example('Updating Column State', 'changing-state', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Null vs Undefined</h2>
 
@@ -243,7 +243,7 @@ SNIPPET
     in a different order.
 </p>
 
-<?= grid_example('Column Definition Order', 'col-def-order', 'generated') ?>
+<?= grid_example('Column Definition Order', 'col-def-order', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2 id="matching-columns">Matching Columns</h2>
 
@@ -300,7 +300,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Matching Columns', 'matching-columns', 'generated') ?>
+<?= grid_example('Matching Columns', 'matching-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Refreshing Columns</h2>
 

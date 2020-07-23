@@ -61,10 +61,11 @@ somePointLater() {
 
     <p>Note that this pre-render only applies to Cell Components - other types of Components are unaffected.</p>
 
-    <h2 id="react-row-data-control">Row Data Control</h2>
-    <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>
+    <h2 id="react-row-data-control">Row Data & Column Def Control</h2>
+    <p>By default the ag-Grid React component will check props passed in to determine if data has changed and will only re-render based on actual changes.</p>
 
-    <p>For <code>rowData</code> we provide an option for you to override this behaviour by the <code>rowDataChangeDetectionStrategy</code> property:</p>
+    <p>For <code>rowData</code> and <code>columnDefs</code> we provide an option for you to override this behaviour by the <code>rowDataChangeDetectionStrategy</code>
+        and <code>columnDefsChangeDetectionStrategy</code> properties respectively:</p>
 
     <snippet>
 
@@ -72,6 +73,7 @@ somePointLater() {
     onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
         rowData=<span ng-non-bindable>{</span>this.state.rowData}
         rowDataChangeDetectionStrategy='IdentityCheck'
+        columnDefsChangeDetectionStrategy='NoCheck'
         ...other properties
     </snippet>
 
@@ -102,7 +104,7 @@ somePointLater() {
         </tbody>
     </table>
 
-    <p>The default value for this setting is:</p>
+    <p>For <code>rowData</code> the default value for this setting is:</p>
     <table class="theme-table reference ng-scope">
         <tbody>
         <tr>
@@ -123,6 +125,8 @@ somePointLater() {
     <p>If you're using Redux or larger data sets then a default of <code>IdentityCheck</code> is a good idea <span>provided</span> you
     ensure you make a copy of thew new row data and do not mutate the <code>rowData</code> passed in.</p>
 
+    <p>For <code>columnDefs</code> the default value for this setting is <code>NoCheck</code> - this allows the grid to determine
+    if a column configuration change is to be applied or not. This is the preferred and most performant choice.</p>
 
 </div>
 

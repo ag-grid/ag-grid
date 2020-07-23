@@ -33,7 +33,7 @@ export interface IHeaderParams {
 
 export interface IHeader {
     /** Get the header to refresh. Gets called whenever Column Defs are updated. */
-    refresh?(params: IHeaderParams): boolean;
+    refresh(params: IHeaderParams): boolean;
 }
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
