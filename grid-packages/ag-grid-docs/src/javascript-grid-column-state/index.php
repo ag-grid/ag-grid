@@ -211,7 +211,7 @@ SNIPPET
     The example below shows some fine grained access to Column State.
 </p>
 
-<?= grid_example('Fine Grained State', 'fine-grained-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Fine Grained State', 'fine-grained-state', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h3>Saving Partial State</h3>
 

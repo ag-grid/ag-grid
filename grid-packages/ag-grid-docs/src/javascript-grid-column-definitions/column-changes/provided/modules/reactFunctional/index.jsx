@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import React, {useState} from 'react';
 import {render} from 'react-dom';
@@ -37,8 +37,6 @@ const colDefSilver = (<AgGridColumn headerName='Silver' field='silver' key='silv
 const colDefBronze = (<AgGridColumn headerName='Bronze' field='bronze' key='bronze'/>);
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState([]);
     const [columns, setColumns] = useState([
         colDefAthlete,
@@ -58,9 +56,6 @@ const GridExample = () => {
     const [bronzeChecked, setBronzeChecked] = useState(false);
 
     const onGridReady = (params) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
-
         const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
         httpRequest.send();
@@ -206,11 +201,11 @@ const GridExample = () => {
         </div>
     );
 
-}
+};
 
 render(
-    <GridExample></GridExample>,
+    <GridExample/>,
     document.querySelector('#root')
-)
+);
 
 

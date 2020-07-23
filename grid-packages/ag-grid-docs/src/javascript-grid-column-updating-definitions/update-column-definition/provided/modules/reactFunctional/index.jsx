@@ -25,7 +25,7 @@ const GridExample = () => {
         {field: 'total'}
     ]);
 
-    const [forceRefresh, setForceRefresh] = useState(false)
+    const [forceRefresh, setForceRefresh] = useState(false);
 
     useEffect(() => {
         if (forceRefresh) {
@@ -119,6 +119,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample></GridExample>,
+    <GridExample/>,
     document.querySelector('#root')
 );

@@ -1,20 +1,20 @@
-'use strict'
+'use strict';
 
 import React, {useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const alphabet = () => {
     return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-}
+};
 
 const createData = (count, prefix) => {
-    var rowData = [];
-    for (var i = 0; i < count; i++) {
-        var item = {};
+    const rowData = [];
+    for (let i = 0; i < count; i++) {
+        const item = {};
         item.fullWidth = i % 3 === 2;
         alphabet().forEach(function (letter) {
             item[letter] = prefix + ' (' + letter + ',' + i + ')';
@@ -22,12 +22,12 @@ const createData = (count, prefix) => {
         rowData.push(item);
     }
     return rowData;
-}
+};
 
 const getColumnDefs = () => {
-    var columnDefs = [];
+    const columnDefs = [];
     alphabet().forEach(function (letter) {
-        var colDef = {
+        const colDef = {
             headerName: letter,
             field: letter,
             width: 150
@@ -41,11 +41,11 @@ const getColumnDefs = () => {
         columnDefs.push(colDef);
     });
     return columnDefs;
-}
+};
 
 const fullWidthCellRenderer = (params) => {
-    var cssClass;
-    var message;
+    let cssClass;
+    let message;
     if (params.node.rowPinned) {
         cssClass = "example-full-width-pinned-row";
         message = "Pinned full width row at index " + params.rowIndex;
@@ -53,27 +53,20 @@ const fullWidthCellRenderer = (params) => {
         cssClass = "example-full-width-row";
         message = "Normal full width row at index" + params.rowIndex;
     }
-    var eDiv = document.createElement("div");
+    const eDiv = document.createElement("div");
     eDiv.innerHTML = "<div class=\"" + cssClass + "\"><button>Click</button> " + message + "</div>";
-    var eButton = eDiv.querySelector("button");
+    const eButton = eDiv.querySelector("button");
     eButton.addEventListener("click", function () {
         alert("button clicked");
     });
     return eDiv.firstChild;
-}
+};
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = [createData(100, "body")];
     const [pinnedTopRowData, setPinnedTopRowData] = [createData(3, "pinned")];
     const [pinnedBottomRowData, setPinnedBottomRowData] = [createData(3, "pinned")];
     const [columns, setColumns] = useState(getColumnDefs());
-
-    const onGridReady = (params) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
-    };
 
     return (
         <div style={{width: '100%', height: '100%'}}>
@@ -104,10 +97,10 @@ const GridExample = () => {
             </div>
         </div>
     );
-}
+};
 
 render(
-    <GridExample></GridExample>,
+    <GridExample/>,
     document.querySelector('#root')
 )
 

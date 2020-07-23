@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import React, {useState} from 'react';
 import {render} from 'react-dom';
@@ -31,15 +31,10 @@ const colDefsMedalsExcluded = [
 ];
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState([]);
     const [columns, setColumns] = useState(colDefsMedalsIncluded);
 
     const onGridReady = (params) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
-
         const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
         httpRequest.send();
@@ -51,11 +46,11 @@ const GridExample = () => {
     };
 
     const onBtExcludeMedalColumns = () => {
-        gridApi.setColumnDefs(colDefsMedalsExcluded);
+        setColumns(colDefsMedalsExcluded);
     };
 
     const onBtIncludeMedalColumns = () => {
-        gridApi.setColumnDefs(colDefsMedalsIncluded);
+        setColumns(colDefsMedalsIncluded);
     };
 
     return (
@@ -88,6 +83,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample></GridExample>,
+    <GridExample/>,
     document.querySelector('#root')
 );
