@@ -80,7 +80,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
         super.destroy();
-        console.log('HeaderComp.destroy()');
     }
 
     public refresh(params: IHeaderParams): boolean {
@@ -95,7 +94,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         this.setDisplayName(params);
 
-        console.log('headerComp.refresh()');
         return true;
     }
 
@@ -111,8 +109,6 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public init(params: IHeaderParams): void {
-        console.log('headerComp.init()');
-
         this.params = params;
 
         this.currentTemplate = this.workOutTemplate();
