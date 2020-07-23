@@ -72,7 +72,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private refreshFunctions: (()=>void) [] = [];
     private moveDragSource: DragSource;
     private displayName: string;
-    private movable: boolean;
+    private draggable: boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -120,7 +120,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const colDef = this.column.getColDef();
         this.sortable = colDef.sortable;
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        this.movable = this.workOutMovable()
+        this.draggable = this.workOutDraggable()
     }
 
     private onNewColumnsLoaded(): void {
@@ -136,7 +136,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.updateState();
 
         const headerCompRefreshed = this.attemptHeaderCompRefresh();
-        if (!headerCompRefreshed) {
+        if (headerCompRefreshed) {
+            const dragSourceIsMissing = this.draggable && !this.dragAndDropService;
+            const dragSourceNeedsRemoving = !this.draggable && this.dragAndDropService;
+            if (dragSourceIsMissing || dragSourceNeedsRemoving) {
+                this.attachDraggingToHeaderComp();
+            }
+        } else {
             this.appendHeaderComp();
         }
 
@@ -324,7 +330,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.headerCompGui = headerComp.getGui();
         this.getGui().appendChild(this.headerCompGui);
 
-        this.refreshMoveDragSource();
+        this.attachDraggingToHeaderComp();
     }
 
     private onColumnMovingChanged(): void {
@@ -338,21 +344,22 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         }
     }
 
-    private workOutMovable(): boolean {
+    private workOutDraggable(): boolean {
         const colDef = this.column.getColDef();
-        const suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.getComponentHolder().suppressMovable
-            || colDef.lockPosition;
+        const isSuppressMovableColumns = this.gridOptionsWrapper.isSuppressMovableColumns();
 
-        const movable = !suppressMove || colDef.enableRowGroup || colDef.enablePivot
-        return movable;
+        const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
+
+        // we should still be allowed drag the column, even if it can't be moved, if the column
+        // can be dragged to a rowGroup or pivot drop zone
+        return colCanMove || colDef.enableRowGroup || colDef.enablePivot;
     }
 
-    private refreshMoveDragSource(): void {
+    private attachDraggingToHeaderComp(): void {
 
         this.removeMoveDragSource();
 
-        if (!this.movable) { return; }
+        if (!this.draggable) { return; }
 
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,

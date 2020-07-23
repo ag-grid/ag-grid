@@ -16,7 +16,7 @@ var gridOptions = {
         defaultWidth: 100,
         sortable: true,
         resizable: true,
-        // headerComponent: 'MyHeaderRenderer'
+        headerComponent: 'MyHeaderRenderer'
     },
     columnDefs: colDefs,
     components: {
@@ -57,11 +57,11 @@ function onSortOff() {
 }
 
 function onMoveOn() {
-    changeCols('moveOn', function(c) {c.suppressMove = false})
+    changeCols('moveOn', function(c) {c.suppressMovable = false})
 }
 
 function onMoveOff() {
-    changeCols('moveOff', function(c) {c.suppressMove = true})
+    changeCols('moveOff', function(c) {c.suppressMovable = true})
 }
 
 function changeCols(name, callback) {
