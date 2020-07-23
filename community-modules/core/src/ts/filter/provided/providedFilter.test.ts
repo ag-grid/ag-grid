@@ -18,11 +18,11 @@ class TestFilter extends ProvidedFilter {
 
         const gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
         gridOptionsWrapper.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
-        this.gridOptionsWrapper = gridOptionsWrapper;
+        (this as any).gridOptionsWrapper = gridOptionsWrapper;
 
         const rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(rowModelType);
-        this.rowModel = rowModel;
+        (this as any).rowModel = rowModel;
 
         this.setParams(params);
     }

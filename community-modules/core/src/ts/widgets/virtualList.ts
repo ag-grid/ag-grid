@@ -18,13 +18,13 @@ export class VirtualList extends ManagedFocusComponent {
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
-    private lastFocusedRow: number;
+    private lastFocusedRowIndex: number;
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @RefSelector('eContainer') private eContainer: HTMLElement;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default') {
-        super(VirtualList.getTemplate(cssIdentifier));
+        super(VirtualList.getTemplate(cssIdentifier), true);
     }
 
     protected postConstruct(): void {
@@ -32,10 +32,6 @@ export class VirtualList extends ManagedFocusComponent {
         this.rowHeight = this.getItemHeight();
 
         super.postConstruct();
-    }
-
-    protected isFocusableContainer(): boolean {
-        return true;
     }
 
     protected focusInnerElement(fromBottom: boolean): void {
@@ -48,7 +44,7 @@ export class VirtualList extends ManagedFocusComponent {
         const target = e.target as HTMLElement;
 
         if (containsClass(target, 'ag-virtual-list-item')) {
-            this.lastFocusedRow = getAriaPosInSet(target) - 1;
+            this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
     }
 
@@ -56,29 +52,32 @@ export class VirtualList extends ManagedFocusComponent {
         super.onFocusOut(e);
 
         if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
-            this.lastFocusedRow = null;
+            this.lastFocusedRowIndex = null;
         }
     }
 
-    protected handleKeyDown(e: KeyboardEvent) {
+    protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_UP:
             case Constants.KEY_DOWN:
             case Constants.KEY_TAB:
-                if (this.navigate(
-                    e.keyCode === Constants.KEY_UP ||
-                    (e.keyCode === Constants.KEY_TAB && e.shiftKey)
-                )) {
+                const up = e.keyCode === Constants.KEY_UP || (e.keyCode === Constants.KEY_TAB && e.shiftKey);
+
+                if (this.navigate(up)) {
                     e.preventDefault();
+                } else if (e.keyCode === Constants.KEY_TAB) {
+                    // focus on the first or last focusable element to ensure that any other handlers start from there
+                    this.focusController[e.shiftKey ? 'focusFirstFocusableElement' : 'focusLastFocusableElement'](this.getGui());
                 }
+
                 break;
         }
     }
 
     private navigate(up: boolean): boolean {
-        if (this.lastFocusedRow == null) { return false; }
+        if (this.lastFocusedRowIndex == null) { return false; }
 
-        const nextRow = this.lastFocusedRow + (up ? -1 : 1);
+        const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
 
         if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
 
@@ -88,7 +87,7 @@ export class VirtualList extends ManagedFocusComponent {
     }
 
     public getLastFocusedRow(): number {
-        return this.lastFocusedRow;
+        return this.lastFocusedRowIndex;
     }
 
     public focusRow(rowNumber: number): void {
@@ -197,7 +196,7 @@ export class VirtualList extends ManagedFocusComponent {
     private ensureRowsRendered(start: number, finish: number) {
         // remove any rows that are no longer required
         this.renderedRows.forEach((_, rowIndex) => {
-            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRow) {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
                 this.removeRow(rowIndex);
             }
         });
@@ -234,9 +233,19 @@ export class VirtualList extends ManagedFocusComponent {
 
         const rowComponent = this.componentCreator(value);
 
+        rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
+
         eDiv.appendChild(rowComponent.getGui());
 
-        this.eContainer.appendChild(eDiv);
+        // keep the DOM order consistent with the order of the rows
+        if (this.renderedRows.has(rowIndex - 1)) {
+            this.renderedRows.get(rowIndex - 1).eDiv.insertAdjacentElement('afterend', eDiv);
+        } else if (this.renderedRows.has(rowIndex + 1)) {
+            this.renderedRows.get(rowIndex + 1).eDiv.insertAdjacentElement('beforebegin', eDiv);
+        } else {
+            this.eContainer.appendChild(eDiv);
+        }
+
         this.renderedRows.set(rowIndex, { rowComponent, eDiv });
     }
 

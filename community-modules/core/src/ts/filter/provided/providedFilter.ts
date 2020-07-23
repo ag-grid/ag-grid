@@ -1,4 +1,3 @@
-import { Component } from '../../widgets/component';
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
@@ -10,6 +9,7 @@ import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -28,7 +28,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * All the filters that come with ag-Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class ProvidedFilter extends Component implements IFilterComp {
+export abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -47,8 +47,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: ProvidedFilterModel | null = null;
 
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rowModel') protected rowModel: IRowModel;
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
@@ -89,7 +89,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     @PostConstruct
     protected postConstruct(): void {
-        this.resetTemplate();
+        this.resetTemplate(); // do this first to create the DOM
+        super.postConstruct();
     }
 
     protected resetTemplate(paramsMap?: any) {
@@ -378,5 +379,14 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (!nextRoot) { return; }
+
+        nextRoot.focus();
+        e.preventDefault();
     }
 }

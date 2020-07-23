@@ -22,16 +22,16 @@ export interface SelectedEvent extends AgEvent { }
 export class SetFilterListItem extends Component {
     public static EVENT_SELECTED = 'selected';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private static TEMPLATE = /* html */`
         <div class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
         </div>`;
 
-    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
+    @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
 
     private selected: boolean = true;
     private tooltipText: string;
@@ -117,7 +117,7 @@ export class SetFilterListItem extends Component {
         cellRendererPromise.then(component => {
             const rendererGui = component.getGui();
             this.eCheckbox.setLabel(rendererGui);
-            this.addDestroyFunc(() => this.getContext().destroyBean(component))
+            this.addDestroyFunc(() => this.getContext().destroyBean(component));
         });
     }
 

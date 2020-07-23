@@ -15,7 +15,7 @@ export class MenuList extends ManagedFocusComponent {
     private activeMenuItem: MenuItemComponent | null;
 
     constructor(private readonly level = 1) {
-        super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
+        super(/* html */`<div class="ag-menu-list" role="tree"></div>`, true);
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
@@ -49,10 +49,6 @@ export class MenuList extends ManagedFocusComponent {
 
                 break;
         }
-    }
-
-    protected isFocusableContainer(): boolean {
-        return true;
     }
 
     public clearActiveItem(): void {
