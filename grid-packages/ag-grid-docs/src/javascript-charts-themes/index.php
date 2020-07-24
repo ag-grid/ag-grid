@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1>Themes</h1>
 
 <p class="lead">
-    A chart theme is a default configuration for the subcomponents and individual properties
-    not explicitly configured by the user, therefore themes can be used is a quick way to change a large
+    A chart theme is the default configuration for the subcomponents and individual properties
+    not explicitly configured by the user. Therefore themes can be used is a quick way to change a large
     number of configs that give your chart a different look and feel.
 </p>
 
@@ -28,17 +28,14 @@ AgChart.create({
 SNIPPET
 ) ?>
 
-<p>The <code>'default'</code> theme is equivalent to the <code>'light'</code> theme.</p>
-
 <p>The following themes are supported:</p>
 
 <?= createSnippet(<<<SNIPPET
-type AgChartThemeName = 'default'
-    | 'light' | 'dark'
-    | 'material-light' | 'material-dark'
-    | 'pastel-light' | 'pastel-dark'
-    | 'solar-light' | 'solar-dark'
-    | 'vivid-light' | 'vivid-dark';
+type AgChartThemeName = 'default' | 'dark'
+    | 'material' | 'material-dark'
+    | 'pastel' | 'pastel-dark'
+    | 'solar' | 'solar-dark'
+    | 'vivid' | 'vivid-dark';
 SNIPPET
 , 'ts') ?>
 
@@ -46,77 +43,51 @@ SNIPPET
 
 <h3>Example: Dark Theme</h3>
 
+<p>
+    Notice how changing from theme to theme is a simple matter of changing the <code>theme</code> property
+    on the original <code>options</code> object and passing it to the <code>AgChart.update(chart, options)</code>
+    along with the chart instance.
+</p>
+
 <?= chart_example('Dark Theme', 'dark-theme', 'generated') ?>
 
 <h2>Overriding stock themes</h2>
 
 <p>
-    By default the navigator shows the whole range of chart's data in the horizontal direction.
-    The two properties that control the range of data to show are <code>min</code> and <code>max</code>,
-    which default to <code>0</code> and <code>1</code>, respectively.
+    One can create their own themes by providing an override for any of the stock themes.
+    A theme override is an object with the following properties:
+    <ul>
+        <li><code>baseTheme</code> - the name of the theme to base this theme upon</li>
+        <li><code>defaults</code> - the object to be merged with base theme's defaults</li>
+        <li><code>palette</code> - the palette to use, replaces the palette of the base theme</li>
+    </ul>
 </p>
 
-<p>
-    The visible range is normalized to the <code>[0, 1]</code> interval. For example, to show
-    the last quarter of the chart's data by default we can use the following config:
-</p>
+<p>Or more formally:</p>
 
 <?= createSnippet(<<<SNIPPET
-navigator: {
-    enabled: true,
-    min: 0.75,
-    max: 1
+interface AgChartThemeOptions {
+    baseTheme?: AgChartThemeName; // if missing 'default' is implied
+    palette: AgChartThemePalette;
+    defaults: any;
+}
+
+interface AgChartThemePalette {
+    fills: string[];
+    strokes: string[];
 }
 SNIPPET
 ) ?>
 
 <p>
-    Regardless of the initial visible range, the user will be able to adjust the range as
-    they see fit by dragging the range handles inside the navigator.
+    Let's create our first theme now. We'll use the 'dark' theme as the base in order for our theme
+    to inherit the dark background and bright strokes but we'll substitute the pallete and change some
+    fonts as well as a few other configs.
 </p>
 
-<h2>Styling the Navigator</h2>
+<h3>Example: Custom Theme</h3>
 
-<p>
-    The navigator's <code>height</code> is configurable and affects chart's layout by
-    leaving more or less vertical space for the series:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-navigator: {
-    enabled: true,
-    height: 50
-}
-SNIPPET
-) ?>
-
-<p>
-    The navigator component has three subcomponents that can be styled independently:
-    <ul>
-        <li><code>mask</code> - the range mask</li>
-        <li><code>minHandle</code> - the min drag handle</li>
-        <li><code>maxHandle</code> - the max drag handle</li>
-    </ul>
-    The range mask shows the portion of the range selected, and the drag handles are used to adjust it.
-</p>
-
-<p>
-    All subcomponent configs are optional too and have default values that make the navigator
-    look good in charts with both light and dark backgrounds.
-</p>
-
-<h3>Example: Navigator Styling</h3>
-
-<p>
-    The example below uses various navigator configs (in a deliberately exaggerated way) to change
-    the following visual attributes of the navigator:
-    <ul>
-        <li>range mask's fill, fill opacity and stroke width</li>
-        <li>fill and stroke colors of handles</li>
-        <li>width, height and stroke width of the left handle</li>
-        <li>the length of the left handle's grip lines and the distance between them</li>
-    </ul>
-</p>
+<?= chart_example('Custom Theme', 'custom-theme', 'generated') ?>
 
 <h2>API Reference</h2>
 
@@ -125,7 +96,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn more about <a href="../javascript-charts-markers/">markers</a>.
+    Continue to the next section to learn more about the <a href="../javascript-charts-navigator/">navigator</a> component.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
