@@ -248,10 +248,14 @@ SNIPPET
 <h2 id="matching-columns">Matching Columns</h2>
 
 <p>
-    The grid typically uses the <code>field</code> attribute in the column definition to know which
-    of the new column definitions matches the old column definition. However using <code>field</code>
-    is not dependable as it's possible to have two columns with the same field, or the field could
-    be missing (e.g. a <code>valueGetter</code> is used instead).
+    When a new Column Definition is passed to the grid, the grid needs to work out if it's an update
+    of a Column or a new Column.
+</p>
+<p>
+    Most of the time the <code>field</code> attribute to match the Column.
+    However <code>field</code> is both an optional and non-unique attribute,
+    e.g. a <code>valueGetter</code> could be used instead of field, or two columns
+    could share the same field.
 </p>
 
 <p>
@@ -259,13 +263,9 @@ SNIPPET
     to match columns:
 </p>
 <ol>
-    <li>Try match based on object equality (e.g. is it the same Column Definition instance).</li>
-    <li>If no match found based on object equality then:
-        <ul>
-            <li>If <code>colId</code> provided, match using <code>colId</code></li>
-            <li>If no <code>colId</code> provided, match using <code>field</code></li>
-        </ul>
-    </li>
+    <li>If <code>colId</code> provided, match using <code>colId</code></li>
+    <li>Otherwise if <code>field</code> provided, match using <code>field</code></li>
+    <li>Otherwise match using object equality on Column Definition instance</li>
 </ol>
 
 <p>
