@@ -47,6 +47,7 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
 import { deepCloneDefinition } from '../utils/object';
 import { camelCaseToHumanText } from '../utils/string';
+import {ColumnDefFactory} from "./columnDefFactory";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -87,6 +88,7 @@ export class ColumnController extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -1317,32 +1319,15 @@ export class ColumnController extends BeanStub {
     }
 
     public getColumnDefs(): (ColDef | ColGroupDef)[] {
-        const res: (ColDef | ColGroupDef)[] = [];
 
         const cols = this.primaryColumns.slice();
         if (this.gridColsArePrimary) {
             cols.sort( (a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b) );
+        } else if (this.lastPrimaryOrder) {
+            cols.sort( (a: Column, b: Column) => this.lastPrimaryOrder.indexOf(a) - this.lastPrimaryOrder.indexOf(b) );
         }
 
-        cols.forEach( col => {
-            const colDefCloned = deepCloneDefinition(col.getColDef());
-
-            colDefCloned.width = col.getActualWidth();
-            colDefCloned.rowGroup = col.isRowGroupActive();
-            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : null;
-            colDefCloned.pivot = col.isPivotActive();
-            colDefCloned.pivotIndex = col.isPivotActive() ? this.pivotColumns.indexOf(col) : null;
-            colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
-            colDefCloned.hide = col.isVisible() ? undefined : true;
-            colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
-
-            colDefCloned.sort = col.getSort() ? col.getSort() : null;
-            colDefCloned.sortIndex = col.getSortIndex()!=null ? col.getSortIndex() : null;
-
-            res.push(colDefCloned);
-        });
-
-        return res;
+        return this.columnDefFactory.buildColumnDefs(cols, this.rowGroupColumns, this.pivotColumns);
     }
 
     // used by:

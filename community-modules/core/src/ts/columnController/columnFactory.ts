@@ -325,27 +325,25 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
-        const res: Column = find(existingColsCopy, col => {
-            const oldColDef = col.getUserProvidedColDef();
+    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column {
+        const res: Column = find(existingColsCopy, existingCol => {
 
-            if (!oldColDef) { return false; }
+            const existingColDef = existingCol.getUserProvidedColDef();
+            if (!existingColDef) { return false; }
 
-            // first check object references
-            if (oldColDef === colDef) { return true; }
+            const newHasId = newColDef.colId != null;
+            const newHasField = newColDef.field != null;
 
-            const newDefHasId = colDef.colId != null;
-            const newDefHasField = colDef.field != null;
-            const oldDefHasId = oldColDef.colId != null;
-
-            if (newDefHasId && oldDefHasId) {
-                return oldColDef.colId === colDef.colId;
+            if (newHasId) {
+                return existingCol.getId() === newColDef.colId;
             }
 
-            const bothIdsMissing = !newDefHasId && !oldDefHasId;
-            if (bothIdsMissing && newDefHasField) {
-                return oldColDef.field === colDef.field;
+            if (newHasField) {
+                return existingColDef.field === newColDef.field;
             }
+
+            // if no id or field present, then try object equivalence.
+            if (existingColDef === newColDef) { return true; }
 
             return false;
         });
