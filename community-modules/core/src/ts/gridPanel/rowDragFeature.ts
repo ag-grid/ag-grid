@@ -468,7 +468,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     public onDragLeave(draggingEvent: DraggingEvent): void {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        this.clearRowHighlight();
+
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.clearRowHighlight();
+        }
 
         if (this.isFromThisGrid(draggingEvent)) {
             this.isMultiRowDrag = false;
