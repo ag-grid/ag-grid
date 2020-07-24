@@ -134,6 +134,9 @@ interface IHeaderComp {
     // can get called more than once, you should return the HTML element
     getGui(): HTMLElement;
 
+    // gets called when a new Column Definition has been set for this header
+    refresh(): HTMLElement;
+
     // optional method, gets called once, when component is destroyed
     destroy?(): void;
 

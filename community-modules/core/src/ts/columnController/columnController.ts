@@ -910,8 +910,8 @@ export class ColumnController extends BeanStub {
         column.setValueActive(active, source);
 
         if (active && !column.getAggFunc()) {
-            const defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
-            column.setAggFunc(defaultAggFunc);
+            const initialAggFunc = this.aggFuncService.getDefaultAggFunc(column);
+            column.setAggFunc(initialAggFunc);
         }
     }
 
@@ -2519,7 +2519,7 @@ export class ColumnController extends BeanStub {
             },
             (colDef: ColDef) => {
                 // return false if any of the following: null, undefined, empty string
-                return colDef.defaultAggFunc!=null && colDef.defaultAggFunc!='';
+                return colDef.initialAggFunc!=null && colDef.initialAggFunc!='';
             }
         );
 
@@ -2530,9 +2530,9 @@ export class ColumnController extends BeanStub {
             if (colDef.aggFunc != null && colDef.aggFunc != '') {
                 col.setAggFunc(colDef.aggFunc);
             } else {
-                // otherwise we use defaultAggFunc only if no agg func set - which happens when new column only
+                // otherwise we use initialAggFunc only if no agg func set - which happens when new column only
                 if (!col.getAggFunc()) {
-                    col.setAggFunc(colDef.defaultAggFunc);
+                    col.setAggFunc(colDef.initialAggFunc);
                 }
             }
         });
@@ -2542,9 +2542,9 @@ export class ColumnController extends BeanStub {
         this.rowGroupColumns = this.extractColumns(oldPrimaryColumns, this.rowGroupColumns,
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
-            (colDef: ColDef) => colDef.defaultRowGroupIndex,
+            (colDef: ColDef) => colDef.initialRowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
-            (colDef: ColDef) => colDef.defaultRowGroup,
+            (colDef: ColDef) => colDef.initialRowGroup,
         );
     }
 
@@ -2671,9 +2671,9 @@ export class ColumnController extends BeanStub {
         this.pivotColumns = this.extractColumns(oldPrimaryColumns, this.pivotColumns,
             (col: Column, flag: boolean) => col.setPivotActive(flag, source),
             (colDef: ColDef) => colDef.pivotIndex,
-            (colDef: ColDef) => colDef.defaultPivotIndex,
+            (colDef: ColDef) => colDef.initialPivotIndex,
             (colDef: ColDef) => colDef.pivot,
-            (colDef: ColDef) => colDef.defaultPivot,
+            (colDef: ColDef) => colDef.initialPivot,
         );
     }
 

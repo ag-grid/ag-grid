@@ -9,7 +9,7 @@ export class ColDefUtil {
         'groupId',
         'colId',
         'sort',
-        'defaultSort',
+        'initialSort',
         'field',
         'type',
         'tooltipComponent',
@@ -20,12 +20,12 @@ export class ColDefUtil {
         'template',
         'templateUrl',
         'filter',
-        'defaultAggFunc',
+        'initialAggFunc',
         'aggFunc',
         'cellRenderer',
         'cellEditor',
         'pinned',
-        'defaultPinned',
+        'initialPinned',
         'chartDataType'
     ];
 
@@ -65,17 +65,17 @@ export class ColDefUtil {
     public static NUMBER_PROPERTIES = [
         'sortedAt',
         'sortIndex',
-        'defaultSortIndex',
+        'initialSortIndex',
         'flex',
-        'defaultFlex',
+        'initialFlex',
         'width',
-        'defaultWidth',
+        'initialWidth',
         'minWidth',
         'maxWidth',
         'rowGroupIndex',
         'defaultFowGroupIndex',
         'pivotIndex',
-        'defaultPivotIndex'];
+        'initialPivotIndex'];
 
     public static BOOLEAN_PROPERTIES = [
         'suppressCellFlash',
@@ -84,11 +84,11 @@ export class ColDefUtil {
         'openByDefault',
         'marryChildren',
         'hide',
-        'defaultHide',
+        'initialHide',
         'rowGroup',
-        'defaultRowGroup',
+        'initialRowGroup',
         'pivot',
-        'defaultPivot',
+        'initialPivot',
         'checkboxSelection',
         'headerCheckboxSelection',
         'headerCheckboxSelectionFilteredOnly',

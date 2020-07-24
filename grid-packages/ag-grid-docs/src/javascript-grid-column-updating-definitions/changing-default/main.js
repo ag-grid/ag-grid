@@ -1,7 +1,7 @@
 var columnDefs = [
-    {field: 'athlete', defaultWidth: 100, defaultSort: 'asc'},
+    {field: 'athlete', initialWidth: 100, initialSort: 'asc'},
     {field: 'age'},
-    {field: 'country', defaultPinned: 'left'},
+    {field: 'country', initialPinned: 'left'},
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
@@ -13,7 +13,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        defaultWidth: 100,
+        initialWidth: 100,
         sortable: true,
         resizable: true
     },

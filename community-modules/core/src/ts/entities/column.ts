@@ -129,48 +129,48 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 this.sort = colDef.sort;
             }
         } else {
-            if (colDef.defaultSort===Constants.SORT_ASC || colDef.defaultSort===Constants.SORT_DESC) {
-                this.sort = colDef.defaultSort;
+            if (colDef.initialSort===Constants.SORT_ASC || colDef.initialSort===Constants.SORT_DESC) {
+                this.sort = colDef.initialSort;
             }
         }
 
         // sortIndex
         const sortIndex = attrToNumber(colDef.sortIndex);
-        const defaultSortIndex = attrToNumber(colDef.defaultSortIndex);
+        const initialSortIndex = attrToNumber(colDef.initialSortIndex);
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
                 this.sortIndex = sortIndex;
             }
         } else {
-            if (defaultSortIndex !== null) {
-                this.sortIndex = defaultSortIndex;
+            if (initialSortIndex !== null) {
+                this.sortIndex = initialSortIndex;
             }
         }
 
         // hide
         const hide = attrToBoolean(colDef.hide);
-        const defaultHide = attrToBoolean(colDef.defaultHide);
+        const initialHide = attrToBoolean(colDef.initialHide);
 
         if (hide !== undefined) {
             this.visible = !hide;
         } else {
-            this.visible = !defaultHide;
+            this.visible = !initialHide;
         }
 
         // pinned
         if (colDef.pinned !== undefined) {
             this.setPinned(colDef.pinned);
         } else {
-            this.setPinned(colDef.defaultPinned);
+            this.setPinned(colDef.initialPinned);
         }
 
         // flex
         const flex = attrToNumber(colDef.flex);
-        const defaultFlex = attrToNumber(colDef.defaultFlex);
+        const initialFlex = attrToNumber(colDef.initialFlex);
         if (flex!==undefined) {
             this.flex = flex;
-        } else if (defaultFlex!==undefined) {
-            this.flex = defaultFlex;
+        } else if (initialFlex!==undefined) {
+            this.flex = initialFlex;
         }
     }
 

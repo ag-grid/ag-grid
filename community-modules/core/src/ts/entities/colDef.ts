@@ -80,11 +80,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
     sort?: string;
-    defaultSort?: string;
+    initialSort?: string;
 
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number;
-    defaultSortIndex?: number;
+    initialSortIndex?: number;
 
     /** @deprecated since v24 - use sordOrder instead*/
     sortedAt?: number;
@@ -104,11 +104,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
-    defaultHide?: boolean;
+    initialHide?: boolean;
 
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
-    defaultPinned?: boolean | string;
+    initialPinned?: boolean | string;
 
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
@@ -133,7 +133,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     width?: number;
 
     /** Default width, in pixels, of the cell */
-    defaultWidth?: number;
+    initialWidth?: number;
 
     /** Min width, in pixels, of the cell */
     minWidth?: number;
@@ -145,7 +145,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * space should be assigned to the column.
      */
     flex?: number;
-    defaultFlex?:number;
+    initialFlex?:number;
 
     /** True if this column should stretch rows height to fit contents */
     autoHeight?: boolean;
@@ -183,7 +183,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
-    defaultAggFunc?: string | IAggFunc;
+    initialAggFunc?: string | IAggFunc;
 
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
@@ -193,8 +193,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     rowGroupIndex?: number;
     rowGroup?: boolean;
 
-    defaultRowGroupIndex?: number;
-    defaultRowGroup?: boolean;
+    initialRowGroupIndex?: number;
+    initialRowGroup?: boolean;
 
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
     showRowGroup?: string | boolean;
@@ -203,8 +203,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pivotIndex?: number;
     pivot?: boolean;
 
-    defaultPivotIndex?: number;
-    defaultPivot?: boolean;
+    initialPivotIndex?: number;
+    initialPivot?: boolean;
 
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;

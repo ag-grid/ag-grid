@@ -56,7 +56,7 @@
                 "url": "../javascript-grid-resizing/#column-flex"
             }
         },
-        "defaultFlex": {
+        "initialFlex": {
             "description": "Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "filter<br />filterFramework": {
@@ -79,7 +79,7 @@
             "default": false,
             "description": "Set to <code>true</code> for this column to be hidden. You might think it would make more sense to call this field <code>visible</code> and mark it <code>false</code> to hide, but we want all default values to be <code>false</code> and we want columns to be visible by default."
         },
-        "defaultHide": {
+        "initialHide": {
             "description": "Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "pinned": {
@@ -89,7 +89,7 @@
             ],
             "description": "Pin a column to one side."
         },
-        "defaultPinned": {
+        "initialPinned": {
             "description": "Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "lockPosition": {
@@ -116,13 +116,13 @@
             ],
             "description": "Set to sort this column."
         },
-        "defaultSort": {
+        "initialSort": {
             "description": "Same as 'sort', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "sortIndex": {
             "description": "If doing multi-sort by default, the order which column sorts are applied."
         },
-        "defaultSortIndex": {
+        "initialSortIndex": {
             "description": "Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "sortingOrder": {
@@ -279,7 +279,7 @@
             ],
             "description": "Name of function to use for aggregation. You can also provide your own agg function."
         },
-        "defaultAggFunc": {
+        "initialAggFunc": {
             "description": "Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "allowedAggFuncs": {
@@ -288,25 +288,25 @@
         "rowGroup": {
             "description": "Set to true to row group by this column"
         },
-        "defaultRowGroup": {
+        "initialRowGroup": {
             "description": "Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "rowGroupIndex": {
             "description": "Set this in columns you want to group by. If only grouping by one column, set this to any number (e.g. <code>0</code>). If grouping by multiple columns, set this to where you want this column to be in the group (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
         },
-        "defaultRowGroupIndex": {
+        "initialRowGroupIndex": {
             "description": "Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "pivot": {
             "description": "Set to true to pivot by this column"
         },
-        "defaultPivot": {
+        "initialPivot": {
             "description": "Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "pivotIndex": {
             "description": "Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (e.g. <code>0</code>). If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
         },
-        "defaultPivotIndex": {
+        "initialPivotIndex": {
             "description": "Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "comparator(valueA, valueB, nodeA, nodeB, isInverted)": {

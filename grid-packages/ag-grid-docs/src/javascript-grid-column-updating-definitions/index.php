@@ -111,17 +111,17 @@ include '../documentation-main/documentation_header.php';
         <th>Default Attribute</th>
         <th>Description</th>
     </tr>
-    <?=addItemToTable('width','defaultWidth','Width of the column.')?>
-    <?=addItemToTable('flex','defaultFlex','The flex value for setting this columns width.')?>
-    <?=addItemToTable('hide','defaultHide','Whether this column should be hidden.')?>
-    <?=addItemToTable('pinned','defaultPinned','Whethe this column should be pinned.')?>
-    <?=addItemToTable('sort','defaultSort','The sort to apply to this column.')?>
-    <?=addItemToTable('sortIndex','defaultSortIndex','The order to apply sorting, if multi column sorting.')?>
-    <?=addItemToTable('rowGroup','defaultRowGroup','If this column should be a row group.')?>
-    <?=addItemToTable('rowGroupIndex','defaultRowGroupIndex','If this column should be a row group and in what order.')?>
-    <?=addItemToTable('pivot','defaultPivot','If this column should be a pivot.')?>
-    <?=addItemToTable('pivotIndex','defaultPivotIndex','If this column should be a pivot and in what order.')?>
-    <?=addItemToTable('aggFunc','defaultAggFunc','The function to aggregate this column by if row grouping or pivoting.')?>
+    <?=addItemToTable('width','initialWidth','Width of the column.')?>
+    <?=addItemToTable('flex','initialFlex','The flex value for setting this columns width.')?>
+    <?=addItemToTable('hide','initialHide','Whether this column should be hidden.')?>
+    <?=addItemToTable('pinned','initialPinned','Whethe this column should be pinned.')?>
+    <?=addItemToTable('sort','initialSort','The sort to apply to this column.')?>
+    <?=addItemToTable('sortIndex','initialSortIndex','The order to apply sorting, if multi column sorting.')?>
+    <?=addItemToTable('rowGroup','initialRowGroup','If this column should be a row group.')?>
+    <?=addItemToTable('rowGroupIndex','initialRowGroupIndex','If this column should be a row group and in what order.')?>
+    <?=addItemToTable('pivot','initialPivot','If this column should be a pivot.')?>
+    <?=addItemToTable('pivotIndex','initialPivotIndex','If this column should be a pivot and in what order.')?>
+    <?=addItemToTable('aggFunc','initialAggFunc','The function to aggregate this column by if row grouping or pivoting.')?>
 </table>
 
 <note>
@@ -147,8 +147,8 @@ include '../documentation-main/documentation_header.php';
 // using default values, get applied when Column is created
 myDefaultValuesColDef = {
     field: 'country',
-    defaultWidth: 200,
-    defaultPinned: 'left'
+    initialWidth: 200,
+    initialPinned: 'left'
 }
 
 // using stateful values, get applied when Column is created or updated
@@ -165,7 +165,7 @@ SNIPPET
 </p>
 <ul>
     <li>
-        The <code>defaultWidth</code>, <code>defaultSort</code> and <code>defaultPinned</code>
+        The <code>initialWidth</code>, <code>initialSort</code> and <code>initialPinned</code>
         is applied only when the columns are created.
     </li>
     <li>

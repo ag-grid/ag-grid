@@ -9,9 +9,9 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const columnsWithDefaults = [
-    {field: 'athlete', defaultWidth: 100, defaultSort: 'asc'},
+    {field: 'athlete', initialWidth: 100, initialSort: 'asc'},
     {field: 'age'},
-    {field: 'country', defaultPinned: 'left'},
+    {field: 'country', initialPinned: 'left'},
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
@@ -60,7 +60,7 @@ const GridExample = () => {
                             rowData={rowData}
                             onGridReady={onGridReady}
                             defaultColDef={{
-                                defaultWidth: 100,
+                                initialWidth: 100,
                                 sortable: true,
                                 resizable: true
                             }}>

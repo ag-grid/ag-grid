@@ -74,7 +74,7 @@ const GridExample = () => {
                             rowData={rowData}
                             onGridReady={onGridReady}
                             defaultColDef={{
-                                defaultWidth: 100,
+                                initialWidth: 100,
                                 sortable: true,
                                 resizable: true
                             }}>

@@ -27,7 +27,7 @@ var colDefsMedalsExcluded = [
 
 var gridOptions = {
     defaultColDef: {
-        defaultWidth: 100,
+        initialWidth: 100,
         sortable: true,
         resizable: true
     },

@@ -23,11 +23,11 @@ export class ColumnUtils extends BeanStub {
 
         let width : number;
         const colDefWidth = attrToNumber(colDef.width);
-        const colDefDefaultWidth = attrToNumber(colDef.defaultWidth);
+        const colDefInitialWidth = attrToNumber(colDef.initialWidth);
         if (colDefWidth != null) {
             width = colDefWidth;
-        } else if (colDefDefaultWidth != null) {
-            width = colDefDefaultWidth;
+        } else if (colDefInitialWidth != null) {
+            width = colDefInitialWidth;
         } else {
             width = optionsWrapper.getColWidth();
         }
