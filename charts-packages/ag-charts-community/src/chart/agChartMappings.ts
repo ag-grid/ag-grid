@@ -321,9 +321,6 @@ const mappings: any = {
                 }, {
                     type: CategoryAxis.type,
                     position: 'bottom'
-                }, {
-                    type: GroupedCategoryAxis.type,
-                    position: 'bottom'
                 }]
             },
         },
