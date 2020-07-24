@@ -1,4 +1,5 @@
 var options = {
+    autoSize: true,
     title: {
         text: 'Mean Sea Level (mm)'
     },

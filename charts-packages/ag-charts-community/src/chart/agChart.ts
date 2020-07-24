@@ -29,15 +29,14 @@ const themes: { [key in string]: AgChartTheme } = {
     default: defaultTheme,
     undefined: defaultTheme,
     null: defaultTheme,
-    light: defaultTheme,
     dark: new DarkTheme(),
-    'material-light': new MaterialLight(),
+    'material': new MaterialLight(),
     'material-dark': new MaterialDark(),
-    'pastel-light': new PastelLight(),
+    'pastel': new PastelLight(),
     'pastel-dark': new PastelDark(),
-    'solar-light': new SolarLight(),
+    'solar': new SolarLight(),
     'solar-dark': new SolarDark(),
-    'vivid-light': new VividLight(),
+    'vivid': new VividLight(),
     'vivid-dark': new VividDark()
 };
 

@@ -2,12 +2,11 @@ type FontStyle = 'normal' | 'italic' | 'oblique';
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
     | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-export type AgChartThemeName = 'default'
-    | 'light' | 'dark'
-    | 'material-light' | 'material-dark'
-    | 'pastel-light' | 'pastel-dark'
-    | 'solar-light' | 'solar-dark'
-    | 'vivid-light' | 'vivid-dark';
+export type AgChartThemeName = 'default' | 'dark'
+    | 'material' | 'material-dark'
+    | 'pastel' | 'pastel-dark'
+    | 'solar' | 'solar-dark'
+    | 'vivid' | 'vivid-dark';
 
 export interface AgChartThemePalette {
     fills: string[];

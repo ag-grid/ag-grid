@@ -2,6 +2,10 @@ var options = {
     container: document.getElementById('myChart'),
     theme: 'dark',
     autoSize: true,
+    padding: {
+        left: 70,
+        right: 70
+    },
     title: {
         text: 'Chart Theme Example'
     },
