@@ -135,9 +135,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        const gridApi = this.params.api;
-        const onRowHeightChangedDebounced = _.debounce(gridApi.onRowHeightChanged.bind(gridApi), 20);
-
         const checkRowSizeFunc = () => {
             const clientHeight = this.getGui().clientHeight;
 
@@ -147,7 +144,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             // empty detail grid would still have some styling around it giving at least a few pixels.
             if (clientHeight != null && clientHeight > 0) {
                 this.params.node.setRowHeight(clientHeight);
-                onRowHeightChangedDebounced();
+                this.params.api.onRowHeightChanged();
             }
         };
 
