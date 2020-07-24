@@ -1,13 +1,5 @@
 var colDefs = [
     {field: 'athlete'},
-    // {field: 'age'},
-    // {field: 'country'},
-    // {field: 'sport'},
-    // {field: 'year'},
-    // {field: 'date'},
-    // {field: 'gold'},
-    // {field: 'silver'},
-    // {field: 'bronze'},
     {field: 'total'}
 ];
 
@@ -15,8 +7,7 @@ var gridOptions = {
     defaultColDef: {
         initialWidth: 100,
         sortable: true,
-        resizable: true,
-        // headerComponent: 'MyHeaderRenderer'
+        resizable: true
     },
     columnDefs: colDefs,
     components: {

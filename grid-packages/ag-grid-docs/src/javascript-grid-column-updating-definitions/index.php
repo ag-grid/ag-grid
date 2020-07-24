@@ -304,7 +304,7 @@ SNIPPET
 
 <h2>Refreshing Columns</h2>
 
-<?= grid_example('Refreshing Headers', 'refreshing-headers', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Refreshing Headers', 'refreshing-headers', 'mixed', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Column Events</h2>
 
@@ -320,7 +320,7 @@ SNIPPET
     a new tab and observe the dev console.
 </p>
 
-<?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Events', 'column-events', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <p>
     To suppress events raised when invoking <code>applyColumnState()</code>

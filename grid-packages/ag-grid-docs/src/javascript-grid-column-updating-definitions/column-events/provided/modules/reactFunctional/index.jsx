@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
 
@@ -9,35 +9,9 @@ import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState([]);
-    const [columns, setColumns] = useState([
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'sport'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'}
-    ]);
-
-    const [forceRefresh, setForceRefresh] = useState(false);
-
-    useEffect(() => {
-        if (forceRefresh) {
-            gridApi.refreshCells({force: true});
-            setForceRefresh(false);
-        }
-    }, [forceRefresh]);
 
     const onGridReady = (params) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
-
         const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
         httpRequest.send();
@@ -48,50 +22,10 @@ const GridExample = () => {
         };
     };
 
-    const setHeaderNames = () => {
-        const newColumns = [...columns];
-        newColumns.forEach((newColumn, index) => {
-            newColumn.headerName = 'C' + index;
-        });
-        setColumns(newColumns);
-    };
-
-    const removeHeaderNames = () => {
-        const newColumns = [...columns];
-        newColumns.forEach((newColumn, index) => {
-            newColumn.headerName = undefined;
-        });
-        setColumns(newColumns);
-    };
-
-    const setValueFormatters = () => {
-        const newColumns = [...columns];
-        newColumns.forEach((newColumn, index) => {
-            newColumn.valueFormatter = params => '[ ' + params.value + ' ]';
-        });
-
-        setColumns(newColumns);
-        setForceRefresh(true);
-    };
-
-    const removeValueFormatters = () => {
-        const newColumns = [...columns];
-        newColumns.forEach((newColumn, index) => {
-            newColumn.valueFormatter = undefined;
-        });
-
-        setColumns(newColumns);
-        setForceRefresh(true);
-    };
-
     return (
         <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
-                    <button onClick={setHeaderNames}>Set Header Names</button>
-                    <button onClick={removeHeaderNames}>Remove Header Names</button>
-                    <button onClick={setValueFormatters}>Set Value Formatters</button>
-                    <button onClick={removeValueFormatters}>Remove Value Formatters</button>
                     <div
                         style={{
                             height: '100%',
@@ -108,8 +42,21 @@ const GridExample = () => {
                                 resizable: true,
                                 filter: true
                             }}
-                            applyColumnDefOrder={true}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
+                            onSortChanged={e => console.log('Event Sort Changed', e)}
+                            onColumnResized={e => console.log('Event Column Resized', e)}
+                            onColumnVisible={e => console.log('Event Column Visible', e)}
+                            onColumnPivotChanged={e => console.log('Event Pivot Changed', e)}
+                            onColumnRowGroupChanged={e => console.log('Event Row Group Changed', e)}
+                            onColumnValueChanged={e => console.log('Event Value Changed', e)}
+                            onColumnMoved={e => console.log('Event Column Moved', e)}
+                            onColumnPinned={e => console.log('Event Column Pinned', e)}>
+                            <AgGridColumn field="athlete"/>
+                            <AgGridColumn field="age"/>
+                            <AgGridColumn field="country"/>
+                            <AgGridColumn field="sport"/>
+                            <AgGridColumn field="gold"/>
+                            <AgGridColumn field="silver"/>
+                            <AgGridColumn field="bronze"/>
                         </AgGridReact>
                     </div>
                 </div>

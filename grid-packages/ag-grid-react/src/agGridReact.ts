@@ -156,14 +156,14 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
                 return ChangeDetectionStrategyType.DeepValueCheck;
             }
-            case 'columnDefs': {
-                // we let the grid do any checking/updates now by default, but still allow the user to override this
-                // to maintain backward compatibility
-                if (!!this.props.columnDefsChangeDetectionStrategy) {
-                    return this.props.columnDefsChangeDetectionStrategy;
-                }
-                return ChangeDetectionStrategyType.NoCheck;
-            }
+            // case 'columnDefs': {
+            //     // we let the grid do any checking/updates now by default, but still allow the user to override this
+            //     // to maintain backward compatibility
+            //     if (!!this.props.columnDefsChangeDetectionStrategy) {
+            //         return this.props.columnDefsChangeDetectionStrategy;
+            //     }
+            //     return ChangeDetectionStrategyType.NoCheck;
+            // }
             default: {
                 // all other data properties will default to DeepValueCheck
                 return ChangeDetectionStrategyType.DeepValueCheck;
