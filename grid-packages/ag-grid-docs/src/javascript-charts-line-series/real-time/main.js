@@ -16,6 +16,7 @@ function getData() {
 
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: true,
     data: getData(),
     series: [{
         xKey: 'time',
