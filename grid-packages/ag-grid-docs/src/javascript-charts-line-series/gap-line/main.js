@@ -1,5 +1,6 @@
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: true,
     data: [
         {
             year: '2008',

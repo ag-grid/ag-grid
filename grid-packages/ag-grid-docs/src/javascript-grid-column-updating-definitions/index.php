@@ -108,7 +108,7 @@ include '../documentation-main/documentation_header.php';
 <table class="table properties">
     <tr>
         <th>Stateful Attribute</th>
-        <th>Default Attribute</th>
+        <th>Initial Attribute</th>
         <th>Description</th>
     </tr>
     <?=addItemToTable('width','initialWidth','Width of the column.')?>
@@ -138,14 +138,14 @@ include '../documentation-main/documentation_header.php';
 </note>
 
 <p>
-    The <b>Default Attribute</b> will be used only when the
+    The <b>Initial Attribute</b> will be used only when the
     <b>Column is Created</b> only. The <b>Stateful Attribute</b> will be used when the <b>Column
     is Created or Updated</b>.
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// using default values, get applied when Column is created
-myDefaultValuesColDef = {
+// using initial values, get applied when Column is created
+myInitialValuesColDef = {
     field: 'country',
     initialWidth: 200,
     initialPinned: 'left'
@@ -161,7 +161,7 @@ SNIPPET
 ) ?>
 
 <p>
-    The example below shows Column Definitions using <b>default attributes</b>. Note the following:
+    The example below shows Column Definitions using <b>initial attributes</b>. Note the following:
 </p>
 <ul>
     <li>
@@ -170,13 +170,13 @@ SNIPPET
     </li>
     <li>
         If you update the width, sort or pinned of a column by interacting with the grid's UI
-        and then hit 'Set Columns with Defaults', the columns state will not change.
+        and then hit 'Set Columns with Initials', the columns state will not change.
     </li>
     <li>
-        Removing the columns first and then setting them again will use the default values again.
+        Removing the columns first and then setting them again will use the initial values again.
     </li>
 </ul>
-<?= grid_example('Updating Column Defaults', 'changing-default', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Updating Column Initials', 'changing-default', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <br/>
 <p>
@@ -302,9 +302,9 @@ SNIPPET
 
 <?= grid_example('Matching Columns', 'matching-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
-<h2>Refreshing Columns</h2>
+<!--<h2>Refreshing Columns</h2>-->
 
-<?= grid_example('Refreshing Headers', 'refreshing-headers', 'mixed', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
+<?//= grid_example('Refreshing Headers', 'refreshing-headers', 'mixed', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Column Events</h2>
 
