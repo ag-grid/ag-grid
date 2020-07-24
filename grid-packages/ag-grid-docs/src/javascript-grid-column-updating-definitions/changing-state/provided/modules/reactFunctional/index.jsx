@@ -37,7 +37,13 @@ const GridExample = () => {
     };
 
     const onBtWithState = () => {
-        setColumns([...columnsWithState]); // important to spread this or react won't treat it as a change
+        // we need to alter the columns so ensure both react and agGridReact act on this change
+        // otherwise react & agGridReact would assume (correctly) that the state was the same and not propagate the
+        // "reset" of column state
+        // this could also be done via the api which would remove the need for a dirty flag: gridApi.setColumnDefs(...);
+        const newColumns = [...columnsWithState];
+        newColumns[0]['dirty'] = new Date().getMilliseconds();
+        setColumns(newColumns);
     }
 
     const onBtRemove = () => {
