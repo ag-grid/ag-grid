@@ -29,8 +29,8 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private static getTemplate(cssClass?: string) {
         return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
-            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+            <div ref="eHeader" role="menu" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
         </div>`;
     }
 
@@ -135,7 +135,8 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private addItem(item: TabbedItem): void {
         const eHeaderButton = document.createElement('span');
-        eHeaderButton.tabIndex = -1;
+        eHeaderButton.setAttribute('tabIndex', '-1');
+        eHeaderButton.setAttribute('role', 'menuitem');
         eHeaderButton.appendChild(item.title);
         addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
