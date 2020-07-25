@@ -1156,13 +1156,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
 }
 
-.ag-paging-button-wrapper {
-    position: relative;
-    overflow: hidden;
-}
-
 .ag-paging-button {
-    position: absolute;
+    position: relative;
 }
 
 .ag-disabled .ag-paging-page-summary-panel {

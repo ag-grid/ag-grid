@@ -167,11 +167,13 @@ export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptio
 
         if (typeof rendererResult === 'string') {
             return loadTemplate(rendererResult);
-        } else if (isNodeOrElement(rendererResult)) {
-            return rendererResult;
-        } else {
-            console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
         }
+
+        if (isNodeOrElement(rendererResult)) {
+            return rendererResult;
+        }
+
+        console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
     } else {
         const span = document.createElement('span');
         let cssClass = iconNameClassMap[iconName];
@@ -185,8 +187,9 @@ export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptio
             }
         }
 
-        span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
-        span.setAttribute("unselectable", "on");
+        span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
+        span.setAttribute('unselectable', 'on');
+        span.setAttribute('role', 'presentation');
 
         return span;
     }
