@@ -25,7 +25,7 @@ export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends ManagedFocusComponent {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;

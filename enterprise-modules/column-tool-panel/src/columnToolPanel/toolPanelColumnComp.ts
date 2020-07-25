@@ -25,7 +25,7 @@ import { BaseColumnItem } from "./primaryColsPanel";
 export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column" tabindex="-1">
+        `<div class="ag-column-select-column" tabindex="-1" role="treeitem">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;

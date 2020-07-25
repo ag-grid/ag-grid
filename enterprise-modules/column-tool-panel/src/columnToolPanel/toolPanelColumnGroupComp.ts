@@ -23,7 +23,7 @@ import { ColumnFilterResults } from "./primaryColsListPanel";
 export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group" tabindex="-1">
+        `<div class="ag-column-select-column-group" tabindex="-1" role="treeitem">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
@@ -94,11 +94,10 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
-
         this.setupDragging();
-
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
+        this.refreshAriaExpanded();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
@@ -363,18 +362,22 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private toggleExpandOrContract(expanded?: boolean) {
-        if (expanded === undefined) {
-            expanded = !this.expanded;
-        }
+        if (expanded === undefined) { expanded = !this.expanded; }
+
         this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
+        this.refreshAriaExpanded();
     }
 
     private setOpenClosedIcons(): void {
         const folderOpen = this.expanded;
         _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
         _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    }
+
+    private refreshAriaExpanded(): void {
+        _.setAriaExpanded(this.getGui(), this.expanded);
     }
 
     public isExpanded(): boolean {
@@ -386,13 +389,11 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     public onSelectAllChanged(value: boolean): void {
-        if (
-            (value && !this.cbSelect.getValue()) ||
-            (!value && this.cbSelect.getValue())
-        ) {
-            if (!this.cbSelect.isReadOnly()) {
-                this.cbSelect.toggle();
-            }
+        const cbValue = this.cbSelect.getValue();
+        const readOnly = this.cbSelect.isReadOnly();
+
+        if (!readOnly && ((value && !cbValue) || (!value && cbValue))) {
+            this.cbSelect.toggle();
         }
     }
 
