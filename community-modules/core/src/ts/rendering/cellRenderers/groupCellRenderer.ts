@@ -25,6 +25,7 @@ import { createIconNoSpan } from "../../utils/icon";
 import { isKeyPressed } from "../../utils/keyboard";
 import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
+import { setAriaExpanded } from "../../utils/aria";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
@@ -407,6 +408,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 
+        setAriaExpanded(eGroupCell, params.node.expanded);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
@@ -524,8 +526,11 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     public onExpandOrContract(): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         const rowNode: RowNode = this.displayedGroup;
+        const params = this.params;
+        const nextExpandState = !rowNode.expanded;
 
-        rowNode.setExpanded(!rowNode.expanded);
+        rowNode.setExpanded(nextExpandState);
+        setAriaExpanded(params.eGridCell, nextExpandState);
     }
 
     private isExpandable(): boolean {
