@@ -45,9 +45,9 @@ import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertI
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
-import { deepCloneDefinition } from '../utils/object';
 import { camelCaseToHumanText } from '../utils/string';
 import {ColumnDefFactory} from "./columnDefFactory";
+import {PropertyChangeDetector} from "./propertyChangeDetector";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -89,6 +89,7 @@ export class ColumnController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
+    @Autowired('propertyChangeDetector') private propertyChangeDetector: PropertyChangeDetector;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -211,7 +212,12 @@ export class ColumnController extends BeanStub {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
+
         const colsPreviouslyExisted = !!this.columnDefs;
+
+        const colDefsSameAsExisting = colsPreviouslyExisted
+            && this.propertyChangeDetector.areEqual(this.columnDefs, columnDefs);
+        const columnStateBefore = colDefsSameAsExisting ? this.getColumnState() : null;
 
         this.colDefVersion++;
 
@@ -248,6 +254,17 @@ export class ColumnController extends BeanStub {
         }
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
+
+        let doNotRaiseEvents = false;
+        if (colDefsSameAsExisting) {
+            const stateAfterChange = this.getColumnState();
+            doNotRaiseEvents = this.propertyChangeDetector.areEqual(columnStateBefore, stateAfterChange);
+        }
+        console.log(`setColumnDefs previous=${colsPreviouslyExisted}, same=${colDefsSameAsExisting}, skipEvents=${doNotRaiseEvents}`);
+
+        // if column definitions are the same as before, and no state change has occured in the columns,
+        // then we should NOT raise events. this prevents an infinite 'prop change' event with React.
+        if (doNotRaiseEvents) { return; }
 
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,

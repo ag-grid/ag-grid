@@ -73,7 +73,7 @@ export class ColDefUtil {
         'minWidth',
         'maxWidth',
         'rowGroupIndex',
-        'defaultFowGroupIndex',
+        'initialRowGroupIndex',
         'pivotIndex',
         'initialPivotIndex'];
 

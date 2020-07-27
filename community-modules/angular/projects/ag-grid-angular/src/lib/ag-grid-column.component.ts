@@ -103,7 +103,7 @@ export class AgGridColumn {
     @Input() public minWidth: any;
     @Input() public maxWidth: any;
     @Input() public rowGroupIndex: any;
-    @Input() public defaultFowGroupIndex: any;
+    @Input() public initialRowGroupIndex: any;
     @Input() public pivotIndex: any;
     @Input() public initialPivotIndex: any;
     @Input() public dndSourceOnRowDrag: any;

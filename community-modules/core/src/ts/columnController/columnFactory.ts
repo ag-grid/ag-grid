@@ -325,7 +325,7 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column {
+    public findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column {
         const res: Column = find(existingColsCopy, existingCol => {
 
             const existingColDef = existingCol.getUserProvidedColDef();
