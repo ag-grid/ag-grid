@@ -93,6 +93,12 @@ const defaultTooltipCss = `
 
     margin: 0 auto;
 }
+
+.ag-chart-wrapper {
+    boxSizing: border-box;
+    overflow: hidden;
+    height: 100%;
+}
 `;
 
 export interface TooltipMeta {
@@ -207,9 +213,10 @@ export abstract class Chart extends Observable {
         root.appendChild(background);
 
         const element = this._element = document.createElement('div');
-        element.style.boxSizing = 'border-box';
-        element.style.overflow = 'hidden';
-        element.style.height = '100%';
+        element.setAttribute('class', 'ag-chart-wrapper');
+        // element.style.boxSizing = 'border-box';
+        // element.style.overflow = 'hidden';
+        // element.style.height = '100%';
 
         const scene = new Scene(document);
         this.scene = scene;

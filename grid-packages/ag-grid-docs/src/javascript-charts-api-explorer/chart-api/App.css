@@ -50,7 +50,21 @@ html {
     height: 50%;
 }
 
+.container__chart .chart {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.container__chart .ag-chart-wrapper {
+    height: auto;
+    border: 1px solid #aaa;
+    box-sizing: content-box;
+}
+
 .container__code {
+    margin-top: 10px;
     overflow: auto;
     height: 50%;
 }
