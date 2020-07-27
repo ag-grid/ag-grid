@@ -85,6 +85,9 @@ export abstract class AgChart {
     }
 
     static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
+        if (!(chart && options)) {
+            return;
+        }
         options = Object.create(options);
         if (container) {
             options.container = container;
@@ -95,13 +98,11 @@ export abstract class AgChart {
         const autoSize = options && options.autoSize;
         const theme = getChartTheme(options.theme);
         update(chart, options, undefined, theme);
-        if (chart) {
-            if (autoSize) {
-                chart.autoSize = true;
-            }
-            if (theme) {
-                theme.updateChart(chart);
-            }
+        if (autoSize) {
+            chart.autoSize = true;
+        }
+        if (theme) {
+            theme.updateChart(chart);
         }
     }
 
@@ -216,6 +217,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
         }
     }
 
+    const chart: Chart | undefined = path in mappings ? (component as Chart) : undefined;
     const mapping = getValue(mappings, path);
 
     if (mapping) {
@@ -236,7 +238,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
                     const oldValue = component[key];
 
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
-                        if (path in mappings) { // component is a chart
+                        if (chart) {
                             if (key === 'series') {
                                 updateSeries(component, value, keyPath, theme);
                             } else if (key === 'axes') {
@@ -256,6 +258,9 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {
+                            if (chart && options.autoSize && (key === 'width' || key === 'height')) {
+                                continue;
+                            }
                             component[key] = value;
                         }
                     }
@@ -264,8 +269,8 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
         }
     }
 
-    if (path in mappings) { // top-level component (chart)
-        (component as Chart).performLayout();
+    if (chart) {
+        chart.performLayout();
     }
 }
 
