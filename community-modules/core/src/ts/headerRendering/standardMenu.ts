@@ -108,11 +108,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         e.preventDefault();
 
-        if (e.shiftKey) {
-            this.focusController.focusLastFocusableElement(menu);
-        } else {
-            this.focusController.focusFirstFocusableElement(menu);
-        }
+        this.focusController.focusInto(menu, e.shiftKey);
     }
 
     public isMenuEnabled(column: Column): boolean {

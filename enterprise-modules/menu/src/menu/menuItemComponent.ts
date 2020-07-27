@@ -12,6 +12,7 @@ import {
     IComponent
 } from "@ag-grid-community/core";
 import { MenuList } from './menuList';
+import { MenuPanel } from './menuPanel';
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -126,7 +127,11 @@ export class MenuItemComponent extends Component {
             }
         } else {
             const { subMenu } = this.params;
-            const subMenuGui = subMenu.getGui();
+
+            const menuPanel = this.createBean(new MenuPanel(subMenu));
+            menuPanel.setParentComponent(this);
+
+            const subMenuGui = menuPanel.getGui();
             const mouseEvent = 'mouseenter';
             const mouseEnterListener = () => this.cancelDeactivate();
 

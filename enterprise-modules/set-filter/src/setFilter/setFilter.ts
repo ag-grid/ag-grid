@@ -359,7 +359,10 @@ export class SetFilter extends ProvidedFilter {
         const { eMiniFilter } = this;
 
         eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
-        eMiniFilter.getFocusableElement().focus();
+
+        if (!params || !params.suppressFocus) {
+            eMiniFilter.getFocusableElement().focus();
+        }
     }
 
     public applyModel(): boolean {

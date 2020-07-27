@@ -64,15 +64,6 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.wireFocusManagement();
     }
 
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-
-        if (nextEl) {
-            e.preventDefault();
-            nextEl.focus();
-        }
-    }
-
     public onExpandAll(): void {
         this.primaryColsListPanel.doSetExpandedAll(true);
     }

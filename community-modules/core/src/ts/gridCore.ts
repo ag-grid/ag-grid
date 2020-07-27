@@ -23,7 +23,6 @@ import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { ColumnController } from "./columnController/columnController";
 import { ColumnGroup } from "./entities/columnGroup";
 import { Column } from "./entities/column";
-import { _ } from "./utils";
 import { addCssClass, removeCssClass, isVisible } from "./utils/dom";
 import { findIndex, last } from "./utils/array";
 
@@ -173,14 +172,15 @@ export class GridCore extends ManagedFocusComponent {
             return this.focusGridHeader();
         }
 
-        return this.focusController.focusFirstFocusableElement(focusableContainers[nextIdx]);
+        return this.focusController.focusInto(focusableContainers[nextIdx]);
 
     }
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
+
         if (fromBottom && focusableContainers.length > 1) {
-            return this.focusController.focusFirstFocusableElement(last(focusableContainers));
+            return this.focusController.focusInto(last(focusableContainers));
         }
 
         return this.focusGridHeader();
@@ -339,4 +339,6 @@ export class GridCore extends ManagedFocusComponent {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     }
+
+    protected onTabKeyDown(): void { }
 }

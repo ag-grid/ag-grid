@@ -136,7 +136,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();
-        this.eValueFrom1.getInputElement().focus();
+
+        if (!params || !params.suppressFocus) {
+            this.eValueFrom1.getInputElement().focus();
+        }
     }
 
     protected getDefaultFilterOptions(): string[] {

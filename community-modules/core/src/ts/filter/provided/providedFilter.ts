@@ -380,13 +380,4 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }
-
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-
-        if (!nextRoot) { return; }
-
-        nextRoot.focus();
-        e.preventDefault();
-    }
 }

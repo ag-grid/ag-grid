@@ -165,4 +165,6 @@
         padding: ag-param(grid-size) * 2 ag-param(grid-size);
         background-color: transparent;
     }
+
+    @include ag-keyboard-focus((ag-multi-filter-group-title-bar), 4px);
 }

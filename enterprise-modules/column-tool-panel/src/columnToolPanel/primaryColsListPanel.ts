@@ -21,7 +21,7 @@ import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 import { EXPAND_STATE } from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
-export type ColumnFilterResults = { [id: string]: boolean };
+export type ColumnFilterResults = { [id: string]: boolean; };
 
 export class PrimaryColsListPanel extends ManagedFocusComponent {
 
@@ -82,13 +82,13 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
             case Constants.KEY_UP:
             case Constants.KEY_DOWN:
                 e.preventDefault();
-                this.nagivateToNextItem(e.keyCode === Constants.KEY_UP);
+                this.navigateToNextItem(e.keyCode === Constants.KEY_UP);
                 break;
         }
-        
+
     }
 
-    private nagivateToNextItem(up: boolean): void {
+    private navigateToNextItem(up: boolean): void {
         const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), true, up);
 
         if (nextEl) {
@@ -267,7 +267,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         if (expandedCount > 0 && notExpandedCount > 0) {
             return EXPAND_STATE.INDETERMINATE;
         }
-        
+
         if (notExpandedCount > 0) {
             return EXPAND_STATE.COLLAPSED;
         }
@@ -312,7 +312,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
                 // update select all header with new state
                 const selectionState = this.selectAllChecked ? true : false;
-                this.dispatchEvent({type: 'selectionChanged', state: selectionState});
+                this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
             }
         }
     }
@@ -364,9 +364,9 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         if (checkedCount > 0 && uncheckedCount > 0) {
             return undefined;
         }
-        
+
         if (checkedCount === 0 || uncheckedCount > 0) {
-            return false
+            return false;
         }
 
         return true;
@@ -390,10 +390,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private filterColumns(): void {
-        const filterResults: { [id: string]: boolean } = {};
+        const filterResults: { [id: string]: boolean; } = {};
 
         const passesFilter = (item: OriginalColumnGroupChild) => {
-            if(!_.exists(this.filterText)) return true;
+            if (!_.exists(this.filterText)) return true;
 
             const columnCompId = this.getColumnCompId(item);
             const comp = this.columnComps.get(columnCompId);
@@ -464,7 +464,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         }
 
         return columnGroupChild.getId();
-    }
+    };
 
     private notifyListeners(): void {
         this.fireGroupExpandedEvent();
@@ -473,12 +473,12 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();
-        this.dispatchEvent({type: 'groupExpanded', state: expandState});
+        this.dispatchEvent({ type: 'groupExpanded', state: expandState });
     }
 
     private fireSelectionChangedEvent(): void {
         const selectionState = this.getSelectionState();
-        this.dispatchEvent({type: 'selectionChanged', state: selectionState});
+        this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }
 
     private destroyColumnComps(): void {

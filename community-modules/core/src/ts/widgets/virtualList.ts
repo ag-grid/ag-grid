@@ -60,17 +60,20 @@ export class VirtualList extends ManagedFocusComponent {
         switch (e.keyCode) {
             case Constants.KEY_UP:
             case Constants.KEY_DOWN:
-            case Constants.KEY_TAB:
-                const up = e.keyCode === Constants.KEY_UP || (e.keyCode === Constants.KEY_TAB && e.shiftKey);
-
-                if (this.navigate(up)) {
+                if (this.navigate(e.keyCode === Constants.KEY_UP)) {
                     e.preventDefault();
-                } else if (e.keyCode === Constants.KEY_TAB) {
-                    // focus on the first or last focusable element to ensure that any other handlers start from there
-                    this.focusController[e.shiftKey ? 'focusFirstFocusableElement' : 'focusLastFocusableElement'](this.getGui());
                 }
 
                 break;
+        }
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        if (this.navigate(e.shiftKey)) {
+            e.preventDefault();
+        } else {
+            // focus on the first or last focusable element to ensure that any other handlers start from there
+            this.focusController.focusInto(this.getGui(), !e.shiftKey);
         }
     }
 

@@ -15,7 +15,6 @@ import {
     Context,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
-import { MenuItemComponent } from '@ag-grid-enterprise/menu';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
@@ -65,7 +64,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
 }
 
 beforeEach(() => {
-    eGui = mock<HTMLElement>('appendChild');
+    eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement');
     filterManager = mock<FilterManager>('createFilterParams');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
     context = mock<Context>('createBean');
@@ -327,16 +326,29 @@ describe('getChildFilterInstance', () => {
 });
 
 describe('afterGuiAttached', () => {
+    let filter1Gui: HTMLElement;
+    let filter2Gui: HTMLElement;
+
     beforeEach(() => {
+        filter1Gui = document.createElement('div');
+        filter1Gui.id = 'filter-1';
         filter1 = mock<IFilterComp>('getGui');
+        filter1.getGui.mockReturnValue(filter1Gui);
+
+        filter2Gui = document.createElement('div');
+        filter2Gui.id = 'filter-2';
         filter2 = mock<IFilterComp>('getGui');
+        filter2.getGui.mockReturnValue(filter2Gui);
 
         context.createBean.mockImplementation(bean => bean);
     });
 
     it('passes through to filter if it has afterGuiAttached function', () => {
         filter1 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter1.getGui.mockReturnValue(filter1Gui);
+
         filter2 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter2.getGui.mockReturnValue(filter2Gui);
 
         const multiFilter = createFilter();
         const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
@@ -349,6 +361,68 @@ describe('afterGuiAttached', () => {
         expect(filter2.afterGuiAttached).toHaveBeenCalledWith(params);
     });
 
+    it('allows focussing if all filters are inline', () => {
+        filter1 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter1.getGui.mockReturnValue(filter1Gui);
+
+        filter2 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter2.getGui.mockReturnValue(filter2Gui);
+
+        const multiFilter = createFilter({
+            filters: [
+                {
+                    filter: 'agTextColumnFilter',
+                    display: 'inline',
+                },
+                {
+                    filter: 'agSetColumnFilter',
+                }
+            ]
+        });
+
+        const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
+
+        multiFilter.afterGuiAttached(params);
+
+        const expectedParams = { ...params, suppressFocus: false };
+
+        expect(filter1.afterGuiAttached).toHaveBeenCalledTimes(1);
+        expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
+        expect(filter2.afterGuiAttached).toHaveBeenCalledTimes(1);
+        expect(filter2.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
+    });
+
+    it.each(['subMenu', 'accordion'])('suppresses focussing if any filter is not inline', display => {
+        filter1 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter1.getGui.mockReturnValue(filter1Gui);
+
+        filter2 = mock<IFilterComp>('getGui', 'afterGuiAttached');
+        filter2.getGui.mockReturnValue(filter2Gui);
+
+        const multiFilter = createFilter({
+            filters: [
+                {
+                    filter: 'agTextColumnFilter',
+                },
+                {
+                    filter: 'agSetColumnFilter',
+                    display
+                }
+            ]
+        });
+
+        const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
+
+        multiFilter.afterGuiAttached(params);
+
+        const expectedParams = { ...params, suppressFocus: true };
+
+        expect(filter1.afterGuiAttached).toHaveBeenCalledTimes(1);
+        expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
+        expect(filter2.afterGuiAttached).toHaveBeenCalledTimes(1);
+        expect(filter2.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
+    });
+
     it('does not pass through to filter if afterGuiAttached function does not exist', () => {
         const multiFilter = createFilter();
 
@@ -356,14 +430,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the first filter then the second filter with a separator in-between', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter();
         filter.afterGuiAttached({ container: 'columnMenu' });
 
@@ -371,20 +437,12 @@ describe('afterGuiAttached', () => {
 
         const { calls } = eGui.appendChild.mock;
 
-        expect((calls[0][0] as HTMLElement)).toBe(filter1Element);
+        expect((calls[0][0] as HTMLElement)).toBe(filter1Gui);
         expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-filter-separator"></div>');
-        expect((calls[2][0] as HTMLElement)).toBe(filter2Element);
+        expect((calls[2][0] as HTMLElement)).toBe(filter2Gui);
     });
 
     it('refreshes the UI if the container changes', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter();
         filter.afterGuiAttached({ container: 'columnMenu' });
         filter.afterGuiAttached({ container: 'toolPanel' });
@@ -393,14 +451,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('does not refresh the UI if the container does not change', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter();
         filter.afterGuiAttached({ container: 'columnMenu' });
         filter.afterGuiAttached({ container: 'columnMenu' });
@@ -409,14 +459,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside a sub-menu if configured', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter({
             filters: [{
                 filter: 'agTextColumnFilter',
@@ -432,14 +474,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside an accordion if sub-menu is configured but filter is opened in tool panel', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter({
             filters: [{
                 filter: 'agTextColumnFilter',
@@ -455,14 +489,6 @@ describe('afterGuiAttached', () => {
     });
 
     it('presents the filter inside an accordion if configured', () => {
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
-
         const filter = createFilter({
             filters: [{
                 filter: 'agTextColumnFilter',
@@ -479,13 +505,6 @@ describe('afterGuiAttached', () => {
 
     it('presents the filter inside an sub-menu with custom title if configured', () => {
         const title = 'Filter Title';
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
 
         const filter = createFilter({
             filters: [{
@@ -504,13 +523,6 @@ describe('afterGuiAttached', () => {
 
     it('presents the filter inside an accordion with custom title if configured', () => {
         const title = 'Filter Title';
-        const filter1Element = document.createElement('div');
-        filter1Element.id = 'filter-1';
-        filter1.getGui.mockReturnValue(filter1Element);
-
-        const filter2Element = document.createElement('div');
-        filter2Element.id = 'filter-2';
-        filter2.getGui.mockReturnValue(filter2Element);
 
         const filter = createFilter({
             filters: [{

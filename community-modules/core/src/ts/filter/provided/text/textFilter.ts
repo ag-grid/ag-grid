@@ -200,7 +200,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();
-        this.eValue1.getInputElement().focus();
+
+        if (!params || !params.suppressFocus) {
+            this.eValue1.getInputElement().focus();
+        }
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {

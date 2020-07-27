@@ -44,7 +44,7 @@ export class MenuList extends ManagedFocusComponent {
                 const topMenu = this.findTopMenu();
 
                 if (topMenu) {
-                    this.focusController.focusFirstFocusableElement(topMenu.getGui());
+                    this.focusController.focusInto(topMenu.getGui());
                 }
 
                 break;
@@ -54,6 +54,7 @@ export class MenuList extends ManagedFocusComponent {
     public clearActiveItem(): void {
         if (this.activeMenuItem) {
             this.activeMenuItem.deactivate();
+            this.activeMenuItem = null;
         }
     }
 

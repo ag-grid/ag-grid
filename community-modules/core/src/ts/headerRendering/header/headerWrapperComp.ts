@@ -1,5 +1,5 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import {Autowired, PreDestroy} from "../../context/context";
+import { Autowired, PreDestroy } from "../../context/context";
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
 import {
@@ -28,10 +28,8 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
-import {setAriaSort, getAriaSortState, removeAriaSort} from "../../utils/aria";
-import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
-import {missing} from "../../utils/generic";
-import {_} from "../../utils";
+import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
+import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -70,7 +68,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private menuEnabled: boolean;
 
     private colDefVersion: number;
-    private refreshFunctions: (()=>void) [] = [];
+    private refreshFunctions: (() => void)[] = [];
 
     private moveDragSource: DragSource;
     private displayName: string;
@@ -123,12 +121,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const colDef = this.column.getColDef();
         this.sortable = colDef.sortable;
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
-        this.draggable = this.workOutDraggable()
+        this.draggable = this.workOutDraggable();
     }
 
     private onNewColumnsLoaded(): void {
         const colDefVersionNow = this.columnController.getColDefVersion();
-        if (colDefVersionNow!=this.colDefVersion) {
+        if (colDefVersionNow != this.colDefVersion) {
             this.colDefVersion = colDefVersionNow;
             this.refresh();
         }
@@ -154,7 +152,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             this.appendHeaderComp();
         }
 
-        this.refreshFunctions.forEach( f => f() );
+        this.refreshFunctions.forEach(f => f());
     }
 
     @PreDestroy
@@ -169,7 +167,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private removeMoveDragSource(): void {
         if (this.moveDragSource) {
-            this.dragAndDropService.removeDragSource(this.moveDragSource)
+            this.dragAndDropService.removeDragSource(this.moveDragSource);
             this.moveDragSource = undefined;
         }
     }
@@ -242,6 +240,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         }
     }
 
+    protected onTabKeyDown(): void { }
+
     public getComponentHolder(): ColDef {
         return this.column.getColDef();
     }
@@ -260,7 +260,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const eGui = this.getGui();
 
-        const updateSortableCssClass = ()=> {
+        const updateSortableCssClass = () => {
             addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', this.sortable);
         };
 
@@ -278,7 +278,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.refreshFunctions.push(updateSortableCssClass);
         this.refreshFunctions.push(updateAriaSort);
 
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this) );
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -328,7 +328,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private afterHeaderCompCreated(version: number, headerComp: IHeaderComp): void {
 
-        if (version!=this.headerCompVersion || !this.isAlive()) {
+        if (version != this.headerCompVersion || !this.isAlive()) {
             this.destroyBean(headerComp);
             return;
         }
@@ -385,7 +385,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private createDragItem(): DragItem {
-        const visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean; } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
 
         return {
@@ -397,13 +397,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private setupResize(): void {
         const colDef = this.getComponentHolder();
 
-        const destroyResizeFuncs: ( ()=>void ) [] = [];
+        const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;
         let canAutosize: boolean;
 
-        const addResize = ()=> {
-            _.setDisplayed(this.eResize, canResize);
+        const addResize = () => {
+            setDisplayed(this.eResize, canResize);
 
             if (!canResize) { return; }
 
@@ -426,7 +426,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
                 const touchListener: TouchListener = new TouchListener(this.eResize);
                 touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
 
-                this.addDestroyFunc( ()=> {
+                this.addDestroyFunc(() => {
                     this.eResize.removeEventListener('dblclick', autoSizeColListener);
                     touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
                     touchListener.destroy();
@@ -434,22 +434,22 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             }
         };
 
-        const removeResize = ()=> {
-            destroyResizeFuncs.forEach( f => f() );
+        const removeResize = () => {
+            destroyResizeFuncs.forEach(f => f());
             destroyResizeFuncs.length = 0;
         };
 
-        const refresh = ()=> {
+        const refresh = () => {
             const resize = this.column.isResizable();
             const autoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
-            const propertyChange = resize!==canResize || autoSize!==canAutosize;
+            const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
                 canAutosize = autoSize;
                 removeResize();
                 addResize();
             }
-        }
+        };
 
         refresh();
         this.addDestroyFunc(removeResize);
@@ -458,7 +458,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     public onResizing(finished: boolean, resizeAmount: number): void {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const columnWidths = [{key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised}];
+        const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
         this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
 
         if (finished) {

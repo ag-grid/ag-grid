@@ -68,7 +68,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
         );
 
         this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
-        
+
         this.addManagedListener(
             this.eFilterTextField.getInputElement(),
             "keypress",
@@ -95,15 +95,6 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
         }
     }
 
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-
-        if (nextEl) {
-            e.preventDefault();
-            nextEl.focus();
-        }
-    }
-
     private createExpandIcons() {
         this.eExpand.appendChild((
             this.eExpandChecked = _.createIconNoSpan(
@@ -114,20 +105,20 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
 
         this.eExpand.appendChild((
             this.eExpandUnchecked = _.createIconNoSpan(
-            "columnSelectClosed",
-            this.gridOptionsWrapper
+                "columnSelectClosed",
+                this.gridOptionsWrapper
             )
         ));
 
         this.eExpand.appendChild((
             this.eExpandIndeterminate = _.createIconNoSpan(
-            "columnSelectIndeterminate",
-            this.gridOptionsWrapper
+                "columnSelectIndeterminate",
+                this.gridOptionsWrapper
             )
         ));
         this.setExpandState(EXPAND_STATE.EXPANDED);
     }
- 
+
     // we only show expand / collapse if we are showing columns
     private showOrHideOptions(): void {
         const showFilter = !this.params.suppressColumnFilter;
@@ -158,7 +149,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure
             // the text filtering has happened, otherwise all columns will be deselected
-            setTimeout(() => this.onSelectClicked(), PrimaryColsHeaderPanel.DEBOUNCE_DELAY)
+            setTimeout(() => this.onSelectClicked(), PrimaryColsHeaderPanel.DEBOUNCE_DELAY);
         }
     }
 

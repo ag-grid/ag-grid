@@ -10,8 +10,8 @@ import { callIfPresent } from '../utils/function';
 
 export class TabbedLayout extends ManagedFocusComponent {
 
-    @RefSelector('eHeader') private eHeader: HTMLElement;
-    @RefSelector('eBody') private eBody: HTMLElement;
+    @RefSelector('eHeader') private readonly eHeader: HTMLElement;
+    @RefSelector('eBody') private readonly eBody: HTMLElement;
 
     private params: TabbedLayoutParams;
     private afterAttachedParams: IAfterGuiAttachedParams;
@@ -39,11 +39,14 @@ export class TabbedLayout extends ManagedFocusComponent {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
                 if (!this.eHeader.contains(document.activeElement)) { return; }
+
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
                 if (currentPosition === nextPosition) { return; }
+
                 e.preventDefault();
+
                 const nextItem = this.items[nextPosition];
 
                 this.showItemWrapper(nextItem);
@@ -57,30 +60,29 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        const { focusController, eHeader, eBody, activeItem } = this;
+        if (e.defaultPrevented) { return; }
 
+        const { focusController, eHeader, eBody, activeItem } = this;
         const activeElement = document.activeElement as HTMLElement;
-        const focusInHeader = eHeader.contains(activeElement);
 
         e.preventDefault();
 
-        if (focusInHeader) {
-            if (e.shiftKey) {
-                focusController.focusLastFocusableElement(eBody);
-            } else {
-                focusController.focusFirstFocusableElement(eBody);
-            }
+        if (eHeader.contains(activeElement)) {
+            // focus is in header, move into body of popup
+            focusController.focusInto(eBody, e.shiftKey);
         } else {
-            const isFocusManaged = focusController.isFocusUnderManagedComponent(eBody);
-
-            if (isFocusManaged) {
+            // focus is in body, establish if it should return to header
+            if (focusController.isFocusUnderManagedComponent(eBody)) {
+                // focus was in a managed focus component and has now left, so we can return to the header
                 activeItem.eHeaderButton.focus();
             } else {
                 const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
 
                 if (nextEl) {
+                    // if another element exists in the body that can be focussed, go to that
                     nextEl.focus();
                 } else {
+                    // otherwise return to the header
                     activeItem.eHeaderButton.focus();
                 }
             }
@@ -91,7 +93,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         this.afterAttachedParams = params;
     }
 
-    public getMinDimensions(): {width: number, height: number} {
+    public getMinDimensions(): { width: number, height: number; } {
         const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
         const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
 
@@ -162,7 +164,7 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private showItemWrapper(wrapper: TabbedItemWrapper): void {
         if (this.params.onItemClicked) {
-            this.params.onItemClicked({item: wrapper.tabbedItem});
+            this.params.onItemClicked({ item: wrapper.tabbedItem });
         }
 
         if (this.activeItem === wrapper) {
@@ -171,16 +173,18 @@ export class TabbedLayout extends ManagedFocusComponent {
         }
 
         clearElement(this.eBody);
+
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusController.isKeyboardFocus();
 
-            this.focusController.focusFirstFocusableElement(this.eBody, onlyUnmanaged);
+            this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
         });
 
         if (this.activeItem) {
             removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
+
         addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
 
         this.activeItem = wrapper;

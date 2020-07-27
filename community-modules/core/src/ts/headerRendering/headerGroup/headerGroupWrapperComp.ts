@@ -117,6 +117,8 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         }
     }
 
+    protected onTabKeyDown(): void { }
+
     private setupExpandable(): void {
         const column = this.getColumn() as ColumnGroup;
         const originalColumnGroup = column.getOriginalColumnGroup();
@@ -272,7 +274,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         const allColumnsOriginalOrder = this.column.getOriginalColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
-        const visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean; } = {};
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
         const allColumnsCurrentOrder: Column[] = [];

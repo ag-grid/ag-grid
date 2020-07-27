@@ -216,7 +216,7 @@ export class FocusController extends BeanStub {
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === makeNull(floating);
     }
 
-    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[] {
+    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged = false): HTMLElement[] {
         const focusableString = FocusController.FOCUSABLE_SELECTOR;
         let excludeString = FocusController.FOCUSABLE_EXCLUDE;
 
@@ -239,22 +239,12 @@ export class FocusController extends BeanStub {
         return diff(nodes, excludeNodes);
     }
 
-    public focusFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
-        const focusable = this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+    public focusInto(rootNode: HTMLElement, up = false, onlyUnmanaged = false): boolean {
+        const focusableElements = this.findFocusableElements(rootNode, null, onlyUnmanaged);
+        const toFocus = up ? last(focusableElements) : focusableElements[0];
 
-        if (focusable) {
-            focusable.focus();
-            return true;
-        }
-
-        return false;
-    }
-
-    public focusLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
-        const focusable = last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
-
-        if (focusable) {
-            focusable.focus();
+        if (toFocus) {
+            toFocus.focus();
             return true;
         }
 
@@ -273,8 +263,8 @@ export class FocusController extends BeanStub {
 
         const nextIndex = currentIndex + (backwards ? -1 : 1);
 
-        if (nextIndex < 0 || nextIndex > focusable.length) {
-            return;
+        if (nextIndex < 0 || nextIndex >= focusable.length) {
+            return null;
         }
 
         return focusable[nextIndex];

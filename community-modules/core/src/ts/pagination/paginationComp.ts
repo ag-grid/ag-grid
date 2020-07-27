@@ -11,7 +11,6 @@ import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
-import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
 
 export class PaginationComp extends Component {
 
@@ -106,7 +105,7 @@ export class PaginationComp extends Component {
     private formatNumber(value: number): string {
         const userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
 
-        if (userFunc) { return userFunc({value: value}); }
+        if (userFunc) { return userFunc({ value: value }); }
 
         return formatNumberCommas(value);
     }

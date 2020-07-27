@@ -11,13 +11,13 @@ import {
     Column,
     IFilterDef,
     _,
-    Component,
     IFilterParams,
     RowNode,
     AgGroupComponent,
     ContainerType,
+    ManagedFocusComponent,
 } from '@ag-grid-community/core';
-import { MenuItemComponent } from '@ag-grid-enterprise/menu';
+import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
     display?: 'inline' | 'accordion' | 'subMenu';
@@ -33,7 +33,7 @@ export interface IMultiFilterModel {
     filterModels: any[];
 }
 
-export class MultiFilter extends Component implements IFilterComp {
+export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
@@ -45,9 +45,10 @@ export class MultiFilter extends Component implements IFilterComp {
     private filterChangedCallback: () => void;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
+    private lastActivatedMenuItem: MenuItemComponent | null = null;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -83,9 +84,8 @@ export class MultiFilter extends Component implements IFilterComp {
     private refreshGui(container: ContainerType): void {
         if (container === this.lastOpenedInContainer) { return; }
 
+        this.clearGui();
         this.destroyChildren();
-
-        _.clearElement(this.getGui());
 
         _.forEach(this.filters, (filter, index) => {
             if (index > 0) {
@@ -94,17 +94,25 @@ export class MultiFilter extends Component implements IFilterComp {
 
             const filterDef = this.filterDefs[index];
             const filterTitle = this.getFilterTitle(filter, filterDef);
+            let filterGui: HTMLElement;
 
             if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                 // prevent sub-menu being used in tool panel
-                this.appendChild(this.insertFilterMenu(filter, filterTitle).getGui());
+                const menuItem = this.insertFilterMenu(filter, filterTitle);
+
+                filterGui = menuItem.getGui();
+
             } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                 // sub-menus should appear as groups in the tool panel
-                this.appendChild(this.insertFilterGroup(filter, filterTitle).getGui());
+                const group = this.insertFilterGroup(filter, filterTitle);
+
+                filterGui = group.getGui();
             } else {
                 // display inline
-                this.appendChild(filter.getGui());
+                filterGui = filter.getGui();
             }
+
+            this.appendChild(filterGui);
         });
 
         this.lastOpenedInContainer = container;
@@ -138,6 +146,21 @@ export class MultiFilter extends Component implements IFilterComp {
 
         this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
+        this.addManagedListener(menuItem, MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
+            if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
+                this.lastActivatedMenuItem.deactivate();
+            }
+
+            this.lastActivatedMenuItem = event.menuItem;
+        });
+
+        menuItem.addGuiEventListener('focusin', () => menuItem.activate());
+        menuItem.addGuiEventListener('focusout', () => {
+            if (!menuItem.isSubMenuOpen()) {
+                menuItem.deactivate();
+            }
+        });
+
         return menuItem;
     }
 
@@ -153,7 +176,9 @@ export class MultiFilter extends Component implements IFilterComp {
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached());
+            const params: IAfterGuiAttachedParams = { container: this.lastOpenedInContainer, suppressFocus: true };
+
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached(params));
         }
 
         return group;
@@ -260,7 +285,10 @@ export class MultiFilter extends Component implements IFilterComp {
             this.refreshGui(params.container);
         }
 
-        this.executeFunctionIfExists('afterGuiAttached', params);
+        const { filters } = this.params;
+        const suppressFocus = filters && _.some(filters, filter => filter.display && filter.display !== 'inline');
+
+        this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
     }
 
     public onAnyFilterChanged(): void {
@@ -336,5 +364,12 @@ export class MultiFilter extends Component implements IFilterComp {
                 filter.onAnyFilterChanged();
             }
         });
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        if (this.lastActivatedMenuItem != null && !this.lastActivatedMenuItem.getGui().contains(e.target as HTMLElement)) {
+            this.lastActivatedMenuItem.deactivate();
+            this.lastActivatedMenuItem = null;
+        }
     }
 }
