@@ -1,103 +1,15 @@
 import {ColumnController} from "./columnController";
 import {Autowired, Bean} from "../context/context";
 import {ColumnFactory} from "./columnFactory";
+import {attrToBoolean, attrToNumber} from "../utils/generic";
+import {Constants} from "../constants";
+import {ColDef, ColGroupDef} from "../entities/colDef";
 
 @Bean('propertyChangeDetector')
 export class PropertyChangeDetector {
 
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('columnFactory') private columnFactory: ColumnFactory;
-
-    public areEqual(oldColDefs: any, newColDefs: any): boolean {
-        const colDefsAreEqual = this.areEquivalent(this.copy(oldColDefs), this.copy(newColDefs));
-        return colDefsAreEqual;
-
-        /*if (!colDefsAreEqual) {
-            return false;
-        }
-
-
-        const justColDefs: ColDef[] = [];
-        const recurse = (list: (ColDef | ColGroupDef)[])=> {
-            list.forEach(item => {
-                if ((item as ColGroupDef).children) {
-                    recurse((item as ColGroupDef).children);
-                } else {
-                    justColDefs.push(item as ColDef);
-                }
-            });
-        };
-
-        let res = true;
-        // compare state items in provided col defs with what we have now
-        if (justColDefs) {
-            const currentColumnsCopy = this.columnController.getAllPrimaryColumns().slice();
-            for (let i = 0; i<justColDefs.length; i++) {
-                const colDef = justColDefs[i];
-                const col = this.columnFactory.findExistingColumn(colDef, currentColumnsCopy);
-                if (col) {
-                    // flex
-                    const newFlex = attrToNumber(colDef.flex);
-                    const flexDifferent = newFlex===undefined ? false : newFlex != col.getFlex();
-                    if (flexDifferent) { return false; }
-
-                    // width - only check it if flex not actie
-                    const newHasFlex = newFlex!==undefined && newFlex>0;
-                    const oldHasFlex = col.getFlex()!=null && col.getFlex()>0;
-                    const ignoreWidth = (newHasFlex || (newFlex===undefined && oldHasFlex));
-
-                    const newWidth = attrToNumber(colDef.width);
-                    const widthDifferent = ignoreWidth ? false :
-                        newWidth==null ? false : newWidth != col.getActualWidth();
-                    if (widthDifferent) { return false; }
-
-                    // sort
-                    const newSort = colDef.sort;
-                    const sortDifferent = newSort===undefined ? false : newSort!=col.getSort();
-                    if (sortDifferent) { return false; }
-
-                    // sort index = only valid if sorting
-                    const isSortInactive = (sort: string) => sort!=Constants.SORT_ASC && sort!=Constants.SORT_DESC;
-                    const sortNotActive = newSort===undefined ? isSortInactive(col.getSort()) : isSortInactive(newSort);
-
-                    const newSortIndex = attrToNumber(colDef.sortIndex);
-                    const sortIndexDifferent = sortNotActive ? false :
-                        newSortIndex===undefined ? false : newSortIndex != col.getSortIndex();
-                    if (sortIndexDifferent) { return false; }
-
-                    // hide
-                    const newHide = attrToBoolean(colDef.hide);
-                    const newVisible = !newHide; // this allows us to check for null, which means 'make it visible'
-                    const hideDifferent = newHide!==undefined && newVisible!=col.isVisible();
-                    if (hideDifferent) { return false; }
-
-                    // pinned
-                    // logic below allows for pinned to be true/false, and converts to string left/right equivalent
-                    const newPinned = colDef.pinned;
-                    let newPinnedString: string;
-                    if (newPinned === true || newPinned === Constants.PINNED_LEFT) {
-                        newPinnedString = Constants.PINNED_LEFT;
-                    } else if (newPinned === Constants.PINNED_RIGHT) {
-                        newPinnedString = Constants.PINNED_RIGHT;
-                    } else {
-                        newPinnedString = null;
-                    }
-                    const pinnedDifferent = newPinned===undefined ? false : newPinnedString!=col.getPinned();
-                    if (pinnedDifferent) { return false; }
-
-                    // aggFunc
-                    const newAggFunc = colDef.aggFunc;
-                    const aggFuncDifferent = newAggFunc===undefined ? false :
-                        newAggFunc==null ? col.isValueActive() : newAggFunc!==col.getAggFunc;
-                    if (aggFuncDifferent) { return false; }
-
-                    // pivot
-
-                }
-            }
-        }
-
-        return res;*/
+    public areEqual(incomingColDefs: (ColDef | ColGroupDef)[], currentColDefs: (ColDef | ColGroupDef)[]): boolean {
+        return this.areEquivalent(this.copy(currentColDefs), this.copy(incomingColDefs));
     }
 
     /*

@@ -48,6 +48,7 @@ import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } fr
 import { camelCaseToHumanText } from '../utils/string';
 import {ColumnDefFactory} from "./columnDefFactory";
 import {PropertyChangeDetector} from "./propertyChangeDetector";
+import {ColDefChangeDetector} from "./colDefChangeDetector";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -89,7 +90,7 @@ export class ColumnController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
-    @Autowired('propertyChangeDetector') private propertyChangeDetector: PropertyChangeDetector;
+    @Autowired('colDefChangeDetector') private colDefChangeDetector: ColDefChangeDetector;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -215,9 +216,12 @@ export class ColumnController extends BeanStub {
 
         const colsPreviouslyExisted = !!this.columnDefs;
 
-        const colDefsSameAsExisting = colsPreviouslyExisted
-            && this.propertyChangeDetector.areEqual(this.columnDefs, columnDefs);
-        const columnStateBefore = colDefsSameAsExisting ? this.getColumnState() : null;
+        if (colsPreviouslyExisted) {
+            const defsHaveChanges = this.colDefChangeDetector.areChangesInColDefs(columnDefs, this.columnDefs);
+            if (!defsHaveChanges) { return; }
+        }
+
+        // const columnStateBefore = colDefsSameAsExisting ? this.getColumnState() : null;
 
         this.colDefVersion++;
 
@@ -255,16 +259,16 @@ export class ColumnController extends BeanStub {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
-        let doNotRaiseEvents = false;
-        if (colDefsSameAsExisting) {
-            const stateAfterChange = this.getColumnState();
-            doNotRaiseEvents = this.propertyChangeDetector.areEqual(columnStateBefore, stateAfterChange);
-        }
-        console.log(`setColumnDefs previous=${colsPreviouslyExisted}, same=${colDefsSameAsExisting}, skipEvents=${doNotRaiseEvents}`);
+        // let doNotRaiseEvents = false;
+        // if (colDefsSameAsExisting) {
+        //     const stateAfterChange = this.getColumnState();
+        //     doNotRaiseEvents = this.propertyChangeDetector.areEqual(columnStateBefore, stateAfterChange);
+        // }
+        // console.log(`setColumnDefs previous=${colsPreviouslyExisted}, same=${colDefsSameAsExisting}, skipEvents=${doNotRaiseEvents}`);
 
-        // if column definitions are the same as before, and no state change has occured in the columns,
+        // if column definitions are the same as before, and no state change has accured in the columns,
         // then we should NOT raise events. this prevents an infinite 'prop change' event with React.
-        if (doNotRaiseEvents) { return; }
+        // if (doNotRaiseEvents) { return; }
 
         const eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
@@ -2570,9 +2574,9 @@ export class ColumnController extends BeanStub {
         previousCols: Column[] = [],
         setFlagFunc: (col: Column, flag: boolean) => void,
         getIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getInitialIndexFunc: (colDef: ColDef) => number | null | undefined,
         getValueFunc: (colDef: ColDef) => boolean | undefined,
-        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
+        getInitialValueFunc: (colDef: ColDef) => boolean | undefined
     ): Column[] {
 
         const colsWithIndex: Column[] = [];
@@ -2586,9 +2590,9 @@ export class ColumnController extends BeanStub {
             const colDef = col.getColDef();
 
             const value = attrToBoolean(getValueFunc(colDef));
-            const defaultValue = attrToBoolean(getDefaultValueFunc(colDef));
+            const initialValue = attrToBoolean(getInitialValueFunc(colDef));
             const index = attrToNumber(getIndexFunc(colDef));
-            const defaultIndex = attrToNumber(getDefaultIndexFunc(colDef));
+            const initialIndex = attrToNumber(getInitialIndexFunc(colDef));
 
             let include: boolean;
 
@@ -2605,7 +2609,7 @@ export class ColumnController extends BeanStub {
                         include = index >= 0;
                     }
                 } else {
-                    include = defaultValue == true || defaultIndex >= 0;
+                    include = initialValue == true || initialIndex >= 0;
                 }
             } else {
                 // col is not new, we ignore the default values, just use the values if provided
@@ -2624,7 +2628,7 @@ export class ColumnController extends BeanStub {
             }
 
             if (include) {
-                if (index!=null || defaultIndex!=null) {
+                if (index!=null || initialIndex!=null) {
                     colsWithIndex.push(col);
                 } else {
                     colsWithValue.push(col);
@@ -2634,7 +2638,7 @@ export class ColumnController extends BeanStub {
 
         const getIndexForCol = (col: Column): number => {
             const index = getIndexFunc(col.getColDef());
-            const defaultIndex = getDefaultIndexFunc(col.getColDef());
+            const defaultIndex = getInitialIndexFunc(col.getColDef());
             return index != null ? index : defaultIndex;
         };
 
