@@ -197,7 +197,7 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
 }
 
 function update(component: any, options: any, path?: string, theme?: AgChartTheme) {
-    if (!(options && typeof options === 'object')) {
+    if (!(options && isObject(options))) {
         return;
     }
 
@@ -247,7 +247,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
                         } else {
                             component[key] = value;
                         }
-                    } else if (typeof oldValue === 'object') {
+                    } else if (isObject(oldValue)) {
                         if (value) {
                             update(oldValue, value, value.type ? path : keyPath, theme);
                         } else if (key in options) {
