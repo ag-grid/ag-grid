@@ -57,10 +57,8 @@ export class ManagedFocusComponent extends Component {
 
         this.addKeyDownListeners(focusableElement);
 
-        if (this.isFocusableContainer) {
-            this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
-            this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
-        }
+        this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
+        this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
     }
 
     /*
@@ -97,11 +95,13 @@ export class ManagedFocusComponent extends Component {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        this.deactivateTabGuards();
+        if (this.isFocusableContainer) {
+            this.deactivateTabGuards();
+        }
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
+        if (this.isFocusableContainer && !this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.activateTabGuards();
         }
     }

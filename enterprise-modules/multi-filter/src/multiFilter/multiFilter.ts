@@ -48,7 +48,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private lastActivatedMenuItem: MenuItemComponent | null = null;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
