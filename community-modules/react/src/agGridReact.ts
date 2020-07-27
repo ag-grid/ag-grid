@@ -202,25 +202,26 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             return;
         }
 
-        let debugLogging = !!nextProps.debug;
+        // let debugLogging = !!nextProps.debug;
 
         if (AgGridColumn.hasChildColumns(nextProps)) {
-            const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
+            // const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
 
-            const currentColDefs = this.gridOptions.columnDefs;
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
-            if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
-                if (debugLogging) {
-                    console.log(`agGridReact: colDefs definitions changed`);
-                }
-
+            // const currentColDefs = this.gridOptions.columnDefs;
+            // const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
+            // if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
+            //     if (debugLogging) {
+            //         console.log(`agGridReact: colDefs definitions changed`);
+            //     }
+            //
                 changes['columnDefs'] =
                     {
                         previousValue: this.gridOptions.columnDefs,
                         currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
                     }
-            }
+            // }
         } else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
+            // for the case where there were columns but aren't anymore
             changes['columnDefs'] =
                 {
                     previousValue: this.gridOptions.columnDefs,
