@@ -43,7 +43,7 @@ import { AutoGroupColService } from "./columnController/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
 import { IRowModel } from "./interfaces/iRowModel";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
@@ -88,9 +88,9 @@ import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
-import {ColumnDefFactory} from "./columnController/columnDefFactory";
-import {PropertyChangeDetector} from "./columnController/propertyChangeDetector";
-import {ColDefChangeDetector} from "./columnController/colDefChangeDetector";
+import { ColumnDefFactory } from "./columnController/columnDefFactory";
+import { PropertyChangeDetector } from "./columnController/propertyChangeDetector";
+import { ColDefChangeDetector } from "./columnController/colDefChangeDetector";
 
 export interface GridParams {
     // used by Web Components
@@ -105,12 +105,12 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
 
     // bean instances to add to the context
-    providedBeanInstances?: { [key: string]: any };
+    providedBeanInstances?: { [key: string]: any; };
 
     modules?: Module[];
 
     // Alternative UI root class. Default is GridCore.
-    rootComponent?: { new(): Component };
+    rootComponent?: { new(): Component; };
 }
 
 export class Grid {
@@ -177,7 +177,7 @@ export class Grid {
         const registered = ModuleRegistry.getRegisteredModules();
 
         const allModules: Module[] = [];
-        const mapNames: { [name: string]: boolean } = {};
+        const mapNames: { [name: string]: boolean; } = {};
 
         // adds to list and removes duplicates
         function addModule(moduleBased: boolean, module: Module) {
@@ -209,9 +209,9 @@ export class Grid {
     private registerModuleUserComponents(registeredModules: Module[]): void {
         const userComponentRegistry: UserComponentRegistry = this.context.getBean('userComponentRegistry');
 
-        const moduleUserComps: { componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>> }[]
+        const moduleUserComps: { componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>; }[]
             = this.extractModuleEntity(registeredModules,
-            (module) => module.userComponents ? module.userComponents : []);
+                (module) => module.userComponents ? module.userComponents : []);
 
         moduleUserComps.forEach(compMeta => {
             userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
@@ -242,24 +242,24 @@ export class Grid {
 
     private createAgStackComponentsList(registeredModules: Module[]): any[] {
         let components: ComponentMeta[] = [
-            {componentName: 'AgCheckbox', componentClass: AgCheckbox},
-            {componentName: 'AgRadioButton', componentClass: AgRadioButton},
-            {componentName: 'AgToggleButton', componentClass: AgToggleButton},
-            {componentName: 'AgInputTextField', componentClass: AgInputTextField},
-            {componentName: 'AgInputTextArea', componentClass: AgInputTextArea},
-            {componentName: 'AgInputNumberField', componentClass: AgInputNumberField},
-            {componentName: 'AgInputRange', componentClass: AgInputRange},
-            {componentName: 'AgSelect', componentClass: AgSelect},
-            {componentName: 'AgSlider', componentClass: AgSlider},
-            {componentName: 'AgAngleSelect', componentClass: AgAngleSelect},
-            {componentName: 'AgColorPicker', componentClass: AgColorPicker},
-            {componentName: 'AgGridComp', componentClass: GridPanel},
-            {componentName: 'AgHeaderRoot', componentClass: HeaderRootComp},
-            {componentName: 'AgPagination', componentClass: PaginationComp},
-            {componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent},
-            {componentName: 'AgGroupComponent', componentClass: AgGroupComponent},
-            {componentName: 'AgPanel', componentClass: AgPanel},
-            {componentName: 'AgDialog', componentClass: AgDialog}
+            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
+            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
+            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
+            { componentName: 'AgInputTextField', componentClass: AgInputTextField },
+            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
+            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputRange', componentClass: AgInputRange },
+            { componentName: 'AgSelect', componentClass: AgSelect },
+            { componentName: 'AgSlider', componentClass: AgSlider },
+            { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
+            { componentName: 'AgColorPicker', componentClass: AgColorPicker },
+            { componentName: 'AgGridComp', componentClass: GridPanel },
+            { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
+            { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
+            { componentName: 'AgPanel', componentClass: AgPanel },
+            { componentName: 'AgDialog', componentClass: AgDialog }
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
@@ -344,9 +344,9 @@ export class Grid {
             rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         }
 
-        const rowModelClasses: { [name: string]: { new(): IRowModel } } = {};
+        const rowModelClasses: { [name: string]: { new(): IRowModel; }; } = {};
         registeredModules.forEach(module => {
-            iterateObject(module.rowModels, (key: string, value: { new(): IRowModel }) => {
+            iterateObject(module.rowModels, (key: string, value: { new(): IRowModel; }) => {
                 rowModelClasses[key] = value;
             });
         });

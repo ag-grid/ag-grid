@@ -1,6 +1,6 @@
 import { Autowired, Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";

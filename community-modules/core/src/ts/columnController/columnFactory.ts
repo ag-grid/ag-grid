@@ -9,7 +9,7 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { assign, iterateObject } from '../utils/object';
 import { attrToNumber, attrToBoolean, find } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
@@ -28,7 +28,7 @@ export class ColumnFactory extends BeanStub {
     }
 
     public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[])
-        : { columnTree: OriginalColumnGroupChild[], treeDept: number } {
+        : { columnTree: OriginalColumnGroupChild[], treeDept: number; } {
 
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
@@ -113,11 +113,11 @@ export class ColumnFactory extends BeanStub {
     }
 
     private balanceColumnTree(
-            unbalancedTree: OriginalColumnGroupChild[],
-            currentDept: number,
-            columnDept: number,
-            columnKeyCreator: ColumnKeyCreator
-        ): OriginalColumnGroupChild[] {
+        unbalancedTree: OriginalColumnGroupChild[],
+        currentDept: number,
+        columnDept: number,
+        columnKeyCreator: ColumnKeyCreator
+    ): OriginalColumnGroupChild[] {
 
         const result: OriginalColumnGroupChild[] = [];
 
@@ -195,13 +195,13 @@ export class ColumnFactory extends BeanStub {
     }
 
     private recursivelyCreateColumns(
-            defs: (ColDef | ColGroupDef)[],
-            level: number,
-            primaryColumns: boolean,
-            existingColsCopy: Column[],
-            columnKeyCreator: ColumnKeyCreator,
-            parent: OriginalColumnGroup | null
-        ): OriginalColumnGroupChild[] {
+        defs: (ColDef | ColGroupDef)[],
+        level: number,
+        primaryColumns: boolean,
+        existingColsCopy: Column[],
+        columnKeyCreator: ColumnKeyCreator,
+        parent: OriginalColumnGroup | null
+    ): OriginalColumnGroupChild[] {
 
         const result: OriginalColumnGroupChild[] = [];
 
@@ -224,13 +224,13 @@ export class ColumnFactory extends BeanStub {
     }
 
     private createColumnGroup(
-            primaryColumns: boolean,
-            colGroupDef: ColGroupDef,
-            level: number,
-            existingColumns: Column[],
-            columnKeyCreator: ColumnKeyCreator,
-            parent: OriginalColumnGroup | null
-        ): OriginalColumnGroup {
+        primaryColumns: boolean,
+        colGroupDef: ColGroupDef,
+        level: number,
+        existingColumns: Column[],
+        columnKeyCreator: ColumnKeyCreator,
+        parent: OriginalColumnGroup | null
+    ): OriginalColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
@@ -255,12 +255,12 @@ export class ColumnFactory extends BeanStub {
     }
 
     private createColumn(
-            primaryColumns: boolean,
-            colDef: ColDef,
-            existingColsCopy: Column[],
-            columnKeyCreator: ColumnKeyCreator,
-            parent: OriginalColumnGroup | null
-        ): Column {
+        primaryColumns: boolean,
+        colDef: ColDef,
+        existingColsCopy: Column[],
+        columnKeyCreator: ColumnKeyCreator,
+        parent: OriginalColumnGroup | null
+    ): Column {
         const colDefMerged = this.mergeColDefs(colDef);
 
         this.checkForDeprecatedItems(colDefMerged);
@@ -299,8 +299,8 @@ export class ColumnFactory extends BeanStub {
         }
 
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
-        if (colDef.sort!==undefined) {
-            if (colDef.sort==Constants.SORT_ASC || colDef.sort==Constants.SORT_DESC) {
+        if (colDef.sort !== undefined) {
+            if (colDef.sort == Constants.SORT_ASC || colDef.sort == Constants.SORT_DESC) {
                 column.setSort(colDef.sort);
             } else {
                 column.setSort(undefined);

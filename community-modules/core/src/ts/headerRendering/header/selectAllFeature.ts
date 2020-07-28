@@ -6,7 +6,7 @@ import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
 import { Events } from "../../events";
 import { IRowModel } from "../../interfaces/iRowModel";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";

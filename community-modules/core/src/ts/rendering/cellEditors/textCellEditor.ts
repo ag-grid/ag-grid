@@ -4,7 +4,7 @@ import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
 import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you

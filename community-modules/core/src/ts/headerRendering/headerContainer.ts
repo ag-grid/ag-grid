@@ -7,11 +7,11 @@ import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
 import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
 import { Component } from '../widgets/component';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { setFixedWidth, clearElement } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
 import { GridPanel } from '../gridPanel/gridPanel';
-import {NumberSequence} from "../utils";
+import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
 
@@ -169,7 +169,7 @@ export class HeaderContainer extends BeanStub {
 
         const sequence = new NumberSequence();
 
-        const refreshColumnGroups = ()=> {
+        const refreshColumnGroups = () => {
             const groupRowCount = this.columnController.getHeaderRowCount() - 1;
 
             this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
@@ -216,7 +216,7 @@ export class HeaderContainer extends BeanStub {
 
         // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
         // taking it out of the last position and re-inserting relative to the other rows.
-        this.getRowComps().forEach( rowComp => this.eContainer.appendChild(rowComp.getGui()) );
+        this.getRowComps().forEach(rowComp => this.eContainer.appendChild(rowComp.getGui()));
     }
 
     private createRowComps(): void {
@@ -251,6 +251,6 @@ export class HeaderContainer extends BeanStub {
 
         // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
         // taking it out of the last position and re-inserting relative to the other rows.
-        this.getRowComps().forEach( rowComp => this.eContainer.appendChild(rowComp.getGui()) );
+        this.getRowComps().forEach(rowComp => this.eContainer.appendChild(rowComp.getGui()));
     }
 }

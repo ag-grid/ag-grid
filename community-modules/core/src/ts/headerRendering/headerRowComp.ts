@@ -9,7 +9,7 @@ import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { FloatingFilterWrapper } from '../filter/floating/floatingFilterWrapper';
 import { isBrowserSafari } from '../utils/browser';
 import { missing } from '../utils/generic';

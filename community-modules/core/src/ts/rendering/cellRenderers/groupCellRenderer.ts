@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ExpressionService } from "../../valueService/expressionService";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
@@ -26,7 +26,7 @@ import { isKeyPressed } from "../../utils/keyboard";
 import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded } from "../../utils/aria";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;

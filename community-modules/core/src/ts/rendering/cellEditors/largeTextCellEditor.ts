@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;

@@ -1,4 +1,4 @@
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -11,7 +11,7 @@ import { BeanStub } from "../context/beanStub";
 import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, containsClass, addOrRemoveCssClass } from '../utils/dom';
 import { forEach, findIndex, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch;

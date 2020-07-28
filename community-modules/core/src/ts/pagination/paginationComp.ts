@@ -6,12 +6,12 @@ import { Events } from "../events";
 import { PaginationProxy } from "./paginationProxy";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export class PaginationComp extends Component {
 

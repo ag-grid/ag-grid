@@ -21,7 +21,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
 import { OriginalColumnGroup } from "./originalColumnGroup";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
@@ -124,12 +124,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private setState(colDef: ColDef): void {
         // sort
-        if (colDef.sort!==undefined) {
-            if (colDef.sort===Constants.SORT_ASC || colDef.sort===Constants.SORT_DESC) {
+        if (colDef.sort !== undefined) {
+            if (colDef.sort === Constants.SORT_ASC || colDef.sort === Constants.SORT_DESC) {
                 this.sort = colDef.sort;
             }
         } else {
-            if (colDef.initialSort===Constants.SORT_ASC || colDef.initialSort===Constants.SORT_DESC) {
+            if (colDef.initialSort === Constants.SORT_ASC || colDef.initialSort === Constants.SORT_DESC) {
                 this.sort = colDef.initialSort;
             }
         }
@@ -167,9 +167,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         // flex
         const flex = attrToNumber(colDef.flex);
         const initialFlex = attrToNumber(colDef.initialFlex);
-        if (flex!==undefined) {
+        if (flex !== undefined) {
             this.flex = flex;
-        } else if (initialFlex!==undefined) {
+        } else if (initialFlex !== undefined) {
             this.flex = initialFlex;
         }
     }

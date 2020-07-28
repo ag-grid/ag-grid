@@ -5,7 +5,7 @@ import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected } from '../utils/aria';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export interface VirtualListModel {
     getRowCount(): number;

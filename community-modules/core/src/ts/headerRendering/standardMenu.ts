@@ -6,7 +6,7 @@ import { Column } from '../entities/column';
 import { PopupService } from '../widgets/popupService';
 import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {

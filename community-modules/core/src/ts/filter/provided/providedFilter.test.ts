@@ -1,6 +1,6 @@
 import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
-import { Constants } from '../../constants';
+import { Constants } from '../../constants/constants';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';

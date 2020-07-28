@@ -7,7 +7,7 @@ import {
     DropTarget
 } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
@@ -30,7 +30,7 @@ import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
 import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 

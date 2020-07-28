@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";

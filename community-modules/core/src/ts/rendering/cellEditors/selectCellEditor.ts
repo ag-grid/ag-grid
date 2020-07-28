@@ -7,7 +7,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ListOption } from "../../widgets/agList";
 import { missing } from "../../utils/generic";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];

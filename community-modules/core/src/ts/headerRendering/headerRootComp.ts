@@ -8,12 +8,12 @@ import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { GridApi } from '../gridApi';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 

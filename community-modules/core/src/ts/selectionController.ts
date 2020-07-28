@@ -9,7 +9,7 @@ import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PostConstruct } from "./context/context";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { ChangedPath } from "./utils/changedPath";
@@ -25,7 +25,7 @@ export class SelectionController extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private selectedNodes: { [key: string]: RowNode | undefined };
+    private selectedNodes: { [key: string]: RowNode | undefined; };
     private logger: Logger;
 
     // used for shift selection, so we know where to start the range selection from
@@ -326,7 +326,7 @@ export class SelectionController extends BeanStub {
      */
     public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
         if (rowNode) {
-            rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+            rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
         }
     }
 
@@ -345,7 +345,7 @@ export class SelectionController extends BeanStub {
      */
     public deselectNode(rowNode: RowNode | null) {
         if (rowNode) {
-            rowNode.setSelectedParams({newValue: false, clearSelection: false});
+            rowNode.setSelectedParams({ newValue: false, clearSelection: false });
         }
     }
 

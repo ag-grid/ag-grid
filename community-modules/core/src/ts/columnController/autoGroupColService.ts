@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { mergeDeep, assign } from "../utils/object";
 import { missing } from "../utils/generic";
@@ -111,7 +111,7 @@ export class AutoGroupColService extends BeanStub {
 
             if (rowGroupColDef.cellRenderer) {
                 assign(defaultAutoColDef, {
-                    cellRendererParams:{
+                    cellRendererParams: {
                         innerRenderer: rowGroupColDef.cellRenderer,
                         innerRendererParams: rowGroupColDef.cellRendererParams
                     }

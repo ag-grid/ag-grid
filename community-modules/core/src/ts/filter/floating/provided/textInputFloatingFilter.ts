@@ -10,7 +10,7 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnController } from '../../../columnController/columnController';
-import { KeyCode } from '../../../keyCode';
+import { KeyCode } from '../../../constants/keyCode';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @Autowired('columnController') private columnController: ColumnController;

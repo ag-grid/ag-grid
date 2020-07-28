@@ -7,7 +7,7 @@ import { setAriaLabelledBy, setAriaLabel } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstractField<K> {
     protected TEMPLATE = /* html */

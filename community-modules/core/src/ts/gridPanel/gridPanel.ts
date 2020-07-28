@@ -5,7 +5,7 @@ import { Autowired, Optional, PostConstruct } from '../context/context';
 import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from '../events';
 import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { MouseEventService } from './mouseEventService';
 import { IClipboardService } from '../interfaces/iClipboardService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
@@ -50,7 +50,7 @@ import { getTarget, getCellCompForEvent, isStopPropagationForAgGrid } from '../u
 import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap

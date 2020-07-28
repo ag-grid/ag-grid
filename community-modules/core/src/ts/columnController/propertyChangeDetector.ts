@@ -1,9 +1,9 @@
-import {ColumnController} from "./columnController";
-import {Autowired, Bean} from "../context/context";
-import {ColumnFactory} from "./columnFactory";
-import {attrToBoolean, attrToNumber} from "../utils/generic";
-import {Constants} from "../constants";
-import {ColDef, ColGroupDef} from "../entities/colDef";
+import { ColumnController } from "./columnController";
+import { Autowired, Bean } from "../context/context";
+import { ColumnFactory } from "./columnFactory";
+import { attrToBoolean, attrToNumber } from "../utils/generic";
+import { Constants } from "../constants/constants";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 
 @Bean('propertyChangeDetector')
 export class PropertyChangeDetector {
@@ -41,7 +41,7 @@ export class PropertyChangeDetector {
         }
 
         return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function (k) {
+            Object.keys(o).forEach(function(k) {
                 r[k] = o[k];
             });
             return r;
@@ -49,11 +49,11 @@ export class PropertyChangeDetector {
     }
 
     private isNaN(value: any) {
-        if(Number.isNaN) {
+        if (Number.isNaN) {
             return Number.isNaN(value);
         }
         // for ie11...
-        return typeof(value) === 'number' && isNaN(value);
+        return typeof (value) === 'number' && isNaN(value);
     }
     /*
      * slightly modified, but taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
@@ -88,7 +88,7 @@ export class PropertyChangeDetector {
             if (newA) {
                 a.areEquivPropertyTracking = [];
             } else if (
-                a.areEquivPropertyTracking.some(function (other: any) {
+                a.areEquivPropertyTracking.some(function(other: any) {
                     return other === b;
                 })
             )

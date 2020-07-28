@@ -1,4 +1,4 @@
-import { GridOptionsWrapper} from "../gridOptionsWrapper";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { CellValueChangedEvent, FillEndEvent } from "../events";
@@ -6,10 +6,10 @@ import { FocusController } from "../focusController";
 import { IRowModel } from "../interfaces/iRowModel";
 import { GridApi } from "../gridApi";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { CellValueChange, FillUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack} from "./undoRedoStack";
+import { CellValueChange, FillUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
 import { RowPosition } from "../entities/rowPosition";
 import { RowNode } from "../entities/rowNode";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { CellRange, CellRangeParams } from "../interfaces/iRangeController";
@@ -74,7 +74,7 @@ export class UndoRedoService extends BeanStub {
             return;
         }
 
-        const {rowPinned, rowIndex, column, oldValue, value} = event;
+        const { rowPinned, rowIndex, column, oldValue, value } = event;
 
         const cellValueChange: CellValueChange = {
             rowPinned: rowPinned,
@@ -85,12 +85,12 @@ export class UndoRedoService extends BeanStub {
         };
 
         this.cellValueChanges.push(cellValueChange);
-    }
+    };
 
     private clearStacks = () => {
         this.undoStack.clear();
         this.redoStack.clear();
-    }
+    };
 
     public undo() {
         if (!this.undoStack) {
@@ -136,8 +136,8 @@ export class UndoRedoService extends BeanStub {
 
     private processAction(action: UndoRedoAction, valueExtractor: (cellValueChange: CellValueChange) => any) {
         action.cellValueChanges.forEach(cellValueChange => {
-            const {rowIndex, rowPinned, columnId} = cellValueChange;
-            const rowPosition: RowPosition = {rowIndex, rowPinned};
+            const { rowIndex, rowPinned, columnId } = cellValueChange;
+            const rowPosition: RowPosition = { rowIndex, rowPinned };
             const currentRow = this.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
@@ -177,8 +177,8 @@ export class UndoRedoService extends BeanStub {
         }
 
         const cellValueChange = cellValueChanges[0];
-        const {rowIndex, rowPinned} = cellValueChange;
-        const rowPosition: RowPosition = {rowIndex, rowPinned};
+        const { rowIndex, rowPinned } = cellValueChange;
+        const rowPosition: RowPosition = { rowIndex, rowPinned };
         const row = this.getRowNode(rowPosition);
 
         const lastFocusedCell: LastFocusedCell = {
@@ -191,7 +191,7 @@ export class UndoRedoService extends BeanStub {
     }
 
     private setLastFocusedCell(lastFocusedCell: LastFocusedCell) {
-        const {rowIndex, columnId, rowPinned} = lastFocusedCell;
+        const { rowIndex, columnId, rowPinned } = lastFocusedCell;
 
         this.gridApi.ensureIndexVisible(rowIndex);
         this.gridApi.ensureColumnVisible(columnId);

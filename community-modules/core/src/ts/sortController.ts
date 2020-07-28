@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
@@ -50,8 +50,8 @@ export class SortController extends BeanStub {
         // update sortIndex on all sorting cols
         const allSortedCols = this.getColumnsWithSortingOrdered();
         let sortIndex = 0;
-        allSortedCols.forEach( col => {
-            if (col!==lastColToChange) {
+        allSortedCols.forEach(col => {
+            if (col !== lastColToChange) {
                 col.setSortIndex(sortIndex);
                 sortIndex++;
             }
@@ -63,7 +63,7 @@ export class SortController extends BeanStub {
 
         // clear sort index on all cols not sorting
         const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(col=>col.getSort()==null).forEach( col => col.setSortIndex(undefined) );
+        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex(undefined));
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -78,7 +78,7 @@ export class SortController extends BeanStub {
             colId: column.getColId(),
             sort: column.getSort()
         }));
-    }
+    };
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set

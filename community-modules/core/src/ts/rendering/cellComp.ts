@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
 import { CellChangedEvent, RowNode } from "../entities/rowNode";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import {
     CellClickedEvent,
     CellContextMenuEvent,
@@ -39,7 +39,7 @@ import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../util
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
 import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export class CellComp extends Component implements TooltipParentComp {
 

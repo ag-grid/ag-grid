@@ -9,7 +9,7 @@ import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
 import { GridCore } from "./gridCore";
@@ -159,7 +159,7 @@ export class GridApi {
 
     private serverSideRowModel: IServerSideRowModel;
 
-    private detailGridInfoMap: { [id: string]: DetailGridInfo } = {};
+    private detailGridInfoMap: { [id: string]: DetailGridInfo; } = {};
 
     private destroyCalled = false;
 
@@ -366,11 +366,11 @@ export class GridApi {
         this.valueCache.expire();
     }
 
-    public getVerticalPixelRange(): { top: number, bottom: number } {
+    public getVerticalPixelRange(): { top: number, bottom: number; } {
         return this.gridPanel.getVScrollPosition();
     }
 
-    public getHorizontalPixelRange(): { left: number, right: number } {
+    public getHorizontalPixelRange(): { left: number, right: number; } {
         return this.gridPanel.getHScrollPosition();
     }
 
@@ -807,7 +807,7 @@ export class GridApi {
         console.warn('ag-Grid: as of version 24.0.0, setSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.applyColumnState() instead.');
         const columnState: ColumnState[] = [];
         if (sortModel) {
-            sortModel.forEach( (item: any, index: number) => {
+            sortModel.forEach((item: any, index: number) => {
                 columnState.push({
                     colId: item.colId,
                     sort: item.sort,
@@ -815,22 +815,22 @@ export class GridApi {
                 });
             });
         }
-        this.columnController.applyColumnState({state: columnState, defaultState: {sort: null} } );
+        this.columnController.applyColumnState({ state: columnState, defaultState: { sort: null } });
     }
 
     public getSortModel() {
         console.warn('ag-Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
         const columnState = this.columnController.getColumnState();
-        const filteredStates = columnState.filter( item => item.sort != null);
+        const filteredStates = columnState.filter(item => item.sort != null);
 
-        const indexes: {[colId: string]: number} = {};
-        filteredStates.forEach( state => indexes[state.colId] = state.sortIndex);
+        const indexes: { [colId: string]: number; } = {};
+        filteredStates.forEach(state => indexes[state.colId] = state.sortIndex);
 
-        const res = filteredStates.map( s => {
-            return {colId: s.colId, sort: s.sort}
-        } );
+        const res = filteredStates.map(s => {
+            return { colId: s.colId, sort: s.sort };
+        });
 
-        res.sort( (a: any, b: any) => { return indexes[a.colId] - indexes[b.colId] } );
+        res.sort((a: any, b: any) => { return indexes[a.colId] - indexes[b.colId]; });
 
         return res;
     }
@@ -1194,7 +1194,7 @@ export class GridApi {
         }
     }
 
-    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void {
+    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc; }): void {
         if (this.aggFuncService) {
             this.aggFuncService.addAggFuncs(aggFuncs);
         }
@@ -1209,7 +1209,7 @@ export class GridApi {
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
-            if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
+            if (rowDataTransaction && rowDataTransaction.addIndex != null) {
                 const message = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
                 doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
             }

@@ -1,11 +1,11 @@
-import {Autowired, Bean} from "../context/context";
-import {PropertyChangeDetector} from "./propertyChangeDetector";
-import {ColDef, ColGroupDef} from "../entities/colDef";
-import {attrToBoolean, attrToNumber} from "../utils/generic";
-import {Constants} from "../constants";
-import {ColumnController} from "./columnController";
-import {ColumnFactory} from "./columnFactory";
-import {Column} from "../entities/column";
+import { Autowired, Bean } from "../context/context";
+import { PropertyChangeDetector } from "./propertyChangeDetector";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { attrToBoolean, attrToNumber } from "../utils/generic";
+import { Constants } from "../constants/constants";
+import { ColumnController } from "./columnController";
+import { ColumnFactory } from "./columnFactory";
+import { Column } from "../entities/column";
 
 @Bean('colDefChangeDetector')
 export class ColDefChangeDetector {
@@ -16,7 +16,7 @@ export class ColDefChangeDetector {
 
     private getColDefsFromTree(tree: (ColDef | ColGroupDef)[]): ColDef[] {
         const res: ColDef[] = [];
-        const recurse = (list: (ColDef | ColGroupDef)[])=> {
+        const recurse = (list: (ColDef | ColGroupDef)[]) => {
             list.forEach(item => {
                 if ((item as ColGroupDef).children) {
                     recurse((item as ColGroupDef).children);
@@ -47,7 +47,7 @@ export class ColDefChangeDetector {
 
         const currentColumnsCopy = this.columnController.getAllPrimaryColumns().slice();
 
-        for (let i = 0; i<justColDefsNoGroups.length; i++) {
+        for (let i = 0; i < justColDefsNoGroups.length; i++) {
             const colDef = justColDefsNoGroups[i];
             const col = this.columnFactory.findExistingColumn(colDef, currentColumnsCopy);
             if (col && this.doesColDefChangeColumnState(colDef, col)) {
@@ -62,7 +62,7 @@ export class ColDefChangeDetector {
     private doesColDefChangeColumnState(colDef: ColDef, col: Column): boolean {
         // flex
         const flex = attrToNumber(colDef.flex);
-        if (flex!==undefined) {
+        if (flex !== undefined) {
             const currentFlex = col.getFlex();
             const incomingFlex = flex || 0;
             if (incomingFlex != currentFlex) {
@@ -72,11 +72,11 @@ export class ColDefChangeDetector {
 
         // width - only check it if flex not active. if flex provided in incoming colDef, then we look
         // at that flex value, otherwise look at the current flex value in col
-        const flexWillBeOffAfterUpdate = flex===undefined ? ((flex || 0)<=0) : col.getFlex()<=0;
+        const flexWillBeOffAfterUpdate = flex === undefined ? ((flex || 0) <= 0) : col.getFlex() <= 0;
         if (flexWillBeOffAfterUpdate) {
             const newWidth = attrToNumber(colDef.width);
             const currentWidth = col.getActualWidth();
-            if (newWidth!=null && newWidth!=currentWidth) {
+            if (newWidth != null && newWidth != currentWidth) {
                 return true;
             }
         }
@@ -84,34 +84,34 @@ export class ColDefChangeDetector {
 
         // sort
         let sort = colDef.sort;
-        if (sort!==undefined) {
+        if (sort !== undefined) {
             // in case user puts anything other than 'asc' or 'desc', this means 'no sort'
-            if (sort!=Constants.SORT_ASC && sort!=Constants.SORT_DESC) {
+            if (sort != Constants.SORT_ASC && sort != Constants.SORT_DESC) {
                 sort = null;
             }
             const currentSort = col.getSort();
-            if (sort!=currentSort) {
+            if (sort != currentSort) {
                 return true;
             }
         }
 
         // sort index = only valid if sorting will exist after new cols applied
-        const isSortInactive = (sort: string) => sort!=Constants.SORT_ASC && sort!=Constants.SORT_DESC;
-        const checkSortIndex = sort===undefined ? isSortInactive(col.getSort()) : isSortInactive(sort);
+        const isSortInactive = (sort: string) => sort != Constants.SORT_ASC && sort != Constants.SORT_DESC;
+        const checkSortIndex = sort === undefined ? isSortInactive(col.getSort()) : isSortInactive(sort);
         const newSortIndex = attrToNumber(colDef.sortIndex);
-        if (checkSortIndex && newSortIndex!==undefined) {
+        if (checkSortIndex && newSortIndex !== undefined) {
             const currentSortIndex = col.getSortIndex();
-            if (newSortIndex!==currentSortIndex) {
+            if (newSortIndex !== currentSortIndex) {
                 return true;
             }
         }
 
         // hide
         const hide = attrToBoolean(colDef.hide);
-        if (hide!==undefined) {
+        if (hide !== undefined) {
             const newVisible = !hide; // this allows us to check for null, which means 'make it visible'
             const currentVisible = col.isVisible();
-            if (newVisible!=currentVisible) {
+            if (newVisible != currentVisible) {
                 return true;
             }
         }
@@ -119,7 +119,7 @@ export class ColDefChangeDetector {
         // pinned
         // logic below allows for pinned to be true/false, and converts to string left/right equivalent
         const pinned = colDef.pinned;
-        if (pinned!==undefined) {
+        if (pinned !== undefined) {
             let pinnedString: string;
             if (pinned === true || pinned === Constants.PINNED_LEFT) {
                 pinnedString = Constants.PINNED_LEFT;
@@ -130,19 +130,19 @@ export class ColDefChangeDetector {
             }
 
             const currentPinned = col.getPinned();
-            if (pinnedString!=currentPinned) {
+            if (pinnedString != currentPinned) {
                 return true;
             }
         }
 
         // aggFunc
         const newAggFunc = colDef.aggFunc;
-        if (newAggFunc!==undefined) {
+        if (newAggFunc !== undefined) {
             const currentValueActive = col.isValueActive();
-            const turningAggOff = newAggFunc==null && currentValueActive;
-            const turningAggOn = newAggFunc!=null && !currentValueActive;
+            const turningAggOff = newAggFunc == null && currentValueActive;
+            const turningAggOn = newAggFunc != null && !currentValueActive;
             const currentAggFunc = col.getAggFunc();
-            const changingAggFunc = newAggFunc!=null && newAggFunc!=currentAggFunc;
+            const changingAggFunc = newAggFunc != null && newAggFunc != currentAggFunc;
             if (turningAggOff || turningAggOn || changingAggFunc) {
                 return true;
             }
@@ -151,11 +151,11 @@ export class ColDefChangeDetector {
         // pivot
         const pivot = attrToBoolean(colDef.pivot);
         const pivotIndex = attrToNumber(colDef.pivotIndex);
-        const pivotProvided = pivot!==undefined || pivotIndex!=undefined;
+        const pivotProvided = pivot !== undefined || pivotIndex != undefined;
         if (pivotProvided) {
-            const pivotActive = pivot!==undefined ? pivot===true : pivotIndex >= 0;
+            const pivotActive = pivot !== undefined ? pivot === true : pivotIndex >= 0;
             const currentPivotActive = col.isPivotActive();
-            if (pivotActive!==currentPivotActive) {
+            if (pivotActive !== currentPivotActive) {
                 return true;
             }
         }
@@ -163,11 +163,11 @@ export class ColDefChangeDetector {
         // row group
         const rowGroup = attrToBoolean(colDef.rowGroup);
         const rowGroupIndex = attrToNumber(colDef.rowGroupIndex);
-        const rowGroupProvided = rowGroup!==undefined || rowGroupIndex!=undefined;
+        const rowGroupProvided = rowGroup !== undefined || rowGroupIndex != undefined;
         if (rowGroupProvided) {
-            const rowGroupActive = rowGroup!==undefined ? rowGroup===true : rowGroupIndex >= 0;
+            const rowGroupActive = rowGroup !== undefined ? rowGroup === true : rowGroupIndex >= 0;
             const currentRowGroupActive = col.isRowGroupActive();
-            if (rowGroupActive!==currentRowGroupActive) {
+            if (rowGroupActive !== currentRowGroupActive) {
                 return true;
             }
         }

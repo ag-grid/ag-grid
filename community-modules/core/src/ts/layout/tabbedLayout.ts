@@ -6,7 +6,7 @@ import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
 import { setAriaLabel } from '../utils/aria';
 import { find } from '../utils/generic';
 import { callIfPresent } from '../utils/function';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export class TabbedLayout extends ManagedFocusComponent {
 

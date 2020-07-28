@@ -24,7 +24,7 @@ import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHead
 import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */

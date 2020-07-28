@@ -1,6 +1,6 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
@@ -11,7 +11,7 @@ import { RowPosition } from "./entities/rowPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { missing } from "./utils/generic";
 import { last } from "./utils/array";
-import { KeyCode } from './keyCode';
+import { KeyCode } from './constants/keyCode';
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {

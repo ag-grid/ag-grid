@@ -8,7 +8,7 @@ import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
@@ -180,7 +180,7 @@ export class RowNode implements IEventEmitter {
     public allChildrenCount: number | null;
 
     /** Children mapped by the pivot columns */
-    public childrenMapped: { [key: string]: any } | null = {};
+    public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
     public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
@@ -217,7 +217,7 @@ export class RowNode implements IEventEmitter {
     public selectable = true;
 
     /** Used by the value service, stores values for a particular change detection turn. */
-    public __cacheData: { [colId: string]: any };
+    public __cacheData: { [colId: string]: any; };
     public __cacheVersion: number;
 
     /** Used by sorting service - to give deterministic sort to groups. Previously we
@@ -509,7 +509,7 @@ export class RowNode implements IEventEmitter {
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({rowNodes: [this]});
+            this.gridApi.redrawRows({ rowNodes: [this] });
         }
     }
 
@@ -818,7 +818,7 @@ export class RowNode implements IEventEmitter {
         const selectionNotAllowed = !this.selectable && newValue;
         const selectionNotChanged = this.selected === newValue;
 
-        if ( selectionNotAllowed || selectionNotChanged) { return false; }
+        if (selectionNotAllowed || selectionNotChanged) { return false; }
 
         this.selected = newValue;
 

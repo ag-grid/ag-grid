@@ -12,7 +12,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 @Bean('navigationService')
 export class NavigationService extends BeanStub {

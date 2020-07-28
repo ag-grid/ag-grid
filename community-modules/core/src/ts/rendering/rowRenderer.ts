@@ -4,7 +4,7 @@ import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, Qualifier } from "../context/context";
 import { GridCore } from "../gridCore";
@@ -33,7 +33,7 @@ import { iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

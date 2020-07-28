@@ -19,7 +19,7 @@ import { Component } from "../widgets/component";
 
 import { ProcessRowParams } from "../entities/gridOptions";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../utils/aria";
@@ -89,7 +89,7 @@ export class RowComp extends Component {
     private refreshNeeded = false;
     private columnRefreshPending = false;
 
-    private cellComps: {[key: string]: CellComp} = {};
+    private cellComps: { [key: string]: CellComp; } = {};
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -255,7 +255,7 @@ export class RowComp extends Component {
 
     private getRowBusinessKey(): string {
         const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
-        if (typeof businessKeyForNodeFunc !== 'function') { return ; }
+        if (typeof businessKeyForNodeFunc !== 'function') { return; }
 
         return businessKeyForNodeFunc(this.rowNode);
     }
@@ -284,7 +284,7 @@ export class RowComp extends Component {
         callback: (eRow: HTMLElement) => void
     ): void {
         const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
-        const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? {cellComps: [], template: ''} : this.createCells(cols);
+        const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? { cellComps: [], template: '' } : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
 
         // the RowRenderer is probably inserting many rows. rather than inserting each template one
@@ -316,7 +316,7 @@ export class RowComp extends Component {
         if (!isAngularCompileRows) { return null; }
 
         const newChildScope = this.parentScope.$new();
-        newChildScope.data = {...data };
+        newChildScope.data = { ...data };
         newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
 
@@ -339,7 +339,7 @@ export class RowComp extends Component {
         // so each can be set independently (as a customer complained about footers getting full width, hence
         // introducing this logic)
         const isGroupRow = this.rowNode.group && !this.rowNode.footer;
-        const isFullWidthGroup =  isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+        const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
         if (this.rowNode.stub) {
             this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
@@ -386,7 +386,7 @@ export class RowComp extends Component {
                 });
 
             // printLayout doesn't put components into the pinned sections
-            if (this.printLayout) { return ; }
+            if (this.printLayout) { return; }
 
             this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type, name,
@@ -759,7 +759,7 @@ export class RowComp extends Component {
             const existingCell = this.cellComps[colId];
 
             // need to check the column is the same one, not a new column with the same ID
-            if (existingCell && existingCell.getColumn()==col) {
+            if (existingCell && existingCell.getColumn() == col) {
                 this.ensureCellInCorrectContainer(existingCell);
             } else {
                 if (existingCell) {
@@ -788,7 +788,8 @@ export class RowComp extends Component {
         const gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
         this.addDestroyFunc(() => {
-            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null); }
+            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null);
+        }
         );
     }
 
@@ -883,18 +884,18 @@ export class RowComp extends Component {
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
-                this.rowNode.setSelectedParams({newValue: false});
+                this.rowNode.setSelectedParams({ newValue: false });
             } else if (multiSelectKeyPressed) {
                 if (rowDeselectionWithCtrl) {
-                    this.rowNode.setSelectedParams({newValue: false});
+                    this.rowNode.setSelectedParams({ newValue: false });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({newValue: true, clearSelection: true});
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: true });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed});
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed });
         }
     }
 
@@ -1097,7 +1098,7 @@ export class RowComp extends Component {
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
                 value: undefined,
-                colDef:undefined,
+                colDef: undefined,
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex,
@@ -1252,7 +1253,7 @@ export class RowComp extends Component {
         return assign({}, rowStyle, rowStyleFuncResult);
     }
 
-    private createCells(cols: Column[]): {template: string, cellComps: CellComp[]} {
+    private createCells(cols: Column[]): { template: string, cellComps: CellComp[]; } {
         const templateParts: string[] = [];
         const newCellComps: CellComp[] = [];
 

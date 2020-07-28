@@ -4,7 +4,7 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { SuppressKeyboardEventParams } from '../entities/colDef';
 import { isBrowserEdge, isBrowserIE } from './browser';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 const PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';

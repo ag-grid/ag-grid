@@ -2,7 +2,7 @@ import { ColGroupDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { ColumnController, ColumnResizeSet } from "../../columnController/columnController";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { HorizontalResizeService } from "../horizontalResizeService";
@@ -28,7 +28,7 @@ import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { setAriaExpanded } from "../../utils/aria";
 import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
-import { KeyCode } from '../../keyCode';
+import { KeyCode } from '../../constants/keyCode';
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 

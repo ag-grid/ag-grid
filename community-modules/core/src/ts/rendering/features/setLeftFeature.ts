@@ -2,7 +2,7 @@ import { ColumnGroupChild } from "../../entities/columnGroupChild";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";

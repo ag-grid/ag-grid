@@ -1,9 +1,9 @@
 import { PostConstruct, Autowired } from '../context/context';
 import { Component } from './component';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { FocusController } from '../focusController';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 /**
  * This provides logic to override the default browser focus logic.

@@ -4,7 +4,7 @@ import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
 import { addCssClass, radioCssClass, removeCssClass } from "../utils/dom";
 import { findIndex } from "../utils/array";
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 export interface ListOption {
     value: string;

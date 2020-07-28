@@ -5,7 +5,7 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgCheckbox } from './agCheckbox';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
-import { KeyCode } from '../keyCode';
+import { KeyCode } from '../constants/keyCode';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';

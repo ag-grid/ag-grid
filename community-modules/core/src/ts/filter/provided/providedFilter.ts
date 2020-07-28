@@ -2,7 +2,7 @@ import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams 
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
-import { Constants } from '../../constants';
+import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
