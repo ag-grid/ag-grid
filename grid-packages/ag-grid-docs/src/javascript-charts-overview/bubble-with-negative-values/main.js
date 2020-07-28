@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data,
     title: {
         text: 'Most Populous Cities (2019)',

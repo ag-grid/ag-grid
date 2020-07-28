@@ -25,6 +25,7 @@ var markerSize = 10;
 
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data,
     title: {
         text: 'Taxed Alcohol Consumption (UK)',

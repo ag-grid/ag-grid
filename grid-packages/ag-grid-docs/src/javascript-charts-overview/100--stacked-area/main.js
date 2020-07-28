@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data,
     title: {
         text: 'UK Energy Sources (2018)',

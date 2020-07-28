@@ -12,6 +12,7 @@ var strokeWidth = 3;
 
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     title: {
         text: 'Earthquake Magnitudes by Source (January 2020)',
         fontSize: 18,

@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data.filter(function(d) { return d.magnitude > 4; }),
     title: {
         text: 'Worldwide Earthquakes (first week of February 2020)',

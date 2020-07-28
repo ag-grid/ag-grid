@@ -298,7 +298,8 @@ export class AgChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...AgChartTheme.getCartesianSeriesMarkerDefaults(),
+                        enabled: false
                     }
                 },
                 histogram: {
@@ -489,12 +490,6 @@ export class AgChartTheme {
             }
         });
     }
-
-    // protected updateAreaSeries(chart: Chart) {
-    //     const areaSeries = chart.series.filter(series => series.type === 'area');
-    //
-    //     areaSeries.forEach(series => series.fillOpacity = areaSeries.length > 1);
-    // }
 }
 
 function arrayMerge(target: any, source: any, options: any) {

@@ -42,6 +42,7 @@ function getData() {
 
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: getData(),
     title: {
         text: 'Simulated CPU Usage',
