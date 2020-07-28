@@ -154,16 +154,22 @@ export const generalConfig = Object.freeze({
         max: () => getChartContainer().offsetHeight - (getChartContainer().offsetHeight % 10),
         unit: 'px',
     },
-    tooltipOffset: {
-        type: '[number, number]',
-        default: [20, 20],
-        description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
-        editor: ArrayEditor,
-    },
-    tooltipClass: {
-        type: 'string',
-        description: 'A class to be added to tooltips in the chart.',
-    },
+    // tooltipTracking: {
+    //     type: 'boolean',
+    //     default: true,
+    //     description: 'If true, for series with markers the tooltip will be shown to the closest marker.',
+    //     editor: BooleanEditor
+    // },
+    // tooltipOffset: {
+    //     type: '[number, number]',
+    //     default: [20, 20],
+    //     description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
+    //     editor: ArrayEditor,
+    // },
+    // tooltipClass: {
+    //     type: 'string',
+    //     description: 'A class to be added to tooltips in the chart.',
+    // },
     padding: {
         meta: {
             description: 'Configuration for the padding shown around the chart.',

@@ -29,18 +29,6 @@
       "min": 1,
       "unit": "px"
     },
-    "tooltipOffset": {
-      "type": "[number, number]",
-      "default": [
-        20,
-        20
-      ],
-      "description": "Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>."
-    },
-    "tooltipClass": {
-      "type": "string",
-      "description": "A class to be added to tooltips in the chart."
-    },
     "padding": {
       "meta": {
         "description": "Configuration for the padding shown around the chart."
@@ -366,11 +354,11 @@
         },
         "fill": {
           "default": "#999999",
-          "description": "The fill color used by the mask."
+          "description": "The fill colour used by the mask."
         },
         "stroke": {
           "default": "#999999",
-          "description": "The stroke color used by the mask."
+          "description": "The stroke colour used by the mask."
         },
         "strokeWidth": {
           "default": 1,
@@ -393,11 +381,11 @@
         },
         "fill": {
           "default": "#f2f2f2",
-          "description": "The fill color used by the handle."
+          "description": "The fill colour used by the handle."
         },
         "stroke": {
           "default": "#999999",
-          "description": "The stroke color used by the handle."
+          "description": "The stroke colour used by the handle."
         },
         "strokeWidth": {
           "default": 1,
@@ -441,11 +429,11 @@
         },
         "fill": {
           "default": "#f2f2f2",
-          "description": "The fill color used by the handle."
+          "description": "The fill colour used by the handle."
         },
         "stroke": {
           "default": "#999999",
-          "description": "The stroke color used by the handle."
+          "description": "The stroke colour used by the handle."
         },
         "strokeWidth": {
           "default": 1,
