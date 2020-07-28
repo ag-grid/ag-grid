@@ -313,8 +313,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const defaultOption = this.optionsFactory.getDefaultOption();
 
-        this.eType1.setValue(defaultOption, silent);
-        this.eType2.setValue(defaultOption, silent);
+        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+
         this.eJoinOperatorAnd
             .setValue(true, silent)
             .setName(uniqueGroupId)

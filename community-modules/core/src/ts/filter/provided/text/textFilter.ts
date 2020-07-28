@@ -160,7 +160,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
         this.forEachInput(field => {
             field.setInputPlaceholder(placeholder);
-            field.setInputAriaLabel(placeholder);
+            field.setInputAriaLabel('Filter value');
         });
     }
 

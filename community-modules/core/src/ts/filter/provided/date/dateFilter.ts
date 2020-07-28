@@ -196,18 +196,19 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
     private resetPlaceholder(): void {
         const placeholder = this.translate('dateFormatOoo');
+        const ariaLabel = 'Filter value';
 
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
-        this.dateCondition1FromComp.setInputAriaLabel(placeholder);
+        this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
 
         this.dateCondition1ToComp.setInputPlaceholder(placeholder);
-        this.dateCondition1ToComp.setInputAriaLabel(placeholder);
+        this.dateCondition1ToComp.setInputAriaLabel(ariaLabel);
 
         this.dateCondition2FromComp.setInputPlaceholder(placeholder);
-        this.dateCondition2FromComp.setInputAriaLabel(placeholder);
+        this.dateCondition2FromComp.setInputAriaLabel(ariaLabel);
 
         this.dateCondition2ToComp.setInputPlaceholder(placeholder);
-        this.dateCondition2ToComp.setInputAriaLabel(placeholder);
+        this.dateCondition2ToComp.setInputAriaLabel(ariaLabel);
     }
 
     protected updateUiVisibility(): void {

@@ -1,4 +1,4 @@
-import { Column } from "../entities/column";
+import { Column } from '../entities/column';
 
 type ColumnSortState = 'ascending' | 'descending' | 'none';
 
@@ -12,7 +12,7 @@ function removeAriaAttribute(element: HTMLElement, attribute: string): void {
 }
 
 function ariaAttributeName(attribute: string) {
-    return `aria-${attribute}`
+    return `aria-${attribute}`;
 }
 
 export function getAriaSortState(column: Column): ColumnSortState {

@@ -4,12 +4,12 @@ import { Component } from "./component";
 import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy } from "../utils/aria";
+import { setAriaLabelledBy, setAriaLabel } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
 
-export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
+export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstractField<K> {
     protected TEMPLATE = /* html */
         `<div class="ag-picker-field" role="presentation">
             <div ref="eLabel"></div>
@@ -91,6 +91,12 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         }
 
         super.refreshLabel();
+    }
+
+    public setAriaLabel(label: string): this {
+        setAriaLabel(this.eDisplayField, label);
+
+        return this;
     }
 
     public setInputWidth(width: number | 'flex'): this {
