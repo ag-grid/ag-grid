@@ -95,9 +95,8 @@ const defaultTooltipCss = `
 }
 
 .ag-chart-wrapper {
-    boxSizing: border-box;
+    box-sizing: border-box;
     overflow: hidden;
-    height: 100%;
 }
 `;
 
@@ -174,6 +173,7 @@ export abstract class Chart extends Observable {
     set autoSize(value: boolean) {
         if (this._autoSize !== value) {
             this._autoSize = value;
+            const { style } = this.element;
             if (value) {
                 const chart = this; // capture `this` for IE11
                 SizeMonitor.observe(this.element, size => {
@@ -182,10 +182,14 @@ export abstract class Chart extends Observable {
                         chart.fireEvent({ type: 'layoutChange' });
                     }
                 });
-                this.element.style.display = 'block';
+                style.display = 'block';
+                style.width = '100%';
+                style.height = '100%';
             } else {
                 SizeMonitor.unobserve(this.element);
-                this.element.style.display = 'inline-block';
+                style.display = 'inline-block';
+                style.width = 'auto';
+                style.height = 'auto';
             }
         }
     }
@@ -214,9 +218,6 @@ export abstract class Chart extends Observable {
 
         const element = this._element = document.createElement('div');
         element.setAttribute('class', 'ag-chart-wrapper');
-        // element.style.boxSizing = 'border-box';
-        // element.style.overflow = 'hidden';
-        // element.style.height = '100%';
 
         const scene = new Scene(document);
         this.scene = scene;

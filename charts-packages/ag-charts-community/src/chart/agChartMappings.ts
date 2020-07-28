@@ -142,6 +142,7 @@ const commonChartMappings: any = {
 
 const chartDefaults: any = {
     container: undefined,
+    autoSize: true,
     width: 600,
     height: 300,
     data: [],

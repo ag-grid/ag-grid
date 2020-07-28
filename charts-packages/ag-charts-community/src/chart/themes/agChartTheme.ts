@@ -139,7 +139,7 @@ export class AgChartTheme {
         return {
             width: 600,
             height: 300,
-            autoSize: false,
+            autoSize: true,
             background: {
                 visible: true,
                 fill: 'white'
