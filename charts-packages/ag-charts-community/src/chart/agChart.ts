@@ -115,10 +115,20 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'area.series': 'area',
     'bar.series': 'bar',
     'column.series': 'column',
+    'histogram.series': 'histogram',
     'scatter.series': 'scatter',
     'polar.series': 'pie', // default series type for polar charts
     'pie.series': 'pie'
 };
+
+const actualSeriesTypeMap = (() => {
+    const map: { [key in string]: string } = {};
+    const actualSeries = ['area', 'bar', 'histogram', 'line', 'pie', 'scatter'];
+    actualSeries.forEach(series => map[series] = series);
+    // Aliases:
+    map['column'] = 'bar';
+    return map;
+})();
 
 function create(options: any, path?: string, component?: any, theme?: AgChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -283,7 +293,8 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: AgC
         let series = allSeries[i];
         if (series) {
             config = provideDefaultType(config, keyPath);
-            if (series.type === config.type) {
+            const type = actualSeriesTypeMap[config.type];
+            if (series.type === type) {
                 update(series, config, keyPath, theme);
             } else {
                 const newSeries = create(config, keyPath, undefined, theme);
