@@ -19,6 +19,7 @@ export class VirtualList extends ManagedFocusComponent {
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
     private lastFocusedRowIndex: number;
+    private isDestroyed = false;
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
@@ -169,7 +170,7 @@ export class VirtualList extends ManagedFocusComponent {
     }
 
     public refresh(): void {
-        if (this.model == null) { return; }
+        if (this.model == null || this.isDestroyed) { return; }
 
         const rowCount = this.model.getRowCount();
 
@@ -177,6 +178,8 @@ export class VirtualList extends ManagedFocusComponent {
 
         // ensure height is applied before attempting to redraw rows
         setTimeout(() => {
+            if (this.isDestroyed) { return; }
+
             this.clearVirtualRows();
             this.drawVirtualRows();
         }, 0);
@@ -266,5 +269,14 @@ export class VirtualList extends ManagedFocusComponent {
 
     public setModel(model: VirtualListModel): void {
         this.model = model;
+    }
+
+    public destroy(): void {
+        if (this.isDestroyed) { return; }
+
+        this.clearVirtualRows();
+        this.isDestroyed = true;
+
+        super.destroy();
     }
 }

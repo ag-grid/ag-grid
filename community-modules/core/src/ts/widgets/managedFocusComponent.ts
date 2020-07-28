@@ -1,6 +1,5 @@
 import { PostConstruct, Autowired } from '../context/context';
 import { Component } from './component';
-import { Constants } from '../constants/constants';
 import { FocusController } from '../focusController';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';

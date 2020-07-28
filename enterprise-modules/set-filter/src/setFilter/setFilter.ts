@@ -671,6 +671,15 @@ export class SetFilter extends ProvidedFilter {
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }
+
+    public destroy(): void {
+        if (this.virtualList != null) {
+            this.virtualList.destroy();
+            this.virtualList = null;
+        }
+
+        super.destroy();
+    }
 }
 
 class ModelWrapper implements VirtualListModel {

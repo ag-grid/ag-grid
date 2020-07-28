@@ -115,13 +115,7 @@ export class FilterManager extends BeanStub {
                     resolve();
                 }
 
-                const promise = filter.setModel(newModel);
-
-                if (promise == null) {
-                    resolve();
-                } else {
-                    (promise as Promise<void>).then(() => resolve());
-                }
+                (filter.setModel(newModel) || Promise.resolve()).then(() => resolve());
             });
         });
     }
@@ -561,21 +555,21 @@ export class FilterManager extends BeanStub {
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
         filterWrapper.filterPromise.then(filter => {
-            filter.setModel(null);
+            (filter.setModel(null) || Promise.resolve()).then(() => {
+                this.getContext().destroyBean(filter);
 
-            this.getContext().destroyBean(filter);
+                filterWrapper.column.setFilterActive(false, source);
 
-            filterWrapper.column.setFilterActive(false, source);
+                if (filterWrapper.scope) {
+                    if (filterWrapper.compiledElement) {
+                        filterWrapper.compiledElement.remove();
+                    }
 
-            if (filterWrapper.scope) {
-                if (filterWrapper.compiledElement) {
-                    filterWrapper.compiledElement.remove();
+                    filterWrapper.scope.$destroy();
                 }
 
-                filterWrapper.scope.$destroy();
-            }
-
-            this.allFilters.delete(filterWrapper.column.getColId());
+                this.allFilters.delete(filterWrapper.column.getColId());
+            });
         });
     }
 
