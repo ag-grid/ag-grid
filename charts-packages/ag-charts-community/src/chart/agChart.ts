@@ -270,7 +270,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
     }
 
     if (chart) {
-        chart.performLayout();
+        chart.layoutPending = true;
     }
 }
 
