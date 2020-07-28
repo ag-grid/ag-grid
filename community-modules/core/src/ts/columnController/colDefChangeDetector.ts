@@ -14,6 +14,9 @@ export class ColDefChangeDetector {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
+    private timestampSameDefsLastSet = 0;
+    private infiniteLoopCount = 0;
+
     private getColDefsFromTree(tree: (ColDef | ColGroupDef)[]): ColDef[] {
         const res: ColDef[] = [];
         const recurse = (list: (ColDef | ColGroupDef)[]) => {
@@ -34,17 +37,40 @@ export class ColDefChangeDetector {
     public areChangesInColDefs(incomingColDefs: (ColDef | ColGroupDef)[], currentColDefs: (ColDef | ColGroupDef)[]): boolean {
 
         // if the defs are different, they we have changes
-        const defsAreTheSame = this.propertyChangeDetector.areEqual(incomingColDefs, currentColDefs);
-        if (!defsAreTheSame) {
+        const defsAreEqual = this.propertyChangeDetector.areEqual(incomingColDefs, currentColDefs);
+        if (!defsAreEqual) {
+            this.infiniteLoopCount = 0;
             return true;
+        }
+
+        // if we are getting called within 200ms 5 or more times in a row,
+        // then skip the update. this stops a potential infinite loop with
+        // frameworks where the application is constantly binding column defs,
+        // as the app is listening on a grid event for Columns Loaded, and then
+        // setting columns again. the grid should NOT apply the change as it should
+        // recognise there is no state change, however it can happen if e.g. application
+        // is providing sortIndex=4, sortIndex=5, which gets translated into
+        // sortIndex=0, sortIndex=1, thus the colDefs never match the column state.
+        const nowMillis = new Date().getTime();
+        const millisSinceLastCall = nowMillis - this.timestampSameDefsLastSet;
+        this.timestampSameDefsLastSet = nowMillis;
+        if (millisSinceLastCall < 200) {
+            this.infiniteLoopCount++;
+            if (this.infiniteLoopCount>5) {
+                return false;
+            }
+        } else {
+            this.infiniteLoopCount = 0;
         }
 
         // however if defs are the same, we need to verify against the state, because the state may of changed.
         // eg a column's width can be colDef.width=200, and the new cols defs can still have width=200 but
-        // the use could of change the width of a column since last setting colDefs which means we need to
+        // the user could of change the width of a column since last setting colDefs which means we need to
         // set the width back to 200 again.
         const justColDefsNoGroups = this.getColDefsFromTree(incomingColDefs);
 
+        // we match columns in the same way the ColumnFactory matches columns. this makes sure we get the
+        // same matches.
         const currentColumnsCopy = this.columnController.getAllPrimaryColumns().slice();
 
         for (let i = 0; i < justColDefsNoGroups.length; i++) {
@@ -72,15 +98,22 @@ export class ColDefChangeDetector {
 
         // width - only check it if flex not active. if flex provided in incoming colDef, then we look
         // at that flex value, otherwise look at the current flex value in col
-        const flexWillBeOffAfterUpdate = flex === undefined ? ((flex || 0) <= 0) : col.getFlex() <= 0;
+        let flexWillBeOffAfterUpdate: boolean;
+        if (flex===undefined) {// if update is NOT changing flex
+            // then we check flex on the column
+            flexWillBeOffAfterUpdate = col.getFlex() <= 0;
+        } else {
+            // else we check flex in the incoming state
+            flexWillBeOffAfterUpdate = flex==null || flex <= 0;
+        }
         if (flexWillBeOffAfterUpdate) {
             const newWidth = attrToNumber(colDef.width);
             const currentWidth = col.getActualWidth();
+            // unlike other attributes, null and undefined are equivalent for width, both mean "do not set"
             if (newWidth != null && newWidth != currentWidth) {
                 return true;
             }
         }
-
 
         // sort
         let sort = colDef.sort;
@@ -96,8 +129,8 @@ export class ColDefChangeDetector {
         }
 
         // sort index = only valid if sorting will exist after new cols applied
-        const isSortInactive = (sort: string) => sort != Constants.SORT_ASC && sort != Constants.SORT_DESC;
-        const checkSortIndex = sort === undefined ? isSortInactive(col.getSort()) : isSortInactive(sort);
+        const isSortActive = (sort: string) => sort == Constants.SORT_ASC || sort == Constants.SORT_DESC;
+        const checkSortIndex = sort === undefined ? isSortActive(col.getSort()) : isSortActive(sort);
         const newSortIndex = attrToNumber(colDef.sortIndex);
         if (checkSortIndex && newSortIndex !== undefined) {
             const currentSortIndex = col.getSortIndex();
@@ -151,7 +184,7 @@ export class ColDefChangeDetector {
         // pivot
         const pivot = attrToBoolean(colDef.pivot);
         const pivotIndex = attrToNumber(colDef.pivotIndex);
-        const pivotProvided = pivot !== undefined || pivotIndex != undefined;
+        const pivotProvided = pivot !== undefined || pivotIndex !== undefined;
         if (pivotProvided) {
             const pivotActive = pivot !== undefined ? pivot === true : pivotIndex >= 0;
             const currentPivotActive = col.isPivotActive();
@@ -163,7 +196,7 @@ export class ColDefChangeDetector {
         // row group
         const rowGroup = attrToBoolean(colDef.rowGroup);
         const rowGroupIndex = attrToNumber(colDef.rowGroupIndex);
-        const rowGroupProvided = rowGroup !== undefined || rowGroupIndex != undefined;
+        const rowGroupProvided = rowGroup !== undefined || rowGroupIndex !== undefined;
         if (rowGroupProvided) {
             const rowGroupActive = rowGroup !== undefined ? rowGroup === true : rowGroupIndex >= 0;
             const currentRowGroupActive = col.isRowGroupActive();
