@@ -11,6 +11,7 @@ import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
+import { KeyCode } from '../keyCode';
 
 export class PaginationComp extends Component {
 
@@ -71,7 +72,7 @@ export class PaginationComp extends Component {
             const { el, fn } = item;
             this.addManagedListener(el, 'click', fn);
             this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
+                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
                     e.preventDefault();
                     fn();
                 }

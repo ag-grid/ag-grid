@@ -3,9 +3,9 @@ import { Autowired } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
-import { Constants } from '../constants';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected } from '../utils/aria';
+import { KeyCode } from '../keyCode';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -58,9 +58,9 @@ export class VirtualList extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
-                if (this.navigate(e.keyCode === Constants.KEY_UP)) {
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                if (this.navigate(e.keyCode === KeyCode.UP)) {
                     e.preventDefault();
                 }
 

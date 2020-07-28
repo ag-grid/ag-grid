@@ -1,10 +1,10 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { Constants } from "../constants";
 import { escapeString } from "../utils/string";
 import { addCssClass, radioCssClass, removeCssClass } from "../utils/dom";
 import { findIndex } from "../utils/array";
+import { KeyCode } from '../keyCode';
 
 export interface ListOption {
     value: string;
@@ -36,7 +36,7 @@ export class AgList extends Component {
     private handleKeyDown(e: KeyboardEvent): void {
         const key = e.keyCode;
         switch (key) {
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 if (!this.highlightedEl) {
                     this.setValue(this.getValue());
                 } else {
@@ -44,9 +44,9 @@ export class AgList extends Component {
                     this.setValueByIndex(pos);
                 }
                 break;
-            case Constants.KEY_DOWN:
-            case Constants.KEY_UP:
-                const isDown = key === Constants.KEY_DOWN;
+            case KeyCode.DOWN:
+            case KeyCode.UP:
+                const isDown = key === KeyCode.DOWN;
                 let itemToHighlight: HTMLElement;
 
                 e.preventDefault();

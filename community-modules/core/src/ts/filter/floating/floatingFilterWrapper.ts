@@ -21,10 +21,10 @@ import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
 import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHeaderWrapper';
-import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
+import { KeyCode } from '../../keyCode';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
@@ -97,23 +97,23 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const wrapperHasFocus = activeEl === eGui;
 
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 if (!wrapperHasFocus) {
                     e.preventDefault();
                 }
-            case Constants.KEY_LEFT:
-            case Constants.KEY_RIGHT:
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
                 if (wrapperHasFocus) { return; }
                 e.stopPropagation();
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 if (wrapperHasFocus) {
                     if (this.focusController.focusInto(eGui)) {
                         e.preventDefault();
                     }
                 }
                 break;
-            case Constants.KEY_ESCAPE:
+            case KeyCode.ESCAPE:
                 if (!wrapperHasFocus) {
                     this.getGui().focus();
                 }

@@ -2,7 +2,6 @@ import { IFloatingFilterParams } from '../floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { debounce } from '../../../utils/function';
-import { Constants } from '../../../constants';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
@@ -11,6 +10,7 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnController } from '../../../columnController/columnController';
+import { KeyCode } from '../../../keyCode';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @Autowired('columnController') private columnController: ColumnController;
@@ -74,7 +74,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const value = this.eFloatingFilterInput.getValue();
-        const enterKeyPressed = isKeyPressed(e, Constants.KEY_ENTER);
+        const enterKeyPressed = isKeyPressed(e, KeyCode.ENTER);
 
         if (this.applyActive && !enterKeyPressed) { return; }
 

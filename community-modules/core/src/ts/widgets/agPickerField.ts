@@ -1,13 +1,13 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Autowired } from "../context/context";
 import { Component } from "./component";
-import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
+import { KeyCode } from '../keyCode';
 
 export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstractField<K> {
     protected TEMPLATE = /* html */
@@ -62,12 +62,12 @@ export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstract
 
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             switch (e.keyCode) {
-                case Constants.KEY_UP:
-                case Constants.KEY_DOWN:
-                case Constants.KEY_ENTER:
-                case Constants.KEY_SPACE:
+                case KeyCode.UP:
+                case KeyCode.DOWN:
+                case KeyCode.ENTER:
+                case KeyCode.SPACE:
                     clickHandler();
-                case Constants.KEY_ESCAPE:
+                case KeyCode.ESCAPE:
                     if (this.isPickerDisplayed) {
                         e.preventDefault();
                     }

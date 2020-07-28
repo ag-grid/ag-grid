@@ -50,6 +50,7 @@ import { getTarget, getCellCompForEvent, isStopPropagationForAgGrid } from '../u
 import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
+import { KeyCode } from '../keyCode';
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -334,7 +335,7 @@ export class GridPanel extends Component {
         if (isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
             this.beans.columnController.refreshFlexedColumns(
-                {viewportWidth: this.getCenterWidth(), updateBodyWidths: true, fireResizedEvent: true}
+                { viewportWidth: this.getCenterWidth(), updateBodyWidths: true, fireResizedEvent: true }
             );
         } else {
             this.bodyHeight = 0;
@@ -586,17 +587,17 @@ export class GridPanel extends Component {
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
 
         switch (keyboardEvent.which) {
-            case Constants.KEY_A:
+            case KeyCode.A:
                 return this.onCtrlAndA(keyboardEvent);
-            case Constants.KEY_C:
+            case KeyCode.C:
                 return this.onCtrlAndC(keyboardEvent);
-            case Constants.KEY_V:
+            case KeyCode.V:
                 return this.onCtrlAndV();
-            case Constants.KEY_D:
+            case KeyCode.D:
                 return this.onCtrlAndD(keyboardEvent);
-            case Constants.KEY_Z:
+            case KeyCode.Z:
                 return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
-            case Constants.KEY_Y:
+            case KeyCode.Y:
                 return this.undoRedoService.redo();
         }
     }
@@ -936,7 +937,7 @@ export class GridPanel extends Component {
             });
         }
 
-        const total = rowCount === -1  ? -1 : (headerCount + rowCount);
+        const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 
         setAriaRowCount(this.getGui(), total);
     }

@@ -16,6 +16,7 @@ import {
     IAfterGuiAttachedParams,
     Promise,
     _,
+    KeyCode,
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -70,10 +71,10 @@ export class SetFilter extends ProvidedFilter {
         if (e.defaultPrevented) { return; }
 
         switch (e.which || e.keyCode) {
-            case Constants.KEY_SPACE:
+            case KeyCode.SPACE:
                 this.handleKeySpace(e);
                 break;
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.handleKeyEnter(e);
                 break;
         }
@@ -515,7 +516,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER) && !this.setFilterParams.excelMode) {
+        if (_.isKeyPressed(e, KeyCode.ENTER) && !this.setFilterParams.excelMode) {
             this.filterOnAllVisibleValues();
         }
     }

@@ -11,6 +11,7 @@ import { BeanStub } from "../context/beanStub";
 import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, containsClass, addOrRemoveCssClass } from '../utils/dom';
 import { forEach, findIndex, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
+import { KeyCode } from '../keyCode';
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch;
@@ -415,12 +416,12 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            const key = event.which || event.keyCode;
             if (!eWrapper.contains(document.activeElement)) { return; }
 
-            switch (key) {
-                case Constants.KEY_ESCAPE:
-                    hidePopup({ keyboardEvent: event });
+            const key = event.which || event.keyCode;
+
+            if (key === KeyCode.ESCAPE) {
+                hidePopup({ keyboardEvent: event });
             }
         };
 

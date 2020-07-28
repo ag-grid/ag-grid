@@ -6,8 +6,8 @@ import { ValueFormatterService } from "../valueFormatterService";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ListOption } from "../../widgets/agList";
-import { Constants } from "../../constants";
 import { missing } from "../../utils/generic";
+import { KeyCode } from '../../keyCode';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];
@@ -35,7 +35,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             return;
         }
 
-        this.startedByEnter = params.keyPress === Constants.KEY_ENTER;
+        this.startedByEnter = params.keyPress === KeyCode.ENTER;
 
         let hasValue = false;
         params.values.forEach((value: any) => {

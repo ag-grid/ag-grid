@@ -1,10 +1,10 @@
 import {
     Autowired,
-    Constants,
     GridOptionsWrapper,
     ManagedFocusComponent,
     MenuItemDef,
     _,
+    KeyCode,
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
 
@@ -33,14 +33,14 @@ export class MenuList extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_DOWN:
-            case Constants.KEY_LEFT:
+            case KeyCode.UP:
+            case KeyCode.RIGHT:
+            case KeyCode.DOWN:
+            case KeyCode.LEFT:
                 e.preventDefault();
                 this.handleNavKey(e.keyCode);
                 break;
-            case Constants.KEY_ESCAPE:
+            case KeyCode.ESCAPE:
                 const topMenu = this.findTopMenu();
 
                 if (topMenu) {
@@ -138,9 +138,9 @@ export class MenuList extends ManagedFocusComponent {
 
     private handleNavKey(key: number): void {
         switch (key) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
-                const nextItem = this.findNextItem(key === Constants.KEY_UP);
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                const nextItem = this.findNextItem(key === KeyCode.UP);
 
                 if (nextItem && nextItem !== this.activeMenuItem) {
                     nextItem.activate();
@@ -149,7 +149,7 @@ export class MenuList extends ManagedFocusComponent {
                 return;
         }
 
-        const left = this.gridOptionsWrapper.isEnableRtl() ? Constants.KEY_RIGHT : Constants.KEY_LEFT;
+        const left = this.gridOptionsWrapper.isEnableRtl() ? KeyCode.RIGHT : KeyCode.LEFT;
 
         if (key === left) {
             this.closeIfIsChild();

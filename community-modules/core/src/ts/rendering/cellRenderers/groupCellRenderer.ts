@@ -26,6 +26,7 @@ import { isKeyPressed } from "../../utils/keyboard";
 import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded } from "../../utils/aria";
+import { KeyCode } from '../../keyCode';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
@@ -442,7 +443,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const enterKeyPressed = isKeyPressed(event, Constants.KEY_ENTER);
+        const enterKeyPressed = isKeyPressed(event, KeyCode.ENTER);
 
         if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
 

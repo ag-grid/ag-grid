@@ -1,12 +1,12 @@
 import { Promise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { Constants } from '../constants';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
 import { setAriaLabel } from '../utils/aria';
 import { find } from '../utils/generic';
 import { callIfPresent } from '../utils/function';
+import { KeyCode } from '../keyCode';
 
 export class TabbedLayout extends ManagedFocusComponent {
 
@@ -36,12 +36,12 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_LEFT:
+            case KeyCode.RIGHT:
+            case KeyCode.LEFT:
                 if (!this.eHeader.contains(document.activeElement)) { return; }
 
                 const currentPosition = this.items.indexOf(this.activeItem);
-                const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                const nextPosition = e.keyCode === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
                 if (currentPosition === nextPosition) { return; }
 
@@ -52,8 +52,8 @@ export class TabbedLayout extends ManagedFocusComponent {
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();
                 break;
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 e.stopPropagation();
                 break;
         }

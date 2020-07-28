@@ -10,8 +10,8 @@ import {
     IFilterComp,
     RefSelector,
     PostConstruct,
-    Constants,
-    _
+    _,
+    KeyCode
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -60,7 +60,7 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.keyCode === KeyCode.ENTER) {
                 this.toggleExpanded();
             }
         });

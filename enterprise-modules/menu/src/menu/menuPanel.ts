@@ -1,4 +1,4 @@
-import { ManagedFocusComponent, IComponent, Constants } from '@ag-grid-community/core';
+import { ManagedFocusComponent, IComponent, KeyCode } from '@ag-grid-community/core';
 import { MenuItemComponent } from './menuItemComponent';
 
 export class MenuPanel extends ManagedFocusComponent {
@@ -10,7 +10,7 @@ export class MenuPanel extends ManagedFocusComponent {
 
     handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_ESCAPE: {
+            case KeyCode.ESCAPE: {
                 this.closePanel();
                 break;
             }

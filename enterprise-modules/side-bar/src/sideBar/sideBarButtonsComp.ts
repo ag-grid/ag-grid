@@ -7,10 +7,10 @@ import {
     ToolPanelDef,
     RefSelector,
     PreDestroy,
-    Constants,
     FocusController,
     HeaderPositionUtils,
-    _
+    _,
+    KeyCode
 } from "@ag-grid-community/core";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
@@ -36,7 +36,7 @@ export class SideBarButtonsComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode !== Constants.KEY_TAB || !e.shiftKey) { return; }
+        if (e.keyCode !== KeyCode.TAB || !e.shiftKey) { return; }
         const prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
 
         if (!prevEl) {
@@ -80,7 +80,7 @@ export class SideBarButtonsComp extends Component {
 
 class SideBarButtonComp extends Component {
 
-    public static EVENT_TOGGLE_BUTTON_CLICKED  = 'toggleButtonClicked';
+    public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -121,7 +121,7 @@ class SideBarButtonComp extends Component {
     }
 
     private onButtonPressed(): void {
-        this.dispatchEvent({type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED});
+        this.dispatchEvent({ type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED });
     }
 
     public setSelected(selected: boolean): void {

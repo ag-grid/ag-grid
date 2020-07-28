@@ -1,7 +1,6 @@
 import {
     Autowired,
     Component,
-    Constants,
     ICellEditor,
     ICellRendererComp,
     ICellRendererParams,
@@ -12,7 +11,8 @@ import {
     GridOptionsWrapper,
     RefSelector,
     _,
-    VirtualList
+    VirtualList,
+    KeyCode
 } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
 
@@ -102,11 +102,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const key = event.which || event.keyCode;
 
         switch (key) {
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case Constants.KEY_DOWN:
-            case Constants.KEY_UP:
+            case KeyCode.DOWN:
+            case KeyCode.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -123,7 +123,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
-        const newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
 
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             const valueToSelect = this.params.values[newIndex];
@@ -195,7 +195,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         if (promise) {
             promise.then(renderer => {
-                this.addDestroyFunc(() => this.getContext().destroyBean(renderer))
+                this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
         } else {
             if (_.exists(this.selectedValue)) {
@@ -250,7 +250,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
-    public afterGuiAttached(): void  {
+    public afterGuiAttached(): void {
 
         const selectedIndex = this.params.values.indexOf(this.selectedValue);
 

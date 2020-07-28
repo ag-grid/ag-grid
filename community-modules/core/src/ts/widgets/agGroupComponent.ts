@@ -3,9 +3,9 @@ import { RefSelector } from './componentAnnotations';
 import { Autowired, PostConstruct } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgCheckbox } from './agCheckbox';
-import { Constants } from '../constants';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
+import { KeyCode } from '../keyCode';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -118,13 +118,13 @@ export class AgGroupComponent extends Component {
         this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
         this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
             switch (e.keyCode) {
-                case Constants.KEY_ENTER:
+                case KeyCode.ENTER:
                     this.toggleGroupExpand();
                     break;
-                case Constants.KEY_RIGHT:
+                case KeyCode.RIGHT:
                     this.toggleGroupExpand(true);
                     break;
-                case Constants.KEY_LEFT:
+                case KeyCode.LEFT:
                     this.toggleGroupExpand(false);
                     break;
             }

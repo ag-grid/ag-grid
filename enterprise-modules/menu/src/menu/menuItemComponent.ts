@@ -2,14 +2,14 @@ import {
     AgEvent,
     Autowired,
     Component,
-    Constants,
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
     TooltipFeature,
     _,
     PopupService,
-    IComponent
+    IComponent,
+    KeyCode
 } from "@ag-grid-community/core";
 import { MenuList } from './menuList';
 import { MenuPanel } from './menuPanel';
@@ -73,7 +73,7 @@ export class MenuItemComponent extends Component {
         } else {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-                if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
+                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
                     this.onItemSelected(e);
                 }
             });

@@ -18,7 +18,7 @@ import {
     RefSelector,
     ManagedFocusComponent,
     _,
-    Constants
+    KeyCode
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 
@@ -97,12 +97,11 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case Constants.KEY_SPACE:
-                e.preventDefault();
-                if (this.isSelectable()) {
-                    this.onSelectAllChanged(!this.isSelected());
-                }
+        if (e.keyCode === KeyCode.SPACE) {
+            e.preventDefault();
+            if (this.isSelectable()) {
+                this.onSelectAllChanged(!this.isSelected());
+            }
         }
     }
 
@@ -273,7 +272,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
     }
 
     private createDragItem() {
-        const visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean; } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
         return {
             columns: [this.column],

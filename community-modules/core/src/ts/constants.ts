@@ -1,5 +1,4 @@
 export class Constants {
-
     static STEP_EVERYTHING = 0;
     static STEP_FILTER = 1;
     static STEP_SORT = 2;
@@ -11,36 +10,10 @@ export class Constants {
     static LAYOUT_INTERVAL = 500;
     static BATCH_WAIT_MILLIS = 50;
 
-    static EXPORT_TYPE_DRAG_COPY:string = 'dragCopy';
-    static EXPORT_TYPE_CLIPBOARD:string = 'clipboard';
-    static EXPORT_TYPE_EXCEL:string = 'excel';
-    static EXPORT_TYPE_CSV:string = 'csv';
-
-    static KEY_BACKSPACE = 8;
-    static KEY_TAB = 9;
-    static KEY_NEW_LINE = 10;
-    static KEY_ENTER = 13;
-    static KEY_SHIFT = 16;
-    static KEY_ESCAPE = 27;
-    static KEY_SPACE = 32;
-    static KEY_LEFT = 37;
-    static KEY_UP = 38;
-    static KEY_RIGHT = 39;
-    static KEY_DOWN = 40;
-    static KEY_DELETE = 46;
-    static KEY_A = 65;
-    static KEY_C = 67;
-    static KEY_V = 86;
-    static KEY_D = 68;
-    static KEY_Z = 90;
-    static KEY_Y = 89;
-
-    static KEY_F2 = 113;
-
-    static KEY_PAGE_UP = 33;
-    static KEY_PAGE_DOWN = 34;
-    static KEY_PAGE_HOME = 36;
-    static KEY_PAGE_END = 35;
+    static EXPORT_TYPE_DRAG_COPY = 'dragCopy';
+    static EXPORT_TYPE_CLIPBOARD = 'clipboard';
+    static EXPORT_TYPE_EXCEL = 'excel';
+    static EXPORT_TYPE_CSV = 'csv';
 
     static ROW_MODEL_TYPE_INFINITE = 'infinite';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
@@ -66,5 +39,4 @@ export class Constants {
 
     static SORT_ASC = 'asc';
     static SORT_DESC = 'desc';
-
 }

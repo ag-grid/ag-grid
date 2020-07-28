@@ -1,10 +1,10 @@
-import { Constants } from '../constants';
 import { exists } from './generic';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { SuppressKeyboardEventParams } from '../entities/colDef';
 import { isBrowserEdge, isBrowserIE } from './browser';
+import { KeyCode } from '../keyCode';
 
 const PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
@@ -34,7 +34,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // starts editing again with a blank value (two 'key down' events are fired). to
     // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
     // https://ag-grid.atlassian.net/browse/AG-605
-    if (isKeyPressed(event, Constants.KEY_NEW_LINE)) { return false; }
+    if (isKeyPressed(event, KeyCode.NEW_LINE)) { return false; }
 
     // no allowed printable chars have alt or ctrl key combinations
     if (event.altKey || event.ctrlKey) { return false; }

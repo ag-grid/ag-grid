@@ -30,6 +30,7 @@ import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { HeaderRowComp } from "../headerRowComp";
 import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
+import { KeyCode } from '../../keyCode';
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -220,14 +221,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const headerComp = this.headerComp as HeaderComp;
         if (!headerComp) { return; }
 
-        if (e.keyCode === Constants.KEY_SPACE) {
+        if (e.keyCode === KeyCode.SPACE) {
             const checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
                 checkbox.setValue(!checkbox.getValue());
             }
         }
 
-        if (e.keyCode === Constants.KEY_ENTER) {
+        if (e.keyCode === KeyCode.ENTER) {
             if (e.ctrlKey || e.metaKey) {
                 if (this.menuEnabled && headerComp.showMenu) {
                     e.preventDefault();

@@ -39,6 +39,7 @@ import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../util
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
 import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
+import { KeyCode } from '../keyCode';
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -1332,26 +1333,26 @@ export class CellComp extends Component implements TooltipParentComp {
         const key = event.which || event.keyCode;
 
         switch (key) {
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
                 break;
-            case Constants.KEY_F2:
+            case KeyCode.F2:
                 this.onF2KeyDown();
                 break;
-            case Constants.KEY_ESCAPE:
+            case KeyCode.ESCAPE:
                 this.onEscapeKeyDown();
                 break;
-            case Constants.KEY_TAB:
+            case KeyCode.TAB:
                 this.onTabKeyDown(event);
                 break;
-            case Constants.KEY_BACKSPACE:
-            case Constants.KEY_DELETE:
+            case KeyCode.BACKSPACE:
+            case KeyCode.DELETE:
                 this.onBackspaceOrDeleteKeyPressed(key);
                 break;
-            case Constants.KEY_DOWN:
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_LEFT:
+            case KeyCode.DOWN:
+            case KeyCode.UP:
+            case KeyCode.RIGHT:
+            case KeyCode.LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
         }
@@ -1401,10 +1402,10 @@ export class CellComp extends Component implements TooltipParentComp {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
+                this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
             } else {
                 e.preventDefault();
-                this.startRowOrCellEdit(Constants.KEY_ENTER);
+                this.startRowOrCellEdit(KeyCode.ENTER);
             }
         }
     }
@@ -1417,13 +1418,13 @@ export class CellComp extends Component implements TooltipParentComp {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
+            this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
         }
     }
 
     private onF2KeyDown(): void {
         if (!this.editingCell) {
-            this.startRowOrCellEdit(Constants.KEY_F2);
+            this.startRowOrCellEdit(KeyCode.F2);
         }
     }
 

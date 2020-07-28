@@ -7,10 +7,10 @@ import {
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
-    Constants,
     AgCheckbox,
     AgInputTextField,
-    ManagedFocusComponent
+    ManagedFocusComponent,
+    KeyCode
 } from "@ag-grid-community/core";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
@@ -57,7 +57,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
         );
 
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_SPACE) {
+            if (e.keyCode === KeyCode.SPACE) {
                 this.onExpandClicked();
             }
         });
@@ -146,7 +146,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
+        if (_.isKeyPressed(e, KeyCode.ENTER)) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure
             // the text filtering has happened, otherwise all columns will be deselected
             setTimeout(() => this.onSelectClicked(), PrimaryColsHeaderPanel.DEBOUNCE_DELAY);

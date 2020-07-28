@@ -1,10 +1,10 @@
-import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
 import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
+import { KeyCode } from '../../keyCode';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
@@ -37,17 +37,14 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            const keyPressBackspaceOrDelete =
-                params.keyPress === Constants.KEY_BACKSPACE
-                || params.keyPress === Constants.KEY_DELETE;
-
-            if (keyPressBackspaceOrDelete) {
+            if (params.keyPress === KeyCode.BACKSPACE || params.keyPress === KeyCode.DELETE) {
                 startValue = '';
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
                 startValue = this.getStartValue(params);
-                if (params.keyPress !== Constants.KEY_F2) {
+
+                if (params.keyPress !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
                 }
             }
@@ -62,9 +59,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
-            const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
-            const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
-            if (pageUp || pageDown) {
+            const { keyCode } = event;
+
+            if (keyCode === KeyCode.PAGE_UP || keyCode === KeyCode.PAGE_DOWN) {
                 event.preventDefault();
             }
         });

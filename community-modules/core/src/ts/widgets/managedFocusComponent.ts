@@ -3,6 +3,7 @@ import { Component } from './component';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
+import { KeyCode } from '../keyCode';
 
 /**
  * This provides logic to override the default browser focus logic.
@@ -155,7 +156,7 @@ export class ManagedFocusComponent extends Component {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.defaultPrevented) { return; }
 
-            if (e.keyCode === Constants.KEY_TAB) {
+            if (e.keyCode === KeyCode.TAB) {
                 this.onTabKeyDown(e);
             } else if (this.handleKeyDown) {
                 this.handleKeyDown(e);

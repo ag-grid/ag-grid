@@ -12,7 +12,7 @@ import {
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams,
     ManagedFocusComponent,
-    Constants
+    KeyCode
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
@@ -79,10 +79,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 e.preventDefault();
-                this.navigateToNextItem(e.keyCode === Constants.KEY_UP);
+                this.navigateToNextItem(e.keyCode === KeyCode.UP);
                 break;
         }
 

@@ -33,6 +33,7 @@ import { iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
+import { KeyCode } from '../keyCode';
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -63,7 +64,7 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsByIndex: { [key: string]: RowComp } = {};
+    private rowCompsByIndex: { [key: string]: RowComp; } = {};
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
 
@@ -424,7 +425,7 @@ export class RowRenderer extends BeanStub {
         // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
         const recycleRows = !this.printLayout && params.recycleRows;
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
-        const rowsToRecycle: { [key: string]: RowComp } = this.binRowComps(recycleRows);
+        const rowsToRecycle: { [key: string]: RowComp; } = this.binRowComps(recycleRows);
 
         this.redraw(rowsToRecycle, animate);
 
@@ -479,10 +480,10 @@ export class RowRenderer extends BeanStub {
         if (this.refreshInProgress) {
             throw new Error(
                 "ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
-                    "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
-                    "this, put the API call into a timeout, eg instead of api.refreshView(), " +
-                    "call setTimeout(function(){api.refreshView(),0}). To see what part of your code " +
-                    "that caused the refresh check this stacktrace."
+                "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
+                "this, put the API call into a timeout, eg instead of api.refreshView(), " +
+                "call setTimeout(function(){api.refreshView(),0}). To see what part of your code " +
+                "that caused the refresh check this stacktrace."
             );
         }
 
@@ -527,7 +528,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        const { flashDelay, fadeDelay }  = params;
+        const { flashDelay, fadeDelay } = params;
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell({ flashDelay, fadeDelay }));
     }
 
@@ -673,8 +674,8 @@ export class RowRenderer extends BeanStub {
         super.destroy();
     }
 
-    private binRowComps(recycleRows: boolean): { [key: string]: RowComp } {
-        const rowsToRecycle: { [key: string]: RowComp } = {};
+    private binRowComps(recycleRows: boolean): { [key: string]: RowComp; } {
+        const rowsToRecycle: { [key: string]: RowComp; } = {};
         let indexesToRemove: string[];
 
         if (recycleRows) {
@@ -720,7 +721,7 @@ export class RowRenderer extends BeanStub {
 
     private removeRowCompsNotToDraw(indexesToDraw: number[]): void {
         // for speedy lookup, dump into map
-        const indexesToDrawMap: { [index: string]: boolean } = {};
+        const indexesToDrawMap: { [index: string]: boolean; } = {};
         indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
 
         const existingIndexes = Object.keys(this.rowCompsByIndex);
@@ -729,7 +730,7 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(indexesNotToDraw);
     }
 
-    private calculateIndexesToDraw(rowsToRecycle: { [key: string]: RowComp }): number[] {
+    private calculateIndexesToDraw(rowsToRecycle: { [key: string]: RowComp; }): number[] {
         // all in all indexes in the viewport
         const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
@@ -753,7 +754,7 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw;
     }
 
-    private redraw(rowsToRecycle?: { [key: string]: RowComp }, animate = false, afterScroll = false) {
+    private redraw(rowsToRecycle?: { [key: string]: RowComp; }, animate = false, afterScroll = false) {
         this.maxDivHeightScaler.updateOffset();
         this.workOutFirstAndLastRowsToRender();
 
@@ -865,7 +866,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterScroll();
     }
 
-    private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: { [key: string]: RowComp }, animate: boolean, afterScroll: boolean): RowComp {
+    private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: { [key: string]: RowComp; }, animate: boolean, afterScroll: boolean): RowComp {
         let rowNode: RowNode;
         let rowComp: RowComp = this.rowCompsByIndex[rowIndex];
 
@@ -909,7 +910,7 @@ export class RowRenderer extends BeanStub {
         return rowComp;
     }
 
-    private destroyRowComps(rowCompsMap: { [key: string]: RowComp }, animate: boolean): void {
+    private destroyRowComps(rowCompsMap: { [key: string]: RowComp; }, animate: boolean): void {
         const delayedFuncs: Function[] = [];
         iterateObject(rowCompsMap, (nodeId: string, rowComp: RowComp) => {
             // if row was used, then it's null
@@ -1128,10 +1129,10 @@ export class RowRenderer extends BeanStub {
             // our current position to be the last cell on the right before finding the
             // the next target.
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                if (key === Constants.KEY_LEFT) {
+                if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }
-            } else if (key === Constants.KEY_RIGHT) {
+            } else if (key === KeyCode.RIGHT) {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
 
@@ -1141,7 +1142,7 @@ export class RowRenderer extends BeanStub {
             hitEdgeOfGrid = missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event && event.keyCode === Constants.KEY_UP) {
+        if (hitEdgeOfGrid && event && event.keyCode === KeyCode.UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,
@@ -1163,7 +1164,7 @@ export class RowRenderer extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if ((userCell as any).floating) {
-                        doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        doOnce(() => { console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {
@@ -1458,7 +1459,7 @@ export class RowRenderer extends BeanStub {
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if ((userCell as any).floating) {
-                        doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        doOnce(() => { console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = (userCell as any).floating;
                     }
                     nextCell = {

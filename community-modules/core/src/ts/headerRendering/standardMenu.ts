@@ -4,9 +4,9 @@ import { IMenuFactory } from '../interfaces/iMenuFactory';
 import { FilterManager } from '../filter/filterManager';
 import { Column } from '../entities/column';
 import { PopupService } from '../widgets/popupService';
-import { Constants } from '../constants';
 import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
+import { KeyCode } from '../keyCode';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -102,7 +102,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (e.keyCode !== Constants.KEY_TAB) { return; }
+        if (e.keyCode !== KeyCode.TAB) { return; }
 
         if (this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) { return; }
 

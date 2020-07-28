@@ -13,6 +13,7 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
+import { KeyCode } from '../keyCode';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -114,17 +115,17 @@ export class HeaderRootComp extends ManagedFocusComponent {
         let direction: HeaderNavigationDirection;
 
         switch (e.keyCode) {
-            case Constants.KEY_LEFT:
+            case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case Constants.KEY_RIGHT:
+            case KeyCode.RIGHT:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction);
                 break;
-            case Constants.KEY_UP:
+            case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case Constants.KEY_DOWN:
+            case KeyCode.DOWN:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
@@ -138,7 +139,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        const { relatedTarget }  = e;
+        const { relatedTarget } = e;
         const eGui = this.getGui();
 
         if (!relatedTarget && eGui.contains(document.activeElement)) { return; }

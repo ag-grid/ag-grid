@@ -28,6 +28,7 @@ import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { setAriaExpanded } from "../../utils/aria";
 import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
+import { KeyCode } from '../../keyCode';
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -108,12 +109,11 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         if (!this.expandable || !wrapperHasFocus) { return; }
 
-        switch (e.keyCode) {
-            case Constants.KEY_ENTER:
-                const column = this.getColumn() as ColumnGroup;
-                const newExpandedValue = !column.isExpanded();
+        if (e.keyCode === KeyCode.ENTER) {
+            const column = this.getColumn() as ColumnGroup;
+            const newExpandedValue = !column.isExpanded();
 
-                this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         }
     }
 

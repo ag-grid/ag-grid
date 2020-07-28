@@ -11,6 +11,7 @@ import { RowPosition } from "./entities/rowPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { missing } from "./utils/generic";
 import { last } from "./utils/array";
+import { KeyCode } from './keyCode';
 
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
@@ -34,27 +35,27 @@ export class CellNavigationService extends BeanStub {
         while (!finished) {
 
             switch (key) {
-                case Constants.KEY_UP :
+                case KeyCode.UP:
                     pointer = this.getCellAbove(pointer);
                     break;
-                case Constants.KEY_DOWN :
+                case KeyCode.DOWN:
                     pointer = this.getCellBelow(pointer);
                     break;
-                case Constants.KEY_RIGHT :
+                case KeyCode.RIGHT:
                     if (this.gridOptionsWrapper.isEnableRtl()) {
                         pointer = this.getCellToLeft(pointer);
                     } else {
                         pointer = this.getCellToRight(pointer);
                     }
                     break;
-                case Constants.KEY_LEFT :
+                case KeyCode.LEFT:
                     if (this.gridOptionsWrapper.isEnableRtl()) {
                         pointer = this.getCellToRight(pointer);
                     } else {
                         pointer = this.getCellToLeft(pointer);
                     }
                     break;
-                default :
+                default:
                     pointer = null;
                     console.warn('ag-Grid: unknown key for navigation ' + key);
                     break;
@@ -130,24 +131,24 @@ export class CellNavigationService extends BeanStub {
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
-                        return {rowIndex: 0, rowPinned: null} as RowPosition;
+                        return { rowIndex: 0, rowPinned: null } as RowPosition;
                     }
 
                     if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                        return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
+                        return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM } as RowPosition;
                     }
 
                     return null;
                 default:
                     // if in the main body, then try pinned bottom, otherwise return nothing
                     if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
-                        return {rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM} as RowPosition;
+                        return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM } as RowPosition;
                     }
                     return null;
             }
         }
 
-        return {rowIndex: index + 1, rowPinned: pinned} as RowPosition;
+        return { rowIndex: index + 1, rowPinned: pinned } as RowPosition;
     }
 
     private getCellBelow(lastCell: CellPosition | null): CellPosition | null {
@@ -184,9 +185,9 @@ export class CellNavigationService extends BeanStub {
     }
 
     public getRowAbove(rowPosition: RowPosition): RowPosition | null {
-            // if already on top row, do nothing
-            const index = rowPosition.rowIndex;
-            const pinned = rowPosition.rowPinned;
+        // if already on top row, do nothing
+        const index = rowPosition.rowIndex;
+        const pinned = rowPosition.rowPinned;
         // if already on top row, do nothing
         if (index === 0) {
             if (pinned === Constants.PINNED_TOP) { return null; }
@@ -232,13 +233,13 @@ export class CellNavigationService extends BeanStub {
     private getLastBodyCell(): RowPosition {
         const lastBodyRow = this.rowModel.getRowCount() - 1;
 
-        return {rowIndex: lastBodyRow, rowPinned: null} as RowPosition;
+        return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
     }
 
     private getLastFloatingTopRow(): RowPosition {
         const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
 
-        return {rowIndex: lastFloatingRow, rowPinned: Constants.PINNED_TOP} as RowPosition;
+        return { rowIndex: lastFloatingRow, rowPinned: Constants.PINNED_TOP } as RowPosition;
     }
 
     public getNextTabbedCell(gridCell: CellPosition, backwards: boolean): CellPosition | null {
@@ -270,7 +271,7 @@ export class CellNavigationService extends BeanStub {
             newFloating = rowBelow ? rowBelow.rowPinned : null;
         }
 
-        return {rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating} as CellPosition;
+        return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating } as CellPosition;
     }
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
@@ -295,7 +296,7 @@ export class CellNavigationService extends BeanStub {
             newFloating = rowAbove ? rowAbove.rowPinned : null;
         }
 
-        return {rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating} as CellPosition;
+        return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating } as CellPosition;
     }
 
 }

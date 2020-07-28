@@ -1,6 +1,5 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
-import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
@@ -13,6 +12,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
+import { KeyCode } from '../keyCode';
 
 @Bean('navigationService')
 export class NavigationService extends BeanStub {
@@ -50,38 +50,38 @@ export class NavigationService extends BeanStub {
         let processed = false;
 
         switch (key) {
-            case Constants.KEY_PAGE_HOME :
-            case Constants.KEY_PAGE_END :
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
                 // handle home and end when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onHomeOrEndKey(key);
                     processed = true;
                 }
                 break;
-            case Constants.KEY_LEFT :
-            case Constants.KEY_RIGHT :
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
                 // handle left and right when ctrl is pressed only
                 if (ctrl && !alt) {
                     this.onCtrlLeftOrRight(key, currentCell);
                     processed = true;
                 }
                 break;
-            case Constants.KEY_UP :
-            case Constants.KEY_DOWN :
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 // handle up and down when ctrl is pressed only
                 if (ctrl && !alt) {
                     this.onCtrlUpOrDown(key, currentCell);
                     processed = true;
                 }
                 break;
-            case Constants.KEY_PAGE_DOWN :
+            case KeyCode.PAGE_DOWN:
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageDown(currentCell);
                     processed = true;
                 }
                 break;
-            case Constants.KEY_PAGE_UP :
+            case KeyCode.PAGE_UP:
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageUp(currentCell);
@@ -204,7 +204,7 @@ export class NavigationService extends BeanStub {
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
-        const upKey = key === Constants.KEY_UP;
+        const upKey = key === KeyCode.UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
@@ -212,7 +212,7 @@ export class NavigationService extends BeanStub {
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
-        const leftKey = key === Constants.KEY_LEFT;
+        const leftKey = key === KeyCode.LEFT;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
 
@@ -222,7 +222,7 @@ export class NavigationService extends BeanStub {
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: number): void {
-        const homeKey = key === Constants.KEY_PAGE_HOME;
+        const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
         const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
