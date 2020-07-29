@@ -1,6 +1,6 @@
 var options = {
     container: document.getElementById('myChart'),
-    autoSize: true,
+    autoSize: false,
     data: generateSpiralData(),
     width: 550,
     height: 550,
