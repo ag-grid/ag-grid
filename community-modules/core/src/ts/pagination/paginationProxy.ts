@@ -282,7 +282,7 @@ export class PaginationProxy extends BeanStub {
         this.topDisplayedRowIndex = this.rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
         // masterRows[masterPageStartIndex].rowIndex;
 
-        if (masterPageEndIndex===masterLastRowIndex) {
+        if (masterPageEndIndex === masterLastRowIndex) {
             // if showing the last master row, then we want to show the very last row of the model
             this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
         } else {
@@ -301,7 +301,7 @@ export class PaginationProxy extends BeanStub {
     private calculatePagesAllRows(): void {
         this.masterRowCount = this.rowModel.getRowCount();
 
-        if (this.masterRowCount===0) {
+        if (this.masterRowCount === 0) {
             this.setZeroRows();
             return;
         }

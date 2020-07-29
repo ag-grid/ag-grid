@@ -27,42 +27,49 @@ export function toStringOrNull(value: any): string | null {
 export function attrToNumber(value: number | string): number | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
-        return undefined;
-    } else if (value === null || value==='') {
+        return;
+    }
+
+    if (value === null || value === '') {
         // null or blank means clear
         return null;
-    } else if (typeof value === 'number') {
-        return isNaN(value) ? undefined : value;
-    } else {
-        const valueParsed = parseInt(value as string);
-        return isNaN(valueParsed) ? undefined : valueParsed;
     }
+
+    if (typeof value === 'number') {
+        return isNaN(value) ? undefined : value;
+    }
+
+    const valueParsed = parseInt(value as string, 10);
+
+    return isNaN(valueParsed) ? undefined : valueParsed;
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function attrToBoolean(value: boolean | string): boolean | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
-        return undefined;
-    } else if (value === null || value==='') {
+        return;
+    }
+
+    if (value === null || value === '') {
         // null means clear
         return false;
-    } else if (value===true || value===false) {
+    }
+
+    if (value === true || value === false) {
         // if simple boolean, return the boolean
         return value;
-    } else {
-        // if equal to the string 'true' (ignoring case) then return true
-        return (/true/i).test(value);
     }
+
+    // if equal to the string 'true' (ignoring case) then return true
+    return (/true/i).test(value);
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
 export function attrToString(value: string): string | undefined {
-    if (value == null || value==='') {
-        return undefined;
-    } else {
-        return value;
-    }
+    if (value == null || value === '') { return; }
+
+    return value;
 }
 
 /** @deprecated */
@@ -120,22 +127,23 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
         return (a > b ? 1 : (a < b ? -1 : 0));
     }
 
-    if (typeof valueA === 'string') {
-        if (!accentedCompare) {
-            return doQuickCompare(valueA, valueB);
-        }
-
-        try {
-            // using local compare also allows chinese comparisons
-            return valueA.localeCompare(valueB);
-        } catch (e) {
-            // if something wrong with localeCompare, eg not supported
-            // by browser, then just continue with the quick one
-            return doQuickCompare(valueA, valueB);
-        }
+    if (typeof valueA !== 'string') {
+        return doQuickCompare(valueA, valueB);
     }
 
-    return doQuickCompare(valueA, valueB);
+    if (!accentedCompare) {
+        return doQuickCompare(valueA, valueB);
+    }
+
+    try {
+        // using local compare also allows chinese comparisons
+        return valueA.localeCompare(valueB);
+    } catch (e) {
+        // if something wrong with localeCompare, eg not supported
+        // by browser, then just continue with the quick one
+        return doQuickCompare(valueA, valueB);
+    }
+
 }
 
 export function find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {

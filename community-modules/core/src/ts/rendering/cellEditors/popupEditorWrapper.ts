@@ -41,7 +41,7 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
         this.params = params;
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
 
-        this.addDestroyFunc(() => this.destroyBean(this.cellEditor) );
+        this.addDestroyFunc(() => this.destroyBean(this.cellEditor));
 
         this.addManagedListener(
             // this needs to be 'super' and not 'this' as if we call 'this',

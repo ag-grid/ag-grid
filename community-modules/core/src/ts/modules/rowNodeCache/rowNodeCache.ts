@@ -162,7 +162,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         const lastRowIndex = block.getDisplayIndexEnd() - 1;
 
         // parent closed means the parent node is not expanded, thus these blocks are not visible
-        const parentClosed = firstRowIndex==null || lastRowIndex==null;
+        const parentClosed = firstRowIndex == null || lastRowIndex == null;
         if (parentClosed) { return false; }
 
         const blockBeforeViewport = firstRowIndex > lastViewportRow;
@@ -308,14 +308,14 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: T[] = [];
-        this.forEachBlockInOrder( (block: T, id: number) => {
+        this.forEachBlockInOrder((block: T, id: number) => {
             const startRow = id * this.cacheParams.blockSize;
             if (startRow >= this.virtualRowCount) {
                 blocksToDestroy.push(block);
             }
         });
         if (blocksToDestroy.length > 0) {
-            blocksToDestroy.forEach( block => this.destroyBlock(block) );
+            blocksToDestroy.forEach(block => this.destroyBlock(block));
         }
     }
 

@@ -12,9 +12,9 @@ export class ColumnDefFactory {
 
         const res: (ColDef | ColGroupDef)[] = [];
 
-        let colGroupDefs: {[id: string]: ColGroupDef} = {};
+        const colGroupDefs: {[id: string]: ColGroupDef} = {};
 
-        cols.forEach( col => {
+        cols.forEach(col => {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -87,7 +87,7 @@ export class ColumnDefFactory {
         colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
 
         colDefCloned.sort = col.getSort() ? col.getSort() : null;
-        colDefCloned.sortIndex = col.getSortIndex()!=null ? col.getSortIndex() : null;
+        colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
 
         return colDefCloned;
     }
