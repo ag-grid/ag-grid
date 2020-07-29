@@ -22,27 +22,28 @@ var gridOptions = {
 };
 
 function clearPinned() {
-    gridOptions.columnApi.setColumnPinned('rowNum', null);
-    gridOptions.columnApi.setColumnPinned('athlete', null);
-    gridOptions.columnApi.setColumnPinned('age', null);
-    gridOptions.columnApi.setColumnPinned('country', null);
-    gridOptions.columnApi.setColumnPinned('total', null);
+    gridOptions.columnApi.applyColumnState({defaultState: {pinned: null}});
 }
 
 function resetPinned() {
-    gridOptions.columnApi.setColumnPinned('rowNum', 'left');
-    gridOptions.columnApi.setColumnPinned('athlete', 'left');
-    gridOptions.columnApi.setColumnPinned('age', 'left');
-    gridOptions.columnApi.setColumnPinned('country', null);
-    gridOptions.columnApi.setColumnPinned('total', 'right');
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            {colId: 'rowNum', pinned: 'left'},
+            {colId: 'athlete', pinned: 'left'},
+            {colId: 'age', pinned: 'left'},
+            {colId: 'country', pinned: 'right'},
+        ],
+        defaultState: {pinned: null}
+    });
 }
 
 function pinCountry() {
-    gridOptions.columnApi.setColumnPinned('rowNum', null);
-    gridOptions.columnApi.setColumnPinned('athlete', null);
-    gridOptions.columnApi.setColumnPinned('age', null);
-    gridOptions.columnApi.setColumnPinned('country', 'left');
-    gridOptions.columnApi.setColumnPinned('total', null);
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            {colId: 'country', pinned: 'left'},
+        ],
+        defaultState: {pinned: null}
+    });
 }
 
 function jumpToCol() {

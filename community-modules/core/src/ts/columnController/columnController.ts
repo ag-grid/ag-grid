@@ -1782,6 +1782,10 @@ export class ColumnController extends BeanStub {
         const previousPivotCols = this.pivotColumns.slice();
 
         if (params.state) {
+            if (!params.state.forEach) {
+                console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.')
+                return;
+            }
             params.state.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState

@@ -229,8 +229,8 @@ export class HeaderRowComp extends Component {
     }
 
     private onVirtualColumnsChanged(): void {
-        const currentChildIds = Object.keys(this.headerComps);
-        const correctChildIds: string[] = [];
+        const compIdsToRemove = Object.keys(this.headerComps);
+        const compIdsWanted: string[] = [];
         const itemsAtDepth = this.getItemsAtDepth();
 
         itemsAtDepth.forEach((child: ColumnGroupChild) => {
@@ -246,36 +246,38 @@ export class HeaderRowComp extends Component {
             const eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
-            const previousComp = this.headerComps[idOfChild];
-            const colAlreadyInDom = previousComp && this.headerComps[idOfChild].getColumn() == child;
+            let previousComp = this.headerComps[idOfChild];
 
-            let headerComp: AbstractHeaderWrapper;
-            let eHeaderCompGui: HTMLElement;
-            if (colAlreadyInDom) {
-                removeFromArray(currentChildIds, idOfChild);
-            } else {
-                // it's possible there is a new Column with the same ID, but it's for a different Column.
-                // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
-                // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
-                // about to replace it in the this.headerComps map.
-                if (previousComp) {
-                    this.destroyChildComponents([idOfChild]);
-                }
-                headerComp = this.createHeaderComp(child);
-                this.headerComps[idOfChild] = headerComp;
-                eHeaderCompGui = headerComp.getGui();
-                eParentContainer.appendChild(eHeaderCompGui);
+            // it's possible there is a new Column with the same ID, but it's for a different Column.
+            // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
+            // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
+            // about to replace it in the this.headerComps map.
+            const previousCompForOldColumn = previousComp && previousComp.getColumn() != child;
+            if (previousCompForOldColumn) {
+                this.destroyChildComponents([idOfChild]);
+                removeFromArray(compIdsToRemove, idOfChild);
+                previousComp = undefined;
             }
 
-            correctChildIds.push(idOfChild);
+            if (previousComp) {
+                // already have comp for this column, so do nothing
+                removeFromArray(compIdsToRemove, idOfChild);
+            } else {
+                // don't have comp, need to create one
+                const headerComp = this.createHeaderComp(child);
+                this.headerComps[idOfChild] = headerComp;
+                eParentContainer.appendChild(headerComp.getGui());
+            }
+
+            compIdsWanted.push(idOfChild);
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(currentChildIds, true);
+        this.destroyChildComponents(compIdsToRemove, true);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
-            const correctChildOrder = correctChildIds.map(id => this.headerComps[id].getGui());
+            const correctChildOrder = compIdsWanted.map(id => this.headerComps[id].getGui());
             setDomChildOrder(this.getGui(), correctChildOrder);
         }
     }

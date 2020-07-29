@@ -83,95 +83,34 @@ function setTitleFormatted(apiName, methodName, paramsName) {
 }
 
 function getActions() {
+
     return [
-        function(api) {
-            api.setSortModel([{ colId: "country", sort: "asc" }]);
-            setTitleFormatted("api", "setSort", "country");
-        },
-        function(api) {
-            api.setSortModel([{ colId: "country", sort: "asc" }, { colId: "year", sort: "asc" }]);
-            setTitleFormatted("api", "setSort", "country, year");
-        },
-        function(api) {
-            api.setSortModel([{ colId: "country", sort: "asc" }, { colId: "year", sort: "desc" }]);
-            setTitleFormatted("api", "setSort", "country, year");
-        },
-        function(api) {
-            api.setSortModel([{ colId: "country", sort: "asc" }]);
-            setTitleFormatted("api", "setSort", "country");
-        },
-        function(api) {
-            api.setSortModel([]);
-            api.setFilterModel({
-                country: {
-                    type: 'set',
-                    values: ["Ireland"]
-                }
+        function(api, columnApi) {
+            columnApi.applyColumnState({
+                state: [{colId: 'country', sort: 'asc'}],
+                defaultState: {sort: null}
             });
-            setTitleFormatted("api", "setFilter", "Ireland");
-        },
-        function(api) {
-            api.setSortModel([{ colId: "year", sort: "asc" }]);
-            setTitleFormatted("api", "setSort", "year");
-        },
-        function(api) {
-            api.setSortModel([{ colId: "year", sort: "desc" }]);
-            setTitleFormatted("api", "setSort", "year");
-        },
-        function(api) {
-            api.setSortModel([]);
-            api.setFilterModel({});
-            setTitleFormatted("api", "clearFilterAndSort", "");
+            setTitleFormatted("api", "applyColumnState", "country: 'asc'");
         },
         function(api, columnApi) {
-            columnApi.setRowGroupColumns(["country", "year"]);
-            columnApi.setColumnVisible("athlete", false);
-            setTitleFormatted("api", "setGrouping", "country, year");
+            columnApi.applyColumnState({
+                state: [{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'asc'}],
+                defaultState: {sort: null}
+            });
+            setTitleFormatted("api", "applyColumnState", "country: 'asc', year 'asc'");
         },
         function(api, columnApi) {
-            columnApi.moveColumns(["gold", "silver", "bronze"], 1);
-            setTitleFormatted("api", "moveColumns", "gold, silver, bronze");
-        },
-        function(api) {
-            var topLevelNodes = api.getModel().getTopLevelNodes();
-            topLevelNodes[2].setExpanded(true);
-            setTitleFormatted("rowNode", "setExpanded", "true");
-        },
-        function(api) {
-            var topLevelNodes = api.getModel().getTopLevelNodes();
-            topLevelNodes[2].childrenAfterSort[1].setExpanded(true);
-            setTitleFormatted("rowNode", "setExpanded", "true");
-        },
-        function(api) {
-            var topLevelNodes = api.getModel().getTopLevelNodes();
-            topLevelNodes[2].childrenAfterSort[1].childrenAfterSort[0].setExpanded(true);
-            setTitleFormatted("rowNode", "setExpanded", "true");
-        },
-        function(api) {
-            var topLevelNodes = api.getModel().getTopLevelNodes();
-            topLevelNodes[2].childrenAfterSort[1].setExpanded(false);
-            setTitleFormatted("rowNode", "setExpanded", "false");
+            columnApi.applyColumnState({
+                state: [{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'desc'}],
+                defaultState: {sort: null}
+            });
+            setTitleFormatted("api", "applyColumnState", "country: 'asc', year: 'desc'");
         },
         function(api, columnApi) {
-            columnApi.setRowGroupColumns([]);
-            columnApi.setColumnVisible("athlete", true);
-            setTitleFormatted("api", "removeGrouping", "");
-        },
-        function(api, columnApi) {
-            columnApi.moveColumns(["gold", "silver", "bronze"], 3);
-            setTitleFormatted("api", "moveColumns", "gold, silver, bronze");
-        },
-        function(api) {
-            api
-                .getModel()
-                .getRow(3)
-                .setRowHeight(100);
-            api.onRowHeightChanged();
-            setTitleFormatted("rowNode", "setRowHeight", "100");
-        },
-        function(api) {
-            api.resetRowHeights();
-            setTitleFormatted("api", "resetRowHeights", "");
+            columnApi.applyColumnState({
+                defaultState: {sort: null}
+            });
+            setTitleFormatted("api", "applyColumnState", "clear sort");
         }
     ];
 }

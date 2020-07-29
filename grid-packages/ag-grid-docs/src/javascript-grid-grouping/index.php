@@ -557,7 +557,7 @@ SNIPPET
     values with something (eg the string 'Empty' or a string with a blank space character i.e. ' ').
 </p>
 
-<h2>Grouping API</h2>
+<h2>Expanding Rows via API</h2>
 
 <?= videoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=750s", "12:30") ?>
 
