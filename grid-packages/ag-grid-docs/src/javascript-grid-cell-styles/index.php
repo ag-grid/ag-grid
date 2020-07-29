@@ -32,25 +32,25 @@ include '../documentation-main/documentation_header.php';
 
 
 <snippet>
-    // return same style for each row
-    var colDef = {
+// return same style for each row
+var colDef = {
     name: 'Static Styles',
     field: 'field1',
     cellStyle: {color: 'red', 'background-color': 'green'}
-    }
-    // return different styles for each row
-    var colDef = {
+}
+// return different styles for each row
+var colDef = {
     name: 'Dynamic Styles',
     field: 'field2',
     cellStyle: function(params) {
-    if (params.value=='Police') {
-    //mark police cells as red
-    return {color: 'red', backgroundColor: 'green'};
-    } else {
-    return null;
+        if (params.value=='Police') {
+            //mark police cells as red
+            return {color: 'red', backgroundColor: 'green'};
+        } else {
+            return null;
+        }
     }
-    }
-    }</snippet>
+}</snippet>
 
 
 <h2>Cell Class</h2>
@@ -61,33 +61,33 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // return same class for each row
-    var colDef1 = {
+// return same class for each row
+var colDef1 = {
     name: 'Static Class',
     field: 'field1',
     cellClass: 'my-class'
-    }
+}
 
-    // return same array of classes for each row
-    var colDef2 = {
+// return same array of classes for each row
+var colDef2 = {
     name: 'Static Array of Classes',
     field: 'field2',
     cellClass: ['my-class1','my-class2']
-    }
+}
 
-    // return class based on function
-    var colDef3 = {
+// return class based on function
+var colDef3 = {
     name: 'Function Returns String',
     field: 'field3',
     cellClass: function(params) { return (params.value==='something'?'my-class-1':'my-class-2'); }
-    }
+}
 
-    // return array of classes based on function
-    var colDef4 = {
+// return array of classes based on function
+var colDef4 = {
     name: 'Function Returns Array',
     field: 'field4',
     cellClass: function(params) { return ['my-class-1','my-class-2']; }
-    }</snippet>
+}</snippet>
 
 
 <h2>Cell Class Rules</h2>
@@ -104,14 +104,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    cellClassRules: {
+cellClassRules: {
     // apply green to 2008
     'rag-green-outer': function(params) { return params.value === 2008},
     // apply amber 2004
     'rag-amber-outer': function(params) { return params.value === 2004},
     // apply red to 2000
     'rag-red-outer': function(params) { return params.value === 2000}
-    }</snippet>
+}</snippet>
 
 <h2>Cell Style, Cell Class & Cell Class Rules Params</h2>
 
@@ -168,11 +168,11 @@ SNIPPET
 </p>
 
 <snippet>
-    cellClassRules: {
+cellClassRules: {
     'rag-green': 'x &lt; 20',
     'rag-amber': 'x &gt;= 20 && x &lt; 25',
     'rag-red': 'x &gt;= 25'
-    }</snippet>
+}</snippet>
 
 <h2>Refresh of Styles</h2>
 
