@@ -11,7 +11,7 @@
 
 <p> Using React Components in the Cell Renderers </p>
 
-<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'generated', ['enterprise' => false, 'onlyShow' => 'react', 'extras' => ['fontawesome', 'bootstrap']]) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'react', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
 
 <h3 id="react-props"> React Props</h3>
 
@@ -60,4 +60,6 @@ class NameCellRenderer extends React.Component {
     If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
+
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'reactFunctional', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
 

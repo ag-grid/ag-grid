@@ -10,7 +10,7 @@
 
 <p> Using VueJS Components in the Cell Renderers </p>
 
-<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'generated', ['enterprise' => false, 'onlyShow' => 'vue', 'extras' => ['fontawesome', 'bootstrap']]) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'vue', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
 
 
 <h3 id="vuejs-methods-lifecycle">VueJS Methods / Lifecycle</h3>

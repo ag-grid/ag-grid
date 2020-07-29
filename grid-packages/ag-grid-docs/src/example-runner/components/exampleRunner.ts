@@ -157,13 +157,19 @@ class ExampleRunnerController {
         const selectedFramework = this.$cookies.get("agGridFramework");
         const selectedRunnerVersion = this.$cookies.get("agGridRunnerVersion");
 
+        let result = null;
         if (this.availableTypes.indexOf(selectedRunnerVersion) > -1) {
-            return selectedRunnerVersion;
+            result = selectedRunnerVersion;
         } else if (this.availableTypes.indexOf(selectedFramework) > -1) {
-            return selectedFramework;
+            result = selectedFramework;
         } else {
-            return this.availableTypes[0];
+            result = this.availableTypes[0];
         }
+
+        if(result === 'reactfunctional') {
+            return 'reactFunctional';
+        }
+        return result;
     }
 
     getInitialImportType(): string {
