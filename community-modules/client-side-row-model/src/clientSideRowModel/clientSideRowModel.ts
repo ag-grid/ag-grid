@@ -79,8 +79,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public init(): void {
 
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
-        const refreshEverythingAfterColsChangedFunc
-            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true, keepRenderedRows: true });
+
+        const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
+                step: Constants.STEP_EVERYTHING, // after cols change, row grouping (the first stage) could of changed
+                afterColumnsChanged: true,
+                keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
+                animate: true
+            });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);

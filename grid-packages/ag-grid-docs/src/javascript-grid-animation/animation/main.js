@@ -32,6 +32,7 @@ var gridOptions = {
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
 function startInterval(api, columnApi) {
+
     var actionIndex = 0;
 
     resetCountdown();
@@ -94,17 +95,17 @@ function getActions() {
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
-                state: [{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'asc'}],
+                state: [{colId: 'year', sort: 'asc'},{colId: 'country', sort: 'asc'}],
                 defaultState: {sort: null}
             });
-            setTitleFormatted("api", "applyColumnState", "country: 'asc', year 'asc'");
+            setTitleFormatted("api", "applyColumnState", "year: 'asc', country 'asc'");
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
-                state: [{colId: 'country', sort: 'asc'},{colId: 'year', sort: 'desc'}],
+                state: [{colId: 'year', sort: 'asc'},{colId: 'country', sort: 'desc'}],
                 defaultState: {sort: null}
             });
-            setTitleFormatted("api", "applyColumnState", "country: 'asc', year: 'desc'");
+            setTitleFormatted("api", "applyColumnState", "year: 'asc', country: 'desc'");
         },
         function(api, columnApi) {
             columnApi.applyColumnState({
@@ -115,50 +116,15 @@ function getActions() {
     ];
 }
 
-var apiGridInitialised = false;
-
 // from actual demo page (/javascript-grid-animation)
 document.addEventListener('DOMContentLoaded', function() {
-    if (apiGridInitialised) {
-        return;
-    }
-    apiGridInitialised = true;
-
     var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
 
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
-            gridOptions.api.setRowData(data);
+            gridOptions.api.setRowData(data.slice(0,50));
             startInterval(gridOptions.api, gridOptions.columnApi);
         });
 });
-
-
-// from homepage (ag-grid.com)
-function initApiGrid() {
-    if (apiGridInitialised) {
-        return;
-    }
-    apiGridInitialised = true;
-
-    var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
-
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-            startInterval(gridOptions.api, gridOptions.columnApi);
-        });
-}
-
-if (document.readyState === "complete") {
-    initApiGrid();
-} else {
-    // to cover scenarios of using this demo on the main webpage, and also the documentation pages,
-    // we cover both events. BUT make sure it's only done once, hence we have the flag apiGridInitialised
-    document.addEventListener("readystatechange", initApiGrid);
-    document.addEventListener("DOMContentLoaded", initApiGrid);
-}
