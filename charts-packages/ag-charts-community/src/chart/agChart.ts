@@ -70,7 +70,7 @@ export abstract class AgChart {
             options.data = data;
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
-        const autoSize = options && options.autoSize;
+        const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
         const chart = create(options, undefined, undefined, theme);
         if (chart) {
@@ -95,7 +95,7 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
-        const autoSize = options && options.autoSize;
+        const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
         update(chart, options, undefined, theme);
         if (autoSize) {
