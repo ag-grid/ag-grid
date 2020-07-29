@@ -35,7 +35,7 @@ CustomHeader.prototype.getGui = function () {
 CustomHeader.prototype.refresh = function (params) {
     this.params = params;
 
-    let res = this.params.enableMenu === this.menuPresent;
+    var res = this.params.enableMenu === this.menuPresent;
 
     console.log('CustomHeader.refresh() -> ' + this.params.column.getId() + ' returning ' + res);
 
