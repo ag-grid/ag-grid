@@ -25,9 +25,7 @@ html {
 }
 
 .container__left {
-    width: 45%;
-    max-width: 500px;
-    min-width: 350px;
+    flex-grow: 1;
 }
 
 .container__options {
@@ -38,7 +36,7 @@ html {
 
 .container__right {
     flex-direction: column;
-    flex-grow: 1;
+    width: 50%;
 }
 
 .container__chart {
@@ -57,6 +55,7 @@ html {
     align-items: center;
     width: 100%;
     height: 100;
+    padding: 10px;
 }
 
 .container__chart .ag-chart-wrapper {
