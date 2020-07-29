@@ -105,6 +105,8 @@ const GridExample = () => {
                         <AgGridReact
                             modules={AllModules}
                             rowData={rowData}
+                            // we use immutableData here to ensure that we only re-render what has changed in the grid
+                            // see https://www.ag-grid.com/javascript-grid-immutable-data/ for more information
                             immutableData={true}
                             getRowNodeId={data => data.row}
                             context={{
