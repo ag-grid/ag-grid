@@ -23,6 +23,7 @@ var gridOptions = {
         minWidth: 200,
         resizable: true,
         floatingFilter: true,
+        menuTabs: ['filterMenuTab'],
     }
 };
 

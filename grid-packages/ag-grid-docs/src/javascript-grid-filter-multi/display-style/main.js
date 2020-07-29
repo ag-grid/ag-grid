@@ -3,10 +3,6 @@ var gridOptions = {
         {
             field: 'athlete',
             filter: 'agMultiColumnFilter',
-        },
-        {
-            field: 'country',
-            filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
                     {
@@ -20,7 +16,7 @@ var gridOptions = {
             }
         },
         {
-            field: 'sport',
+            field: 'country',
             filter: 'agMultiColumnFilter',
             filterParams: {
                 filters: [
@@ -36,11 +32,16 @@ var gridOptions = {
                 ]
             }
         },
+        {
+            field: 'sport',
+            filter: 'agMultiColumnFilter',
+        },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 200,
         resizable: true,
+        menuTabs: ['filterMenuTab'],
     },
     sideBar: {
         toolPanels: [

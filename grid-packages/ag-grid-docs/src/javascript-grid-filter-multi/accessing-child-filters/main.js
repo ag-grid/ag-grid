@@ -23,17 +23,18 @@ var gridOptions = {
         flex: 1,
         minWidth: 200,
         resizable: true,
+        menuTabs: ['filterMenuTab'],
     },
 };
 
 function getTextUiModel() {
     var textFilter = gridOptions.api.getFilterInstance('athlete').getChildFilterInstance(0);
-    console.log('Current Text Filter state: ', textFilter.getModelFromUi());
+    console.log('Current Text Filter model: ', textFilter.getModelFromUi());
 }
 
 function getSetMiniFilter() {
     var setFilter = gridOptions.api.getFilterInstance('athlete').getChildFilterInstance(1);
-    console.log('Current Mini Filter text: ', setFilter.getMiniFilter());
+    console.log('Current Set Filter search text: ', setFilter.getMiniFilter());
 }
 
 // setup the grid after the page has finished loading
