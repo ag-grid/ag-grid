@@ -290,7 +290,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         const { closeOnApply } = this.providedFilterParams;
 
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
-        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+        if (closeOnApply && this.applyActive && !afterFloatingFilter && !afterDataChange) {
             this.close(e);
         }
     }

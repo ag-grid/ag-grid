@@ -67,8 +67,8 @@ class TestFilter extends ProvidedFilter {
         this.modelHasChanged = hasChanged;
     }
 
-    public apply(afterFloatingFilter = false): void {
-        this.onBtApply(afterFloatingFilter);
+    public apply(afterFloatingFilter = false, afterDataChange = false): void {
+        this.onBtApply(afterFloatingFilter, afterDataChange);
     }
 }
 
@@ -145,6 +145,20 @@ describe('closeOnApply', () => {
         filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply(true);
+
+        expect(hidePopup).toHaveBeenCalledTimes(0);
+    });
+
+    it('does not close popup if from change came from data', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.buttons = ['apply'];
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply(false, true);
 
         expect(hidePopup).toHaveBeenCalledTimes(0);
     });
