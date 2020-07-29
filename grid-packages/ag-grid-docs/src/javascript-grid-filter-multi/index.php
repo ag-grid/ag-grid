@@ -145,7 +145,7 @@ SNIPPET
     <a href="../javascript-grid-filter-number/">Number Filter</a>.
 </p>
 
-<?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 635]) ?>
+<?= grid_example('Custom Filters', 'custom-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 635]) ?>
 
 <h2>Multi Filter Model</h2>
 
