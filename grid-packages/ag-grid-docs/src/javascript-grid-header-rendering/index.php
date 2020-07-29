@@ -135,7 +135,7 @@ interface IHeaderComp {
     getGui(): HTMLElement;
 
     // gets called when a new Column Definition has been set for this header
-    refresh(): HTMLElement;
+    refresh(params: IHeaderCompParams): HTMLElement;
 
     // optional method, gets called once, when component is destroyed
     destroy?(): void;
@@ -277,6 +277,22 @@ column.addEventListener('filterChanged', function() {
 myMenuButton.addEventListener('click', function() {
     params.showColumnMenu(myMenuButton);
 });</snippet>
+
+    <h3 id="refresh">Refresh</h3>
+
+    <p>
+        The <code>refresh(params)</code> method gets called when the application updates the Column Definitions.
+        For example the application could set a <code>headerName</code> attribute and then set the Column
+        Definitions again. In this instance, the Header Component should update the displayed header name.
+    </p>
+
+    <p>
+        It is the responsibility of the Header Component to inspect the Column Definition for relevant
+        changes and updated if needed. If the refresh was successful then <code>true</code> should
+        be returned. If the refresh was no successful then <code>false</code> should be returned.
+        If <code>false</code> is returned, then the grid will destroy and recreate the component.
+        This pattern is consistent with the <code>refresh</code> method of Cell Renderers.
+    </p>
 
     <h3 id="complementing-params">Complementing Params</h3>
 

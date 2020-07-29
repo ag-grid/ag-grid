@@ -327,4 +327,49 @@ SNIPPET
     set the grid property <code>suppressColumnStateEvents=true</code>.
 </p>
 
+<h2>Refreshing Headers</h2>
+
+<p>
+    If you are creating your own <a href="../javascript-grid-header-rendering/">Header Components</a> then
+    you will need to be aware of how Header Components are refreshed.
+</p>
+
+<p>
+    All Header Components that still exist after the new Column Definitions are applied (in other words, the
+    Column still exists after the update, it was not removed) will have it's <code>refresh</code> method
+    called.
+</p>
+
+<p>
+    It is up to the Header Component to update based on any changes it may find in the Column Definition.
+</p>
+
+<p>
+    The example below demonstrates refreshing of the headers. Note the following:
+</p>
+<ul>
+    <li>
+        Each column is configured to use a custom Header Component.
+    </li>
+    <li>
+        The Header Component logs to the console
+        when it's methods <code>init</code>, <code>refresh</code> and <code>destroy</code> are called.
+    </li>
+    <li>
+        Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
+        The Header Component refreshes itself and returns <code>true</code>.
+    </li>
+    <li>
+        Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh.
+        The Header Component returns <code>false</code> which results in the component getting destroyed and recreated.
+    </li>
+    <li>
+        Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh.
+        However there is no change to the Header Component as it doesn't depend on resize - the resize UI
+        is provided by the grid.
+    </li>
+</ul>
+
+<?= grid_example('Refresh Headers', 'refresh-headers', 'mixed', ['reactFunctional' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>

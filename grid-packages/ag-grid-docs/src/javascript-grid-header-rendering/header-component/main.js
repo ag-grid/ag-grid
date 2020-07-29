@@ -32,9 +32,6 @@ var gridOptions = {
         headerComponentParams: {
             menuIcon: 'fa-bars'
         }
-    },
-    onFirstDataRendered: function (params) {
-        params.api.sizeColumnsToFit();
     }
 };
 
