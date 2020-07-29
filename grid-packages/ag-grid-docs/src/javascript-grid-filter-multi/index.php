@@ -56,7 +56,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 602, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Floating Filters</h2>
 
@@ -71,7 +71,7 @@ SNIPPET
     apply different child filters from the Multi Filter.
 </p>
 
-<?= grid_example('Floating Filters', 'floating-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Floating Filters', 'floating-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 635, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Display Style</h2>
 
@@ -116,23 +116,23 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The <strong>Athlete</strong> column shows the default behaviour, where all filters are inline.
+        The <strong>Athlete</strong> column demonstrates having the first filter inside a sub-menu.
     </li>
     <li>
-        The <strong>Country</strong> column demonstrates having the first filter inside a sub-menu.
+        The sub-menu for the <strong>Athlete</strong> filter is shown as an accordion inside the Tool Panel.
     </li>
     <li>
-        The sub-menu for the <strong>Country</strong> filter is shown as an accordion inside the Tool Panel.
+        The <strong>Country</strong> column demonstrates having both filters as accordions.
     </li>
     <li>
-        The <strong>Sport</strong> column demonstrates having both filters as accordions.
+        A custom title is used for the first filter in the <strong>Country</strong> column.
     </li>
     <li>
-        A custom title is used for the first filter in the <strong>Sport</strong> column.
+        The <strong>Sport</strong> column shows the default behaviour, where all filters are inline.
     </li>
 </ul>
 
-<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 629, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Custom Filters</h2>
 
@@ -145,35 +145,7 @@ SNIPPET
     <a href="../javascript-grid-filter-number/">Number Filter</a>.
 </p>
 
-<?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
-
-<h2>Accessing Child Filters</h2>
-
-<p>
-    The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order
-    as they are specified in the <code>filters</code> array in the <code>filterParams</code>. If you want to interact
-    with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling
-    <code>getChildFilterInstance(index)</code>,  where <code>index</code> is the same as the index in the
-    <code>filters</code> array. You can then call any API methods that are available on that particular child filter
-    instance.
-</p>
-
-<p>
-    The example below shows how you can access child filter instances and call methods on them:
-</p>
-
-<ul class="content">
-    <li>
-        Clicking the <strong>Print Text Filter model</strong> button will access the Text Filter inside the Multi Filter
-        and print the model from the current UI to the console.
-    </li>
-    <li>
-        Clicking the <strong>Print Mini Filter text</strong> button will access the Set Filter inside the Multi Filter
-        and print the current Mini Filter text to the console.
-    </li>
-</ul>
-
-<?= grid_example('Accessing Child Filters', 'accessing-child-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 635]) ?>
 
 <h2>Multi Filter Model</h2>
 
@@ -217,7 +189,35 @@ SNIPPET
     console and save/restore it using the buttons at the top of the grid
 </p>
 
-<?= grid_example('Multi Filter Model', 'multi-filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Filter Model', 'multi-filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 639, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+
+<h2>Accessing Child Filters</h2>
+
+<p>
+    The Multi Filter acts as a wrapper around a list of child filters inside it. The order of the filters is the same order
+    as they are specified in the <code>filters</code> array in the <code>filterParams</code>. If you want to interact
+    with the individual child filters, you can retrieve a particular child filter instance from the Multi Filter by calling
+    <code>getChildFilterInstance(index)</code>,  where <code>index</code> is the same as the index in the
+    <code>filters</code> array. You can then call any API methods that are available on that particular child filter
+    instance.
+</p>
+
+<p>
+    The example below shows how you can access child filter instances and call methods on them:
+</p>
+
+<ul class="content">
+    <li>
+        Clicking the <strong>Print Text Filter model</strong> button will access the Text Filter inside the Multi Filter
+        and print the model for the current UI to the console.
+    </li>
+    <li>
+        Clicking the <strong>Print Set Filter search text</strong> button will access the Set Filter inside the Multi Filter
+        and print the current search text to the console.
+    </li>
+</ul>
+
+<?= grid_example('Accessing Child Filters', 'accessing-child-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 624, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
 
 <h2>Multi Filter Parameters</h2>
 
