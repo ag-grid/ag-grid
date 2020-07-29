@@ -47,8 +47,6 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
-import { PropertyChangeDetector } from "./propertyChangeDetector";
-import { ColDefChangeDetector } from "./colDefChangeDetector";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -90,7 +88,6 @@ export class ColumnController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
-    @Autowired('colDefChangeDetector') private colDefChangeDetector: ColDefChangeDetector;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -215,11 +212,6 @@ export class ColumnController extends BeanStub {
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
 
         const colsPreviouslyExisted = !!this.columnDefs;
-
-        if (colsPreviouslyExisted) {
-            const defsHaveChanges = this.colDefChangeDetector.areChangesInColDefs(columnDefs, this.columnDefs);
-            if (!defsHaveChanges) { return; }
-        }
 
         this.colDefVersion++;
 

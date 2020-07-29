@@ -89,8 +89,6 @@ import { HeaderNavigationService } from "./headerRendering/header/headerNavigati
 import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
-import { PropertyChangeDetector } from "./columnController/propertyChangeDetector";
-import { ColDefChangeDetector } from "./columnController/colDefChangeDetector";
 
 export interface GridParams {
     // used by Web Components
@@ -290,8 +288,7 @@ export class Grid {
             FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            PropertyChangeDetector, ColDefChangeDetector
+            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
