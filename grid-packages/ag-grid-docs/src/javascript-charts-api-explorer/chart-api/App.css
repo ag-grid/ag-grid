@@ -2,11 +2,18 @@ html {
     box-sizing: border-box;
 }
 
+body {
+    padding: 0;
+    margin: 0;
+}
+
 *, *:before, *:after {
     box-sizing: inherit;
 }
 
 .container {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -17,7 +24,7 @@ html {
 .container__body {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    flex-grow: 1;
 }
 
 .container__head {
@@ -43,8 +50,6 @@ html {
     position: relative;
     overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
     height: 50%;
 }
 
@@ -65,7 +70,10 @@ html {
 }
 
 .container__code {
-    margin-top: 10px;
-    overflow: auto;
+    overflow-y: scroll;
     height: 50%;
+}
+
+.container__code .code {
+    height: 100px;
 }

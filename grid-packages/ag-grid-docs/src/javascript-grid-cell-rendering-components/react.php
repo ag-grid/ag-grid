@@ -1,5 +1,5 @@
 <!-- React from here on -->
-<h2> React Cell Rendering </h2>
+<h2>React Cell Rendering </h2>
 
 <p>
     It is possible to provide React cell renderers for ag-Grid to use if you are are using the
@@ -9,11 +9,11 @@
 
 <h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>
 
-<p> Using React Components in the Cell Renderers </p>
+<p>Using React Components in the Cell Renderers </p>
 
 <?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'react', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
 
-<h3 id="react-props"> React Props</h3>
+<h3 id="react-props">React Props</h3>
 
 <p>
     The React component will get the 'Cell Renderer Params' as described above as its React Props.
@@ -39,7 +39,7 @@ class NameCellRenderer extends React.Component {
     }
 }</snippet>
 
-<h3 id="react-methods-lifecycle"> React Methods / Lifecycle</h3>
+<h3 id="react-methods-lifecycle">React Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the <code>ICellRenderer</code> interface described above are applicable
@@ -53,13 +53,18 @@ class NameCellRenderer extends React.Component {
     <li><code>getGui()</code> is not used. Instead do normal React magic in your <code>render()</code> method..</li>
 </ul>
 
-<h3> Handling Refresh</h3>
+<h3>Handling Refresh</h3>
 
 <p>
     To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.
     If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
+
+<h3>React Hook Cell Renderer</h3>
+
+<p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
+            href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
 
 <?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'reactFunctional', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
 

@@ -830,7 +830,7 @@ export class GridApi {
             return { colId: s.colId, sort: s.sort };
         });
 
-        res.sort((a: any, b: any) => { return indexes[a.colId] - indexes[b.colId]; });
+        res.sort((a: any, b: any) => indexes[a.colId] - indexes[b.colId]);
 
         return res;
     }

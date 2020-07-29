@@ -1006,7 +1006,6 @@ export class ColumnController extends BeanStub {
 
         this.resizeColumnSets(sets, finished, source);
 
-
     }
 
     private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
@@ -2094,25 +2093,25 @@ export class ColumnController extends BeanStub {
             pivotIndexes: { [key: string]: number; },
             source: ColumnEventType
         ): void {
-    
+
             if (!column) { return; }
-    
+
             // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
             column.setVisible(!stateItem.hide, source);
             // sets pinned to 'left' or 'right'
             column.setPinned(stateItem.pinned);
-    
+
             if (stateItem.flex != null && stateItem.flex > 0) {
                 column.setFlex(stateItem.flex);
             }
-    
+
             const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
             if (noFlexThisCol) {
                 if (stateItem.width!=null && stateItem.width>0) {
                     column.setActualWidth(stateItem.width, source);
                 }
             }
-    
+
             if (typeof stateItem.aggFunc === 'string') {
                 column.setAggFunc(stateItem.aggFunc);
                 column.setValueActive(true, source);
@@ -2126,7 +2125,7 @@ export class ColumnController extends BeanStub {
                 column.setAggFunc(null);
                 column.setValueActive(false, source);
             }
-    
+
             if (typeof stateItem.rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
                 column.setRowGroupActive(true, source);
@@ -2134,7 +2133,7 @@ export class ColumnController extends BeanStub {
             } else {
                 column.setRowGroupActive(false, source);
             }
-    
+
             if (typeof stateItem.pivotIndex === 'number') {
                 this.pivotColumns.push(column);
                 column.setPivotActive(true, source);

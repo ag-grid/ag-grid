@@ -88,9 +88,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         // if template changed, then recreate the whole comp, the code required to manage
         // a changing template is to difficult for what it's worth.
-        if (this.workOutTemplate()!=this.currentTemplate) { return false; }
-        if (this.workOutShowMenu()!=this.currentShowMenu) { return false; }
-        if (this.workOutSort()!=this.currentSort) { return false; }
+        if (this.workOutTemplate() != this.currentTemplate) { return false; }
+        if (this.workOutShowMenu() != this.currentShowMenu) { return false; }
+        if (this.workOutSort() != this.currentSort) { return false; }
 
         this.setDisplayName(params);
 
@@ -122,7 +122,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setDisplayName(params: IHeaderParams): void {
-        if (this.currentDisplayName!=params.displayName) {
+        if (this.currentDisplayName != params.displayName) {
             this.currentDisplayName = params.displayName;
             const displayNameSanitised = escapeString(this.currentDisplayName);
             if (this.eText) {
