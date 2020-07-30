@@ -40,7 +40,7 @@
     "exported": "React Support"
   },
   {
-    "title": "Vue Suport",
+    "title": "Vue Support",
     "module": "@ag-grid-community/vue",
     "framework": true,
     "exported": "Vue Support"

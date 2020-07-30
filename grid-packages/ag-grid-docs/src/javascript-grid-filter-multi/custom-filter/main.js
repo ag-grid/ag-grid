@@ -8,8 +8,8 @@ var gridOptions = {
             filterParams: {
                 filters: [
                     {
-                        filter: YearFilter,
-                        floatingFilterComponent: YearFloatingFilter,
+                        filter: 'yearFilter',
+                        floatingFilterComponent: 'yearFloatingFilter',
                     },
                     {
                         filter: 'agNumberColumnFilter'
@@ -24,7 +24,11 @@ var gridOptions = {
         resizable: true,
         floatingFilter: true,
         menuTabs: ['filterMenuTab'],
-    }
+    },
+    components: {
+        yearFilter: YearFilter,
+        yearFloatingFilter: YearFloatingFilter
+    },
 };
 
 // setup the grid after the page has finished loading
