@@ -182,6 +182,10 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLinePath() {
+        if (!this.data) {
+            return;
+        }
+
         const { xAxis, yAxis, data, xData, yData, lineNode } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
@@ -242,6 +246,10 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        if (!this.chart) {
+            return;
+        }
+
         const { marker, xKey, yKey, stroke, strokeWidth } = this;
         const MarkerShape = getMarker(marker.shape);
         const { highlightedDatum } = this.chart;
@@ -349,8 +357,8 @@ export class LineSeries extends CartesianSeries {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: 1,
                     strokeOpacity
                 }

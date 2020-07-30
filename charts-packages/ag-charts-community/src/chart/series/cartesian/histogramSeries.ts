@@ -40,16 +40,16 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-    label: {
+    label?: {
         text: string;
         x: number;
         y: number;
-        fontStyle: FontStyle;
-        fontWeight: FontWeight;
+        fontStyle?: FontStyle;
+        fontWeight?: FontWeight;
         fontSize: number;
         fontFamily: string;
         fill: string;
-    }
+    };
 }
 
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
@@ -294,6 +294,10 @@ export class HistogramSeries extends CartesianSeries {
     private deriveBins(): [number, number][] {
         const { bins, binCount } = this;
 
+        if (!this.data) {
+            return [];
+        }
+
         if (bins && binCount) {
             console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
         }
@@ -366,7 +370,7 @@ export class HistogramSeries extends CartesianSeries {
         const yData = this.binnedData.map(b => b.getY(this.areaPlot));
         const yMinMax = numericExtent(yData);
 
-        this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
+        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
 
         const firstBin = this.binnedData[0];
         const lastBin = this.binnedData[this.binnedData.length - 1];
@@ -452,7 +456,7 @@ export class HistogramSeries extends CartesianSeries {
                 w = xMaxPx - xMinPx,
                 h = Math.abs(yMaxPx - yZeroPx);
 
-            const selectionDatumLabel = y !== 0 && {
+            const selectionDatumLabel = y !== 0 ? {
                 text: labelFormatter({ value: binOfData.aggregatedValue }),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
@@ -461,7 +465,7 @@ export class HistogramSeries extends CartesianSeries {
                 fill: labelColor,
                 x: xMinPx + w / 2,
                 y: yMaxPx + h / 2
-            };
+            } : undefined;
 
             nodeData.push({
                 series: this,
@@ -494,6 +498,9 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     private updateRectNodes(): void {
+        if (!this.chart) {
+            return;
+        }
         const { highlightedDatum } = this.chart;
         const {
             fillOpacity,
@@ -611,8 +618,8 @@ export class HistogramSeries extends CartesianSeries {
                     text: yName || yKey || 'Frequency'
                 },
                 marker: {
-                    fill,
-                    stroke,
+                    fill: fill || 'rgba(0, 0, 0, 0)',
+                    stroke: stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

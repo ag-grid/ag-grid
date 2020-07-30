@@ -208,6 +208,10 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private generateNodeData(): ScatterNodeDatum[] {
+        if (!this.data) {
+            return [];
+        }
+
         const xScale = this.xAxis.scale;
         const yScale = this.yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -256,6 +260,10 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { highlightedDatum } = this.chart;
         const { marker, xKey, yKey, fill, stroke, strokeWidth, fillOpacity, strokeOpacity } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
@@ -371,8 +379,8 @@ export class ScatterSeries extends CartesianSeries {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity,
                     strokeOpacity
                 }

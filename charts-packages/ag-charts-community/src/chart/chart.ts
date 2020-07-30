@@ -762,7 +762,7 @@ export abstract class Chart extends Observable {
         }
 
         let minDistance = Infinity;
-        let closestDatum: SeriesNodeDatum;
+        let closestDatum: SeriesNodeDatum | undefined;
 
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
@@ -835,7 +835,7 @@ export abstract class Chart extends Observable {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum ? pick.node as Shape : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined);
             } else {
                 hideTooltip = true;
             }
@@ -864,7 +864,7 @@ export abstract class Chart extends Observable {
         const { lastPick } = this;
 
         if (lastPick && lastPick.node) {
-            const { datum } = this.lastPick;
+            const { datum } = lastPick;
             datum.series.fireNodeClickEvent(datum);
         }
     }

@@ -264,8 +264,12 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { areaSelectionData, markerSelectionData } = this.generateSelectionData();
+        const selectionData = this.generateSelectionData();
+        if (!selectionData) {
+            return;
+        }
 
+        const { areaSelectionData, markerSelectionData } = selectionData;
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
@@ -273,15 +277,15 @@ export class AreaSeries extends CartesianSeries {
         this.markerSelectionData = markerSelectionData;
     }
 
-    private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
+    private generateSelectionData(): {
+        areaSelectionData: AreaSelectionDatum[],
+        markerSelectionData: MarkerSelectionDatum[]
+    } | undefined {
+        if (!this.data) {
+            return;
+        }
         const {
-            yKeys,
-            data,
-            xData,
-            yData,
-            marker,
-            fills,
-            strokes,
+            yKeys, data, xData, yData, marker, fills, strokes,
             xAxis: { scale: xScale }, yAxis: { scale: yScale }
         } = this;
 
@@ -382,6 +386,10 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateStrokeSelection(areaSelectionData: AreaSelectionDatum[]): void {
+        if (!this.data) {
+            return;
+        }
+
         const { strokes, strokeWidth, strokeOpacity, data, seriesItemEnabled } = this;
         const updateStrokes = this.strokeSelection.setData(areaSelectionData);
 
@@ -435,6 +443,10 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { marker } = this;
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;

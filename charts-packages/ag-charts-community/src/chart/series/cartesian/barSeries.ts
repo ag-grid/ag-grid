@@ -361,6 +361,10 @@ export class BarSeries extends CartesianSeries {
     }
 
     private generateNodeData(): BarNodeDatum[] {
+        if (!this.data) {
+            return [];
+        }
+
         const { xAxis, yAxis, flipXY } = this;
         const xScale = (flipXY ? yAxis : xAxis).scale;
         const yScale = (flipXY ? xAxis : yAxis).scale;
@@ -483,6 +487,10 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateRectNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { fillOpacity, strokeOpacity, shadow, highlightStyle: { fill, stroke } } = this;
         const { highlightedDatum } = this.chart;
 

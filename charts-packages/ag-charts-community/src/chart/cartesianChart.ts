@@ -17,7 +17,7 @@ export class CartesianChart extends Chart {
 
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
-        this.scene.root.visible = false;
+        this.scene.root!!.visible = false;
 
         const root = this.scene.root!;
         root.append(this.seriesRoot);
@@ -38,7 +38,7 @@ export class CartesianChart extends Chart {
             return;
         }
 
-        this.scene.root.visible = true;
+        this.scene.root!!.visible = true;
 
         const { width, height, axes, legend, navigator } = this;
 

@@ -26,10 +26,10 @@ import { PolarChart } from "./polarChart";
 
 const defaultTheme = new AgChartTheme();
 const themes: { [key in string]: AgChartTheme } = {
-    default: defaultTheme,
-    undefined: defaultTheme,
-    null: defaultTheme,
-    dark: new DarkTheme(),
+    'default': defaultTheme,
+    'undefined': defaultTheme,
+    'null': defaultTheme,
+    'dark': new DarkTheme(),
     'material': new MaterialLight(),
     'material-dark': new MaterialDark(),
     'pastel': new PastelLight(),
@@ -40,7 +40,7 @@ const themes: { [key in string]: AgChartTheme } = {
     'vivid-dark': new VividDark()
 };
 
-export function getChartTheme(value: string | AgChartTheme | AgChartThemeOptions): AgChartTheme {
+export function getChartTheme(value?: string | AgChartTheme | AgChartThemeOptions): AgChartTheme {
     if (themes[value as string]) {
         return themes[value as string];
     }
@@ -148,7 +148,11 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
         }
     }
 
-    const mapping = path && getValue(mappings, path);
+    if (!path) {
+        return;
+    }
+
+    const mapping = getValue(mappings, path);
 
     if (mapping) {
         options = provideDefaultOptions(path, options, mapping, theme);
@@ -225,6 +229,10 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
         } else {
             path = options.type;
         }
+    }
+
+    if (!path) {
+        return;
     }
 
     const chart: Chart | undefined = path in mappings ? (component as Chart) : undefined;
@@ -368,6 +376,7 @@ function provideDefaultChartType(options: any): any {
 
 function provideDefaultType(options: any, path?: string): any {
     if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
+        path = '';
         options = provideDefaultChartType(options);
     }
 

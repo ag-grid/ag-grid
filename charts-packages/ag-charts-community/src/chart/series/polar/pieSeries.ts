@@ -129,7 +129,9 @@ export class PieSeries extends PolarSeries {
         this.callout.addEventListener('change', this.scheduleLayout, this);
 
         this.addPropertyListener('data', event => {
-            event.source.seriesItemEnabled = event.value.map(() => true);
+            if (event.value) {
+                event.source.seriesItemEnabled = event.value.map(() => true);
+            }
         });
     }
 
@@ -347,6 +349,10 @@ export class PieSeries extends PolarSeries {
     }
 
     private updateNodes() {
+        if (!this.chart) {
+            return;
+        }
+
         const {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
             outerRadiusOffset, innerRadiusOffset,

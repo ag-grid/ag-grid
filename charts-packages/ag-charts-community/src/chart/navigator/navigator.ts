@@ -80,7 +80,7 @@ export class Navigator {
     constructor(chart: CartesianChart) {
         this.chart = chart;
 
-        chart.scene.root.append(this.rs);
+        chart.scene.root!!.append(this.rs);
         this.rs.onRangeChange = (min, max) => this.updateAxes(min, max);
     }
 

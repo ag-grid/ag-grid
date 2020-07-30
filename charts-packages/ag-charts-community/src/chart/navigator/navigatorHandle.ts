@@ -3,17 +3,17 @@ import { RangeHandle } from "../shapes/rangeHandle";
 export class NavigatorHandle {
     private readonly rh: RangeHandle;
 
-    set fill(value: string) {
+    set fill(value: string | undefined) {
         this.rh.fill = value;
     }
-    get fill(): string {
+    get fill(): string | undefined {
         return this.rh.fill;
     }
 
-    set stroke(value: string) {
+    set stroke(value: string | undefined) {
         this.rh.stroke = value;
     }
-    get stroke(): string {
+    get stroke(): string | undefined {
         return this.rh.stroke;
     }
 

@@ -38,7 +38,10 @@ export class Observable {
             const scopes = new Set<Object>();
             propertyListeners.set(listener, scopes);
         }
-        propertyListeners.get(listener).add(scope);
+        const scopes = propertyListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     }
 
     removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>, scope: Object = this): void {
@@ -48,9 +51,11 @@ export class Observable {
         if (propertyListeners) {
             if (listener) {
                 const scopes = propertyListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    propertyListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        propertyListeners.delete(listener);
+                    }
                 }
             } else {
                 propertyListeners.clear();
@@ -82,7 +87,10 @@ export class Observable {
             const scopes = new Set<Object>();
             eventListeners.set(listener, scopes);
         }
-        eventListeners.get(listener).add(scope);
+        const scopes = eventListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     }
 
     removeEventListener(type: string, listener?: SourceEventListener<this>, scope: Object = this): void {
@@ -92,9 +100,11 @@ export class Observable {
         if (eventListeners) {
             if (listener) {
                 const scopes = eventListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    eventListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        eventListeners.delete(listener);
+                    }
                 }
             } else {
                 eventListeners.clear();
