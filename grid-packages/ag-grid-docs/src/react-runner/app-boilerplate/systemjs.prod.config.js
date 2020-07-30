@@ -1,4 +1,4 @@
-(function (global) {
+(function(global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -18,7 +18,7 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: Object.assign(
+        paths: assign(
             {
                 // paths serve as alias
                 "npm:": "https://unpkg.com/",
@@ -101,7 +101,7 @@
                     react: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);
