@@ -52,16 +52,27 @@ SNIPPET
     the batching of aggregations, sorts and filters.
 </note>
 
-<h2>Flush Transactions</h2>
+<h2>Flush Async Transactions</h2>
 
 <p>
-    The default wait between executing batches is 50ms. This can be changed using the grid
-    property <code>asyncTransactionWaitMillis</code>.
+    The default wait between executing batches is 50ms. This means when an Async Transaction
+    is provided to the grid, it can take up to 50ms for that transaction to be applied.
 </p>
 
 <p>
-    You can also manually flush transactions the transactions waiting to be executed inside
-    the grid. This is done by calling the API <code>flushAsyncTransactions</code>.
+    Sometimes you may want all transactions to be applied before doing something - for example
+    you may want to select a rows in the grid but want to make sure the grid has all the latest
+    row data before doing so.
+</p>
+
+<p>
+    To make sure the grid has no Async Transactions pending, you can flush the Async Transaction
+    queue. This is done by calling the API <code>flushAsyncTransactions</code>.
+</p>
+
+<p>
+    It is also possible to change the wait between executing batches from the default 50ms. This
+    is done using the grid property <code>asyncTransactionWaitMillis</code>.
 </p>
 
 <p>
