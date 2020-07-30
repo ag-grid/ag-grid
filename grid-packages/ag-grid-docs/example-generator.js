@@ -259,6 +259,7 @@ function createExampleGenerator(prefix, importTypes) {
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
         if(type === 'mixed' && providedExamples['react']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']))
         } else {
             const reactScripts = getMatchingPaths('*_react.*');
             const reactConfigs = new Map();
@@ -280,9 +281,11 @@ function createExampleGenerator(prefix, importTypes) {
             let reactDeclarativeScripts = null;
             const reactDeclarativeConfigs = new Map();
             if (vanillaToReactFunctional && options.reactFunctional) {
-                reactDeclarativeScripts = getMatchingPaths('*_react*');
+                const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
+                const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react' ;
+                reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
                 try {
-                    const getSource = vanillaToReactFunctional(bindings, extractComponentFileNames(reactDeclarativeScripts, '_react'));
+                    const getSource = vanillaToReactFunctional(bindings, extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
                     importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);

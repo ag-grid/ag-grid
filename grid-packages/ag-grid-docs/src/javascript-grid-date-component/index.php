@@ -87,6 +87,6 @@ SNIPPET
     Our way of fixing this problem is to add the <code>ag-custom-component-popup</code> class to the floating calendar.
 </p>
 
-<?= grid_example('Custom Date Component', 'custom-date', 'generated', ['extras' => ['fontawesome', 'flatpickr']]) ?>
+<?= grid_example('Custom Date Component', 'custom-date', 'generated', ['extras' => ['fontawesome', 'flatpickr'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
