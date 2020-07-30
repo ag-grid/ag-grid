@@ -53,6 +53,8 @@
 
         function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+        function _assign() { var result = {}; for (var i = 0, len = arguments.length; i < len; i++) { var arg = arguments[i]; for (var prop in arg) { result[prop] = arg[prop]; } } return result; }
+
         var INITIAL_ROWS = 100;
 
         var FrameworkCell =
@@ -128,7 +130,6 @@
             return row.id;
         }
 
-
         function App() {
             var _React$useState = React.useState(initialRowData),
                 _React$useState2 = _slicedToArray(_React$useState, 2),
@@ -147,7 +148,7 @@
             function changeLastRow() {
                 setRowData(function(origRowData) {
                     return origRowData.map(function(row) {
-                        return row.id === id ? { ...row, data: "".concat(row.data, "*") } : row;
+                        return row.id === id ? _assign({}, row, { data: "".concat(row.data, "*") }) : row;
                     });
                 });
             }
