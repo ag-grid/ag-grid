@@ -56,7 +56,7 @@ interface IDateComp {
 
     // Gets called when the component is destroyed. If your custom component needs to do
     // any resource cleaning up, do it here.
-    destroy(): void;
+    destroy(): void; 
 }
 SNIPPET
 , 'ts') ?>
@@ -73,7 +73,7 @@ SNIPPET
 interface IDateParams {
     // Callback method to call when the date has changed
     onDateChanged: () => void;
-}
+} 
 SNIPPET
 , 'ts') ?>
 

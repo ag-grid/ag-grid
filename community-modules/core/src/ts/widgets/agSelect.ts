@@ -100,7 +100,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     public setValue(value: string, silent?: boolean, fromPicker?: boolean): this {
-        if (this.value === value) { return; }
+        if (this.value === value) { return this; }
 
         if (!fromPicker) {
             this.listComponent.setValue(value, true);
@@ -108,12 +108,13 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
         const newValue = this.listComponent.getValue();
 
-        if (newValue === this.getValue()) { return; }
+        if (newValue === this.getValue()) { return this; }
 
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue();
 
         return super.setValue(value, silent);
     }
+
 
     protected destroy(): void {
         if (this.hideList) {

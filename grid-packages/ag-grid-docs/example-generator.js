@@ -260,7 +260,7 @@ function createExampleGenerator(prefix, importTypes) {
 
         if(type === 'mixed' && providedExamples['react']) {
         } else {
-            const reactScripts = getMatchingPaths('*_react*');
+            const reactScripts = getMatchingPaths('*_react.*');
             const reactConfigs = new Map();
 
             try {
@@ -289,7 +289,8 @@ function createExampleGenerator(prefix, importTypes) {
                     throw e;
                 }
 
-                importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', 'react', reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
+                debugger
+                importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', reactScriptPostfix, reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
             }
         }
 
