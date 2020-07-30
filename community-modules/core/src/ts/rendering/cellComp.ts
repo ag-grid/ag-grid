@@ -2131,11 +2131,12 @@ export class CellComp extends Component implements TooltipParentComp {
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-        const cellEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
-        const editingStoppedEvent = Object.assign(cellEvent, {
-            oldValue: oldValue,
-            newValue: newValue
-        });
+        const editingStoppedEvent = {
+            ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
+            oldValue,
+            newValue
+        };
+
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 }

@@ -302,11 +302,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
-    bindings.gridSettings = Object.assign({
+    bindings.gridSettings = {
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-alpine'
-    }, exampleSettings);
+        theme: 'ag-theme-alpine',
+        ...exampleSettings
+    };
 
     return bindings;
 }

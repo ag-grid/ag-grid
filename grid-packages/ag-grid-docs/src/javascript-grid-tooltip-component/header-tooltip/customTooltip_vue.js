@@ -12,11 +12,11 @@ export default Vue.extend({
             </div>
         </div>
         <div class="custom-tooltip" v-else>
-            <p><span>Athletes Name:</span></p>
+            <p><span>Athlete's Name:</span></p>
             <p><span>{{athlete}}</span></p>
         </div>
     `,
-    data: function () {
+    data: function() {
         return {
             athlete: null
         };
@@ -37,7 +37,9 @@ export default Vue.extend({
     },
     methods: {
         setState(obj) {
-            Object.assign(this, obj);
+            const that = this;
+
+            Object.keys(obj).forEach(function(key) { that[key] = obj[key]; });
         }
     }
 });

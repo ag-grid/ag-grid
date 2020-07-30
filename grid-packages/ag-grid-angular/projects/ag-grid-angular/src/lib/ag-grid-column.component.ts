@@ -1,5 +1,5 @@
-import {Component, ContentChildren, Input, QueryList} from "@angular/core";
-import {ColDef} from "ag-grid-community";
+import { Component, ContentChildren, Input, QueryList } from "@angular/core";
+import { ColDef } from "ag-grid-community";
 
 @Component({
     selector: 'ag-grid-column',
@@ -35,9 +35,7 @@ export class AgGridColumn {
     };
 
     private createColDefFromGridColumn(from: AgGridColumn): ColDef {
-        let colDef: ColDef = {};
-        Object.assign(colDef, from);
-        delete (<any>colDef).childColumns;
+        let { childColumns, ...colDef } = from;
         return colDef;
     };
 

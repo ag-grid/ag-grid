@@ -12,7 +12,7 @@ export default Vue.extend({
                 <p>Total: {{total}}</p>
             </div>
         </div>`,
-    data: function () {
+    data: function() {
         return {
             type: null,
             athlete: null,
@@ -27,7 +27,9 @@ export default Vue.extend({
     },
     methods: {
         setState(obj) {
-            Object.assign(this, obj);
+            const that = this;
+
+            Object.keys(obj).forEach(function(key) { that[key] = obj[key]; });
         }
     }
 });
