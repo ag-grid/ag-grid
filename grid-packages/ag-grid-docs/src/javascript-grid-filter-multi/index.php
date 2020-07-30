@@ -56,7 +56,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 602, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 602, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Floating Filters</h2>
 
@@ -132,7 +132,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 629, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 629, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Custom Filters</h2>
 
