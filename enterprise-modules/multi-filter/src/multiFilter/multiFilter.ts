@@ -78,7 +78,8 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             }
         });
 
-        return Promise.all(filterPromises).then(filters => { this.filters = filters; });
+        // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
+        return Promise.all(filterPromises).then(filters => { this.filters = filters; this.refreshGui('columnMenu'); });
     }
 
     private refreshGui(container: ContainerType): void {
