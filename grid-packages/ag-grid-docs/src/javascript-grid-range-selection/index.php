@@ -22,28 +22,31 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Ranges can be selected in the following ways:
-        <ul>
-            <li>
-                <b>Mouse Drag:</b> Click the mouse down on a cell and drag and release the mouse over another cell.
-                A range will be created between the two cells and clear any existing ranges.
-            </li>
-            <li>
-                <b>Ctrl & Mouse Drag:</b> Holding <b>Ctrl</b> key while creating a range using mouse drag
-                will create a new range selection and keep any existing ranges.
-            </li>
-            <li>
-                <b>Shift & Click:</b> Clicking on one cell to focus that cell, then holding down <b>Shift</b>
-                while clicking another cell, will create a range between both cells.
-            </li>
-            <li>
-                <b>Shift & Arrow Keys:</b> Focusing a cell and then holding down <b>Shift</b> and using
-                the arrow keys will create a range starting from the focused cell.
-            </li>
+    <ul class="content">
+        <li>
+            <b>Mouse Drag:</b> Click the mouse down on a cell and drag and release the mouse over another cell.
+            A range will be created between the two cells and clear any existing ranges.
+        </li>
+        <li>
+            <b>Ctrl & Mouse Drag:</b> Holding <b>Ctrl</b> key while creating a range using mouse drag
+            will create a new range selection and keep any existing ranges.
+        </li>
+        <li>
+            <b>Shift & Click:</b> Clicking on one cell to focus that cell, then holding down <b>Shift</b>
+            while clicking another cell, will create a range between both cells.
+        </li>
+        <li>
+            <b>Shift & Arrow Keys:</b> Focusing a cell and then holding down <b>Shift</b> and using
+            the arrow keys will create a range starting from the focused cell.
+        </li>
 
-        </ul>
+    </ul>
     </p>
 
-    <h3>Example: Range Selection</h2>
+
+    <p>
+        Range Selection is enabled using the following grid option property <code>enableRangeSelection=true</code>.
+    </p>
 
     <p>
         The example below demonstrates simple range selection. Ranges can be selected in all the ways
@@ -52,11 +55,15 @@ include '../documentation-main/documentation_header.php';
 
     <?= grid_example('Range Selection', 'range-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
-    <h3>Example: Suppress Multi Range Selection</h3>
+    <h2>Suppress Multi Range Selection</h2>
 
     <p>
-        This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows
-        one range selection even if the <b>Ctrl</b> key is held down.
+        By default multiple ranges can be selected. To restrict range selection to a single range, even
+        if the <b>Ctrl</b> key is held down, enable the following grid options property: <code>suppressMultiRangeSelection=true</code>.
+    </p>
+
+    <p>
+        The following example demonstrates single range selection:
     </p>
 
     <?= grid_example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
@@ -216,7 +223,7 @@ interface AddCellRangeParams {
         copying from the clipboard.
     </p>
 
-    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
 
 </div>
