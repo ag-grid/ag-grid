@@ -25,7 +25,7 @@ import { createIconNoSpan } from "../../utils/icon";
 import { isKeyPressed } from "../../utils/keyboard";
 import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
-import { setAriaExpanded } from "../../utils/aria";
+import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
@@ -45,14 +45,14 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
 export class GroupCellRenderer extends Component implements ICellRendererComp {
 
-    private static TEMPLATE =
-        '<span class="ag-cell-wrapper">' +
-        '<span class="ag-group-expanded" ref="eExpanded"></span>' +
-        '<span class="ag-group-contracted" ref="eContracted"></span>' +
-        '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
-        '<span class="ag-group-value" ref="eValue"></span>' +
-        '<span class="ag-group-child-count" ref="eChildCount"></span>' +
-        '</span>';
+    private static TEMPLATE = /* html */
+        `<span class="ag-cell-wrapper">
+            <span class="ag-group-expanded" ref="eExpanded"></span>
+            <span class="ag-group-contracted" ref="eContracted"></span>
+            <span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>
+            <span class="ag-group-value" ref="eValue"></span>
+            <span class="ag-group-child-count" ref="eChildCount"></span>
+        </span>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
@@ -409,7 +409,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 
-        setAriaExpanded(eGroupCell, params.node.expanded);
+        setAriaExpanded(eGroupCell, !!params.node.expanded);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
@@ -543,23 +543,24 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private showExpandAndContractIcons(): void {
-        const rowNode = this.params.node;
+        const { eContracted, eExpanded, params, displayedGroup, columnController } = this;
+        const { eGridCell, node } = params;
 
         if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
-            const expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
-            setDisplayed(this.eContracted, !expanded);
-            setDisplayed(this.eExpanded, expanded);
+            const expanded = this.draggedFromHideOpenParents ? true : node.expanded;
+            setDisplayed(eContracted, !expanded);
+            setDisplayed(eExpanded, expanded);
         } else {
             // it not expandable, show neither
-            setDisplayed(this.eExpanded, false);
-            setDisplayed(this.eContracted, false);
+            removeAriaExpanded(eGridCell);
+            setDisplayed(eExpanded, false);
+            setDisplayed(eContracted, false);
         }
 
-        const displayedGroup = this.displayedGroup;
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        const pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
         const notExpandable = !displayedGroup.isExpandable();
         const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
 

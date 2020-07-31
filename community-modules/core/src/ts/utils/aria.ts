@@ -59,6 +59,10 @@ export function setAriaExpanded(element: HTMLElement, expanded: boolean): void {
     setAriaAttribute(element, 'expanded', expanded);
 }
 
+export function removeAriaExpanded(element: HTMLElement): void {
+    removeAriaAttribute(element, 'expanded');
+}
+
 export function setAriaSetSize(element: HTMLElement, setsize: number): void {
     setAriaAttribute(element, 'setsize', setsize);
 }

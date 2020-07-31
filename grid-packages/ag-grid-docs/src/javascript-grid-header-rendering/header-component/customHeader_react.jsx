@@ -65,10 +65,6 @@ export default class CustomHeader extends Component {
         });
     }
 
-    onMenuClick() {
-        this.props.showColumnMenu(this.menuButton);
-    }
-
     onSortRequested(order, event) {
         this.props.setSort(order, event.shiftKey);
     }
