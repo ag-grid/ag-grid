@@ -10,9 +10,9 @@ const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const {generateExamples} = require('./example-generator');
-const {updateBetweenStrings, getAllModules} = require('./utils');
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const { generateExamples } = require('./example-generator');
+const { updateBetweenStrings, getAllModules } = require('./utils');
+const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
 
 const flattenArray = array => [].concat.apply([], array);
 
@@ -253,7 +253,7 @@ function watchAndGenerateExamples() {
         console.log("Docs contents haven't changed - skipping example generation");
     }
 
-    chokidar.watch([`./src/**/*.{php,html,css,js}`], {ignored: ['**/_gen/**/*']}).on('change', regenerateExamplesForFileChange);
+    chokidar.watch([`./src/**/*.{php,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -458,7 +458,7 @@ const getLernaChainBuildInfo = async (skipFrameworks) => {
     if (skipFrameworks) {
         // if we're skipping frameworks then only return "legacy" packages (ie ag-grid-community)
         const excludeFrameworksFilter = dependent => dependent === 'ag-grid-community' || dependent === 'ag-grid-enterprise' || dependent === 'ag-charts-community';
-        filterBuildChain(excludeFrameworksFilter)
+        filterBuildChain(excludeFrameworksFilter);
     } else {
         // we filter out all "core" modules as they'll be dealt with by TSC itself
         // this will leave us with frameworks and "legacy" packages like ag-grid-community
@@ -583,7 +583,7 @@ function moduleChanged(moduleRoot) {
 
 function updateModuleChangedHash(moduleRoot) {
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
-        const npm = WINDOWS ? 'npm.cmd' : 'npm';
+    const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
     cp.spawnSync(npm, ['run', 'hash'], {
         cwd: resolvedPath
@@ -705,7 +705,7 @@ const readModulesState = () => {
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
+                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
             });
     });
 
@@ -729,7 +729,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             });
 
             // Formatting code when generating examples takes ages, so disable it for local development.
-            if(skipExampleFormatting) {
+            if (skipExampleFormatting) {
                 console.log("Skipping example formatting");
                 process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
             }

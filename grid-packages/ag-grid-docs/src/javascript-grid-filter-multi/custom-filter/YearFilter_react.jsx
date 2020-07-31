@@ -5,12 +5,12 @@ export default class YearFilter extends Component {
         super(props);
 
         this.state = {
-            isFilterActive: false,
+            isActive: false,
         };
     }
 
-    toggleFilter = isFilterActive => {
-        this.setState({ isFilterActive }, () => this.props.filterChangedCallback());
+    toggleFilter = isActive => {
+        this.setState({ isActive }, () => this.props.filterChangedCallback());
     };
 
     doesFilterPass = params => {
@@ -18,7 +18,7 @@ export default class YearFilter extends Component {
     };
 
     isFilterActive = () => {
-        return this.state.isFilterActive;
+        return this.state.isActive;
     };
 
     getModel = () => {
@@ -37,10 +37,10 @@ export default class YearFilter extends Component {
         return (
             <div class="year-filter">
                 <label>
-                    <input type="radio" checked={!this.state.isFilterActive} onChange={() => this.toggleFilter(false)} /> All
+                    <input type="radio" checked={!this.state.isActive} onChange={() => this.toggleFilter(false)} /> All
                 </label>
                 <label>
-                    <input type="radio" checked={this.state.isFilterActive} onChange={() => this.toggleFilter(true)} /> After 2004
+                    <input type="radio" checked={this.state.isActive} onChange={() => this.toggleFilter(true)} /> After 2004
                 </label>
             </div>
         );
