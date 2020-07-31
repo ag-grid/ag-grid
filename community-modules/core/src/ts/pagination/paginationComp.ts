@@ -227,7 +227,7 @@ export class PaginationComp extends Component {
     private setTotalLabels() {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
-        const rowCount = this.paginationProxy.isLastPageFound() ?
+        const rowCount = lastPageFound ?
             this.paginationProxy.getMasterRowCount() : null;
 
         if (lastPageFound) {

@@ -241,6 +241,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private setZeroRows(): void {
+        this.masterRowCount = 0;
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = -1;
         this.currentPage = 0;
@@ -255,7 +256,8 @@ export class PaginationProxy extends BeanStub {
 
         this.masterRowCount = this.rowModel.getTopLevelRowCount();
 
-        if (this.masterRowCount === 0) {
+        // we say <=0 (rather than =0) as viewport returns -1 when no rows
+        if (this.masterRowCount <= 0) {
             this.setZeroRows();
             return;
         }
