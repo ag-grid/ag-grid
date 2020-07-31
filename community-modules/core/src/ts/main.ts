@@ -267,6 +267,7 @@ export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/he
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
 export {
     IAggFunc,
+    IAggFuncParams,
     ColGroupDef,
     ColDef,
     AbstractColDef,

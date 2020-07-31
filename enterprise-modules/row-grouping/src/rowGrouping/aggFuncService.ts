@@ -7,7 +7,8 @@ import {
     IAggFunc,
     IAggFuncService,
     PostConstruct,
-    _
+    _,
+    IAggFuncParams
 } from "@ag-grid-community/core";
 
 @Bean('aggFuncService')
@@ -91,34 +92,34 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     }
 }
 
-function aggSum(input: any[]): any {
-    return input
+function aggSum(params: IAggFuncParams): any {
+    return params.values
         .filter(value => typeof value === 'number')
         .reduce((sum, value) => sum === null ? value : sum + value, null);
 }
 
-function aggFirst(input: any[]): any {
-    return input.length > 0 ? input[0] : null;
+function aggFirst(params: IAggFuncParams): any {
+    return params.values.length > 0 ? params.values[0] : null;
 }
 
-function aggLast(input: any[]): any {
-    return input.length > 0 ? _.last(input) : null;
+function aggLast(params: IAggFuncParams): any {
+    return params.values.length > 0 ? _.last(params.values) : null;
 }
 
-function aggMin(input: any[]): any {
-    return input
+function aggMin(params: IAggFuncParams): any {
+    return params.values
         .filter(value => typeof value === 'number')
         .reduce((min, value) => min === null || value < min ? value : min, null);
 }
 
-function aggMax(input: any[]): any {
-    return input
+function aggMax(params: IAggFuncParams): any {
+    return params.values
         .filter(value => typeof value === 'number')
         .reduce((max, value) => max === null || value > max ? value : max, null);
 }
 
-function aggCount(input: any[]): any {
-    const value = input.reduce((count, item) => {
+function aggCount(params: IAggFuncParams): any {
+    const value = params.values.reduce((count, item) => {
         const isGroupAgg = _.exists(item) && typeof item.value === 'number';
 
         return count + (isGroupAgg ? item.value : 1);
@@ -138,9 +139,9 @@ function aggCount(input: any[]): any {
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(input: any[]): any {
+function aggAvg(params: IAggFuncParams): any {
     // the average will be the sum / count
-    const { sum, count } = input.reduce(({ sum, count }, item) => {
+    const { sum, count } = params.values.reduce(({ sum, count }, item) => {
         const itemIsGroupResult = _.exists(item) &&
             typeof item.value === 'number' &&
             typeof item.count === 'number';

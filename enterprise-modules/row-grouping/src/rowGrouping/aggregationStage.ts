@@ -13,6 +13,7 @@ import {
     GridApi,
     ColumnApi,
     ChangedPath,
+    IAggFuncParams,
     _
 } from "@ag-grid-community/core";
 import { PivotStage } from "./pivotStage";
@@ -247,25 +248,47 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     }
 
     public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode): any {
-        const aggFunction = typeof aggFuncOrString === 'string' ? 
+        const aggFunc = typeof aggFuncOrString === 'string' ?
             this.aggFuncService.getAggFunc(aggFuncOrString) : 
             aggFuncOrString;
 
-        if (typeof aggFunction !== 'function') {
+        if (typeof aggFunc !== 'function') {
             console.error(`ag-Grid: unrecognised aggregation function ${aggFuncOrString}`);
             return null;
         }
 
-        const aggFuncAny = aggFunction as any;
+        const deprecationWarning = () => {
+            _.doOnce(()=> {
+                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. please move your aggregation function to use params.values')
+            }, 'aggregationStage.aggregateValues Deprecation');
+        };
 
-        return aggFuncAny(values, {
+        const aggFuncAny = aggFunc as IAggFunc;
+        const params: IAggFuncParams = {
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
             rowNode: rowNode,
             data: rowNode ? rowNode.data : undefined,
             api: this.gridApi,
-            columnApi: this.columnApi
-        });
+            columnApi: this.columnApi,
+            // the three things below are for logging warning messages in case anyone is treating
+            // the params object as an array. in previous grid versions, we didn't pass params object,
+            // but passed values array instead.
+            forEach: (callback: (value: any, index: number, array: any[]) => void, thisArg?: any) => {
+                deprecationWarning();
+                return values.forEach(callback, thisArg);
+            },
+            get length() {
+                deprecationWarning();
+                return values.length;
+            },
+            set length(val: number) {
+                deprecationWarning();
+                values.length = val;
+            }
+        } as any; // the "as any" is needed to allow the deprecation warning messages
+
+        return aggFuncAny(params);
     }
 }

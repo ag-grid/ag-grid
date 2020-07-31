@@ -65,7 +65,17 @@ export interface ColGroupDef extends AbstractColDef {
 }
 
 export interface IAggFunc {
-    (input: any[]): any;
+    (params: IAggFuncParams): any;
+}
+
+export interface IAggFuncParams {
+    values: any[];
+    column: Column;
+    colDef: ColDef;
+    rowNode: RowNode;
+    data: any;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 /***********************************************************************
