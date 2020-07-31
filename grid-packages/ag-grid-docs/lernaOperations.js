@@ -147,7 +147,7 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
 const extractCssBuildChain = (buildChainInfo) => {
     return {
         paths: buildChainInfo.paths
-            .filter(path => path.includes('community-modules/core'))
+            .filter(path => path.includes('community-modules/core') || path.includes('community-modules\\core'))
             .map(path => `${path}/src/styles`),
         buildChains: {
             "@ag-grid-community/core": {
