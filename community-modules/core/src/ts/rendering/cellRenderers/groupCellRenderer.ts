@@ -409,7 +409,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const eExpandedIcon = createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 
-        setAriaExpanded(eGroupCell, params.node.expanded);
+        setAriaExpanded(eGroupCell, !!params.node.expanded);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
