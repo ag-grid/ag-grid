@@ -460,8 +460,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
         details: GroupingDetails): RowNode {
 
-        const mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] as RowNode : undefined;
+        const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
+
+        const map = parentGroup.childrenMapped;
+        // we use hasOwnProperty as otherwise things like 'constructor' would fail as a key,
+        // as javascript map already has an inherited property 'constructor
+        const nodeExists = map && map.hasOwnProperty(key);
+        let nextNode = nodeExists ? map[key] as RowNode : undefined;
+
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
