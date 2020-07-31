@@ -92,4 +92,4 @@ SNIPPET
     Using Angular Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
 </p>
 
-<?= grid_example('Angular Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'angular', 'extras' => ['bootstrap']]) ?>
+<?= grid_example('Angular Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'angular', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>
