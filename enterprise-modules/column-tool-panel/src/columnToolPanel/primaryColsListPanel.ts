@@ -288,7 +288,11 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         } else {
             // we don't want to change visibility on lock visible columns
             const primaryCols = this.columnApi.getPrimaryColumns();
-            const colsToChange = primaryCols.filter(col => !col.getColDef().lockVisible);
+
+            const filterColsToChange = (col: Column) =>
+                !col.getColDef().lockVisible && !col.getColDef().suppressColumnsToolPanel;
+
+            const colsToChange = primaryCols.filter(filterColsToChange);
 
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
@@ -311,8 +315,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
 
                 // update select all header with new state
-                const selectionState = this.selectAllChecked ? true : false;
-                this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
+                this.dispatchEvent({ type: 'selectionChanged', state: this.selectAllChecked });
             }
         }
     }
@@ -354,22 +357,12 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 checked = col.isVisible();
             }
 
-            if (checked) {
-                checkedCount++;
-            } else {
-                uncheckedCount++;
-            }
+            checked ?checkedCount++ : uncheckedCount++;
         });
 
-        if (checkedCount > 0 && uncheckedCount > 0) {
-            return undefined;
-        }
+        if (checkedCount > 0 && uncheckedCount > 0) return undefined;
 
-        if (checkedCount === 0 || uncheckedCount > 0) {
-            return false;
-        }
-
-        return true;
+        return !(checkedCount === 0 || uncheckedCount > 0);
     }
 
     public setFilterText(filterText: string) {
