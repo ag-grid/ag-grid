@@ -20,8 +20,7 @@ export default Vue.extend({
                 </div>
             </form>
         </div>
-    `,
-    data: function () {
+    `,data: function () {
         return {
             callsCount: 0,
             now: ''
@@ -30,7 +29,7 @@ export default Vue.extend({
     beforeMount() {
     },
     mounted() {
-        this.callsCount = this.params.data.call;
+        this.callsCount = this.params.data.calls;
         this.now = new Date().toLocaleTimeString();
     },
     methods: {
@@ -38,8 +37,8 @@ export default Vue.extend({
         refresh(params) {
             // check and see if we need to get the grid to tear this
             // component down and update it again
-            console.log('d');
-            if (params.data.calls!=this.callsCount) {
+            console.log(params.data.calls, this.callsCount, params.data.calls!=this.callsCount);
+            if (params.data.calls!=this._data.callsCount) {
                 return false;
             } else {
                 return true;
