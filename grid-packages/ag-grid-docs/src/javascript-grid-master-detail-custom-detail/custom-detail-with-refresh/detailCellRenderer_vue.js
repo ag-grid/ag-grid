@@ -37,7 +37,6 @@ export default Vue.extend({
         refresh(params) {
             // check and see if we need to get the grid to tear this
             // component down and update it again
-            console.log(params.data.calls, this.callsCount, params.data.calls!=this.callsCount);
             if (params.data.calls!=this._data.callsCount) {
                 return false;
             } else {
