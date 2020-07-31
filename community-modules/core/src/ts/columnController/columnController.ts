@@ -1796,7 +1796,10 @@ export class ColumnController extends BeanStub {
                 const column = this.getPrimaryColumn(state.colId);
 
                 if (!column) {
-                    console.warn('ag-grid: column ' + state.colId + ' not found');
+                    // we don't log the failure, as it's possible the user is applying that has extra
+                    // cols in it. for example they could of save while row-grouping (so state includes
+                    // auto-group column) and then applied state when not grouping (so the auto-group
+                    // column would be in the state but no used).
                     success = false;
                 } else {
                     this.syncColumnWithStateItem(column, state, params.defaultState, rowGroupIndexes,
