@@ -491,8 +491,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
 
-        this.getRowNodes(draggingEvent).forEach(rowNode => {
-            rowNode.setDragging(false);
-        });
+        if (this.getRowNodes(draggingEvent)) { 
+            this.getRowNodes(draggingEvent).forEach(rowNode => {
+                rowNode.setDragging(false);
+            });
+        }
     }
 }
