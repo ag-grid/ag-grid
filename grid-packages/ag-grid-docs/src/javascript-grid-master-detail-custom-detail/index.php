@@ -97,4 +97,44 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 
 </snippet>
 
+<h2>Refreshing</h2>
+
+<p>
+    When data is updated in the grid using
+    <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>, the grid will call
+    refresh on all Detail Cell Renderer's.
+</p>
+
+<p>
+    It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the
+    <code>refresh()</code> method returns <code>true</code>, the grid will assume the Detail Cell Renderer has
+    refreshed successfully and nothing more will happen. However if <code>false</code> is returned,
+    the grid will destroy the Detail Cell Renderer and re-create it again.
+</p>
+
+<p>
+    This pattern is similar to how refresh works for normal grid Cell Renderer's.
+</p>
+
+<p>
+    The example below shows how components can optionally refresh on updates. The example
+    refreshes the first row every one second. The <code>refresh()</code> method gets called on all
+    Detail Cell Renderers after the transaction is applied. Only the first Detail Cell Renderer
+    returns <code>false</code> so it is the only one that updates.
+</p>
+
+<p>
+    The creation time is printed to each Detail Cell Renderer so it can be noted when it was
+    last created.
+</p>
+
+<p>
+    In this simple example, it would be possible for the components to just update themselves
+    and not rely on the grid destroying and re-creating the components. However the example is
+    contrived to demonstrate returning <code>true</code> vs <code>false</code> from the
+    refresh method.
+</p>
+
+<?= grid_example('Custom Detail with Refresh', 'custom-detail-with-refresh', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>
