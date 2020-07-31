@@ -132,11 +132,9 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public refreshAfterAnyFilterChanged(): Promise<void> {
-        if (this.showAvailableOnly()) {
-            return this.allValuesPromise.then(values => this.updateAvailableValues(values));
-        }
-
-        return Promise.resolve();
+        return this.showAvailableOnly() ?
+            this.allValuesPromise.then(values => this.updateAvailableValues(values)) :
+            Promise.resolve();
     }
 
     private updateAllValues(): Promise<string[]> {

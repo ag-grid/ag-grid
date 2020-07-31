@@ -755,9 +755,11 @@ export class GridApi {
 
     public getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp {
         const column = this.columnController.getPrimaryColumn(key);
+
         if (column) {
             const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
             const currentValue = filterPromise.resolveNow<IFilterComp>(null, filterComp => filterComp);
+
             if (callback) {
                 if (currentValue) {
                     setTimeout(callback, 0, currentValue);
@@ -765,6 +767,7 @@ export class GridApi {
                     filterPromise.then(callback);
                 }
             }
+
             return currentValue;
         }
     }

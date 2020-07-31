@@ -454,7 +454,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onAnyFilterChanged(): void {
-        this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh());
+        // don't block the current action when updating the values for this filter
+        setTimeout(() => this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh()), 0);
     }
 
     private updateSelectAllCheckbox(): void {
