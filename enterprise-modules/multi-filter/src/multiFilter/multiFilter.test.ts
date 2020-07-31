@@ -67,7 +67,7 @@ beforeEach(() => {
     eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement');
     filterManager = mock<FilterManager>('createFilterParams');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
-    context = mock<Context>('createBean');
+    context = mock<Context>('createBean', 'destroyBean');
 
     colDef = mock<ColDef>();
     column = mock<Column>('getColDef');
@@ -85,8 +85,11 @@ describe('init', () => {
         createFilter();
 
         expect(userComponentFactory.newFilterComponent).toHaveBeenCalledTimes(2);
-        expect(userComponentFactory.newFilterComponent.mock.calls[0][0]).toMatchObject({ filter: 'agTextColumnFilter' });
-        expect(userComponentFactory.newFilterComponent.mock.calls[1][0]).toMatchObject({ filter: 'agSetColumnFilter' });
+
+        const { calls } = userComponentFactory.newFilterComponent.mock;
+
+        expect(calls[0][0]).toMatchObject({ filter: 'agTextColumnFilter' });
+        expect(calls[1][0]).toMatchObject({ filter: 'agSetColumnFilter' });
     });
 });
 
@@ -458,6 +461,12 @@ describe('afterGuiAttached', () => {
         expect(eGui.appendChild).toHaveBeenCalledTimes(3);
     });
 
+    const getMostRecentlyAppendedElement = (): HTMLElement => {
+        const { calls } = eGui.appendChild.mock;
+
+        return calls[calls.length - 1][0] as HTMLElement;
+    };
+
     it('presents the filter inside a sub-menu if configured', () => {
         const filter = createFilter({
             filters: [{
@@ -468,9 +477,7 @@ describe('afterGuiAttached', () => {
 
         filter.afterGuiAttached({ container: 'columnMenu' });
 
-        const { calls } = eGui.appendChild.mock;
-
-        expect((calls[0][0] as HTMLElement).classList).toContain('ag-compact-menu-option');
+        expect(getMostRecentlyAppendedElement().classList).toContain('ag-compact-menu-option');
     });
 
     it('presents the filter inside an accordion if sub-menu is configured but filter is opened in tool panel', () => {
@@ -483,9 +490,7 @@ describe('afterGuiAttached', () => {
 
         filter.afterGuiAttached({ container: 'toolPanel' });
 
-        const { calls } = eGui.appendChild.mock;
-
-        expect((calls[0][0] as HTMLElement).classList).toContain('ag-multi-filter-group');
+        expect(getMostRecentlyAppendedElement().classList).toContain('ag-multi-filter-group');
     });
 
     it('presents the filter inside an accordion if configured', () => {
@@ -498,9 +503,7 @@ describe('afterGuiAttached', () => {
 
         filter.afterGuiAttached({ container: 'columnMenu' });
 
-        const { calls } = eGui.appendChild.mock;
-
-        expect((calls[0][0] as HTMLElement).classList).toContain('ag-multi-filter-group');
+        expect(getMostRecentlyAppendedElement().classList).toContain('ag-multi-filter-group');
     });
 
     it('presents the filter inside an sub-menu with custom title if configured', () => {
