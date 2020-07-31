@@ -585,6 +585,10 @@
             "default": false,
             "description": "Set to <code>true</code> to always show the vertical scrollbar."
         },
+        "debounceVerticalScrollbar": {
+            "default": false,
+            "description": "Set to <code>true</code> to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, eg IE."
+        },
         "suppressHorizontalScroll": {
             "default": false,
             "description": "Set to <code>true</code> to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls.",

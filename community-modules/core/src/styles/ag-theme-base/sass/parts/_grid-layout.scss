@@ -6,7 +6,7 @@
     }
 
     .ag-root-wrapper {
-        @include ag-border(primary, $radius: ag-param(border-radius));
+        @include ag-border(primary);
     }
     
     // support 20 levels here because row group indentation is used for tree data which can be quite deep

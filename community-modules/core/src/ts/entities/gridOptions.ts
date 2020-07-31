@@ -121,6 +121,7 @@ export interface GridOptions {
     deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
     alwaysShowVerticalScroll?: boolean;
+    debounceVerticalScrollbar?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
     tooltipShowDelay?: number;

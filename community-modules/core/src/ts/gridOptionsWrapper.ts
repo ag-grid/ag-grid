@@ -531,6 +531,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.alwaysShowVerticalScroll);
     }
 
+    public isDebounceVerticalScrollbar() {
+        return isTrue(this.gridOptions.debounceVerticalScrollbar);
+    }
+
     public isSuppressLoadingOverlay() {
         return isTrue(this.gridOptions.suppressLoadingOverlay);
     }

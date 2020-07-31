@@ -108,5 +108,21 @@ include '../documentation-main/documentation_header.php';
         so you know what the grid is doing, that way you will be able to reason with it.
     </p>
 
+    <h2>9. Debounce Vertical Scroll</h2>
+
+    <p>
+        By default, there is no debouncing of the vertical scroll. However on slow browsers, especially
+        IE, depending on your application, you may wish to debounce the vertical scroll.
+    </p>
+
+    <p>
+        To debounce the vertical scroll, set grid property <code>debounceVerticalScrollbar=true</code>.
+    </p>
+
+    <p>
+        The example below demonstrates debouncing of the vertical scroll.
+    </p>
+
+    <?= grid_example('Debounce Vertical Scroll', 'debounce-vertical-scroll', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
