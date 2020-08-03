@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected } from '../utils/aria';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 
 export interface VirtualListModel {
@@ -36,8 +36,7 @@ export class VirtualList extends ManagedFocusComponent {
     }
 
     protected focusInnerElement(fromBottom: boolean): void {
-        const rowCount = this.model.getRowCount();
-        this.focusRow(fromBottom ? rowCount - 1 : 0);
+        this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
     }
 
     protected onFocusIn(e: FocusEvent): void {
@@ -231,7 +230,10 @@ export class VirtualList extends ManagedFocusComponent {
         eDiv.setAttribute('tabindex', '-1');
 
         if (typeof this.model.isRowSelected === 'function') {
-            setAriaSelected(eDiv, this.model.isRowSelected(rowIndex));
+            const isSelected = this.model.isRowSelected(rowIndex);
+
+            setAriaSelected(eDiv, !!isSelected);
+            setAriaChecked(eDiv, isSelected);
         }
 
         eDiv.style.height = `${this.rowHeight}px`;

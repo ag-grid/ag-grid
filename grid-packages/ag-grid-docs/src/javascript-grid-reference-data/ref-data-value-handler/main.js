@@ -151,6 +151,8 @@ function lookupKey(mappings, name) {
 }
 
 function colourCellRenderer(params) {
+    if (params.value === '(Select All)') { return params.value; }
+
     return '<span style="color: ' + removeSpaces(params.valueFormatted) + '">' + params.valueFormatted + '</span>';
 }
 

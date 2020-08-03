@@ -1,6 +1,6 @@
 var countryFilterParams = {
     cellRenderer: countryCellRenderer,
-}
+};
 
 var gridOptions = {
     columnDefs: [
@@ -32,9 +32,11 @@ var gridOptions = {
 };
 
 function countryCellRenderer(params) {
-    if (!params.value) return '';
+    if (!params.value || params.value === '(Select All)') { return params.value; }
+
     var url = 'https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png';
     var flagImage = '<img class="flag" border="0" width="15" height="10" src="' + url + '">';
+
     return flagImage + ' ' + params.value;
 }
 
@@ -75,11 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid
-        .simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
+        .simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
             // only return data that has corresponding country codes
             var dataWithFlags = data.filter(function(d) {
-                return COUNTRY_CODES[d.country]
+                return COUNTRY_CODES[d.country];
             });
 
             gridOptions.api.setRowData(dataWithFlags);

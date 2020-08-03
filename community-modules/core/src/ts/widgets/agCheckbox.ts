@@ -70,7 +70,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         return this.isSelected();
     }
 
-    public setValue(value: boolean | undefined, silent?: boolean): this {
+    public setValue(value?: boolean, silent?: boolean): this {
         this.refreshSelectedClass(value);
         this.setSelected(value, silent);
 

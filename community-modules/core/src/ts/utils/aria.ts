@@ -106,3 +106,7 @@ export function removeAriaSort(element: HTMLElement): void {
 export function setAriaSelected(element: HTMLElement, selected: boolean): void {
     setAriaAttribute(element, 'selected', selected);
 }
+
+export function setAriaChecked(element: HTMLElement, checked?: boolean) {
+    setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
+}

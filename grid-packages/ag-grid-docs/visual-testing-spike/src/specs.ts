@@ -86,7 +86,7 @@ export const specs: SpecDefinition[] = [
                 prepare: async page => {
                     await page.click('.ag-tab:nth-child(2)');
                     await untickCheckBoxWithin(page, '.ag-virtual-list-item:nth-child(2)');
-                    await page.click('.ag-filter-header-container input');
+                    await page.click('.ag-mini-filter input');
                 }
             },
             {
@@ -138,7 +138,7 @@ export const specs: SpecDefinition[] = [
                     await drag({
                         page,
                         from: '.ag-header-cell[col-id="age"]',
-                        by: {x: 30, y: 0},
+                        by: { x: 30, y: 0 },
                         leaveMouseDown: true
                     });
                 }
@@ -274,8 +274,8 @@ export const specs: SpecDefinition[] = [
                     await wait(500);
                     const chartCoords = await page.evaluate(() => {
                         const chart = document.querySelector('.ag-chart-canvas-wrapper');
-                        const {top, left} = chart!.getBoundingClientRect();
-                        return {top, left};
+                        const { top, left } = chart!.getBoundingClientRect();
+                        return { top, left };
                     });
                     // move mouse over bar to get tooltop
                     await page.mouse.move(chartCoords.left + 85, chartCoords.top + 600);

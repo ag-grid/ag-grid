@@ -753,15 +753,22 @@ function ratingRenderer(params) {
 }
 
 function ratingRendererGeneral(value, forFilter) {
+    if (value === '(Select All)') {
+        return value;
+    }
+
     var result = '<span>';
+
     for (var i = 0; i < 5; i++) {
         if (value > i) {
             result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/goldStar.png"/>';
         }
     }
-    if (forFilter && value === 0) {
-        result += '(no stars)';
+
+    if (forFilter && Number(value) === 0) {
+        result += '(No stars)';
     }
+
     return result;
 }
 
@@ -812,12 +819,15 @@ function booleanCellRenderer(params) {
 
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
+
     if (valueCleaned === true) {
         //this is the unicode for tick character
         return '&#10004;';
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return '&#10006;';
+    } else if (params.value === '(Select All)') {
+        return params.value;
     } else {
         return '(empty)';
     }
@@ -844,16 +854,6 @@ function languageCellRenderer(params) {
     }
 }
 
-function countryCellRenderer(params) {
-    //get flags from here: http://www.freeflagicons.com/
-    if (params.value === '' || params.value === undefined || params.value === null) {
-        return null;
-    } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
-    }
-}
-
 function CountryCellRenderer() {
     this.eGui = document.createElement('span');
     this.eGui.style.cursor = 'default';
@@ -861,8 +861,8 @@ function CountryCellRenderer() {
 
 CountryCellRenderer.prototype.init = function(params) {
     //get flags from here: http://www.freeflagicons.com/
-    if (params.value === '' || params.value === undefined || params.value === null) {
-        this.eGui.innerHTML = '';
+    if (params.value == null || params.value === '' || params.value === '(Select All)') {
+        this.eGui.innerHTML = params.value;
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         this.eGui.innerHTML = flag + ' ' + params.value;
