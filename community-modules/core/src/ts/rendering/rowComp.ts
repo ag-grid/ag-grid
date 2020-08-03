@@ -121,6 +121,8 @@ export class RowComp extends Component {
     private elementOrderChanged = false;
     private lastMouseDownOnDragger = false;
 
+    private rowLevel: number;
+
     private readonly printLayout: boolean;
     private readonly embedFullWidth: boolean;
 
@@ -157,6 +159,8 @@ export class RowComp extends Component {
     public init(): void {
         this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
+        this.rowLevel = this.calculateRowLevel();
+
         this.setupRowContainers();
         this.addListeners();
 
@@ -479,6 +483,7 @@ export class RowComp extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_UI_LEVEL_CHANGED, this.onUiLevelChanged.bind(this));
 
         const eventService = this.beans.eventService;
         this.addManagedListener(eventService, Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED, this.onPaginationPixelOffsetChanged.bind(this));
@@ -1003,16 +1008,13 @@ export class RowComp extends Component {
 
         if (rowNode.group) {
             classes.push('ag-row-group');
-            // if a group, put the level of the group in
-            classes.push('ag-row-level-' + rowNode.level);
 
             if (rowNode.footer) {
                 classes.push('ag-row-footer');
             }
-        } else {
-            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
+
+        classes.push('ag-row-level-' + this.rowLevel);
 
         if (rowNode.stub) {
             classes.push('ag-row-loading');
@@ -1053,6 +1055,28 @@ export class RowComp extends Component {
         }
 
         return classes;
+    }
+
+    private calculateRowLevel(): number {
+        if (this.rowNode.group) {
+            return this.rowNode.level;
+        } else {
+            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+            return this.rowNode.parent ? (this.rowNode.parent.level + 1) : 0;
+        }
+    }
+
+    private onUiLevelChanged(): void {
+        const newLevel = this.calculateRowLevel();
+        if (this.rowLevel != newLevel) {
+            const classToAdd = 'ag-row-level-' + newLevel;
+            const classToRemove = 'ag-row-level-' + this.rowLevel;
+            this.eAllRowContainers.forEach((row) => {
+                addCssClass(row, classToAdd);
+                removeCssClass(row, classToRemove);
+            });
+        }
+        this.rowLevel = newLevel;
     }
 
     private isFirstRowOnPage(): boolean {
