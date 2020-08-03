@@ -1254,6 +1254,21 @@ export class ColumnController extends BeanStub {
         return true;
     }
 
+    // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns
+    // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
+    public sortColumnsLikeGridColumns(cols: Column[]): void {
+        if (!cols || cols.length<=1) { return; }
+
+        const notAllColsInGridColumns = cols.filter( c => this.gridColumns.indexOf(c) < 0).length > 0;
+        if (notAllColsInGridColumns) { return; }
+
+        cols.sort( (a: Column, b: Column) => {
+            const indexA = this.gridColumns.indexOf(a);
+            const indexB = this.gridColumns.indexOf(b);
+            return indexA - indexB;
+        });
+    }
+
     public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
         let foundNonLocked = false;
         let rulePassed = true;

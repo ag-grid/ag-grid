@@ -212,11 +212,22 @@ export class MoveColumnController implements DropListener {
     private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection, mouseX: number, fromEnter: boolean): void {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
-        const validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, mouseX);
+
+        // it is important to sort the moving columns as they are in grid columns, as the list of moving columns
+        // could themselves be part of 'married children' groups, which means we need to maintain the order within
+        // the moving list.
+        const allMovingColumnsOrdered = allMovingColumns.slice();
+        this.columnController.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+
+        const validMoves = this.calculateValidMoves(allMovingColumnsOrdered, draggingRight, mouseX);
+
+        if (mouseX<90) {
+            console.log('less than 90');
+        }
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
-        const oldIndex = this.calculateOldIndex(allMovingColumns);
+        const oldIndex = this.calculateOldIndex(allMovingColumnsOrdered);
 
         if (validMoves.length === 0) { return; }
 
@@ -250,11 +261,11 @@ export class MoveColumnController implements DropListener {
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            if (!this.columnController.doesMovePassRules(allMovingColumns, move)) {
+            if (!this.columnController.doesMovePassRules(allMovingColumnsOrdered, move)) {
                 continue;
             }
 
-            this.columnController.moveColumns(allMovingColumns, move, "uiColumnDragged");
+            this.columnController.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
 
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
