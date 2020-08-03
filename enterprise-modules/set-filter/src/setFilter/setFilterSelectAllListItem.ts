@@ -17,12 +17,10 @@ import {
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
-export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
-    isSelected: boolean;
-}
+export interface SelectedEvent extends AgEvent { }
 
 export class SetFilterListItem extends Component {
-    public static EVENT_SELECTION_CHANGED = 'selectionChanged';
+    public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
@@ -35,13 +33,13 @@ export class SetFilterListItem extends Component {
 
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
 
+    private selected: boolean = true;
     private tooltipText: string;
 
     constructor(
-        private readonly value: string | (() => string),
+        private readonly value: any,
         private readonly params: ISetFilterParams,
-        private readonly translate: (key: keyof ISetFilterLocaleText) => string,
-        private isSelected?: boolean) {
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string) {
         super(SetFilterListItem.TEMPLATE);
     }
 
@@ -49,35 +47,31 @@ export class SetFilterListItem extends Component {
     private init(): void {
         this.render();
 
-        this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.onValueChange(value => {
-            this.isSelected = value;
+            this.selected = value;
 
-            const event: SetFilterListItemSelectionChangedEvent = {
-                type: SetFilterListItem.EVENT_SELECTION_CHANGED,
-                isSelected: value,
-            };
+            const event: SelectedEvent = { type: SetFilterListItem.EVENT_SELECTED };
 
-            this.dispatchEvent(event);
+            return this.dispatchEvent(event);
         });
     }
 
-    public toggleSelected(): void {
-        this.isSelected = !this.isSelected;
-        this.eCheckbox.setValue(this.isSelected);
+    public isSelected(): boolean {
+        return this.selected;
+    }
+
+    public setSelected(selected: boolean, forceEvent?: boolean): void {
+        this.selected = selected;
+        this.updateCheckboxIcon(forceEvent);
+    }
+
+    private updateCheckboxIcon(forceEvent?: boolean) {
+        this.eCheckbox.setValue(this.isSelected(), !forceEvent);
     }
 
     public render(): void {
-        const { params: { column, colDef } } = this;
-
-        let { value } = this;
-        let formattedValue: string = null;
-
-        if (typeof value === 'function') {
-            value = value();
-        } else {
-            formattedValue = this.getFormattedValue(colDef, column, value);
-        }
+        const { value, params: { column, colDef } } = this;
+        const formattedValue = this.getFormattedValue(colDef, column, value);
 
         if (this.params.showTooltips) {
             this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
@@ -121,8 +115,9 @@ export class SetFilterListItem extends Component {
         }
 
         cellRendererPromise.then(component => {
-            this.eCheckbox.setLabel(component.getGui());
-            this.addDestroyFunc(() => this.destroyBean(component));
+            const rendererGui = component.getGui();
+            this.eCheckbox.setLabel(rendererGui);
+            this.addDestroyFunc(() => this.getContext().destroyBean(component));
         });
     }
 

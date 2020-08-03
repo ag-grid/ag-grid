@@ -1432,16 +1432,24 @@ function ratingRenderer(params) {
 }
 
 function ratingRendererGeneral(value, forFilter) {
+    if (value === '(Select All)') {
+        return value;
+    }
+
     var result = '<span>';
+
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width=12 height=12 />';
+            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
         }
     }
-    if (forFilter && value === 0) {
-        result += '(no stars)';
+
+    if (forFilter && Number(value) === 0) {
+        result += '(No stars)';
     }
+
     result += '</span>';
+
     return result;
 }
 
@@ -1513,10 +1521,13 @@ function booleanCellRenderer(params) {
 
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
+
     if (valueCleaned === true) {
         return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
         return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
+    } else if (params.value === '(Select All)') {
+        return params.value;
     } else {
         return "(empty)";
     }
@@ -1581,8 +1592,8 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(dataMod
 
 function countryCellRenderer(params) {
     //get flags from here: http://www.freeflagicons.com/
-    if (params.value === "" || params.value === undefined || params.value === null) {
-        return '';
+    if (params.value == null || params.value === "" || params.value === '(Select All)') {
+        return params.value;
     } else {
         var flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;

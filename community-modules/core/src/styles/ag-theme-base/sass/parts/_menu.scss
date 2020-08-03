@@ -107,7 +107,7 @@
         padding-top: ag-param(widget-container-vertical-padding);
     }
 
-    .ag-set-filter-list {
+    .ag-set-filter-list, .ag-filter-no-matches {
         height: ag-param(list-item-height) * 6;
     }
 
@@ -123,7 +123,6 @@
 
     .ag-mini-filter {
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
-        margin-bottom: 0;
     }
 
     .ag-set-filter-item {
@@ -132,11 +131,6 @@
 
     .ag-set-filter-item-value {
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
-    }
-
-    .ag-filter-header-container {
-        padding-bottom: ag-param(widget-container-vertical-padding);
-        @include ag-border(secondary, bottom);
     }
 
     .ag-filter-apply-panel {
@@ -154,7 +148,7 @@
     }
 
     .ag-filter-no-matches {
-        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     }
 
     .ag-multi-filter-menu-item {

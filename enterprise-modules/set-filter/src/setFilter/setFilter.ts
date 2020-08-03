@@ -1,5 +1,4 @@
 import {
-    AgCheckbox,
     AgInputTextField,
     Autowired,
     CellValueChangedEvent,
@@ -18,24 +17,22 @@ import {
     _,
     KeyCode,
 } from '@ag-grid-community/core';
-
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
-import { SetFilterListItem } from './setFilterListItem';
+import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFilter extends ProvidedFilter {
-    @RefSelector('eSelectAll') private readonly eSelectAll: AgCheckbox;
+    public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
+
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
     @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
-    @RefSelector('eSelectAllContainer') private readonly eSelectAllContainer: HTMLElement;
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
 
     private valueModel: SetValueModel;
-    private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
 
@@ -56,12 +53,7 @@ export class SetFilter extends ProvidedFilter {
         return /* html */`
             <div class="ag-set-filter">
                 <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
-                <div class="ag-filter-header-container" role="presentation">
-                    <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                    <div ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
-                        <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
-                    </div>
-                </div>
+                <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                 <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
@@ -90,7 +82,7 @@ export class SetFilter extends ProvidedFilter {
 
             if (component) {
                 e.preventDefault();
-                component.setSelected(!component.isSelected(), true);
+                component.toggleSelected();
             }
         }
     }
@@ -293,7 +285,6 @@ export class SetFilter extends ProvidedFilter {
     private initialiseFilterBodyUi(): void {
         this.initVirtualList();
         this.initMiniFilter();
-        this.initSelectAll();
     }
 
     private initVirtualList() {
@@ -311,16 +302,47 @@ export class SetFilter extends ProvidedFilter {
         }
 
         virtualList.setComponentCreator(value => this.createSetListItem(value));
-        virtualList.setModel(new ModelWrapper(this.valueModel));
+
+        let model: VirtualListModel;
+
+        if (this.setFilterParams.suppressSelectAll) {
+            model = new ModelWrapper(this.valueModel);
+        } else {
+            model = new ModelWrapperWithSelectAll(this.valueModel, () => this.isSelectAllSelected());
+        }
+
+        virtualList.setModel(model);
+    }
+
+    private getSelectAllLabel(): string {
+        const key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
+            'selectAll' : 'selectAllSearchResults';
+
+        return `(${this.translateForSetFilter(key)})`;
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translateForSetFilter(key)));
-        const selected = this.valueModel.isValueSelected(value);
+        if (value === SetFilter.SELECT_ALL_VALUE) {
+            const listItem = this.createBean(new SetFilterListItem(
+                () => this.getSelectAllLabel(),
+                this.setFilterParams,
+                key => this.translateForSetFilter(key),
+                this.isSelectAllSelected()));
 
-        listItem.setSelected(selected);
+            listItem.addEventListener(
+                SetFilterListItem.EVENT_SELECTION_CHANGED,
+                (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected)
+            );
+
+            return listItem;
+        }
+
+        const listItem = this.createBean(new SetFilterListItem(
+            value, this.setFilterParams, key => this.translateForSetFilter(key), this.valueModel.isValueSelected(value)));
+
         listItem.addEventListener(
-            SetFilterListItem.EVENT_SELECTED, () => this.onItemSelected(value, listItem.isSelected())
+            SetFilterListItem.EVENT_SELECTION_CHANGED,
+            (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(value, e.isSelected)
         );
 
         return listItem;
@@ -336,14 +358,6 @@ export class SetFilter extends ProvidedFilter {
         eMiniFilter.setInputAriaLabel('Search filter values');
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
-    }
-
-    private initSelectAll() {
-        if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, false);
-        } else {
-            this.eSelectAll.onValueChange(() => this.onSelectAll());
-        }
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -455,19 +469,7 @@ export class SetFilter extends ProvidedFilter {
 
     public onAnyFilterChanged(): void {
         // don't block the current action when updating the values for this filter
-        setTimeout(() => this.valueModel.refreshAfterAnyFilterChanged().then(() => this.virtualList.refresh()), 0);
-    }
-
-    private updateSelectAllCheckbox(): void {
-        if (this.valueModel.isEverythingVisibleSelected()) {
-            this.selectAllState = true;
-        } else if (this.valueModel.isNothingVisibleSelected()) {
-            this.selectAllState = false;
-        } else {
-            this.selectAllState = undefined;
-        }
-
-        this.eSelectAll.setValue(this.selectAllState, true);
+        setTimeout(() => this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh()), 0);
     }
 
     private onMiniFilterInput() {
@@ -493,27 +495,20 @@ export class SetFilter extends ProvidedFilter {
             this.refresh();
         }
 
+        this.showOrHideResults();
+    }
+
+    private showOrHideResults(): void {
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
         _.setDisplayed(this.eNoMatches, hideResults);
-
-        if (!this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, !hideResults);
-        }
+        _.setDisplayed(this.eSetFilterList, !hideResults);
     }
 
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
         this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
-    }
-
-    private updateSelectAllLabel() {
-        const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            this.translateForSetFilter('selectAll') :
-            this.translateForSetFilter('selectAllSearchResults');
-
-        this.eSelectAll.setLabel(`(${label})`);
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
@@ -526,23 +521,33 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
+        this.showOrHideResults();
     }
 
-    private onSelectAll() {
-        this.selectAllState = !this.selectAllState;
+    private focusRowIfAlive(rowIndex: number): void {
+        window.setTimeout(() => {
+            if (this.isAlive()) {
+                this.virtualList.focusRow(rowIndex);
+            }
+        }, 0);
+    }
 
-        if (this.selectAllState) {
+    private onSelectAll(isSelected: boolean): void {
+        if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
         } else {
             this.valueModel.deselectAllMatchingMiniFilter();
         }
 
+        const focusedRow = this.virtualList.getLastFocusedRow();
+
         this.refresh();
         this.onUiChanged();
+        this.focusRowIfAlive(focusedRow);
     }
 
-    private onItemSelected(value: any, selected: boolean) {
-        if (selected) {
+    private onItemSelected(value: any, isSelected: boolean): void {
+        if (isSelected) {
             this.valueModel.selectValue(value);
         } else {
             this.valueModel.deselectValue(value);
@@ -550,17 +555,9 @@ export class SetFilter extends ProvidedFilter {
 
         const focusedRow = this.virtualList.getLastFocusedRow();
 
-        this.updateSelectAllCheckbox();
+        this.refresh();
         this.onUiChanged();
-        this.virtualList.refresh();
-
-        if (focusedRow != null) {
-            window.setTimeout(() => {
-                if (this.isAlive()) {
-                    this.virtualList.focusRow(focusedRow);
-                }
-            }, 10);
-        }
+        this.focusRowIfAlive(focusedRow);
     }
 
     public setMiniFilter(newMiniFilter: string): void {
@@ -568,7 +565,7 @@ export class SetFilter extends ProvidedFilter {
         this.onMiniFilterInput();
     }
 
-    public getMiniFilter() {
+    public getMiniFilter(): string {
         return this.valueModel.getMiniFilter();
     }
 
@@ -610,8 +607,6 @@ export class SetFilter extends ProvidedFilter {
 
     private refresh() {
         this.virtualList.refresh();
-        this.updateSelectAllCheckbox();
-        this.updateSelectAllLabel();
     }
 
     /** @deprecated since version 23.2. Please use getModel instead. */
@@ -663,7 +658,7 @@ export class SetFilter extends ProvidedFilter {
             this.refreshFilterValues();
         }
         else {
-            this.virtualList.refresh();
+            this.refresh();
         }
     }
 
@@ -671,6 +666,18 @@ export class SetFilter extends ProvidedFilter {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
+    }
+
+    private isSelectAllSelected(): boolean | undefined {
+        if (this.valueModel.isEverythingVisibleSelected()) {
+            return true;
+        }
+
+        if (this.valueModel.isNothingVisibleSelected()) {
+            return false;
+        }
+
+        return undefined;
     }
 
     public destroy(): void {
@@ -697,5 +704,24 @@ class ModelWrapper implements VirtualListModel {
 
     public isRowSelected(index: number): boolean {
         return this.model.isValueSelected(this.getRow(index));
+    }
+}
+
+class ModelWrapperWithSelectAll implements VirtualListModel {
+    constructor(
+        private readonly model: SetValueModel,
+        private readonly isSelectAllSelected: (() => boolean | undefined)) {
+    }
+
+    public getRowCount(): number {
+        return this.model.getDisplayedValueCount() + 1;
+    }
+
+    public getRow(index: number): string {
+        return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedValue(index - 1);
+    }
+
+    public isRowSelected(index: number): boolean | undefined {
+        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
     }
 }

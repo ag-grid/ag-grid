@@ -68,11 +68,6 @@
         margin-left: 0;
     }
 
-    .ag-filter-header-container {
-        border-bottom: solid 1px;
-        @include ag-color-property(border-bottom-color, border-color);
-    }
-
     .ag-column-drop-vertical-empty-message {
         font-size: ag-param(font-size) - 1;
         font-weight: 600;
