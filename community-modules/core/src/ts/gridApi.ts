@@ -278,13 +278,13 @@ export class GridApi {
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
-                const res = this.immutableService.createTransactionForRowData(rowData);
-                if (!res) { return; }
-                const [transaction, orderIdMap] = res;
-                this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+                const transactionAndMap = this.immutableService.createTransactionForRowData(rowData);
+                if (!transactionAndMap) { return; }
+                const [transaction, orderIdMap] = transactionAndMap;
+                const nodeTransaction = this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
                 // to the data change event on the row node and refreshed itself.
-                this.rowRenderer.refreshFullWidthRows();
+                this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
             } else {
                 this.selectionController.reset();
                 this.clientSideRowModel.setRowData(rowData);
@@ -1224,10 +1224,11 @@ export class GridApi {
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
+            return;
         }
 
         // refresh all the full width rows
-        this.rowRenderer.refreshFullWidthRows();
+        this.rowRenderer.refreshFullWidthRows(res.update);
 
         // do change detection for all present cells
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
