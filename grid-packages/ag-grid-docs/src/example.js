@@ -233,9 +233,9 @@ var gridOptions = {
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
-    pagination: true,
+    // pagination: true,
     // paginateChildRows: true,
-    paginationPageSize: 10,
+    // paginationPageSize: 10,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
