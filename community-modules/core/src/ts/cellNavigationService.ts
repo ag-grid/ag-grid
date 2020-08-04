@@ -272,10 +272,7 @@ export class CellNavigationService extends BeanStub {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (
-                !this.paginationProxy.isNextRowInTheCurrentPage(rowBelow, gridCell) &&
-                !this.gridOptionsWrapper.isSuppressPaginationPanel()
-            ) {
+            if (!gridCell.rowPinned && !this.paginationProxy.isRowInPage(rowBelow)) {
                 return null;
             }
 
@@ -306,10 +303,7 @@ export class CellNavigationService extends BeanStub {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (
-                !this.paginationProxy.isNextRowInTheCurrentPage(rowAbove, gridCell) &&
-                !this.gridOptionsWrapper.isSuppressPaginationPanel()
-            ) {
+            if (!rowAbove.rowPinned && !this.paginationProxy.isRowInPage(rowAbove)) {
                 return null;
             }
 

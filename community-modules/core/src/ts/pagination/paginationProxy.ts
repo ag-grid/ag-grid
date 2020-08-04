@@ -164,14 +164,10 @@ export class PaginationProxy extends BeanStub {
         this.goToPage(pageNumber);
     }
 
-    public isNextRowInTheCurrentPage(currentRow: RowPosition, nextRow: RowPosition): boolean {
-        const gridOptionsWrapper = this.gridOptionsWrapper;
-        const isPagination = gridOptionsWrapper.isPagination();
-
-        if (!isPagination) { return true; }
-
-        return currentRow.rowPinned == nextRow.rowPinned &&
-            this.getPageForIndex(nextRow.rowIndex) !== this.getCurrentPage();
+    public isRowInPage(row: RowPosition): boolean {
+        if (!this.active) { return; }
+        const rowPage = this.getPageForIndex(row.rowIndex);
+        return rowPage === this.currentPage;
     }
 
     public isLastPageFound(): boolean {
