@@ -724,7 +724,8 @@
               {
                 "title": "Multi Filter",
                 "url": "javascript-grid-filter-multi/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               },
               {
                 "title": "Filter API",
