@@ -25,6 +25,7 @@ function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
         api: null,
         currentParentModel: null,
         parentFilterInstance: (callback: (filter: IFilterComp) => void) => callback(parentFilter),
+        showParentFilter: () => { },
         suppressFilterButton: false,
         onFloatingFilterChanged: () => true,
         filterParams,
