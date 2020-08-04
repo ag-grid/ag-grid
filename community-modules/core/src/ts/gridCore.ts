@@ -179,8 +179,13 @@ export class GridCore extends ManagedFocusComponent {
     public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.getFocusableContainers();
 
-        if (fromBottom && focusableContainers.length > 1) {
-            return this.focusController.focusInto(last(focusableContainers));
+        if (fromBottom) {
+            if (focusableContainers.length > 1) {
+                return this.focusController.focusInto(last(focusableContainers));
+            }
+
+            const lastColumn = last(this.columnController.getAllDisplayedColumns());
+            if (this.focusController.focusGridView(lastColumn, true)) { return true; }
         }
 
         return this.focusGridHeader();

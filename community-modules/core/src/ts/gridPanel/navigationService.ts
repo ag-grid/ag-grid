@@ -225,7 +225,7 @@ export class NavigationService extends BeanStub {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
-        const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        const rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     }

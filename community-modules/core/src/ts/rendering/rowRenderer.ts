@@ -951,7 +951,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
-
         let newFirst: number;
         let newLast: number;
 

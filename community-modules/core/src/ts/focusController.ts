@@ -317,12 +317,14 @@ export class FocusController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public focusGridView(column?: Column): boolean {
-        const firstRow = this.rowPositionUtils.getFirstRow();
+    public focusGridView(column?: Column, backwards?: boolean): boolean {
+        const nextRow = backwards
+            ? this.rowPositionUtils.getLastRow()
+            : this.rowPositionUtils.getFirstRow();
 
-        if (!firstRow) { return false; }
+        if (!nextRow) { return false; }
 
-        const { rowIndex, rowPinned } = firstRow;
+        const { rowIndex, rowPinned } = nextRow;
         const focusedHeader = this.getFocusedHeader();
 
         if (!column) {

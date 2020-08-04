@@ -774,7 +774,12 @@ export class GridPanel extends Component {
             return;
         }
 
-        this.paginationProxy.goToPageWithIndex(index);
+        const isPaging = this.gridOptionsWrapper.isPagination();
+        const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+
+        if (!paginationPanelEnabled) {
+            this.paginationProxy.goToPageWithIndex(index);
+        }
 
         const rowNode = this.paginationProxy.getRow(index);
         let rowGotShiftedDuringOperation: boolean;

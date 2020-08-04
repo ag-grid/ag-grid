@@ -8,6 +8,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { missing, exists } from "../utils/generic";
 import { isNumeric } from "../utils/number";
+import { RowPosition } from "../entities/rowPosition";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
@@ -68,12 +69,8 @@ export class PaginationProxy extends BeanStub {
     }
 
     public goToPage(page: number): void {
-        if (!this.active) {
-            return;
-        }
-        if (this.currentPage === page) {
-            return;
-        }
+        if (!this.active || this.currentPage === page) { return; }
+
         this.currentPage = page;
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
@@ -156,13 +153,25 @@ export class PaginationProxy extends BeanStub {
         return this.rowModel.getRowCount();
     }
 
-    public goToPageWithIndex(index: any): void {
-        if (!this.active) {
-            return;
-        }
+    public getPageForIndex(index: number): number {
+        return Math.floor(index / this.pageSize);
+    }
 
-        const pageNumber = Math.floor(index / this.pageSize);
+    public goToPageWithIndex(index: any): void {
+        if (!this.active) { return; }
+
+        const pageNumber = this.getPageForIndex(index);
         this.goToPage(pageNumber);
+    }
+
+    public isNextRowInTheCurrentPage(currentRow: RowPosition, nextRow: RowPosition): boolean {
+        const gridOptionsWrapper = this.gridOptionsWrapper;
+        const isPagination = gridOptionsWrapper.isPagination();
+
+        if (!isPagination) { return true; }
+
+        return currentRow.rowPinned == nextRow.rowPinned &&
+            this.getPageForIndex(nextRow.rowIndex) !== this.getCurrentPage();
     }
 
     public isLastPageFound(): boolean {
