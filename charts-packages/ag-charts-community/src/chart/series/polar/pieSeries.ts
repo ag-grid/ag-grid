@@ -196,10 +196,6 @@ export class PieSeries extends PolarSeries {
         this.updateNodes();
     }
 
-    get colorCount(): number {
-        return Infinity;
-    }
-
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
         this.strokes = strokes;

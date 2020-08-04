@@ -197,10 +197,6 @@ export class BarSeries extends CartesianSeries {
         return this._yNames;
     }
 
-    get colorCount(): number {
-        return this.yKeys.length;
-    }
-
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
         this.strokes = strokes;

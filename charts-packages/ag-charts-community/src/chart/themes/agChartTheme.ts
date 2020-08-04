@@ -2,6 +2,7 @@ import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
 import { Chart } from "../chart";
 import { AgChartThemeOverrides, AgChartThemePalette } from "../agChartOptions";
+import { Series } from "../series/series";
 
 export class AgChartTheme {
 
@@ -26,7 +27,7 @@ export class AgChartTheme {
             '#8c2d46',
             '#5f5f5f'
         ]
-    }
+    };
 
     private readonly config: any;
 
@@ -88,8 +89,6 @@ export class AgChartTheme {
         return {
             ...this.getSeriesDefaults(),
             flipXY: false,
-            fills: [],
-            strokes: [],
             fillOpacity: 1,
             strokeOpacity: 1,
             xKey: '',
@@ -128,8 +127,6 @@ export class AgChartTheme {
             shape: 'circle',
             size: 8,
             minSize: 8,
-            fill: undefined,
-            stroke: undefined,
             strokeWidth: 1,
             formatter: undefined
         };
@@ -238,7 +235,6 @@ export class AgChartTheme {
                     xName: '',
                     yKey: '',
                     yName: '',
-                    stroke: undefined,
                     strokeWidth: 2,
                     strokeOpacity: 1,
                     tooltipRenderer: undefined,
@@ -260,8 +256,6 @@ export class AgChartTheme {
                     yName: '',
                     sizeName: 'Size',
                     labelName: 'Label',
-                    fill: undefined,
-                    stroke: undefined,
                     strokeWidth: 2,
                     fillOpacity: 1,
                     strokeOpacity: 1,
@@ -281,8 +275,6 @@ export class AgChartTheme {
                     yKeys: [],
                     yNames: [],
                     normalizedTo: undefined,
-                    fills: [],
-                    strokes: [],
                     fillOpacity: 0.8,
                     strokeOpacity: 1,
                     strokeWidth: 2,
@@ -309,8 +301,6 @@ export class AgChartTheme {
                     yKey: '',
                     xName: '',
                     yName: '',
-                    fill: undefined,
-                    stroke: undefined,
                     strokeWidth: 1,
                     fillOpacity: 1,
                     strokeOpacity: 1,
@@ -389,8 +379,6 @@ export class AgChartTheme {
                         length: 10,
                         strokeWidth: 1
                     },
-                    fills: [],
-                    strokes: [],
                     fillOpacity: 1,
                     strokeOpacity: 1,
                     strokeWidth: 1,
@@ -469,26 +457,38 @@ export class AgChartTheme {
         return deepMerge(parentDefaults, defaults, mergeOptions);
     }
 
-    updateChart(chart: Chart) {
-        this.updatePalette(chart);
+    setSeriesColors(series: Series, seriesOptions: any, firstColorIndex: number): number {
+        const { palette } = this;
+        const colorCount = this.getSeriesColorCount(seriesOptions);
+
+        if (colorCount === Infinity) {
+            series.setColors(palette.fills, palette.strokes);
+        } else {
+            const fills = copy(palette.fills, firstColorIndex, colorCount);
+            const strokes = copy(palette.strokes, firstColorIndex, colorCount);
+            series.setColors(fills, strokes);
+            firstColorIndex += colorCount;
+        }
+        return firstColorIndex;
     }
 
-    protected updatePalette(chart: Chart) {
-        const { palette } = this;
-        const allSeries = chart.series;
-        let colorIndex = 0;
-
-        allSeries.forEach(series => {
-            const { colorCount } = series;
-            if (colorCount === Infinity) {
-                series.setColors(palette.fills, palette.strokes);
-            } else {
-                const fills = copy(palette.fills, colorIndex, colorCount);
-                const strokes = copy(palette.strokes, colorIndex, colorCount);
-                series.setColors(fills, strokes);
-                colorIndex += colorCount;
-            }
-        });
+    /**
+     * This would typically correspond to the number of dependent variables the series plots.
+     * If the color count is not fixed, for example it's data-dependent with one color per data point,
+     * return Infinity to fetch all unique colors and manage them in the series.
+     */
+    getSeriesColorCount(seriesOptions: any): number {
+        const type = seriesOptions.type;
+        switch (type) {
+            case 'bar':
+            case 'column':
+            case 'area':
+                return seriesOptions.yKeys.length;
+            case 'pie':
+                return Infinity;
+            default:
+                return 1;
+        }
     }
 }
 

@@ -195,8 +195,6 @@ const seriesDefaults: any = {
 };
 
 const columnSeriesDefaults: any = {
-    fills: [],
-    strokes: [],
     fillOpacity: 1,
     strokeOpacity: 1,
     xKey: '',
@@ -397,7 +395,6 @@ const mappings: any = {
                         xName: '',
                         yKey: '',
                         yName: '',
-                        stroke: undefined,
                         strokeWidth: 2,
                         strokeOpacity: 1,
                         tooltipRenderer: undefined,
@@ -415,8 +412,6 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: undefined,
-                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -437,8 +432,6 @@ const mappings: any = {
                         yName: '',
                         sizeName: 'Size',
                         labelName: 'Label',
-                        fill: undefined,
-                        stroke: undefined,
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
@@ -457,8 +450,6 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: undefined,
-                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -475,8 +466,6 @@ const mappings: any = {
                         yKeys: [],
                         yNames: [],
                         normalizedTo: undefined,
-                        fills: [],
-                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 2,
@@ -496,8 +485,6 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: undefined,
-                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -515,8 +502,6 @@ const mappings: any = {
                         yKey: '',
                         xName: '',
                         yName: '',
-                        fill: undefined,
-                        stroke: undefined,
                         strokeWidth: 1,
                         fillOpacity: 1,
                         strokeOpacity: 1,
@@ -625,8 +610,6 @@ const mappings: any = {
                         labelKey: undefined,
                         labelName: undefined,
                         callout: {},
-                        fills: [],
-                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         rotation: 0,

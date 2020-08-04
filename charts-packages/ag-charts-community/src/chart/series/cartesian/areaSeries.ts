@@ -129,10 +129,6 @@ export class AreaSeries extends CartesianSeries {
         return this._yKeys;
     }
 
-    get colorCount(): number {
-        return this.yKeys.length;
-    }
-
     setColors(fills: string[], strokes: string[]) {
         this.fills = fills;
         this.strokes = strokes;

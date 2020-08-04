@@ -73,15 +73,6 @@ export abstract class Series extends Observable {
 
     tooltipEnabled: boolean = true;
 
-    /**
-     * This would typically correspond to the number of dependent variables the series plots.
-     * If the color count is not fixed, for example it's data dependent with one color per data point,
-     * return Infinity to fetch all unique colors and manage them in the series.
-     */
-    get colorCount(): number {
-        return 1;
-    }
-
     setColors(fills: string[], strokes: string[]) {}
 
     @reactive('dataChange') data?: any[] = undefined;

@@ -60,6 +60,8 @@ type AgChartType<T> =
     T extends AgPolarChartOptions ? PolarChart :
     never;
 
+let firstColorIndex = 0;
+
 export abstract class AgChart {
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
@@ -72,13 +74,11 @@ export abstract class AgChart {
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
+        firstColorIndex = 0;
         const chart = create(options, undefined, undefined, theme);
         if (chart) {
             if (autoSize) {  // `autoSize` takes precedence over `width` / `height`
                 chart.autoSize = true;
-            }
-            if (theme) {
-                theme.updateChart(chart);
             }
         }
         return chart;
@@ -97,12 +97,10 @@ export abstract class AgChart {
         }
         const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
+        firstColorIndex = 0;
         update(chart, options, undefined, theme);
         if (autoSize) {
             chart.autoSize = true;
-        }
-        if (theme) {
-            theme.updateChart(chart);
         }
     }
 
@@ -165,7 +163,12 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
             .map((param: any) => options[param])
             .filter((value: any) => value !== undefined);
 
-        component = component || new meta.constructor(...constructorParamValues);
+        if (!component) {
+            component = new meta.constructor(...constructorParamValues);
+            if (theme && component instanceof Series) {
+                firstColorIndex = theme.setSeriesColors(component, options, firstColorIndex);
+            }
+        }
 
         for (const key in options) {
             // Process every non-special key in the config object.
@@ -174,7 +177,11 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
 
                 if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                     if (Array.isArray(value)) {
-                        const subComponents = value.map(config => create(config, path + '.' + key, undefined, theme)).filter(config => !!config);
+                        const subComponents = value
+                        .map(config => {
+                            return create(config, path + '.' + key, undefined, theme);
+                        })
+                        .filter(instance => !!instance);
                         component[key] = subComponents;
                     } else {
                         if (mapping[key] && component[key]) {
@@ -303,6 +310,9 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: AgC
             config = provideDefaultType(config, keyPath);
             const type = actualSeriesTypeMap[config.type];
             if (series.type === type) {
+                if (theme) {
+                    firstColorIndex = theme.setSeriesColors(series, config, firstColorIndex);
+                }
                 update(series, config, keyPath, theme);
             } else {
                 const newSeries = create(config, keyPath, undefined, theme);
