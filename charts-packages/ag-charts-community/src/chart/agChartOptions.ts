@@ -328,6 +328,8 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     stroke?: string;
     strokeWidth?: number;
     strokeOpacity?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     highlightStyle?: {
         fill?: string;
         stroke?: string;

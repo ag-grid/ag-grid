@@ -52,6 +52,8 @@ export class LineSeries extends CartesianSeries {
     @reactive('layoutChange') title?: string;
 
     @reactive('update') stroke?: string = undefined;
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
@@ -227,6 +229,8 @@ export class LineSeries extends CartesianSeries {
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
         lineNode.strokeOpacity = this.strokeOpacity;
 
         // Used by marker nodes and for hit-testing even when not using markers
