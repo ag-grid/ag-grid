@@ -190,7 +190,7 @@ export class CellNavigationService extends BeanStub {
         // if already on top row, do nothing
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
-        const isFirstRow = index === 0 || !pinned && index === this.paginationProxy.getPageFirstRow();
+        const isFirstRow = pinned ? index === 0 : index === this.paginationProxy.getPageFirstRow();
 
         // if already on top row, do nothing
         if (isFirstRow) {
