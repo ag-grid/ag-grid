@@ -1334,8 +1334,8 @@ export class RowRenderer extends BeanStub {
         if (success) {
             keyboardEvent.preventDefault();
         } else if (keyboardEvent.shiftKey) {
-            const cellPosition = previousRenderedCell.getCellPosition();
-            if (cellPosition.rowIndex === 0) {
+            const { rowIndex, rowPinned } = previousRenderedCell.getCellPosition();
+            if (rowIndex === 0 || (!rowPinned && rowIndex === this.paginationProxy.getPageFirstRow())) {
                 keyboardEvent.preventDefault();
                 this.focusController.focusHeaderPosition({
                     headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1,

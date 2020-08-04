@@ -165,7 +165,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isRowInPage(row: RowPosition): boolean {
-        if (!this.active) { return; }
+        if (!this.active) { return true; }
         const rowPage = this.getPageForIndex(row.rowIndex);
         return rowPage === this.currentPage;
     }

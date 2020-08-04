@@ -133,7 +133,7 @@ export class CellNavigationService extends BeanStub {
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
-                        return { rowIndex: 0, rowPinned: null } as RowPosition;
+                        return { rowIndex: this.paginationProxy.getPageFirstRow(), rowPinned: null } as RowPosition;
                     }
 
                     if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
@@ -272,7 +272,7 @@ export class CellNavigationService extends BeanStub {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!gridCell.rowPinned && !this.paginationProxy.isRowInPage(rowBelow)) {
+            if (!rowBelow.rowPinned && !this.paginationProxy.isRowInPage(rowBelow)) {
                 return null;
             }
 
