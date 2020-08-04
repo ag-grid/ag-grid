@@ -43,7 +43,8 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(`${displayName} Filter Input`);
+            .setInputAriaLabel(`${displayName} Filter Input`)
+            .addGuiEventListener('click', () => params.showParentFilter());
 
         this.params = params;
     }

@@ -29,8 +29,8 @@ import { KeyCode } from '../../constants/keyCode';
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell" role="columnheader" tabindex="-1">
-            <div ref="eFloatingFilterBody" role="presentation"></div>
-            <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
+            <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
+            <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
@@ -125,34 +125,25 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {
             const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.beans.focusController.setFocusedHeader(
-                headerRow.getRowIndex(),
-                this.getColumn()
-            );
+            this.beans.focusController.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
         }
     }
 
     private setupFloatingFilter(): void {
         const colDef = this.column.getColDef();
 
-        if (colDef.filter && colDef.floatingFilter) {
-            this.floatingFilterCompPromise = this.getFloatingFilterInstance();
+        if (!colDef.filter || !colDef.floatingFilter) { return; }
 
-            if (this.floatingFilterCompPromise) {
-                this.floatingFilterCompPromise.then(compInstance => {
-                    if (compInstance) {
-                        this.setupWithFloatingFilter(compInstance);
-                        this.setupSyncWithFilter();
-                    } else {
-                        this.setupEmpty();
-                    }
-                });
-            } else {
-                this.setupEmpty();
+        this.floatingFilterCompPromise = this.getFloatingFilterInstance();
+
+        if (!this.floatingFilterCompPromise) { return; }
+
+        this.floatingFilterCompPromise.then(compInstance => {
+            if (compInstance) {
+                this.setupWithFloatingFilter(compInstance);
+                this.setupSyncWithFilter();
             }
-        } else {
-            this.setupEmpty();
-        }
+        });
     }
 
     private setupLeftPositioning(): void {
@@ -175,7 +166,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     // linked to event listener in template
     private showParentFilter() {
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
+        const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
+
+        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'filterMenuTab', ['filterMenuTab']);
     }
 
     private setupColumnHover(): void {
@@ -210,8 +203,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         const floatingFilterCompUi = floatingFilterComp.getGui();
 
-        addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
         addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-full-body', this.suppressFilterButton);
+        addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
+
         setDisplayed(this.eButtonWrapper, !this.suppressFilterButton);
 
         const eIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
@@ -266,6 +260,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
             filterParams: finalFilterParams,
             currentParentModel: this.currentParentModel.bind(this),
             parentFilterInstance: this.parentFilterInstance.bind(this),
+            showParentFilter: this.showParentFilter.bind(this),
             onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
             suppressFilterButton: false // This one might be overridden from the colDef
         };
@@ -303,10 +298,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private getFilterComponentPrototype(colDef: ColDef): { new(): any; } {
         const resolvedComponent = this.userComponentFactory.lookupComponentClassDef(colDef, 'filter', this.createDynamicParams());
         return resolvedComponent ? resolvedComponent.component : null;
-    }
-
-    private setupEmpty(): void {
-        setDisplayed(this.eButtonWrapper, false);
     }
 
     private currentParentModel(): any {

@@ -116,6 +116,9 @@ interface IFloatingFilterParams {
     // when the user updates via the floating filter.
     parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => void;
 
+    // Shows the parent filter popup.
+    showParentFilter: () => void;
+
     // The grid API
     api: any;
 }
