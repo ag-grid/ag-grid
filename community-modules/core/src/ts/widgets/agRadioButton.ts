@@ -11,8 +11,10 @@ export class AgRadioButton extends AgCheckbox {
     }
 
     public toggle(): void {
-        const nextValue = this.getNextValue();
-        this.setValue(nextValue);
+        // do not allow an active radio button to be deselected
+        if (!this.isSelected()) {
+            this.setValue(true);
+        }
     }
 
     protected addInputListeners() {
