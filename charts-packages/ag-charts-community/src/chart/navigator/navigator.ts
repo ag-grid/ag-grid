@@ -95,6 +95,10 @@ export class Navigator {
     }
 
     onMouseDown(event: MouseEvent) {
+        if (!this.enabled) {
+            return;
+        }
+
         const { offsetX, offsetY } = event;
         const { rs } = this;
         const { minHandle, maxHandle, x, width, min } = rs;
@@ -112,6 +116,10 @@ export class Navigator {
     }
 
     onMouseMove(event: MouseEvent) {
+        if (!this.enabled) {
+            return;
+        }
+
         const { rs, panHandleOffset } = this;
         const { x, y, width, height, minHandle, maxHandle } = rs;
         const { style } = this.chart.element;
