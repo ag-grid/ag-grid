@@ -53,7 +53,6 @@ var savedFilterModel = null;
 
 function clearFilters() {
     gridOptions.api.setFilterModel(null);
-    gridOptions.api.onFilterChanged();
 }
 
 function saveFilterModel() {
@@ -67,7 +66,6 @@ function saveFilterModel() {
 
 function restoreFilterModel() {
     gridOptions.api.setFilterModel(savedFilterModel);
-    gridOptions.api.onFilterChanged();
 }
 
 function restoreFromHardCoded() {
@@ -82,7 +80,6 @@ function restoreFromHardCoded() {
     };
 
     gridOptions.api.setFilterModel(hardcodedFilter);
-    gridOptions.api.onFilterChanged();
 }
 
 function destroyFilter() {

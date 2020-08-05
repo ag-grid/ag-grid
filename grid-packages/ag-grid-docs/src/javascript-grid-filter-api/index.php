@@ -26,15 +26,15 @@ var model = gridApi.getFilterModel();
 
 // model represents the state of filters for all columns, e.g.
 // {
-//   "athlete": {
-//     "filterType": "text",
-//     "type": "startsWith",
-//     "filter": "mich"
+//   athlete: {
+//     filterType: 'text',
+//     type: 'startsWith',
+//     filter: 'mich'
 //   },
-//   "age": {
-//     "filterType": "number",
-//     "type": "lessThan",
-//     "filter": 30
+//   age: {
+//     filterType: 'number',
+//     type: 'lessThan',
+//     filter: 30
 //   }
 // }
 
@@ -51,37 +51,7 @@ SNIPPET
 
 <p>You can reset all filters by doing the following:</p>
 
-<?= createSnippet('gridOptions.api.setFilterModel(null);') ?>
-
-<h3>Re-running Grid Filtering</h3>
-
-<p>
-    After filters have been changed via the API, you must ensure the method <code>gridApi.onFilterChanged()</code> is
-    called to tell the grid to filter the rows again. If <code>gridApi.onFilterChanged()</code>
-    is not called, the grid will still show the data relevant to the filters before they were updated through the API.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-var model = {
-   "athlete": {
-     "filterType": "text",
-     "type": "startsWith",
-     "filter": "mich"
-   },
-   "age": {
-     "filterType": "number",
-     "type": "lessThan",
-     "filter": 30
-   }
-};
-
-// Set the filter model
-gridApi.setFilterModel(model);
-
-// Tell grid to run filter operation again
-gridApi.onFilterChanged();
-SNIPPET
-) ?>
+<?= createSnippet('gridApi.setFilterModel(null);') ?>
 
 <h3>Example: Get / Set All Filter Models</h3>
 
@@ -142,6 +112,30 @@ gridApi.getFilterInstance('name', function(filterInstance) {
 SNIPPET
 ) ?>
 
+<h3>Re-running Grid Filtering</h3>
+
+<p>
+    After filters have been changed via their API, you must ensure the method <code>gridApi.onFilterChanged()</code> is
+    called to tell the grid to filter the rows again. If <code>gridApi.onFilterChanged()</code>
+    is not called, the grid will still show the data relevant to the filters before they were updated through the API.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Get a reference to the filter instance
+var filterInstance = gridApi.getFilterInstance('name');
+
+// Set the filter model
+filterInstance.setModel({
+    filterType: 'text',
+    type: 'startsWith',
+    filter: 'abc'
+});
+
+// Tell grid to run filter operation again
+gridApi.onFilterChanged();
+SNIPPET
+) ?>
+
 <h3>Reset Individual Filters</h3>
 
 <p>
@@ -151,9 +145,9 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 // Get a reference to the filter instance
-var filterInstance = gridApi.getFilterInstance('filter_name');
+var filterInstance = gridApi.getFilterInstance('name');
 
-// set the model to null
+// Set the model to null
 filterInstance.setModel(null);
 
 // Tell grid to run filter operation again
