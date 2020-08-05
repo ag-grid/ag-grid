@@ -37,5 +37,6 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function toggleEnabled(value) {
-    chart.navigator.enabled = value;
+    options.navigator.enabled = value;
+    agCharts.AgChart.update(chart, options);
 }
