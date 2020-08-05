@@ -32,15 +32,15 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function setTickCountTo5() {
-    chart.axes[0].tick.count = 5;
-    chart.axes[1].tick.count = 5;
-    chart.performLayout();
+    options.axes[0].tick.count = 5;
+    options.axes[1].tick.count = 5;
+    agCharts.AgChart.update(chart, options);
 }
 
 function setTickCountTo10() {
-    chart.axes[0].tick.count = 10;
-    chart.axes[1].tick.count = 10;
-    chart.performLayout();
+    options.axes[0].tick.count = 10;
+    options.axes[1].tick.count = 10;
+    agCharts.AgChart.update(chart, options);
 }
 
 function generateSpiralData() {
