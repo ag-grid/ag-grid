@@ -179,6 +179,30 @@ export const generalConfig = Object.freeze({
         bottom: getPaddingOption('bottom'),
         left: getPaddingOption('left'),
     },
+    theme: {
+        meta: {
+            description: 'The name of a chart theme to use or an object that overrides one of the stock themes.'
+        },
+        baseTheme: {
+            description: "Optional, if missing 'default' is implied."
+        },
+        palette: {
+            meta: {
+                description: "The color palette to be used by the chart's series."
+            },
+            fills: {
+                type: 'number[]',
+                description: "The array of fills to be used by the chart's series."
+            },
+            strokes: {
+                type: 'number[]',
+                description: "The array of strokes to be used by the chart's series."
+            }
+        },
+        defaults: {
+            description: "The overrides of the 'baseTheme' defaults."
+        }
+    },
     background: {
         meta: {
             description: 'Configuration for the background shown behind the chart.',

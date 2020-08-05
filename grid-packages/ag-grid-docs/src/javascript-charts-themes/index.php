@@ -68,8 +68,8 @@ SNIPPET
 <?= createSnippet(<<<SNIPPET
 interface AgChartThemeOptions {
     baseTheme?: AgChartThemeName; // if missing 'default' is implied
-    palette: AgChartThemePalette;
-    defaults: any;
+    palette?: AgChartThemePalette;
+    defaults?: any;
 }
 
 interface AgChartThemePalette {
@@ -78,6 +78,14 @@ interface AgChartThemePalette {
 }
 SNIPPET
 ) ?>
+
+<p>
+    The <code>defaults</code> object is similar in its structure to the chart's options with two exceptions:
+    the <code>series</code> and the <code>axes</code> configs, which in case of the a theme are not arrays
+    but objects that map a series or an axis type to a corresponding config. This is because a theme cannot provide
+    the actual series and axes for a chart to use, it can only provide default configs for the series and axes
+    set by the user, whatever they may be.
+</p>
 
 <p>
     Let's create our first theme now. We'll use the 'dark' theme as the base in order for our theme
@@ -91,7 +99,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.navigator') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.theme') ?>
 
 <h2>Next Up</h2>
 
