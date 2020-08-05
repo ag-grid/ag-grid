@@ -1,5 +1,8 @@
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: false,
+    width: 800,
+    height: 430,
     data: [
         { label: 'USA', value: 56.9 },
         { label: 'UK', value: 22.5 },
@@ -30,9 +33,10 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function updateHeight(event) {
-    var value = event.target.value;
+    var value = +event.target.value;
 
-    chart.height = +event.target.value;
+    options.height = value;
+    agCharts.AgChart.update(chart, options);
 
     document.getElementById('sliderValue').innerHTML = value;
 }
