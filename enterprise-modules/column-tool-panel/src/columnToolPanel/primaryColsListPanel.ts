@@ -18,7 +18,7 @@ import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
-import { EXPAND_STATE } from "./primaryColsHeaderPanel";
+import { ExpandState } from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean; };
@@ -234,7 +234,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         }
     }
 
-    private getExpandState(): EXPAND_STATE {
+    private getExpandState(): ExpandState {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
@@ -265,14 +265,14 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         recursiveFunc(this.columnTree);
 
         if (expandedCount > 0 && notExpandedCount > 0) {
-            return EXPAND_STATE.INDETERMINATE;
+            return ExpandState.INDETERMINATE;
         }
 
         if (notExpandedCount > 0) {
-            return EXPAND_STATE.COLLAPSED;
+            return ExpandState.COLLAPSED;
         }
 
-        return EXPAND_STATE.EXPANDED;
+        return ExpandState.EXPANDED;
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
@@ -357,7 +357,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 checked = col.isVisible();
             }
 
-            checked ?checkedCount++ : uncheckedCount++;
+            checked ? checkedCount++ : uncheckedCount++;
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) return undefined;

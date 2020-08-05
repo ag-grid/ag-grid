@@ -61,7 +61,6 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
-        this.wireFocusManagement();
     }
 
     public onExpandAll(): void {

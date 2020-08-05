@@ -85,7 +85,9 @@ export class ManagedFocusComponent extends Component {
         const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
 
         if (this.isFocusableContainer) {
-            this.activateTabGuards();
+            // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
+            // tabbing to the tab-guard from inside the component
+            setTimeout(() => this.activateTabGuards(), 0);
         }
 
         if (!nextRoot) { return; }
