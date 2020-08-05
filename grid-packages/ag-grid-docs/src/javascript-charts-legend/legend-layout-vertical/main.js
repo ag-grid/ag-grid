@@ -31,16 +31,12 @@ var options = {
 };
 
 var chart = agCharts.AgChart.create(options);
-var frame;
 
 function updateHeight(event) {
     var value = +event.target.value;
 
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => {
-        options.height = value;
-        agCharts.AgChart.update(chart, options);
-    });
+    options.height = value;
+    agCharts.AgChart.update(chart, options);
 
-    document.getElementById('sliderValue').innerHTML = value;
+    document.getElementById('sliderValue').innerHTML = String(value);
 }
