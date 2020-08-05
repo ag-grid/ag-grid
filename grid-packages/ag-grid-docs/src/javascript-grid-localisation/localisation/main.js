@@ -58,10 +58,10 @@ var gridOptions = {
     enableCharts: true,
     localeText: {
         // Set Filter
-        selectAll: 'daSelect All',
-        selectAllSearchResults: 'daSelect All Search Results',
+        selectAll: '(daSelect All)',
+        selectAllSearchResults: '(daSelect All Search Results)',
         searchOoo: 'daSearch...',
-        blanks: 'daBlanks',
+        blanks: '(daBlanks)',
         noMatches: 'daNo matches.',
 
         // Number Filter & Text Filter

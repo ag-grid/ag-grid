@@ -9,9 +9,9 @@ export interface ISetFilterLocaleText {
 
 export const DEFAULT_LOCALE_TEXT: ISetFilterLocaleText = {
     loadingOoo: 'Loading...',
-    blanks: 'Blanks',
+    blanks: '(Blanks)',
     searchOoo: 'Search...',
-    selectAll: 'Select All',
-    selectAllSearchResults: 'Select All Search Results',
+    selectAll: '(Select All)',
+    selectAllSearchResults: '(Select All Search Results)',
     noMatches: 'No matches.'
 };

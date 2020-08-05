@@ -318,7 +318,7 @@ export class SetFilter extends ProvidedFilter {
         const key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             'selectAll' : 'selectAllSearchResults';
 
-        return `(${this.translateForSetFilter(key)})`;
+        return this.translateForSetFilter(key);
     }
 
     private createSetListItem(value: any): Component {

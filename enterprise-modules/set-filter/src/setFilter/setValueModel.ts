@@ -277,7 +277,7 @@ export class SetValueModel implements IEventEmitter {
 
         this.availableValues.forEach(value => {
             if (value == null) {
-                if (this.filterParams.excelMode && matchesFilter(`(${this.translate('blanks')})`)) {
+                if (this.filterParams.excelMode && matchesFilter(this.translate('blanks'))) {
                     this.displayedValues.push(value);
                 }
             } else {
