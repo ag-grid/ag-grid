@@ -9,7 +9,6 @@
     width: 100%;
 }
 
-.button-group {
-    padding-bottom: 4px;
-    display: inline-block;
+.example-header {
+    padding-bottom: 1rem;
 }

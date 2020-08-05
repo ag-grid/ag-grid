@@ -49,24 +49,24 @@ var gridOptions = {
     },
 };
 
+var savedFilterModel = null;
+
 function clearFilters() {
     gridOptions.api.setFilterModel(null);
     gridOptions.api.onFilterChanged();
 }
 
 function saveFilterModel() {
-    var savedFilters = '[]';
-    window.savedModel = gridOptions.api.getFilterModel();
-    if (window.savedModel) {
-        savedFilters = Object.keys(window.savedModel);
-    } else {
-        savedFilters = '-none-';
-    }
-    document.querySelector('#savedFilters').innerHTML = JSON.stringify(savedFilters);
+    savedFilterModel = gridOptions.api.getFilterModel();
+
+    var keys = Object.keys(savedFilterModel);
+    var savedFilters = keys.length > 0 ? keys.join(', ') : '(none)';
+
+    document.querySelector('#savedFilters').innerHTML = savedFilters;
 }
 
 function restoreFilterModel() {
-    gridOptions.api.setFilterModel(window.savedModel);
+    gridOptions.api.setFilterModel(savedFilterModel);
     gridOptions.api.onFilterChanged();
 }
 
@@ -80,8 +80,13 @@ function restoreFromHardCoded() {
         athlete: { type: 'startsWith', filter: 'Mich' },
         date: { type: 'lessThan', dateFrom: '2010-01-01' }
     };
+
     gridOptions.api.setFilterModel(hardcodedFilter);
     gridOptions.api.onFilterChanged();
+}
+
+function destroyFilter() {
+    gridOptions.api.destroyFilter('athlete');
 }
 
 // setup the grid after the page has finished loading
