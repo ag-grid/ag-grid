@@ -26,15 +26,15 @@ include '../documentation-main/documentation_header.php';
 <div style="display: flex; margin-bottom: 20px;">
     <span class="filter-image">
         <span class="filter-image__title">Text Filter</span><br/>
-        <img src="./textFilter.png"/>
+        <img src="./text-filter.png"/>
     </span>
     <span class="filter-image">
         <span class="filter-image__title">Number Filter</span><br/>
-        <img src="./numberFilter.png"/>
+        <img src="./number-filter.png"/>
     </span>
     <span class="filter-image">
         <span class="filter-image__title">Date Filter</span><br/>
-        <img src="./dateFilter.png"/>
+        <img src="./date-filter.png"/>
     </span>
 </div>
 
