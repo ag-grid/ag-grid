@@ -85,13 +85,19 @@ export class Navigator {
     }
 
     updateAxes(min: number, max: number) {
-        this.chart.axes.forEach(axis => {
+        const { chart } = this;
+        let clipSeries = false;
+        chart.axes.forEach(axis => {
             if (axis.direction === ChartAxisDirection.X) {
+                if (!clipSeries && (min > 0 || max < 1)) {
+                    clipSeries = true;
+                }
                 axis.visibleRange = [min, max];
                 axis.update();
             }
         });
-        this.chart.series.forEach(series => series.update());
+        chart.seriesRoot.active = clipSeries;
+        chart.series.forEach(series => series.update());
     }
 
     onMouseDown(event: MouseEvent) {
