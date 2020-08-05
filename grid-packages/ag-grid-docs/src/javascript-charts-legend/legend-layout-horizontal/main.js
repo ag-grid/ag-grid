@@ -1,5 +1,8 @@
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: false,
+    width: 750,
+    height: 430,
     data: [
         { label: 'USA', value: 56.9 },
         { label: 'UK', value: 22.5 },
@@ -31,11 +34,16 @@ var options = {
 };
 
 var chart = agCharts.AgChart.create(options);
+var frame;
 
 function updateWidth(event) {
-    var value = event.target.value;
+    var value = +event.target.value;
 
-    chart.width = +event.target.value;
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+        options.width = value;
+        agCharts.AgChart.update(chart, options);
+    });
 
     document.getElementById('sliderValue').innerHTML = value;
 }

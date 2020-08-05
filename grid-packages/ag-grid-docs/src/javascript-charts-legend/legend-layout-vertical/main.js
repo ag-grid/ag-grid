@@ -1,7 +1,7 @@
 var options = {
     container: document.getElementById('myChart'),
     autoSize: false,
-    width: 800,
+    width: 750,
     height: 430,
     data: [
         { label: 'USA', value: 56.9 },
@@ -31,12 +31,16 @@ var options = {
 };
 
 var chart = agCharts.AgChart.create(options);
+var frame;
 
 function updateHeight(event) {
     var value = +event.target.value;
 
-    options.height = value;
-    agCharts.AgChart.update(chart, options);
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+        options.height = value;
+        agCharts.AgChart.update(chart, options);
+    });
 
     document.getElementById('sliderValue').innerHTML = value;
 }
