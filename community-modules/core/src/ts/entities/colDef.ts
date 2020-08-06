@@ -76,6 +76,7 @@ export interface IAggFuncParams {
     data: any;
     api: GridApi;
     columnApi: ColumnApi;
+    context: any;
 }
 
 /***********************************************************************

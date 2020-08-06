@@ -272,6 +272,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             data: rowNode ? rowNode.data : undefined,
             api: this.gridApi,
             columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext(),
             // the three things below are for logging warning messages in case anyone is treating
             // the params object as an array. in previous grid versions, we didn't pass params object,
             // but passed values array instead.
