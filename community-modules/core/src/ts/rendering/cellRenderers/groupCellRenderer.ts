@@ -161,7 +161,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const params = this.params;
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
-        const manyDimensionThisColumn = params.colDef.showRowGroup === true;
+        const fullWithRow = !!params.colDef;
+        const manyDimensionThisColumn = !fullWithRow || params.colDef.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
 
