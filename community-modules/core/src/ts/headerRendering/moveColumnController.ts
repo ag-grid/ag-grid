@@ -221,10 +221,6 @@ export class MoveColumnController implements DropListener {
 
         const validMoves = this.calculateValidMoves(allMovingColumnsOrdered, draggingRight, mouseX);
 
-        if (mouseX<90) {
-            console.log('less than 90');
-        }
-
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
         const oldIndex = this.calculateOldIndex(allMovingColumnsOrdered);
