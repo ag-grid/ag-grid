@@ -24,13 +24,16 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
-    constructor(className: string, private readonly pickerIcon?: string) {
+    constructor(className: string, private readonly pickerIcon?: string, popupRole?: string) {
         super(className, /* html */
             `<div class="ag-picker-field" role="presentation">
                 <div ref="eLabel"></div>
-                <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
+                <div ref="eWrapper"
+                    class="ag-wrapper ag-picker-field-wrapper"
+                    tabIndex="-1"
+                    ${popupRole ? `aria-haspopup="${popupRole}"` : ''}>
                     <div ref="eDisplayField" class="ag-picker-field-display"></div>
-                    <div ref="eIcon" class="ag-picker-field-icon"></div>
+                    <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                 </div>
             </div>`);
     }
@@ -97,7 +100,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     }
 
     public setAriaLabel(label: string): this {
-        setAriaLabel(this.eDisplayField, label);
+        setAriaLabel(this.eWrapper, label);
 
         return this;
     }

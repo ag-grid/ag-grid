@@ -12,7 +12,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     @Autowired('popupService') private popupService: PopupService;
 
     constructor() {
-        super('ag-select', 'smallDown');
+        super('ag-select', 'smallDown', 'listbox');
     }
 
     @PostConstruct
@@ -32,6 +32,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             AgAbstractField.EVENT_CHANGED,
             () => {
                 this.setValue(this.listComponent.getValue(), false, true);
+
                 if (this.hideList) { this.hideList(); }
             }
         );
@@ -39,12 +40,14 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
     public showPicker() {
         const listGui = this.listComponent.getGui();
-        const mouseWheelFunc = this.addManagedListener(document.body, 'wheel', (e: MouseEvent) => {
+
+        const destroyMouseWheelFunc = this.addManagedListener(document.body, 'wheel', (e: MouseEvent) => {
             if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
                 this.hideList();
             }
         });
-        const focusOutFunc = this.addManagedListener(listGui, 'focusout', (e: FocusEvent) => {
+
+        const destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', (e: FocusEvent) => {
             if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
                 this.hideList();
             }
@@ -53,17 +56,19 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.hideList = this.popupService.addPopup(true, listGui, true, () => {
             this.hideList = null;
             this.isPickerDisplayed = false;
-            focusOutFunc();
-            mouseWheelFunc();
+            destroyFocusOutFunc();
+            destroyMouseWheelFunc();
+
             if (this.isAlive()) {
                 this.getFocusableElement().focus();
             }
         });
 
         this.isPickerDisplayed = true;
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
-        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
 
+        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+
+        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';
 
         this.popupService.positionPopupUnderComponent({
@@ -79,7 +84,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     public addOptions(options: ListOption[]): this {
-        options.forEach((option) => this.addOption(option));
+        options.forEach(option => this.addOption(option));
 
         return this;
     }

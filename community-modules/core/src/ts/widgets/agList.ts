@@ -2,9 +2,10 @@ import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
-import { addCssClass, radioCssClass, removeCssClass } from "../utils/dom";
+import { addCssClass, removeCssClass } from "../utils/dom";
 import { findIndex } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
+import { setAriaSelected } from '../utils/aria';
 
 export interface ListOption {
     value: string;
@@ -12,25 +13,22 @@ export interface ListOption {
 }
 
 export class AgList extends Component {
+    public static EVENT_ITEM_SELECTED = 'selectedItem';
+    private static ACTIVE_CLASS = 'ag-active-item';
 
     private options: ListOption[] = [];
     private itemEls: HTMLElement[] = [];
     private highlightedEl: HTMLElement;
     private value: string | null;
     private displayValue: string | null;
-    public static EVENT_ITEM_SELECTED = 'selectedItem';
 
-    constructor(private cssIdentifier = 'default') {
-        super(AgList.getTemplate(cssIdentifier));
+    constructor(private readonly cssIdentifier = 'default') {
+        super(/* html */`<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
     }
 
     @PostConstruct
     private init(): void {
         this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
-    }
-
-    private static getTemplate(cssIdentifier: string) {
-        return `<div class="ag-list ag-${cssIdentifier}-list"></div>`;
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -71,33 +69,30 @@ export class AgList extends Component {
 
     public addOption(listOption: ListOption): this {
         const { value, text } = listOption;
-        const sanitisedText = escapeString(text === undefined ? value : text);
+        const sanitisedText = escapeString(text || value);
 
         this.options.push({ value, text: sanitisedText });
-        this.renderOption(sanitisedText);
+        this.renderOption(value, sanitisedText);
 
         return this;
     }
 
-    private renderOption(innerText: string): void {
+    private renderOption(value: string, text: string): void {
         const itemEl = document.createElement('div');
-        const itemContentEl = document.createElement('span');
+        itemEl.setAttribute('role', 'option');
 
         addCssClass(itemEl, 'ag-list-item');
         addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
 
+        itemEl.innerHTML = text;
         itemEl.tabIndex = -1;
-        itemContentEl.innerHTML = innerText;
+
         this.itemEls.push(itemEl);
 
-        this.addManagedListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem(itemEl));
+        this.addManagedListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
         this.addManagedListener(itemEl, 'mouseleave', () => this.clearHighlighted());
-        this.addManagedListener(itemEl, 'click', () => {
-            const idx = this.itemEls.indexOf(itemEl);
-            this.setValueByIndex(idx);
-        });
+        this.addManagedListener(itemEl, 'click', () => this.setValue(value));
 
-        itemEl.appendChild(itemContentEl);
         this.getGui().appendChild(itemEl);
     }
 
@@ -159,14 +154,22 @@ export class AgList extends Component {
 
     private highlightItem(el: HTMLElement): void {
         if (!el.offsetParent) { return; }
-        radioCssClass(el, 'ag-active-item');
+
+        this.clearHighlighted();
         this.highlightedEl = el;
+
+        addCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        setAriaSelected(this.highlightedEl, true);
+
         this.highlightedEl.focus();
     }
 
     private clearHighlighted(): void {
         if (!this.highlightedEl || !this.highlightedEl.offsetParent) { return; }
-        removeCssClass(this.highlightedEl, 'ag-active-item');
+
+        removeCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        setAriaSelected(this.highlightedEl, false);
+
         this.highlightedEl = null;
     }
 
