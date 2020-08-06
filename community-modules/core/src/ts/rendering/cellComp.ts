@@ -1404,8 +1404,14 @@ export class CellComp extends Component implements TooltipParentComp {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
                 this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
             } else {
-                e.preventDefault();
                 this.startRowOrCellEdit(KeyCode.ENTER);
+                if (this.editingCell) {
+                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                    // preventing default results in a 'new line' character getting inserted in the text area
+                    // when the editing was started
+                    e.preventDefault();
+                }
             }
         }
     }
