@@ -11,14 +11,8 @@ interface ColorPickerConfig extends IAgLabel {
 
 export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
-    protected displayTag = 'div';
-    protected className = 'ag-color-picker';
-    protected pickerIcon = 'colorPicker';
-    protected isPickerDisplayed = false;
-
     constructor(config?: ColorPickerConfig) {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+        super('ag-color-picker', 'colorPicker');
 
         if (config && config.color) {
             this.value = config.color;
@@ -35,7 +29,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
     public showPicker() {
         const eGuiRect = this.getGui().getBoundingClientRect();
-        const colorDialog = new AgDialog({
+        const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
             hideTitleBar: true,
@@ -44,16 +38,13 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             height: 250,
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
-        });
+        }));
 
-        this.createBean(colorDialog);
         this.isPickerDisplayed = true;
+
         addCssClass(colorDialog.getGui(), 'ag-color-dialog');
 
-        const colorPanel = new AgColorPanel({
-            picker: this
-        });
-        this.createBean(colorPanel);
+        const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
         colorPanel.addDestroyFunc(() => {
             if (colorDialog.isAlive()) {
@@ -66,12 +57,11 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         colorPanel.setValue(this.getValue());
 
         colorDialog.addDestroyFunc(() => {
-            const wasDestroying = this.isDestroyingPicker;
-
             // here we check if the picker was already being
-            // destroyed to avoid a stackoverflow
-            if (!wasDestroying) {
+            // destroyed to avoid a stack overflow
+            if (!this.isDestroyingPicker) {
                 this.isDestroyingPicker = true;
+
                 if (colorPanel.isAlive()) {
                     this.destroyBean(colorPanel);
                 }

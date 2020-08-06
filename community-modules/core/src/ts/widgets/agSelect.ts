@@ -1,27 +1,18 @@
 import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField } from "./agPickerField";
-import { IAgLabel } from "./agAbstractLabel";
 import { ListOption, AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 
-type AgSelectConfig = ListOption & IAgLabel;
-
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
-
-    protected displayTag = 'div';
-    protected className = 'ag-select';
-    protected pickerIcon = 'smallDown';
     protected listComponent: AgList;
-    protected isPickerDisplayed = false;
     private hideList: (event?: any) => void;
 
     @Autowired('popupService') private popupService: PopupService;
 
-    constructor(config?: AgSelectConfig) {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+    constructor() {
+        super('ag-select', 'smallDown');
     }
 
     @PostConstruct
@@ -115,13 +106,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return super.setValue(value, silent);
     }
 
-
     protected destroy(): void {
         if (this.hideList) {
             this.hideList();
         }
 
-        this.getContext().destroyBean(this.listComponent);
+        this.destroyBean(this.listComponent);
         super.destroy();
     }
 }

@@ -1,15 +1,16 @@
-import { AgAbstractLabel } from './agAbstractLabel';
+import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
 import { setDisabled, addOrRemoveCssClass, setFixedWidth, addCssClass } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgAbstractField<T> extends AgAbstractLabel {
+export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
     public static EVENT_CHANGED = 'valueChange';
 
-    protected abstract displayTag: string;
-    protected abstract className: string;
-
-    protected value: T;
+    protected value: TValue;
     protected disabled: boolean = false;
+
+    constructor(protected readonly className: string, template?: string, config?: TConfig) {
+        super(template, config);
+    }
 
     protected postConstruct(): void {
         super.postConstruct();
@@ -17,7 +18,7 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
         addCssClass(this.getGui(), this.className);
     }
 
-    public onValueChange(callbackFn: (newValue: T) => void) {
+    public onValueChange(callbackFn: (newValue: TValue) => void) {
         this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
 
         return this;
@@ -33,11 +34,11 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
         return this;
     }
 
-    public getValue(): T {
+    public getValue(): TValue {
         return this.value;
     }
 
-    public setValue(value: T, silent?: boolean): this {
+    public setValue(value: TValue, silent?: boolean): this {
         if (this.value === value) {
             return this;
         }

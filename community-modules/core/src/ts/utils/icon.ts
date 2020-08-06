@@ -135,7 +135,7 @@ export function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrap
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement {
+export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column, forceCreate?: boolean): HTMLElement {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first

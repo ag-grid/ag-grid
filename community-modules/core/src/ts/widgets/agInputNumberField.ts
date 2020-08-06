@@ -2,13 +2,14 @@ import { AgInputTextField } from "./agInputTextField";
 import { addOrRemoveAttribute } from '../utils/dom';
 
 export class AgInputNumberField extends AgInputTextField {
-
-    protected className = 'ag-number-field';
-    protected inputType = 'number';
     private precision?: number;
     private step?: number;
     private min?: number;
     private max?: number;
+
+    constructor() {
+        super('ag-number-field', 'number');
+    }
 
     postConstruct() {
         super.postConstruct();

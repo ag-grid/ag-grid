@@ -10,22 +10,21 @@ export interface IInputField extends IAgLabel {
     width?: number;
 }
 
-export abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
-    protected abstract inputType: string;
+export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField>
+    extends AgAbstractField<TValue, TConfig> {
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
+    @RefSelector('eInput') protected readonly eInput: TElement;
 
-    protected config: IInputField = {};
-
-    protected TEMPLATE = /* html */`
-        <div role="presentation">
-            <div ref="eLabel" class="ag-input-field-label"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>
-            </div>
-        </div>`;
-
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eInput') protected eInput: T;
+    constructor(className: string, displayFieldTag = 'input', private readonly inputType?: string, config?: TConfig) {
+        super(className, /* html */`
+            <div role="presentation">
+                <div ref="eLabel" class="ag-input-field-label"></div>
+                <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+                    <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
+                </div>
+            </div>`, config);
+    }
 
     protected postConstruct() {
         super.postConstruct();
@@ -71,7 +70,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         }
     }
 
-    public getInputElement(): T {
+    public getInputElement(): TElement {
         return this.eInput;
     }
 

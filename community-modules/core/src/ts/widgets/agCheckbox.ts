@@ -11,20 +11,16 @@ export interface ChangeEvent extends AgEvent {
 }
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    protected className = 'ag-checkbox';
-    protected displayTag = 'input';
-    protected inputType = 'checkbox';
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+
     protected labelAlignment: LabelAlignment = 'right';
 
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-
-    private selected: boolean | undefined = false;
+    private selected?: boolean = false;
     private readOnly = false;
     private passive = false;
 
-    constructor() {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+    constructor(className = 'ag-checkbox', inputType = 'checkbox') {
+        super(className, 'input', inputType);
     }
 
     protected addInputListeners() {

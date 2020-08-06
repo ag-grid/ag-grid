@@ -9,30 +9,31 @@ import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 
-export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstractField<K> {
-    protected TEMPLATE = /* html */
-        `<div class="ag-picker-field" role="presentation">
-            <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
-                <%displayField% ref="eDisplayField" class="ag-picker-field-display"></%displayField%>
-                <div ref="eIcon" class="ag-picker-field-icon"></div>
-            </div>
-        </div>`;
-
+export abstract class AgPickerField<TElement extends HTMLElement, TValue> extends AgAbstractField<TValue> {
     public abstract showPicker(): Component;
-    protected abstract pickerIcon: string;
-    protected abstract isPickerDisplayed: boolean;
-    protected value: K;
+    protected value: TValue;
+    protected isPickerDisplayed: boolean = false;
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
     private pickerComponent: Component;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected eDisplayField: T;
-    @RefSelector('eIcon') private eIcon: HTMLButtonElement;
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
+    @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
+    @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
+
+    constructor(className: string, private readonly pickerIcon?: string) {
+        super(className, /* html */
+            `<div class="ag-picker-field" role="presentation">
+                <div ref="eLabel"></div>
+                <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
+                    <div ref="eDisplayField" class="ag-picker-field-display"></div>
+                    <div ref="eIcon" class="ag-picker-field-icon"></div>
+                </div>
+            </div>`);
+    }
 
     protected postConstruct() {
         super.postConstruct();
@@ -42,7 +43,9 @@ export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstract
                 this.skipClick = false;
                 return;
             }
+
             if (this.isDisabled()) { return; }
+
             this.pickerComponent = this.showPicker();
         };
 
@@ -79,7 +82,7 @@ export abstract class AgPickerField<T extends HTMLElement, K> extends AgAbstract
         this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            this.eIcon.appendChild(createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper));
         }
     }
 

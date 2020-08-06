@@ -11,13 +11,19 @@ export interface IAgLabel {
     labelAlignment?: LabelAlignment;
 }
 
-export abstract class AgAbstractLabel extends Component {
+export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> extends Component {
     protected abstract eLabel: HTMLElement;
 
+    protected readonly config: TConfig;
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
-    protected config: IAgLabel = {};
     private label: HTMLElement | string = '';
+
+    constructor(template?: string, config?: TConfig) {
+        super(template);
+
+        this.config = config || {} as any;
+    }
 
     @PostConstruct
     protected postConstruct() {

@@ -2,7 +2,7 @@ import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
-import { addCssClass, addOrRemoveCssClass } from "../utils/dom";
+import { addCssClass, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 
 export type ResizableSides = 'topLeft' |
@@ -48,8 +48,6 @@ export class AgDialog extends AgPanel {
             <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
             <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
         </div>`;
-
-    private MAXIMIZE_BTN_TEMPLATE = `<div class="ag-dialog-button"></span>`;
 
     @Autowired('dragService') private dragService: DragService;
 
@@ -280,8 +278,8 @@ export class AgDialog extends AgPanel {
     }
 
     private refreshMaximizeIcon() {
-        addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
-        addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
+        setDisplayed(this.maximizeIcon, this.isMaximized);
+        setDisplayed(this.minimizeIcon, !this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -381,7 +379,7 @@ export class AgDialog extends AgPanel {
         const eTitleBar = this.eTitleBar;
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
-        const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
+        const maximizeButtonComp = this.maximizeButtonComp = new Component(/* html */`<div class="ag-dialog-button"></span>`);
         this.getContext().createBean(maximizeButtonComp);
 
         const eGui = maximizeButtonComp.getGui();

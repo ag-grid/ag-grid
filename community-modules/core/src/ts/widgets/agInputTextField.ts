@@ -6,20 +6,9 @@ export interface ITextInputField extends IInputField {
     allowedCharPattern?: string;
 }
 
-export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
-    protected className = 'ag-text-field';
-    protected displayTag = 'input';
-    protected inputType = 'text';
-
-    protected config: ITextInputField;
-
-    constructor(config?: ITextInputField) {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
-
-        if (config) {
-            this.config = config;
-        }
+export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, ITextInputField> {
+    constructor(className = 'ag-text-field', inputType = 'text', config?: ITextInputField) {
+        super(className, 'input', inputType, config);
     }
 
     protected postConstruct() {

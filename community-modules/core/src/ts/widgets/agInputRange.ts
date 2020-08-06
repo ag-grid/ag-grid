@@ -7,25 +7,12 @@ interface IInputRange extends IInputField {
     step?: number;
 }
 
-export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
-
-    protected className = 'ag-range-field';
-    protected displayTag = 'input';
-    protected inputType = 'range';
-    protected config: IInputRange;
-
+export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
     private min: number;
     private max: number;
-    private step: number;
 
     constructor(config?: IInputRange) {
-        super();
-
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
-
-        if (config) {
-            this.config = config;
-        }
+        super('ag-range-field', 'input', 'range', config);
     }
 
     protected postConstruct() {
@@ -72,8 +59,6 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string>
     }
 
     public setStep(value: number): this {
-        this.step = value;
-
         this.eInput.setAttribute('step', value.toString());
 
         return this;
