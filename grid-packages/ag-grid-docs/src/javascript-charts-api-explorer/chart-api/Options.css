@@ -98,7 +98,6 @@
     display: flex;
     justify-content: space-between;
     background-color: #0084e7;
-    border-top-right-radius: 10px;
 }
 
 .search__title h2 {
@@ -107,7 +106,7 @@
 
 .search__input {
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 4px 8px;
     font-size: 0.8rem;
     margin-left: 5px;

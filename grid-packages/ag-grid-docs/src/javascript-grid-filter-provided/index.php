@@ -119,4 +119,42 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
+<h2>Applying the UI Model</h2>
+
+<p>
+    Provided filters maintain a separate model representing what is shown in the UI, which might change without
+    having yet been applied, for example when an Apply button is present and the user has made changes in the UI
+    but not yet clicked Apply. Calling <code>getModelFromUi()</code> will always return a model representing the
+    current UI, whereas <code>getModel()</code> will return the applied model that is currently being used for filtering.
+</p>
+
+<p>
+    If any changes are made in the UI when the Apply button is active, or via other API methods whether the Apply
+    button is active or not, you must call <code>filterInstance.applyModel()</code> if you want to ensure the UI is
+    applied.
+</p>
+
+<p>
+    Applying the model is then typically followed by calling <code>gridApi.onFilterChanged()</code> to tell the grid to
+    re-run the filtering.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Get a reference to the 'name' filter instance
+var filterInstance = gridApi.getFilterInstance('name');
+
+// Apply the model to ensure any changes in the UI or via API methods are recognised
+filterInstance.applyModel();
+
+// Tell grid to run filter operation again
+gridApi.onFilterChanged();
+SNIPPET
+) ?>
+
+<p>
+    If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show any changes that have
+    been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This
+    will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).
+</p>
+
 <?php include '../documentation-main/documentation_footer.php';?>

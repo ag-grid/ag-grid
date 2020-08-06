@@ -12,6 +12,13 @@
     margin-bottom: 1rem;
 }
 
+@media only screen and (max-width: 768px) {
+    #documentation h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+}
+
 #documentation h1 section {
     position: absolute;
 }

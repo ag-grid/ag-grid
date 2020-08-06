@@ -85,16 +85,26 @@ export class Navigator {
     }
 
     updateAxes(min: number, max: number) {
-        this.chart.axes.forEach(axis => {
+        const { chart } = this;
+        let clipSeries = false;
+        chart.axes.forEach(axis => {
             if (axis.direction === ChartAxisDirection.X) {
+                if (!clipSeries && (min > 0 || max < 1)) {
+                    clipSeries = true;
+                }
                 axis.visibleRange = [min, max];
                 axis.update();
             }
         });
-        this.chart.series.forEach(series => series.update());
+        chart.seriesRoot.active = clipSeries;
+        chart.series.forEach(series => series.update());
     }
 
     onMouseDown(event: MouseEvent) {
+        if (!this.enabled) {
+            return;
+        }
+
         const { offsetX, offsetY } = event;
         const { rs } = this;
         const { minHandle, maxHandle, x, width, min } = rs;
@@ -112,6 +122,10 @@ export class Navigator {
     }
 
     onMouseMove(event: MouseEvent) {
+        if (!this.enabled) {
+            return;
+        }
+
         const { rs, panHandleOffset } = this;
         const { x, y, width, height, minHandle, maxHandle } = rs;
         const { style } = this.chart.element;

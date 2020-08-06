@@ -115,7 +115,7 @@ export class SetFilterListItem extends Component {
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 
-            this.eCheckbox.setLabel(valueToRender == null ? `(${this.translate('blanks')})` : valueToRender);
+            this.eCheckbox.setLabel(valueToRender == null ? this.translate('blanks') : valueToRender);
 
             return;
         }

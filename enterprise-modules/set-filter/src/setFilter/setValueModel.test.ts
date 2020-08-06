@@ -28,7 +28,7 @@ function createSetValueModel(
         suppressSorting,
         _ => { },
         valueFormatterService,
-        key => key === 'blanks' ? 'Blanks' : null);
+        key => key === 'blanks' ? '(Blanks)' : null);
 }
 
 function getDisplayedValues(model: SetValueModel) {

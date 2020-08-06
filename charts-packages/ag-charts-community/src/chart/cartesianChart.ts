@@ -205,6 +205,7 @@ export class CartesianChart extends Chart {
 
     updateAxes() {
         const { navigator } = this;
+        let clipSeries = false;
 
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
@@ -225,7 +226,13 @@ export class CartesianChart extends Chart {
                 axis.visibleRange = [navigator.min, navigator.max];
             }
 
+            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+                clipSeries = true;
+            }
+
             axis.update();
         });
+
+        this.seriesRoot.active = clipSeries;
     }
 }

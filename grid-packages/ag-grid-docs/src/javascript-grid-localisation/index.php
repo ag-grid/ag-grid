@@ -19,10 +19,10 @@ include '../documentation-main/documentation_header.php';
 <?= createSnippet(<<<SNIPPET
 localeText: {
     // Set Filter
-    selectAll: 'Select All',
-    selectAllSearchResults: 'Select All Search Results',
+    selectAll: '(Select All)',
+    selectAllSearchResults: '(Select All Search Results)',
     searchOoo: 'Search...',
-    blanks: 'Blanks',
+    blanks: '(Blanks)',
     noMatches: 'No matches.',
 
     // Number Filter & Text Filter

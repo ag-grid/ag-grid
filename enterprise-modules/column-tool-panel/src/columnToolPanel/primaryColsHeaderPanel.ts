@@ -4,23 +4,23 @@ import {
     ColumnController,
     Events,
     GridOptionsWrapper,
-    PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
     AgCheckbox,
     AgInputTextField,
-    ManagedFocusComponent,
-    KeyCode
+    KeyCode,
+    PostConstruct,
+    Component
 } from "@ag-grid-community/core";
 
-export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
+export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
-export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
+export class PrimaryColsHeaderPanel extends Component {
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private readonly columnController: ColumnController;
 
-    @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eSelect') private eSelect: AgCheckbox;
+    @RefSelector('eExpand') private readonly eExpand: HTMLElement;
+    @RefSelector('eSelect') private readonly eSelect: AgCheckbox;
     @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
     private static DEBOUNCE_DELAY = 300;
@@ -29,32 +29,29 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
 
-    private expandState: EXPAND_STATE;
-    private selectState: boolean | undefined;
+    private expandState: ExpandState;
+    private selectState?: boolean;
 
     private onFilterTextChangedDebounced: () => void;
 
     private params: ToolPanelColumnCompParams;
 
-    @PreConstruct
-    private preConstruct(): void {
-        this.setTemplate(/* html */
-            `<div class="ag-column-select-header" role="presentation" tabindex="-1">
-                <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
-                <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
-                <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
-            </div>`
-        );
+    private static TEMPLATE = /* html */
+        `<div class="ag-column-select-header" role="presentation" tabindex="-1">
+            <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
+            <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
+            <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
+        </div>`;
+
+    constructor() {
+        super(PrimaryColsHeaderPanel.TEMPLATE);
     }
 
+    @PostConstruct
     protected postConstruct(): void {
         this.createExpandIcons();
 
-        this.addManagedListener(
-            this.eExpand,
-            "click",
-            this.onExpandClicked.bind(this)
-        );
+        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
 
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === KeyCode.SPACE) {
@@ -62,29 +59,20 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
             }
         });
 
-        this.addManagedListener(this.eSelect.getInputElement(),
-            'click',
-            this.onSelectClicked.bind(this)
-        );
+        this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
 
         this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
 
         this.addManagedListener(
             this.eFilterTextField.getInputElement(),
-            "keypress",
+            'keypress',
             this.onMiniFilterKeyPress.bind(this)
         );
 
-        this.addManagedListener(
-            this.eventService,
-            Events.EVENT_NEW_COLUMNS_LOADED,
-            this.showOrHideOptions.bind(this)
-        );
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
 
         this.eSelect.setInputAriaLabel('Toggle Select All Columns');
         this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
-
-        super.postConstruct();
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -97,26 +85,18 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
 
     private createExpandIcons() {
         this.eExpand.appendChild((
-            this.eExpandChecked = _.createIconNoSpan(
-                "columnSelectOpen",
-                this.gridOptionsWrapper
-            )
+            this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)
         ));
 
         this.eExpand.appendChild((
-            this.eExpandUnchecked = _.createIconNoSpan(
-                "columnSelectClosed",
-                this.gridOptionsWrapper
-            )
+            this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)
         ));
 
         this.eExpand.appendChild((
-            this.eExpandIndeterminate = _.createIconNoSpan(
-                "columnSelectIndeterminate",
-                this.gridOptionsWrapper
-            )
+            this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper)
         ));
-        this.setExpandState(EXPAND_STATE.EXPANDED);
+
+        this.setExpandState(ExpandState.EXPANDED);
     }
 
     // we only show expand / collapse if we are showing columns
@@ -154,30 +134,19 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     }
 
     private onSelectClicked(): void {
-        const eventType = this.selectState === true ? "unselectAll" : "selectAll";
-        this.dispatchEvent({ type: eventType });
+        this.dispatchEvent({ type: this.selectState ? 'unselectAll' : 'selectAll' });
     }
 
     private onExpandClicked(): void {
-        const eventType = this.expandState === EXPAND_STATE.EXPANDED ? "collapseAll" : "expandAll";
-        this.dispatchEvent({ type: eventType });
+        this.dispatchEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
     }
 
-    public setExpandState(state: EXPAND_STATE): void {
+    public setExpandState(state: ExpandState): void {
         this.expandState = state;
 
-        _.setDisplayed(
-            this.eExpandChecked,
-            this.expandState === EXPAND_STATE.EXPANDED
-        );
-        _.setDisplayed(
-            this.eExpandUnchecked,
-            this.expandState === EXPAND_STATE.COLLAPSED
-        );
-        _.setDisplayed(
-            this.eExpandIndeterminate,
-            this.expandState === EXPAND_STATE.INDETERMINATE
-        );
+        _.setDisplayed(this.eExpandChecked, this.expandState === ExpandState.EXPANDED);
+        _.setDisplayed(this.eExpandUnchecked, this.expandState === ExpandState.COLLAPSED);
+        _.setDisplayed(this.eExpandIndeterminate, this.expandState === ExpandState.INDETERMINATE);
     }
 
     public setSelectionState(state?: boolean): void {
