@@ -361,9 +361,11 @@ export class BarSeries extends CartesianSeries {
             return [];
         }
 
-        const { xAxis, yAxis, flipXY } = this;
-        const xScale = (flipXY ? yAxis : xAxis).scale;
-        const yScale = (flipXY ? xAxis : yAxis).scale;
+        const { flipXY } = this;
+        const xAxis = flipXY ? this.yAxis : this.xAxis;
+        const yAxis = flipXY ? this.xAxis : this.yAxis;
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
 
         const {
             groupScale,
@@ -399,9 +401,15 @@ export class BarSeries extends CartesianSeries {
             let prevMin = 0;
             let prevMax = 0;
 
-            yDatum.forEach((curr, j) => {
+            for (let j = 0; j < yDatum.length; j++) {
+                const curr = yDatum[j];
                 const yKey = yKeys[j];
                 const barX = grouped ? x + groupScale.convert(yKey) : x;
+
+                if (!xAxis.inRange(barX, barWidth)) {
+                    continue;
+                }
+
                 const prev = curr < 0 ? prevMin : prevMax;
                 const y = yScale.convert(grouped ? curr : prev + curr);
                 const bottomY = yScale.convert(grouped ? 0 : prev);
@@ -447,7 +455,7 @@ export class BarSeries extends CartesianSeries {
                         prevMax += curr;
                     }
                 }
-            });
+            }
         });
 
         return nodeData;

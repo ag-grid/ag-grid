@@ -96,7 +96,7 @@ export class Navigator {
                 axis.update();
             }
         });
-        chart.seriesRoot.active = clipSeries;
+        chart.seriesRoot.enabled = clipSeries;
         chart.series.forEach(series => series.update());
     }
 

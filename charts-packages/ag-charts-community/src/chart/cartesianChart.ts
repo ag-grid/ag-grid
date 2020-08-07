@@ -233,6 +233,6 @@ export class CartesianChart extends Chart {
             axis.update();
         });
 
-        this.seriesRoot.active = clipSeries;
+        this.seriesRoot.enabled = clipSeries;
     }
 }

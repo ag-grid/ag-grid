@@ -201,6 +201,17 @@ export class Axis<S extends Scale<D, number>, D = any> {
         scale.range = [start, start + span];
     }
 
+    /**
+     * Checks if a point or an object is in range.
+     * @param x A point (or object's starting point).
+     * @param width Object's width.
+     * @param tolerance Expands the range on both ends by this amount.
+     */
+    inRange(x: number, width = 0, tolerance = 0) {
+        const { range } = this;
+        return (x + width) >= (range[0] - tolerance) && x <= (range[1] + tolerance);
+    }
+
     protected requestedRange: number[];
     set range(value: number[]) {
         this.requestedRange = value.slice();

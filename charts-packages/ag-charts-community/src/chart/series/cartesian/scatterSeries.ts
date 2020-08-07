@@ -212,8 +212,9 @@ export class ScatterSeries extends CartesianSeries {
             return [];
         }
 
-        const xScale = this.xAxis.scale;
-        const yScale = this.yAxis.scale;
+        const { xAxis, yAxis } = this;
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
@@ -221,15 +222,25 @@ export class ScatterSeries extends CartesianSeries {
 
         sizeScale.range = [marker.minSize, marker.size];
 
-        return xData.map((xDatum, i) => ({
-            series: this,
-            seriesDatum: data[i],
-            point: {
-                x: xScale.convert(xDatum) + xOffset,
-                y: yScale.convert(yData[i]) + yOffset
-            },
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }));
+        const nodeData: ScatterNodeDatum[] = [];
+        for (let i = 0; i < xData.length; i++) {
+            const xDatum = xData[i];
+            const x = xScale.convert(xDatum) + xOffset;
+            if (!xAxis.inRange(x)) {
+                continue;
+            }
+            nodeData.push({
+                series: this,
+                seriesDatum: data[i],
+                point: {
+                    x,
+                    y: yScale.convert(yData[i]) + yOffset
+                },
+                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+            });
+        }
+
+        return nodeData;
     }
 
     update(): void {

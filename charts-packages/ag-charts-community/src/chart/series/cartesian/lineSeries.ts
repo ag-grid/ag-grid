@@ -200,7 +200,8 @@ export class LineSeries extends CartesianSeries {
 
         linePath.clear();
         let moveTo = true;
-        xData.forEach((xDatum, i) => {
+        for (let i = 0; i < xData.length; i++) {
+            const xDatum = xData[i];
             const yDatum = yData[i];
             const isGap =
                 yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
@@ -210,6 +211,9 @@ export class LineSeries extends CartesianSeries {
                 moveTo = true;
             } else {
                 const x = xScale.convert(xDatum) + xOffset;
+                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                    continue;
+                }
                 const y = yScale.convert(yDatum) + yOffset;
 
                 if (moveTo) {
@@ -225,7 +229,7 @@ export class LineSeries extends CartesianSeries {
                     point: { x, y }
                 });
             }
-        });
+        }
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;

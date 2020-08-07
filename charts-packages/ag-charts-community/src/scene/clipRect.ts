@@ -21,15 +21,15 @@ export class ClipRect extends Node {
             && point.y >= this.y && point.y <= this.y + this.height;
     }
 
-    private _active: boolean = true;
-    set active(value: boolean) {
-        if (this._active !== value) {
-            this._active = value;
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
             this.dirty = true;
         }
     }
-    get active(): boolean {
-        return this._active;
+    get enabled(): boolean {
+        return this._enabled;
     }
 
     private _dirtyPath = true;
@@ -104,7 +104,7 @@ export class ClipRect extends Node {
     }
 
     render(ctx: CanvasRenderingContext2D) {
-        if (this.active) {
+        if (this.enabled) {
             if (this.dirtyPath) {
                 this.updatePath();
             }
