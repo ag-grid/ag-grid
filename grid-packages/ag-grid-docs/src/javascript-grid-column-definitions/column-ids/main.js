@@ -28,12 +28,12 @@ var gridOptions = {
         {headerName: 'Col 5', valueGetter: 'data.width'},
         {headerName: 'Col 6', valueGetter: 'data.width'}
     ],
-    rowData: createRowData(),
+    rowData: this.createRowData(),
     onGridReady: function(params) {
         var cols = params.columnApi.getAllColumns();
         cols.forEach(function(col) {
             var colDef = col.getUserProvidedColDef();
-            console.log(colDef.headerName + ', Column ID = ' + col.getId(), colDef);
+            console.log(colDef.headerName + ', Column ID = ' + col.getId(), JSON.stringify(colDef));
         });
     }
 };
