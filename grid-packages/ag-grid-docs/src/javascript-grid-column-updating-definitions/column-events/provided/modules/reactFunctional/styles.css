@@ -1,7 +1,3 @@
-.test-grid {
-    flex-grow: 1;
-}
-
 .test-container {
     height: 100%;
     display: flex;
@@ -9,17 +5,28 @@
 }
 
 .test-header {
-    height: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
-.test-header label {
-    margin-right: 0.5rem;
+.test-header .example-section {
+    margin-bottom: 0.5rem;
 }
 
-.test-header input {
-    position: relative;
-    top: 2px;
+.test-button-group {
+    display: inline-block;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.test-button-group button {
+    margin: 4px;
+}
+
+.test-button-row {
+}
+
+#myGrid {
+    flex: 1 1 auto;
 }

@@ -1,15 +1,17 @@
-var columnDefs = [
-    {field: 'athlete', initialWidth: 100, initialSort: 'asc'},
-    {field: 'age'},
-    {field: 'country', initialPinned: 'left'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
-];
+function getColumnDefs() {
+    return [
+        {field: 'athlete', initialWidth: 100, initialSort: 'asc'},
+        {field: 'age'},
+        {field: 'country', initialPinned: 'left'},
+        {field: 'sport'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
+    ];
+}
 
 var gridOptions = {
     defaultColDef: {
@@ -17,11 +19,11 @@ var gridOptions = {
         sortable: true,
         resizable: true
     },
-    columnDefs: columnDefs
+    columnDefs: getColumnDefs()
 };
 
 function onBtWithDefault() {
-    gridOptions.api.setColumnDefs(columnDefs);
+    gridOptions.api.setColumnDefs(getColumnDefs());
 }
 
 function onBtRemove() {

@@ -57,8 +57,8 @@ const GridExample = () => {
         <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
-                    <button onClick={onBtIncludeMedalColumns}>Include Medal Columns</button>
                     <button onClick={onBtExcludeMedalColumns}>Exclude Medal Columns</button>
+                    <button onClick={onBtIncludeMedalColumns}>Include Medal Columns</button>
                     <div
                         style={{
                             height: '100%',

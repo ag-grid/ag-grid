@@ -370,10 +370,6 @@ SNIPPET
     </li>
 </ul>
 
-<p style="border: 2px solid red; padding: 10px; font-weight: bold;">
-    Sean to fix this example for all frameworks...
-</p>
-
-<?= grid_example('Refresh Headers', 'refresh-headers', 'mixed', ['reactFunctional' => true]) ?>
+<?= grid_example('Refresh Headers', 'refresh-headers', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

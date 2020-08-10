@@ -1,18 +1,20 @@
-var columnDefs = [
-    {field: "athlete"},
-    {field: "age"},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
-];
+function getColumnDefs() {
+    return [
+        {field: "athlete"},
+        {field: "age"},
+        {field: "country"},
+        {field: "year"},
+        {field: "date"},
+        {field: "sport"},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
+    ];
+}
 
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: getColumnDefs(),
     rowData: null,
     components: {
         CustomHeader: CustomHeader
@@ -23,6 +25,7 @@ var gridOptions = {
 };
 
 function onBtUpperNames() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.headerName = c.field.toUpperCase();
     });
@@ -30,6 +33,7 @@ function onBtUpperNames() {
 }
 
 function onBtLowerNames() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.headerName = c.field;
     });
@@ -37,6 +41,7 @@ function onBtLowerNames() {
 }
 
 function onBtFilterOn() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.filter = true;
     });
@@ -44,14 +49,15 @@ function onBtFilterOn() {
 }
 
 function onBtFilterOff() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.filter = false;
     });
     gridOptions.api.setColumnDefs(columnDefs);
 }
 
-
 function onBtResizeOn() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.resizable = true;
     });
@@ -59,6 +65,7 @@ function onBtResizeOn() {
 }
 
 function onBtResizeOff() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(c) {
         c.resizable = false;
     });

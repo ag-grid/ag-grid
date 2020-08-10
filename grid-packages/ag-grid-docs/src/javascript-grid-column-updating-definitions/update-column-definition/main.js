@@ -1,15 +1,18 @@
-var columnDefs = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
-];
+
+function getColumnDefs() {
+    return [
+        {field: 'athlete'},
+        {field: 'age'},
+        {field: 'country'},
+        {field: 'sport'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
+    ];
+}
 
 var gridOptions = {
     defaultColDef: {
@@ -19,10 +22,11 @@ var gridOptions = {
         filter: true
     },
     applyColumnDefOrder: true,
-    columnDefs: columnDefs
+    columnDefs: getColumnDefs()
 };
 
 function setHeaderNames() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(colDef, index ) {
         colDef.headerName = 'C' + index;
     });
@@ -30,6 +34,7 @@ function setHeaderNames() {
 }
 
 function removeHeaderNames() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(colDef, index ) {
         colDef.headerName = undefined;
     });
@@ -37,6 +42,7 @@ function removeHeaderNames() {
 }
 
 function setValueFormatters() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(colDef, index ) {
         colDef.valueFormatter = function(params) {
             return '[ ' + params.value + ' ]';
@@ -47,13 +53,13 @@ function setValueFormatters() {
 }
 
 function removeValueFormatters() {
+    var columnDefs = getColumnDefs();
     columnDefs.forEach( function(colDef, index ) {
         colDef.valueFormatter = undefined;
     });
     gridOptions.api.setColumnDefs(columnDefs);
     gridOptions.api.refreshCells({force: true});
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

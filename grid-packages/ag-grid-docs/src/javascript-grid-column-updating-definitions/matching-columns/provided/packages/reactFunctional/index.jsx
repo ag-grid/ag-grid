@@ -1,22 +1,31 @@
 'use strict';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 
-import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const athleteColumn = {
     headerName: 'Athlete',
-    valueGetter: function(params) { return params.data.athlete; }
+    valueGetter: function (params) {
+        return params.data.athlete;
+    }
 };
 
 const colDefsMedalsIncluded = [
     athleteColumn,
-    {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
-    {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {
+        colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
+            return params.data.age;
+        }
+    },
+    {
+        headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
+            return params.data.country;
+        }
+    },
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
@@ -28,8 +37,16 @@ const colDefsMedalsIncluded = [
 
 const colDefsMedalsExcluded = [
     athleteColumn,
-    {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
-    {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {
+        colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
+            return params.data.age;
+        }
+    },
+    {
+        headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
+            return params.data.country;
+        }
+    },
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'}

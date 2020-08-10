@@ -1,22 +1,32 @@
 'use strict';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import {AllCommunityModules} from "@ag-grid-community/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const athleteColumn = {
     headerName: 'Athlete',
-    valueGetter: function(params) { return params.data.athlete; }
+    valueGetter: function (params) {
+        return params.data.athlete;
+    }
 };
 
 const colDefsMedalsIncluded = [
     athleteColumn,
-    {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
-    {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {
+        colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
+            return params.data.age;
+        }
+    },
+    {
+        headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
+            return params.data.country;
+        }
+    },
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'},
@@ -28,8 +38,16 @@ const colDefsMedalsIncluded = [
 
 const colDefsMedalsExcluded = [
     athleteColumn,
-    {colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) { return params.data.age; }},
-    {headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) { return params.data.country; }},
+    {
+        colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
+            return params.data.age;
+        }
+    },
+    {
+        headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
+            return params.data.country;
+        }
+    },
     {field: 'sport'},
     {field: 'year'},
     {field: 'date'}
@@ -71,7 +89,7 @@ const GridExample = () => {
                         }}
                         className="ag-theme-alpine test-grid">
                         <AgGridReact
-                            modules={AllModules}
+                            modules={AllCommunityModules}
                             rowData={rowData}
                             onGridReady={onGridReady}
                             defaultColDef={{
