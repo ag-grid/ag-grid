@@ -21,9 +21,11 @@ export default class CustomHeader extends Component {
         let menu = null;
         if (this.props.enableMenu) {
             menu =
-                <div ref={(menuButton) => { this.menuButton = menuButton; }}
-                    className="customHeaderMenuButton"
-                    onClick={this.onMenuClicked.bind(this)}>
+                <div ref={(menuButton) => {
+                    this.menuButton = menuButton;
+                }}
+                     className="customHeaderMenuButton"
+                     onClick={this.onMenuClicked.bind(this)}>
                     <i className={`fa ${this.props.menuIcon}`}></i>
                 </div>;
         }
@@ -32,13 +34,18 @@ export default class CustomHeader extends Component {
         if (this.props.enableSorting) {
             sort =
                 <div style={{display: "inline-block"}}>
-                    <div onClick={this.onSortRequested.bind(this, 'asc')} onTouchEnd={this.onSortRequested.bind(this, 'asc')} className={`customSortDownLabel ${this.state.ascSort}`}>
+                    <div onClick={this.onSortRequested.bind(this, 'asc')}
+                         onTouchEnd={this.onSortRequested.bind(this, 'asc')}
+                         className={`customSortDownLabel ${this.state.ascSort}`}>
                         <i class="fa fa-long-arrow-alt-down"></i>
                     </div>
-                    <div onClick={this.onSortRequested.bind(this, 'desc')} onTouchEnd={this.onSortRequested.bind(this, 'desc')} className={`customSortUpLabel ${this.state.descSort}`}>
+                    <div onClick={this.onSortRequested.bind(this, 'desc')}
+                         onTouchEnd={this.onSortRequested.bind(this, 'desc')}
+                         className={`customSortUpLabel ${this.state.descSort}`}>
                         <i class="fa fa-long-arrow-alt-up"></i>
                     </div>
-                    <div onClick={this.onSortRequested.bind(this, '')} onTouchEnd={this.onSortRequested.bind(this, '')} className={`customSortRemoveLabel ${this.state.noSort}`}>
+                    <div onClick={this.onSortRequested.bind(this, '')} onTouchEnd={this.onSortRequested.bind(this, '')}
+                         className={`customSortRemoveLabel ${this.state.noSort}`}>
                         <i class="fa fa-times"></i>
                     </div>
                 </div>;

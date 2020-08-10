@@ -7,10 +7,10 @@ CustomHeader.prototype.init = function (params) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = '' +
         '<div style="display: flex;">' +
-            '<span ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
-            '<div style="flex-grow: 1;">' +
-                '<span ref="eText" style=""></span>' +
-            '</div>' +
+        '<span ref="eMenu" class="ag-icon ag-icon-menu" style="margin-right: 4px;"></span>' +
+        '<div style="flex-grow: 1;">' +
+        '<span ref="eText" style=""></span>' +
+        '</div>' +
         '</div>';
 
     this.eMenu = this.eGui.querySelector('[ref="eMenu"]');
