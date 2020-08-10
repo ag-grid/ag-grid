@@ -117,10 +117,10 @@ export class PaginationComp extends Component {
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');
-        const strFirst = localeTextFunc('first', 'First');
-        const strPrevious = localeTextFunc('previous', 'Previous');
-        const strNext = localeTextFunc('next', 'Next');
-        const strLast = localeTextFunc('last', 'Last');
+        const strFirst = localeTextFunc('firstPage', 'First Page');
+        const strPrevious = localeTextFunc('previousPage', 'Previous Page');
+        const strNext = localeTextFunc('nextPage', 'Next Page');
+        const strLast = localeTextFunc('lastPage', 'Last Page');
         const compId = this.getCompId();
         const summaryDescribedBy = `ag-${compId}-first-row ag-${compId}-to ag-${compId}-last-row ag-${compId}-of ag-${compId}-row-count`;
         const descriptionDescribedBy = `ag-${compId}-start-page ag-${compId}-start-page-number ag-${compId}-of-page ag-${compId}-of-page-number`;
