@@ -946,40 +946,7 @@
             "title": "Pivoting",
             "url": "javascript-grid-pivoting/",
             "enterprise": true,
-            "showInCollapsed": true,
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Sub Totals",
-                "url": "javascript-grid-pivoting-sub-totals/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Secondary Columns",
-                "url": "javascript-grid-pivoting-secondary-columns/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Columns",
-                "url": "javascript-grid-pivoting-column-management/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Sort / Filter",
-                "url": "javascript-grid-pivoting-sort-filter/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "API",
-                "url": "javascript-grid-pivoting-api/",
-                "enterprise": true,
-                "showInCollapsed": false
-              }
-            ]
+            "showInCollapsed": true
           }
         ]
       },
