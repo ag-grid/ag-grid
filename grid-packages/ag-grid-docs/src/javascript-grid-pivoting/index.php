@@ -234,22 +234,28 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
-
-    <h2>Expandable Pivot Groups</h2>
-
+    <h2>Pivot Column Groups</h2>
     <p>
-        By default pivot column groups are collapsed when there is more than one pivot column. To disable this
-        behaviour use the following grid option:
+        Multiple group columns will be shown in the grid when there is more than one active pivot column. These columns
+        can be collapsed, expanded or fixed as described in the sections below:
     </p>
 
-<?= createSnippet(<<<SNIPPET
-suppressExpandablePivotGroups = true
-SNIPPET
-) ?>
+    <h3>Expandable Pivot Column Groups</h3>
+    <p>
+        When there is more than one active pivot column, multiple group columns will appear in a collapsed state by default.
+        Each value column will be aggregated based on the configured <code>colDef.aggFunc</code> at each column group level.
+    </p>
 
-    <p>TODO: update docs</p>
+    <?= grid_example('Expandable Pivot Column Groups', 'expandable-pivot-column-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
-    <?= grid_example('Expandable Pivot Groups', 'collapsable-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
+    <h3>Fixed Pivot Column Groups</h3>
+
+    <p>
+        To fix the pivot column groups without the ability to expand and collapse the column groups, enable the following grid
+        option property: <code>suppressExpandablePivotGroups=true</code>.
+    </p>
+
+    <?= grid_example('Fixed Pivot Column Groups', 'fixed-pivot-column-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2 id="pivotRowTotals">Pivot Row Totals</h2>
 
@@ -293,23 +299,18 @@ SNIPPET
         when the group is expanded.
     </p>
 
-    <note>
-        <code>gridOptions.pivotTotals = true</code> has now been deprecated in favour of the new property
-        <code>gridOptions.pivotColumnGroupTotals = 'before' | 'after'</code>.
-    </note>
-
     <p>
         All value columns must use the same aggregation function for the total column to make sense, otherwise the
         total column will not be included.
     </p>
 
     <p>
-       The example below demonstrates Pivot Column Group Totals as follows:
+        The example below demonstrates Pivot Column Group Totals as follows:
     </p>
-       <ul class="content">
-           <li>Pivot Column Group Totals added on ['sport', 'year'] columns.</li>
-           <li>Expanding pivot groups reveals columns that make up totals.</li>
-       </ul>
+    <ul class="content">
+        <li>Pivot Column Group Totals added on ['sport', 'year'] columns.</li>
+        <li>Expanding pivot groups reveals columns that make up totals.</li>
+    </ul>
 
     <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
