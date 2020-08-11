@@ -370,6 +370,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Refresh Headers', 'refresh-headers', 'generated') ?>
+<?= grid_example('Refresh Headers', 'refresh-headers', 'mixed', ['reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

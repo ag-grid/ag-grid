@@ -7,7 +7,10 @@ export default class CustomHeader extends Component {
         this.state = {
             ascSort: 'inactive',
             descSort: 'inactive',
-            noSort: 'inactive'
+            noSort: 'inactive',
+            enableMenu: props.enableMenu,
+            enableSorting: props.enableSorting,
+            displayName: props.displayName
         };
 
         props.column.addEventListener('sortChanged', this.onSortChanged.bind(this));
@@ -17,21 +20,30 @@ export default class CustomHeader extends Component {
         this.onSortChanged();
     }
 
+    refresh(params) {
+        console.log("here", params.enableMenu);
+        this.setState({
+            enableMenu: params.enableMenu,
+            enableSorting: params.enableSorting,
+            displayName: params.displayName
+        })
+        return true;
+    }
+
     render() {
         let menu = null;
-        if (this.props.enableMenu) {
+        if (this.state.enableMenu) {
             menu =
                 <div ref={(menuButton) => {
                     this.menuButton = menuButton;
                 }}
-                     className="customHeaderMenuButton"
+                     className="ag-icon ag-icon-menu"
                      onClick={this.onMenuClicked.bind(this)}>
-                    <i className={`fa ${this.props.menuIcon}`}></i>
                 </div>;
         }
 
         let sort = null;
-        if (this.props.enableSorting) {
+        if (this.state.enableSorting) {
             sort =
                 <div style={{display: "inline-block"}}>
                     <div onClick={this.onSortRequested.bind(this, 'asc')}
@@ -52,9 +64,9 @@ export default class CustomHeader extends Component {
         }
 
         return (
-            <div>
+            <div style={{display: 'flex'}}>
                 {menu}
-                <div className="customHeaderLabel">{this.props.displayName}</div>
+                <div className="customHeaderLabel">{this.state.displayName}</div>
                 {sort}
             </div>
         );
@@ -70,10 +82,6 @@ export default class CustomHeader extends Component {
             descSort: this.props.column.isSortDescending() ? 'active' : 'inactive',
             noSort: !this.props.column.isSortAscending() && !this.props.column.isSortDescending() ? 'active' : 'inactive'
         });
-    }
-
-    onMenuClick() {
-        this.props.showColumnMenu(this.menuButton);
     }
 
     onSortRequested(order, event) {
