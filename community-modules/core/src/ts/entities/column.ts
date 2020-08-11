@@ -330,11 +330,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
-
-        if (colDefAny.suppressToolPanel) {
-            warnOnce(`ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.`, 'ColumnCheck_weihjlsjkdf', this.colDef);
-            this.colDef.suppressColumnsToolPanel = true;
-        }
     }
 
     public addEventListener(eventType: string, listener: Function): void {

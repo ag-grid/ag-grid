@@ -30,9 +30,6 @@ export interface AbstractColDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
 
-    /** @deprecated since v22 - use suppressColumnsToolPanel / suppressFiltersToolPanel instead */
-    suppressToolPanel?: boolean;
-
     /** Set to true to not include this column in the Columns Tool Panel */
     suppressColumnsToolPanel?: boolean;
 
@@ -368,6 +365,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;
+
+
 }
 
 export interface IsColumnFunc {
