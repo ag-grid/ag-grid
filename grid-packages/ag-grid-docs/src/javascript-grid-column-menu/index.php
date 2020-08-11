@@ -57,6 +57,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <code>getMainMenuItems()</code> takes the following object as parameters:
+
         <snippet>
 GetMainMenuItemsParams {
     column: Column, // the column that was clicked
@@ -162,6 +163,62 @@ menuItems.push('separator')</snippet>
     </ul>
 
     <?= grid_example('Column Menu', 'column-menu', 'generated', ['enterprise' => true]) ?>
+
+    <h2>Customising the Columns Menu Tab</h2>
+
+    <p>
+        The behaviour and appearance of the Columns Menu tab can be customised by supplying <code>ColumnsMenuParams</code>
+        to the column definition: <code>colDef.columnsMenuParams</code>.
+    </p>
+
+    <p>
+        The available properties are shown below:
+    </p>
+
+<?= createSnippet(<<<SNIPPET
+ColumnsMenuParams {
+    // to suppress updating the layout of columns as they are rearranged in the grid
+    suppressSyncLayoutWithGrid?: boolean,
+
+    // to suppress Column Filter section 
+    suppressColumnFilter?: boolean,
+
+    // to suppress Select / Un-select all widget
+    suppressColumnSelectAll?: boolean,
+
+    // to suppress Expand / Collapse all widget
+    suppressColumnExpandAll?: boolean,
+
+    // by default, column groups start expanded. Pass true to default to contracted groups
+    contractColumnSelection?: boolean
+}
+SNIPPET
+    , 'ts') ?>
+
+    <p>
+        Note that all of the above properties are initially set to <code>false</code>.
+    </p>
+
+    <p>
+        The following example demonstrates all of the above columns menu tab properties. Note the following:
+    </p>
+
+    <ul class="content">
+        <li>
+           All columns menu tabs have been configured to ignore column moves in the grid by setting
+            <code>suppressSyncLayoutWithGrid = true</code> on the default column definition.
+        </li>
+        <li>
+            The <b>Name</b> column doesn't show the top filter section as <code>suppressColumnFilter</code>,
+            <code>suppressColumnSelectAll</code> and <code>suppressColumnExpandAll</code> are all set to <code>true</code>.
+        </li>
+        <li>
+            The <b>Age</b> column shows the group columns in a collapsed state as <code>contractColumnSelection</code>
+            is set to <code>true</code>.
+        </li>
+    </ul>
+
+    <?= grid_example('Customising Column Menu Tab', 'customising-column-menu-tab', 'generated', ['enterprise' => true]) ?>
 
     <h2>Popup Parent</h2>
 
