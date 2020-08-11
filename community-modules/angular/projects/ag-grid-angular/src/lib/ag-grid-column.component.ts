@@ -68,6 +68,7 @@ export class AgGridColumn {
     @Input() public tooltipComponentParams: any;
     @Input() public tooltipComponentFramework: any;
     @Input() public refData: any;
+    @Input() public columnsMenuParams: any;
     @Input() public headerName: any;
     @Input() public columnGroupShow: any;
     @Input() public headerClass: any;

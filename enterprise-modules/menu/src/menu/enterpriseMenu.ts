@@ -471,17 +471,20 @@ export class EnterpriseMenu extends BeanStub {
 
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
+        let columnsMenuParams = this.column.getColDef().columnsMenuParams;
+        if (!columnsMenuParams) columnsMenuParams = {}
+
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,
             suppressPivotMode: false,
-            contractColumnSelection: false,
-            suppressColumnExpandAll: false,
-            suppressColumnFilter: false,
-            suppressColumnSelectAll: false,
+            contractColumnSelection: !!columnsMenuParams.contractColumnSelection,
+            suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
+            suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
+            suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
             suppressSideButtons: false,
-            suppressSyncLayoutWithGrid: false,
+            suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
         });

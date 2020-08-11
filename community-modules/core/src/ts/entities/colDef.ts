@@ -366,7 +366,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;
 
-
+    /** Params to customise the columns menu behaviour and appearance */
+    columnsMenuParams?: ColumnsMenuParams;
 }
 
 export interface IsColumnFunc {
@@ -390,6 +391,14 @@ export interface GetQuickFilterTextParams {
     column: Column;
     colDef: ColDef;
     context: any;
+}
+
+export interface ColumnsMenuParams {
+    suppressSyncLayoutWithGrid?: boolean,
+    suppressColumnFilter?: boolean,
+    suppressColumnSelectAll?: boolean,
+    suppressColumnExpandAll?: boolean,
+    contractColumnSelection?: boolean
 }
 
 export interface BaseColDefParams {

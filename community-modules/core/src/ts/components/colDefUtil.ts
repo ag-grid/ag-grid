@@ -51,7 +51,9 @@ export class ColDefUtil {
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
-        'refData'];
+        'refData',
+        'columnsMenuParams'
+    ];
 
     public static ARRAY_PROPERTIES = [
         'children',
