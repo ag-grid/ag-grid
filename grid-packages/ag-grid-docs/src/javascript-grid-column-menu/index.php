@@ -96,8 +96,12 @@ MenuItem {
         <li><code>valueAggSubMenu</code>: Submenu for value aggregation. Always shown.</li>
         <li><code>autoSizeThis</code>: Auto-size the current column. Always shown.</li>
         <li><code>autoSizeAll</code>: Auto-size all columns. Always shown.</li>
-        <li><code>rowGroup</code>: Group by this column. Only shown if column is not grouped.</li>
-        <li><code>rowUnGroup</code>: Un-group by this column. Only shown if column is grouped.</li>
+        <li><code>rowGroup</code>: Group by this column. Only shown if column is not grouped. Note this will appear
+            once there is row grouping.
+        </li>
+        <li><code>rowUnGroup</code>: Un-group by this column. Only shown if column is grouped.</li> Note this will
+        appear once there is row grouping.
+
         <li><code>resetColumns</code>: Reset column details. Always shown.</li>
         <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
         <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
