@@ -3,7 +3,7 @@ import { Autowired } from "../context/context";
 import { Component } from "./component";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy, setAriaLabel } from "../utils/aria";
+import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
@@ -40,6 +40,11 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
 
     protected postConstruct() {
         super.postConstruct();
+
+        const displayId = `${this.getCompId()}-display`;
+
+        this.eDisplayField.setAttribute('id', displayId);
+        setAriaDescribedBy(this.eWrapper, displayId);
 
         const clickHandler = () => {
             if (this.skipClick) {
