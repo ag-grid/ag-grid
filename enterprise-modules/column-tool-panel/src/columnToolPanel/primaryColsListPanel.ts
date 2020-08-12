@@ -12,7 +12,8 @@ import {
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams,
     ManagedFocusComponent,
-    KeyCode
+    KeyCode,
+    ColumnEventType
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
@@ -40,14 +41,22 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
     private columnComps: Map<string, ColumnItem> = new Map();
+    private eventType: ColumnEventType;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
     }
 
-    public init(params: ToolPanelColumnCompParams, allowDragging: boolean): void {
+    public init(
+        params: ToolPanelColumnCompParams,
+        allowDragging: boolean,
+        eventType: ColumnEventType): void
+    {
         this.params = params;
         this.allowDragging = allowDragging;
+        this.eventType = eventType;
+
+        console.log("this.eventType: ", this.eventType);
 
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
@@ -159,7 +168,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
         if (!columnGroup.isPadding()) {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.allowDragging, this.expandGroupsByDefault,
-                this.onGroupExpanded.bind(this), () => this.filterResults);
+                this.onGroupExpanded.bind(this), () => this.filterResults, this.eventType);
 
             this.getContext().createBean(renderedGroup);
             const renderedGroupGui = renderedGroup.getGui();
@@ -298,7 +307,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
-                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, 'columnMenu');
+                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, this.eventType);
                 return;
             }
 
@@ -312,7 +321,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 const filteredColsToChange = colsToChange.filter(col => _.includes(filteredCols, col.getColId()));
 
                 // update visibility of columns currently filtered
-                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
+                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, this.eventType);
 
                 // update select all header with new state
                 this.dispatchEvent({ type: 'selectionChanged', state: this.selectAllChecked });

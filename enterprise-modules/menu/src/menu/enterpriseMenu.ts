@@ -487,7 +487,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
-        });
+        }, 'columnMenu');
 
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());

@@ -15,7 +15,8 @@ import {
     RefSelector,
     TouchListener,
     ManagedFocusComponent,
-    KeyCode
+    KeyCode,
+    ColumnEventType
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
@@ -54,9 +55,17 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     private displayName: string | null;
     private processingColumnStateChange = false;
     private getFilterResultsCallback: () => ColumnFilterResults;
+    private eventType: ColumnEventType;
 
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
-        expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
+    constructor(
+        columnGroup: OriginalColumnGroup,
+        columnDept: number,
+        allowDragging: boolean,
+        expandByDefault: boolean,
+        expandedCallback: () => void,
+        getFilterResults: () => ColumnFilterResults,
+        eventType: ColumnEventType
+    ) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
@@ -64,6 +73,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.expanded = expandByDefault;
         this.expandedCallback = expandedCallback;
         this.getFilterResultsCallback = getFilterResults;
+        this.eventType = eventType;
     }
 
     @PostConstruct
@@ -75,7 +85,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
 
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
@@ -200,7 +210,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             const visibleColumns = allowedColumns.filter(passesFilter);
 
             // only columns that are 'allowed' and pass filter should be visible
-            this.columnController.setColumnsVisible(visibleColumns, nextState, "toolPanelUi");
+            this.columnController.setColumnsVisible(visibleColumns, nextState, this.eventType);
         }
     }
 
@@ -223,13 +233,13 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         });
 
         if (columnsToUnPivot.length > 0) {
-            this.columnController.removePivotColumns(columnsToUnPivot, "toolPanelUi");
+            this.columnController.removePivotColumns(columnsToUnPivot, this.eventType);
         }
         if (columnsToUnGroup.length > 0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup, "toolPanelUi");
+            this.columnController.removeRowGroupColumns(columnsToUnGroup, this.eventType);
         }
         if (columnsToUnValue.length > 0) {
-            this.columnController.removeValueColumns(columnsToUnValue, "toolPanelUi");
+            this.columnController.removeValueColumns(columnsToUnValue, this.eventType);
         }
     }
 
@@ -258,13 +268,13 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         });
 
         if (columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(columnsToAggregate, "toolPanelUi");
+            this.columnController.addValueColumns(columnsToAggregate, this.eventType);
         }
         if (columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(columnsToGroup, "toolPanelUi");
+            this.columnController.addRowGroupColumns(columnsToGroup, this.eventType);
         }
         if (columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(columnsToPivot, "toolPanelUi");
+            this.columnController.addPivotColumns(columnsToPivot, this.eventType);
         }
     }
 

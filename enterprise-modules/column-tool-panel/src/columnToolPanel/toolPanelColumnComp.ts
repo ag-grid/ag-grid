@@ -140,7 +140,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
+            this.columnController.setColumnVisible(this.column, nextState, "toolPanelUi");
         }
     }
 
@@ -162,7 +162,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removePivotColumn(column, "columnMenu");
+                columnController.removePivotColumn(column, "toolPanelUi");
             }
         }
         // remove value if column is value
@@ -178,7 +178,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeValueColumn(column, "columnMenu");
+                columnController.removeValueColumn(column, "toolPanelUi");
             }
         }
         // remove group if column is grouped
@@ -194,7 +194,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeRowGroupColumn(column, "columnMenu");
+                columnController.removeRowGroupColumn(column, "toolPanelUi");
             }
         }
     }
@@ -221,7 +221,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addValueColumn(column, "columnMenu");
+                this.columnController.addValueColumn(column, "toolPanelUi");
             }
         } else if (column.isAllowRowGroup()) {
             if (functionPassive) {
@@ -235,7 +235,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addRowGroupColumn(column, "columnMenu");
+                this.columnController.addRowGroupColumn(column, "toolPanelUi");
             }
         } else if (column.isAllowPivot()) {
             if (functionPassive) {
@@ -249,7 +249,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addPivotColumn(column, "columnMenu");
+                this.columnController.addPivotColumn(column, "toolPanelUi");
             }
         }
     }

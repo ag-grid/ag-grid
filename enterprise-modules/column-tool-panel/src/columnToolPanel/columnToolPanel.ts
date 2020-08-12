@@ -86,7 +86,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         this.primaryColsPanel = this.createManagedBean(new PrimaryColsPanel());
 
-        this.primaryColsPanel.init(true, this.params);
+        this.primaryColsPanel.init(true, this.params, "toolPanelUi");
         _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
         this.appendChild(this.primaryColsPanel);
 

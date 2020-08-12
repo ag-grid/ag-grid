@@ -5,6 +5,7 @@ import {
     RefSelector,
     IPrimaryColsPanel,
     ManagedFocusComponent,
+    ColumnEventType,
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
@@ -31,15 +32,17 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
+    private eventType: ColumnEventType;
 
     constructor() {
         super(PrimaryColsPanel.TEMPLATE, true);
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    public init(allowDragging: boolean, params: ToolPanelColumnCompParams): void {
+    public init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void {
         this.allowDragging = allowDragging;
         this.params = params;
+        this.eventType = eventType;
 
         this.primaryColsHeaderPanel.init(this.params);
 
@@ -54,7 +57,7 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
         this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
 
-        this.primaryColsListPanel.init(this.params, this.allowDragging);
+        this.primaryColsListPanel.init(this.params, this.allowDragging, this.eventType);
 
         this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
