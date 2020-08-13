@@ -234,12 +234,36 @@ SNIPPET
 
 <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
 
+<h2>Install ag-Charts with NPM</h2>
+
+<p>
+    To install ag-Charts and update your package.json file run:
+</p>
+
+<snippet language="sh">
+npm install --save ag-charts-community
+</snippet>
+
+<p>Then <code>import</code> the module as follows:</p>
+
+<snippet>
+import * as agCharts from 'ag-charts-community';
+</snippet>
+
+<p>
+    Creating charts is the done using the <code>agCharts.AgChart</code> factory as shown in the example above, i.e.
+</p>
+
+<snippet>
+    agCharts.AgChart.create(options);
+</snippet>
+
+<h2>Next Up</h2>
+
 <p>
     Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation
     to learn more.
 </p>
-
-<h2>Next Up</h2>
 
 <p>
     Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
