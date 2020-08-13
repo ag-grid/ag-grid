@@ -495,6 +495,14 @@
                 "url": "../javascript-grid-pivoting/#pivotRowTotals"
             }
         },
+        "suppressExpandablePivotGroups": {
+            "default": false,
+            "description": "When enabled pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.",
+            "more": {
+                "name": "Fixed Pivot Column Groups",
+                "url": "../javascript-grid-pivoting/#fixed-pivot-column-groups"
+            }
+        },
         "pivotSuppressAutoColumn": {
             "default": false,
             "description": "If <code>true</code>, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column."
