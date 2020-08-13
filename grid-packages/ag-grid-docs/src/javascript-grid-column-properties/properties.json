@@ -386,6 +386,13 @@
                 "excluded"
             ],
             "description": "Defines the chart data type that should be used for a column."
+        },
+        "columnsMenuParams": {
+            "description": "Params used to change the behaviour and appearance of the Columns Menu tab.",
+            "more": {
+                "name": "Customising the Columns Menu Tab",
+                "url": "../javascript-grid-column-menu/#customising-the-columns-menu-tab"
+            }
         }
     },
     "columnGroupsOnly": {
