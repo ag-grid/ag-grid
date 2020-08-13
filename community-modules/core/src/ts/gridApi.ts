@@ -97,7 +97,7 @@ export interface RedrawRowsParams {
 export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeIndex?: number;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -106,7 +106,7 @@ export interface CreateRangeChartParams {
 
 export interface CreatePivotChartParams {
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeIndex?: number;
     chartContainer?: HTMLElement;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
