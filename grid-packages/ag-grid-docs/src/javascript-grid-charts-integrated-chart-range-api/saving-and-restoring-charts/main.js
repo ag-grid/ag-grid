@@ -105,14 +105,6 @@ function openImage(type) {
     }
 }
 
-function openPng() {
-    openImage('image/png');
-}
-
-function openJpg() {
-    openImage('image/jpeg');
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
