@@ -1,10 +1,9 @@
 import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
-import { Chart } from "../chart";
 import { AgChartThemeOverrides, AgChartThemePalette } from "../agChartOptions";
 import { Series } from "../series/series";
 
-export class AgChartTheme {
+export class ChartTheme {
 
     readonly palette: AgChartThemePalette = {
         fills: [
@@ -204,32 +203,32 @@ export class AgChartTheme {
 
     static readonly defaults: any = {
         cartesian: {
-            ...AgChartTheme.getChartDefaults(),
+            ...ChartTheme.getChartDefaults(),
             axes: {
                 number: {
-                    ...AgChartTheme.getAxisDefaults()
+                    ...ChartTheme.getAxisDefaults()
                 },
                 category: {
-                    ...AgChartTheme.getAxisDefaults()
+                    ...ChartTheme.getAxisDefaults()
                 },
                 groupedCategory: {
-                    ...AgChartTheme.getAxisDefaults()
+                    ...ChartTheme.getAxisDefaults()
                 },
                 time: {
-                    ...AgChartTheme.getAxisDefaults()
+                    ...ChartTheme.getAxisDefaults()
                 }
             },
             series: {
                 column: {
-                    ...AgChartTheme.getBarSeriesDefaults(),
+                    ...ChartTheme.getBarSeriesDefaults(),
                     flipXY: false
                 },
                 bar: {
-                    ...AgChartTheme.getBarSeriesDefaults(),
+                    ...ChartTheme.getBarSeriesDefaults(),
                     flipXY: true
                 },
                 line: {
-                    ...AgChartTheme.getSeriesDefaults(),
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -242,11 +241,11 @@ export class AgChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 scatter: {
-                    ...AgChartTheme.getSeriesDefaults(),
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -264,11 +263,11 @@ export class AgChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...AgChartTheme.getCartesianSeriesMarkerDefaults()
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
                     }
                 },
                 area: {
-                    ...AgChartTheme.getSeriesDefaults(),
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     xName: '',
@@ -290,12 +289,12 @@ export class AgChartTheme {
                         fill: 'yellow'
                     },
                     marker: {
-                        ...AgChartTheme.getCartesianSeriesMarkerDefaults(),
+                        ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                         enabled: false
                     }
                 },
                 histogram: {
-                    ...AgChartTheme.getSeriesDefaults(),
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined,
                     xKey: '',
                     yKey: '',
@@ -315,7 +314,7 @@ export class AgChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: AgChartTheme.fontFamily,
+                        fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)',
                         formatter: undefined
                     }
@@ -353,10 +352,10 @@ export class AgChartTheme {
             }
         },
         polar: {
-            ...AgChartTheme.getChartDefaults(),
+            ...ChartTheme.getChartDefaults(),
             series: {
                 pie: {
-                    ...AgChartTheme.getSeriesDefaults(),
+                    ...ChartTheme.getSeriesDefaults(),
                     title: undefined, // Caption
                     angleKey: '',
                     angleName: '',
@@ -369,7 +368,7 @@ export class AgChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: AgChartTheme.fontFamily,
+                        fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)',
                         offset: 3,
                         minAngle: 20
@@ -440,7 +439,7 @@ export class AgChartTheme {
      * ```
      */
     getDefaults(): any {
-        return deepMerge({}, AgChartTheme.defaults, { arrayMerge });
+        return deepMerge({}, ChartTheme.defaults, { arrayMerge });
     }
 
     protected mergeWithParentDefaults(defaults: any): any {
@@ -448,7 +447,7 @@ export class AgChartTheme {
         const proto = Object.getPrototypeOf(Object.getPrototypeOf(this));
 
         if (proto === Object.prototype) {
-            let config: any = deepMerge({}, AgChartTheme.defaults, mergeOptions);
+            let config: any = deepMerge({}, ChartTheme.defaults, mergeOptions);
             config = deepMerge(config, defaults, mergeOptions);
             return config;
         }

@@ -18,8 +18,8 @@ export interface AgChartThemeOverrides {
     defaults?: any;
 }
 
-export interface AgChartThemeOptions extends AgChartThemeOverrides {
-    baseTheme?: AgChartThemeName; // | AgChartTheme;
+export interface AgChartTheme extends AgChartThemeOverrides {
+    baseTheme?: AgChartThemeName; // | ChartTheme;
 }
 
 export interface AgChartPaddingOptions {
@@ -177,7 +177,7 @@ interface AgBaseChartOptions {
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
     listeners?: { [key in string]: Function };
-    theme?: string | AgChartThemeOptions; // | AgChartTheme
+    theme?: string | AgChartTheme; // | ChartTheme
 }
 
 interface AgBaseAxisOptions {
@@ -474,16 +474,16 @@ type AgCartesianSeriesOptions =
 
 type AgPolarSeriesOptions = AgPieSeriesOptions;
 
-export interface AgCartesianChartOptions extends AgBaseChartOptions {
+export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
     type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
-    axes?: AgCartesianAxisOptions[];
-    series?: AgCartesianSeriesOptions[];
+    axes?: TAxisOptions;
+    series?: TSeriesOptions;
 }
 
-export interface AgPolarChartOptions extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TAxisOptions = AgPolarAxisOptions[], TSeriesOptions = AgPolarSeriesOptions[]> extends AgBaseChartOptions {
     type?: 'polar' | 'pie';
-    axes?: AgPolarAxisOptions[]; // will be supported in the future and used by radar series
-    series?: AgPolarSeriesOptions[];
+    axes?: TAxisOptions; // will be supported in the future and used by radar series
+    series?: TSeriesOptions;
 }
 
 export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions;

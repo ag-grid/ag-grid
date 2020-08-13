@@ -20,13 +20,15 @@ import {
     Caption,
     CategoryAxis,
     Chart,
-    ChartPalette,
-    ChartPaletteName,
     BarSeries,
     DropShadow,
     Padding,
-    palettes,
-    PieSeries
+    PieSeries,
+    ChartTheme,
+    getChartTheme,
+    themes,
+    find,
+    AgChartThemePalette
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
@@ -38,7 +40,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartPaletteName: () => ChartPaletteName;
+    getChartThemeIndex: () => number;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -70,7 +72,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customPalette: ChartPalette;
+    protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
@@ -114,12 +116,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected abstract getDefaultOptions(): TOptions;
 
+    private getSelectedIntegratedChartTheme(): ChartTheme {
+        return getChartTheme('dark');
+    }
+    protected mergeOptions(theme: ChartTheme): TOptions {
+        const options = this.getDefaultOptions();
+        return options;
+    }
+
     protected initChartOptions(): void {
+        const theme = this.getSelectedIntegratedChartTheme();
+        const options = this.mergeOptions(theme);
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
+            const params: ProcessChartOptionsParams = { type: this.chartType, options };
             const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
@@ -157,7 +169,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return this.chartOptions;
     }
 
-    public getCustomPalette(): ChartPalette | undefined {
+    public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
     }
 
@@ -317,7 +329,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartThemeIndex: this.chartProxyParams.getChartThemeIndex(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -346,11 +358,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getPredefinedPalette(): ChartPalette {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
+    protected getPredefinedPalette(): AgChartThemePalette {
+        const map: { [key in string]: string } = {
+            'borneo': 'default',
+            'material': 'material',
+            'pastel': 'pastel',
+            'bright': 'solar',
+            'flat': 'vivid'
+        };
+        const themeName = map[this.chartProxyParams.getChartThemeIndex()];
+        return themes[themeName].palette;
     }
 
-    protected getPalette(): ChartPalette {
+    protected getPalette(): AgChartThemePalette {
         return this.customPalette || this.getPredefinedPalette();
     }
 

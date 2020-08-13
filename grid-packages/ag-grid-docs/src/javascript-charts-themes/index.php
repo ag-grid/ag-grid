@@ -66,15 +66,44 @@ SNIPPET
 <p>Or more formally:</p>
 
 <?= createSnippet(<<<SNIPPET
-interface AgChartThemeOptions {
+interface AgChartTheme {
     baseTheme?: AgChartThemeName; // if missing 'default' is implied
     palette?: AgChartThemePalette;
-    defaults?: any;
+    defaults?: AgChartThemeDefaults;
 }
 
 interface AgChartThemePalette {
     fills: string[];
     strokes: string[];
+}
+
+export interface AgChartThemeDefaults {
+    cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
+    polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
+}
+
+export interface AgCartesianAxesTheme {
+    number?: AgNumberAxisOptions;
+    category?: AgCategoryAxisOptions;
+    groupedCategory?: AgGroupedCategoryAxisOptions;
+    time?: AgTimeAxisOptions;
+}
+
+export interface AgCartesianSeriesTheme {
+    line?: AgLineSeriesOptions;
+    scatter?: AgScatterSeriesOptions;
+    area?: AgAreaSeriesOptions;
+    bar?: AgBarSeriesOptions;
+    histogram?: AgHistogramSeriesOptions;
+}
+
+export interface AgPolarAxesTheme {
+    // polar charts don't support axes at the moment
+    // (used by radar charts, for example)
+}
+
+export interface AgPolarSeriesTheme {
+    pie?: AgPieSeriesOptions;
 }
 SNIPPET
 ) ?>

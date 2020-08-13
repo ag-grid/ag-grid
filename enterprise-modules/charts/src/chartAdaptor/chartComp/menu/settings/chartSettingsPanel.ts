@@ -7,7 +7,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { ChartPalette, ChartPaletteName } from "ag-charts-community";
+import { AgChartThemePalette, AgChartTheme, ChartTheme } from "ag-charts-community";
 import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
@@ -41,9 +41,8 @@ export class ChartSettingsPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    private activePalette?: ChartPaletteName;
-    private palettes: Map<ChartPaletteName | undefined, ChartPalette>;
-    private paletteNames: (ChartPaletteName | undefined)[];
+    private activeThemeIndex?: number;
+    private themes: ChartTheme[] = [];
 
     private isAnimating: boolean;
 
@@ -56,6 +55,7 @@ export class ChartSettingsPanel extends Component {
     @PostConstruct
     private postConstruct() {
         this.resetPalettes();
+        this.resetThemes();
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
@@ -65,41 +65,42 @@ export class ChartSettingsPanel extends Component {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     }
 
-    private resetPalettes(): void {
-        const palettes = this.chartController.getPalettes();
+    private resetThemes() {
+        
+    }
 
-        if (palettes === this.palettes) {
+    private resetPalettes(): void {
+        const themes = this.chartController.getThemes();
+
+        if (themes === this.themes) {
             return;
         }
 
-        this.palettes = palettes;
-        this.activePalette = this.chartController.getPaletteName();
+        this.themes = themes;
+        this.activeThemeIndex = this.chartController.getThemeIndex();
 
-        if (!this.palettes.has(this.activePalette)) {
-            this.activePalette = undefined;
+        if (this.activeThemeIndex < 0 || this.activeThemeIndex >= this.themes.length) {
+            this.activeThemeIndex = undefined;
         }
 
-        this.paletteNames = [];
         this.cardItems = [];
 
         _.clearElement(this.eCardSelector);
 
         this.destroyMiniCharts();
 
-        this.palettes.forEach((palette, name) => {
-            if (!this.activePalette) {
-                this.activePalette = name;
+        this.themes.forEach((theme, index) => {
+            if (!this.activeThemeIndex) {
+                this.activeThemeIndex = index;
             }
 
-            this.paletteNames.push(name);
-
-            const isActivePalette = this.activePalette === name;
-            const { fills, strokes } = palette;
+            const isActivePalette = this.activeThemeIndex === index;
+            const { fills, strokes } = theme.palette;
             const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
-            this.addCardLink(name);
+            this.addCardLink(index);
 
             if (isActivePalette) {
                 miniChartsContainer.refreshSelected();
@@ -108,24 +109,23 @@ export class ChartSettingsPanel extends Component {
             }
         });
 
-        _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.size <= 1);
+        _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.themes.length <= 1);
 
-        const paletteIndex = this.paletteNames.indexOf(this.activePalette);
-        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
+        _.radioCssClass(this.cardItems[this.activeThemeIndex], 'ag-selected', 'ag-not-selected');
     }
 
-    private addCardLink(paletteName: ChartPaletteName): void {
+    private addCardLink(themeIndex: number): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
-            const { activePalette, isAnimating, paletteNames } = this;
+            const { activeThemeIndex, isAnimating } = this;
 
-            if (paletteName === activePalette || isAnimating) {
+            if (themeIndex === activeThemeIndex || isAnimating) {
                 return;
             }
 
-            this.setActivePalette(paletteName, paletteNames.indexOf(paletteName) < paletteNames.indexOf(activePalette) ? 'left' : 'right');
+            this.setActivePalette(themeIndex, themeIndex < activeThemeIndex ? 'left' : 'right');
         });
 
         this.eCardSelector.appendChild(link);
@@ -133,10 +133,10 @@ export class ChartSettingsPanel extends Component {
     }
 
     private getPrev(): number {
-        let prev = this.paletteNames.indexOf(this.activePalette) - 1;
+        let prev = this.activeThemeIndex - 1;
 
         if (prev < 0) {
-            prev = this.paletteNames.length - 1;
+            prev = this.themes.length - 1;
         }
 
         return prev;
@@ -147,13 +147,13 @@ export class ChartSettingsPanel extends Component {
             return;
         }
 
-        this.setActivePalette(this.paletteNames[this.getPrev()], 'left');
+        this.setActivePalette(this.getPrev(), 'left');
     }
 
     private getNext(): number {
-        let next = this.paletteNames.indexOf(this.activePalette) + 1;
+        let next = this.activeThemeIndex + 1;
 
-        if (next >= this.paletteNames.length) {
+        if (next >= this.themes.length) {
             next = 0;
         }
 
@@ -165,17 +165,15 @@ export class ChartSettingsPanel extends Component {
             return;
         }
 
-        this.setActivePalette(this.paletteNames[this.getNext()], 'right');
+        this.setActivePalette(this.getNext(), 'right');
     }
 
-    private setActivePalette(paletteName: ChartPaletteName, animationDirection: AnimationDirection) {
-        const paletteIndex = this.paletteNames.indexOf(paletteName);
+    private setActivePalette(themeIndex: number, animationDirection: AnimationDirection) {
+        _.radioCssClass(this.cardItems[themeIndex], 'ag-selected', 'ag-not-selected');
 
-        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
-
-        const currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
+        const currentPalette = this.miniCharts[this.activeThemeIndex];
         const currentGui = currentPalette.getGui();
-        const futurePalette = this.miniCharts[paletteIndex];
+        const futurePalette = this.miniCharts[themeIndex];
         const futureGui = futurePalette.getGui();
 
         currentPalette.refreshSelected();
@@ -188,8 +186,8 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(currentGui, 'ag-animating');
         _.addCssClass(futureGui, 'ag-animating');
 
-        this.activePalette = paletteName;
-        this.chartController.setChartPaletteName(this.activePalette);
+        this.activeThemeIndex = themeIndex;
+        this.chartController.setChartThemeIndex(this.activeThemeIndex);
 
         this.isAnimating = true;
 
