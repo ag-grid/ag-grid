@@ -56,7 +56,7 @@
     "rollup-plugin-typescript": "^1.0.0",
     "rollup-plugin-uglify": "^6.0.0",
     "rollup-stream": "^1.24.0",
-    "serialize-javascript": "2.1.0",
+    "serialize-javascript": "4.0.0",
     "tslib": "^1.10.0",
     "typescript": "3.6.3",
     "vinyl-source-stream": "^2.0.0"
