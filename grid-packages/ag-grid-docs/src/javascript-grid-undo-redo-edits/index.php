@@ -68,12 +68,18 @@ undoRedoCellEditingLimit: 20 // default is 10
 <h2>Undo / Redo API</h2>
 
 <p>
-    It is also possible to control undo / redo using the following grid API methods:
+    It is also possible to programmatically control undo / redo and check the number of currently available
+    undo / redo actions. These API methods are listed below:
 </p>
 
 <snippet>
+// perform undo / redo
 gridApi.undoCellEditing();
 gridApi.redoCellEditing();
+
+// obtain current number of available undo / redo actions
+gridApi.getCurrentUndoSize();
+gridApi.getCurrentRedoSize();
 </snippet>
 
 <h2>Example: Undo / Redo</h2>
@@ -116,6 +122,7 @@ enableCellChangeFlash: true,
     <li><b>Redo Shortcut</b>: use CTRL+Y to redo the undone cell edits.</li>
     <li><b>Undo API</b>: use the 'Undo' button to invoke <code>gridApi.undoCellEditing().</code></li>
     <li><b>Redo API</b>: use the 'Redo' button to invoke <code>gridApi.redoCellEditing().</code></li>
+    <li><b>Undo / Redo Limit</b>: only 5 actions are allowed as <code>undoRedoCellEditingLimit=5</code>.</li>
 </ul>
 
 <?= grid_example('Undo / Redo', 'undo-redo', 'generated', ['enterprise' => true, 'exampleHeight' => 530, 'modules' => true]) ?>

@@ -1078,6 +1078,14 @@ export class GridApi {
         this.undoRedoService.redo();
     }
 
+    public getCurrentUndoSize(): number {
+        return this.undoRedoService.getCurrentUndoStackSize();
+    }
+
+    public getCurrentRedoSize(): number {
+        return this.undoRedoService.getCurrentRedoStackSize();
+    }
+
     public getChartModels(): ChartModel[] {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartModels') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {

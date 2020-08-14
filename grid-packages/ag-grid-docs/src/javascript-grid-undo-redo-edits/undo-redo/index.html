@@ -1,8 +1,12 @@
 <div class="example-wrapper">
     <div>
         <span class="button-group">
-            <button onclick="undo()">Undo</button>
-            <button onclick="redo()">Redo</button>
+            <label>Available Undo's</label>
+            <input id="undoInput" class="undo-redo-input" value="0" disabled/>
+            <label>Available Redo's</label>
+            <input id="redoInput" class="undo-redo-input" value="0" disabled/>
+            <button id="undoBtn" class="undo-btn" onclick="undo()" disabled>Undo</button>
+            <button id="redoBtn" class="redo-btn" onclick="redo()" disabled>Redo</button>
         </span>
     </div>
     <div id="myGrid" class="ag-theme-alpine"></div>

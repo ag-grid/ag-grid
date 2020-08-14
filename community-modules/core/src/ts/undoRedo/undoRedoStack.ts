@@ -65,4 +65,8 @@ export class UndoRedoStack {
     public clear(): void {
         this.actionStack = [];
     }
+
+    public getCurrentStackSize(): number {
+        return this.actionStack.length;
+    }
 }

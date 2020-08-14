@@ -19,7 +19,18 @@ var gridOptions = {
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 5,
     enableCellChangeFlash: true,
+    onCellValueChanged: onCellValueChanged
 };
+
+function onCellValueChanged() {
+    var undoSize = gridOptions.api.getCurrentUndoSize();
+    document.querySelector('#undoInput').value = undoSize;
+    document.querySelector('#undoBtn').disabled = undoSize < 1;
+
+    var redoSize = gridOptions.api.getCurrentRedoSize();
+    document.querySelector('#redoInput').value = redoSize;
+    document.querySelector('#redoBtn').disabled = redoSize < 1;
+}
 
 function undo() {
     gridOptions.api.undoCellEditing();

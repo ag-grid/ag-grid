@@ -92,6 +92,15 @@ export class UndoRedoService extends BeanStub {
         this.redoStack.clear();
     };
 
+
+    public getCurrentUndoStackSize(): number {
+        return this.undoStack ? this.undoStack.getCurrentStackSize() : 0;
+    }
+
+    public getCurrentRedoStackSize(): number {
+        return this.redoStack ? this.redoStack.getCurrentStackSize() : 0;
+    }
+
     public undo() {
         if (!this.undoStack) {
             return;
