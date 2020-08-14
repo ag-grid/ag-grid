@@ -302,10 +302,6 @@ SNIPPET
 
 <?= grid_example('Matching Columns', 'matching-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
 
-<!--<h2>Refreshing Columns</h2>-->
-
-<?//= grid_example('Refreshing Headers', 'refreshing-headers', 'mixed', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
-
 <h2>Column Events</h2>
 
 <p>
@@ -371,5 +367,20 @@ SNIPPET
 </ul>
 
 <?= grid_example('Refresh Headers', 'refresh-headers', 'mixed', ['reactFunctional' => true]) ?>
+
+<h2>Column Definition Retrieval</h2>
+
+<p>There will be times where you'll want to retrieve the current Column Definition in order to perhaps persist them,
+    or perhaps retrieve, alter and then re-apply the modified columns.</p>
+
+<p>The current column definitions can be retrieved with <code>getColumnDefs</code>:</p>
+
+<?= createSnippet(<<<SNIPPET
+gridOptions.api.getColumnDefs();
+SNIPPET
+) ?>
+
+<?= grid_example('Get Column Definitions', 'get-column-defs', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
