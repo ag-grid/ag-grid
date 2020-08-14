@@ -467,6 +467,23 @@
             "description": "Returns the status bar component instance for the <code>key</code> provided."
         }
     },
+    "UndoRedo": {
+        "meta": {
+            "displayName": "Undo / Redo"
+        },
+        "undoCellEditing()": {
+            "description": "Undo's last cell edit."
+        },
+        "redoCellEditing()": {
+            "description": "Redo's last cell edit undo."
+        },
+        "getCurrentUndoSize()": {
+            "description": "Returns current number of available cell edit undo's."
+        },
+        "getCurrentRedoSize()": {
+            "description": "Returns current number of available cell edit redo's."
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Charts"
