@@ -33,6 +33,7 @@ import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartTranslator } from "./chartTranslator";
+import { ChartTheme } from "ag-charts-community";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -81,6 +82,7 @@ export class GridChartComp extends Component {
 
     constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
+        debugger;
     }
 
     @PostConstruct
@@ -88,6 +90,7 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
+            chartThemeIndex: this.params.chartThemeIndex,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -97,7 +100,7 @@ export class GridChartComp extends Component {
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartThemeIndex));
+        this.chartController = this.createManagedBean(new ChartController(this.model));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -140,8 +143,10 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
             chartType,
+            chartThemeIndex: this.model.getChartThemeIndex(),
             processChartOptions: processChartOptionsFunc,
             getChartThemeIndex: this.getChartThemeIndex.bind(this),
+            getChartThemes: this.getChartThemes.bind(this),
             allowPaletteOverride: !this.params.chartThemeIndex,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
@@ -165,6 +170,10 @@ export class GridChartComp extends Component {
 
     private getChartThemeIndex(): number {
         return this.chartController.getThemeIndex();
+    }
+
+    private getChartThemes(): ChartTheme[] {
+        return this.chartController.getThemes();
     }
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
@@ -261,15 +270,17 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        if (this.shouldRecreateChart()) {
+        debugger;
+        // if (this.shouldRecreateChart()) {
             this.createChart();
-        }
+        // }
 
         this.updateChart();
     }
 
     private shouldRecreateChart(): boolean {
-        return this.chartType !== this.model.getChartType();
+        return this.chartType !== this.model.getChartType()
+            || this.getChartThemeIndex() !== this.model.getChartThemeIndex();
     }
 
     public getCurrentChartType(): ChartType {

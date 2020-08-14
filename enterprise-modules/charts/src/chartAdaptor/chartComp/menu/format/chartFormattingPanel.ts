@@ -32,6 +32,7 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createPanels() {
+        debugger;
         const chartType = this.chartController.getChartType();
         const isGrouping = this.chartController.isGrouping();
 

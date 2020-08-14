@@ -30,6 +30,7 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
+    chartThemeIndex: number;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -55,6 +56,7 @@ export class ChartDataModel extends BeanStub {
 
     private readonly pivotChart: boolean;
     private chartType: ChartType;
+    private chartThemeIndex: number;
     private readonly suppressChartRanges: boolean;
 
     private readonly aggFunc?: string | IAggFunc;
@@ -69,8 +71,10 @@ export class ChartDataModel extends BeanStub {
     public constructor(params: ChartModelParams) {
         super();
 
+        debugger;
         this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
+        this.chartThemeIndex = params.chartThemeIndex;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
@@ -110,10 +114,6 @@ export class ChartDataModel extends BeanStub {
 
     public getData(): any[] {
         return this.chartData;
-    }
-
-    public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
     }
 
     public isGrouping(): boolean {
@@ -174,9 +174,22 @@ export class ChartDataModel extends BeanStub {
         };
     }
 
+    public setChartType(chartType: ChartType): void {
+        debugger;
+        this.chartType = chartType;
+    }
+
     public getChartType(): ChartType {
         return this.chartType;
     };
+
+    public setChartThemeIndex(chartThemeIndex: number): void {
+        this.chartThemeIndex = chartThemeIndex;
+    }
+
+    public getChartThemeIndex(): number {
+        return this.chartThemeIndex;
+    }
 
     public isSuppressChartRanges(): boolean {
         return this.suppressChartRanges;

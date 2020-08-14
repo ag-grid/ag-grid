@@ -70,6 +70,7 @@ export class ChartSettingsPanel extends Component {
     }
 
     private resetPalettes(): void {
+        debugger;
         const themes = this.chartController.getThemes();
 
         if (themes === this.themes) {
@@ -114,18 +115,18 @@ export class ChartSettingsPanel extends Component {
         _.radioCssClass(this.cardItems[this.activeThemeIndex], 'ag-selected', 'ag-not-selected');
     }
 
-    private addCardLink(themeIndex: number): void {
+    private addCardLink(chartThemeIndex: number): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
             const { activeThemeIndex, isAnimating } = this;
 
-            if (themeIndex === activeThemeIndex || isAnimating) {
+            if (chartThemeIndex === activeThemeIndex || isAnimating) {
                 return;
             }
 
-            this.setActivePalette(themeIndex, themeIndex < activeThemeIndex ? 'left' : 'right');
+            this.setActivePalette(chartThemeIndex, chartThemeIndex < activeThemeIndex ? 'left' : 'right');
         });
 
         this.eCardSelector.appendChild(link);
@@ -168,12 +169,12 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.getNext(), 'right');
     }
 
-    private setActivePalette(themeIndex: number, animationDirection: AnimationDirection) {
-        _.radioCssClass(this.cardItems[themeIndex], 'ag-selected', 'ag-not-selected');
+    private setActivePalette(chartThemeIndex: number, animationDirection: AnimationDirection) {
+        _.radioCssClass(this.cardItems[chartThemeIndex], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniCharts[this.activeThemeIndex];
         const currentGui = currentPalette.getGui();
-        const futurePalette = this.miniCharts[themeIndex];
+        const futurePalette = this.miniCharts[chartThemeIndex];
         const futureGui = futurePalette.getGui();
 
         currentPalette.refreshSelected();
@@ -186,7 +187,8 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(currentGui, 'ag-animating');
         _.addCssClass(futureGui, 'ag-animating');
 
-        this.activeThemeIndex = themeIndex;
+        debugger;
+        this.activeThemeIndex = chartThemeIndex;
         this.chartController.setChartThemeIndex(this.activeThemeIndex);
 
         this.isAnimating = true;

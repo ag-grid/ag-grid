@@ -104,7 +104,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     private createChart(cellRange: CellRange,
                         chartType: ChartType,
-                        chartThemeIndex?: number,
+                        chartThemeIndex: number = 0,
                         pivotChart = false,
                         suppressChartRanges = false,
                         container?: HTMLElement,

@@ -34,6 +34,7 @@ import {
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
+    chartThemeIndex: number;
     width?: number;
     height?: number;
     parentElement: HTMLElement;
@@ -41,6 +42,7 @@ export interface ChartProxyParams {
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeIndex: () => number;
+    getChartThemes: () => ChartTheme[];
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -117,17 +119,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     private getSelectedIntegratedChartTheme(): ChartTheme {
-        return getChartTheme('dark');
+        const params = this.chartProxyParams;
+        debugger;
+        const chartThemeIndex = params.getChartThemeIndex();
+        return params.getChartThemes()[chartThemeIndex];
     }
-    protected mergeOptions(theme: ChartTheme): TOptions {
+    
+    // Merges theme defaults into default options. To be overridden in subclasses.
+    protected mergeInTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
         return options;
     }
 
     protected initChartOptions(): void {
-        const theme = this.getSelectedIntegratedChartTheme();
-        const options = this.mergeOptions(theme);
         const { processChartOptions } = this.chartProxyParams;
+        const theme = this.getSelectedIntegratedChartTheme();
+        const options = this.mergeInTheme(theme);
 
         // allow users to override options before they are applied
         if (processChartOptions) {

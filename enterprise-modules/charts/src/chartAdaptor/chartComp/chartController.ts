@@ -14,7 +14,7 @@ import {
     GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { AgChartThemePalette, getChartTheme, ChartTheme, AgChartTheme } from "ag-charts-community";
+import { getChartTheme, ChartTheme } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -29,12 +29,9 @@ export class ChartController extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
-    private chartThemeIndex: number = 0;
 
-    public constructor(private readonly model: ChartDataModel, themeIndex: number = 0) {
+    public constructor(private readonly model: ChartDataModel) {
         super();
-
-        this.chartThemeIndex = themeIndex;
     }
 
     @PostConstruct
@@ -106,7 +103,7 @@ export class ChartController extends BeanStub {
     }
 
     public getThemeIndex(): number {
-        return this.chartThemeIndex;
+        return this.model.getChartThemeIndex();
     }
 
     // public getThemes(): AgChartThemePalette[] {
@@ -130,20 +127,21 @@ export class ChartController extends BeanStub {
     //     // return map;
     // }
 
+    private stockThemes: ChartTheme[] = [
+        'default',
+        'dark',
+        'material',
+        'material-dark',
+        'pastel',
+        'pastel-dark',
+        'solar',
+        'solar-dark',
+        'vivid',
+        'vivid-dark'
+    ].map(name => getChartTheme(name));
+
     public getThemes(): ChartTheme[] {
-        const themeOptions: AgChartTheme[] = [
-            { baseTheme: 'default' },
-            { baseTheme: 'dark' },
-            { baseTheme: 'material' },
-            { baseTheme: 'material-dark' },
-            { baseTheme: 'pastel' },
-            { baseTheme: 'pastel-dark' },
-            { baseTheme: 'solar' },
-            { baseTheme: 'solar-dark' },
-            { baseTheme: 'vivid' },
-            { baseTheme: 'vivid-dark' }
-        ];
-        return themeOptions.map(o => getChartTheme(o));
+        return this.stockThemes;
     }
 
     public setChartType(chartType: ChartType): void {
@@ -152,8 +150,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartThemeIndex(index: number): void {
-        this.chartThemeIndex = index;
+    public setChartThemeIndex(chartThemeIndex: number): void {
+        this.model.setChartThemeIndex(chartThemeIndex);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

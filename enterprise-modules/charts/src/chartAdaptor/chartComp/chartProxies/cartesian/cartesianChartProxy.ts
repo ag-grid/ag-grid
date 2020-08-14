@@ -16,7 +16,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         super(params);
     }
 
-    protected mergeOptions(theme: ChartTheme): CartesianChartOptions<T> {
+    protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<T> {
         const options = this.getDefaultOptions();
         debugger;
         options.title = theme.getConfig('cartesian.title');
