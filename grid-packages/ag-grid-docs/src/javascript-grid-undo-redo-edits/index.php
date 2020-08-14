@@ -125,6 +125,6 @@ enableCellChangeFlash: true,
     <li><b>Undo / Redo Limit</b>: only 5 actions are allowed as <code>undoRedoCellEditingLimit=5</code>.</li>
 </ul>
 
-<?= grid_example('Undo / Redo', 'undo-redo', 'generated', ['enterprise' => true, 'exampleHeight' => 530, 'modules' => true]) ?>
+<?= grid_example('Undo / Redo', 'undo-redo', 'generated', ['enterprise' => true, 'exampleHeight' => 530, 'modules'=>['clientside', 'range', 'clipboard']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

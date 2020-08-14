@@ -19,18 +19,9 @@ var gridOptions = {
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 5,
     enableCellChangeFlash: true,
+    onFirstDataRendered: onFirstDataRendered,
     onCellValueChanged: onCellValueChanged
 };
-
-function onCellValueChanged() {
-    var undoSize = gridOptions.api.getCurrentUndoSize();
-    document.querySelector('#undoInput').value = undoSize;
-    document.querySelector('#undoBtn').disabled = undoSize < 1;
-
-    var redoSize = gridOptions.api.getCurrentRedoSize();
-    document.querySelector('#redoInput').value = redoSize;
-    document.querySelector('#redoBtn').disabled = redoSize < 1;
-}
 
 function undo() {
     gridOptions.api.undoCellEditing();
@@ -38,6 +29,34 @@ function undo() {
 
 function redo() {
     gridOptions.api.redoCellEditing();
+}
+
+function onFirstDataRendered() {
+    setValue('#undoInput', 0);
+    disable('#undoInput', true);
+    disable('#undoBtn', true);
+
+    setValue('#redoInput', 0);
+    disable('#redoInput', true);
+    disable('#redoBtn', true);
+}
+
+function onCellValueChanged(params) {
+    var undoSize = params.api.getCurrentUndoSize();
+    setValue('#undoInput', undoSize);
+    disable('#undoBtn', undoSize < 1);
+
+    var redoSize = params.api.getCurrentRedoSize();
+    setValue('#redoInput', redoSize);
+    disable('#redoBtn', redoSize < 1);
+}
+
+function disable(id, disabled) {
+    document.querySelector(id).disabled = disabled;
+}
+
+function setValue(id, value) {
+    document.querySelector(id).value = value;
 }
 
 function getRows() {
