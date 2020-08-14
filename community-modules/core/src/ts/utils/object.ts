@@ -74,7 +74,7 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true): void {
 
         if (oldValue === newValue) { return; }
 
-        if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
+        if (typeof oldValue === 'object' && oldValue !== null && typeof newValue === 'object' && !Array.isArray(oldValue)) {
             mergeDeep(oldValue, newValue);
         } else if (copyUndefined || newValue !== undefined) {
             dest[key] = newValue;
