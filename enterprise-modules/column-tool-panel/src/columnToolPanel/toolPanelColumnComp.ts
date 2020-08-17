@@ -69,7 +69,6 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         const indent = this.columnDept;
@@ -92,6 +91,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();
+        this.refreshCheckboxAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
@@ -124,7 +124,9 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
             return;
         }
 
-        // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
+        this.refreshCheckboxAriaLabel();
+
+        // only want to action if the user clicked the checkbox, not if we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) {
             return;
@@ -142,6 +144,11 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         } else {
             this.columnController.setColumnVisible(this.column, nextState, "toolPanelUi");
         }
+    }
+
+    private refreshCheckboxAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'checked' : 'unchecked';
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection (${state})`);
     }
 
     private actionUnCheckedPivotMode(): void {

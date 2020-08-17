@@ -91,8 +91,6 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             this.displayName = '>>';
         }
 
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
-
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
@@ -108,6 +106,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
+
+        this.refreshCheckboxAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
@@ -189,6 +189,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private onChangeCommon(nextState: boolean): void {
+        this.refreshCheckboxAriaLabel();
+
         if (this.processingColumnStateChange) {
             return;
         }
@@ -212,6 +214,11 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             // only columns that are 'allowed' and pass filter should be visible
             this.columnController.setColumnsVisible(visibleColumns, nextState, this.eventType);
         }
+    }
+
+    private refreshCheckboxAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'checked' : 'unchecked';
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection (${state})`);
     }
 
     private actionUnCheckedReduce(columns: Column[]): void {
