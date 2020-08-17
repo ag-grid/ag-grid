@@ -52,7 +52,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
-
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const ePopup = menu.getGui();
 
@@ -66,7 +65,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 menu.showTab(defaultTab);
             }
         }, defaultTab, undefined, mouseEvent.target as HTMLElement);
-
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
@@ -110,9 +108,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: string[],
         eventSource?: HTMLElement
     ): void {
-        const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.createBean(menu);
-
+        const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
         // need to show filter before positioning, as only after filter
@@ -122,7 +118,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             true,
             (e: Event) => { // menu closed callback
                 this.destroyBean(menu);
-                column.setMenuVisible(false, "contextMenu");
+                column.setMenuVisible(false, 'contextMenu');
+
                 const isKeyboardEvent = e instanceof KeyboardEvent;
 
                 if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
@@ -133,9 +130,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         );
 
-        menu.afterGuiAttached({
-            hidePopup: hidePopup
-        });
+        menu.afterGuiAttached({ hidePopup });
 
         positionCallback(menu);
 
@@ -219,8 +214,7 @@ export class EnterpriseMenu extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        const tabs = this.getTabsToCreate()
-            .map(menuTabName => this.createTab(menuTabName));
+        const tabs = this.getTabsToCreate().map(name => this.createTab(name));
 
         this.tabbedLayout = new TabbedLayout({
             items: tabs,
@@ -472,7 +466,7 @@ export class EnterpriseMenu extends BeanStub {
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
         let columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams) columnsMenuParams = {}
+        if (!columnsMenuParams) columnsMenuParams = {};
 
         this.columnSelectPanel.init(false, {
             suppressValues: false,

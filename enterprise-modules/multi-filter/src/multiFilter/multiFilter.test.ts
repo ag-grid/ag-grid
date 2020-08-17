@@ -13,12 +13,14 @@ import {
     IDoesFilterPassParams,
     ProvidedFilter,
     Context,
+    FocusController,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
+let focusController: jest.Mocked<FocusController>;
 
 let colDef: jest.Mocked<ColDef>;
 let column: jest.Mocked<Column>;
@@ -56,6 +58,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
     (multiFilter as any).eGui = eGui;
     (multiFilter as any).filterManager = filterManager;
     (multiFilter as any).userComponentFactory = userComponentFactory;
+    (multiFilter as any).focusController = focusController;
     (multiFilter as any).context = context;
 
     multiFilter.init(params);
@@ -67,6 +70,7 @@ beforeEach(() => {
     eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement');
     filterManager = mock<FilterManager>('createFilterParams');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
+    focusController = mock<FocusController>('findFocusableElements');
     context = mock<Context>('createBean', 'destroyBean');
 
     colDef = mock<ColDef>();
@@ -344,6 +348,7 @@ describe('afterGuiAttached', () => {
         filter2.getGui.mockReturnValue(filter2Gui);
 
         context.createBean.mockImplementation(bean => bean);
+        focusController.findFocusableElements.mockReturnValue([]);
     });
 
     it('passes through to filter if it has afterGuiAttached function', () => {
@@ -415,6 +420,9 @@ describe('afterGuiAttached', () => {
         });
 
         const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
+        const blur = jest.fn();
+
+        (document.activeElement as HTMLElement).blur = blur;
 
         multiFilter.afterGuiAttached(params);
 
@@ -424,6 +432,7 @@ describe('afterGuiAttached', () => {
         expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
         expect(filter2.afterGuiAttached).toHaveBeenCalledTimes(1);
         expect(filter2.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
+        expect(blur).toHaveBeenCalledTimes(1);
     });
 
     it('does not pass through to filter if afterGuiAttached function does not exist', () => {

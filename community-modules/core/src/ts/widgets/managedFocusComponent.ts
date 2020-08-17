@@ -64,7 +64,7 @@ export class ManagedFocusComponent extends Component {
     /*
      * Override this method if focusing the default element requires special logic.
      */
-    protected focusInnerElement(fromBottom?: boolean): void {
+    protected focusInnerElement(fromBottom = false): void {
         const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard');
 
         if (!focusable.length) { return; }

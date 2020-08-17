@@ -50,13 +50,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     public init(
         params: ToolPanelColumnCompParams,
         allowDragging: boolean,
-        eventType: ColumnEventType): void
-    {
+        eventType: ColumnEventType): void {
         this.params = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
-
-        console.log("this.eventType: ", this.eventType);
 
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
