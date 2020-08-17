@@ -46,7 +46,7 @@ function onBtSortAthleteAndMedalsFirst() {
         {field: 'date'}
     ];
 
-    var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
+    // var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
 
     gridOptions.api.setColumnDefs(newColumnDefs);
 }
@@ -70,7 +70,7 @@ function onBtClearSortAthleteAndMedals() {
         {field: 'total'}
     ];
 
-    var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
+    // var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
 
     gridOptions.api.setColumnDefs(newColumnDefs);
 }
