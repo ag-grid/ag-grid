@@ -17,13 +17,19 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     }
 
     protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<T> {
-        const options = this.getDefaultOptions();
-        debugger;
-        options.title = theme.getConfig('cartesian.title');
-        options.background = theme.getConfig('cartesian.background');
-        options.legend = theme.getConfig('cartesian.legend');
-        options.xAxis = theme.getConfig('cartesian.axes.number');
-        options.yAxis = theme.getConfig('cartesian.axes.number');
+        const options = super.mergeInTheme(theme);
+        const { chartType } = this.chartProxyParams;
+
+        // let xAxisType = chartType.indexOf('grouped') >= 0 ? 'groupedCategory' : 'category';
+        let xAxisType = 'category';
+        let yAxisType = 'number';
+
+        if (chartType.indexOf('bar') >= 0) {
+            [xAxisType, yAxisType] = [yAxisType, xAxisType];
+        }
+
+        options.xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
+        options.yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
         return options;
     }
 

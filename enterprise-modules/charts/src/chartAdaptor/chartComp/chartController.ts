@@ -14,7 +14,7 @@ import {
     GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { getChartTheme, ChartTheme } from "ag-charts-community";
+import { getChartTheme, ChartTheme, AgChartTheme } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -127,18 +127,75 @@ export class ChartController extends BeanStub {
     //     // return map;
     // }
 
-    private stockThemes: ChartTheme[] = [
-        'default',
+    /*
+    opts.title.enabled = true;
+        opts.title.text = "Medals by Age";
+        opts.legend.position = 'bottom';
+
+        opts.seriesDefaults.tooltip.renderer = function(params) {
+            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+            var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
+            return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
+        };
+
+        if (opts.xAxis) {
+            opts.xAxis.label.rotation = 0;
+        }
+
+        if (opts.yAxis) {
+            opts.yAxis.label.rotation = 0;
+        }
+    */
+
+    private stockThemes: ChartTheme[] = ([
+        {
+            defaults: {
+                cartesian: {
+                    title: {
+                        enabled: true,
+                        text: 'Medals by Age'
+                    },
+                    legend: {
+                        position: 'top'
+                    },
+                    series: {
+                        column: {
+                            tooltipRenderer: function(params: any) {
+                                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                                var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    
+                                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
+                            }
+                        }
+                    },
+                    axes: {
+                        category: {
+                            label: {
+                                rotation: 45
+                            }
+                        },
+                        number: {
+                            label: {
+                                rotation: 45
+                            }
+                        }
+                    }
+                }
+            }
+        },
         'dark',
         'material',
-        'material-dark',
         'pastel',
-        'pastel-dark',
-        'solar',
-        'solar-dark',
-        'vivid',
-        'vivid-dark'
-    ].map(name => getChartTheme(name));
+        'vivid'
+        // 'pastel-dark',
+        // 'solar',
+        // 'solar-dark',
+        // 'vivid',
+        // 'vivid-dark'
+    ] as (string | AgChartTheme)[]).map(name => getChartTheme(name));
 
     public getThemes(): ChartTheme[] {
         return this.stockThemes;

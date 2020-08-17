@@ -53,7 +53,6 @@ export class ChartDataPanel extends Component {
     }
 
     private updatePanels() {
-        debugger;
         const currentChartType = this.chartType;
         const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
         const colIds = dimensionCols.map(c => c.colId).concat(valueCols.map(c => c.colId));

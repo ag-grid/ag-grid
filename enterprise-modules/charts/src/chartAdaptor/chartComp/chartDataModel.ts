@@ -71,7 +71,6 @@ export class ChartDataModel extends BeanStub {
     public constructor(params: ChartModelParams) {
         super();
 
-        debugger;
         this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
         this.chartThemeIndex = params.chartThemeIndex;
@@ -175,7 +174,6 @@ export class ChartDataModel extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
-        debugger;
         this.chartType = chartType;
     }
 

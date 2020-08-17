@@ -2,7 +2,7 @@ import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-
 import {
     CartesianChart,
     BarSeries,
-    AgChart, AgCartesianChartOptions
+    AgChart, AgCartesianChartOptions, ChartTheme
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -14,6 +14,12 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
+        const options = super.mergeInTheme(theme);
+        // options.seriesDefaults = theme.getConfig('cartesian.series.column');
+        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {

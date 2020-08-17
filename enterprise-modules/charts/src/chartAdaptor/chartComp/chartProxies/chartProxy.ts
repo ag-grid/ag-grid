@@ -120,7 +120,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     private getSelectedIntegratedChartTheme(): ChartTheme {
         const params = this.chartProxyParams;
-        debugger;
         const chartThemeIndex = params.getChartThemeIndex();
         return params.getChartThemes()[chartThemeIndex];
     }
@@ -128,17 +127,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     // Merges theme defaults into default options. To be overridden in subclasses.
     protected mergeInTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
+        options.title = theme.getConfig('cartesian.title');
+        options.subtitle = theme.getConfig('cartesian.subtitle');
+        options.background = theme.getConfig('cartesian.background');
+        options.legend = theme.getConfig('cartesian.legend');
         return options;
     }
 
     protected initChartOptions(): void {
         const { processChartOptions } = this.chartProxyParams;
         const theme = this.getSelectedIntegratedChartTheme();
-        const options = this.mergeInTheme(theme);
+        this.chartOptions = this.mergeInTheme(theme);
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options };
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
@@ -147,8 +150,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
             this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
-        } else {
-            this.chartOptions = this.getDefaultOptions();
         }
     }
 
@@ -366,15 +367,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getPredefinedPalette(): AgChartThemePalette {
-        const map: { [key in string]: string } = {
-            'borneo': 'default',
-            'material': 'material',
-            'pastel': 'pastel',
-            'bright': 'solar',
-            'flat': 'vivid'
-        };
-        const themeName = map[this.chartProxyParams.getChartThemeIndex()];
-        return themes[themeName].palette;
+        const themes = this.chartProxyParams.getChartThemes();
+        const themeIndex = this.chartProxyParams.getChartThemeIndex();
+        return themes[themeIndex].palette;
     }
 
     protected getPalette(): AgChartThemePalette {

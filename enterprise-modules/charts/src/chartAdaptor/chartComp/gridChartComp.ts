@@ -82,7 +82,6 @@ export class GridChartComp extends Component {
 
     constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
-        debugger;
     }
 
     @PostConstruct
@@ -270,7 +269,6 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        debugger;
         // if (this.shouldRecreateChart()) {
             this.createChart();
         // }

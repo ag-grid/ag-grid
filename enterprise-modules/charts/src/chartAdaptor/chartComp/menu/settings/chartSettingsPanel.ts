@@ -70,7 +70,6 @@ export class ChartSettingsPanel extends Component {
     }
 
     private resetPalettes(): void {
-        debugger;
         const themes = this.chartController.getThemes();
 
         if (themes === this.themes) {
@@ -91,10 +90,6 @@ export class ChartSettingsPanel extends Component {
         this.destroyMiniCharts();
 
         this.themes.forEach((theme, index) => {
-            if (!this.activeThemeIndex) {
-                this.activeThemeIndex = index;
-            }
-
             const isActivePalette = this.activeThemeIndex === index;
             const { fills, strokes } = theme.palette;
             const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
@@ -187,7 +182,6 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(currentGui, 'ag-animating');
         _.addCssClass(futureGui, 'ag-animating');
 
-        debugger;
         this.activeThemeIndex = chartThemeIndex;
         this.chartController.setChartThemeIndex(this.activeThemeIndex);
 
