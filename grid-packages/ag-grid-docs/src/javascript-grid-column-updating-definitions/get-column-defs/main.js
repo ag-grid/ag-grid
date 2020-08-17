@@ -94,7 +94,7 @@ function onBtRowGroupCountryThenSport() {
         {field: 'total'}
     ];
 
-    var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
+    // var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
 
     gridOptions.api.setColumnDefs(newColumnDefs);
 }
@@ -118,7 +118,7 @@ function onBtClearAllRowGroups() {
         {field: 'total'}
     ];
 
-    var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
+    // var newColumnDefs = desiredColumnDefOrderAndState.map(columnDef => ({...currentColumnDefs[columnDef.field], ...columnDef}));
 
     gridOptions.api.setColumnDefs(newColumnDefs);
 }
