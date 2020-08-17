@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { LegendMarker } from "./legend";
-import { AgChartTheme } from "./themes/agChartTheme";
+import { ChartTheme } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { MaterialLight } from "./themes/materialLight";
 import { MaterialDark } from "./themes/materialDark";
@@ -18,36 +18,47 @@ import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
-    AgChartThemeOptions
+    AgChartTheme
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
 
-const defaultTheme = new AgChartTheme();
-const themes: { [key in string]: AgChartTheme } = {
-    'default': defaultTheme,
-    'undefined': defaultTheme,
-    'null': defaultTheme,
-    'dark': new DarkTheme(),
+type ThemeMap = { [key in string]: ChartTheme };
+
+const lightTheme = new ChartTheme();
+const darkTheme = new DarkTheme();
+export const lightThemes: ThemeMap = {
+    'undefined': lightTheme,
+    'null': lightTheme,
+    'default': lightTheme,
     'material': new MaterialLight(),
-    'material-dark': new MaterialDark(),
     'pastel': new PastelLight(),
-    'pastel-dark': new PastelDark(),
     'solar': new SolarLight(),
-    'solar-dark': new SolarDark(),
     'vivid': new VividLight(),
-    'vivid-dark': new VividDark()
+};
+export const darkThemes: ThemeMap = {
+    'undefined': darkTheme,
+    'null': darkTheme,
+    'dark': darkTheme,
+    'material-dark': new MaterialDark(),
+    'pastel-dark': new PastelDark(),
+    'solar-dark': new SolarDark(),
+    'vivid-dark': new VividDark(),
+};
+export const themes: ThemeMap = {
+    ...darkThemes,
+    ...lightThemes,
 };
 
-export function getChartTheme(value?: string | AgChartTheme | AgChartThemeOptions): AgChartTheme {
+export function getChartTheme(value?: string | ChartTheme | AgChartTheme): ChartTheme {
     if (themes[value as string]) {
         return themes[value as string];
     }
-    if (value instanceof AgChartTheme) {
+    if (value instanceof ChartTheme) {
         return value;
     }
-    value = value as AgChartThemeOptions;
+    value = value as AgChartTheme;
     if (value.defaults || value.palette) {
         const baseTheme: any = getChartTheme(value.baseTheme);
         return new baseTheme.constructor(value);
@@ -128,7 +139,7 @@ const actualSeriesTypeMap = (() => {
     return map;
 })();
 
-function create(options: any, path?: string, component?: any, theme?: AgChartTheme) {
+function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
     if (component instanceof LegendMarker) {
@@ -217,7 +228,7 @@ function create(options: any, path?: string, component?: any, theme?: AgChartThe
     }
 }
 
-function update(component: any, options: any, path?: string, theme?: AgChartTheme) {
+function update(component: any, options: any, path?: string, theme?: ChartTheme) {
     if (!(options && isObject(options))) {
         return;
     }
@@ -299,7 +310,7 @@ function update(component: any, options: any, path?: string, theme?: AgChartThem
     }
 }
 
-function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: AgChartTheme) {
+function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const allSeries = chart.series;
     let prevSeries: Series | undefined;
     let i = 0;
@@ -335,7 +346,7 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: AgC
     }
 }
 
-function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: AgChartTheme) {
+function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const axes = chart.axes as ChartAxis[];
     const axesToAdd: ChartAxis[] = [];
     const axesToUpdate: ChartAxis[] = [];
@@ -408,7 +419,7 @@ function skipThemeKey(key: string): boolean {
  * If certain options were not provided by the user, use the defaults from the theme and the mapping.
  * All three objects are provided for the current path in the config tree, not necessarily top-level.
  */
-function provideDefaultOptions(path: string, options: any, mapping: any, theme?: AgChartTheme): any {
+function provideDefaultOptions(path: string, options: any, mapping: any, theme?: ChartTheme): any {
     const isChartConfig = path.indexOf('.') < 0;
     const themeDefaults = theme && theme.getConfig(path);
     const defaults = mapping && mapping.meta && mapping.meta.defaults;

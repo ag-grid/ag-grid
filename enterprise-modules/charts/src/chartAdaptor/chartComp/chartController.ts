@@ -14,7 +14,7 @@ import {
     GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName, palettes } from "ag-charts-community";
+import { getChartTheme, ChartTheme, AgChartTheme } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -29,12 +29,9 @@ export class ChartController extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
-    private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
+    public constructor(private readonly model: ChartDataModel) {
         super();
-
-        this.chartPaletteName = paletteName;
     }
 
     @PostConstruct
@@ -84,7 +81,7 @@ export class ChartController extends BeanStub {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartPalette: this.getPaletteName(),
+            chartThemeIndex: this.getThemeIndex(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
@@ -105,22 +102,103 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getPaletteName(): ChartPaletteName {
-        return this.chartPaletteName;
+    public getThemeIndex(): number {
+        return this.model.getChartThemeIndex();
     }
 
-    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
-        const customPalette = this.chartProxy.getCustomPalette();
+    // public getThemes(): AgChartThemePalette[] {
+    //     const customPalette = this.chartProxy.getCustomPalette();
 
-        if (customPalette) {
-            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
+    //     if (customPalette) {
+    //         const map = new Map<number | undefined, AgChartThemePalette>();
 
-            map.set(undefined, customPalette);
+    //         map.set(undefined, customPalette);
 
-            return map;
+    //         return map;
+    //     }
+
+    //     return [];
+    //     // const map = new Map<number | undefined, AgChartThemePalette>();
+    //     // const themes = this.getThemes();
+    //     // const names = ['borneo', 'material', 'pastel', 'bright', 'flat']
+    //     // themes.forEach((theme, index) => {
+    //     //     map.set(names[index % names.length], theme.palette);
+    //     // });
+    //     // return map;
+    // }
+
+    /*
+    opts.title.enabled = true;
+        opts.title.text = "Medals by Age";
+        opts.legend.position = 'bottom';
+
+        opts.seriesDefaults.tooltip.renderer = function(params) {
+            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+            var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
+            return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
+        };
+
+        if (opts.xAxis) {
+            opts.xAxis.label.rotation = 0;
         }
 
-        return palettes;
+        if (opts.yAxis) {
+            opts.yAxis.label.rotation = 0;
+        }
+    */
+
+    private stockThemes: ChartTheme[] = ([
+        {
+            defaults: {
+                cartesian: {
+                    title: {
+                        enabled: true,
+                        text: 'Medals by Age'
+                    },
+                    legend: {
+                        position: 'top'
+                    },
+                    series: {
+                        column: {
+                            tooltipRenderer: function(params: any) {
+                                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+                                var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    
+                                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
+                            }
+                        }
+                    },
+                    axes: {
+                        category: {
+                            label: {
+                                rotation: 45
+                            }
+                        },
+                        number: {
+                            label: {
+                                rotation: 45
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'dark',
+        'material',
+        'pastel',
+        'vivid'
+        // 'pastel-dark',
+        // 'solar',
+        // 'solar-dark',
+        // 'vivid',
+        // 'vivid-dark'
+    ] as (string | AgChartTheme)[]).map(name => getChartTheme(name));
+
+    public getThemes(): ChartTheme[] {
+        return this.stockThemes;
     }
 
     public setChartType(chartType: ChartType): void {
@@ -129,8 +207,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartPaletteName(palette: ChartPaletteName): void {
-        this.chartPaletteName = palette;
+    public setChartThemeIndex(chartThemeIndex: number): void {
+        this.model.setChartThemeIndex(chartThemeIndex);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

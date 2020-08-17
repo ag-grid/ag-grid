@@ -23,7 +23,6 @@ import {
     BeanStub
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
-import { ChartPaletteName } from "ag-charts-community";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
@@ -64,7 +63,7 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartPalette as ChartPaletteName,
+            params.chartThemeIndex,
             false,
             params.suppressChartRanges,
             params.chartContainer,
@@ -95,7 +94,7 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartPalette as ChartPaletteName,
+            params.chartThemeIndex,
             true,
             true,
             params.chartContainer,
@@ -105,7 +104,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     private createChart(cellRange: CellRange,
                         chartType: ChartType,
-                        chartPaletteName?: ChartPaletteName,
+                        chartThemeIndex: number = 0,
                         pivotChart = false,
                         suppressChartRanges = false,
                         container?: HTMLElement,
@@ -118,7 +117,7 @@ export class ChartService extends BeanStub implements IChartService {
             pivotChart,
             cellRange,
             chartType,
-            chartPaletteName,
+            chartThemeIndex,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,
