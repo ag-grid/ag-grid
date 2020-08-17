@@ -4,31 +4,28 @@ import {
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    ColumnApi,
     DropShadowOptions,
     Events,
     EventService,
     FontOptions,
+    GridApi,
     LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
-    GridApi,
-    ColumnApi,
 } from "@ag-grid-community/core";
 import {
+    AgChartThemePalette,
     AreaSeries,
+    BarSeries,
     Caption,
     CategoryAxis,
     Chart,
-    BarSeries,
+    ChartTheme,
     DropShadow,
     Padding,
-    PieSeries,
-    ChartTheme,
-    getChartTheme,
-    themes,
-    find,
-    AgChartThemePalette
+    PieSeries
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
@@ -43,6 +40,7 @@ export interface ChartProxyParams {
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeIndex: () => number;
     getChartThemes: () => ChartTheme[];
+    getChartThemeOverrides: () => ChartTheme | undefined;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -138,6 +136,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const { processChartOptions } = this.chartProxyParams;
         const theme = this.getSelectedIntegratedChartTheme();
         this.chartOptions = this.mergeInTheme(theme);
+
+        let chartThemeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        if (chartThemeOverrides) {
+            this.chartOptions = this.mergeInTheme(chartThemeOverrides);
+        }
 
         // allow users to override options before they are applied
         if (processChartOptions) {

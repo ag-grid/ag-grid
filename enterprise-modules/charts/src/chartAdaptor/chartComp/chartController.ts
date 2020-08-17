@@ -8,14 +8,15 @@ import {
     ChartType,
     ColumnApi,
     Events,
+    GetChartImageDataUrlParams,
     GridApi,
+    GridOptionsWrapper,
     IRangeController,
     PostConstruct,
-    GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { getChartTheme, ChartTheme, AgChartTheme } from "ag-charts-community";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {ChartDataModel, ColState} from "./chartDataModel";
+import {ChartProxy} from "./chartProxies/chartProxy";
+import {ChartTheme, getChartTheme} from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -25,6 +26,7 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('rangeController') rangeController: IRangeController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
@@ -106,99 +108,9 @@ export class ChartController extends BeanStub {
         return this.model.getChartThemeIndex();
     }
 
-    // public getThemes(): AgChartThemePalette[] {
-    //     const customPalette = this.chartProxy.getCustomPalette();
-
-    //     if (customPalette) {
-    //         const map = new Map<number | undefined, AgChartThemePalette>();
-
-    //         map.set(undefined, customPalette);
-
-    //         return map;
-    //     }
-
-    //     return [];
-    //     // const map = new Map<number | undefined, AgChartThemePalette>();
-    //     // const themes = this.getThemes();
-    //     // const names = ['borneo', 'material', 'pastel', 'bright', 'flat']
-    //     // themes.forEach((theme, index) => {
-    //     //     map.set(names[index % names.length], theme.palette);
-    //     // });
-    //     // return map;
-    // }
-
-    /*
-    opts.title.enabled = true;
-        opts.title.text = "Medals by Age";
-        opts.legend.position = 'bottom';
-
-        opts.seriesDefaults.tooltip.renderer = function(params) {
-            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-            var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-            var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
-            return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
-        };
-
-        if (opts.xAxis) {
-            opts.xAxis.label.rotation = 0;
-        }
-
-        if (opts.yAxis) {
-            opts.yAxis.label.rotation = 0;
-        }
-    */
-
-    private stockThemes: ChartTheme[] = ([
-        {
-            defaults: {
-                cartesian: {
-                    title: {
-                        enabled: true,
-                        text: 'Medals by Age'
-                    },
-                    legend: {
-                        position: 'top'
-                    },
-                    series: {
-                        column: {
-                            tooltipRenderer: function(params: any) {
-                                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                                var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    
-                                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
-                            }
-                        }
-                    },
-                    axes: {
-                        category: {
-                            label: {
-                                rotation: 45
-                            }
-                        },
-                        number: {
-                            label: {
-                                rotation: 45
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        'dark',
-        'material',
-        'pastel',
-        'vivid'
-        // 'pastel-dark',
-        // 'solar',
-        // 'solar-dark',
-        // 'vivid',
-        // 'vivid-dark'
-    ] as (string | AgChartTheme)[]).map(name => getChartTheme(name));
-
     public getThemes(): ChartTheme[] {
-        return this.stockThemes;
+        let chartThemes = this.gridOptionsWrapper.getChartThemes();
+        return chartThemes.map(name => getChartTheme(name));
     }
 
     public setChartType(chartType: ChartType): void {

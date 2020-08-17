@@ -38,10 +38,11 @@ import { AutoHeightCalculator } from './rendering/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
+import { AgChartTheme } from "./interfaces/iAgChartOptions";
+import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, values, missing } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
-import { iterateObject } from './utils/object';
 import { doOnce } from './utils/function';
 import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
@@ -1067,10 +1068,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
-        return this.gridOptions.getChartToolbarItems;
-    }
-
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
     }
@@ -1151,6 +1148,23 @@ export class GridOptionsWrapper {
 
     public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {
         return this.gridOptions.postSort;
+    }
+
+    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
+        return this.gridOptions.getChartToolbarItems;
+    }
+
+    public getChartThemeOverrides(): AgChartTheme | undefined {
+        return this.gridOptions.chartThemeOverrides;
+    }
+
+    public getChartThemes(): (string | AgChartTheme)[] {
+        if (this.gridOptions.chartThemes) {
+            return this.gridOptions.chartThemes;
+        }
+
+        // return default themes if user hasn't supplied any
+        return ['solar', 'material', 'pastel', 'vivid', 'dark']
     }
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {

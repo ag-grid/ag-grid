@@ -328,6 +328,7 @@ export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts
 export * from "./interfaces/iChartOptions";
+export * from "./interfaces/iAgChartOptions";
 
 // modules
 export { Module } from "./interfaces/iModule";
