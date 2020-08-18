@@ -68,6 +68,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_HAS_CHILDREN_CHANGED = 'hasChildrenChanged';
     public static EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
@@ -223,6 +224,11 @@ export class RowNode implements IEventEmitter {
     /** Used by sorting service - to give deterministic sort to groups. Previously we
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
+
+    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+     * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
+     * method, however that would be a breaking change. */
+    private __hasChildren: boolean;
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -578,11 +584,24 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public hasChildren(): boolean {
+    public updateHasChildren(): void {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        const newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        if (newValue!==this.__hasChildren) {
+            this.__hasChildren = newValue;
+            if (this.eventService) {
+                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
+            }
+        }
+    }
+
+    public hasChildren(): boolean {
+        if (this.__hasChildren==null) {
+            this.updateHasChildren();
+        }
+        return this.__hasChildren;
     }
 
     public isEmptyRowGroupNode(): boolean {

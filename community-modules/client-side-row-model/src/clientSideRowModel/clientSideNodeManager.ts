@@ -88,6 +88,7 @@ export class ClientSideNodeManager {
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
         this.rootNode.childrenMapped = null;
+        this.rootNode.updateHasChildren();
 
         this.nextId = 0;
         this.allNodesMap = {};

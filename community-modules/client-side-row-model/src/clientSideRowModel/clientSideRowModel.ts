@@ -710,6 +710,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         } else {
             this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
+            this.rootNode.updateHasChildren();
         }
     }
 
