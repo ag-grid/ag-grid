@@ -127,3 +127,7 @@ export function deepMerge(target: any, source: any, options?: any): any {
         return mergeObject(target, source, options);
     }
 }
+
+export function isObject(value: any): boolean {
+    return typeof value === 'object' && !Array.isArray(value);
+}

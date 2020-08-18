@@ -30,7 +30,7 @@ import {
     Padding,
     PieSeries
 } from "ag-charts-community";
-import { deepMerge } from "../object";
+import { mergeDeep } from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -127,42 +127,41 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
     
     // Merges theme defaults into default options. To be overridden in subclasses.
-    protected mergeInTheme(theme: ChartTheme): TOptions {
+    protected getDefaultOptionsWithTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
 
-        const chartType = this.chartType.indexOf('pie') >= 0
-            || this.chartType.indexOf('doughnut') >= 0
-            || this.chartType.indexOf('donut') >= 0 ? 'polar' : 'cartesian';
+        const chartType = this.chartType === ChartType.Pie
+            || this.chartType === ChartType.Doughnut ? 'polar' : 'cartesian';
 
         const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
-        deepMerge(titleOptions, options.title);
+        mergeDeep(titleOptions, options.title);
         options.title = titleOptions as any;
 
         const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
-        deepMerge(subtitleOptions, options.subtitle);
+        mergeDeep(subtitleOptions, options.subtitle);
         options.subtitle = subtitleOptions as any;
 
         const backgroundOptions = theme.getConfig(chartType + '.background');
-        deepMerge(backgroundOptions, options.background);
+        mergeDeep(backgroundOptions, options.background);
         options.background = backgroundOptions;
 
         const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
-        deepMerge(legendOptions, options.legend);
+        mergeDeep(legendOptions, options.legend);
         options.legend = legendOptions as any;
 
         const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
-        deepMerge(navigatorOptions, options.navigator);
+        mergeDeep(navigatorOptions, options.navigator);
         options.navigator = navigatorOptions as any;
 
         options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
         options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
         
         const listenerOptions = theme.getConfig(chartType + '.listeners');
-        deepMerge(listenerOptions, options.listeners);
+        mergeDeep(listenerOptions, options.listeners);
         options.listeners = listenerOptions;
 
         const paddingOptions = theme.getConfig(chartType + '.padding');
-        deepMerge(paddingOptions, options.padding);
+        mergeDeep(paddingOptions, options.padding);
         options.padding = paddingOptions;
 
         return options;
@@ -171,11 +170,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected initChartOptions(): void {
         const { processChartOptions } = this.chartProxyParams;
         const theme = this.getSelectedIntegratedChartTheme();
-        this.chartOptions = this.mergeInTheme(theme);
+        this.chartOptions = this.getDefaultOptionsWithTheme(theme);
 
         let chartThemeOverrides = this.chartProxyParams.getChartThemeOverrides();
         if (chartThemeOverrides) {
-            this.chartOptions = this.mergeInTheme(chartThemeOverrides);
+            this.chartOptions = this.getDefaultOptionsWithTheme(chartThemeOverrides);
         }
 
         // allow users to override options before they are applied

@@ -13,7 +13,7 @@ import { SolarDark } from "./themes/solarDark";
 import { VividLight } from "./themes/vividLight";
 import { VividDark } from "./themes/vividDark";
 import { find } from "../util/array";
-import { getValue } from "../util/object";
+import { getValue, isObject } from "../util/object";
 import {
     AgCartesianChartOptions,
     AgChartOptions,
@@ -445,8 +445,4 @@ function provideDefaultOptions(path: string, options: any, mapping: any, theme?:
     }
 
     return options;
-}
-
-function isObject(value: any): boolean {
-    return typeof value === 'object' && !Array.isArray(value);
 }

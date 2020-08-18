@@ -6,7 +6,7 @@ import {
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../object";
+import { mergeDeep } from "../../object";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
@@ -17,9 +17,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
-        const options = super.mergeInTheme(theme);
-        const seriesType = this.chartType.indexOf('bar') >= 0 ? 'bar' : 'column';
+    protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
+        const options = super.getDefaultOptionsWithTheme(theme);
+        const seriesType = this.chartType === ChartType.GroupedBar
+            || this.chartType === ChartType.StackedBar
+            || this.chartType === ChartType.NormalizedBar ? 'bar' : 'column';
         const seriesDefaults = theme.getConfig<AgBarSeriesOptions>('cartesian.series.' + seriesType);
         const iSeriesDefaults: BarSeriesOptions = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
@@ -39,7 +41,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
         };
-        deepMerge(iSeriesDefaults, options.seriesDefaults);
+        mergeDeep(iSeriesDefaults, options.seriesDefaults);
         options.seriesDefaults = iSeriesDefaults;
         return options;
     }

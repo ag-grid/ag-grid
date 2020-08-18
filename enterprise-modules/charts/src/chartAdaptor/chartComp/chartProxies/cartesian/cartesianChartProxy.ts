@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
+import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions, ChartType } from "@ag-grid-community/core";
 import {
     CartesianChart, CategoryAxis,
     ChartAxis,
@@ -9,6 +9,7 @@ import {
     GroupedCategoryChart, NumberAxis, TimeAxis, ChartTheme
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
+import { deepMerge, mergeDeep } from "../../object";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
@@ -16,20 +17,28 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         super(params);
     }
 
-    protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<T> {
-        const options = super.mergeInTheme(theme);
+    protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<T> {
+        const options = super.getDefaultOptionsWithTheme(theme);
         const { chartType } = this.chartProxyParams;
 
-        // let xAxisType = chartType.indexOf('grouped') >= 0 ? 'groupedCategory' : 'category';
+        debugger;
+
         let xAxisType = 'category';
         let yAxisType = 'number';
 
-        if (chartType.indexOf('bar') >= 0) {
+        if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar || chartType === ChartType.NormalizedBar) {
             [xAxisType, yAxisType] = [yAxisType, xAxisType];
         }
 
-        options.xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
-        options.yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
+        const xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
+        const yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
+
+        mergeDeep(xAxis, options.xAxis);
+        options.xAxis = xAxis;
+
+        mergeDeep(yAxis, options.yAxis);
+        options.yAxis = yAxis;
+
         return options;
     }
 
