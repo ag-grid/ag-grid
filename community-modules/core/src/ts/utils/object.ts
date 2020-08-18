@@ -91,18 +91,26 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     return Object.keys(allValues);
 }
 
-export function mergeDeep(dest: any, source: any, copyUndefined = true): void {
+export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsThatNeedCopy: string[] = [], iteration = 0): void {
     if (!exists(source)) { return; }
 
-    iterateObject(source, (key: string, newValue: any) => {
-        const oldValue: any = dest[key];
+    iterateObject(source, (key: string, sourceValue: any) => {
+        let destValue: any = dest[key];
 
-        if (oldValue === newValue) { return; }
+        if (destValue === sourceValue) { return; }
 
-        if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
-            mergeDeep(oldValue, newValue);
-        } else if (copyUndefined || newValue !== undefined) {
-            dest[key] = newValue;
+        const dontCopyOverSourceObject = iteration==0 && destValue == null && sourceValue!=null && objectsThatNeedCopy.indexOf(key)>=0;
+        if (dontCopyOverSourceObject) {
+            // by putting an empty value into destValue first, it means we end up copying over values from
+            // the source object, rather than just copying in the source object in it's entirety.
+            destValue = {};
+            dest[key] = destValue;
+        }
+
+        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
+            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+        } else if (copyUndefined || sourceValue !== undefined) {
+            dest[key] = sourceValue;
         }
     });
 }
