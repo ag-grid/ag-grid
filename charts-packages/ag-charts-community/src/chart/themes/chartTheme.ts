@@ -425,7 +425,7 @@ export class ChartTheme {
         return config;
     }
 
-    getConfig(path: string): any {
+    getConfig<T = any>(path: string): T {
         return getValue(this.config, path);
     }
 

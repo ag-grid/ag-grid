@@ -1,4 +1,4 @@
-import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
+import { _, BarSeriesOptions, CartesianChartOptions, ChartType, AgBarSeriesOptions, DropShadowOptions, BarSeriesLabelOptions, HighlightOptions } from "@ag-grid-community/core";
 import {
     CartesianChart,
     BarSeries,
@@ -6,6 +6,7 @@ import {
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
@@ -18,7 +19,28 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
     protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
         const options = super.mergeInTheme(theme);
-        // options.seriesDefaults = theme.getConfig('cartesian.series.column');
+        const seriesType = this.chartType.indexOf('bar') >= 0 ? 'bar' : 'column';
+        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>('cartesian.series.' + seriesType);
+        const iSeriesDefaults: BarSeriesOptions = {
+            shadow: seriesDefaults.shadow as DropShadowOptions,
+            label: seriesDefaults.label as BarSeriesLabelOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: seriesDefaults.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: seriesDefaults.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        };
+        deepMerge(iSeriesDefaults, options.seriesDefaults);
+        options.seriesDefaults = iSeriesDefaults;
         return options;
     }
 

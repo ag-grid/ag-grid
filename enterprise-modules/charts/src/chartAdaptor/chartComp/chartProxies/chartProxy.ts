@@ -14,6 +14,9 @@ import {
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
+    AgChartCaptionOptions,
+    AgChartLegendOptions,
+    AgNavigatorOptions,
 } from "@ag-grid-community/core";
 import {
     AgChartThemePalette,
@@ -27,6 +30,7 @@ import {
     Padding,
     PieSeries
 } from "ag-charts-community";
+import { deepMerge } from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -125,10 +129,42 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     // Merges theme defaults into default options. To be overridden in subclasses.
     protected mergeInTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
-        options.title = theme.getConfig('cartesian.title');
-        options.subtitle = theme.getConfig('cartesian.subtitle');
-        options.background = theme.getConfig('cartesian.background');
-        options.legend = theme.getConfig('cartesian.legend');
+
+        const chartType = this.chartType.indexOf('pie') >= 0
+            || this.chartType.indexOf('doughnut') >= 0
+            || this.chartType.indexOf('donut') >= 0 ? 'polar' : 'cartesian';
+
+        const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
+        deepMerge(titleOptions, options.title);
+        options.title = titleOptions as any;
+
+        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
+        deepMerge(subtitleOptions, options.subtitle);
+        options.subtitle = subtitleOptions as any;
+
+        const backgroundOptions = theme.getConfig(chartType + '.background');
+        deepMerge(backgroundOptions, options.background);
+        options.background = backgroundOptions;
+
+        const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
+        deepMerge(legendOptions, options.legend);
+        options.legend = legendOptions as any;
+
+        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
+        deepMerge(navigatorOptions, options.navigator);
+        options.navigator = navigatorOptions as any;
+
+        options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
+        options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
+        
+        const listenerOptions = theme.getConfig(chartType + '.listeners');
+        deepMerge(listenerOptions, options.listeners);
+        options.listeners = listenerOptions;
+
+        const paddingOptions = theme.getConfig(chartType + '.padding');
+        deepMerge(paddingOptions, options.padding);
+        options.padding = paddingOptions;
+
         return options;
     }
 

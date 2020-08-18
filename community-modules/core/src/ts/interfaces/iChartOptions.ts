@@ -37,6 +37,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     navigator: NavigatorOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    tooltipTracking?: boolean;
     listeners?: { [key in string]: Function };
 }
 
