@@ -181,7 +181,7 @@ export class TooltipFeature extends BeanStub {
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn,
+            column: this.parentComp.getColumn(),
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText
