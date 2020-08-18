@@ -15,7 +15,36 @@ export interface AgChartThemePalette {
 
 export interface AgChartThemeOverrides {
     palette?: AgChartThemePalette;
-    defaults?: any;
+    defaults?: AgChartThemeDefaults;
+}
+
+export interface AgChartThemeDefaults {
+    cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
+    polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
+}
+
+export interface AgCartesianAxesTheme {
+    number?: AgNumberAxisOptions;
+    category?: AgCategoryAxisOptions;
+    groupedCategory?: AgGroupedCategoryAxisOptions;
+    time?: AgTimeAxisOptions;
+}
+
+export interface AgCartesianSeriesTheme {
+    line?: AgLineSeriesOptions;
+    scatter?: AgScatterSeriesOptions;
+    area?: AgAreaSeriesOptions;
+    bar?: AgBarSeriesOptions;
+    histogram?: AgHistogramSeriesOptions;
+}
+
+export interface AgPolarAxesTheme {
+    // polar charts don't support axes at the moment
+    // (used by radar charts, for example)
+}
+
+export interface AgPolarSeriesTheme {
+    pie?: AgPieSeriesOptions;
 }
 
 export interface AgChartTheme extends AgChartThemeOverrides {
