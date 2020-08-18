@@ -21,8 +21,6 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const options = super.getDefaultOptionsWithTheme(theme);
         const { chartType } = this.chartProxyParams;
 
-        debugger;
-
         let xAxisType = 'category';
         let yAxisType = 'number';
 

@@ -302,7 +302,8 @@ export {
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ChartRef,
-    ProcessChartOptionsParams
+    ProcessChartOptionsParams,
+    ProcessChartThemeOptionsParams
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

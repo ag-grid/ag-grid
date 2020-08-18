@@ -1,5 +1,9 @@
 import {
     _,
+    AgChartCaptionOptions,
+    AgChartLegendOptions,
+    AgChartTheme,
+    AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
     ChartOptionsChanged,
@@ -13,10 +17,8 @@ import {
     LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
+    ProcessChartThemeOptionsParams,
     SeriesOptions,
-    AgChartCaptionOptions,
-    AgChartLegendOptions,
-    AgNavigatorOptions,
 } from "@ag-grid-community/core";
 import {
     AgChartThemePalette,
@@ -27,10 +29,12 @@ import {
     Chart,
     ChartTheme,
     DropShadow,
+    getChartTheme,
     Padding,
     PieSeries
 } from "ag-charts-community";
-import { mergeDeep } from "../object";
+import {mergeDeep} from "../object";
+import get = Reflect.get;
 
 export interface ChartProxyParams {
     chartId: string;
@@ -42,6 +46,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
+    processChartThemeOptions: (params: ProcessChartThemeOptionsParams) => AgChartTheme;
     getChartThemeIndex: () => number;
     getChartThemes: () => ChartTheme[];
     getChartThemeOverrides: () => ChartTheme | undefined;
@@ -120,10 +125,36 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected abstract getDefaultOptions(): TOptions;
 
-    private getSelectedIntegratedChartTheme(): ChartTheme {
-        const params = this.chartProxyParams;
-        const chartThemeIndex = params.getChartThemeIndex();
-        return params.getChartThemes()[chartThemeIndex];
+    protected initChartOptions(): void {
+        const theme = this.getSelectedIntegratedChartTheme();
+        this.chartOptions = this.getDefaultOptionsWithTheme(theme);
+
+        let themeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        if (themeOverrides) {
+            this.chartOptions = this.getDefaultOptionsWithTheme(themeOverrides);
+        }
+
+        // allow users to override options before they are applied
+        const { processChartOptions } = this.chartProxyParams;
+        if (processChartOptions) {
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
+            const overriddenOptions = processChartOptions(params) as TOptions;
+
+            // ensure we have everything we need, in case the processing removed necessary options
+            const safeOptions = this.getDefaultOptions();
+            _.mergeDeep(safeOptions, overriddenOptions, false);
+
+            this.overridePalette(safeOptions);
+            this.chartOptions = safeOptions;
+        }
+
+        // // TODO spike to test processChartThemeOptions()
+        const { processChartThemeOptions } = this.chartProxyParams;
+        if (processChartThemeOptions) {
+            const params: ProcessChartThemeOptionsParams = { type: this.chartType, options: themeOverrides };
+            const overriddenThemeOptions = getChartTheme(processChartThemeOptions(params));
+            this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
+        }
     }
     
     // Merges theme defaults into default options. To be overridden in subclasses.
@@ -167,28 +198,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return options;
     }
 
-    protected initChartOptions(): void {
-        const { processChartOptions } = this.chartProxyParams;
-        const theme = this.getSelectedIntegratedChartTheme();
-        this.chartOptions = this.getDefaultOptionsWithTheme(theme);
-
-        let chartThemeOverrides = this.chartProxyParams.getChartThemeOverrides();
-        if (chartThemeOverrides) {
-            this.chartOptions = this.getDefaultOptionsWithTheme(chartThemeOverrides);
-        }
-
-        // allow users to override options before they are applied
-        if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
-            const overriddenOptions = processChartOptions(params) as TOptions;
-
-            // ensure we have everything we need, in case the processing removed necessary options
-            const safeOptions = this.getDefaultOptions();
-            _.mergeDeep(safeOptions, overriddenOptions, false);
-
-            this.overridePalette(safeOptions);
-            this.chartOptions = safeOptions;
-        }
+    private getSelectedIntegratedChartTheme(): ChartTheme {
+        const params = this.chartProxyParams;
+        const chartThemeIndex = params.getChartThemeIndex();
+        return params.getChartThemes()[chartThemeIndex];
     }
 
     private overridePalette(chartOptions: TOptions): void {

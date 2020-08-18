@@ -12,7 +12,7 @@ import {
     NavigateToNextCellParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
-    ProcessChartOptionsParams,
+    ProcessChartOptionsParams, ProcessChartThemeOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
@@ -1169,6 +1169,10 @@ export class GridOptionsWrapper {
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
         return this.gridOptions.processChartOptions;
+    }
+
+    public getProcessChartThemeOptionsFunc(): (params: ProcessChartThemeOptionsParams) => AgChartTheme {
+        return this.gridOptions.processChartThemeOptions;
     }
 
     public getClipboardDeliminator() {

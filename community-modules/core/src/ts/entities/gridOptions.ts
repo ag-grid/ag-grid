@@ -412,6 +412,8 @@ export interface GridOptions {
 
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
+    processChartThemeOptions?(params: ProcessChartThemeOptionsParams): AgChartTheme;
+
     /**********************************************************************************************************
      * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
      * as event callbacks are automatically generated.                                                        *
@@ -598,6 +600,11 @@ export interface IsRowSelectable {
 export interface ProcessChartOptionsParams {
     type: ChartType;
     options: ChartOptions<any>;
+}
+
+export interface ProcessChartThemeOptionsParams {
+    type: ChartType;
+    options: AgChartTheme;
 }
 
 export interface GetContextMenuItemsParams {
