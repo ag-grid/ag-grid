@@ -29,8 +29,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
         </div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -106,8 +106,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
         this.refreshAriaExpanded();
-
-        this.refreshCheckboxAriaLabel();
+        this.refreshAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
@@ -189,7 +188,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private onChangeCommon(nextState: boolean): void {
-        this.refreshCheckboxAriaLabel();
+        this.refreshAriaLabel();
 
         if (this.processingColumnStateChange) {
             return;
@@ -216,9 +215,9 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         }
     }
 
-    private refreshCheckboxAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'checked' : 'unchecked';
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection (${state})`);
+    private refreshAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
+        _.setAriaLabel(this.getGui(), `${this.displayName} column group toggle visibility (${state})`);
     }
 
     private actionUnCheckedReduce(columns: Column[]): void {

@@ -26,8 +26,8 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select-column" tabindex="-1" role="treeitem">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -91,7 +91,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();
-        this.refreshCheckboxAriaLabel();
+        this.refreshAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
@@ -124,7 +124,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
             return;
         }
 
-        this.refreshCheckboxAriaLabel();
+        this.refreshAriaLabel();
 
         // only want to action if the user clicked the checkbox, not if we are setting the checkbox because
         // of a change in the model
@@ -146,9 +146,9 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         }
     }
 
-    private refreshCheckboxAriaLabel(): void {
-        const state = this.cbSelect.getValue() ? 'checked' : 'unchecked';
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection (${state})`);
+    private refreshAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
+        _.setAriaLabel(this.getGui(), `${this.displayName} column toggle visibility (${state})`);
     }
 
     private actionUnCheckedPivotMode(): void {
