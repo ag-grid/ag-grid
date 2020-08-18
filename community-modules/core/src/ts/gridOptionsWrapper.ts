@@ -38,7 +38,7 @@ import { AutoHeightCalculator } from './rendering/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import { AgChartTheme } from "./interfaces/iAgChartOptions";
+import {AgChartTheme, AgChartThemeName} from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, values, missing } from './utils/generic';
@@ -1158,13 +1158,13 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemeOverrides;
     }
 
-    public getChartThemes(): (string | AgChartTheme)[] {
+    public getChartThemes(): (AgChartThemeName | AgChartTheme)[] {
         if (this.gridOptions.chartThemes) {
             return this.gridOptions.chartThemes;
         }
 
         // return default themes if user hasn't supplied any
-        return ['solar', 'material', 'pastel', 'vivid', 'dark']
+        return ['solar', 'material', 'pastel', 'vivid', 'dark'];
     }
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
