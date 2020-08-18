@@ -28,7 +28,12 @@ var gridOptions = {
 };
 
 function onBtSortAthleteAndMedalsFirst() {
-    gridOptions.api.setColumnDefs([
+    var currentColumnDefs = gridOptions.columnApi.getColumnDefs().reduce(function (acc, columnDef) {
+        acc[columnDef.field] = columnDef;
+        return acc;
+    }, {});
+
+    var desiredColumnDefOrderAndState = [
         {field: 'gold'},
         {field: 'silver'},
         {field: 'bronze'},
@@ -39,11 +44,24 @@ function onBtSortAthleteAndMedalsFirst() {
         {field: 'sport'},
         {field: 'year'},
         {field: 'date'}
-    ]);
+    ];
+
+    var newColumnDefs = desiredColumnDefOrderAndState.map(function (columnDef) {
+        var newColumnDef = Object.assign({}, currentColumnDefs[columnDef.field]);
+        Object.assign(newColumnDef, columnDef);
+        return newColumnDef;
+    });
+
+    gridOptions.api.setColumnDefs(newColumnDefs);
 }
 
 function onBtClearSortAthleteAndMedals() {
-    gridOptions.api.setColumnDefs([
+    var currentColumnDefs = gridOptions.columnApi.getColumnDefs().reduce(function (acc, columnDef) {
+        acc[columnDef.field] = columnDef;
+        return acc;
+    });
+
+    var desiredColumnDefOrderAndState = [
         {field: 'athlete', sort: null},
         {field: 'age'},
         {field: 'country'},
@@ -54,37 +72,72 @@ function onBtClearSortAthleteAndMedals() {
         {field: 'silver'},
         {field: 'bronze'},
         {field: 'total'}
-    ]);
+    ];
+
+    var newColumnDefs = desiredColumnDefOrderAndState.map(function (columnDef) {
+        var newColumnDef = Object.assign({}, currentColumnDefs[columnDef.field]);
+        Object.assign(newColumnDef, columnDef);
+        return newColumnDef;
+    });
+
+    gridOptions.api.setColumnDefs(newColumnDefs);
 }
 
 function onBtRowGroupCountryThenSport() {
-    gridOptions.api.setColumnDefs([
-        {field: 'athlete', sort: null},
+    var currentColumnDefs = gridOptions.columnApi.getColumnDefs().reduce(function (acc, columnDef) {
+        acc[columnDef.field] = columnDef;
+        return acc;
+    }, {});
+
+    var desiredColumnDefOrderAndState = [
+        {field: 'athlete'},
         {field: 'age'},
-        {field: 'country', rowGroupIndex: 0},
-        {field: 'sport', rowGroupIndex: 1},
+        {field: 'country', rowGroup: true, rowGroupIndex: 0},
+        {field: 'sport', rowGroup: true, rowGroupIndex: 1},
         {field: 'year'},
         {field: 'date'},
         {field: 'gold'},
         {field: 'silver'},
         {field: 'bronze'},
         {field: 'total'}
-    ]);
+    ];
+
+    var newColumnDefs = desiredColumnDefOrderAndState.map(function (columnDef) {
+        var newColumnDef = Object.assign({}, currentColumnDefs[columnDef.field]);
+        Object.assign(newColumnDef, columnDef);
+        return newColumnDef;
+    });
+
+    gridOptions.api.setColumnDefs(newColumnDefs);
 }
 
 function onBtClearAllRowGroups() {
-    gridOptions.api.setColumnDefs([
-        {field: 'athlete', sort: null},
+    var currentColumnDefs = gridOptions.columnApi.getColumnDefs().reduce(function (acc, columnDef) {
+        acc[columnDef.field] = columnDef;
+        return acc;
+    });
+
+    var desiredColumnDefOrderAndState = [
+        {field: 'athlete'},
         {field: 'age'},
-        {field: 'country', rowGroupIndex: null},
-        {field: 'sport', rowGroupIndex: null},
+        {field: 'country'},
+        {field: 'sport'},
         {field: 'year'},
         {field: 'date'},
         {field: 'gold'},
         {field: 'silver'},
         {field: 'bronze'},
         {field: 'total'}
-    ]);
+    ];
+
+    var newColumnDefs = desiredColumnDefOrderAndState.map(function (columnDef) {
+        var newColumnDef = Object.assign({}, currentColumnDefs[columnDef.field]);
+        Object.assign(newColumnDef, columnDef);
+        Object.assign(newColumnDef, {rowGroup: null});
+        return newColumnDef;
+    });
+
+    gridOptions.api.setColumnDefs(newColumnDefs);
 }
 
 function printColumnDefs() {

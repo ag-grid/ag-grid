@@ -8,14 +8,15 @@ import {
     ChartType,
     ColumnApi,
     Events,
+    GetChartImageDataUrlParams,
     GridApi,
+    GridOptionsWrapper,
     IRangeController,
     PostConstruct,
-    GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName, palettes } from "ag-charts-community";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {ChartDataModel, ColState} from "./chartDataModel";
+import {ChartProxy} from "./chartProxies/chartProxy";
+import {ChartTheme, getChartTheme} from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -25,16 +26,14 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('rangeController') rangeController: IRangeController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
-    private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
+    public constructor(private readonly model: ChartDataModel) {
         super();
-
-        this.chartPaletteName = paletteName;
     }
 
     @PostConstruct
@@ -84,7 +83,7 @@ export class ChartController extends BeanStub {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartPalette: this.getPaletteName(),
+            chartThemeIndex: this.getThemeIndex(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
@@ -105,22 +104,13 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getPaletteName(): ChartPaletteName {
-        return this.chartPaletteName;
+    public getThemeIndex(): number {
+        return this.model.getChartThemeIndex();
     }
 
-    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
-        const customPalette = this.chartProxy.getCustomPalette();
-
-        if (customPalette) {
-            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
-
-            map.set(undefined, customPalette);
-
-            return map;
-        }
-
-        return palettes;
+    public getThemes(): ChartTheme[] {
+        let chartThemes = this.gridOptionsWrapper.getChartThemes();
+        return chartThemes.map(name => getChartTheme(name));
     }
 
     public setChartType(chartType: ChartType): void {
@@ -129,8 +119,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartPaletteName(palette: ChartPaletteName): void {
-        this.chartPaletteName = palette;
+    public setChartThemeIndex(chartThemeIndex: number): void {
+        this.model.setChartThemeIndex(chartThemeIndex);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

@@ -1,7 +1,7 @@
-import { AgChartTheme } from "./agChartTheme";
+import { ChartTheme } from "./chartTheme";
 import { AgChartThemePalette } from "../agChartOptions";
 
-export class SolarLight extends AgChartTheme {
+export class SolarLight extends ChartTheme {
     readonly palette: AgChartThemePalette = {
         fills: [
             '#febe76',

@@ -156,6 +156,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public excelStyles : any = undefined;
     @Input() public pinnedTopRowData : any = undefined;
     @Input() public pinnedBottomRowData : any = undefined;
+    @Input() public chartThemes : any = undefined;
     @Input() public components : any = undefined;
     @Input() public frameworkComponents : any = undefined;
     @Input() public rowStyle : any = undefined;
@@ -184,6 +185,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public reduxStore : any = undefined;
     @Input() public statusBar : any = undefined;
     @Input() public sideBar : any = undefined;
+    @Input() public chartThemeOverrides : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;
     @Input() public rowSelection : any = undefined;

@@ -4,41 +4,43 @@ import {
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    ColumnApi,
     DropShadowOptions,
     Events,
     EventService,
     FontOptions,
+    GridApi,
     LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
-    GridApi,
-    ColumnApi,
 } from "@ag-grid-community/core";
 import {
+    AgChartThemePalette,
     AreaSeries,
+    BarSeries,
     Caption,
     CategoryAxis,
     Chart,
-    ChartPalette,
-    ChartPaletteName,
-    BarSeries,
+    ChartTheme,
     DropShadow,
     Padding,
-    palettes,
     PieSeries
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
+    chartThemeIndex: number;
     width?: number;
     height?: number;
     parentElement: HTMLElement;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartPaletteName: () => ChartPaletteName;
+    getChartThemeIndex: () => number;
+    getChartThemes: () => ChartTheme[];
+    getChartThemeOverrides: () => ChartTheme | undefined;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -70,7 +72,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customPalette: ChartPalette;
+    protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
@@ -114,12 +116,35 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected abstract getDefaultOptions(): TOptions;
 
+    private getSelectedIntegratedChartTheme(): ChartTheme {
+        const params = this.chartProxyParams;
+        const chartThemeIndex = params.getChartThemeIndex();
+        return params.getChartThemes()[chartThemeIndex];
+    }
+    
+    // Merges theme defaults into default options. To be overridden in subclasses.
+    protected mergeInTheme(theme: ChartTheme): TOptions {
+        const options = this.getDefaultOptions();
+        options.title = theme.getConfig('cartesian.title');
+        options.subtitle = theme.getConfig('cartesian.subtitle');
+        options.background = theme.getConfig('cartesian.background');
+        options.legend = theme.getConfig('cartesian.legend');
+        return options;
+    }
+
     protected initChartOptions(): void {
         const { processChartOptions } = this.chartProxyParams;
+        const theme = this.getSelectedIntegratedChartTheme();
+        this.chartOptions = this.mergeInTheme(theme);
+
+        let chartThemeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        if (chartThemeOverrides) {
+            this.chartOptions = this.mergeInTheme(chartThemeOverrides);
+        }
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
@@ -128,8 +153,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
             this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
-        } else {
-            this.chartOptions = this.getDefaultOptions();
         }
     }
 
@@ -157,7 +180,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return this.chartOptions;
     }
 
-    public getCustomPalette(): ChartPalette | undefined {
+    public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
     }
 
@@ -317,7 +340,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartThemeIndex: this.chartProxyParams.getChartThemeIndex(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -346,11 +369,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getPredefinedPalette(): ChartPalette {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
+    protected getPredefinedPalette(): AgChartThemePalette {
+        const themes = this.chartProxyParams.getChartThemes();
+        const themeIndex = this.chartProxyParams.getChartThemeIndex();
+        return themes[themeIndex].palette;
     }
 
-    protected getPalette(): ChartPalette {
+    protected getPalette(): AgChartThemePalette {
         return this.customPalette || this.getPredefinedPalette();
     }
 

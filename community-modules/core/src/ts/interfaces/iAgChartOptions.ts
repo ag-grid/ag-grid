@@ -18,10 +18,6 @@ export interface AgChartThemeOverrides {
     defaults?: AgChartThemeDefaults;
 }
 
-export interface AgChartTheme extends AgChartThemeOverrides {
-    baseTheme?: AgChartThemeName; // | ChartTheme;
-}
-
 export interface AgChartThemeDefaults {
     cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
     polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
@@ -49,6 +45,10 @@ export interface AgPolarAxesTheme {
 
 export interface AgPolarSeriesTheme {
     pie?: AgPieSeriesOptions;
+}
+
+export interface AgChartTheme extends AgChartThemeOverrides {
+    baseTheme?: AgChartThemeName; // | ChartTheme;
 }
 
 export interface AgChartPaddingOptions {

@@ -6,7 +6,7 @@ import {
     ChartAxisPosition,
     find,
     GroupedCategoryAxis,
-    GroupedCategoryChart, NumberAxis, TimeAxis
+    GroupedCategoryChart, NumberAxis, TimeAxis, ChartTheme
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
 
@@ -14,6 +14,23 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
     protected constructor(params: ChartProxyParams) {
         super(params);
+    }
+
+    protected mergeInTheme(theme: ChartTheme): CartesianChartOptions<T> {
+        const options = super.mergeInTheme(theme);
+        const { chartType } = this.chartProxyParams;
+
+        // let xAxisType = chartType.indexOf('grouped') >= 0 ? 'groupedCategory' : 'category';
+        let xAxisType = 'category';
+        let yAxisType = 'number';
+
+        if (chartType.indexOf('bar') >= 0) {
+            [xAxisType, yAxisType] = [yAxisType, xAxisType];
+        }
+
+        options.xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
+        options.yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
+        return options;
     }
 
     public getAxisProperty<T = string>(expression: string): T {

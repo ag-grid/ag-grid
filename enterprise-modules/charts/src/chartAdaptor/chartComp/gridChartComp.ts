@@ -1,45 +1,46 @@
 import {
     _,
+    AgChartTheme,
     AgDialog,
     Autowired,
     CellRange,
+    ChartCreated,
+    ChartDestroyed,
     ChartModel,
     ChartOptions,
     ChartType,
+    ColumnApi,
     Component,
     Environment,
+    Events,
+    GridApi,
     GridOptionsWrapper,
     IAggFunc,
+    PopupService,
     PostConstruct,
     ProcessChartOptionsParams,
-    RefSelector,
-    GridApi,
-    ColumnApi,
-    ChartCreated,
-    ChartDestroyed,
-    Events,
-    PopupService
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./titleEdit";
-import { ChartController } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartPaletteName } from "ag-charts-community";
-import { ChartTranslator } from "./chartTranslator";
+import {ChartMenu} from "./menu/chartMenu";
+import {TitleEdit} from "./titleEdit";
+import {ChartController} from "./chartController";
+import {ChartDataModel, ChartModelParams} from "./chartDataModel";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
+import {ChartTranslator} from "./chartTranslator";
+import {Chart, ChartTheme, getChartTheme} from "ag-charts-community";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
-    chartPaletteName: ChartPaletteName;
+    chartThemeIndex: number;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -89,6 +90,7 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
+            chartThemeIndex: this.params.chartThemeIndex,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -98,7 +100,7 @@ export class GridChartComp extends Component {
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.chartController = this.createManagedBean(new ChartController(this.model));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -141,9 +143,12 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
             chartType,
+            chartThemeIndex: this.model.getChartThemeIndex(),
             processChartOptions: processChartOptionsFunc,
-            getChartPaletteName: this.getChartPaletteName.bind(this),
-            allowPaletteOverride: !this.params.chartPaletteName,
+            getChartThemeIndex: this.getChartThemeIndex.bind(this),
+            getChartThemes: this.getChartThemes.bind(this),
+            getChartThemeOverrides: this.getChartThemeOverrides.bind(this),
+            allowPaletteOverride: !this.params.chartThemeIndex,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -164,8 +169,17 @@ export class GridChartComp extends Component {
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getChartPaletteName(): ChartPaletteName {
-        return this.chartController.getPaletteName();
+    private getChartThemeIndex(): number {
+        return this.chartController.getThemeIndex();
+    }
+
+    private getChartThemes(): (string | AgChartTheme)[] {
+        return this.chartController.getThemes();
+    }
+
+    private getChartThemeOverrides(): ChartTheme | undefined {
+        const chartThemeOverrides = this.gridOptionsWrapper.getChartThemeOverrides();
+        return chartThemeOverrides ? getChartTheme(chartThemeOverrides) : undefined;
     }
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
@@ -262,15 +276,16 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        if (this.shouldRecreateChart()) {
+        // if (this.shouldRecreateChart()) {
             this.createChart();
-        }
+        // }
 
         this.updateChart();
     }
 
     private shouldRecreateChart(): boolean {
-        return this.chartType !== this.model.getChartType();
+        return this.chartType !== this.model.getChartType()
+            || this.getChartThemeIndex() !== this.model.getChartThemeIndex();
     }
 
     public getCurrentChartType(): ChartType {

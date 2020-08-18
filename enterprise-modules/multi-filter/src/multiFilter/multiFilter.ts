@@ -290,6 +290,12 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const suppressFocus = filters && _.some(filters, filter => filter.display && filter.display !== 'inline');
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
+
+        if (suppressFocus) {
+            // reset focus to the top of the container, and blur
+            this.focusInnerElement();
+            (document.activeElement as HTMLElement).blur();
+        }
     }
 
     public onAnyFilterChanged(): void {

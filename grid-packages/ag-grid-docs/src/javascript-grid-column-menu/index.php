@@ -222,7 +222,7 @@ SNIPPET
         </li>
     </ul>
 
-    <?= grid_example('Customising Column Menu Tab', 'customising-column-menu-tab', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Customising Columns Menu Tab', 'customising-columns-menu-tab', 'generated', ['enterprise' => true]) ?>
 
     <h2>Popup Parent</h2>
 

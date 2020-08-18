@@ -11,7 +11,7 @@ export interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeIndex: number;
     chartOptions: ChartOptions<any>;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }

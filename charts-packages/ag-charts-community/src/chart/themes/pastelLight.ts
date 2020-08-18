@@ -1,7 +1,7 @@
-import { AgChartTheme } from "./agChartTheme";
+import { ChartTheme } from "./chartTheme";
 import { AgChartThemePalette } from "../agChartOptions";
 
-export class PastelLight extends AgChartTheme {
+export class PastelLight extends ChartTheme {
     readonly palette: AgChartThemePalette = {
         fills: [
             '#c16068',
