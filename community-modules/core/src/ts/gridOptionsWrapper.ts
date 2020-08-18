@@ -1164,7 +1164,7 @@ export class GridOptionsWrapper {
         }
 
         // return default themes if user hasn't supplied any
-        return ['solar', 'material', 'pastel', 'vivid', 'dark'];
+        return ['default', 'material', 'pastel', 'vivid', 'solar'];
     }
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
