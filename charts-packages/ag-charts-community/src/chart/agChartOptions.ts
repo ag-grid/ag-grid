@@ -75,7 +75,7 @@ interface AgDropShadowOptions {
     blue?: number;
 }
 
-interface AgChartCaptionOptions {
+export interface AgChartCaptionOptions {
     enabled?: boolean;
     padding?: AgChartPaddingOptions;
     text?: string;

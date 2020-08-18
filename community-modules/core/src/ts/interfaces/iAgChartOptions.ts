@@ -75,7 +75,7 @@ interface AgDropShadowOptions {
     blue?: number;
 }
 
-interface AgChartCaptionOptions {
+export interface AgChartCaptionOptions {
     enabled?: boolean;
     padding?: AgChartPaddingOptions;
     text?: string;
@@ -103,7 +103,7 @@ interface AgNavigatorHandleOptions {
     gripLineLength?: number;
 }
 
-interface AgNavigatorOptions {
+export interface AgNavigatorOptions {
     enabled?: boolean;
     height?: number;
     min?: number;
@@ -137,7 +137,7 @@ interface AgChartLegendItemOptions {
     paddingY?: number;
 }
 
-interface AgChartLegendOptions {
+export interface AgChartLegendOptions {
     enabled?: boolean;
     position?: AgChartLegendPosition;
     spacing?: number;
