@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
-import { RowComp } from "./rowComp";
+import { RowComp } from "./row/rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
@@ -16,7 +16,7 @@ import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
-import { RowContainerComponent } from "./rowContainerComponent";
+import { RowContainerComponent } from "./row/rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";

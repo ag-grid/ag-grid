@@ -200,7 +200,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return this.numberFilterParams.numberParser(filterText);
         }
 
-        return filterText == null ? null : parseFloat(filterText);
+        return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
     }
 
     protected createCondition(position: ConditionPosition): NumberFilterModel {

@@ -1,13 +1,13 @@
-import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
-import { RowNode } from "../entities/rowNode";
-import { DragItem, DragSource, DragSourceType } from "../dragAndDrop/dragAndDropService";
-import { Events } from "../eventKeys";
-import { Beans } from "./beans";
-import { BeanStub } from "../context/beanStub";
-import { Column } from "../entities/column";
-import { createIconNoSpan } from "../utils/icon";
-import { doOnce, isFunction } from "../utils/function";
+import { Component } from "../../widgets/component";
+import { PostConstruct } from "../../context/context";
+import { RowNode } from "../../entities/rowNode";
+import { DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
+import { Events } from "../../eventKeys";
+import { Beans } from "../beans";
+import { BeanStub } from "../../context/beanStub";
+import { Column } from "../../entities/column";
+import { createIconNoSpan } from "../../utils/icon";
+import { doOnce, isFunction } from "../../utils/function";
 
 export interface IRowDragItem extends DragItem {
     defaultTextValue: string;

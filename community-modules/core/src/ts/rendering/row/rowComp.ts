@@ -1,7 +1,7 @@
-import { Beans } from "./beans";
-import { CellComp } from "./cellComp";
-import { DataChangedEvent, RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
+import { Beans } from "../beans";
+import { CellComp } from "../cellComp";
+import { DataChangedEvent, RowNode } from "../../entities/rowNode";
+import { Column } from "../../entities/column";
 import {
     Events,
     RowClickedEvent,
@@ -11,25 +11,25 @@ import {
     RowEvent,
     RowValueChangedEvent,
     VirtualRowRemovedEvent
-} from "../events";
+} from "../../events";
 
-import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { RowContainerComponent } from "./rowContainerComponent";
-import { Component } from "../widgets/component";
+import { Component } from "../../widgets/component";
 
-import { ProcessRowParams } from "../entities/gridOptions";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { Constants } from "../constants/constants";
-import { ModuleNames } from "../modules/moduleNames";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../utils/aria";
-import { escapeString } from "../utils/string";
-import { removeCssClass, addCssClass, addOrRemoveCssClass, setDomChildOrder, appendHtml, isElementChildOfClass, addStylesToElement } from "../utils/dom";
-import { removeFromArray, pushAll } from "../utils/array";
-import { missing, exists } from "../utils/generic";
-import { isStopPropagationForAgGrid } from "../utils/event";
-import { iterateObject, assign } from "../utils/object";
-import { cssStyleObjectToMarkup } from "../utils/general";
+import { ProcessRowParams } from "../../entities/gridOptions";
+import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
+import { Constants } from "../../constants/constants";
+import { ModuleNames } from "../../modules/moduleNames";
+import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../../utils/aria";
+import { escapeString } from "../../utils/string";
+import { removeCssClass, addCssClass, addOrRemoveCssClass, setDomChildOrder, appendHtml, isElementChildOfClass, addStylesToElement } from "../../utils/dom";
+import { removeFromArray, pushAll } from "../../utils/array";
+import { missing, exists } from "../../utils/generic";
+import { isStopPropagationForAgGrid } from "../../utils/event";
+import { iterateObject, assign } from "../../utils/object";
+import { cssStyleObjectToMarkup } from "../../utils/general";
 
 interface CellTemplate {
     template: string;
@@ -159,7 +159,7 @@ export class RowComp extends Component {
     public init(): void {
         this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
-        this.rowLevel = this.calculateRowLevel();
+        this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setupRowContainers();
         this.addListeners();
@@ -568,7 +568,7 @@ export class RowComp extends Component {
 
     private updateExpandedCss(): void {
 
-        const expandable = this.isExpandable(this.rowNode);
+        const expandable = this.beans.rowCssClassCalculator.isExpandable(this.rowNode);
         const expanded = this.rowNode.expanded;
 
         this.eAllRowContainers.forEach(eRow => {
@@ -981,100 +981,26 @@ export class RowComp extends Component {
         return params;
     }
 
-    private isExpandable(rowNode: RowNode): boolean {
-        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
-        const res = isTreeData ?
-            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
-            rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0:
-            // if normal row grouping, we add expanded classes to groups only
-            rowNode.group && !rowNode.footer;
-        return res;
-    }
-
     private getInitialRowClasses(extraCssClass: string): string[] {
-        const classes: string[] = [];
-        const rowNode = this.rowNode;
-
-        if (exists(extraCssClass)) {
-            classes.push(extraCssClass);
-        }
-
-        classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
-
-        if (this.fadeRowIn) {
-            classes.push('ag-opacity-zero');
-        }
-
-        classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
-
-        if (rowNode.isRowPinned()) {
-            classes.push('ag-row-pinned');
-        }
-
-        if (rowNode.isSelected()) {
-            classes.push('ag-row-selected');
-        }
-
-        if (rowNode.group) {
-            classes.push('ag-row-group');
-
-            if (rowNode.footer) {
-                classes.push('ag-row-footer');
-            }
-        }
-
-        classes.push('ag-row-level-' + this.rowLevel);
-
-        if (rowNode.stub) {
-            classes.push('ag-row-loading');
-        }
-
-        if (this.fullWidthRow) {
-            classes.push('ag-full-width-row');
-        }
-
-
-        const addExpandedClass = this.isExpandable(rowNode);
-        if (addExpandedClass) {
-            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
-        }
-
-        if (rowNode.dragging) {
-            classes.push('ag-row-dragging');
-        }
-
-        pushAll(classes, this.processClassesFromGridOptions());
-        pushAll(classes, this.preProcessRowClassRules());
-
-        // we use absolute position unless we are doing print layout
-        classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
-
-        this.firstRowOnPage = this.isFirstRowOnPage();
-        this.lastRowOnPage = this.isLastRowOnPage();
-
-        if (this.firstRowOnPage) {
-            classes.push('ag-row-first');
-        }
-
-        if (this.lastRowOnPage) {
-            classes.push('ag-row-last');
-        }
-
-        return classes;
-    }
-
-    private calculateRowLevel(): number {
-        if (this.rowNode.group) {
-            return this.rowNode.level;
-        } else {
-            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            return this.rowNode.parent ? (this.rowNode.parent.level + 1) : 0;
-        }
+        const params = {
+            rowNode: this.rowNode,
+            extraCssClass: extraCssClass,
+            rowFocused: this.rowFocused,
+            fadeRowIn: this.fadeRowIn,
+            rowIsEven: this.rowIsEven,
+            rowLevel: this.rowLevel,
+            fullWidthRow: this.fullWidthRow,
+            firstRowOnPage: this.isFirstRowOnPage(),
+            lastRowOnPage: this.isLastRowOnPage(),
+            printLayout: this.printLayout,
+            expandable: this.beans.rowCssClassCalculator.isExpandable(this.rowNode),
+            scope: this.scope
+        };
+        return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }
 
     private onUiLevelChanged(): void {
-        const newLevel = this.calculateRowLevel();
+        const newLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
         if (this.rowLevel != newLevel) {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
@@ -1106,38 +1032,6 @@ export class RowComp extends Component {
             this.lastRowOnPage = newLast;
             this.eAllRowContainers.forEach((row) => addOrRemoveCssClass(row, 'ag-row-last', newLast));
         }
-    }
-
-    private preProcessRowClassRules(): string[] {
-        const res: string[] = [];
-
-        this.processRowClassRules(
-            (className: string) => {
-                res.push(className);
-            },
-            (className: string) => {
-                // not catered for, if creating, no need
-                // to remove class as it was never there
-            }
-        );
-
-        return res;
-    }
-
-    private processRowClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
-        this.beans.stylingService.processClassRules(
-            this.beans.gridOptionsWrapper.rowClassRules(),
-            {
-                value: undefined,
-                colDef: undefined,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                $scope: this.scope,
-                context: this.beans.gridOptionsWrapper.getContext()
-            }, onApplicableClass, onNotApplicableClass);
     }
 
     public stopEditing(cancel = false): void {
@@ -1189,7 +1083,7 @@ export class RowComp extends Component {
     }
 
     private postProcessClassesFromGridOptions(): void {
-        const cssClasses = this.processClassesFromGridOptions();
+        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode);
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
@@ -1198,7 +1092,8 @@ export class RowComp extends Component {
     }
 
     private postProcessRowClassRules(): void {
-        this.processRowClassRules(
+        this.beans.rowCssClassCalculator.processRowClassRules(
+            this.rowNode, this.scope,
             (className: string) => {
                 this.eAllRowContainers.forEach(row => addCssClass(row, className));
             },
@@ -1206,45 +1101,6 @@ export class RowComp extends Component {
                 this.eAllRowContainers.forEach(row => removeCssClass(row, className));
             }
         );
-    }
-
-    private processClassesFromGridOptions(): string[] {
-        const res: string[] = [];
-
-        const process = (rowCls: string | string[]) => {
-            if (typeof rowCls === 'string') {
-                res.push(rowCls);
-            } else if (Array.isArray(rowCls)) {
-                rowCls.forEach(e => res.push(e));
-            }
-        };
-
-        // part 1 - rowClass
-        const rowClass = this.beans.gridOptionsWrapper.getRowClass();
-        if (rowClass) {
-            if (typeof rowClass === 'function') {
-                console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
-                return;
-            }
-            process(rowClass);
-        }
-
-        // part 2 - rowClassFunc
-        const rowClassFunc = this.beans.gridOptionsWrapper.getRowClassFunc();
-
-        if (rowClassFunc) {
-            const params = {
-                node: this.rowNode,
-                data: this.rowNode.data,
-                rowIndex: this.rowNode.rowIndex,
-                context: this.beans.gridOptionsWrapper.getContext(),
-                api: this.beans.gridOptionsWrapper.getApi()
-            };
-            const rowClassFuncResult = rowClassFunc(params);
-            process(rowClassFuncResult);
-        }
-
-        return res;
     }
 
     private preProcessStylesFromGridOptions(): string {

@@ -1,9 +1,9 @@
-import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Constants } from "../constants/constants";
-import { BeanStub } from "../context/beanStub";
+import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
+import { RowNode } from "../../entities/rowNode";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Constants } from "../../constants/constants";
+import { BeanStub } from "../../context/beanStub";
 
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.

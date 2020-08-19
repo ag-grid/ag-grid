@@ -1,6 +1,6 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { appendHtml, insertTemplateWithDomOrder, ensureDomOrder, setDisplayed } from "../utils/dom";
+import { Autowired, PostConstruct } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { appendHtml, insertTemplateWithDomOrder, ensureDomOrder, setDisplayed } from "../../utils/dom";
 
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
