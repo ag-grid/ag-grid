@@ -33,7 +33,7 @@ import {
     Padding,
     PieSeries
 } from "ag-charts-community";
-import {mergeDeep} from "../object";
+import {mergeDeep, deepMerge} from "../object";
 import get = Reflect.get;
 
 export interface ChartProxyParams {
@@ -165,34 +165,34 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             || this.chartType === ChartType.Doughnut ? 'polar' : 'cartesian';
 
         const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
-        mergeDeep(titleOptions, options.title);
+        deepMerge(titleOptions, options.title);
         options.title = titleOptions as any;
 
         const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
-        mergeDeep(subtitleOptions, options.subtitle);
+        deepMerge(subtitleOptions, options.subtitle);
         options.subtitle = subtitleOptions as any;
 
         const backgroundOptions = theme.getConfig(chartType + '.background');
-        mergeDeep(backgroundOptions, options.background);
+        deepMerge(backgroundOptions, options.background);
         options.background = backgroundOptions;
 
         const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
-        mergeDeep(legendOptions, options.legend);
+        deepMerge(legendOptions, options.legend);
         options.legend = legendOptions as any;
 
         const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
-        mergeDeep(navigatorOptions, options.navigator);
+        deepMerge(navigatorOptions, options.navigator);
         options.navigator = navigatorOptions as any;
 
         options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
         options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
         
         const listenerOptions = theme.getConfig(chartType + '.listeners');
-        mergeDeep(listenerOptions, options.listeners);
+        deepMerge(listenerOptions, options.listeners);
         options.listeners = listenerOptions;
 
         const paddingOptions = theme.getConfig(chartType + '.padding');
-        mergeDeep(paddingOptions, options.padding);
+        deepMerge(paddingOptions, options.padding);
         options.padding = paddingOptions;
 
         return options;

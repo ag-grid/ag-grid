@@ -6,7 +6,7 @@ import {
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { mergeDeep } from "../../object";
+import { mergeDeep, deepMerge } from "../../object";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
@@ -22,7 +22,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const seriesType = this.chartType === ChartType.GroupedBar
             || this.chartType === ChartType.StackedBar
             || this.chartType === ChartType.NormalizedBar ? 'bar' : 'column';
-        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>('cartesian.series.' + seriesType);
+        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(seriesType + '.series.' + seriesType);
         const iSeriesDefaults: BarSeriesOptions = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             label: seriesDefaults.label as BarSeriesLabelOptions,
@@ -41,7 +41,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
         };
-        mergeDeep(iSeriesDefaults, options.seriesDefaults);
+        deepMerge(iSeriesDefaults, options.seriesDefaults);
         options.seriesDefaults = iSeriesDefaults;
         return options;
     }
