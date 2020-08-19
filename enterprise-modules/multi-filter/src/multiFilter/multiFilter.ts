@@ -48,7 +48,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private lastActivatedMenuItem: MenuItemComponent | null = null;
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -293,8 +293,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
         if (suppressFocus) {
             // reset focus to the top of the container, and blur
-            this.focusInnerElement();
-            (document.activeElement as HTMLElement).blur();
+            this.forceFocusOutOfContainer(true);
         }
     }
 

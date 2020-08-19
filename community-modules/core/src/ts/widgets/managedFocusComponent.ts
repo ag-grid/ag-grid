@@ -37,13 +37,9 @@ export class ManagedFocusComponent extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        if (!this.getFocusableElement()) { return; }
-
-        this.wireFocusManagement();
-    }
-
-    protected wireFocusManagement() {
         const focusableElement = this.getFocusableElement();
+
+        if (!focusableElement) { return; }
 
         addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
@@ -65,7 +61,13 @@ export class ManagedFocusComponent extends Component {
      * Override this method if focusing the default element requires special logic.
      */
     protected focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard');
+        const focusable = this.focusController.findFocusableElements(this.getFocusableElement());
+
+        if (this.isFocusableContainer && this.tabGuardsAreActive()) {
+            // remove tab guards from this component from list of focusable elements
+            focusable.splice(0, 1);
+            focusable.splice(focusable.length - 1, 1);
+        }
 
         if (!focusable.length) { return; }
 
@@ -78,15 +80,17 @@ export class ManagedFocusComponent extends Component {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        if (this.isFocusableContainer) {
+        const tabGuardsAreActive = this.tabGuardsAreActive();
+
+        if (this.isFocusableContainer && tabGuardsAreActive) {
             this.deactivateTabGuards();
         }
 
         const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
 
-        if (this.isFocusableContainer) {
+        if (this.isFocusableContainer && tabGuardsAreActive) {
             // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
-            // tabbing to the tab-guard from inside the component
+            // tabbing to the tab guard from inside the component
             setTimeout(() => this.activateTabGuards(), 0);
         }
 
@@ -108,11 +112,15 @@ export class ManagedFocusComponent extends Component {
         }
     }
 
-    public forceFocusOutOfContainer(): void {
-        this.activateTabGuards();
+    public forceFocusOutOfContainer(up = false): void {
+        if (!this.isFocusableContainer) { return; }
 
+        this.activateTabGuards();
         this.skipTabGuardFocus = true;
-        this.bottomTabGuard.focus();
+
+        const tabGuardToFocus = up ? this.topTabGuard : this.bottomTabGuard;
+
+        if (tabGuardToFocus) { tabGuardToFocus.focus(); }
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
@@ -121,7 +129,7 @@ export class ManagedFocusComponent extends Component {
                 newChild = (newChild as Component).getGui();
             }
 
-            const bottomTabGuard = this.bottomTabGuard;
+            const { bottomTabGuard } = this;
 
             if (bottomTabGuard) {
                 bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
@@ -135,6 +143,7 @@ export class ManagedFocusComponent extends Component {
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
+
         tabGuard.classList.add('ag-tab-guard');
         tabGuard.classList.add(`ag-tab-guard-${side}`);
         tabGuard.setAttribute('role', 'presentation');
@@ -150,7 +159,8 @@ export class ManagedFocusComponent extends Component {
     }
 
     private forEachTabGuard(callback: (tabGuard: HTMLElement) => void) {
-        [this.topTabGuard, this.bottomTabGuard].forEach(callback);
+        if (this.topTabGuard) { callback(this.topTabGuard); }
+        if (this.bottomTabGuard) { callback(this.bottomTabGuard); }
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
@@ -182,11 +192,21 @@ export class ManagedFocusComponent extends Component {
         this.forEachTabGuard(guard => guard.removeAttribute('tabIndex'));
     }
 
+    private tabGuardsAreActive(): boolean {
+        return this.topTabGuard && this.topTabGuard.hasAttribute('tabIndex');
+    }
+
     protected clearGui(): void {
+        const tabGuardsAreActive = this.tabGuardsAreActive();
+
         clearElement(this.getFocusableElement());
 
         if (this.isFocusableContainer) {
             this.addTabGuards();
+
+            if (tabGuardsAreActive) {
+                this.activateTabGuards();
+            }
         }
     }
 }

@@ -83,6 +83,9 @@ describe('init', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui');
         filter2 = mock<IFilterComp>('getGui');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('will default to text filter and set filter', () => {
@@ -101,6 +104,9 @@ describe('isFilterActive', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('returns false if no filters are active', () => {
@@ -124,6 +130,9 @@ describe('doesFilterPass', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'doesFilterPass');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'doesFilterPass');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('returns true if no filters are active', () => {
@@ -165,6 +174,9 @@ describe('getModelFromUi', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('returns null if neither filter is active', () => {
@@ -175,6 +187,7 @@ describe('getModelFromUi', () => {
 
     it('includes model from first filter', () => {
         const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
+        providedFilter.getGui.mockReturnValue(document.createElement('div'));
         filter1 = providedFilter;
 
         const multiFilter = createFilter();
@@ -200,6 +213,7 @@ describe('getModelFromUi', () => {
 
     it('includes model from second filter', () => {
         const providedFilter = mock<ProvidedFilter>('getGui', 'isFilterActive', 'getModelFromUi');
+        providedFilter.getGui.mockReturnValue(document.createElement('div'));
         filter2 = providedFilter;
 
         const multiFilter = createFilter();
@@ -228,6 +242,9 @@ describe('getModel', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'getModel');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'getModel');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('returns null if neither filter is active', () => {
@@ -239,6 +256,7 @@ describe('getModel', () => {
     it('includes model from first filter', () => {
         const multiFilter = createFilter();
         const filterModel = { filterType: 'text' };
+
         filter1.getModel.mockReturnValue(filterModel);
         filter1.isFilterActive.mockReturnValue(true);
 
@@ -251,6 +269,7 @@ describe('getModel', () => {
     it('includes model from second filter', () => {
         const multiFilter = createFilter();
         const filterModel = { filterType: 'set', values: ['A', 'B', 'C'] };
+
         filter2.getModel.mockReturnValue(filterModel);
         filter2.isFilterActive.mockReturnValue(true);
 
@@ -282,6 +301,9 @@ describe('setModel', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('sets null on both filters if provided model is null', done => {
@@ -416,13 +438,11 @@ describe('afterGuiAttached', () => {
                     filter: 'agSetColumnFilter',
                     display
                 }
+
             ]
         });
 
         const params: IAfterGuiAttachedParams = { container: 'columnMenu' };
-        const blur = jest.fn();
-
-        (document.activeElement as HTMLElement).blur = blur;
 
         multiFilter.afterGuiAttached(params);
 
@@ -432,7 +452,6 @@ describe('afterGuiAttached', () => {
         expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
         expect(filter2.afterGuiAttached).toHaveBeenCalledTimes(1);
         expect(filter2.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
-        expect(blur).toHaveBeenCalledTimes(1);
     });
 
     it('does not pass through to filter if afterGuiAttached function does not exist', () => {
@@ -556,11 +575,17 @@ describe('onAnyFilterChanged', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui');
         filter2 = mock<IFilterComp>('getGui');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('passes through to filter if it has onAnyFilterChanged function', () => {
         filter1 = mock<IFilterComp>('getGui', 'onAnyFilterChanged');
         filter2 = mock<IFilterComp>('getGui', 'onAnyFilterChanged');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
 
         const multiFilter = createFilter();
         multiFilter.onAnyFilterChanged();
@@ -580,11 +605,17 @@ describe('onNewRowsLoaded', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui');
         filter2 = mock<IFilterComp>('getGui');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('passes through to filter if it has onNewRowsLoaded function', () => {
         filter1 = mock<IFilterComp>('getGui', 'onNewRowsLoaded');
         filter2 = mock<IFilterComp>('getGui', 'onNewRowsLoaded');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
 
         const multiFilter = createFilter();
         multiFilter.onNewRowsLoaded();
@@ -604,6 +635,9 @@ describe('onFilterChanged', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it.each([0, 1])('triggers filterChangedCallback from multi filter if child filter changes', index => {
@@ -622,6 +656,9 @@ describe('onFilterChanged', () => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onAnyFilterChanged');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel', 'onAnyFilterChanged');
 
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
+
         createFilter();
 
         const params = userComponentFactory.newFilterComponent.mock.calls[0][1];
@@ -638,6 +675,9 @@ describe('getLastActiveFilterIndex', () => {
     beforeEach(() => {
         filter1 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
         filter2 = mock<IFilterComp>('getGui', 'isFilterActive', 'setModel');
+
+        filter1.getGui.mockReturnValue(document.createElement('div'));
+        filter2.getGui.mockReturnValue(document.createElement('div'));
     });
 
     it('returns null if no filter is active', () => {
