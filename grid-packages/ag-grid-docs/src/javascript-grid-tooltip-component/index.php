@@ -83,7 +83,7 @@ SNIPPET
     <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to <code>0</code>.</li>
 </ul>
 
-<?//= g rid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Showing Blank Values</h2>
 
@@ -118,7 +118,7 @@ SNIPPET
     </li>
 </ul>
 
-<?//= g rid_example('Blank Values', 'blank-values', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Blank Values', 'blank-values', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Header Tooltip with Custom Tooltip</h2>
 
