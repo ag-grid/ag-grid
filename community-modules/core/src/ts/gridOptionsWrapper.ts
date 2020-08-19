@@ -13,6 +13,7 @@ import {
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
+    ProcessAgChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
@@ -34,11 +35,11 @@ import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
 import { ColDefUtil } from './components/colDefUtil';
 import { Events } from './eventKeys';
-import { AutoHeightCalculator } from './rendering/autoHeightCalculator';
+import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import {AgChartTheme, AgChartThemeName} from "./interfaces/iAgChartOptions";
+import {AgChartOptions, AgChartTheme, AgChartThemeName} from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, values, missing } from './utils/generic';
@@ -1171,8 +1172,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.processChartOptions;
     }
 
-    public getProcessChartThemeOptionsFunc(): (params: ProcessChartThemeOptionsParams) => AgChartTheme {
-        return this.gridOptions.processChartThemeOptions;
+    public getProcessAgChartOptionsFunc(): (params: ProcessAgChartOptionsParams) => AgChartOptions {
+        return this.gridOptions.processAgChartOptions;
     }
 
     public getClipboardDeliminator() {
