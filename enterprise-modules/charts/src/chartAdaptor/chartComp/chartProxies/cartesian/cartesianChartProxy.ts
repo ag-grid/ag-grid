@@ -31,10 +31,10 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
         const yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
 
-        mergeDeep(xAxis, options.xAxis);
+        deepMerge(xAxis, options.xAxis);
         options.xAxis = xAxis;
 
-        mergeDeep(yAxis, options.yAxis);
+        deepMerge(yAxis, options.yAxis);
         options.yAxis = yAxis;
 
         return options;
