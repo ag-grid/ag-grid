@@ -24,7 +24,15 @@ export interface AgChartTheme extends AgChartThemeOverrides {
 
 export interface AgChartThemeDefaults {
     cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
+    column?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    bar?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
+    line?: AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>;
+    area?: AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>;
+    scatter?: AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>;
+    histogram?: AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>;
+
     polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
+    pie?: AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>;
 }
 
 export interface AgCartesianAxesTheme {
