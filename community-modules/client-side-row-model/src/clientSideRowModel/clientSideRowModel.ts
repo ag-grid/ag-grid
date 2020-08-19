@@ -868,11 +868,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public resetRowHeights(): void {
         this.forEachNode(rowNode => {
-            rowNode.setRowHeight(null);
-            // forEachNode doesn't go through detail rows, so need to check
-            // for detail nodes explicitly.
-            if (rowNode.detailNode) {
-                rowNode.detailNode.setRowHeight(null);
+            rowNode.setRowHeight(rowNode.rowHeight, true);
+            // we keep the height each row is at, however we set estimated=true rather than clear the height.
+            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
+            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
+            const detailNode = rowNode.detailNode;
+            if (detailNode) {
+                detailNode.setRowHeight(detailNode.rowHeight, true);
             }
         });
         this.onRowHeightChanged();
