@@ -520,9 +520,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         groupNode.allLeafChildren = [];
-        // why is this done here? we are not updating the children could as we go,
-        // i suspect this is updated in the filter stage
 
+        // why is this done here? we are not updating the children count as we go,
+        // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
 
         groupNode.rowGroupIndex = this.usingTreeData ? null : level;

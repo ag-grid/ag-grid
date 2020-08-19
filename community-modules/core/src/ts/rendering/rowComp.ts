@@ -478,7 +478,8 @@ export class RowComp extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
@@ -565,15 +566,15 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
     }
 
-    private onExpandedChanged(): void {
-        const rowNode = this.rowNode;
+    private updateExpandedCss(): void {
 
-        this.eAllRowContainers.forEach(row => {
-            const expanded = rowNode.expanded;
+        const expandable = this.isExpandable(this.rowNode);
+        const expanded = this.rowNode.expanded;
 
-            addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded);
-            addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded);
-            setAriaExpanded(row, expanded);
+        this.eAllRowContainers.forEach(eRow => {
+            addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
+            addOrRemoveCssClass(eRow, 'ag-row-group-contracted', expandable && !expanded);
+            setAriaExpanded(eRow, expandable && expanded);
         });
     }
 
@@ -980,9 +981,18 @@ export class RowComp extends Component {
         return params;
     }
 
+    private isExpandable(rowNode: RowNode): boolean {
+        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
+        const res = isTreeData ?
+            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
+            rowNode.childrenAfterGroup && rowNode.childrenAfterGroup.length > 0:
+            // if normal row grouping, we add expanded classes to groups only
+            rowNode.group && !rowNode.footer;
+        return res;
+    }
+
     private getInitialRowClasses(extraCssClass: string): string[] {
         const classes: string[] = [];
-        const isTreeData = this.beans.gridOptionsWrapper.isTreeData();
         const rowNode = this.rowNode;
 
         if (exists(extraCssClass)) {
@@ -1024,11 +1034,8 @@ export class RowComp extends Component {
             classes.push('ag-full-width-row');
         }
 
-        const addExpandedClass = isTreeData ?
-            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
-            rowNode.allChildrenCount :
-            // if normal row grouping, we add expanded classes to groups only
-            rowNode.group && !rowNode.footer;
+
+        const addExpandedClass = this.isExpandable(rowNode);
         if (addExpandedClass) {
             classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
