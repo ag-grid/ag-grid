@@ -2,7 +2,6 @@ import {
     _,
     AgChartCaptionOptions,
     AgChartLegendOptions,
-    AgChartTheme,
     AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
@@ -17,8 +16,9 @@ import {
     LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
-    ProcessChartThemeOptionsParams,
+    ProcessAgChartOptionsParams,
     SeriesOptions,
+    AgChartOptions,
 } from "@ag-grid-community/core";
 import {
     AgChartThemePalette,
@@ -29,12 +29,10 @@ import {
     Chart,
     ChartTheme,
     DropShadow,
-    getChartTheme,
     Padding,
     PieSeries
 } from "ag-charts-community";
-import {mergeDeep, deepMerge} from "../object";
-import get = Reflect.get;
+import {deepMerge} from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -46,7 +44,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    processChartThemeOptions: (params: ProcessChartThemeOptionsParams) => AgChartTheme;
+    processAgChartOptions: (params: ProcessAgChartOptionsParams) => AgChartOptions;
     getChartThemeIndex: () => number;
     getChartThemes: () => ChartTheme[];
     getChartThemeOverrides: () => ChartTheme | undefined;
@@ -148,13 +146,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.chartOptions = safeOptions;
         }
 
-        // // TODO spike to test processChartThemeOptions()
-        const { processChartThemeOptions } = this.chartProxyParams;
-        if (processChartThemeOptions) {
-            const params: ProcessChartThemeOptionsParams = { type: this.chartType, options: themeOverrides };
-            const overriddenThemeOptions = getChartTheme(processChartThemeOptions(params));
-            this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
-        }
+        // // // TODO spike to test processChartThemeOptions()
+        // const { processChartThemeOptions } = this.chartProxyParams;
+        // if (processChartThemeOptions) {
+        //     const params: ProcessChartThemeOptionsParams = { type: this.chartType, options: themeOverrides };
+        //     const overriddenThemeOptions = getChartTheme(processChartThemeOptions(params));
+        //     this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
+        // }
     }
 
     integratedToStandaloneChartType(integratedChartType: string): string {

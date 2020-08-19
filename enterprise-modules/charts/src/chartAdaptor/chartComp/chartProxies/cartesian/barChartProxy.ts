@@ -1,4 +1,14 @@
-import { _, BarSeriesOptions, CartesianChartOptions, ChartType, AgBarSeriesOptions, DropShadowOptions, BarSeriesLabelOptions, HighlightOptions } from "@ag-grid-community/core";
+import {
+    _,
+    BarSeriesOptions,
+    CartesianChartOptions,
+    ChartType,
+    AgBarSeriesOptions,
+    DropShadowOptions,
+    BarSeriesLabelOptions,
+    HighlightOptions,
+    AgChartOptions
+} from "@ag-grid-community/core";
 import {
     CartesianChart,
     BarSeries,
@@ -54,6 +64,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         options = options || this.chartOptions;
         const { seriesDefaults } = options;
+
         const agChartOptions = options as AgCartesianChartOptions;
 
         agChartOptions.autoSize = true;
@@ -76,7 +87,14 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
         }];
 
-        return AgChart.create(options, parentElement);
+        const params = {
+            type: this.chartType,
+            options: agChartOptions
+        };
+
+        let opts = this.chartProxyParams.processAgChartOptions(params) as AgCartesianChartOptions;
+
+        return AgChart.create(opts, parentElement);
     }
 
     public update(params: UpdateChartParams): void {

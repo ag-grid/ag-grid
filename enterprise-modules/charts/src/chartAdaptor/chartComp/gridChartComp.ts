@@ -34,7 +34,7 @@ import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {ChartTranslator} from "./chartTranslator";
-import {Chart, ChartTheme, getChartTheme} from "ag-charts-community";
+import {ChartTheme, getChartTheme} from "ag-charts-community";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -137,7 +137,7 @@ export class GridChartComp extends Component {
         }
 
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
-        const processChartThemeOptionsFunc = this.gridOptionsWrapper.getProcessChartThemeOptionsFunc();
+        const processAgChartOptionsFunc = this.gridOptionsWrapper.getProcessAgChartOptionsFunc();
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
@@ -146,7 +146,7 @@ export class GridChartComp extends Component {
             chartType,
             chartThemeIndex: this.model.getChartThemeIndex(),
             processChartOptions: processChartOptionsFunc,
-            processChartThemeOptions: processChartThemeOptionsFunc,
+            processAgChartOptions: processAgChartOptionsFunc,
             getChartThemeIndex: this.getChartThemeIndex.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             getChartThemeOverrides: this.getChartThemeOverrides.bind(this),

@@ -87,7 +87,7 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartTheme, AgChartThemeName} from "../interfaces/iAgChartOptions";
+import {AgChartOptions, AgChartTheme, AgChartThemeName} from "../interfaces/iAgChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -412,7 +412,7 @@ export interface GridOptions {
 
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
-    processChartThemeOptions?(params: ProcessChartThemeOptionsParams): AgChartTheme;
+    processAgChartOptions?(params: ProcessAgChartOptionsParams): AgChartOptions;
 
     /**********************************************************************************************************
      * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -602,9 +602,9 @@ export interface ProcessChartOptionsParams {
     options: ChartOptions<any>;
 }
 
-export interface ProcessChartThemeOptionsParams {
+export interface ProcessAgChartOptionsParams {
     type: ChartType;
-    options: AgChartTheme;
+    options: AgChartOptions;
 }
 
 export interface GetContextMenuItemsParams {
