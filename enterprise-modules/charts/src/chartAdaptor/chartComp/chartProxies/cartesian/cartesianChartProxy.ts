@@ -19,17 +19,18 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
     protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<T> {
         const options = super.getDefaultOptionsWithTheme(theme);
-        const { chartType } = this.chartProxyParams;
+        const standaloneChartType = this.getStandaloneChartType();
+        const flipXY = standaloneChartType === 'bar';
 
         let xAxisType = 'category';
         let yAxisType = 'number';
 
-        if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar || chartType === ChartType.NormalizedBar) {
+        if (flipXY) {
             [xAxisType, yAxisType] = [yAxisType, xAxisType];
         }
 
-        const xAxis = theme.getConfig('cartesian.axes.' + xAxisType);
-        const yAxis = theme.getConfig('cartesian.axes.' + yAxisType);
+        const xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
+        const yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
 
         deepMerge(xAxis, options.xAxis);
         options.xAxis = xAxis;

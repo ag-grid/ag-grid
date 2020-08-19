@@ -156,42 +156,71 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
         }
     }
+
+    integratedToStandaloneChartType(integratedChartType: string): string {
+        switch (integratedChartType) {
+            case ChartType.GroupedBar:
+            case ChartType.StackedBar:
+            case ChartType.NormalizedBar:
+                return 'bar';
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
+                return 'column';
+            case ChartType.Line:
+                return 'line';
+            case ChartType.Area:
+                return 'area';
+            case ChartType.Scatter:
+                return 'scatter';
+            case ChartType.Histogram:
+                return 'histogram';
+            case ChartType.Pie:
+            case ChartType.Doughnut:
+                return 'pie';
+            default:
+                return 'cartesian';
+        }
+    }
+
+    getStandaloneChartType(): string {
+        return this.integratedToStandaloneChartType(this.chartType);
+    }
     
     // Merges theme defaults into default options. To be overridden in subclasses.
     protected getDefaultOptionsWithTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
 
-        const chartType = this.chartType === ChartType.Pie
-            || this.chartType === ChartType.Doughnut ? 'polar' : 'cartesian';
+        const standaloneChartType = this.getStandaloneChartType();
 
-        const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
+        const titleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title');
         deepMerge(titleOptions, options.title);
         options.title = titleOptions as any;
 
-        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
+        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle');
         deepMerge(subtitleOptions, options.subtitle);
         options.subtitle = subtitleOptions as any;
 
-        const backgroundOptions = theme.getConfig(chartType + '.background');
+        const backgroundOptions = theme.getConfig(standaloneChartType + '.background');
         deepMerge(backgroundOptions, options.background);
         options.background = backgroundOptions;
 
-        const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
+        const legendOptions = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend');
         deepMerge(legendOptions, options.legend);
         options.legend = legendOptions as any;
 
-        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
+        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator');
         deepMerge(navigatorOptions, options.navigator);
         options.navigator = navigatorOptions as any;
 
-        options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
+        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
+        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
         
-        const listenerOptions = theme.getConfig(chartType + '.listeners');
+        const listenerOptions = theme.getConfig(standaloneChartType + '.listeners');
         deepMerge(listenerOptions, options.listeners);
         options.listeners = listenerOptions;
 
-        const paddingOptions = theme.getConfig(chartType + '.padding');
+        const paddingOptions = theme.getConfig(standaloneChartType + '.padding');
         deepMerge(paddingOptions, options.padding);
         options.padding = paddingOptions;
 

@@ -19,10 +19,12 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
     protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
         const options = super.getDefaultOptionsWithTheme(theme);
-        const seriesType = this.chartType === ChartType.GroupedBar
-            || this.chartType === ChartType.StackedBar
-            || this.chartType === ChartType.NormalizedBar ? 'bar' : 'column';
-        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(seriesType + '.series.' + seriesType);
+        const { chartType: integratedChartType } = this;
+        const standaloneChartType = this.getStandaloneChartType();
+        const seriesType = integratedChartType === ChartType.GroupedBar
+            || integratedChartType === ChartType.StackedBar
+            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
         const iSeriesDefaults: BarSeriesOptions = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             label: seriesDefaults.label as BarSeriesLabelOptions,
