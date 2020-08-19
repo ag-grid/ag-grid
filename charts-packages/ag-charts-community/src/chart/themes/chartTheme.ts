@@ -414,7 +414,7 @@ export class ChartTheme {
 
     private createAliases(config: any) {
         const typeToAliases: { [key in string]: string[] } = {
-            cartesian: ['line', 'area', 'bar', 'column'],
+            cartesian: ['line', 'area', 'bar', 'column', 'scatter', 'histogram'],
             polar: ['pie']
         };
         for (const type in typeToAliases) {
