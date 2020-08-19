@@ -8,7 +8,7 @@ import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
-import { IRowDragItem } from "../rendering/rowDragComp";
+import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 
 /***********************************************************************

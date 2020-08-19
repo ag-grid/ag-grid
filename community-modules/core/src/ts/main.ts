@@ -164,7 +164,7 @@ export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
-export { RowComp } from "./rendering/rowComp";
+export { RowComp } from "./rendering/row/rowComp";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";

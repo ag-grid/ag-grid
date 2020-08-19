@@ -27,10 +27,11 @@ import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { DetailRowCompCache } from "./detailRowCompCache";
+import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
+import {RowCssClassCalculator} from "./row/rowCssClassCalculator";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -74,6 +75,7 @@ export class Beans {
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('selectionController') public selectionController: SelectionController;
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
+    @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
     public doingMasterDetail: boolean;
     public gridPanel: GridPanel;

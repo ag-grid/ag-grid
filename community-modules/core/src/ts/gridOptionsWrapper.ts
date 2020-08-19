@@ -34,7 +34,7 @@ import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
 import { ColDefUtil } from './components/colDefUtil';
 import { Events } from './eventKeys';
-import { AutoHeightCalculator } from './rendering/autoHeightCalculator';
+import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';

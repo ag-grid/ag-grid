@@ -1,11 +1,13 @@
-import { GridPanel } from "../gridPanel/gridPanel";
-import { Autowired, Bean } from "../context/context";
-import { Beans } from "./beans";
-import { RowNode } from "../entities/rowNode";
-import { CellComp } from "./cellComp";
-import { ColumnController } from "../columnController/columnController";
-import { BeanStub } from "../context/beanStub";
-import { addCssClass, clearElement } from "../utils/dom";
+import { GridPanel } from "../../gridPanel/gridPanel";
+import { Autowired, Bean } from "../../context/context";
+import { Beans } from "../beans";
+import { RowNode } from "../../entities/rowNode";
+import { CellComp } from "../cellComp";
+import { ColumnController } from "../../columnController/columnController";
+import { BeanStub } from "../../context/beanStub";
+import { addCssClass, clearElement } from "../../utils/dom";
+import {RowCssClassCalculator} from "./rowCssClassCalculator";
+import {PaginationProxy} from "../../pagination/paginationProxy";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
@@ -13,28 +15,24 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired('beans') private beans: Beans;
     @Autowired("$scope") private $scope: any;
     @Autowired("columnController") private columnController: ColumnController;
+    @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
+    @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
 
     private gridPanel: GridPanel;
-
-    private eDummyContainer: HTMLElement;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
-        if (!this.eDummyContainer) {
-            this.eDummyContainer = document.createElement('div');
 
-            // so any styles on row also get applied in dummy, otherwise
-            // the content in dummy may differ to the real
-            addCssClass(this.eDummyContainer, 'ag-row ag-row-no-focus');
-        }
+        const eDummyContainer = document.createElement('div');
+        this.addInRowCssClasses(rowNode, eDummyContainer);
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
         const eBodyContainer = this.gridPanel.getCenterContainer();
-        eBodyContainer.appendChild(this.eDummyContainer);
+        eBodyContainer.appendChild(eDummyContainer);
 
         const cellComps: CellComp[] = [];
         const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
@@ -50,12 +48,12 @@ export class AutoHeightCalculator extends BeanStub {
                 true,
                 false
             );
-            cellComp.setParentRow(this.eDummyContainer);
+            cellComp.setParentRow(eDummyContainer);
             cellComps.push(cellComp);
         });
 
         const template = cellComps.map(cellComp => cellComp.getCreateTemplate()).join(' ');
-        this.eDummyContainer.innerHTML = template;
+        eDummyContainer.innerHTML = template;
 
         // this gets any cellComps that are using components to put the components in
         cellComps.forEach(cellComp => cellComp.afterAttached());
@@ -64,15 +62,15 @@ export class AutoHeightCalculator extends BeanStub {
         // the row isn't expanding to cover the cell heights, i don't know why, i couldn't
         // figure it out so instead looking at the individual cells instead
         let maxCellHeight = 0;
-        for (let i = 0; i < this.eDummyContainer.children.length; i++) {
-            const child = this.eDummyContainer.children[i] as HTMLElement;
+        for (let i = 0; i < eDummyContainer.children.length; i++) {
+            const child = eDummyContainer.children[i] as HTMLElement;
             if (child.offsetHeight > maxCellHeight) {
                 maxCellHeight = child.offsetHeight;
             }
         }
 
         // we are finished with the dummy container, so get rid of it
-        eBodyContainer.removeChild(this.eDummyContainer);
+        eBodyContainer.removeChild(eDummyContainer);
 
         cellComps.forEach(cellComp => {
             // dunno why we need to detach first, doing it here to be consistent with code in RowComp
@@ -80,9 +78,23 @@ export class AutoHeightCalculator extends BeanStub {
             cellComp.destroy();
         });
 
-        // in case anything left over from last time
-        clearElement(this.eDummyContainer);
-
         return maxCellHeight;
+    }
+
+    private addInRowCssClasses(rowNode: RowNode, eDummyContainer: HTMLDivElement) {
+        // so any styles on row also get applied in dummy, otherwise
+        // the content in dummy may differ to the real
+        const rowIndex = rowNode.rowIndex;
+        const params = {
+            rowNode: rowNode,
+            rowIsEven: rowIndex % 2 === 0,
+            rowLevel: this.rowCssClassCalculator.calculateRowLevel(rowNode),
+            firstRowOnPage: rowIndex === this.beans.paginationProxy.getPageFirstRow(),
+            lastRowOnPage: rowIndex === this.beans.paginationProxy.getPageLastRow(),
+            printLayout: false,
+            expandable: this.rowCssClassCalculator.isExpandable(rowNode)
+        };
+        const classes = this.rowCssClassCalculator.getInitialRowClasses(params);
+        addCssClass(eDummyContainer, classes.join(' '));
     }
 }

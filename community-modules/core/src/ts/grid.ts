@@ -57,7 +57,7 @@ import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridPanel/navigationService";
 import { MaxDivHeightScaler } from "./rendering/maxDivHeightScaler";
 import { SelectableService } from "./rowNodes/selectableService";
-import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
+import { AutoHeightCalculator } from "./rendering/row/autoHeightCalculator";
 import { PaginationComp } from "./pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
@@ -74,7 +74,7 @@ import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
-import { DetailRowCompCache } from "./rendering/detailRowCompCache";
+import { DetailRowCompCache } from "./rendering/row/detailRowCompCache";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { CellPositionUtils } from "./entities/cellPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
@@ -89,6 +89,7 @@ import { HeaderNavigationService } from "./headerRendering/header/headerNavigati
 import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
+import {RowCssClassCalculator} from "./rendering/row/rowCssClassCalculator";
 
 export interface GridParams {
     // used by Web Components
@@ -288,7 +289,8 @@ export class Grid {
             FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory
+            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
+            RowCssClassCalculator
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
