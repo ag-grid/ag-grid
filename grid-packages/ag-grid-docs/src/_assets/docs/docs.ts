@@ -67,13 +67,33 @@ $(function() {
 
     docNav.empty().append(list);
 
+    var headings = [];
+    var maxLevel = 1;
+
     for (var i = 0, len = anchors.elements.length; i < len; i++) {
         (function() {
             var heading = anchors.elements[i];
             var headingLevel = heading.tagName.match(/\d/);
-            var headingText = $(heading).text();
 
-            var link = $(`<li class="level-${headingLevel}">
+            headings.push({ level: headingLevel, heading: heading });
+
+            if (headingLevel > maxLevel) {
+                maxLevel = headingLevel;
+            }
+        })();
+    }
+
+    // limit the length of the side menu
+    while (headings.length > 50 && maxLevel > 1) {
+        headings = headings.filter(function(h) { return h.level < maxLevel; });
+        maxLevel--;
+    }
+
+    for (var i = 0; i < headings.length; i++) {
+        (function() {
+            var heading = headings[i].heading;
+            var headingText = $(heading).text();
+            var link = $(`<li class="level-${headings[i].level}">
                 <a href="#${heading.id}">${headingText}</a>
             </li>`);
 

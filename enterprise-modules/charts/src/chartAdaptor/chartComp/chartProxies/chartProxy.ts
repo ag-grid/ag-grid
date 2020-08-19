@@ -1,5 +1,9 @@
 import {
     _,
+    AgChartCaptionOptions,
+    AgChartLegendOptions,
+    AgChartTheme,
+    AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
     ChartOptionsChanged,
@@ -13,10 +17,8 @@ import {
     LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
+    ProcessChartThemeOptionsParams,
     SeriesOptions,
-    AgChartCaptionOptions,
-    AgChartLegendOptions,
-    AgNavigatorOptions,
 } from "@ag-grid-community/core";
 import {
     AgChartThemePalette,
@@ -27,10 +29,12 @@ import {
     Chart,
     ChartTheme,
     DropShadow,
+    getChartTheme,
     Padding,
     PieSeries
 } from "ag-charts-community";
-import { deepMerge } from "../object";
+import {mergeDeep} from "../object";
+import get = Reflect.get;
 
 export interface ChartProxyParams {
     chartId: string;
@@ -42,6 +46,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
+    processChartThemeOptions: (params: ProcessChartThemeOptionsParams) => AgChartTheme;
     getChartThemeIndex: () => number;
     getChartThemes: () => ChartTheme[];
     getChartThemeOverrides: () => ChartTheme | undefined;
@@ -120,65 +125,17 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected abstract getDefaultOptions(): TOptions;
 
-    private getSelectedIntegratedChartTheme(): ChartTheme {
-        const params = this.chartProxyParams;
-        const chartThemeIndex = params.getChartThemeIndex();
-        return params.getChartThemes()[chartThemeIndex];
-    }
-    
-    // Merges theme defaults into default options. To be overridden in subclasses.
-    protected mergeInTheme(theme: ChartTheme): TOptions {
-        const options = this.getDefaultOptions();
-
-        const chartType = this.chartType.indexOf('pie') >= 0
-            || this.chartType.indexOf('doughnut') >= 0
-            || this.chartType.indexOf('donut') >= 0 ? 'polar' : 'cartesian';
-
-        const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
-        deepMerge(titleOptions, options.title);
-        options.title = titleOptions as any;
-
-        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
-        deepMerge(subtitleOptions, options.subtitle);
-        options.subtitle = subtitleOptions as any;
-
-        const backgroundOptions = theme.getConfig(chartType + '.background');
-        deepMerge(backgroundOptions, options.background);
-        options.background = backgroundOptions;
-
-        const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
-        deepMerge(legendOptions, options.legend);
-        options.legend = legendOptions as any;
-
-        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
-        deepMerge(navigatorOptions, options.navigator);
-        options.navigator = navigatorOptions as any;
-
-        options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
-        options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
-        
-        const listenerOptions = theme.getConfig(chartType + '.listeners');
-        deepMerge(listenerOptions, options.listeners);
-        options.listeners = listenerOptions;
-
-        const paddingOptions = theme.getConfig(chartType + '.padding');
-        deepMerge(paddingOptions, options.padding);
-        options.padding = paddingOptions;
-
-        return options;
-    }
-
     protected initChartOptions(): void {
-        const { processChartOptions } = this.chartProxyParams;
         const theme = this.getSelectedIntegratedChartTheme();
-        this.chartOptions = this.mergeInTheme(theme);
+        this.chartOptions = this.getDefaultOptionsWithTheme(theme);
 
-        let chartThemeOverrides = this.chartProxyParams.getChartThemeOverrides();
-        if (chartThemeOverrides) {
-            this.chartOptions = this.mergeInTheme(chartThemeOverrides);
+        let themeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        if (themeOverrides) {
+            this.chartOptions = this.getDefaultOptionsWithTheme(themeOverrides);
         }
 
         // allow users to override options before they are applied
+        const { processChartOptions } = this.chartProxyParams;
         if (processChartOptions) {
             const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
@@ -190,6 +147,61 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
         }
+
+        // // TODO spike to test processChartThemeOptions()
+        const { processChartThemeOptions } = this.chartProxyParams;
+        if (processChartThemeOptions) {
+            const params: ProcessChartThemeOptionsParams = { type: this.chartType, options: themeOverrides };
+            const overriddenThemeOptions = getChartTheme(processChartThemeOptions(params));
+            this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
+        }
+    }
+    
+    // Merges theme defaults into default options. To be overridden in subclasses.
+    protected getDefaultOptionsWithTheme(theme: ChartTheme): TOptions {
+        const options = this.getDefaultOptions();
+
+        const chartType = this.chartType === ChartType.Pie
+            || this.chartType === ChartType.Doughnut ? 'polar' : 'cartesian';
+
+        const titleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.title');
+        mergeDeep(titleOptions, options.title);
+        options.title = titleOptions as any;
+
+        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(chartType + '.subtitle');
+        mergeDeep(subtitleOptions, options.subtitle);
+        options.subtitle = subtitleOptions as any;
+
+        const backgroundOptions = theme.getConfig(chartType + '.background');
+        mergeDeep(backgroundOptions, options.background);
+        options.background = backgroundOptions;
+
+        const legendOptions = theme.getConfig<AgChartLegendOptions>(chartType + '.legend');
+        mergeDeep(legendOptions, options.legend);
+        options.legend = legendOptions as any;
+
+        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(chartType + '.navigator');
+        mergeDeep(navigatorOptions, options.navigator);
+        options.navigator = navigatorOptions as any;
+
+        options.tooltipClass = theme.getConfig(chartType + '.tooltipClass');
+        options.tooltipTracking = theme.getConfig(chartType + '.tooltipTracking');
+        
+        const listenerOptions = theme.getConfig(chartType + '.listeners');
+        mergeDeep(listenerOptions, options.listeners);
+        options.listeners = listenerOptions;
+
+        const paddingOptions = theme.getConfig(chartType + '.padding');
+        mergeDeep(paddingOptions, options.padding);
+        options.padding = paddingOptions;
+
+        return options;
+    }
+
+    private getSelectedIntegratedChartTheme(): ChartTheme {
+        const params = this.chartProxyParams;
+        const chartThemeIndex = params.getChartThemeIndex();
+        return params.getChartThemes()[chartThemeIndex];
     }
 
     private overridePalette(chartOptions: TOptions): void {

@@ -380,7 +380,4 @@ gridOptions.api.getColumnDefs();
 SNIPPET
 ) ?>
 
-<?= grid_example('Get Column Definitions', 'get-column-defs', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
-
-
 <?php include '../documentation-main/documentation_footer.php';?>

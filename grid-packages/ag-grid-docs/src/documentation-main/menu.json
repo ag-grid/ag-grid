@@ -1460,9 +1460,14 @@
             "forceTopLevelSubItems": true,
             "items": [
               {
-                "title": "Reference",
+                "title": "Options Reference",
                 "showInCollapsed": true,
                 "url": "javascript-charts-api/"
+              },
+              {
+                "title": "Themes Reference",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api-themes/"
               },
               {
                 "title": "Explorer",

@@ -11,7 +11,7 @@ export default class ClickableStatusBarComponent extends Component {
         this.onClick = this.onClick.bind(this);
     }
 
-    onClick(event) {
+    onClick() {
         alert('Selected Row Count: ' + this.props.api.getSelectedRows().length)
     }
 

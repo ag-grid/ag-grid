@@ -137,6 +137,7 @@ export class GridChartComp extends Component {
         }
 
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
+        const processChartThemeOptionsFunc = this.gridOptionsWrapper.getProcessChartThemeOptionsFunc();
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
@@ -145,6 +146,7 @@ export class GridChartComp extends Component {
             chartType,
             chartThemeIndex: this.model.getChartThemeIndex(),
             processChartOptions: processChartOptionsFunc,
+            processChartThemeOptions: processChartThemeOptionsFunc,
             getChartThemeIndex: this.getChartThemeIndex.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             getChartThemeOverrides: this.getChartThemeOverrides.bind(this),

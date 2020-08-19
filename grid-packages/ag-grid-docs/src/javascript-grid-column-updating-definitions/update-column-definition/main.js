@@ -21,7 +21,6 @@ var gridOptions = {
         resizable: true,
         filter: true
     },
-    applyColumnDefOrder: true,
     columnDefs: getColumnDefs()
 };
 

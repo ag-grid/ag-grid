@@ -104,3 +104,51 @@ export function deepMerge(target: any, source: any, options?: any): any {
     }
 }
 // END - deep merge
+
+export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsThatNeedCopy: string[] = [], iteration = 0): void {
+    if (!exists(source)) { return; }
+
+    iterateObject(source, (key: string, sourceValue: any) => {
+        let destValue: any = dest[key];
+
+        if (destValue === sourceValue) { return; }
+
+        const dontCopyOverSourceObject = iteration==0 && destValue == null && sourceValue!=null && objectsThatNeedCopy.indexOf(key)>=0;
+        if (dontCopyOverSourceObject) {
+            // by putting an empty value into destValue first, it means we end up copying over values from
+            // the source object, rather than just copying in the source object in it's entirety.
+            destValue = {};
+            dest[key] = destValue;
+        }
+
+        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
+            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+        } else if (copyUndefined || sourceValue !== undefined) {
+            dest[key] = sourceValue;
+        }
+    });
+}
+
+function iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
+    if (object == null) { return; }
+
+    if (Array.isArray(object)) {
+        forEach(object, (value, index) => callback(`${index}`, value));
+    } else {
+        forEach(Object.keys(object), key => callback(key, object[key]));
+    }
+}
+
+export function exists<T>(value: T, allowEmptyString = false): boolean {
+    return value != null && (allowEmptyString || value as any !== '');
+}
+
+function forEach<T>(list: T[], action: (value: T, index: number) => void): void {
+    if (list == null) {
+        return;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        action(list[i], i);
+    }
+}

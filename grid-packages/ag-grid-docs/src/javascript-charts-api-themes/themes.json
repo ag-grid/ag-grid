@@ -1,0 +1,1972 @@
+{
+  "theme": {
+    "meta": {
+      "displayName": "Theme Configuration",
+      "description": "This object is used to define the configuration for a custom chart theme."
+    },
+    "baseTheme": {
+      "options": [
+        "default",
+        "dark",
+        "material",
+        "material-dark",
+        "pastel",
+        "pastel-dark",
+        "solar",
+        "solar-dark",
+        "vivid",
+        "vivid-dark"
+      ],
+      "default": "default",
+      "description": "The name of the theme to base your theme on. Your custom theme will import all of the configuration from the base theme, allowing you to override just those settings you wish to change."
+    },
+    "defaults": {
+      "meta": {
+        "description": "This object is merged into the defaults specified in the base theme."
+      },
+      "common": {
+        "description": "Specify defaults for all charts.",
+        "more": {
+          "name": "Common Chart Configuration",
+          "url": "#commonConfig"
+        }
+      },
+      "cartesian": {
+        "description": "Specify defaults for cartesian charts.",
+        "more": {
+          "name": "Cartesian Chart Configuration",
+          "url": "#cartesianConfig"
+        }
+      },
+      "polar": {
+        "description": "Specify defaults for polar charts.",
+        "more": {
+          "name": "Polar Chart Configuration",
+          "url": "#polarConfig"
+        }
+      }
+    },
+    "palette": {
+      "meta": {
+        "description": "The palette to use. If specified, this replaces the palette from the base theme."
+      },
+      "fills": {
+        "type": "number[]",
+        "description": "The array of fills to be used."
+      },
+      "strokes": {
+        "type": "number[]",
+        "description": "The array of strokes to be used."
+      }
+    }
+  },
+  "commonConfig": {
+    "meta": {
+      "displayName": "Common Chart Configuration",
+      "description": "This is the common configuration shared by all types of chart."
+    },
+    "autoSize": {
+      "default": true,
+      "description": "By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>."
+    },
+    "width": {
+      "type": "number",
+      "description": "The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.",
+      "min": 1,
+      "unit": "px"
+    },
+    "height": {
+      "type": "number",
+      "description": "The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.",
+      "min": 1,
+      "unit": "px"
+    },
+    "padding": {
+      "meta": {
+        "description": "Configuration for the padding shown around the chart."
+      },
+      "top": {
+        "default": 20,
+        "description": "The number of pixels of padding at the top of the chart area.",
+        "min": 0,
+        "max": 40
+      },
+      "right": {
+        "default": 20,
+        "description": "The number of pixels of padding at the right of the chart area.",
+        "min": 0,
+        "max": 40
+      },
+      "bottom": {
+        "default": 20,
+        "description": "The number of pixels of padding at the bottom of the chart area.",
+        "min": 0,
+        "max": 40
+      },
+      "left": {
+        "default": 20,
+        "description": "The number of pixels of padding at the left of the chart area.",
+        "min": 0,
+        "max": 40
+      }
+    },
+    "background": {
+      "meta": {
+        "description": "Configuration for the background shown behind the chart."
+      },
+      "fill": {
+        "default": "#FFFFFF",
+        "description": "Colour of the chart background."
+      },
+      "visible": {
+        "default": true,
+        "description": "Whether or not the background should be visible."
+      }
+    },
+    "title": {
+      "meta": {
+        "description": "Configuration for the title shown at the top of the chart."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the title should be shown."
+      },
+      "text": {
+        "type": "string",
+        "default": "Title",
+        "description": "The text to show in the title."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the title."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the title."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the title.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 18,
+        "description": "The font size in pixels to use for the title.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the title."
+      }
+    },
+    "subtitle": {
+      "meta": {
+        "description": "Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the subtitle should be shown."
+      },
+      "text": {
+        "type": "string",
+        "default": "Subtitle",
+        "description": "The text to show in the subtitle."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the subtitle."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the subtitle."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the subtitle.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 14,
+        "description": "The font size in pixels to use for the subtitle.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the subtitle."
+      }
+    },
+    "legend": {
+      "meta": {
+        "description": "Configuration for the chart legend."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not to show the legend."
+      },
+      "position": {
+        "default": "right",
+        "description": "Where the legend should show in relation to the chart.",
+        "options": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ]
+      },
+      "spacing": {
+        "default": 20,
+        "description": "The spacing in pixels to use outside the legend.",
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      },
+      "layoutHorizontalSpacing": {
+        "default": 16,
+        "description": "The horizontal spacing in pixels to use between legend items.",
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      },
+      "layoutVerticalSpacing": {
+        "default": 8,
+        "description": "The vertical spacing in pixels to use between legend items.",
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      },
+      "itemSpacing": {
+        "default": 8,
+        "description": "The spacing in pixels between a legend marker and the corresponding label.",
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      },
+      "markerShape": {
+        "type": "string",
+        "description": "If set, overrides the marker shape from the series and the Legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to square if there is none.",
+        "options": [
+          "circle",
+          "cross",
+          "diamond",
+          "plus",
+          "square",
+          "triangle"
+        ]
+      },
+      "markerSize": {
+        "default": 15,
+        "description": "The size in pixels of the markers in the legend.",
+        "min": 0,
+        "max": 30,
+        "unit": "px"
+      },
+      "strokeWidth": {
+        "default": 1,
+        "description": "The width in pixels of the stroke for markers in the legend.",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "color": {
+        "default": "black",
+        "description": "The colour of the text."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the legend."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the legend.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the legend.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the legend."
+      }
+    },
+    "navigator": {
+      "meta": {
+        "description": "Configuration for the chart navigator. Not supported in pie charts."
+      },
+      "enabled": {
+        "default": false,
+        "description": "Whether or not to show the navigator."
+      },
+      "height": {
+        "default": 30,
+        "description": "The height of the navigator.",
+        "min": 10,
+        "max": 100,
+        "unit": "px"
+      },
+      "min": {
+        "default": 0,
+        "description": "The start of the visible range in the [0, 1] interval.",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "max": {
+        "default": 1,
+        "description": "The end of the visible range in the [0, 1] interval.",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "mask": {
+        "meta": {
+          "description": "Configuration for the navigator's visible range mask."
+        },
+        "fill": {
+          "default": "#999999",
+          "description": "The fill colour used by the mask."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke colour used by the mask."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the mask.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "fillOpacity": {
+          "default": 0.2,
+          "description": "The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.",
+          "min": 0,
+          "max": 1,
+          "step": 0.05
+        }
+      },
+      "minHandle": {
+        "meta": {
+          "description": "Configuration for the navigator's left handle."
+        },
+        "fill": {
+          "default": "#f2f2f2",
+          "description": "The fill colour used by the handle."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke colour used by the handle."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the handle.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "width": {
+          "default": 8,
+          "description": "The width of the handle.",
+          "min": 4,
+          "max": 20,
+          "unit": "px"
+        },
+        "height": {
+          "default": 16,
+          "description": "The height of the handle.",
+          "min": 8,
+          "max": 26,
+          "unit": "px"
+        },
+        "gripLineLength": {
+          "default": 8,
+          "description": "The length of the handle's grip lines.",
+          "min": 4,
+          "max": 16,
+          "unit": "px"
+        },
+        "gripLineGap": {
+          "default": 2,
+          "description": "The distance between the handle's grip lines.",
+          "min": 1,
+          "max": 8,
+          "unit": "px"
+        }
+      },
+      "maxHandle": {
+        "meta": {
+          "description": "Configuration for the navigator's right handle."
+        },
+        "fill": {
+          "default": "#f2f2f2",
+          "description": "The fill colour used by the handle."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke colour used by the handle."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the handle.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "width": {
+          "default": 8,
+          "description": "The width of the handle.",
+          "min": 4,
+          "max": 20,
+          "unit": "px"
+        },
+        "height": {
+          "default": 16,
+          "description": "The height of the handle.",
+          "min": 8,
+          "max": 26,
+          "unit": "px"
+        },
+        "gripLineLength": {
+          "default": 8,
+          "description": "The length of the handle's grip lines.",
+          "min": 4,
+          "max": 16,
+          "unit": "px"
+        },
+        "gripLineGap": {
+          "default": 2,
+          "description": "The distance between the handle's grip lines.",
+          "min": 1,
+          "max": 8,
+          "unit": "px"
+        }
+      }
+    }
+  },
+  "cartesianConfig": {
+    "meta": {
+      "displayName": "Cartesian Chart Configuration",
+      "description": "This extends the <a href='#commonConfig'>common chart configuration</a> with options specific to cartesian charts."
+    },
+    "axes": {
+      "number": {
+        "description": "Configuration for number axes.",
+        "more": {
+          "name": "Number Axis Configuration",
+          "url": "#numberAxisConfig"
+        }
+      },
+      "category": {
+        "description": "Configuration for category axes.",
+        "more": {
+          "name": "Category Axis Configuration",
+          "url": "#categoryAxisConfig"
+        }
+      },
+      "groupedCategory": {
+        "description": "Configuration for grouped category axes.",
+        "more": {
+          "name": "Grouped Category Axis Configuration",
+          "url": "#groupedCategoryAxisConfig"
+        }
+      },
+      "time": {
+        "description": "Configuration for time axes.",
+        "more": {
+          "name": "Time Axis Configuration",
+          "url": "#timeAxisConfig"
+        }
+      }
+    },
+    "series": {
+      "meta": {
+        "description": "Configuration for cartesian series."
+      },
+      "common": {
+        "description": "Configuration common to all series.",
+        "more": {
+          "name": "Common Series Configuration",
+          "url": "#commonSeriesConfig"
+        }
+      },
+      "line": {
+        "description": "Configuration for line series.",
+        "more": {
+          "name": "Line Series Configuration",
+          "url": "#lineSeriesConfig"
+        }
+      },
+      "scatter": {
+        "description": "Configuration for scatter/bubble series.",
+        "more": {
+          "name": "Scatter Series Configuration",
+          "url": "#scatterSeriesConfig"
+        }
+      },
+      "area": {
+        "description": "Configuration for area series.",
+        "more": {
+          "name": "Area Series Configuration",
+          "url": "#areaSeriesConfig"
+        }
+      },
+      "bar": {
+        "description": "Configuration for bar/column series.",
+        "more": {
+          "name": "Bar/Column Series Configuration",
+          "url": "#barSeriesConfig"
+        }
+      },
+      "histogram": {
+        "description": "Configuration for histogram series.",
+        "more": {
+          "name": "Histogram Series Configuration",
+          "url": "#histogramSeriesConfig"
+        }
+      }
+    }
+  },
+  "polarConfig": {
+    "meta": {
+      "displayName": "Polar Chart Configuration",
+      "description": "This extends the <a href='#commonConfig'>common chart configuration</a> with options specific to polar charts."
+    },
+    "series": {
+      "meta": {
+        "description": "Configuration for polar series."
+      },
+      "common": {
+        "description": "Configuration common to all series.",
+        "more": {
+          "name": "Common Series Configuration",
+          "url": "#commonSeriesConfig"
+        }
+      },
+      "pie": {
+        "description": "Configuration for pie series.",
+        "more": {
+          "name": "Pie Series Configuration",
+          "url": "#pieSeriesConfig"
+        }
+      }
+    }
+  },
+  "cartesianAxisConfig": {
+    "meta": {
+      "displayName": "Cartesian Axis Configuration",
+      "description": "This is the configuration shared by all types of axis for cartesian charts."
+    },
+    "position": {
+      "type": "string",
+      "description": "The position on the chart where the axis should be rendered.",
+      "options": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ]
+    },
+    "title": {
+      "meta": {
+        "description": "Configuration for the title shown next to the axis."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the axis title should be shown."
+      },
+      "text": {
+        "type": "string",
+        "default": "Axis Title",
+        "description": "The text to show in the axis title."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the axis title."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the axis title."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the axis title.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 14,
+        "description": "The font size in pixels to use for the axis title.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the axis title."
+      }
+    },
+    "line": {
+      "meta": {
+        "description": "Configuration for the axis line."
+      },
+      "width": {
+        "default": 1,
+        "description": "The width in pixels of the axis line.",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "color": {
+        "default": "rgba(195, 195, 195, 1)",
+        "description": "The colour of the axis line."
+      }
+    },
+    "tick": {
+      "meta": {
+        "description": "Configuration for the axis ticks."
+      },
+      "width": {
+        "default": 1,
+        "description": "The width in pixels of the axis ticks (and corresponding grid line).",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "size": {
+        "default": 6,
+        "description": "The length in pixels of the axis ticks.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      },
+      "color": {
+        "default": "rgba(195, 195, 195, 1)",
+        "description": "The colour of the axis ticks."
+      },
+      "count": {
+        "default": 10,
+        "description": "A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.",
+        "min": 0,
+        "max": 50
+      }
+    },
+    "label": {
+      "meta": {
+        "description": "Configuration for the axis labels, shown next to the ticks."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the labels."
+      },
+      "padding": {
+        "default": 5,
+        "description": "Padding in pixels between the axis label and the tick.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      },
+      "rotation": {
+        "default": 0,
+        "description": "The rotation of the axis labels in degrees.",
+        "min": -359,
+        "max": 359,
+        "unit": "&deg;"
+      },
+      "format": {
+        "type": "string",
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../javascript-grid-charts-integrated-customisation-cartesian/#format-string\">click here</a>."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "any",
+            "index": "number",
+            "fractionDigits": "number",
+            "formatter": "(x: any) => string"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code>."
+      }
+    },
+    "gridStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration of the lines used to form the grid in the chart area."
+      },
+      "stroke": {
+        "default": "rgba(195, 195, 195, 1)",
+        "description": "The colour of the grid line."
+      },
+      "lineDash": {
+        "default": [
+          4,
+          2
+        ],
+        "description": "Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+      }
+    }
+  },
+  "numberAxisConfig": {
+    "meta": {
+      "displayName": "Number Axis Configuration",
+      "description": "This extends the <a href='#cartesianAxisConfig'>common cartesian axis configuration</a> with options specific to number axes."
+    },
+    "nice": {
+      "default": true,
+      "description": "If <code>true</code>, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+    },
+    "min": {
+      "description": "The minimum value for the axis."
+    },
+    "max": {
+      "description": "The maximum value for the axis."
+    }
+  },
+  "categoryAxisConfig": {
+    "meta": {
+      "displayName": "Category Axis Configuration",
+      "description": "This extends the <a href='#cartesianAxisConfig'>common cartesian axis configuration</a> with options specific to category axes."
+    },
+    "paddingInner": {
+      "description": "The padding between the category label and the line."
+    },
+    "paddingOuter": {
+      "description": "The padding between lines for neighbouring categories."
+    }
+  },
+  "groupedCategoryAxisConfig": {
+    "meta": {
+      "displayName": "Grouped Category Axis Configuration",
+      "description": "This extends the <a href='#cartesianAxisConfig'>common cartesian axis configuration</a> with options specific to grouped category axes. Currently there are no additional options over the base configuration."
+    }
+  },
+  "timeAxisConfig": {
+    "meta": {
+      "displayName": "Time Axis Configuration",
+      "description": "This extends the <a href='#cartesianAxisConfig'>common cartesian axis configuration</a> with options specific to time axes."
+    },
+    "nice": {
+      "default": true,
+      "description": "If <code>true</code>, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+    }
+  },
+  "commonSeriesConfig": {
+    "meta": {
+      "displayName": "Common Series Configuration",
+      "description": "This is the common configuration shared by all types of series."
+    },
+    "visible": {
+      "default": true,
+      "description": "Whether or not to display the series."
+    },
+    "showInLegend": {
+      "default": true,
+      "description": "Whether or not to include the series in the legend."
+    },
+    "tooltipEnabled": {
+      "default": true,
+      "description": "Whether or not to show tooltips when the series are hovered over."
+    },
+    "listeners": {
+      "description": "A map of event names to event listener functions. The keys can be one of the following: <code>nodeClick</code>"
+    }
+  },
+  "barSeriesConfig": {
+    "meta": {
+      "displayName": "Bar/Column Series Configuration",
+      "description": "Configuration for bar/column series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "grouped": {
+      "default": false,
+      "description": "Whether to show different y-values as separate bars (grouped) or not (stacked)."
+    },
+    "normalizedTo": {
+      "type": "number",
+      "description": "The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>. For example, if <code>normalizedTo</code> is set to <code>100</code>, the bar stacks will all be scaled proportionally so that each of their totals is 100.",
+      "min": 1,
+      "max": 100
+    },
+    "fills": {
+      "default": [
+        "#f3622d",
+        "#fba71b",
+        "#57b757",
+        "#41a9c9",
+        "#4258c9",
+        "#9a42c8",
+        "#c84164",
+        "#888888"
+      ],
+      "description": "The colours to cycle through for the fills of the bars."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokes": {
+      "default": [
+        "#aa4520",
+        "#b07513",
+        "#3d803d",
+        "#2d768d",
+        "#2e3e8d",
+        "#6c2e8c",
+        "#8c2d46",
+        "#5f5f5f"
+      ],
+      "description": "The colours to cycle through for the strokes of the bars."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the bars.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the bars are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the bars when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the bars when hovered over."
+      }
+    },
+    "shadow": {
+      "meta": {
+        "description": "Configuration for the shadow used behind the chart series."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the shadow is visible."
+      },
+      "color": {
+        "default": "rgba(0, 0, 0, 0.5)",
+        "description": "The colour of the shadow."
+      },
+      "xOffset": {
+        "default": 0,
+        "description": "The horizontal offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "yOffset": {
+        "default": 0,
+        "description": "The vertical offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "blur": {
+        "default": 5,
+        "description": "The radius of the shadow's blur, given in pixels.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels shown on bars."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      }
+    }
+  },
+  "histogramSeriesConfig": {
+    "meta": {
+      "displayName": "Histogram Series Configuration",
+      "description": "Configuration for histogram series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string",
+          "sizeKey?": "string",
+          "sizeName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "binCount": {
+      "type": "number",
+      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+    },
+    "bins": {
+      "type": "number[][]",
+      "description": "Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting."
+    },
+    "aggregation": {
+      "type": "string",
+      "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
+      "default": "sum",
+      "options": [
+        "sum",
+        "mean"
+      ]
+    },
+    "areaPlot": {
+      "type": "boolean",
+      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+      "default": "false"
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    },
+    "fill": {
+      "default": "#f3622d",
+      "description": "The colour of the fill for the histogram bars."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the histogram bars."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    }
+  },
+  "lineSeriesConfig": {
+    "meta": {
+      "displayName": "Line Series Configuration",
+      "description": "Configuration for line series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "title": {
+      "type": "string",
+      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the lines."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the lines.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the lines.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "marker": {
+      "meta": {
+        "description": "Configuration for the markers used in the series."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not to show markers."
+      },
+      "shape": {
+        "type": "string | Marker",
+        "default": "circle",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "options": [
+          "circle",
+          "cross",
+          "diamond",
+          "plus",
+          "square",
+          "triangle"
+        ]
+      },
+      "size": {
+        "default": 8,
+        "description": "The size in pixels of the markers.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "minSize": {
+        "default": 12,
+        "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "fill": {
+        "type": "string",
+        "description": "The colour to use for marker fills. If this is not specified, the markers will take their fill from the series."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series."
+      },
+      "strokeWidth": {
+        "type": "number",
+        "description": "The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series.",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "datum": "any",
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number",
+            "highlighted": "boolean",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": {
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number"
+          }
+        },
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+      }
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    }
+  },
+  "areaSeriesConfig": {
+    "meta": {
+      "displayName": "Area Series Configuration",
+      "description": "Configuration for area series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "normalizedTo": {
+      "type": "number",
+      "description": "The number to normalise the area stacks to. For example, if <code>normalizedTo</code> is set to <code>100</code>, the stacks will all be scaled proportionally so that their total height is always 100.",
+      "min": 1,
+      "max": 100
+    },
+    "fills": {
+      "default": [
+        "#f3622d",
+        "#fba71b",
+        "#57b757",
+        "#41a9c9",
+        "#4258c9",
+        "#9a42c8",
+        "#c84164",
+        "#888888"
+      ],
+      "description": "The colours to cycle through for the fills of the areas."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the areas.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokes": {
+      "default": [
+        "#aa4520",
+        "#b07513",
+        "#3d803d",
+        "#2d768d",
+        "#2e3e8d",
+        "#6c2e8c",
+        "#8c2d46",
+        "#5f5f5f"
+      ],
+      "description": "The colours to cycle through for the strokes of the areas."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the areas.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the areas.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "marker": {
+      "meta": {
+        "description": "Configuration for the markers used in the series."
+      },
+      "enabled": {
+        "default": false,
+        "description": "Whether or not to show markers."
+      },
+      "shape": {
+        "type": "string | Marker",
+        "default": "circle",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "options": [
+          "circle",
+          "cross",
+          "diamond",
+          "plus",
+          "square",
+          "triangle"
+        ]
+      },
+      "size": {
+        "default": 8,
+        "description": "The size in pixels of the markers.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "minSize": {
+        "default": 12,
+        "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "fill": {
+        "type": "string",
+        "description": "The colour to use for marker fills. If this is not specified, the markers will take their fill from the series."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series."
+      },
+      "strokeWidth": {
+        "type": "number",
+        "description": "The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series.",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "datum": "any",
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number",
+            "highlighted": "boolean",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": {
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number"
+          }
+        },
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+      }
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    },
+    "shadow": {
+      "meta": {
+        "description": "Configuration for the shadow used behind the chart series."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the shadow is visible."
+      },
+      "color": {
+        "default": "rgba(0, 0, 0, 0.5)",
+        "description": "The colour of the shadow."
+      },
+      "xOffset": {
+        "default": 0,
+        "description": "The horizontal offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "yOffset": {
+        "default": 0,
+        "description": "The vertical offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "blur": {
+        "default": 5,
+        "description": "The radius of the shadow's blur, given in pixels.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      }
+    }
+  },
+  "scatterSeriesConfig": {
+    "meta": {
+      "displayName": "Scatter/Bubble Series Configuration",
+      "description": "Configuration for scatter/bubble series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string",
+          "sizeKey?": "string",
+          "sizeName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "title": {
+      "type": "string",
+      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+    },
+    "fill": {
+      "default": "#f3622d",
+      "description": "The colour of the fill for the markers."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the markers.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the markers."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the markers.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the markers.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "marker": {
+      "meta": {
+        "description": "Configuration for the markers used in the series."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not to show markers."
+      },
+      "shape": {
+        "type": "string | Marker",
+        "default": "circle",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "options": [
+          "circle",
+          "cross",
+          "diamond",
+          "plus",
+          "square",
+          "triangle"
+        ]
+      },
+      "size": {
+        "default": 8,
+        "description": "The size in pixels of the markers.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "minSize": {
+        "default": 12,
+        "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+        "min": 1,
+        "max": 20,
+        "unit": "px"
+      },
+      "fill": {
+        "type": "string",
+        "description": "The colour to use for marker fills. If this is not specified, the markers will take their fill from the series."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series."
+      },
+      "strokeWidth": {
+        "type": "number",
+        "description": "The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series.",
+        "min": 0,
+        "max": 10,
+        "unit": "px"
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "datum": "any",
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number",
+            "highlighted": "boolean",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": {
+            "fill": "string",
+            "stroke": "string",
+            "strokeWidth": "number",
+            "size": "number"
+          }
+        },
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+      }
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    }
+  },
+  "pieSeriesConfig": {
+    "meta": {
+      "displayName": "Pie/Doughnut Series Configuration",
+      "description": "Configuration for pie/doughnut series."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "angleKey": "string",
+          "angleName?": "string",
+          "radiusKey?": "string",
+          "radiusName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "rotation": {
+      "default": 0,
+      "description": "The rotation of the pie series in degrees.",
+      "min": -359,
+      "max": 359,
+      "unit": "&deg"
+    },
+    "innerRadiusOffset": {
+      "default": 0,
+      "description": "The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If this is not given, or a value of zero is given, a pie chart will be rendered.",
+      "min": -50,
+      "max": 50,
+      "unit": "px"
+    },
+    "outerRadiusOffset": {
+      "default": 0,
+      "description": "The offset in pixels of the outer radius of the series. Used to construct doughnut charts.",
+      "min": -50,
+      "max": 50,
+      "unit": "px"
+    },
+    "title": {
+      "meta": {
+        "description": "Configuration for the series title."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the title should be shown."
+      },
+      "text": {
+        "type": "string",
+        "description": "The text to show in the title."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the title."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the title."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the title.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 10,
+        "description": "The font size in pixels to use for the title.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the title."
+      }
+    },
+    "fills": {
+      "default": [
+        "#f3622d",
+        "#fba71b",
+        "#57b757",
+        "#41a9c9",
+        "#4258c9",
+        "#9a42c8",
+        "#c84164",
+        "#888888"
+      ],
+      "description": "The colours to cycle through for the fills of the segments."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the segments.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokes": {
+      "default": [
+        "#aa4520",
+        "#b07513",
+        "#3d803d",
+        "#2d768d",
+        "#2e3e8d",
+        "#6c2e8c",
+        "#8c2d46",
+        "#5f5f5f"
+      ],
+      "description": "The colours to cycle through for the strokes of the segments."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the segments.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the segments.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the segments are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the segments when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the segments when hovered over."
+      }
+    },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels used for the segments."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "#000000",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      },
+      "offset": {
+        "default": 3,
+        "description": "Distance in pixels between the callout line and the label text.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      },
+      "minAngle": {
+        "default": 20,
+        "description": "Minimum angle in degrees required for a segment to show a label.",
+        "min": 0,
+        "max": 360,
+        "unit": "&deg;"
+      }
+    },
+    "callout": {
+      "meta": {
+        "description": "Configuration for the callouts used with the labels for the segments."
+      },
+      "colors": {
+        "default": [
+          "#aa4520",
+          "#b07513",
+          "#3d803d",
+          "#2d768d",
+          "#2e3e8d",
+          "#6c2e8c",
+          "#8c2d46",
+          "#5f5f5f"
+        ],
+        "description": "The colours to cycle through for the strokes of the callouts."
+      },
+      "strokeWidth": {
+        "default": 1,
+        "description": "The width in pixels of the stroke for callout lines.",
+        "min": 1,
+        "max": 10,
+        "unit": "px"
+      },
+      "length": {
+        "default": 10,
+        "description": "The length in pixels of the callout lines.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "shadow": {
+      "meta": {
+        "description": "Configuration for the shadow used behind the chart series."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the shadow is visible."
+      },
+      "color": {
+        "default": "rgba(0, 0, 0, 0.5)",
+        "description": "The colour of the shadow."
+      },
+      "xOffset": {
+        "default": 0,
+        "description": "The horizontal offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "yOffset": {
+        "default": 0,
+        "description": "The vertical offset in pixels for the shadow.",
+        "min": -20,
+        "max": 20,
+        "unit": "px"
+      },
+      "blur": {
+        "default": 5,
+        "description": "The radius of the shadow's blur, given in pixels.",
+        "min": 0,
+        "max": 20,
+        "unit": "px"
+      }
+    }
+  }
+}

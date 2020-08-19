@@ -426,6 +426,7 @@ export class ChartTheme {
     }
 
     getConfig<T = any>(path: string): T {
+        const value = getValue(this.config, path);
         return getValue(this.config, path);
     }
 
