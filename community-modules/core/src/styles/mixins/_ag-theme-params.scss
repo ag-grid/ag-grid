@@ -255,6 +255,15 @@ $-ag-params: null !default;
         @warn "Problem while calculating theme parameter `#{$context-name}: #{-ag-inspect-derived-value($derived)}`. This rule attempts to modify the color of `#{$reference-name}` using $#{$operator}, but (#{$reference-name}: #{$lhs}) is a CSS variable and can't be modified at compile time. Either set `#{$reference-name}` to a CSS color value (e.g. #ffffff) or provide a value for `#{$context-name}` that does not use $#{$operator}";
         @return null;
     }
+    @if $operator == "mix" {
+        $color-param: nth($rhs, 1);
+        $color: -ag-resolve-param-name($params, $color-param);
+        @if -ag-is-css-var-token($color) {
+            $reference-name: map-get($derived, "reference-name");
+            @warn "Problem while calculating theme parameter `#{$context-name}: #{-ag-inspect-derived-value($derived)}`. This rule attempts to modify the color of `#{$reference-name}` using $#{$operator}, but (#{$color-param}) is a CSS variable and can't be modified at compile time. Either set `#{$color-param}` to a CSS color value (e.g. #ffffff) or provide a value for `#{$context-name}` that does not use $#{$operator}";
+            @return null;
+        }
+    }
     @if type-of($rhs) == string {
         $rhs: -ag-resolve-param-name($params, $rhs);
     }
