@@ -8,7 +8,7 @@ var gridOptions = {
     ],
     defaultColDef: {
         flex: 1,
-        cellClass: 'cell-wrap-text',
+        wrapText: true,
         autoHeight: true,
         sortable: true,
         resizable: true,

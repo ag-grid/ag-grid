@@ -112,6 +112,7 @@ export class ColDefUtil {
         'rowDrag',
         'dndSource',
         'autoHeight',
+        'wrapText',
         'sortable',
         'resizable',
         'singleClickEdit',

@@ -368,6 +368,10 @@ export class CellComp extends Component implements TooltipParentComp {
             cssClasses.push('ag-cell-value');
         }
 
+        if (this.column.getColDef().wrapText) {
+            cssClasses.push('ag-cell-wrap-text');
+        }
+
         return cssClasses;
     }
 

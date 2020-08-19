@@ -65,17 +65,25 @@ SNIPPET
 
 <?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
-<h2>Row Height More Complex Example</h2>
+<h2>Text Wrapping</h2>
 
 <p>
-    Below shows a more complex example, where the row height is changed based on the contents of
-    the 'Latin Text' column. The column definition has CSS style so that the cell does not have
-    its contents clipped. The algorithm used to work out how tall the row should be is far
-    from perfect, however it demonstrates that you can change your row height based on
-    the contents of the cell.
+    If you want the text to wrap inside the cell, add the flag <code>wrapText=true</code> to
+    the Column Definition.
+</p>
+<p>
+    The example below has <code>wrapText=true</code> set on the Latin Text column.
+    Behind the scenes, this results in the CSS class <code>white-space: normal</code>
+    getting applied to the cell, which results in text wrapping.
 </p>
 
 <?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+
+<note>
+    If you are providing a custom <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>,
+    then you can implement text wrapping in the custom component in your own way. The property <code>wrapText</code>
+    is intend to be used when not using a custom Cell Renderer.
+</note>
 
 <h2>Auto Row Height</h2>
 
@@ -85,6 +93,14 @@ SNIPPET
     height should be calculated from. For example, if one column is showing
     description text over multiple lines, then you may choose to select only
     that column to determine the line height.
+</p>
+
+<p>
+    <code>autoHeight</code> is typically used with <code>wrapText</code>.
+    If <code>wrapText</code> is not set, and no custom
+    <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>
+    is used, then the cell will display all it's contents on one line. This is probably not
+    the intention if using Auto Row Height.
 </p>
 
 <p>
@@ -107,8 +123,9 @@ SNIPPET
         so the height of each row is such that it fits all contents from these
         three columns.
     </li>
-    <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+    <li>All columns with Auto Height have <code>wrapText=true</code> so that cell content is wrapped.
     <li>
+        The example listens for the grid event <code>onColumnResized</code>.
         When a column is resized, the grid re-calculates the row heights after
         the resize is finished.
     </li>

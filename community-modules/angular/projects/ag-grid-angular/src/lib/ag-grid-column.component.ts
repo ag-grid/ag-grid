@@ -163,6 +163,7 @@ export class AgGridColumn {
     @Input() public rowDrag: any;
     @Input() public dndSource: any;
     @Input() public autoHeight: any;
+    @Input() public wrapText: any;
     @Input() public sortable: any;
     @Input() public resizable: any;
     @Input() public singleClickEdit: any;

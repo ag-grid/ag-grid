@@ -666,6 +666,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     text-overflow: ellipsis;
 }
 
+.ag-cell-wrap-text {
+    white-space: normal;
+}
+
 .ag-cell-wrapper {
     display: flex;
     align-items: center;

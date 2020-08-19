@@ -375,6 +375,10 @@
             "default": false,
             "description": "Set to <code>true</code> to have the grid calculate the height of a row based on contents of this column."
         },
+        "wrapText": {
+            "default": false,
+            "description": "Set to <code>true</code> to have the text wrap inside the cell."
+        },
         "singleClickEdit": {
             "default": false,
             "description": "Set to <code>true</code> to have cells under this column enter edit mode after single click."
