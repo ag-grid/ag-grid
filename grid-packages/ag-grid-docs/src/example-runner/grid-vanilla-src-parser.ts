@@ -191,7 +191,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
 
-    const extractAndParseColDefs = (node) => {
+    const extractColDefs = (node) => {
         const copyOfColDefs = JSON.parse(JSON.stringify(node));
         // for each column def
         for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
@@ -200,14 +200,22 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             // for each col def property
             for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
                 const columnDefProperty = columnDef.properties[colDefPropertyIndex];
-                if (columnDefProperty.value.type === 'Identifier') {
+
+                if(columnDefProperty.key.name === 'children') {
+                    const children = extractColDefs(columnDefProperty.value);
+                    columnDefProperty.value = children;
+                } else if (columnDefProperty.value.type === 'Identifier') {
                     columnDefProperty.value.type = 'Literal';
                     columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
                 }
             }
         }
 
-        return generate(copyOfColDefs, indentOne);
+        return copyOfColDefs;
+    };
+
+    const extractAndParseColDefs = (node) => {
+        return generate(extractColDefs(node), indentOne);
     };
 
     PROPERTIES.forEach(propertyName => {
