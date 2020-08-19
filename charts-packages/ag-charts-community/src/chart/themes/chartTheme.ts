@@ -409,7 +409,7 @@ export class ChartTheme {
                 this.palette = overrides.palette;
             }
         }
-        this.config = this.createAliases(defaults);
+        this.config = Object.freeze(this.createAliases(defaults));
     }
 
     private createAliases(config: any) {
@@ -426,7 +426,6 @@ export class ChartTheme {
     }
 
     getConfig<T = any>(path: string): T {
-        const value = getValue(this.config, path);
         return getValue(this.config, path);
     }
 
