@@ -22,27 +22,48 @@
     },
     "defaults": {
       "meta": {
-        "description": "This object is merged into the defaults specified in the base theme."
+        "description": "Configuration from this object is merged into the defaults specified in the base theme."
       },
-      "common": {
-        "description": "Specify defaults for all charts.",
+      "bar": {
+        "description": "Specify defaults for bar/column charts.",
         "more": {
-          "name": "Common Chart Configuration",
-          "url": "#commonConfig"
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
         }
       },
-      "cartesian": {
-        "description": "Specify defaults for cartesian charts.",
+      "histogram": {
+        "description": "Specify defaults for histogram charts.",
         "more": {
-          "name": "Cartesian Chart Configuration",
-          "url": "#cartesianConfig"
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
         }
       },
-      "polar": {
-        "description": "Specify defaults for polar charts.",
+      "line": {
+        "description": "Specify defaults for line charts.",
         "more": {
-          "name": "Polar Chart Configuration",
-          "url": "#polarConfig"
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
+      "scatter": {
+        "description": "Specify defaults for scatter/bubble charts.",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
+      "area": {
+        "description": "Specify defaults for line charts.",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
+      "pie": {
+        "description": "Specify defaults for pie/doughnut charts.",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
         }
       }
     },
@@ -60,9 +81,9 @@
       }
     }
   },
-  "commonConfig": {
+  "chartConfig": {
     "meta": {
-      "displayName": "Common Chart Configuration",
+      "displayName": "Chart Configuration",
       "description": "This is the common configuration shared by all types of chart."
     },
     "autoSize": {
@@ -523,12 +544,6 @@
           "unit": "px"
         }
       }
-    }
-  },
-  "cartesianConfig": {
-    "meta": {
-      "displayName": "Cartesian Chart Configuration",
-      "description": "This extends the <a href='#commonConfig'>common chart configuration</a> with options specific to cartesian charts."
     },
     "axes": {
       "number": {
@@ -561,81 +576,12 @@
       }
     },
     "series": {
-      "meta": {
-        "description": "Configuration for cartesian series."
-      },
-      "common": {
-        "description": "Configuration common to all series.",
-        "more": {
-          "name": "Common Series Configuration",
-          "url": "#commonSeriesConfig"
-        }
-      },
-      "line": {
-        "description": "Configuration for line series.",
-        "more": {
-          "name": "Line Series Configuration",
-          "url": "#lineSeriesConfig"
-        }
-      },
-      "scatter": {
-        "description": "Configuration for scatter/bubble series.",
-        "more": {
-          "name": "Scatter Series Configuration",
-          "url": "#scatterSeriesConfig"
-        }
-      },
-      "area": {
-        "description": "Configuration for area series.",
-        "more": {
-          "name": "Area Series Configuration",
-          "url": "#areaSeriesConfig"
-        }
-      },
-      "bar": {
-        "description": "Configuration for bar/column series.",
-        "more": {
-          "name": "Bar/Column Series Configuration",
-          "url": "#barSeriesConfig"
-        }
-      },
-      "histogram": {
-        "description": "Configuration for histogram series.",
-        "more": {
-          "name": "Histogram Series Configuration",
-          "url": "#histogramSeriesConfig"
-        }
-      }
-    }
-  },
-  "polarConfig": {
-    "meta": {
-      "displayName": "Polar Chart Configuration",
-      "description": "This extends the <a href='#commonConfig'>common chart configuration</a> with options specific to polar charts."
-    },
-    "series": {
-      "meta": {
-        "description": "Configuration for polar series."
-      },
-      "common": {
-        "description": "Configuration common to all series.",
-        "more": {
-          "name": "Common Series Configuration",
-          "url": "#commonSeriesConfig"
-        }
-      },
-      "pie": {
-        "description": "Configuration for pie series.",
-        "more": {
-          "name": "Pie Series Configuration",
-          "url": "#pieSeriesConfig"
-        }
-      }
+      "description": "This is the configuration for the series, which is specific to the type of chart:<br /><br /><ul><li>See <a href='#barSeriesConfig'>Bar Series Configuration</a> for bar/column series</li><li>See <a href='#histogramSeriesConfig'>Histogram Series Configuration</a> for histogram series</li><li>See <a href='#lineSeriesConfig'>Line Series Configuration</a> for line series</li><li>See <a href='#scatterSeriesConfig'>Scatter Series Configuration</a> for scatter/bubble series</li><li>See <a href='#areaSeriesConfig'>Area Series Configuration</a> for area series</li><li>See <a href='#pieSeriesConfig'>Pie Series Configuration</a> for pie/doughnut series</li></ul>"
     }
   },
   "cartesianAxisConfig": {
     "meta": {
-      "displayName": "Cartesian Axis Configuration",
+      "displayName": "Axis Configuration",
       "description": "This is the configuration shared by all types of axis for cartesian charts."
     },
     "position": {
