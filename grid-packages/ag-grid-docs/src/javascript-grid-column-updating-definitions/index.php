@@ -42,9 +42,9 @@ include '../documentation-main/documentation_header.php';
     be kept if the column still exists after the new definitions are applied. For example try the following:
 </p>
 <ul>
-    <li>Resize Country column. Note changing columns doesn't impact it's width.</li>
-    <li>Move Country column. Note changing columns doesn't impact it's position.</li>
-    <li>Sort Country column. Note changing columns doesn't impact it's sort.</li>
+    <li>Resize Country column. Note changing columns doesn't impact its width.</li>
+    <li>Move Country column. Note changing columns doesn't impact its position.</li>
+    <li>Sort Country column. Note changing columns doesn't impact its sort.</li>
 </ul>
 
 <h2 id="changing-column-definition">Updating Column Definitions</h2>
@@ -56,12 +56,17 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
+    It is not possible to update the Column Definition of just one column in isolation. Only a new set of
+    Column Definitions can be applied.
+</p>
+
+<p>
     The example below demonstrates updating column definitions to change how columns are configured.
     Note the following:
 </p>
 
 <ul>
-    <li>All Columns are provided with just the <code>field</code> attribet set on the Column Definition.</li>
+    <li>All Columns are provided with just the <code>field</code> attribute set on the Column Definition.</li>
     <li>
         'Set Header Names' and 'Remove Header Names' sets and then subsequently removes the <code>headerName</code>
         attribute on all Columns.
@@ -73,7 +78,7 @@ include '../documentation-main/documentation_header.php';
     <li>
         Headers refresh whenever new columns are set. However cells do not refresh, thus a call to
         <code>api.refreshCells({force: true})</code> is required. The refresh is forced so cells will
-        be refresh even though the underlying value for that cell hasn't changed.
+        be refreshed even though the underlying value for that cell hasn't changed.
     </li>
     <li>
         Note that any resizing, reordering, sorting etc of the Columns is kept intact between updates to the
@@ -82,11 +87,6 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 <?= grid_example('Updating Column Definition', 'update-column-definition', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
-
-<p>
-    It is not possible to update the Column Definition of just one column in isolation. Only a new set of
-    Column Definitions can be applied.
-</p>
 
 <h2 id="changing-column-state">Changing Column State</h2>
 
@@ -114,13 +114,13 @@ include '../documentation-main/documentation_header.php';
     <?=addItemToTable('width','initialWidth','Width of the column.')?>
     <?=addItemToTable('flex','initialFlex','The flex value for setting this columns width.')?>
     <?=addItemToTable('hide','initialHide','Whether this column should be hidden.')?>
-    <?=addItemToTable('pinned','initialPinned','Whethe this column should be pinned.')?>
+    <?=addItemToTable('pinned','initialPinned','Whether this column should be pinned.')?>
     <?=addItemToTable('sort','initialSort','The sort to apply to this column.')?>
     <?=addItemToTable('sortIndex','initialSortIndex','The order to apply sorting, if multi column sorting.')?>
-    <?=addItemToTable('rowGroup','initialRowGroup','If this column should be a row group.')?>
-    <?=addItemToTable('rowGroupIndex','initialRowGroupIndex','If this column should be a row group and in what order.')?>
+    <?=addItemToTable('rowGroup','initialRowGroup','Whether this column should be a row group.')?>
+    <?=addItemToTable('rowGroupIndex','initialRowGroupIndex','Whether this column should be a row group and in what order.')?>
     <?=addItemToTable('pivot','initialPivot','If this column should be a pivot.')?>
-    <?=addItemToTable('pivotIndex','initialPivotIndex','If this column should be a pivot and in what order.')?>
+    <?=addItemToTable('pivotIndex','initialPivotIndex','Whether this column should be a pivot and in what order.')?>
     <?=addItemToTable('aggFunc','initialAggFunc','The function to aggregate this column by if row grouping or pivoting.')?>
 </table>
 
@@ -195,7 +195,7 @@ SNIPPET
         Note the <code>defaultColDef</code> is used to remove state. For example <code>sort=null</code>
         is set so that any sorting the user might of done on another column is cleared down. Otherwise
         the grid would see the <code>sort</code> attribute as <code>undefined</code> which means
-        the state should nto be changed.
+        the state should not be changed.
     </li>
 </ul>
 
@@ -306,7 +306,7 @@ SNIPPET
 
 <p>
     Column Events will get raised when setting new Column Definitions that update the current Columns.
-    For example Column Pinned event will get raised if applying the state results in a column getting
+    For example <code>columnPinned</code> event will get raised if applying the state results in a column getting
     pinned or unpinned.
 </p>
 
@@ -332,7 +332,7 @@ SNIPPET
 
 <p>
     All Header Components that still exist after the new Column Definitions are applied (in other words, the
-    Column still exists after the update, it was not removed) will have it's <code>refresh</code> method
+    Column still exists after the update, it was not removed) will have its <code>refresh</code> method
     called.
 </p>
 
@@ -349,7 +349,7 @@ SNIPPET
     </li>
     <li>
         The Header Component logs to the console
-        when it's methods <code>init</code>, <code>refresh</code> and <code>destroy</code> are called.
+        when its methods <code>init</code>, <code>refresh</code> and <code>destroy</code> are called.
     </li>
     <li>
         Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
