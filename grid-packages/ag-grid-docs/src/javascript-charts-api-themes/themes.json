@@ -881,7 +881,7 @@
       "description": "Whether or not to show tooltips when the series are hovered over."
     },
     "listeners": {
-      "type": "{ [key: string]: Function }",
+      "type": "Object",
       "description": "A map of event names to event listener functions. The keys can be one of the following: <code>nodeClick</code>"
     }
   },

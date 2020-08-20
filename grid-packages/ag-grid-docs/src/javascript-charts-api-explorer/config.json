@@ -58,30 +58,6 @@
         "max": 40
       }
     },
-    "theme": {
-      "meta": {
-        "description": "The name of a chart theme to use or an object that overrides one of the stock themes."
-      },
-      "baseTheme": {
-        "description": "Optional, if missing 'default' is implied."
-      },
-      "palette": {
-        "meta": {
-          "description": "The color palette to be used by the chart's series."
-        },
-        "fills": {
-          "type": "number[]",
-          "description": "The array of fills to be used by the chart's series."
-        },
-        "strokes": {
-          "type": "number[]",
-          "description": "The array of strokes to be used by the chart's series."
-        }
-      },
-      "defaults": {
-        "description": "The overrides of the 'baseTheme' defaults."
-      }
-    },
     "background": {
       "meta": {
         "description": "Configuration for the background shown behind the chart."
@@ -360,14 +336,14 @@
       },
       "min": {
         "default": 0,
-        "description": "The start of the visible range in the [0, 1] interval.",
+        "description": "The start of the visible range in the <code>[0, 1]</code> interval.",
         "min": 0,
         "max": 1,
         "step": 0.01
       },
       "max": {
         "default": 1,
-        "description": "The end of the visible range in the [0, 1] interval.",
+        "description": "The end of the visible range in the <code>[0, 1]</code> interval.",
         "min": 0,
         "max": 1,
         "step": 0.01
@@ -393,7 +369,7 @@
         },
         "fillOpacity": {
           "default": 0.2,
-          "description": "The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.",
+          "description": "The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking.",
           "min": 0,
           "max": 1,
           "step": 0.05
@@ -731,6 +707,7 @@
           4,
           2
         ],
+        "type": "number[]",
         "description": "Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
       }
     }
@@ -801,6 +778,7 @@
       "max": 100
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -821,6 +799,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1216,6 +1195,7 @@
       "max": 100
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -1236,6 +1216,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1746,6 +1727,7 @@
       }
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -1766,6 +1748,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1883,6 +1866,7 @@
         "description": "Configuration for the callouts used with the labels for the segments."
       },
       "colors": {
+        "type": "string[]",
         "default": [
           "#aa4520",
           "#b07513",

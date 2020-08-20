@@ -190,7 +190,7 @@
                 $lines[] = "    $name: $type;";
             }
 
-            array_push($lines, '}', '');
+            $lines[] = '}';
         }
 
         if ($returnTypeIsObject) {
