@@ -68,8 +68,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         }
     };
 
-    @RefSelector('eValue1') private eValue1: AgInputTextField;
-    @RefSelector('eValue2') private eValue2: AgInputTextField;
+    @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
+    @RefSelector('eValue2') private readonly eValue2: AgInputTextField;
 
     private comparator: TextComparator;
     private formatter: TextFormatter;
@@ -189,11 +189,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const showValue1 = this.showValueFrom(this.getCondition1Type());
-        setDisplayed(this.eValue1.getGui(), showValue1);
-
-        const showValue2 = this.showValueFrom(this.getCondition2Type());
-        setDisplayed(this.eValue2.getGui(), showValue2);
+        setDisplayed(this.eCondition1Body, this.showValueFrom(this.getCondition1Type()));
+        setDisplayed(this.eCondition2Body, this.isCondition2Enabled() && this.showValueFrom(this.getCondition2Type()));
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams) {

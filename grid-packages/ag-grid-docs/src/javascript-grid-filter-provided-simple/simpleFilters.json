@@ -53,6 +53,18 @@
                 "Date"
             ]
         },
+        "defaultJoinOperator": {
+            "description": "By default, the two conditions are combined using <code>AND</code>. You can change this default by setting this property.",
+            "options": [
+                "AND",
+                "OR"
+            ],
+            "relevantTo": [
+                "Text",
+                "Number",
+                "Date"
+            ]
+        },
         "suppressAndOrCondition": {
             "description": "If <code>true</code>, the filter will only allow one condition.",
             "default": false,

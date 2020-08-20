@@ -14,6 +14,7 @@ export type JoinOperator = 'AND' | 'OR';
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
+    defaultJoinOperator?: JoinOperator;
     suppressAndOrCondition?: boolean;
     alwaysShowBothConditions?: boolean;
 }
@@ -48,15 +49,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public static STARTS_WITH = 'startsWith';
     public static ENDS_WITH = 'endsWith';
 
-    @RefSelector('eOptions1') private eType1: AgSelect;
-    @RefSelector('eOptions2') private eType2: AgSelect;
-    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
-    @RefSelector('eJoinOperatorAnd') private eJoinOperatorAnd: AgRadioButton;
-    @RefSelector('eJoinOperatorOr') private eJoinOperatorOr: AgRadioButton;
-    @RefSelector('eCondition2Body') private eCondition2Body: HTMLElement;
+    @RefSelector('eOptions1') protected readonly eType1: AgSelect;
+    @RefSelector('eOptions2') protected readonly eType2: AgSelect;
+    @RefSelector('eJoinOperatorPanel') protected readonly eJoinOperatorPanel: HTMLElement;
+    @RefSelector('eJoinOperatorAnd') protected readonly eJoinOperatorAnd: AgRadioButton;
+    @RefSelector('eJoinOperatorOr') protected readonly eJoinOperatorOr: AgRadioButton;
+    @RefSelector('eCondition1Body') protected readonly eCondition1Body: HTMLElement;
+    @RefSelector('eCondition2Body') protected readonly eCondition2Body: HTMLElement;
 
     private allowTwoConditions: boolean;
     private alwaysShowBothConditions: boolean;
+    private defaultJoinOperator: JoinOperator;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -106,7 +109,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected setTypeFromFloatingFilter(type: string): void {
         this.eType1.setValue(type);
         this.eType2.setValue(this.optionsFactory.getDefaultOption());
-        this.eJoinOperatorAnd.setValue(true);
+        (this.isDefaultOperator('AND') ? this.eJoinOperatorAnd : this.eJoinOperatorOr).setValue(true);
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> {
@@ -189,8 +192,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         } else {
             const simpleModel = model as ISimpleFilterModel;
 
-            this.eJoinOperatorAnd.setValue(true);
-            this.eJoinOperatorOr.setValue(false);
+            this.eJoinOperatorAnd.setValue(this.isDefaultOperator('AND'));
+            this.eJoinOperatorOr.setValue(this.isDefaultOperator('OR'));
 
             this.eType1.setValue(simpleModel.type);
             this.eType2.setValue(this.optionsFactory.getDefaultOption());
@@ -231,6 +234,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
+        this.defaultJoinOperator = params.defaultJoinOperator || 'AND';
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
@@ -287,26 +291,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        if (!this.allowTwoConditions) {
-            setDisplayed(this.eJoinOperatorPanel, false);
-            setDisplayed(this.eType2.getGui(), false);
-            setDisplayed(this.eCondition2Body, false);
-
-            return;
-        }
-
-        const secondFilterEnabled = this.isConditionUiComplete(ConditionPosition.One);
+        const isCondition2Enabled = this.isCondition2Enabled();
 
         if (this.alwaysShowBothConditions) {
-            this.eJoinOperatorAnd.setDisabled(!secondFilterEnabled);
-            this.eJoinOperatorOr.setDisabled(!secondFilterEnabled);
-            this.eType2.setDisabled(!secondFilterEnabled);
-            setDisabled(this.eCondition2Body, !secondFilterEnabled);
+            this.eJoinOperatorAnd.setDisabled(!isCondition2Enabled);
+            this.eJoinOperatorOr.setDisabled(!isCondition2Enabled);
+            this.eType2.setDisabled(!isCondition2Enabled);
+            setDisabled(this.eCondition2Body, !isCondition2Enabled);
         } else {
-            setDisplayed(this.eJoinOperatorPanel, secondFilterEnabled);
-            setDisplayed(this.eType2.getGui(), secondFilterEnabled);
-            setDisplayed(this.eCondition2Body, secondFilterEnabled);
+            setDisplayed(this.eJoinOperatorPanel, isCondition2Enabled);
+            setDisplayed(this.eType2.getGui(), isCondition2Enabled);
+            setDisplayed(this.eCondition2Body, isCondition2Enabled);
         }
+    }
+
+    protected isCondition2Enabled(): boolean {
+        return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {
@@ -317,16 +317,20 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
 
         this.eJoinOperatorAnd
-            .setValue(true, silent)
+            .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('andCondition'));
 
         this.eJoinOperatorOr
-            .setValue(false, silent)
+            .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
 
         return Promise.resolve();
+    }
+
+    private isDefaultOperator(operator: JoinOperator): boolean {
+        return operator === this.defaultJoinOperator;
     }
 
     private addChangedListeners() {
@@ -339,6 +343,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     protected doesFilterHaveHiddenInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
+
         return customFilterOption && customFilterOption.hideFilterInput;
     }
 }
