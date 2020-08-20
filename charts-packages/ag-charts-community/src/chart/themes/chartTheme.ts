@@ -1,6 +1,6 @@
 import { deepMerge, getValue } from "../../util/object";
 import { copy } from "../../util/array";
-import { AgChartThemeOverrides, AgChartThemePalette } from "../agChartOptions";
+import { AgChartThemeOverrides, AgChartThemePalette, AgChartThemeDefaults } from "../agChartOptions";
 import { Series } from "../series/series";
 
 export class ChartTheme {
@@ -400,33 +400,45 @@ export class ChartTheme {
     };
 
     constructor(overrides?: AgChartThemeOverrides) {
-        let defaults = this.getDefaults();
+        let defaults = this.createChartConfigPerSeries(this.getDefaults());
         if (overrides) {
-            if (overrides.defaults) {
+            const overridesDefaults = overrides.defaults;
+            if (overridesDefaults) {
+                ChartTheme.seriesTypes.forEach(seriesType => {
+                    const seriesConfig = overridesDefaults[seriesType];
+                    if (seriesConfig) {
+                        (seriesConfig as any).series = { line: seriesConfig.series };
+                    }
+                });
                 defaults = deepMerge(defaults, overrides.defaults, { arrayMerge });
             }
             if (overrides.palette) {
                 this.palette = overrides.palette;
             }
         }
-        this.config = this.createAliases(defaults);
+        this.config = Object.freeze(defaults);
     }
 
-    private createAliases(config: any) {
+    private static cartesianSeriesTypes: (keyof AgChartThemeDefaults)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
+    private static polarSeriesTypes: (keyof AgChartThemeDefaults)[] = ['pie'];
+    private static seriesTypes: (keyof AgChartThemeDefaults)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
+
+    private createChartConfigPerSeries(config: any) {
         const typeToAliases: { [key in string]: string[] } = {
-            cartesian: ['line', 'area', 'bar', 'column', 'scatter', 'histogram'],
-            polar: ['pie']
+            cartesian: ChartTheme.cartesianSeriesTypes,
+            polar: ChartTheme.polarSeriesTypes
         };
         for (const type in typeToAliases) {
             typeToAliases[type].forEach(alias => {
-                config[alias] = config[type];
+                if (!config[alias]) {
+                    config[alias] = deepMerge({}, config[type], { arrayMerge });
+                }
             });
         }
         return config;
     }
 
     getConfig<T = any>(path: string): T {
-        const value = getValue(this.config, path);
         return getValue(this.config, path);
     }
 
@@ -439,7 +451,7 @@ export class ChartTheme {
      *     }
      * ```
      */
-    getDefaults(): any {
+    protected getDefaults(): any {
         return deepMerge({}, ChartTheme.defaults, { arrayMerge });
     }
 

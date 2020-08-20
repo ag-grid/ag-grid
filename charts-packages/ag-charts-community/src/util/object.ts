@@ -14,8 +14,8 @@ export function chainObjects<P extends object, C extends object>(parent: P, chil
     return obj as P & C;
 }
 
-export function getValue(object: any, path: string) {
-    const parts = path.split('.');
+export function getValue(object: any, path: string | string[]) {
+    const parts = Array.isArray(path) ? path : path.split('.');
     let value = object;
     parts.forEach(part => {
         value = value[part];

@@ -25,6 +25,7 @@
         "description": "Configuration from this object is merged into the defaults specified in the base theme."
       },
       "bar": {
+        "type": "IChartConfig",
         "description": "Specify defaults for bar/column charts.",
         "more": {
           "name": "Chart Configuration",
@@ -32,6 +33,7 @@
         }
       },
       "histogram": {
+        "type": "IChartConfig",
         "description": "Specify defaults for histogram charts.",
         "more": {
           "name": "Chart Configuration",
@@ -39,6 +41,7 @@
         }
       },
       "line": {
+        "type": "IChartConfig",
         "description": "Specify defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
@@ -46,6 +49,7 @@
         }
       },
       "scatter": {
+        "type": "IChartConfig",
         "description": "Specify defaults for scatter/bubble charts.",
         "more": {
           "name": "Chart Configuration",
@@ -53,6 +57,7 @@
         }
       },
       "area": {
+        "type": "IChartConfig",
         "description": "Specify defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
@@ -60,6 +65,7 @@
         }
       },
       "pie": {
+        "type": "IChartConfig",
         "description": "Specify defaults for pie/doughnut charts.",
         "more": {
           "name": "Chart Configuration",
@@ -72,11 +78,11 @@
         "description": "The palette to use. If specified, this replaces the palette from the base theme."
       },
       "fills": {
-        "type": "number[]",
+        "type": "string[]",
         "description": "The array of fills to be used."
       },
       "strokes": {
-        "type": "number[]",
+        "type": "string[]",
         "description": "The array of strokes to be used."
       }
     }
@@ -547,6 +553,7 @@
     },
     "axes": {
       "number": {
+        "type": "INumberAxisConfig",
         "description": "Configuration for number axes.",
         "more": {
           "name": "Number Axis Configuration",
@@ -554,6 +561,7 @@
         }
       },
       "category": {
+        "type": "ICategoryAxisConfig",
         "description": "Configuration for category axes.",
         "more": {
           "name": "Category Axis Configuration",
@@ -561,6 +569,7 @@
         }
       },
       "groupedCategory": {
+        "type": "IGroupedAxisConfig",
         "description": "Configuration for grouped category axes.",
         "more": {
           "name": "Grouped Category Axis Configuration",
@@ -568,6 +577,7 @@
         }
       },
       "time": {
+        "type": "ITimeAxisConfig",
         "description": "Configuration for time axes.",
         "more": {
           "name": "Time Axis Configuration",
@@ -800,6 +810,7 @@
           4,
           2
         ],
+        "type": "number[]",
         "description": "Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
       }
     }
@@ -814,9 +825,11 @@
       "description": "If <code>true</code>, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
     },
     "min": {
+      "type": "number",
       "description": "The minimum value for the axis."
     },
     "max": {
+      "type": "number",
       "description": "The maximum value for the axis."
     }
   },
@@ -826,9 +839,11 @@
       "description": "This extends the <a href='#cartesianAxisConfig'>common cartesian axis configuration</a> with options specific to category axes."
     },
     "paddingInner": {
+      "type": "number",
       "description": "The padding between the category label and the line."
     },
     "paddingOuter": {
+      "type": "number",
       "description": "The padding between lines for neighbouring categories."
     }
   },
@@ -866,6 +881,7 @@
       "description": "Whether or not to show tooltips when the series are hovered over."
     },
     "listeners": {
+      "type": "Object",
       "description": "A map of event names to event listener functions. The keys can be one of the following: <code>nodeClick</code>"
     }
   },
@@ -900,6 +916,7 @@
       "max": 100
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -920,6 +937,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1299,6 +1317,7 @@
       "max": 100
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -1319,6 +1338,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1716,6 +1736,7 @@
       }
     },
     "fills": {
+      "type": "string[]",
       "default": [
         "#f3622d",
         "#fba71b",
@@ -1736,6 +1757,7 @@
       "step": 0.05
     },
     "strokes": {
+      "type": "string[]",
       "default": [
         "#aa4520",
         "#b07513",
@@ -1853,6 +1875,7 @@
         "description": "Configuration for the callouts used with the labels for the segments."
       },
       "colors": {
+        "type": "string[]",
         "default": [
           "#aa4520",
           "#b07513",

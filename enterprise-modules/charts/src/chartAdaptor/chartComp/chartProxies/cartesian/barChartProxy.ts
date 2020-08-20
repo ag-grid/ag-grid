@@ -92,9 +92,9 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             options: agChartOptions
         };
 
-        let opts = this.chartProxyParams.processAgChartOptions(params) as AgCartesianChartOptions;
-
-        return AgChart.create(opts, parentElement);
+        // let opts = this.chartProxyParams.processAgChartOptions(params) as AgCartesianChartOptions;
+        // return AgChart.create(opts, parentElement);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {

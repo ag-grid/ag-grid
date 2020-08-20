@@ -13,6 +13,6 @@ include '../documentation-main/documentation_header.php';
     <a href="../javascript-charts-themes/">Themes</a> section.
 </p>
 
-<?php createDocumentationFromFile('themes.json') ?>
+<?php createDocumentationFromFile('themes.json', null, [], ['showSnippets' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

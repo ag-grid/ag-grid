@@ -84,7 +84,7 @@ $(function() {
     }
 
     // limit the length of the side menu
-    while (headings.length > 20 && maxLevel > 1) {
+    while (headings.length > 20 && maxLevel > 2) {
         headings = headings.filter(function(h) { return h.level < maxLevel; });
         maxLevel--;
     }

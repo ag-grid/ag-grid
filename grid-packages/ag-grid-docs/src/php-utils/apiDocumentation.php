@@ -4,11 +4,11 @@
         return json_decode(file_get_contents($path));
     }
 
-    function createPropertyTable($title, $properties, $prefix = null, $skipHeader = false, $names = []) {
+    function createPropertyTable($title, $properties, $config = [], $prefix = null, $names = []) {
         $toProcess = [];
         $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
 
-        if (!$skipHeader) {
+        if (!$config['skipHeader']) {
             $meta = $properties->meta;
             $displayName = $meta->displayName;
 
@@ -66,7 +66,7 @@
                 }
 
                 if (is_object($definition->type)) {
-                    createCodeSample($definition->type);
+                    createFunctionCodeSample($definition->type);
                 }
 
                 echo "</td>";
@@ -95,12 +95,75 @@
 
         echo '</table>';
 
+        if ($config['showSnippets'] && empty($names)) {
+            createObjectCodeSample($title, $properties);
+        }
+
         foreach ($toProcess as $name => $definition) {
-            createPropertyTable($name, $definition, $newPrefix);
+            createPropertyTable($name, $definition, $config, $newPrefix);
         }
     }
 
-    function createCodeSample($type) {
+    function createObjectCodeSample($name, $properties) {
+        $lines = [
+            'interface I' . ucfirst($name) . ' {',
+        ];
+
+        foreach ($properties as $name => $definition) {
+            if ($name == 'meta') {
+                continue;
+            }
+
+            $line = '  ' . $name;
+
+            // process property object
+            if (!isset($definition->isRequired) || !$definition->isRequired) {
+                $line .= '?';
+            }
+
+            $line .= ': ';
+
+            if (isset($definition->options)) {
+                $line .= implode(' | ', array_map(formatJson, $definition->options));
+            }
+            else if (isset($definition->type)) {
+                $line .= is_object($definition->type) ? 'Function' : $definition->type;
+            }
+            else if (isset($definition->default)) {
+                $type = gettype($definition->default);
+
+                if ($type === 'integer' || $type === 'double') {
+                    $type = 'number';
+                }
+
+                if ($type === 'array') {
+                    $type = 'any[]';
+                }
+
+                $line .= $type;
+            }
+            else if (isset($definition->description)) {
+                $line .= 'any';
+            }
+            else {
+                $line .= 'I' . ucfirst($name);
+            }
+
+            $line .= ';';
+
+            if (isset($definition->default)) {
+                $line .= ' // default: ' . formatJson($definition->default);
+            }
+
+            $lines[] = $line;
+        }
+
+        $lines[]= '}';
+
+        echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
+    }
+
+    function createFunctionCodeSample($type) {
         $arguments = isset($type->parameters) ? ['params' => $type->parameters] : $type->arguments;
         $returnType = $type->returnType;
         $returnTypeIsObject = is_object($returnType);
@@ -127,7 +190,7 @@
                 $lines[] = "    $name: $type;";
             }
 
-            array_push($lines, '}', '');
+            $lines[] = '}';
         }
 
         if ($returnTypeIsObject) {
@@ -143,11 +206,11 @@
         echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
     }
 
-    function createDocumentationFromFile($path, $expression = null, $names = []) {
-        createDocumentationFromFiles([$path], $expression, $names);
+    function createDocumentationFromFile($path, $expression = null, $names = [], $config = []) {
+        createDocumentationFromFiles([$path], $expression, $names, $config);
     }
 
-    function createDocumentationFromFiles($paths, $expression = null, $names = []) {
+    function createDocumentationFromFiles($paths, $expression = null, $names = [], $config = []) {
         if (count($paths) === 0) {
             return;
         }
@@ -170,12 +233,14 @@
 
             $properties = mergeObjects($propertiesFromFiles);
 
-            createPropertyTable($key, $properties, $expression, true, $names);
+            $config['skipHeader'] = true;
+
+            createPropertyTable($key, $properties, $config, $expression, $names);
         } else {
             $properties = mergeObjects($propertiesFromFiles);
 
             foreach ($properties as $key => $val) {
-                createPropertyTable($key, $val);
+                createPropertyTable($key, $val, $config);
             }
         }
     }
@@ -194,7 +259,11 @@
 
     function formatJson($value) {
         $json = json_encode($value, JSON_PRETTY_PRINT);
-        $json = preg_replace("/\[\s+(.*)\s+\]/s", "[$1]", $json); // remove outer spaces from arrays
+        $json = preg_replace_callback("/\[(.*)\]/s",
+            function($match) {
+                return '[' . preg_replace('/,\s+/', ', ', trim($match[1])) . ']';
+            }
+        , $json); // remove carriage returns from arrays
         $json = str_replace('"', "'", $json); // use single quotes
 
         return $json;

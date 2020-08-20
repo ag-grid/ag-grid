@@ -179,30 +179,6 @@ export const generalConfig = Object.freeze({
         bottom: getPaddingOption('bottom'),
         left: getPaddingOption('left'),
     },
-    theme: {
-        meta: {
-            description: 'The name of a chart theme to use or an object that overrides one of the stock themes.'
-        },
-        baseTheme: {
-            description: "Optional, if missing 'default' is implied."
-        },
-        palette: {
-            meta: {
-                description: "The color palette to be used by the chart's series."
-            },
-            fills: {
-                type: 'number[]',
-                description: "The array of fills to be used by the chart's series."
-            },
-            strokes: {
-                type: 'number[]',
-                description: "The array of strokes to be used by the chart's series."
-            }
-        },
-        defaults: {
-            description: "The overrides of the 'baseTheme' defaults."
-        }
-    },
     background: {
         meta: {
             description: 'Configuration for the background shown behind the chart.',
@@ -320,7 +296,7 @@ export const generalConfig = Object.freeze({
         },
         min: {
             default: 0,
-            description: 'The start of the visible range in the [0, 1] interval.',
+            description: 'The start of the visible range in the <code>[0, 1]</code> interval.',
             editor: NumberEditor,
             min: 0,
             max: 1,
@@ -328,7 +304,7 @@ export const generalConfig = Object.freeze({
         },
         max: {
             default: 1,
-            description: 'The end of the visible range in the [0, 1] interval.',
+            description: 'The end of the visible range in the <code>[0, 1]</code> interval.',
             editor: NumberEditor,
             min: 0,
             max: 1,
@@ -358,7 +334,7 @@ export const generalConfig = Object.freeze({
             },
             fillOpacity: {
                 default: 0.2,
-                description: `The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.`,
+                description: `The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking.`,
                 editor: NumberEditor,
                 min: 0,
                 max: 1,
@@ -499,6 +475,7 @@ export const axisConfig = Object.freeze({
         },
         lineDash: {
             default: [4, 2],
+            type: 'number[]',
             description: 'Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
             editor: ArrayEditor,
         }
@@ -689,6 +666,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
     if (includeFill) {
         if (hasMultipleSeries) {
             config.fills = {
+                type: 'string[]',
                 default: fills,
                 description: `The colours to cycle through for the fills of the ${name}.`,
             };
@@ -712,6 +690,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
 
     if (hasMultipleSeries) {
         config.strokes = {
+            type: 'string[]',
             default: strokes,
             description: `The colours to cycle through for the strokes of the ${name}.`,
         };
@@ -1111,6 +1090,7 @@ export const pieSeriesConfig = Object.freeze({
             description: 'Configuration for the callouts used with the labels for the segments.',
         },
         colors: {
+            type: 'string[]',
             default: strokes,
             description: 'The colours to cycle through for the strokes of the callouts.',
         },
@@ -1159,7 +1139,7 @@ export const histogramSeriesConfig = Object.freeze({
         displayName: "Histogram Series Configuration",
         description: "Configuration for histogram series."
     },
-    binCount:{
+    binCount: {
         type: "number",
         description: "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
     },
