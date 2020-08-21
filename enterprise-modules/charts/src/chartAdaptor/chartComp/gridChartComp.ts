@@ -179,9 +179,8 @@ export class GridChartComp extends Component {
         return this.chartController.getThemes();
     }
 
-    private getChartThemeOverrides(): ChartTheme | undefined {
-        const chartThemeOverrides = this.gridOptionsWrapper.getChartThemeOverrides();
-        return chartThemeOverrides ? getChartTheme(chartThemeOverrides) : undefined;
+    private getChartThemeOverrides(): AgChartTheme | undefined {
+        return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {

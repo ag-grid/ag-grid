@@ -7,7 +7,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { AgChartThemePalette, AgChartTheme, ChartTheme } from "ag-charts-community";
+import {AgChartThemePalette, AgChartTheme, ChartTheme, getChartTheme} from "ag-charts-community";
 import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
@@ -76,7 +76,7 @@ export class ChartSettingsPanel extends Component {
             return;
         }
 
-        this.themes = themes;
+        this.themes = themes.map(theme => getChartTheme(theme));
         this.activeThemeIndex = this.chartController.getThemeIndex();
 
         if (this.activeThemeIndex < 0 || this.activeThemeIndex >= this.themes.length) {

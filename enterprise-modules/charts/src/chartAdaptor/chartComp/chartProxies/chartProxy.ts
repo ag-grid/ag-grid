@@ -13,12 +13,12 @@ import {
     EventService,
     FontOptions,
     GridApi,
-    LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
     ProcessAgChartOptionsParams,
     SeriesOptions,
     AgChartOptions,
+
 } from "@ag-grid-community/core";
 import {
     AgChartThemePalette,
@@ -29,8 +29,11 @@ import {
     Chart,
     ChartTheme,
     DropShadow,
+    getChartTheme,
     Padding,
-    PieSeries
+    PieSeries,
+    AgChartTheme,
+    AgChartThemeName
 } from "ag-charts-community";
 import {deepMerge} from "../object";
 
@@ -46,8 +49,8 @@ export interface ChartProxyParams {
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     processAgChartOptions: (params: ProcessAgChartOptionsParams) => AgChartOptions;
     getChartThemeIndex: () => number;
-    getChartThemes: () => ChartTheme[];
-    getChartThemeOverrides: () => ChartTheme | undefined;
+    getChartThemes: () => (AgChartThemeName | AgChartTheme)[];
+    getChartThemeOverrides: () => AgChartTheme | undefined;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -81,6 +84,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected chart: TChart;
     protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
+    protected chartTheme: ChartTheme;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -124,13 +128,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        const theme = this.getSelectedIntegratedChartTheme();
-        this.chartOptions = this.getDefaultOptionsWithTheme(theme);
 
-        let themeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        const theme = this.getSelectedIntegratedChartTheme();
+
+        let themeOverrides: AgChartTheme = this.chartProxyParams.getChartThemeOverrides();
         if (themeOverrides) {
-            this.chartOptions = this.getDefaultOptionsWithTheme(themeOverrides);
+            if (typeof theme === 'string') {
+                this.chartTheme = getChartTheme({baseTheme: theme, ...themeOverrides});
+            } else {
+                const mergedThemes = deepMerge(theme, themeOverrides);
+                this.chartTheme = getChartTheme(mergedThemes);
+            }
+        } else {
+            this.chartTheme = getChartTheme(theme);
         }
+
+        this.chartOptions = this.getDefaultOptionsWithTheme(this.chartTheme);
 
         // allow users to override options before they are applied
         const { processChartOptions } = this.chartProxyParams;
@@ -145,14 +158,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
         }
-
-        // // // TODO spike to test processChartThemeOptions()
-        // const { processChartThemeOptions } = this.chartProxyParams;
-        // if (processChartThemeOptions) {
-        //     const params: ProcessChartThemeOptionsParams = { type: this.chartType, options: themeOverrides };
-        //     const overriddenThemeOptions = getChartTheme(processChartThemeOptions(params));
-        //     this.chartOptions = this.getDefaultOptionsWithTheme(overriddenThemeOptions);
-        // }
     }
 
     integratedToStandaloneChartType(integratedChartType: string): string {
@@ -184,7 +189,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     getStandaloneChartType(): string {
         return this.integratedToStandaloneChartType(this.chartType);
     }
-    
+
     // Merges theme defaults into default options. To be overridden in subclasses.
     protected getDefaultOptionsWithTheme(theme: ChartTheme): TOptions {
         const options = this.getDefaultOptions();
@@ -218,7 +223,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return options;
     }
 
-    private getSelectedIntegratedChartTheme(): ChartTheme {
+    private getSelectedIntegratedChartTheme(): AgChartThemeName | AgChartTheme {
         const params = this.chartProxyParams;
         const chartThemeIndex = params.getChartThemeIndex();
         return params.getChartThemes()[chartThemeIndex];
@@ -440,7 +445,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected getPredefinedPalette(): AgChartThemePalette {
         const themes = this.chartProxyParams.getChartThemes();
         const themeIndex = this.chartProxyParams.getChartThemeIndex();
-        return themes[themeIndex].palette;
+        return (themes[themeIndex] as AgChartTheme).palette;
     }
 
     protected getPalette(): AgChartThemePalette {
@@ -448,95 +453,23 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.getPredefinedPalette();
-        const fontOptions = this.getDefaultFontOptions();
-
         return {
             background: {
-                fill: this.getBackgroundColor(),
-                visible: true,
             },
             padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
             },
             title: {
-                ...fontOptions,
-                enabled: false,
-                fontWeight: 'bold',
-                fontSize: 16,
             },
             subtitle: {
-                ...fontOptions,
-                enabled: false,
             },
             legend: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                item: {
-                    label: {
-                        ...fontOptions,
-                    },
-                    marker: {
-                        shape: 'square',
-                        size: 15,
-                        padding: 8,
-                        strokeWidth: 1,
-                    },
-                    paddingX: 16,
-                    paddingY: 8,
-                },
             },
             navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
             },
             seriesDefaults: {
-                fill: {
-                    colors: fills,
-                    opacity: 1,
-                },
-                stroke: {
-                    colors: strokes,
-                    opacity: 1,
-                    width: 1,
-                },
-                highlightStyle: {
-                    fill: 'yellow',
-                },
-                listeners: {}
             },
             listeners: {}
-        };
+        } as any;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
