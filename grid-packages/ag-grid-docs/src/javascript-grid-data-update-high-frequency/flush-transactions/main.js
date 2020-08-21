@@ -126,7 +126,7 @@ var gridOptions = {
     onGridReady: function(params) {
         createRowData();
         params.api.setRowData(globalRowData)
-        startFeed();
+        startFeed(params.api);
     }
 };
 
@@ -134,9 +134,7 @@ function onFlushTransactions() {
     gridOptions.api.flushAsyncTransactions();
 }
 
-function startFeed() {
-
-    var api = gridOptions.api;
+function startFeed(api) {
     var count = 1;
 
     setInterval(function() {

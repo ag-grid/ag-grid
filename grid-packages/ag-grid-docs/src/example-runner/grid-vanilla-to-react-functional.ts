@@ -236,11 +236,14 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         // no real need for  "this" in hooks
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
+        const gridInstanceConverter = content => content.replace(/gridInstance\.api/g, "gridApi").replace(/gridInstance\.columnApi/g, "gridColumnApi");
+
         const template = getTemplate(bindings, componentAttributes.map(thisReferenceConverter), columnDefs);
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter);
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter).map(gridInstanceConverter);
         const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
+
 
         return `
 'use strict'
@@ -270,7 +273,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
     
 }
 
-${bindings.utils.join('\n')}
+${bindings.utils.map(gridInstanceConverter).join('\n')}
 
 render(
     <GridExample></GridExample>,

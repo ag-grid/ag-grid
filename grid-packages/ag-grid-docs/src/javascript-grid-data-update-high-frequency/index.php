@@ -92,6 +92,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Flush Transactions', 'flush-transactions', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+<?= grid_example('Flush Transactions', 'flush-transactions', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'reactFunctional' =>  true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
