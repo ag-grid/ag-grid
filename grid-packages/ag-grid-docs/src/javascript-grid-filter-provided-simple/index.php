@@ -49,8 +49,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <ul class="content">
-    <li>Three filter types: 1) Text Filter, 2) Number Filter and 3) Date Filter.</li>
-    <li><code>filter=false</code> is set on Total to hide the filter on this column.</li>
+    <li>The <strong>Athlete</strong> column has a Text Filter.</li>
+    <li>The <strong>Age</strong> column has a Number Filter.</li>
+    <li>The <strong>Date</strong> column has a Date Filter.</li>
+    <li><code>filter=false</code> is set on the <strong>Total</strong> column to disable the filter.</li>
 </ul>
 
 <p>
@@ -118,12 +120,36 @@ include '../documentation-main/documentation_header.php';
 
 <?= createDocumentationFromFile('simpleFilters.json', 'filterParams'); ?>
 
+<h3>Example: Simple Filter Options</h3>
+
+<p>
+    The following example demonstrates those configuration options that can be applied to any Simple Filter.
+</p>
+
+<ul class="content">
+    <li>The <strong>Athlete</strong> column shows a Text Filter with default behavior for all options.</li>
+    <li>
+        The <strong>Country</strong> column shows a Text Filter with <code>filterOptions</code> set to show a different
+        list of available options, and <code>defaultOption</code> set to change the default option selected.
+    </li>
+    <li>
+        The <strong>Age</strong> column has a Number Filter with <code>alwaysShowBothConditions</code> set to
+        <code>true</code> so that both condition are always shown. The <code>defaultJoinOperator</code> is also set to
+        <code>'OR'</code> rather than the default (<code>'AND'</code>).
+    </li>
+    <li>
+        The <strong>Date</strong> column has a Date Filter with <code>suppressAndOrCondition</code> set to
+        <code>true</code>, so that only the first condition is shown.
+    </li>
+</ul>
+
+<?= grid_example('Simple Filter Options', 'simple-filter-options', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
+
 <h2 id="filterOptions">Filter Options</h2>
 
 <p>
     Each filter presents a list of options to the user. The list of options for each filter are as follows:
 </p>
-
 
 <table class="reference">
     <tr>

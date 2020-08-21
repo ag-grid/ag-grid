@@ -99,6 +99,8 @@ export class GridOptionsWrapper {
 
     public static PROP_DOM_LAYOUT = 'domLayout';
 
+    public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
+
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('columnController') private readonly columnController: ColumnController;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -913,6 +915,19 @@ export class GridOptionsWrapper {
 
     public isEnableFillHandle(): boolean {
         return isTrue(this.gridOptions.enableFillHandle);
+    }
+
+    public getFillHandleDirection(): 'x' | 'y' | 'xy' {
+        const direction = this.gridOptions.fillHandleDirection;
+
+        if (!direction) { return 'xy'; }
+
+        if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
+            doOnce(() => console.warn(`ag-Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
+            return 'xy';
+        }
+
+        return direction as 'x' | 'y' | 'xy';
     }
 
     public getFillOperation(): ((params: FillOperationParams) => any) | undefined {

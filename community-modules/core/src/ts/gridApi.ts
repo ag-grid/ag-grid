@@ -899,6 +899,10 @@ export class GridApi {
         this.gridPanel.setCellTextSelection(selectable);
     }
 
+    public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FILL_HANDLE_DIRECTION, direction);
+    }
+
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
         this.doLayout();

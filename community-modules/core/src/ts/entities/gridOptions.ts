@@ -183,6 +183,7 @@ export interface GridOptions {
     enableRangeSelection?: boolean;
     enableRangeHandle?: boolean;
     enableFillHandle?: boolean;
+    fillHandleDirection?: string;
     suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
@@ -569,6 +570,7 @@ export interface FillOperationParams {
     values: any[];
     initialValues: any[];
     currentIndex: number;
+    currentCellValue: any;
     api: GridApi;
     columnApi: ColumnApi;
     context: any;

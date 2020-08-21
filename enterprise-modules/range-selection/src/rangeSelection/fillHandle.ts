@@ -56,7 +56,14 @@ export class FillHandle extends AbstractSelectionHandle {
         const { x: newX, y: newY } = this.mouseEventService.getNormalisedPosition(e);
         const diffX = Math.abs(x - newX);
         const diffY = Math.abs(y - newY);
-        const direction: Direction = diffX > diffY ? 'x' : 'y';
+        const allowedDirection = this.gridOptionsWrapper.getFillHandleDirection();
+        let direction: Direction;
+
+        if (allowedDirection === 'xy') {
+            direction = diffX > diffY ? 'x' : 'y';
+        } else {
+            direction = allowedDirection;
+        }
 
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
@@ -279,6 +286,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 values,
                 initialValues,
                 currentIndex: idx,
+                currentCellValue: this.valueService.getValue(col, rowNode),
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
