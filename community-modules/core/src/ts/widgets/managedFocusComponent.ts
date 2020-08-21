@@ -193,7 +193,7 @@ export class ManagedFocusComponent extends Component {
     }
 
     private tabGuardsAreActive(): boolean {
-        return this.topTabGuard && this.topTabGuard.hasAttribute('tabIndex');
+        return !!this.topTabGuard && this.topTabGuard.hasAttribute('tabIndex');
     }
 
     protected clearGui(): void {
