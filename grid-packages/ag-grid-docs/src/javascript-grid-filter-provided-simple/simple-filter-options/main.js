@@ -1,4 +1,5 @@
 var filterParams = {
+    suppressAndOrCondition: true,
     comparator: function(filterLocalDateAtMidnight, cellValue) {
         var dateAsString = cellValue;
         if (dateAsString == null) return -1;
@@ -21,14 +22,28 @@ var filterParams = {
 };
 
 var columnDefs = [
-    { field: "athlete" },
-    { field: "age", filter: 'agNumberColumnFilter', maxWidth: 100 },
+    { field: 'athlete' },
     {
-        field: "date",
+        field: 'country',
+        filterParams: {
+            filterOptions: ['contains', 'startsWith', 'endsWith'],
+            defaultOption: 'startsWith'
+        }
+    },
+    {
+        field: 'age',
+        filter: 'agNumberColumnFilter',
+        filterParams: {
+            alwaysShowBothConditions: true,
+            defaultJoinOperator: 'OR'
+        },
+        maxWidth: 100
+    },
+    {
+        field: 'date',
         filter: 'agDateColumnFilter',
         filterParams: filterParams
     },
-    { field: "total", filter: false },
 ];
 
 var gridOptions = {
