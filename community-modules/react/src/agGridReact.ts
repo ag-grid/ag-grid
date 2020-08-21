@@ -23,6 +23,7 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
+    containerStyle? : any;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
