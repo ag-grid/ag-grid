@@ -1,4 +1,4 @@
-import { deepMerge, getValue } from "../../util/object";
+import { deepMerge, getValue, isObject } from "../../util/object";
 import { copy } from "../../util/array";
 import { AgChartThemeOverrides, AgChartThemePalette, AgChartThemeDefaults } from "../agChartOptions";
 import { Series } from "../series/series";
@@ -401,16 +401,34 @@ export class ChartTheme {
 
     constructor(overrides?: AgChartThemeOverrides) {
         let defaults = this.createChartConfigPerSeries(this.getDefaults());
-        if (overrides) {
+        if (isObject(overrides)) {
+            const mergeOptions = { arrayMerge };
+            overrides = deepMerge({}, overrides, mergeOptions) as AgChartThemeOverrides;
             const overridesDefaults = overrides.defaults;
             if (overridesDefaults) {
+                if (isObject(overridesDefaults.common)) {
+                    ChartTheme.seriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.common, mergeOptions);
+                    });
+                }
+                if (overridesDefaults.cartesian) {
+                    ChartTheme.cartesianSeriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.cartesian, mergeOptions);
+                    });
+                }
+                if (overridesDefaults.polar) {
+                    ChartTheme.polarSeriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.polar, mergeOptions);
+                    });
+                }
                 ChartTheme.seriesTypes.forEach(seriesType => {
                     const seriesConfig = overridesDefaults[seriesType];
                     if (seriesConfig) {
-                        (seriesConfig as any).series = { line: seriesConfig.series };
+                        (seriesConfig as any).series = { [seriesType]: seriesConfig.series };
+                        defaults[seriesType] = deepMerge(defaults[seriesType], seriesConfig, mergeOptions);
                     }
                 });
-                defaults = deepMerge(defaults, overrides.defaults, { arrayMerge });
+                // defaults = deepMerge(defaults, overridesDefaults, mergeOptions);
             }
             if (overrides.palette) {
                 this.palette = overrides.palette;

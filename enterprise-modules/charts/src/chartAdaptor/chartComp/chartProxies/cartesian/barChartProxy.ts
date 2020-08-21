@@ -53,8 +53,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
         };
-        deepMerge(iSeriesDefaults, options.seriesDefaults);
-        options.seriesDefaults = iSeriesDefaults;
+        options.seriesDefaults = deepMerge(iSeriesDefaults, options.seriesDefaults);
         return options;
     }
 

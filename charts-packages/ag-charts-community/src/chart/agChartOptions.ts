@@ -33,6 +33,8 @@ export interface AgChartThemeDefaults {
 
     polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
     pie?: AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>;
+
+    common?: any;
 }
 
 export interface AgCartesianAxesTheme {

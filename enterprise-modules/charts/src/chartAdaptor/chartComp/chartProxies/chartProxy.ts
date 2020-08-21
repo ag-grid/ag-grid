@@ -192,35 +192,28 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const standaloneChartType = this.getStandaloneChartType();
 
         const titleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title');
-        deepMerge(titleOptions, options.title);
-        options.title = titleOptions as any;
+        options.title = deepMerge(titleOptions, options.title);
 
         const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle');
-        deepMerge(subtitleOptions, options.subtitle);
-        options.subtitle = subtitleOptions as any;
+        options.subtitle = deepMerge(subtitleOptions, options.subtitle);
 
         const backgroundOptions = theme.getConfig(standaloneChartType + '.background');
-        deepMerge(backgroundOptions, options.background);
-        options.background = backgroundOptions;
+        options.background = deepMerge(backgroundOptions, options.background);
 
         const legendOptions = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend');
-        deepMerge(legendOptions, options.legend);
-        options.legend = legendOptions as any;
+        options.legend = deepMerge(legendOptions, options.legend);
 
         const navigatorOptions = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator');
-        deepMerge(navigatorOptions, options.navigator);
-        options.navigator = navigatorOptions as any;
+        options.navigator = deepMerge(navigatorOptions, options.navigator);
 
         options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
         options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
         
         const listenerOptions = theme.getConfig(standaloneChartType + '.listeners');
-        deepMerge(listenerOptions, options.listeners);
-        options.listeners = listenerOptions;
+        options.listeners = deepMerge(listenerOptions, options.listeners);
 
         const paddingOptions = theme.getConfig(standaloneChartType + '.padding');
-        deepMerge(paddingOptions, options.padding);
-        options.padding = paddingOptions;
+        options.padding = deepMerge(paddingOptions, options.padding);
 
         return options;
     }

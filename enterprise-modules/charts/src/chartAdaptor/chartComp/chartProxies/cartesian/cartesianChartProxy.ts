@@ -32,11 +32,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
         const yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
 
-        deepMerge(xAxis, options.xAxis);
-        options.xAxis = xAxis;
-
-        deepMerge(yAxis, options.yAxis);
-        options.yAxis = yAxis;
+        options.xAxis = deepMerge(xAxis, options.xAxis);
+        options.yAxis = deepMerge(yAxis, options.yAxis);
 
         return options;
     }
