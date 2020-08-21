@@ -277,6 +277,8 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
+        //FIXME: unnecessarily recreating charts
+
         // if (this.shouldRecreateChart()) {
             this.createChart();
         // }
