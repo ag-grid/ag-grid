@@ -422,10 +422,12 @@ export class ChartTheme {
                     });
                 }
                 ChartTheme.seriesTypes.forEach(seriesType => {
-                    const seriesConfig = overridesDefaults[seriesType];
-                    if (seriesConfig) {
-                        (seriesConfig as any).series = { [seriesType]: seriesConfig.series };
-                        defaults[seriesType] = deepMerge(defaults[seriesType], seriesConfig, mergeOptions);
+                    const chartConfig = overridesDefaults[seriesType];
+                    if (chartConfig) {
+                        if (chartConfig.series) {
+                            (chartConfig as any).series = { [seriesType]: chartConfig.series };
+                        }
+                        defaults[seriesType] = deepMerge(defaults[seriesType], chartConfig, mergeOptions);
                     }
                 });
                 // defaults = deepMerge(defaults, overridesDefaults, mergeOptions);
