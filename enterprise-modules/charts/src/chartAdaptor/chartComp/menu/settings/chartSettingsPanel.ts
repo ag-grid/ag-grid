@@ -41,8 +41,8 @@ export class ChartSettingsPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    private activeThemeIndex?: number;
-    private themes: ChartTheme[] = [];
+    private activePaletteIndex?: number;
+    private palettes: AgChartThemePalette[] = [];
 
     private isAnimating: boolean;
 
@@ -55,7 +55,6 @@ export class ChartSettingsPanel extends Component {
     @PostConstruct
     private postConstruct() {
         this.resetPalettes();
-        this.resetThemes();
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
@@ -65,23 +64,15 @@ export class ChartSettingsPanel extends Component {
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     }
 
-    private resetThemes() {
-        
-    }
-
     private resetPalettes(): void {
-        const themes = this.chartController.getThemes();
+        const palettes = this.chartController.getPalettes();
 
-        if (themes === this.themes) {
+        if (palettes === this.palettes) {
             return;
         }
 
-        this.themes = themes.map(theme => getChartTheme(theme));
-        this.activeThemeIndex = this.chartController.getThemeIndex();
-
-        if (this.activeThemeIndex < 0 || this.activeThemeIndex >= this.themes.length) {
-            this.activeThemeIndex = undefined;
-        }
+        this.palettes = palettes;
+        this.activePaletteIndex = this.chartController.getThemeIndex();
 
         this.cardItems = [];
 
@@ -89,9 +80,9 @@ export class ChartSettingsPanel extends Component {
 
         this.destroyMiniCharts();
 
-        this.themes.forEach((theme, index) => {
-            const isActivePalette = this.activeThemeIndex === index;
-            const { fills, strokes } = theme.palette;
+        this.palettes.forEach((palette, index) => {
+            const isActivePalette = this.activePaletteIndex === index;
+            const { fills, strokes } = palette;
             const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
 
             this.miniCharts.push(miniChartsContainer);
@@ -105,9 +96,9 @@ export class ChartSettingsPanel extends Component {
             }
         });
 
-        _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.themes.length <= 1);
+        _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.length <= 1);
 
-        _.radioCssClass(this.cardItems[this.activeThemeIndex], 'ag-selected', 'ag-not-selected');
+        _.radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
     private addCardLink(chartThemeIndex: number): void {
@@ -115,13 +106,13 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
-            const { activeThemeIndex, isAnimating } = this;
+            const { activePaletteIndex, isAnimating } = this;
 
-            if (chartThemeIndex === activeThemeIndex || isAnimating) {
+            if (chartThemeIndex === activePaletteIndex || isAnimating) {
                 return;
             }
 
-            this.setActivePalette(chartThemeIndex, chartThemeIndex < activeThemeIndex ? 'left' : 'right');
+            this.setActivePalette(chartThemeIndex, chartThemeIndex < activePaletteIndex ? 'left' : 'right');
         });
 
         this.eCardSelector.appendChild(link);
@@ -129,10 +120,10 @@ export class ChartSettingsPanel extends Component {
     }
 
     private getPrev(): number {
-        let prev = this.activeThemeIndex - 1;
+        let prev = this.activePaletteIndex - 1;
 
         if (prev < 0) {
-            prev = this.themes.length - 1;
+            prev = this.palettes.length - 1;
         }
 
         return prev;
@@ -147,9 +138,9 @@ export class ChartSettingsPanel extends Component {
     }
 
     private getNext(): number {
-        let next = this.activeThemeIndex + 1;
+        let next = this.activePaletteIndex + 1;
 
-        if (next >= this.themes.length) {
+        if (next >= this.palettes.length) {
             next = 0;
         }
 
@@ -167,7 +158,7 @@ export class ChartSettingsPanel extends Component {
     private setActivePalette(chartThemeIndex: number, animationDirection: AnimationDirection) {
         _.radioCssClass(this.cardItems[chartThemeIndex], 'ag-selected', 'ag-not-selected');
 
-        const currentPalette = this.miniCharts[this.activeThemeIndex];
+        const currentPalette = this.miniCharts[this.activePaletteIndex];
         const currentGui = currentPalette.getGui();
         const futurePalette = this.miniCharts[chartThemeIndex];
         const futureGui = futurePalette.getGui();
@@ -182,8 +173,8 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(currentGui, 'ag-animating');
         _.addCssClass(futureGui, 'ag-animating');
 
-        this.activeThemeIndex = chartThemeIndex;
-        this.chartController.setChartThemeIndex(this.activeThemeIndex);
+        this.activePaletteIndex = chartThemeIndex;
+        this.chartController.setChartThemeIndex(this.activePaletteIndex);
 
         this.isAnimating = true;
 

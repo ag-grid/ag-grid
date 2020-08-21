@@ -1,5 +1,5 @@
 import {
-    _, AgChartTheme, AgChartThemeName,
+    _, AgChartTheme, AgChartThemeName, AgChartThemePalette,
     AgEvent,
     Autowired,
     BeanStub,
@@ -110,6 +110,16 @@ export class ChartController extends BeanStub {
 
     public getThemes(): (AgChartThemeName | AgChartTheme)[] {
         return this.gridOptionsWrapper.getChartThemes();
+    }
+
+    public getPalettes(): AgChartThemePalette[] {
+        const customPalette = this.chartProxy.getCustomPalette();
+
+        if (customPalette) {
+            return [customPalette];
+        }
+
+        return this.gridOptionsWrapper.getChartThemes().map(theme => getChartTheme(theme).palette);
     }
 
     public setChartType(chartType: ChartType): void {
