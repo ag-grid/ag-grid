@@ -20,6 +20,19 @@ var gridOptions = {
     enableFillHandle: true,
 };
 
+function fillHandleAxis(direction) {
+    var buttons = document.querySelectorAll('.ag-fill-direction');
+    var button = document.querySelector('.ag-fill-direction.' + direction);
+
+    buttons.forEach(function(btn) {
+        btn.classList.remove('selected');
+    });
+
+    button.classList.add('selected');
+
+    gridOptions.api.setFillHandleDirection(direction);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

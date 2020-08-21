@@ -20,6 +20,11 @@ include '../documentation-main/documentation_header.php';
         To enable the Fill Handle, simply set <code>enableFillHandle</code> to <code>true</code> in the <code>gridOptions</code>.
     </p>
 
+    <p>
+        The <code>fillHandleDirection</code> property can be set to <code>x</code>, <code>y</code> and <code>xy</code> in the <code>gridOptions</code>
+        to force the preferred axis for the <code>Fill Handle</code>. This value is <code>xy</code> by default.
+    </p>
+
     <note>
         It's important to note that if you enable both <code>enableFillHandle</code> and <code>enableRangeHandle</code>,
         the Fill Handle will take precedence.

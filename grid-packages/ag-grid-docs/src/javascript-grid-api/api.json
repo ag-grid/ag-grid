@@ -574,6 +574,13 @@
                 "name": "Purging Groups",
                 "url": "../javascript-grid-server-side-model-grouping/#purging-groups"
             }
+        },
+        "setFillHandleDirection(direction)": {
+            "description": "Sets the preferred direction for the selection fill handle.",
+            "more": {
+                "name": "Fill Handle",
+                "url": "../javascript-grid-range-selection-fill-handle/"
+            }
         }
     }
 }

@@ -166,6 +166,22 @@
         "enableRangeSelection": {
             "default": false,
             "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection/'>Range Selection</a>."
+        },
+        "enableRangeHandle": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection-handle/'>Range Handle</a>"
+        },
+        "enableFillHandle": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection-fill-handle/'>Fill Handle</a>"
+        },
+        "fillHandleDirection": {
+            "default": "xy",
+            "description": "Set to 'x' to force the fill handle direction to horizontal, or set it to 'y' to force the fill handle direction to vertical"
+        },
+        "suppressClearOnFillReduction": {
+            "default": false,
+            "description": "Set it to <code>true</code> to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle."
         }
     },
     "rowDragging": {
