@@ -128,9 +128,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-
-        const theme = this.getSelectedIntegratedChartTheme();
-
+        const theme = this.getSelectedTheme();
         let themeOverrides: AgChartTheme = this.chartProxyParams.getChartThemeOverrides();
         if (themeOverrides) {
             if (typeof theme === 'string') {
@@ -223,7 +221,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return options;
     }
 
-    private getSelectedIntegratedChartTheme(): AgChartThemeName | AgChartTheme {
+    private getSelectedTheme(): AgChartThemeName | AgChartTheme {
         const params = this.chartProxyParams;
         const chartThemeIndex = params.getChartThemeIndex();
         return params.getChartThemes()[chartThemeIndex];
@@ -234,17 +232,15 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             return;
         }
 
-        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
         const { seriesDefaults } = chartOptions;
-        const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-        const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
-        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+        const fillsOverridden = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+        const strokesOverridden = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
 
         if (fillsOverridden || strokesOverridden) {
+            // both fills and strokes will need to be overridden
             this.customPalette = {
-                fills: fillsOverridden ? fills : defaultFills,
-                strokes: strokesOverridden ? strokes : defaultStrokes
+                fills: fillsOverridden,
+                strokes: strokesOverridden
             };
         }
     }
@@ -443,13 +439,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getPredefinedPalette(): AgChartThemePalette {
-        const themes = this.chartProxyParams.getChartThemes();
-        const themeIndex = this.chartProxyParams.getChartThemeIndex();
-        return (themes[themeIndex] as AgChartTheme).palette;
+        return this.chartTheme.palette;
     }
 
     protected getPalette(): AgChartThemePalette {
-        return this.customPalette || this.getPredefinedPalette();
+        return this.customPalette || this.chartTheme.palette;
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
