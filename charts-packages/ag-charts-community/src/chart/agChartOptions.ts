@@ -319,13 +319,23 @@ interface AgSeriesTooltipRendererParams {
 interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     xKey: string;
     xName?: string;
+
     yKey: string;
     yName?: string;
+}
+
+export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
+    angleKey: string;
+    angleName?: string;
+
+    radiusKey?: string;
+    radiusName?: string;
 }
 
 interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
     sizeKey?: string;
     sizeName?: string;
+    
     labelKey?: string;
     labelName?: string;
 }
@@ -466,6 +476,7 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    label?: AgHistogramSeriesLabelOptions;
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string;
 }
 
@@ -502,6 +513,12 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string;
+}
+
+interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
+    labelKey?: string;
+    labelName?: string;
 }
 
 type AgCartesianSeriesOptions =
