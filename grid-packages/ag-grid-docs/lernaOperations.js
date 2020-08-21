@@ -269,7 +269,7 @@ function moduleChanged(moduleRoot) {
 
 const readModulesState = () => {
     const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages', 'examples-grid'];
-    const exclusions = ['ag-grid-dev', 'polymer', 'ag-grid-polymer', 'ag-grid-charts-example'];
+    const exclusions = ['ag-grid-dev', 'polymer', 'ag-grid-polymer'];
 
     const modulesState = {};
 
