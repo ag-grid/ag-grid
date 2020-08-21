@@ -68,21 +68,21 @@ SNIPPET
 <h2>Text Wrapping</h2>
 
 <p>
-    If you want the text to wrap inside the cell, add the flag <code>wrapText=true</code> to
+    If you want text to wrap inside cells rather than truncating, add the flag <code>wrapText=true</code> to
     the Column Definition.
 </p>
 <p>
-    The example below has <code>wrapText=true</code> set on the Latin Text column.
-    Behind the scenes, this results in the CSS class <code>white-space: normal</code>
-    getting applied to the cell, which results in text wrapping.
+    The example below has <code>wrapText=true</code> set on the <strong>Latin Text</strong> column.
+    Behind the scenes, this results in the CSS property <code>white-space: normal</code>
+    being applied to the cell, which causes the text to wrap.
 </p>
 
 <?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <note>
     If you are providing a custom <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>,
-    then you can implement text wrapping in the custom component in your own way. The property <code>wrapText</code>
-    is intend to be used when not using a custom Cell Renderer.
+    you can implement text wrapping in the custom component in your own way. The property <code>wrapText</code>
+    is intended to be used when you are not using a custom Cell Renderer.
 </note>
 
 <h2>Auto Row Height</h2>
