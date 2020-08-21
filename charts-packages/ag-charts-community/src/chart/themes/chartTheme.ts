@@ -2,6 +2,7 @@ import { deepMerge, getValue, isObject } from "../../util/object";
 import { copy } from "../../util/array";
 import { AgChartThemeOverrides, AgChartThemePalette, AgChartThemeDefaults } from "../agChartOptions";
 import { Series } from "../series/series";
+import { Padding } from "../../util/padding";
 
 export class ChartTheme {
 
@@ -356,7 +357,16 @@ export class ChartTheme {
             series: {
                 pie: {
                     ...ChartTheme.getSeriesDefaults(),
-                    title: undefined, // Caption
+                    title: {
+                        enabled: false,
+                        padding: new Padding(0),
+                        text: '',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 14,
+                        fontFamily: ChartTheme.fontFamily,
+                        color: 'rgb(70, 70, 70)'
+                    },
                     angleKey: '',
                     angleName: '',
                     radiusKey: undefined,
@@ -378,7 +388,9 @@ export class ChartTheme {
                         length: 10,
                         strokeWidth: 1
                     },
+                    fills: [],
                     fillOpacity: 1,
+                    strokes: [],
                     strokeOpacity: 1,
                     strokeWidth: 1,
                     rotation: 0,

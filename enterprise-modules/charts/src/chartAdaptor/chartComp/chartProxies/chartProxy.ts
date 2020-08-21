@@ -173,8 +173,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             case ChartType.Line:
                 return 'line';
             case ChartType.Area:
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
                 return 'area';
             case ChartType.Scatter:
+            case ChartType.Bubble:
                 return 'scatter';
             case ChartType.Histogram:
                 return 'histogram';
