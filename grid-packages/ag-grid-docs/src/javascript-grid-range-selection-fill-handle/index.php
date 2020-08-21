@@ -88,6 +88,7 @@ include '../documentation-main/documentation_header.php';
             values: any[], // the values that have been processed by the fill operation
             initialValues: any[], // the values that were present before processing started
             currentIndex: number, // index of the current processed value
+            currentCellValue: any, // the current value of the cell being `filled`
             api: GridApi, // the grid API
             columnApi: ColumnApi, // the grid Column API
             context: any,  // the context

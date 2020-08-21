@@ -279,6 +279,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 values,
                 initialValues,
                 currentIndex: idx,
+                currentCellValue: this.valueService.getValue(col, rowNode),
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
