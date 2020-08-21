@@ -187,9 +187,21 @@ var rowData = [
     },
 ];
 
+function cellCellEditorParams(params) {
+    var selectedCountry = params.data.country;
+    var allowedCities = countyToCityMap(selectedCountry);
+
+    return {
+        values: allowedCities,
+        formatValue: function (value) {
+            return value + ' (' + selectedCountry + ')';
+        }
+    };
+}
+
 var gridOptions = {
     columnDefs: [
-        { field: 'name' },
+        {field: 'name'},
         {
             field: 'gender',
             cellRenderer: 'genderCellRenderer',
@@ -210,19 +222,9 @@ var gridOptions = {
         {
             field: 'city',
             cellEditor: 'agRichSelectCellEditor',
-            cellEditorParams: function(params) {
-                var selectedCountry = params.data.country;
-                var allowedCities = countyToCityMap(selectedCountry);
-
-                return {
-                    values: allowedCities,
-                    formatValue: function(value) {
-                        return value + ' (' + selectedCountry + ')';
-                    }
-                };
-            }
+            cellEditorParams: cellCellEditorParams
         },
-        { field: 'address', cellEditor: 'agLargeTextCellEditor', minWidth: 550 }
+        {field: 'address', cellEditor: 'agLargeTextCellEditor', minWidth: 550}
     ],
     defaultColDef: {
         flex: 1,
@@ -262,7 +264,7 @@ function onCellValueChanged(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
