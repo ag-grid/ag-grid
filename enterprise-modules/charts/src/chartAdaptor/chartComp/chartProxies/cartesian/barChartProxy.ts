@@ -27,15 +27,19 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
-        const options = super.getDefaultOptionsWithTheme(theme);
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
         const { chartType: integratedChartType } = this;
         const standaloneChartType = this.getStandaloneChartType();
+
         const seriesType = integratedChartType === ChartType.GroupedBar
             || integratedChartType === ChartType.StackedBar
             || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+            
         const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
-        const iSeriesDefaults: BarSeriesOptions = {
+
+        options.seriesDefaults = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             label: seriesDefaults.label as BarSeriesLabelOptions,
             tooltip: {
@@ -52,8 +56,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
                 width: seriesDefaults.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
-        };
-        options.seriesDefaults = deepMerge(iSeriesDefaults, options.seriesDefaults);
+        } as BarSeriesOptions;
+
         return options;
     }
 

@@ -1,5 +1,5 @@
-import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, LineSeries, AgChart, AgCartesianChartOptions } from "ag-charts-community";
+import { CartesianChartOptions, LineSeriesOptions, AgLineSeriesOptions, DropShadowOptions, HighlightOptions } from "@ag-grid-community/core";
+import { CartesianChart, LineSeries, AgChart, AgCartesianChartOptions, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
@@ -11,6 +11,36 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
+        options.seriesDefaults = {
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [],
+                opacity: 1
+            },
+            stroke: {
+                colors: [seriesDefaults.stroke],
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as LineSeriesOptions;
+
+        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {

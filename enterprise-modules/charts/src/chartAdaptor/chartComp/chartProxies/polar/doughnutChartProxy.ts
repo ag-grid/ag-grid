@@ -2,9 +2,10 @@ import {
     AgChart, AgPieSeriesOptions,
     AgPolarChartOptions,
     PieSeries,
-    PolarChart
+    PolarChart,
+    ChartTheme
 } from "ag-charts-community";
-import { _, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { _, PieSeriesOptions, PolarChartOptions, HighlightOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 
@@ -15,6 +16,37 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: {
+                ...seriesDefaults.label,
+                minRequiredAngle: seriesDefaults.label.minAngle
+            },
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: seriesDefaults.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: seriesDefaults.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+        } as PieSeriesOptions;
+
+        return options;
     }
 
     protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {

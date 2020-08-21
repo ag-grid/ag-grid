@@ -1,9 +1,10 @@
-import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
+import { _, HistogramSeriesOptions, CartesianChartOptions, HighlightOptions, DropShadowOptions, AgHistogramSeriesOptions, BarSeriesLabelOptions } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
     AgChart,
     CartesianChart,
-    HistogramSeries
+    HistogramSeries,
+    ChartTheme
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -15,6 +16,32 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
+        options.seriesDefaults = {
+            shadow: seriesDefaults.shadow as DropShadowOptions,
+            label: seriesDefaults.label as BarSeriesLabelOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [seriesDefaults.fill],
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: [seriesDefaults.stroke],
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as HistogramSeriesOptions;
+
+        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<HistogramSeriesOptions>): CartesianChart {

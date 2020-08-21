@@ -17,8 +17,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         super(params);
     }
 
-    protected getDefaultOptionsWithTheme(theme: ChartTheme): CartesianChartOptions<T> {
-        const options = super.getDefaultOptionsWithTheme(theme);
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<T> {
+        const options = super.getDefaultOptionsFromTheme(theme);
         const standaloneChartType = this.getStandaloneChartType();
         const flipXY = standaloneChartType === 'bar';
 
@@ -29,11 +29,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             [xAxisType, yAxisType] = [yAxisType, xAxisType];
         }
 
-        const xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
-        const yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
-
-        options.xAxis = deepMerge(xAxis, options.xAxis);
-        options.yAxis = deepMerge(yAxis, options.yAxis);
+        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
+        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
 
         return options;
     }

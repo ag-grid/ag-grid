@@ -1,5 +1,5 @@
-import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, ScatterSeries, AgChart, AgCartesianChartOptions } from "ag-charts-community";
+import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions, AgScatterSeriesOptions, HighlightOptions } from "@ag-grid-community/core";
+import { CartesianChart, ScatterSeries, AgChart, AgCartesianChartOptions, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -18,6 +18,37 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
+        options.seriesDefaults = {
+            paired: false,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [],
+                opacity: 1
+            },
+            stroke: {
+                colors: [seriesDefaults.stroke],
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+        } as ScatterSeriesOptions;
+
+        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {

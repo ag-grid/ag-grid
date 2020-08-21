@@ -18,6 +18,8 @@ import {
     ProcessAgChartOptionsParams,
     SeriesOptions,
     AgChartOptions,
+    LegendOptions,
+    NavigatorOptions,
 
 } from "@ag-grid-community/core";
 import {
@@ -141,7 +143,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.chartTheme = getChartTheme(theme);
         }
 
-        this.chartOptions = this.getDefaultOptionsWithTheme(this.chartTheme);
+        this.chartOptions = this.getDefaultOptionsFromTheme(this.chartTheme);
 
         // allow users to override options before they are applied
         const { processChartOptions } = this.chartProxyParams;
@@ -189,34 +191,20 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     // Merges theme defaults into default options. To be overridden in subclasses.
-    protected getDefaultOptionsWithTheme(theme: ChartTheme): TOptions {
-        const options = this.getDefaultOptions();
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): TOptions {
+        const options = {} as TOptions;
 
         const standaloneChartType = this.getStandaloneChartType();
 
-        const titleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title');
-        options.title = deepMerge(titleOptions, options.title);
-
-        const subtitleOptions = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle');
-        options.subtitle = deepMerge(subtitleOptions, options.subtitle);
-
-        const backgroundOptions = theme.getConfig(standaloneChartType + '.background');
-        options.background = deepMerge(backgroundOptions, options.background);
-
-        const legendOptions = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend');
-        options.legend = deepMerge(legendOptions, options.legend);
-
-        const navigatorOptions = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator');
-        options.navigator = deepMerge(navigatorOptions, options.navigator);
-
+        options.title = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title') as CaptionOptions;
+        options.subtitle = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle') as CaptionOptions;
+        options.background = theme.getConfig(standaloneChartType + '.background');
+        options.legend =  theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
+        options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
         options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
         options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
-        
-        const listenerOptions = theme.getConfig(standaloneChartType + '.listeners');
-        options.listeners = deepMerge(listenerOptions, options.listeners);
-
-        const paddingOptions = theme.getConfig(standaloneChartType + '.padding');
-        options.padding = deepMerge(paddingOptions, options.padding);
+        options.listeners = theme.getConfig(standaloneChartType + '.listeners');
+        options.padding = theme.getConfig(standaloneChartType + '.padding');
 
         return options;
     }

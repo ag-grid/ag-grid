@@ -1,5 +1,5 @@
-import { AreaSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
-import { AreaSeries, CartesianChart, AgChart, AgCartesianChartOptions } from "ag-charts-community";
+import { AreaSeriesOptions, CartesianChartOptions, ChartType, DropShadowOptions, AgAreaSeriesOptions, AgCartesianChartOptions, HighlightOptions } from "@ag-grid-community/core";
+import { AreaSeries, CartesianChart, AgChart, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -10,6 +10,37 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgAreaSeriesOptions>('area.series.area');
+        options.seriesDefaults = {
+            shadow: seriesDefaults.shadow as DropShadowOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: seriesDefaults.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: seriesDefaults.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as AreaSeriesOptions;
+
+        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
