@@ -140,8 +140,7 @@ include '../documentation-main/documentation_header.php';
     <li>
         The callback <code>getDetailRowData()</code> is called.
         The Detail Grid is recreated and contains the most recent data.
-        The grid's context (column position, vertical scroll) is kept. Try interacting with the detail grid
-        for the first row (move columns, vertical scroll) and observe the grid is kept intact.
+        The grid's context (column position, vertical scroll) is lost.
     </li>
     <li>
         The Detail Grid setting <a href="../javascript-grid-immutable-data/">Immutable Data</a>
