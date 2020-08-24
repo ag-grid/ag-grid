@@ -61,7 +61,7 @@ masterGridOptions.detailRowHeight = 200;
     The following example sets a fixed row height for all detail rows.
 </p>
 
-<?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2 id="auto-height">Auto Height</h2>
 
@@ -84,7 +84,7 @@ detailCellRendererParams: {
 },
 </snippet>
 
-<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
+<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail'], 'reactFunctional' => true]) ?>
 
 <note>
     <p>
@@ -131,6 +131,6 @@ masterGridOptions.getRowHeight = function (params) {
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
