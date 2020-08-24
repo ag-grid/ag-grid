@@ -41,7 +41,7 @@ gridOptions = {
     normally appear, only the message "My Customer Detail" is shown.
 </p>
 
-<?= grid_example('Simple Detail Cell Renderer', 'simple-custom-detail', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Simple Detail Cell Renderer', 'simple-custom-detail', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Custom Detail With Form</h2>
 
@@ -53,7 +53,7 @@ gridOptions = {
     This example shows a custom Detail Cell Renderer that uses a form rather than a grid.
 </p>
 
-<?= grid_example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Custom Detail With Grid</h2>
 
@@ -62,7 +62,7 @@ gridOptions = {
     This example demonstrates displaying a customer grid as the detail.
 </p>
 
-<?= grid_example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <p>
     In order for the Detail Grid's API to be available via the Master Grid as explained in
@@ -135,6 +135,6 @@ this.masterGridApi.removeDetailGridInfo(detailId);
     refresh method.
 </p>
 
-<?= grid_example('Custom Detail with Refresh', 'custom-detail-with-refresh', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Custom Detail with Refresh', 'custom-detail-with-refresh', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

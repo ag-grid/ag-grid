@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Rows', 'refresh-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Rows', 'refresh-rows', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2 id="refresh-everything">Refresh Everything</h2>
 
@@ -152,7 +152,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Everything', 'refresh-everything', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Everything', 'refresh-everything', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2 id="refresh-nothing">Refresh Nothing</h2>
 
@@ -175,6 +175,6 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Nothing', 'refresh-nothing', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Nothing', 'refresh-nothing', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
