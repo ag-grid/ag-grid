@@ -90,7 +90,7 @@ colDef.valueGetter = function(params) {
 
     </ul>
 
-    <?= grid_example('Value Getters', 'value-getters', 'generated', ['modules' => true]) ?>
+    <?= grid_example('Value Getters', 'value-getters', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
     <h3>Header Value Getters</h3>
 
@@ -198,7 +198,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Value Cache', 'value-cache', 'vanilla', ['enterprise' => true]) ?>
+    <?= grid_example('Value Cache', 'value-cache', 'vanilla', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
     <note>
         Note that the example still works fast when the value cache is turned off. This emphasises
@@ -293,7 +293,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', ['enterprise' => true, 'modules' => true]) ?>
+    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -344,7 +344,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules'=>['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

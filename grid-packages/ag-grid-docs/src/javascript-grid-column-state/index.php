@@ -59,7 +59,7 @@ SNIPPET
 </p>
 <ol class="content">
     <li>Click 'Save State' to save the Column State.</li>
-    <li>Change some column state e.g. resize columns, move columns around, apply column sorting or row grouping e.t.c.</li>
+    <li>Change some column state e.g. resize columns, move columns around, apply column sorting or row grouping etc.</li>
     <li>Click 'Restore State' and the columns state is set back to where it was when you clicked 'Save State'.</li>
     <li>Click 'Reset State' and the state will go back to what was defined in the Column Definitions.</li>
 </ol>
@@ -115,8 +115,8 @@ SNIPPET
 <h3>Applying Partial State</h3>
 
 <p>
-    When applying column state, and some state attributes or columns are missing from the Column State,
-    then the following rules apply:
+    When applying column state, in cases where some state attributes or columns are missing from the Column State,
+    the following rules apply:
 </p>
 
 <ul class="content">
@@ -236,7 +236,7 @@ SNIPPET
 <h2>Considerations</h2>
 
 <p>
-    There are a few items to note on specific state attributes. The are as follows:
+    There are a few items to note on specific state attributes. They are as follows:
 </p>
 
 <h3>Null vs Undefined</h3>

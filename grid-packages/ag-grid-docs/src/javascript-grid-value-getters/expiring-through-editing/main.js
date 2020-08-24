@@ -1,5 +1,19 @@
 var callCount = 1;
 
+var totalValueGetter = function (params) {
+    var q1 = params.getValue('q1');
+    var q2 = params.getValue('q2');
+    var q3 = params.getValue('q3');
+    var q4 = params.getValue('q4');
+    var result = q1 + q2 + q3 + q4;
+    console.log('Total Value Getter (' + callCount + ', ' + params.column.getId() + '): ' + [q1, q2, q3, q4].join(', ') + ' = ' + result);
+    callCount++;
+    return result;
+};
+var total10ValueGetter = function(params) {
+    var total = params.getValue('total');
+    return total * 10;
+};
 var columnDefs = [
     { field: "q1", type: 'quarterFigure' },
     { field: "q2", type: 'quarterFigure' },
@@ -12,16 +26,7 @@ var columnDefs = [
         cellClass: 'number-cell total-col',
         aggFunc: "sum",
         valueFormatter: formatNumber,
-        valueGetter: function (params) {
-            var q1 = params.getValue('q1');
-            var q2 = params.getValue('q2');
-            var q3 = params.getValue('q3');
-            var q4 = params.getValue('q4');
-            var result = q1 + q2 + q3 + q4;
-            console.log('Total Value Getter (' + callCount + ', ' + params.column.getId() + '): ' + [q1, q2, q3, q4].join(', ') + ' = ' + result);
-            callCount++;
-            return result;
-        }
+        valueGetter: totalValueGetter
     },
     {
         headerName: "Total x 10",
@@ -29,10 +34,7 @@ var columnDefs = [
         aggFunc: "sum",
         minWidth: 120,
         valueFormatter: formatNumber,
-        valueGetter: function(params) {
-            var total = params.getValue('total');
-            return total * 10;
-        }
+        valueGetter: total10ValueGetter
     }
 ];
 

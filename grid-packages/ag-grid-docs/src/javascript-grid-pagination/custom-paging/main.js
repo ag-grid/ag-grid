@@ -1,16 +1,18 @@
+var checkboxSelection = function(params) {
+    // we put checkbox on the name if we are not doing grouping
+    return params.columnApi.getRowGroupColumns().length === 0;
+};
+var headerCheckboxSelection = function(params) {
+    // we put checkbox on the name if we are not doing grouping
+    return params.columnApi.getRowGroupColumns().length === 0;
+};
 var columnDefs = [
     {
         headerName: 'Athlete',
         field: 'athlete',
         minWidth: 170,
-        checkboxSelection: function(params) {
-            // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelection: function(params) {
-            // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
-        }
+        checkboxSelection: checkboxSelection,
+        headerCheckboxSelection: headerCheckboxSelection
     },
     {field: 'age'},
     {field: 'country'},
