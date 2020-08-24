@@ -1918,6 +1918,13 @@ export class ColumnController extends BeanStub {
 
     private compareColumnStatesAndRaiseEvents(source: ColumnEventType): () => void {
 
+        // if no columns to begin with, then it means we are setting columns for the first time, so
+        // there should be no events fired to show differences in columns.
+        const colsPreviouslyExisted = !!this.columnDefs;
+        if (!colsPreviouslyExisted) {
+            return () => {};
+        }
+
         const startState = {
             rowGroupColumns: this.rowGroupColumns.slice(),
             pivotColumns: this.pivotColumns.slice(),
@@ -2087,81 +2094,6 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private sortColumnListUsingIndexes(indexes: { [key: string]: number; }, colA: Column, colB: Column): number {
-        const indexA = indexes[colA.getId()];
-        const indexB = indexes[colB.getId()];
-
-        return indexA - indexB;
-    }
-
-    private syncColumnWithNoState(column: Column, source: ColumnEventType): void {
-        column.setVisible(false, source);
-        column.setAggFunc(null);
-        column.setPinned(null);
-        column.setRowGroupActive(false, source);
-        column.setPivotActive(false, source);
-        column.setValueActive(false, source);
-    }
-
-    /*
-        private syncColumnWithStateItem(
-            column: Column | null,
-            stateItem: ColumnState,
-            rowGroupIndexes: { [key: string]: number; },
-            pivotIndexes: { [key: string]: number; },
-            source: ColumnEventType
-        ): void {
-
-            if (!column) { return; }
-
-            // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-            column.setVisible(!stateItem.hide, source);
-            // sets pinned to 'left' or 'right'
-            column.setPinned(stateItem.pinned);
-
-            if (stateItem.flex != null && stateItem.flex > 0) {
-                column.setFlex(stateItem.flex);
-            }
-
-            const noFlexThisCol = column.getFlex()!=null && column.getFlex()<=0;
-            if (noFlexThisCol) {
-                if (stateItem.width!=null && stateItem.width>0) {
-                    column.setActualWidth(stateItem.width, source);
-                }
-            }
-
-            if (typeof stateItem.aggFunc === 'string') {
-                column.setAggFunc(stateItem.aggFunc);
-                column.setValueActive(true, source);
-                this.valueColumns.push(column);
-            } else {
-                if (exists(stateItem.aggFunc)) {
-                    console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
-                        'functions, register the functions first before using them in get/set state. This is because it is ' +
-                        'intended for the column state to be stored and retrieved as simple JSON.');
-                }
-                column.setAggFunc(null);
-                column.setValueActive(false, source);
-            }
-
-            if (typeof stateItem.rowGroupIndex === 'number') {
-                this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true, source);
-                rowGroupIndexes[column.getId()] = stateItem.rowGroupIndex;
-            } else {
-                column.setRowGroupActive(false, source);
-            }
-
-            if (typeof stateItem.pivotIndex === 'number') {
-                this.pivotColumns.push(column);
-                column.setPivotActive(true, source);
-                pivotIndexes[column.getId()] = stateItem.pivotIndex;
-            } else {
-                column.setPivotActive(false, source);
-            }
-        }
-    */
-
     private syncColumnWithStateItem(
         column: Column | null,
         stateItem: ColumnState,
@@ -2232,8 +2164,10 @@ export class ColumnController extends BeanStub {
         if (aggFunc !== undefined) {
             if (typeof aggFunc === 'string') {
                 column.setAggFunc(aggFunc);
-                column.setValueActive(true, source);
-                this.valueColumns.push(column);
+                if (!column.isValueActive()) {
+                    column.setValueActive(true, source);
+                    this.valueColumns.push(column);
+                }
             } else {
                 if (exists(aggFunc)) {
                     console.warn('ag-Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
@@ -2241,8 +2175,10 @@ export class ColumnController extends BeanStub {
                         'intended for the column state to be stored and retrieved as simple JSON.');
                 }
                 column.setAggFunc(null);
-                column.setValueActive(false, source);
-                removeFromArray(this.valueColumns, column);
+                if (column.isValueActive()) {
+                    column.setValueActive(false, source);
+                    removeFromArray(this.valueColumns, column);
+                }
             }
         }
 

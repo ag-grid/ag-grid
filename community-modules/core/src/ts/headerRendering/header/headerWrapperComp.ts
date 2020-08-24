@@ -12,7 +12,7 @@ import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
-import { Events } from "../../events";
+import {ColumnValueChangedEvent, Events} from "../../events";
 import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
@@ -116,13 +116,26 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             this.column, null);
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+    }
+
+    private onColumnValueChanged(): void {
+        // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
+        if (this.displayName!==this.calculateDisplayName()) {
+            this.refresh();
+        }
     }
 
     private updateState(): void {
         const colDef = this.column.getColDef();
         this.sortable = colDef.sortable;
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
+        this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
+    }
+
+    private calculateDisplayName(): string {
+        return this.columnController.getDisplayNameForColumn(this.column, 'header', true);;
     }
 
     private onNewColumnsLoaded(): void {
