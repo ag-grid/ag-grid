@@ -525,7 +525,7 @@ export class ChartTheme {
             case 'bar':
             case 'column':
             case 'area':
-                return seriesOptions.yKeys.length;
+                return seriesOptions.yKeys ? seriesOptions.yKeys.length : 0;
             case 'pie':
                 return Infinity;
             default:
