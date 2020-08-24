@@ -150,7 +150,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -160,7 +160,7 @@ SNIPPET
     descriptions at the top of the page.
 </p>
 
-<?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2 id="customHeader">Custom Header</h2>
 <p>
@@ -187,7 +187,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Header Tooltip', 'header-tooltip', 'generated') ?>
+<?= grid_example('Header Tooltip', 'header-tooltip', 'generated', ['reactFunctional' => true]) ?>
 
 <h2>Header Templates</h2>
 
