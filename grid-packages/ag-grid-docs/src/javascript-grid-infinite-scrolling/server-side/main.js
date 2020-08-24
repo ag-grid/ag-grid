@@ -1,5 +1,5 @@
-function countries() {
-    return [
+var countries =
+    [
         'United States',
         'Russia',
         'Australia',
@@ -111,7 +111,8 @@ function countries() {
         'Mozambique',
         'Barbados'
     ];
-}
+
+var filterParams = {values: countries};
 
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
@@ -125,7 +126,7 @@ var columnDefs = [
         sortable: false,
         suppressMenu: true
     },
-    { field: 'athlete', suppressMenu: true },
+    {field: 'athlete', suppressMenu: true},
     {
         field: 'age',
         filter: 'agNumberColumnFilter',
@@ -137,19 +138,19 @@ var columnDefs = [
     {
         field: 'country',
         filter: 'agSetColumnFilter',
-        filterParams: { values: countries() }
+        filterParams: filterParams
     },
     {
         field: 'year',
         filter: 'agSetColumnFilter',
-        filterParams: { values: ['2000', '2004', '2008', '2012'] }
+        filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
-    { field: 'date' },
-    { field: 'sport', suppressMenu: true },
-    { field: 'gold', suppressMenu: true },
-    { field: 'silver', suppressMenu: true },
-    { field: 'bronze', suppressMenu: true },
-    { field: 'total', suppressMenu: true }
+    {field: 'date'},
+    {field: 'sport', suppressMenu: true},
+    {field: 'gold', suppressMenu: true},
+    {field: 'silver', suppressMenu: true},
+    {field: 'bronze', suppressMenu: true},
+    {field: 'total', suppressMenu: true}
 ];
 
 var gridOptions = {
@@ -170,11 +171,11 @@ var gridOptions = {
     infiniteInitialRowCount: 1,
     maxBlocksInCache: 2,
     // debug: true,
-    getRowNodeId: function(item) {
+    getRowNodeId: function (item) {
         return item.id;
     },
     components: {
-        loadingCellRenderer: function(params) {
+        loadingCellRenderer: function (params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
@@ -195,7 +196,7 @@ function sortData(sortModel, data) {
     }
     // do an in memory sort of the data, across all the fields
     var resultOfSort = data.slice();
-    resultOfSort.sort(function(a, b) {
+    resultOfSort.sort(function (a, b) {
         for (var k = 0; k < sortModel.length; k++) {
             var sortColModel = sortModel[k];
             var valueA = a[sortColModel.colId];
@@ -268,24 +269,24 @@ function filterData(filterModel, data) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
         // give each row an id
-        data.forEach(function(data, index) {
+        data.forEach(function (data, index) {
             data.id = 'R' + (index + 1);
         });
 
         var dataSource = {
             rowCount: null, // behave as infinite scroll
-            getRows: function(params) {
+            getRows: function (params) {
                 console.log('asking for ' + params.startRow + ' to ' + params.endRow);
 
                 // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
                 // To make the demo look real, wait for 500ms before returning
-                setTimeout(function() {
+                setTimeout(function () {
                     // take a slice of the total rows
                     var dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
                     var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
