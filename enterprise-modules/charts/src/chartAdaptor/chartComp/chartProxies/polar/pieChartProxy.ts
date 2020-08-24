@@ -106,7 +106,7 @@ export class PieChartProxy extends PolarChartProxy {
         pieSeries.strokes = strokes;
 
         if (calloutColors) {
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = strokes;
         }
 
         chart.addSeries(pieSeries);
