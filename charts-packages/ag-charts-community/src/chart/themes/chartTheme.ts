@@ -388,9 +388,7 @@ export class ChartTheme {
                         length: 10,
                         strokeWidth: 2
                     },
-                    fills: [],
                     fillOpacity: 1,
-                    strokes: [],
                     strokeOpacity: 1,
                     strokeWidth: 1,
                     rotation: 0,

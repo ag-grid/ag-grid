@@ -105,6 +105,12 @@ export interface TooltipMeta {
     pageY: number;
 }
 
+export function toTooltipHtml(content: string, title?: string, color: string = '#888'): string {
+    const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
+            style="color: white; background-color: ${color}">${title}</div>` : '';
+    return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
+}
+
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
