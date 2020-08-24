@@ -281,7 +281,7 @@ SNIPPET
     <li>
         All columns, with the exception of Country, are matched correctly. This means
         any column width, sort, position etc will be kept between changes to the columns.
-        Country will have it's state reset, as it will be treated as a new column each time.
+        Country will have its state reset, as it will be treated as a new column each time.
     </li>
     <li>
         Athlete column is matched by object equality as the same column definition instance
