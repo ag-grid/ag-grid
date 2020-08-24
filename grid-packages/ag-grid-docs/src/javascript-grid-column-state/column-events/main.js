@@ -8,6 +8,38 @@ var columnDefs = [
     {field: 'bronze'}
 ];
 
+function onSortChanged(e) {
+    console.log('Event Sort Changed', e);
+}
+
+function onColumnResized (e) {
+    console.log('Event Column Resized', e);
+}
+
+function onColumnVisible (e) {
+    console.log('Event Column Visible', e);
+}
+
+function onColumnPivotChanged (e) {
+    console.log('Event Pivot Changed', e);
+}
+
+function onColumnRowGroupChanged (e) {
+    console.log('Event Row Group Changed', e);
+}
+
+function onColumnValueChanged (e) {
+    console.log('Event Value Changed', e);
+}
+
+function onColumnMoved (e) {
+    console.log('Event Column Moved', e);
+}
+
+function onColumnPinned (e) {
+    console.log('Event Column Pinned', e);
+}
+
 var gridOptions = {
     defaultColDef: {
         sortable: true,
@@ -20,30 +52,14 @@ var gridOptions = {
     debug: true,
     columnDefs: columnDefs,
     rowData: null,
-    onSortChanged: function(e) {
-        console.log('Event Sort Changed', e);
-    },
-    onColumnResized: function (e) {
-        console.log('Event Column Resized', e);
-    },
-    onColumnVisible: function (e) {
-        console.log('Event Column Visible', e);
-    },
-    onColumnPivotChanged: function (e) {
-        console.log('Event Pivot Changed', e);
-    },
-    onColumnRowGroupChanged: function (e) {
-        console.log('Event Row Group Changed', e);
-    },
-    onColumnValueChanged: function (e) {
-        console.log('Event Value Changed', e);
-    },
-    onColumnMoved: function (e) {
-        console.log('Event Column Moved', e);
-    },
-    onColumnPinned: function (e) {
-        console.log('Event Column Pinned', e);
-    }
+    onSortChanged: onSortChanged,
+    onColumnResized: onColumnResized,
+    onColumnVisible: onColumnVisible,
+    onColumnPivotChanged: onColumnPivotChanged,
+    onColumnRowGroupChanged: onColumnRowGroupChanged,
+    onColumnValueChanged: onColumnValueChanged,
+    onColumnMoved: onColumnMoved,
+    onColumnPinned: onColumnPinned
 };
 
 function onBtSortOn() {

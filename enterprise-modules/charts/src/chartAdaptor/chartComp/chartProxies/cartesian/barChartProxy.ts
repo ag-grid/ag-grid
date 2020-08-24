@@ -107,14 +107,15 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         const chart = this.chart;
         const barSeries = chart.series[0] as BarSeries;
+        const palette = this.getPalette();
 
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(f => f.colId);
         barSeries.yNames = params.fields.map(f => f.displayName);
-        barSeries.fills = this.getPalette().fills;
-        barSeries.strokes = this.getPalette().strokes;
+        barSeries.fills = palette.fills;
+        barSeries.strokes = palette.strokes;
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }

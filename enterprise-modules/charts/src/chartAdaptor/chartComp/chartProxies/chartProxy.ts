@@ -155,7 +155,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
 
-            this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
         }
     }
@@ -216,24 +215,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const params = this.chartProxyParams;
         const chartThemeIndex = params.getChartThemeIndex();
         return params.getChartThemes()[chartThemeIndex];
-    }
-
-    private overridePalette(chartOptions: TOptions): void {
-        if (!this.chartProxyParams.allowPaletteOverride) {
-            return;
-        }
-
-        const { seriesDefaults } = chartOptions;
-        const fillsOverridden = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-        const strokesOverridden = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
-
-        if (fillsOverridden || strokesOverridden) {
-            // both fills and strokes will need to be overridden
-            this.customPalette = {
-                fills: fillsOverridden,
-                strokes: strokesOverridden
-            };
-        }
     }
 
     public getChartOptions(): TOptions {

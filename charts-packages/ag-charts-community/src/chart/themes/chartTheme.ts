@@ -374,7 +374,7 @@ export class ChartTheme {
                     labelKey: undefined,
                     labelName: undefined,
                     label: {
-                        enabled: true,
+                        enabled: false,
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -386,7 +386,7 @@ export class ChartTheme {
                     callout: {
                         colors: [],
                         length: 10,
-                        strokeWidth: 1
+                        strokeWidth: 2
                     },
                     fills: [],
                     fillOpacity: 1,
