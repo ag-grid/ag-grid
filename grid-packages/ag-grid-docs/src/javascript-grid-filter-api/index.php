@@ -75,7 +75,7 @@ SNIPPET
     (Note: the example uses the Enterprise-only <a href="../javascript-grid-filter-set/">Set Filter</a>).
 </p>
 
-<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 587, 'modules' => ['clientside', 'menu', 'filterpanel', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 587, 'modules' => ['clientside', 'menu', 'filterpanel', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2 id="filterComponentInstance">Accessing Individual Filter Component Instances</h2>
 
@@ -172,6 +172,6 @@ SNIPPET
     (Note: the example uses the Enterprise-only <a href="../javascript-grid-filter-set/">Set Filter</a>).
 </p>
 
-<?= grid_example('Accessing Individual Filters', 'filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 624, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Accessing Individual Filters', 'filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 624, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
