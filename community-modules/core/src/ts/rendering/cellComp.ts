@@ -217,8 +217,11 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createCellRendererInstance(true);
         this.angular1Compile();
         this.refreshHandle();
+        
+        const colDef = this.getComponentHolder();
+        const canHaveTooltip = colDef.tooltipField || colDef.tooltipValueGetter || colDef.tooltip;
 
-        if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+        if (canHaveTooltip && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
