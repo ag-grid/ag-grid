@@ -13,16 +13,16 @@ import {
     EventService,
     FontOptions,
     GridApi,
-    PaddingOptions,
-    ProcessChartOptionsParams,
-    ProcessAgChartOptionsParams,
-    SeriesOptions,
-    AgChartOptions,
     LegendOptions,
     NavigatorOptions,
-
+    PaddingOptions,
+    ProcessChartOptionsParams,
+    ProcessChartParams,
+    SeriesOptions,
 } from "@ag-grid-community/core";
 import {
+    AgChartTheme,
+    AgChartThemeName,
     AgChartThemePalette,
     AreaSeries,
     BarSeries,
@@ -33,9 +33,7 @@ import {
     DropShadow,
     getChartTheme,
     Padding,
-    PieSeries,
-    AgChartTheme,
-    AgChartThemeName
+    PieSeries
 } from "ag-charts-community";
 import {deepMerge} from "../object";
 
@@ -49,7 +47,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    processAgChartOptions: (params: ProcessAgChartOptionsParams) => AgChartOptions;
+    processChartFunc: (params: ProcessChartParams) => void;
     getChartThemeIndex: () => number;
     getChartThemes: () => (AgChartThemeName | AgChartTheme)[];
     getChartThemeOverrides: () => AgChartTheme | undefined;

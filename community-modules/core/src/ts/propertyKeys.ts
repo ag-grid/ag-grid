@@ -73,7 +73,7 @@ export class PropertyKeys {
         'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'defaultGroupSortComparator', 'isRowMaster',
         'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey',
-        'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'processAgChartOptions', 'getChartToolbarItems', 'fillOperation'
+        'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'processChart', 'getChartToolbarItems', 'fillOperation'
     ];
 
     public static ALL_PROPERTIES = [
