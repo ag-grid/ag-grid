@@ -132,7 +132,7 @@ SNIPPET
     after you press the button.
 </p>
 
-<?= grid_example('Column Resizing', 'column-resizing', 'generated') ?>
+<?= grid_example('Column Resizing', 'column-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Sizing Columns By Default</h2>
 
@@ -149,7 +149,7 @@ SNIPPET
     for some frameworks (e.g. Angular) as DOM objects are used before getting attached.
 </p>
 
-<?= grid_example('Default Resizing', 'default-resizing', 'generated') ?>
+<?= grid_example('Default Resizing', 'default-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Column Flex</h2>
 
@@ -192,7 +192,7 @@ SNIPPET
         by its <code>minWidth</code>/<code>maxWidth</code> rules, in which case it should take up the remaining available space.</li>
 </ul>
 
-<?= grid_example('Column Flex', 'flex-columns', 'generated') ?>
+<?= grid_example('Column Flex', 'flex-columns', 'generated', ['reactFunctional' => true]) ?>
 
 <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -221,7 +221,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Shift Resizing', 'shift-resizing', 'generated') ?>
+<?= grid_example('Shift Resizing', 'shift-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Resizing Groups</h2>
 
@@ -238,7 +238,7 @@ SNIPPET
         in the groups have <code>resizable=false</code>.</li>
 </ul>
 
-<?= grid_example('Resizing Groups', 'resizing-groups', 'generated') ?>
+<?= grid_example('Resizing Groups', 'resizing-groups', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Rendered</h2>
 
