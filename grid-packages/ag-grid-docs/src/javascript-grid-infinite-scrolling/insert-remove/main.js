@@ -1,3 +1,10 @@
+var valueFormatter = function(params) {
+    if (typeof params.value === 'number') {
+        return '£' + params.value.toLocaleString();
+    } else {
+        return params.value;
+    }
+};
 var columnDefs = [
     {
         headerName: 'Item ID',
@@ -9,13 +16,7 @@ var columnDefs = [
     { field: 'model' },
     {
         field: 'price',
-        valueFormatter: function(params) {
-            if (typeof params.value === 'number') {
-                return '£' + params.value.toLocaleString();
-            } else {
-                return params.value;
-            }
-        }
+        valueFormatter: valueFormatter
     }
 ];
 

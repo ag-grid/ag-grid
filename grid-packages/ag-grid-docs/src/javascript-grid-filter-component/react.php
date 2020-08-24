@@ -50,10 +50,6 @@ SNIPPET
     same, so put them directly onto your React Component.
 </p>
 
-<h3>React Hooks</h3>
-
-<p>Please see <a href="../react-hooks/#hooks-with-methods">here</a> for information on using Hooks with Filter Components.</p>
-
 <h3 id="accessing-the-react-component-instance">Accessing the React Component Instance</h3>
 
 <p>
