@@ -125,8 +125,8 @@ export class ChartTheme {
         return {
             enabled: true,
             shape: 'circle',
-            size: 8,
-            minSize: 8,
+            size: 6,
+            minSize: 6,
             strokeWidth: 1,
             formatter: undefined
         };
