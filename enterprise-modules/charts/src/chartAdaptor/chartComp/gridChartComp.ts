@@ -138,8 +138,6 @@ export class GridChartComp extends Component {
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
         const processChartFunc = this.gridOptionsWrapper.getProcessChartFunc();
 
-        console.log(processChartFunc);
-
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
