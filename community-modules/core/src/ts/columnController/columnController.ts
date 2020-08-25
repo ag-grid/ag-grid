@@ -1803,7 +1803,8 @@ export class ColumnController extends BeanStub {
             params.state.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                if (exists(this.getAutoColumn(state.colId))) {
+                const isAutoGroupColumn = state.colId && state.colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
