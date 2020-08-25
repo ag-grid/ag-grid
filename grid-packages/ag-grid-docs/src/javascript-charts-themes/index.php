@@ -77,6 +77,41 @@ SNIPPET
     fonts as well as a few other configs.
 </p>
 
+<?= createSnippet(<<<SNIPPET
+var myTheme = {
+    baseTheme: 'dark',
+    palette: {
+        fills: [
+            '#5C2983',
+            '#0076C5',
+            '#21B372',
+            '#FDDE02',
+            '#F76700',
+            '#D30018'
+        ],
+        strokes: ['black']
+    },
+    defaults: {
+        cartesian: {
+            title: {
+                fontSize: 24
+            },
+            series: {
+                column: {
+                    label: {
+                        enabled: true,
+                        color: 'black'
+                    }
+                }
+            }
+        }
+    }
+};
+SNIPPET
+) ?>
+
+<p>You can see how the above theme can be applied to a chart in the example below:</p>
+
 <h3>Example: Custom Theme</h3>
 
 <?= chart_example('Custom Theme', 'custom-theme', 'generated') ?>

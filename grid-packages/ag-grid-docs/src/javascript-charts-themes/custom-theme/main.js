@@ -1,34 +1,38 @@
-var options = {
-    container: document.getElementById('myChart'),
-    theme: {
-        baseTheme: 'dark',
-        palette: {
-            fills: [
-                '#5C2983',
-                '#0076C5',
-                '#21B372',
-                '#FDDE02',
-                '#F76700',
-                '#D30018'
-            ],
-            strokes: ['black']
-        },
-        defaults: {
-            cartesian: {
-                title: {
-                    fontSize: 24
-                },
-                series: {
-                    column: {
-                        label: {
-                            enabled: true,
-                            color: 'black'
-                        }
+var myTheme = {
+    baseTheme: 'dark',
+    palette: {
+        fills: [
+            '#5C2983',
+            '#0076C5',
+            '#21B372',
+            '#FDDE02',
+            '#F76700',
+            '#D30018'
+        ],
+        strokes: ['black']
+    },
+    defaults: {
+        cartesian: {
+            title: {
+                fontSize: 24
+            },
+            series: {
+                column: {
+                    label: {
+                        enabled: true,
+                        color: 'black'
                     }
                 }
             }
         }
-    },
+    }
+};
+
+var options = {
+    
+    theme: myTheme,
+
+    container: document.getElementById('myChart'),
     autoSize: true,
     padding: {
         left: 70,
