@@ -18,15 +18,23 @@
         "vivid-dark"
       ],
       "default": "default",
-      "description": "The name of the theme to base your theme on. Your custom theme will import all of the configuration from the base theme, allowing you to override just those settings you wish to change."
+      "description": "The name of the theme to base your theme on. Your custom theme will inherit all of the configuration from the base theme, allowing you to override just the settings you wish to change using the `defaults` config (see below)."
     },
     "defaults": {
       "meta": {
         "description": "Configuration from this object is merged into the defaults specified in the base theme."
       },
+      "common": {
+        "type": "IChartConfig",
+        "description": "Specifies defaults for all chart types. Be careful and only use properties that apply to all chart types here. For example don't use the `navigator` config here, since it's only present in cartesian charts.",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
       "cartesian": {
         "type": "IChartConfig",
-        "description": "Specify defaults for cartesian charts (used for bar, column, line, area and scatter series).",
+        "description": "Specifies defaults for cartesian charts (used for bar, column, line, area, scatter and histogram series).",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -34,7 +42,7 @@
       },
       "bar": {
         "type": "IChartConfig",
-        "description": "Specify defaults for bar/column charts.",
+        "description": "Specifies defaults for bar/column charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -42,7 +50,7 @@
       },
       "histogram": {
         "type": "IChartConfig",
-        "description": "Specify defaults for histogram charts.",
+        "description": "Specifies defaults for histogram charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -50,7 +58,7 @@
       },
       "line": {
         "type": "IChartConfig",
-        "description": "Specify defaults for line charts.",
+        "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -58,7 +66,7 @@
       },
       "scatter": {
         "type": "IChartConfig",
-        "description": "Specify defaults for scatter/bubble charts.",
+        "description": "Specifies defaults for scatter/bubble charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -66,7 +74,7 @@
       },
       "area": {
         "type": "IChartConfig",
-        "description": "Specify defaults for line charts.",
+        "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -74,7 +82,7 @@
       },
       "polar": {
         "type": "IChartConfig",
-        "description": "Specify defaults for polar charts (used for pie series).",
+        "description": "Specifies defaults for polar charts (used for pie series).",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -82,7 +90,7 @@
       },
       "pie": {
         "type": "IChartConfig",
-        "description": "Specify defaults for pie/doughnut charts.",
+        "description": "Specifies defaults for pie/doughnut charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -602,7 +610,7 @@
       }
     },
     "series": {
-      "description": "This is the configuration for the series, which is specific to the type of chart:<br /><br /><ul><li>See <a href='#barSeriesConfig'>Bar Series Configuration</a> for bar/column series</li><li>See <a href='#histogramSeriesConfig'>Histogram Series Configuration</a> for histogram series</li><li>See <a href='#lineSeriesConfig'>Line Series Configuration</a> for line series</li><li>See <a href='#scatterSeriesConfig'>Scatter Series Configuration</a> for scatter/bubble series</li><li>See <a href='#areaSeriesConfig'>Area Series Configuration</a> for area series</li><li>See <a href='#pieSeriesConfig'>Pie Series Configuration</a> for pie/doughnut series</li></ul>"
+      "description": "The default configuration for all series types supported by this type of chart.<br /><br />For cartesian charts it's:<br /><br /><ul><li><a href='#barSeriesConfig'>'bar'</a> series</li><li><a href='#histogramSeriesConfig'>'histogram'</a> series</li><li><a href='#lineSeriesConfig'>'line'</a> series</li><li><a href='#scatterSeriesConfig'>'scatter'</a> series</li><li><a href='#areaSeriesConfig'>'area'</a> series</li></ul>For polar charts:<br /><br/><ul><li><a href='#pieSeriesConfig'>'pie'</a> series</li></ul><br />This config should be an object where the keys are the types of series and the values are the series' default configs."
     }
   },
   "cartesianAxisConfig": {
