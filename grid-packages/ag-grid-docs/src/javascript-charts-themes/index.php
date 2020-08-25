@@ -10,8 +10,8 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     A chart theme is the default configuration for the subcomponents and individual properties
-    not explicitly configured by the user. Therefore themes can be used is a quick way to change a large
-    number of configs that give your chart a different look and feel.
+    not explicitly configured by the user. Therefore themes can be used as a quick way to change a large
+    number of chart's properties while keeping the user config simple.
 </p>
 
 <h2>Using stock themes</h2>
@@ -57,67 +57,22 @@ SNIPPET
     One can create their own themes by providing an override for any of the stock themes.
     A theme override is an object with the following properties:
     <ul>
-        <li><code>baseTheme</code> - the name of the theme to base this theme upon</li>
-        <li><code>defaults</code> - the object to be merged with base theme's defaults</li>
-        <li><code>palette</code> - the palette to use, replaces the palette of the base theme</li>
+        <li><code>baseTheme</code> - the name of the theme to base this theme upon (optional, if not specified, the <code>'default'</code> theme is used)</li>
+        <li><code>defaults</code> - the object to be merged with the base theme's defaults and override them (optional)</li>
+        <li><code>palette</code> - the palette to use, replaces the palette of the base theme (optional)</li>
     </ul>
 </p>
 
-<p>Or more formally:</p>
-
-<?= createSnippet(<<<SNIPPET
-interface AgChartTheme {
-    baseTheme?: AgChartThemeName; // if missing 'default' is implied
-    palette?: AgChartThemePalette;
-    defaults?: AgChartThemeDefaults;
-}
-
-interface AgChartThemePalette {
-    fills: string[];
-    strokes: string[];
-}
-
-export interface AgChartThemeDefaults {
-    cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
-    polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
-}
-
-export interface AgCartesianAxesTheme {
-    number?: AgNumberAxisOptions;
-    category?: AgCategoryAxisOptions;
-    groupedCategory?: AgGroupedCategoryAxisOptions;
-    time?: AgTimeAxisOptions;
-}
-
-export interface AgCartesianSeriesTheme {
-    line?: AgLineSeriesOptions;
-    scatter?: AgScatterSeriesOptions;
-    area?: AgAreaSeriesOptions;
-    bar?: AgBarSeriesOptions;
-    histogram?: AgHistogramSeriesOptions;
-}
-
-export interface AgPolarAxesTheme {
-    // polar charts don't support axes at the moment
-    // (used by radar charts, for example)
-}
-
-export interface AgPolarSeriesTheme {
-    pie?: AgPieSeriesOptions;
-}
-SNIPPET
-) ?>
-
 <p>
-    The <code>defaults</code> object is similar in its structure to the chart's options with two exceptions:
-    the <code>series</code> and the <code>axes</code> configs, which in case of the a theme are not arrays
-    but objects that map a series or an axis type to a corresponding config. This is because a theme cannot provide
-    the actual series and axes for a chart to use, it can only provide default configs for the series and axes
-    set by the user, whatever they may be.
+    The <code>defaults</code> object is similar in its structure to the chart's options with two noteworthy exceptions:
+    <ul>
+        <li>the <code>series</code> config is an object that maps each series type to its config</li>
+        <li>the <code>axes</code> config is an object that maps each axis type to its config</li>
+    </ul>
 </p>
 
 <p>
-    Let's create our first theme now. We'll use the 'dark' theme as the base in order for our theme
+    Let's create our first theme now. We'll use the <code>'dark'</code> theme as the base in order for our theme
     to inherit the dark background and bright strokes but we'll substitute the pallete and change some
     fonts as well as a few other configs.
 </p>
