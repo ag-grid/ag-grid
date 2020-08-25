@@ -279,7 +279,7 @@ export const generalConfig = Object.freeze({
     },
     navigator: {
         meta: {
-            description: 'Configuration for the chart navigator. Not supported in pie charts.',
+            description: 'Configuration for the chart navigator. This config is only supported by cartesian charts.',
         },
         enabled: {
             default: false,

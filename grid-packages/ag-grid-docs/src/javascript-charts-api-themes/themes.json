@@ -24,6 +24,14 @@
       "meta": {
         "description": "Configuration from this object is merged into the defaults specified in the base theme."
       },
+      "cartesian": {
+        "type": "IChartConfig",
+        "description": "Specify defaults for cartesian charts (used for bar, column, line, area and scatter series).",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
       "bar": {
         "type": "IChartConfig",
         "description": "Specify defaults for bar/column charts.",
@@ -59,6 +67,14 @@
       "area": {
         "type": "IChartConfig",
         "description": "Specify defaults for line charts.",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "#chartConfig"
+        }
+      },
+      "polar": {
+        "type": "IChartConfig",
+        "description": "Specify defaults for polar charts (used for pie series).",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -400,7 +416,7 @@
     },
     "navigator": {
       "meta": {
-        "description": "Configuration for the chart navigator. Not supported in pie charts."
+        "description": "Configuration for the chart navigator. This config is only supported by cartesian charts."
       },
       "enabled": {
         "default": false,
