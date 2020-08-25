@@ -37,19 +37,47 @@ var gridOptions = {
                     position: 'bottom',
                 },
             },
-            cartesian: {
+            column: {
                 axes: {
                     category: {
                         label: {
                             rotation: 0
                         }
                     }
+                },
+                series: {
+                    tooltipRenderer: customTooltipRenderer
                 }
             }
         }
     },
     onFirstDataRendered: onFirstDataRendered,
 };
+
+function customTooltipRenderer(params) {
+    var titleStyle = params.color
+        ? ' style="color: white; background-color:' +
+        params.color +
+        '"'
+        : '';
+    var title = params.title
+        ? '<div class="ag-chart-tooltip-title"' +
+        titleStyle +
+        '>' +
+        params.title +
+        '</div>'
+        : '';
+    var value = params.datum[params.yKey]
+        .toString()
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
+    return (
+        title +
+        '<div class="ag-chart-tooltip-content" style="text-align: center">' +
+        value +
+        '</div>'
+    );
+}
 
 function onFirstDataRendered(params) {
     var createRangeChartParams = {
