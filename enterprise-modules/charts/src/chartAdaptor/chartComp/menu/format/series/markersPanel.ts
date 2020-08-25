@@ -6,7 +6,8 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgGroupComponentParams
+    AgGroupComponentParams,
+    AgSelect
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
@@ -17,6 +18,7 @@ export class MarkersPanel extends Component {
     public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesMarkersGroup">
+                <ag-select ref="seriesMarkerShapeSelect"></ag-select>
                 <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
@@ -24,6 +26,7 @@ export class MarkersPanel extends Component {
         </div>`;
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
+    @RefSelector('seriesMarkerShapeSelect') private seriesMarkerShapeSelect: AgSelect;
     @RefSelector('seriesMarkerSizeSlider') private seriesMarkerSizeSlider: AgSlider;
     @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
     @RefSelector('seriesMarkerStrokeWidthSlider') private seriesMarkerStrokeWidthSlider: AgSlider;
@@ -50,6 +53,42 @@ export class MarkersPanel extends Component {
     private initMarkers() {
         // scatter charts should always show markers
         const shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof ScatterChartProxy;
+
+        const seriesMarkerShapeOptions = [
+            {
+                value: 'square',
+                text: 'Square'
+            },
+            {
+                value: 'circle',
+                text: 'Circle'
+            },
+            {
+                value: 'cross',
+                text: 'Cross'
+            },
+            {
+                value: 'diamond',
+                text: 'Diamond'
+            },
+            {
+                value: 'plus',
+                text: 'Plus'
+            },
+            {
+                value: 'triangle',
+                text: 'Triangle'
+            },
+            {
+                value: 'heart',
+                text: 'Heart'
+            }
+        ];
+        this.seriesMarkerShapeSelect
+            .addOptions(seriesMarkerShapeOptions)
+            .setLabel(this.chartTranslator.translate('shape'))
+            .setValue(this.chartController.getChartProxy().getSeriesOption("marker.shape"))
+            .onValueChange(value => this.chartController.getChartProxy().setSeriesOption("marker.shape", value));
 
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
