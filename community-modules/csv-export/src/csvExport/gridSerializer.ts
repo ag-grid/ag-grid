@@ -77,7 +77,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
-    private firstGroupColumn?: Column;
+    private groupColumns?: Column[] = [];
 
     constructor(config: GridSerializingParams) {
         const {
@@ -96,7 +96,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public prepare(columnsToExport: Column[]): void {
-        this.firstGroupColumn = _.find(columnsToExport, col => !!col.getColDef().showRowGroup);
+        this.groupColumns = _.filter(columnsToExport, col => !!col.getColDef().showRowGroup);
     }
 
     abstract addCustomContent(customContent: T): void;
@@ -116,12 +116,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
         // we render the group summary text e.g. "-> Parent -> Child"...
+        const groupIndex = this.gridOptionsWrapper.isGroupMultiAutoColumn() ? node.rowGroupIndex : 0;
         const renderGroupSummaryCell =
             // on group rows
             node && node.group
             && (
-                // in the first group column if groups appear in regular grid cells
-                column === this.firstGroupColumn
+                // in the group column if groups appear in regular grid cells
+                index === groupIndex && this.groupColumns.indexOf(column) !== -1
                 // or the first cell in the row, if we're doing full width rows
                 || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode()))
             );
@@ -144,9 +145,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             });
-        } else {
-            return this.columnController.getDisplayNameForColumn(column, 'csv', true);
         }
+
+        return this.columnController.getDisplayNameForColumn(column, 'csv', true)        
     }
 
     private createValueForGroupNode(node: RowNode): string {
@@ -177,9 +178,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
             });
-        } else {
-            return value;
         }
+
+        return value;
     }
 }
 

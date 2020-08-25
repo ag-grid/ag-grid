@@ -162,9 +162,6 @@ export function reactive(...events: string[]) {
                 set: function (value: any) {
                     const oldValue = this[privateKey];
 
-                    // if (debug) {
-                    //     debugger;
-                    // }
                     if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
