@@ -55,12 +55,31 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     protected updateLabelRotation(categoryId: string, isHorizontalChart = false) {
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
+        const themeOverrides = this.chartProxyParams.getChartThemeOverrides();
+        // debugger;
+
+        const chartType = this.getStandaloneChartType();
+        let userThemeOverrideRotation = undefined;
+        const commonRotation = _.get(themeOverrides, 'defaults.common.axes.category.label.rotation', undefined);
+        const cartesianRotation = _.get(themeOverrides, 'defaults.cartesian.axes.category.label.rotation', undefined);
+        const chartTypeRotation = _.get(themeOverrides, `defaults.${chartType}.axes.category.label.rotation`, undefined);
+        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+            userThemeOverrideRotation = chartTypeRotation;
+        } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
+            userThemeOverrideRotation = cartesianRotation;
+        } else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
+            userThemeOverrideRotation = commonRotation;
+        }
 
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             const { label } = this.chartOptions[axisKey];
 
             if (label) {
-                labelRotation = label.rotation || 335;
+                if (userThemeOverrideRotation !== undefined) {
+                    labelRotation = userThemeOverrideRotation;
+                } else {
+                    labelRotation = label.rotation || 335;
+                }
             }
         }
 

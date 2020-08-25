@@ -51,7 +51,7 @@ SNIPPET
 
 <?= chart_example('Dark Theme', 'dark-theme', 'generated') ?>
 
-<h2>Overriding stock themes</h2>
+<h2>Making custom themes</h2>
 
 <p>
     One can create their own themes by providing an override for any of the stock themes.
@@ -72,9 +72,9 @@ SNIPPET
 </p>
 
 <p>
-    Let's create our first theme now. We'll use the <code>'dark'</code> theme as the base in order for our theme
-    to inherit the dark background and bright strokes but we'll substitute the pallete and change some
-    fonts as well as a few other configs.
+    For example, a custom theme that uses the <code>'dark'</code> theme as the base
+    to inherit the dark background and bright strokes but substitutes the pallete
+    and changes some fonts as well as a few other configs can look like this:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -110,15 +110,11 @@ var myTheme = {
 SNIPPET
 ) ?>
 
-<p>You can see how the above theme can be applied to a chart in the example below:</p>
+<p>The above theme is applied to the chart in the example below:</p>
 
 <h3>Example: Custom Theme</h3>
 
 <?= chart_example('Custom Theme', 'custom-theme', 'generated') ?>
-
-<h2>API Reference</h2>
-
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.theme') ?>
 
 <h2>Next Up</h2>
 
