@@ -26,7 +26,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    chartThemes: ['pastel', 'vivid', 'dark'],
     chartThemeOverrides: {
         defaults: {
             common: {
