@@ -41,10 +41,32 @@ import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 
+const CSS_CELL = 'ag-cell';
+const CSS_CELL_VALUE = 'ag-cell-value';
+const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
+
 const CSS_RANGE_TOP = 'ag-cell-range-top';
 const CSS_RANGE_RIGHT = 'ag-cell-range-right';
 const CSS_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_RANGE_LEFT = 'ag-cell-range-left';
+
+const CSS_CELL_FOCUS = 'ag-cell-focus';
+
+const CSS_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
+const CSS_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
+
+const CSS_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
+const CSS_INLINE_EDITING = 'ag-cell-inline-editing';
+const CSS_POPUP_EDITING = 'ag-cell-popup-editing';
+
+const CSS_RANGE_SELECTED = 'ag-cell-range-selected';
+const CSS_COLUMN_HOVER = 'ag-column-hover';
+const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
+
+const CSS_RANGE_CHART = 'ag-cell-range-chart';
+const CSS_RANGE_SINGLE_CELL = 'ag-cell-range-single-cell';
+const CSS_RANGE_CHART_CATEGORY = 'ag-cell-range-chart-category';
+const CSS_RANGE_HANDLE = 'ag-cell-range-handle';
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -197,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.usingWrapper) {
             wrapperStartTemplate =
                 `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                    <span ref="eCellValue" role="presentation" class="ag-cell-value" ${unselectable}>`;
+                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}" ${unselectable}>`;
             wrapperEndTemplate = '</span></div>';
         }
 
@@ -242,7 +264,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public onColumnHover(): void {
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        this.addOrRemoveCssClass('ag-column-hover', isHovered);
+        this.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
     public onCellChanged(event: CellChangedEvent): void {
@@ -337,31 +359,31 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private getInitialCssClasses(): string[] {
-        const cssClasses = ["ag-cell", "ag-cell-not-inline-editing"];
+        const cssClasses = [CSS_CELL, CSS_NOT_INLINE_EDITING];
 
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push('ag-cell-auto-height');
+            cssClasses.push(CSS_AUTO_HEIGHT);
         }
 
         const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
 
         if (doingFocusCss && this.cellFocused) {
             // otherwise the class depends on the focus state
-            cssClasses.push('ag-cell-focus');
+            cssClasses.push(CSS_CELL_FOCUS);
         }
 
         if (this.firstRightPinned) {
-            cssClasses.push('ag-cell-first-right-pinned');
+            cssClasses.push(CSS_FIRST_RIGHT_PINNED);
         }
 
         if (this.lastLeftPinned) {
-            cssClasses.push('ag-cell-last-left-pinned');
+            cssClasses.push(CSS_LAST_LEFT_PINNED);
         }
 
         if (this.beans.columnHoverService.isHovered(this.column)) {
-            cssClasses.push('ag-column-hover');
+            cssClasses.push(CSS_COLUMN_HOVER);
         }
 
         pushAll(cssClasses, this.preProcessClassesFromColDef());
@@ -370,11 +392,11 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
-            cssClasses.push('ag-cell-value');
+            cssClasses.push(CSS_CELL_VALUE);
         }
 
         if (this.column.getColDef().wrapText) {
-            cssClasses.push('ag-cell-wrap-text');
+            cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
 
         return cssClasses;
@@ -1256,9 +1278,9 @@ export class CellComp extends Component implements TooltipParentComp {
         const editingInline = this.editingCell && !this.cellEditorInPopup;
         const popupEditorShowing = this.editingCell && this.cellEditorInPopup;
 
-        this.addOrRemoveCssClass("ag-cell-inline-editing", editingInline);
-        this.addOrRemoveCssClass("ag-cell-not-inline-editing", !editingInline);
-        this.addOrRemoveCssClass("ag-cell-popup-editing", popupEditorShowing);
+        this.addOrRemoveCssClass(CSS_INLINE_EDITING, editingInline);
+        this.addOrRemoveCssClass(CSS_NOT_INLINE_EDITING, !editingInline);
+        this.addOrRemoveCssClass(CSS_POPUP_EDITING, popupEditorShowing);
         addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-inline-editing", editingInline);
         addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-not-inline-editing", !editingInline);
     }
@@ -1741,18 +1763,18 @@ export class CellComp extends Component implements TooltipParentComp {
             return classes;
         }
 
-        classes.push('ag-cell-range-selected');
+        classes.push(CSS_RANGE_SELECTED);
 
         if (this.hasChartRange) {
-            classes.push('ag-cell-range-chart');
+            classes.push(CSS_RANGE_CHART);
         }
 
         const count = Math.min(this.rangeCount, 4);
 
-        classes.push(`ag-cell-range-selected-${count}`);
+        classes.push(`${CSS_RANGE_SELECTED}-${count}`);
 
         if (this.isSingleCell()) {
-            classes.push('ag-cell-range-single-cell');
+            classes.push(CSS_RANGE_SINGLE_CELL);
         }
 
         if (this.rangeCount > 0) {
@@ -1765,7 +1787,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (!!this.selectionHandle) {
-            classes.push('ag-cell-range-handle');
+            classes.push(CSS_RANGE_HANDLE);
         }
 
         return classes;
@@ -1792,11 +1814,11 @@ export class CellComp extends Component implements TooltipParentComp {
         const element = this.getGui();
 
         if (rangeCount !== newRangeCount) {
-            this.addOrRemoveCssClass('ag-cell-range-selected', newRangeCount !== 0);
-            this.addOrRemoveCssClass('ag-cell-range-selected-1', newRangeCount === 1);
-            this.addOrRemoveCssClass('ag-cell-range-selected-2', newRangeCount === 2);
-            this.addOrRemoveCssClass('ag-cell-range-selected-3', newRangeCount === 3);
-            this.addOrRemoveCssClass('ag-cell-range-selected-4', newRangeCount >= 4);
+            this.addOrRemoveCssClass(CSS_RANGE_SELECTED, newRangeCount !== 0);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-1`, newRangeCount === 1);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-2`, newRangeCount === 2);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-3`, newRangeCount === 3);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-4`, newRangeCount >= 4);
             this.rangeCount = newRangeCount;
         }
 
@@ -1806,12 +1828,12 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (hasChartRange !== this.hasChartRange) {
             this.hasChartRange = hasChartRange;
-            this.addOrRemoveCssClass('ag-cell-range-chart', this.hasChartRange);
+            this.addOrRemoveCssClass(CSS_RANGE_CHART, this.hasChartRange);
         }
 
         this.updateRangeBorders();
 
-        this.addOrRemoveCssClass('ag-cell-range-single-cell', this.isSingleCell());
+        this.addOrRemoveCssClass(CSS_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.refreshHandle();
     }
@@ -1847,7 +1869,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
             const isCategoryCell = hasCategoryRange && rangeController.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
-            this.addOrRemoveCssClass('ag-cell-range-chart-category', isCategoryCell);
+            this.addOrRemoveCssClass(CSS_RANGE_CHART_CATEGORY, isCategoryCell);
             fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 
@@ -1895,7 +1917,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.addSelectionHandle();
         }
 
-        this.addOrRemoveCssClass('ag-cell-range-handle', !!this.selectionHandle);
+        this.addOrRemoveCssClass(CSS_RANGE_HANDLE, !!this.selectionHandle);
     }
 
     private updateRangeBorders(): void {
@@ -1906,10 +1928,10 @@ export class CellComp extends Component implements TooltipParentComp {
         const isBottom = !isSingleCell && rangeBorders.bottom;
         const isLeft = !isSingleCell && rangeBorders.left;
 
-        this.addOrRemoveCssClass('ag-cell-range-top', isTop);
-        this.addOrRemoveCssClass('ag-cell-range-right', isRight);
-        this.addOrRemoveCssClass('ag-cell-range-bottom', isBottom);
-        this.addOrRemoveCssClass('ag-cell-range-left', isLeft);
+        this.addOrRemoveCssClass(CSS_RANGE_TOP, isTop);
+        this.addOrRemoveCssClass(CSS_RANGE_RIGHT, isRight);
+        this.addOrRemoveCssClass(CSS_RANGE_BOTTOM, isBottom);
+        this.addOrRemoveCssClass(CSS_RANGE_LEFT, isLeft);
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -1917,7 +1939,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.addOrRemoveCssClass('ag-cell-first-right-pinned', firstRightPinned);
+            this.addOrRemoveCssClass(CSS_FIRST_RIGHT_PINNED, firstRightPinned);
         }
     }
 
@@ -1926,7 +1948,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.addOrRemoveCssClass('ag-cell-last-left-pinned', lastLeftPinned);
+            this.addOrRemoveCssClass(CSS_LAST_LEFT_PINNED, lastLeftPinned);
         }
     }
 
@@ -2029,7 +2051,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
 
             if (doingFocusCss) {
-                this.addOrRemoveCssClass('ag-cell-focus', cellFocused);
+                this.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
             }
 
             this.cellFocused = cellFocused;
