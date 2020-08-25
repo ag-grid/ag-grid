@@ -303,7 +303,7 @@ export {
     ProcessDataFromClipboardParams,
     ChartRef,
     ProcessChartOptionsParams,
-    ProcessAgChartOptionsParams
+    ProcessChartParams
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

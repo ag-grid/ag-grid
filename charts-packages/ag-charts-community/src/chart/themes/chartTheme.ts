@@ -125,8 +125,8 @@ export class ChartTheme {
         return {
             enabled: true,
             shape: 'circle',
-            size: 8,
-            minSize: 8,
+            size: 6,
+            minSize: 6,
             strokeWidth: 1,
             formatter: undefined
         };
@@ -388,9 +388,7 @@ export class ChartTheme {
                         length: 10,
                         strokeWidth: 2
                     },
-                    fills: [],
                     fillOpacity: 1,
-                    strokes: [],
                     strokeOpacity: 1,
                     strokeWidth: 1,
                     rotation: 0,
@@ -527,7 +525,7 @@ export class ChartTheme {
             case 'bar':
             case 'column':
             case 'area':
-                return seriesOptions.yKeys.length;
+                return seriesOptions.yKeys ? seriesOptions.yKeys.length : 0;
             case 'pie':
                 return Infinity;
             default:

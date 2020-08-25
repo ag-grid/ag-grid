@@ -1,22 +1,16 @@
 import {
     _,
+    AgBarSeriesOptions,
+    BarSeriesLabelOptions,
     BarSeriesOptions,
     CartesianChartOptions,
     ChartType,
-    AgBarSeriesOptions,
     DropShadowOptions,
-    BarSeriesLabelOptions,
-    HighlightOptions,
-    AgChartOptions
+    HighlightOptions
 } from "@ag-grid-community/core";
-import {
-    CartesianChart,
-    BarSeries,
-    AgChart, AgCartesianChartOptions, ChartTheme
-} from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { mergeDeep, deepMerge } from "../../object";
+import {AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, ChartTheme} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
@@ -90,14 +84,18 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
         }];
 
-        const params = {
-            type: this.chartType,
-            options: agChartOptions
-        };
+        agChartOptions.container = parentElement;
+        const chart = AgChart.create(agChartOptions);
 
-        // let opts = this.chartProxyParams.processAgChartOptions(params) as AgCartesianChartOptions;
-        // return AgChart.create(opts, parentElement);
-        return AgChart.create(agChartOptions, parentElement);
+        const processChartFunc = this.chartProxyParams.processChartFunc;
+        if (processChartFunc) {
+            processChartFunc({
+                type: ChartType.GroupedColumn,
+                chart: chart,
+                options: agChartOptions
+            });
+        }
+        return chart;
     }
 
     public update(params: UpdateChartParams): void {

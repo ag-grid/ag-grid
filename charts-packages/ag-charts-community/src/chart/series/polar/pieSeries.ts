@@ -16,7 +16,7 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { Chart, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     type: 'nodeClick';
@@ -450,7 +450,6 @@ export class PieSeries extends PolarSeries {
         }
 
         const {
-            title,
             fills,
             tooltipRenderer,
             angleName,
@@ -460,7 +459,7 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const text = title ? title.text : undefined;
+        const title = this.title && this.title.enabled ? this.title.text : undefined;
         const color = fills[nodeDatum.index % fills.length];
 
         if (tooltipRenderer) {
@@ -472,17 +471,14 @@ export class PieSeries extends PolarSeries {
                 radiusName,
                 labelKey,
                 labelName,
-                title: text,
+                title,
                 color,
             });
         } else {
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${text}</div>` : '';
             const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
             const value = nodeDatum.seriesDatum[angleKey];
             const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${label}${formattedValue}</div>`;
+            return toTooltipHtml(label + formattedValue, title, color);
         }
     }
 

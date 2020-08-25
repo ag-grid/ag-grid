@@ -44,6 +44,7 @@ export class ChartTranslator extends BeanStub {
         left: 'Left',
         labels: 'Labels',
         size: 'Size',
+        shape: 'Shape',
         minSize: 'Minimum Size',
         maxSize: 'Maximum Size',
         legend: 'Legend',

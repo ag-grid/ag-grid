@@ -411,9 +411,10 @@ export interface GridOptions {
 
     chartThemes?: (AgChartThemeName | AgChartTheme)[];
 
-    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
+    processChart?(params: ProcessChartParams): void;
 
-    processAgChartOptions?(params: ProcessAgChartOptionsParams): AgChartOptions;
+    /** @deprecated */
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
     /**********************************************************************************************************
      * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -604,9 +605,10 @@ export interface ProcessChartOptionsParams {
     options: ChartOptions<any>;
 }
 
-export interface ProcessAgChartOptionsParams {
+export interface ProcessChartParams {
     type: ChartType;
     options: AgChartOptions;
+    chart: any;
 }
 
 export interface GetContextMenuItemsParams {

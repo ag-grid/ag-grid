@@ -59,8 +59,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             const { label } = this.chartOptions[axisKey];
 
-            if (label && label.rotation) {
-                labelRotation = label.rotation;
+            if (label) {
+                labelRotation = label.rotation || 335;
             }
         }
 

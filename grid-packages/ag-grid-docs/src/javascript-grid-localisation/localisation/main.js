@@ -235,6 +235,7 @@ var gridOptions = {
         left: 'laLeft',
         labels: 'laLabels',
         size: 'laSize',
+        shape: 'laShape',
         minSize: 'laMinimum Size',
         maxSize: 'laMaximum Size',
         legend: 'laLegend',

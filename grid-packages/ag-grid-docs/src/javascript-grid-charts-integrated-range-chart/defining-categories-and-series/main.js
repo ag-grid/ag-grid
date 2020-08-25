@@ -26,10 +26,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    chartThemes: ['pastel', 'vivid', 'dark'],
     chartThemeOverrides: {
         defaults: {
-            cartesian: {
+            common: {
                 title: {
                     enabled: true,
                     text: 'Medals by Age',
@@ -37,6 +36,15 @@ var gridOptions = {
                 legend: {
                     position: 'bottom',
                 },
+            },
+            cartesian: {
+                axes: {
+                    category: {
+                        label: {
+                            rotation: 0
+                        }
+                    }
+                }
             }
         }
     },
