@@ -445,6 +445,7 @@ export const axisConfig = Object.freeze({
             min: -359,
             max: 359,
             unit: '&deg;',
+            description: 'Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.'
         },
         format: {
             type: 'string',

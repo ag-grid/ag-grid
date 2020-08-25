@@ -70,10 +70,10 @@ var gridOptions = {
                 },
                 series: {
                     label: {
-                        enabled: true,
-                        callout: {
-                            length: 900 //FIXME
-                        }
+                        enabled: true
+                    },
+                    callout: {
+                        length: 20
                     }
                 }
             }
