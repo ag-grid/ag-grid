@@ -44,6 +44,10 @@ export class Component extends BeanStub {
     // around as we create a new rowComp instance for the same row node).
     private compId = compIdSequence.next();
 
+    // to minimise DOM hits, we only apply CSS classes if they have changed. as addding a CSS class that is already
+    // there, or removing one that wasn't present, all takes CPU.
+    private cssClassStates: {[cssClass: string]: boolean } = {};
+
     constructor(template?: string) {
         super();
 
@@ -336,15 +340,27 @@ export class Component extends BeanStub {
     }
 
     public addCssClass(className: string): void {
-        addCssClass(this.eGui, className);
+        const updateNeeded = this.cssClassStates[className]!==true;
+        if (updateNeeded) {
+            addCssClass(this.eGui, className);
+            this.cssClassStates[className] = true;
+        }
     }
 
     public removeCssClass(className: string): void {
-        removeCssClass(this.eGui, className);
+        const updateNeeded = this.cssClassStates[className]!==false;
+        if (updateNeeded) {
+            removeCssClass(this.eGui, className);
+            this.cssClassStates[className] = false;
+        }
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        const updateNeeded = this.cssClassStates[className]!==addOrRemove;
+        if (updateNeeded) {
+            addOrRemoveCssClass(this.eGui, className, addOrRemove);
+            this.cssClassStates[className] = addOrRemove;
+        }
     }
 
     public getAttribute(key: string): string | null {
