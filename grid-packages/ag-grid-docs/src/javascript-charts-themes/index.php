@@ -116,6 +116,10 @@ SNIPPET
 
 <?= chart_example('Custom Theme', 'custom-theme', 'generated') ?>
 
+<h3>Example: Advanced Theme</h3>
+
+<?= chart_example('Advanced Theme', 'advanced-theme', 'generated') ?>
+
 <h2>Next Up</h2>
 
 <p>
