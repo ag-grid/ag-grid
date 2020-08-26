@@ -422,11 +422,13 @@ export class ChartTheme {
                     });
                 }
                 if (overridesDefaults.cartesian) {
+                    defaults.cartesian = deepMerge(defaults.cartesian, overridesDefaults.cartesian, mergeOptions);
                     ChartTheme.cartesianSeriesTypes.forEach(seriesType => {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.cartesian, mergeOptions);
                     });
                 }
                 if (overridesDefaults.polar) {
+                    defaults.polar = deepMerge(defaults.polar, overridesDefaults.polar, mergeOptions);
                     ChartTheme.polarSeriesTypes.forEach(seriesType => {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.polar, mergeOptions);
                     });
