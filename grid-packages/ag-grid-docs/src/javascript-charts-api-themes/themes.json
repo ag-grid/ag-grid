@@ -610,7 +610,7 @@
       }
     },
     "series": {
-      "description": "The default configuration for all series types supported by this type of chart.<br /><br />For cartesian charts it's:<br /><br /><ul><li><a href='#barSeriesConfig'>'bar'</a> series</li><li><a href='#histogramSeriesConfig'>'histogram'</a> series</li><li><a href='#lineSeriesConfig'>'line'</a> series</li><li><a href='#scatterSeriesConfig'>'scatter'</a> series</li><li><a href='#areaSeriesConfig'>'area'</a> series</li></ul>For polar charts:<br /><br/><ul><li><a href='#pieSeriesConfig'>'pie'</a> series</li></ul><br />This config should be an object where the keys are the types of series and the values are the series' default configs."
+      "description": "The default configuration for all series types supported by this type of chart.<br /><br />For cartesian charts it's:<br /><br /><ul><li><a href='#barSeriesConfig'>'bar'</a> series</li><li><a href='#barSeriesConfig'>'column'</a> series</li><li><a href='#histogramSeriesConfig'>'histogram'</a> series</li><li><a href='#lineSeriesConfig'>'line'</a> series</li><li><a href='#scatterSeriesConfig'>'scatter'</a> series</li><li><a href='#areaSeriesConfig'>'area'</a> series</li></ul>For polar charts:<br /><br/><ul><li><a href='#pieSeriesConfig'>'pie'</a> series</li></ul><br />This config should be an object where the keys are the types of series and the values are the series' default configs."
     }
   },
   "cartesianAxisConfig": {
