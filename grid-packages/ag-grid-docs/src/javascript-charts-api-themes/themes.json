@@ -618,16 +618,6 @@
       "displayName": "Axis Configuration",
       "description": "This is the configuration shared by all types of axis for cartesian charts."
     },
-    "position": {
-      "type": "string",
-      "description": "The position on the chart where the axis should be rendered.",
-      "options": [
-        "top",
-        "right",
-        "bottom",
-        "left"
-      ]
-    },
     "title": {
       "meta": {
         "description": "Configuration for the title shown next to the axis."
