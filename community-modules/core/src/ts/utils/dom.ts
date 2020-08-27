@@ -235,7 +235,7 @@ export function isRtlNegativeScroll(): boolean {
 
     template.scrollLeft = 1;
     rtlNegativeScroll = template.scrollLeft === 0;
-    template.remove();
+    document.body.removeChild(template);
 
     return rtlNegativeScroll;
 }
