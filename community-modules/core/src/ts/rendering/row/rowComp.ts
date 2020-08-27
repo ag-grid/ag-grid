@@ -572,6 +572,7 @@ export class RowComp extends Component {
         const expanded = this.rowNode.expanded;
 
         this.eAllRowContainers.forEach(eRow => {
+            addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
             addOrRemoveCssClass(eRow, 'ag-row-group-contracted', expandable && !expanded);
             setAriaExpanded(eRow, expandable && expanded);

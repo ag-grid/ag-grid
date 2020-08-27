@@ -55,12 +55,8 @@ export class RowCssClassCalculator {
             classes.push('ag-row-selected');
         }
 
-        if (params.rowNode.group) {
-            classes.push('ag-row-group');
-
-            if (params.rowNode.footer) {
-                classes.push('ag-row-footer');
-            }
+        if (params.rowNode.footer) {
+            classes.push('ag-row-footer');
         }
 
         classes.push('ag-row-level-' + params.rowLevel);
@@ -74,6 +70,7 @@ export class RowCssClassCalculator {
         }
 
         if (params.expandable) {
+            classes.push('ag-row-group');
             classes.push(params.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
