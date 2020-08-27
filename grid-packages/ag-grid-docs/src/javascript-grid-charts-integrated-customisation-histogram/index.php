@@ -123,4 +123,6 @@ interface HistogramTooltipRendererParams {
 
 <?= grid_example('Histogram Chart Customisations', 'custom-histogram-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Histogram Chart Customisations (Theme)', 'custom-histogram-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
