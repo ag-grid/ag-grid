@@ -112,4 +112,6 @@ interface BarTooltipRendererParams {
 
 <?= grid_example('Bar/Column Chart Customisations', 'custom-bar-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Bar/Column Chart Customisations (Theme)', 'custom-bar-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
