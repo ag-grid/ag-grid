@@ -17,7 +17,6 @@ var gridOptions = {
     rowDragManaged: true,
     enableMultiRowDragging: true,
     rowSelection: 'multiple',
-    rowDeselection: true,
     animateRows: true
 };
 

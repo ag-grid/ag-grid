@@ -152,8 +152,8 @@
             }
         },
         "rowDeselection": {
-            "default": false,
-            "description": "If <code>true</code> then rows will be deselected if you hold down <code>Ctrl</code> and click the row."
+            "default": true,
+            "description": "If <code>false</code> then rows will not be deselected if you hold down <code>Ctrl</code> and click the row or press <code>Space</code>."
         },
         "suppressRowClickSelection": {
             "default": false,

@@ -170,7 +170,6 @@ var gridOptions = {
         }
     },
     rowSelection: 'multiple',
-    rowDeselection: true,
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     cacheOverflowSize: 2,

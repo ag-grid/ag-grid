@@ -50,8 +50,7 @@ var gridOptions = {
     },
 
     columnDefs: columnDefs,
-    rowSelection: 'multiple',
-    rowDeselection: true,
+    rowSelection: 'multiple', 
     groupIncludeFooter: true,
     groupIncludeTotalFooter: true,
 

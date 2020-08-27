@@ -32,10 +32,11 @@ include '../documentation-main/documentation_header.php';
             This is useful for touch devices where <code>Ctrl</code> and <code>Shift</code> clicking is
             not an option.
         </li>
-        <li><code>rowDeselection</code>: Set to <code>true</code> to allow rows to be deselected if
-            you hold down <code>Ctrl</code> and click the row. By default the grid disallows deselection
-            of rows (i.e. once a row is selected, it remains selected until another row is selected
-            in its place).</li>
+        <li><code>rowDeselection</code>: Set to <code>false</code> to prevent rows from being deselected if
+            you hold down <code>Ctrl</code> and click the row (i.e. once a row is selected, it remains selected 
+            until another row is selected in its place). By default the grid allows deselection
+            of rows.
+        </li>
         <li><code>suppressRowClickSelection</code>: If <code>true</code>, rows won't be selected when clicked. Use, for
             example, when you want checkbox selection, and don't want to also select the row when the row
             is clicked.</li>

@@ -24,7 +24,6 @@ var gridOptions = {
     },
   },
   rowSelection: 'multiple',
-  rowDeselection: true,
   groupSelectsChildren: true,
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,

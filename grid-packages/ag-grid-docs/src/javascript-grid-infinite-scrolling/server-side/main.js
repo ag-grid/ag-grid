@@ -163,7 +163,6 @@ var gridOptions = {
         floatingFilter: true,
     },
     rowSelection: 'multiple',
-    rowDeselection: true,
     rowModelType: 'infinite',
     paginationPageSize: 100,
     cacheOverflowSize: 2,

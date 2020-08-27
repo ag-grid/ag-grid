@@ -288,7 +288,7 @@ export class GridOptionsWrapper {
     }
 
     public isRowDeselection() {
-        return isTrue(this.gridOptions.rowDeselection);
+        return this.gridOptions.rowDeselection !== false;
     }
 
     public isRowSelectionMulti() {

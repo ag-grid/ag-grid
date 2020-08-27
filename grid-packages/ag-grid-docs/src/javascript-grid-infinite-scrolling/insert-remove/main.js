@@ -156,7 +156,6 @@ var gridOptions = {
         resizable: true,
     },
     rowSelection: 'multiple',
-    rowDeselection: true,
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     datasource: datasource,

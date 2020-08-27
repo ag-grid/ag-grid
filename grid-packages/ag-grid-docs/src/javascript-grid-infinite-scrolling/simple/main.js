@@ -35,7 +35,6 @@ var gridOptions = {
     },
     rowBuffer: 0,
     rowSelection: 'multiple',
-    rowDeselection: true,
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100
