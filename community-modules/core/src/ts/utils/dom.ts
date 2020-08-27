@@ -2,6 +2,8 @@ import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
 
+let rtlNegativeScroll: boolean;
+
 export function addCssClass(element: HTMLElement, className: string) {
     if (!element || !className || className.length === 0) { return; }
 
@@ -210,6 +212,34 @@ export function getAbsoluteWidth(el: HTMLElement): number {
     return Math.ceil(el.offsetWidth + marginWidth);
 }
 
+export function isRtlNegativeScroll(): boolean {
+    if (typeof rtlNegativeScroll === "boolean") {
+        return rtlNegativeScroll;
+    }
+
+    const template = document.createElement('div');
+    template.style.direction = 'rtl';
+    template.style.width = '1px';
+    template.style.height = '1px';
+    template.style.position = 'fixed';
+    template.style.top = '0px';
+    template.style.overflow = 'hidden';
+    template.dir = 'rtl';
+    template.innerHTML = /* html */
+        `<div style="width: 2px">
+            <span style="display: inline-block; width: 1px"></span>
+            <span style="display: inline-block; width: 1px"></span>
+        </div>`;
+
+    document.body.appendChild(template);
+
+    template.scrollLeft = 1;
+    rtlNegativeScroll = template.scrollLeft === 0;
+    template.remove();
+
+    return rtlNegativeScroll;
+}
+
 export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
     let scrollLeft = element.scrollLeft;
 
@@ -217,8 +247,7 @@ export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
 
-        // Get Chrome to return the same value as well
-        if (isBrowserChrome()) {
+        if (isBrowserChrome() && !isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
         }
     }
@@ -229,15 +258,12 @@ export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
 export function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
         // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-        if (isBrowserSafari() || isBrowserChrome()) {
+        if (isRtlNegativeScroll()) {
+            value *= -1;
+        } else if (isBrowserSafari() || isBrowserChrome()) {
             value = element.scrollWidth - element.clientWidth - value;
         }
-        // Firefox uses negative numbers when doing RTL scrolling
-        if (isBrowserFirefox()) {
-            value *= -1;
-        }
     }
-
     element.scrollLeft = value;
 }
 
