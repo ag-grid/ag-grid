@@ -6,11 +6,11 @@ import {
     HighlightOptions,
     ScatterSeriesOptions
 } from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries} from "ag-charts-community";
-import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
-import {ChartDataModel} from "../../chartDataModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from "../../typeChecker";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries } from "ag-charts-community";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartDataModel } from "../../chartDataModel";
+import { CartesianChartProxy } from "./cartesianChartProxy";
+import { isDate } from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -32,14 +32,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
         options.seriesDefaults = {
-            paired: false,
+            paired: seriesDefaults.paired,
             tooltip: {
                 enabled: seriesDefaults.tooltipEnabled,
                 renderer: seriesDefaults.tooltipRenderer
             },
             fill: {
-                colors: [],
-                opacity: 1
+                colors: [seriesDefaults.fill],
+                opacity: seriesDefaults.fillOpacity,
             },
             stroke: {
                 colors: [seriesDefaults.stroke],

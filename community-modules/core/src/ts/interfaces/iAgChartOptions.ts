@@ -335,7 +335,7 @@ export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRende
 interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
     sizeKey?: string;
     sizeName?: string;
-    
+
     labelKey?: string;
     labelName?: string;
 }
@@ -393,6 +393,7 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     xName?: string;
     yName?: string;
+    paired?: boolean;
     title?: string;
     fill?: string;
     stroke?: string;
@@ -427,7 +428,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
 }
 
 interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: number; }) => string;
 }
 
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
@@ -453,7 +454,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
 }
 
 interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: number; }) => string;
 }
 
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
