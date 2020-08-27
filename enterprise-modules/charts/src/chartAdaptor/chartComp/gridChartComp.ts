@@ -79,6 +79,7 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
+    private chartThemeIndex: number;
 
     constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
@@ -164,6 +165,7 @@ export class GridChartComp extends Component {
 
         // set local state used to detect when chart type changes
         this.chartType = chartType;
+        this.chartThemeIndex = this.model.getChartThemeIndex();
         this.chartProxy = this.createChartProxy(chartProxyParams);
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
@@ -277,18 +279,16 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        //FIXME: unnecessarily recreating charts
-
-        // if (this.shouldRecreateChart()) {
+        if (this.shouldRecreateChart()) {
             this.createChart();
-        // }
+        }
 
         this.updateChart();
     }
 
     private shouldRecreateChart(): boolean {
         return this.chartType !== this.model.getChartType()
-            || this.getChartThemeIndex() !== this.model.getChartThemeIndex();
+            || this.chartThemeIndex !== this.model.getChartThemeIndex();
     }
 
     public getCurrentChartType(): ChartType {

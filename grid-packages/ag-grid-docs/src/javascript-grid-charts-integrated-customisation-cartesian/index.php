@@ -130,6 +130,8 @@ interface NavigatorHandleOptions {
 
 <?= grid_example('Cartesian Chart Customisations', 'custom-cartesian-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Cartesian Chart Customisations (Theme)', 'custom-cartesian-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <h2>Axis Types</h2>
 
 <p>

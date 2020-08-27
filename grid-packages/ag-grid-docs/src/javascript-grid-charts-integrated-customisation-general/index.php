@@ -103,7 +103,7 @@ type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle
     demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= grid_example('General Chart Customisations', 'custom-general', 'generated', ['enterprise' => true]) ?>#
+<?= grid_example('General Chart Customisations', 'custom-general', 'generated', ['enterprise' => true]) ?>
 
 <?= grid_example('General Chart Customisations (Theme)', 'custom-general-theme', 'generated', ['enterprise' => true]) ?>
 
