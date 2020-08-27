@@ -331,6 +331,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
 
+    // This property can be reported as Critical Issues by some security scans.
+    // We are aware of this, however As 'templateUrl' is a legacy property used by angular 1.x users
+    // we don't want to santise it at this late stage due to the potential impact to existing users.
+    // Note that if this property is not used by application developers it won't pose a security risk
+    // in an application.
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
 
