@@ -120,4 +120,6 @@ interface PieTooltipRendererParams {
 
 <?= grid_example('Pie/Doughnut Chart Customisations', 'custom-pie-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Pie/Doughnut Chart Customisations (Theme)', 'custom-pie-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
