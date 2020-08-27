@@ -869,10 +869,18 @@ export class RowComp extends Component {
         const multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
         const shiftKeyPressed = mouseEvent.shiftKey;
 
+        // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
+        // handle this is broken. to observe, change the logic below and allow groups to be selected.
+        // you will see the group gets selected, then all children get selected, then the grid unselects
+        // the children (as the default behaviour when clicking is to unselect other rows) which results
+        // in the group getting unselected (as all children are unselected). the correct thing would be
+        // to change this, so that children of the selected group are not then subsequenly un-selected.
+        const groupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+
         if (
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
             // so return if it's a group row
-            this.rowNode.group ||
+            (groupSelectsChildren && this.rowNode.group) ||
             // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
             // and we click it, the selection should not change (ie any currently selected row should stay selected)
             !this.rowNode.selectable ||
