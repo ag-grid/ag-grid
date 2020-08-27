@@ -113,4 +113,6 @@ interface AreaTooltipRendererParams {
 
 <?= grid_example('Area Chart Customisations', 'custom-area-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Area Chart Customisations', 'custom-area-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
