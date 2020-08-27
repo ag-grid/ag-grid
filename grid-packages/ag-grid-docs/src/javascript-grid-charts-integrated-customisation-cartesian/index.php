@@ -19,6 +19,7 @@ include '../documentation-main/documentation_header.php';
 interface CartesianChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
+    navigator: NavigatorOptions;
 }
 
 interface AxisOptions {
@@ -90,6 +91,33 @@ interface GridStyle {
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
     // If undefined, a solid line will be used.
     lineDash?: number[]; // default: [4, 2]
+}
+
+interface NavigatorOptions {
+    enabled: boolean; // default: false
+    height: number; // default: 30
+    min: number; // default: 0
+    max: number; // default: 1
+    mask: NavigatorMaskOptions;
+    minHandle: NavigatorHandleOptions;
+    maxHandle: NavigatorHandleOptions;
+}
+
+interface NavigatorMaskOptions {
+    fill: string; // default: #999999
+    stroke: string; // default: #999999
+    strokeWidth: number; // default: 1
+    fillOpacity: number; // default: 0.2
+}
+
+interface NavigatorHandleOptions {
+    fill: string; // default: #f2f2f2
+    stroke: string; // default: #999999
+    strokeWidth: number; // default: 1
+    width: number; // default: 8
+    height: number; // default: 16
+    gripLineGap: number; // default: 2
+    gripLineLength: number; // default: 8
 }
 </snippet>
 

@@ -132,6 +132,17 @@ function processChartOptions(params) {
         return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
     };
 
+    options.yAxis.gridStyle = [
+        {
+            stroke: '#80808044',
+            lineDash: undefined
+        },
+        {
+            stroke: '#80808044',
+            lineDash: [6, 3]
+        }
+    ];
+
     options.navigator.enabled = true;
     options.navigator.height = 9;
     options.navigator.min = 0.2;
@@ -157,17 +168,6 @@ function processChartOptions(params) {
     options.navigator.maxHandle.height = 22;
     options.navigator.maxHandle.gripLineGap = 4;
     options.navigator.maxHandle.gripLineLength = 12;
-
-    options.yAxis.gridStyle = [
-        {
-            stroke: '#80808044',
-            lineDash: undefined
-        },
-        {
-            stroke: '#80808044',
-            lineDash: [6, 3]
-        }
-    ];
 
     return options;
 }

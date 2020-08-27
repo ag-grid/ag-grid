@@ -41,60 +41,61 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    processChartOptions: processChartOptions,
+    chartThemeOverrides: {
+        defaults: {
+            common: {
+                padding: {
+                    top: 20,
+                    right: 30,
+                    bottom: 10,
+                    left: 2,
+                },
+                background: {
+                    fill: '#e5e5e5'
+                },
+                title: {
+                    enabled: true,
+                    text: 'Precious Metals Production',
+                    fontStyle: 'italic',
+                    fontWeight: '600',
+                    fontSize: 18,
+                    fontFamily: 'Impact, sans-serif',
+                    color: '#414182',
+                },
+                subtitle: {
+                    enabled: true,
+                    text: 'by country',
+                    fontSize: 14,
+                    fontFamily: 'Monaco, monospace',
+                    color: 'rgb(100, 100, 100)',
+                },
+                legend: {
+                    enabled: true,
+                    position: 'left',
+                    padding: 20,
+                    item: {
+                        label: {
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fontSize: 18,
+                            fontFamily: 'Palatino, serif',
+                            color: '#555',
+                        },
+                        marker: {
+                            type: 'diamond',
+                            size: 10,
+                            padding: 10,
+                            strokeWidth: 2,
+                        },
+                        paddingX: 120,
+                        paddingY: 20,
+                    }
+                },
+                tooltipClass: 'my-tooltip-class',
+            }
+        }
+    }
 };
-
-function processChartOptions(params) {
-    var options = params.options;
-
-    console.log('chart options:', options);
-
-    // options.width = 500;
-    // options.height = 400;
-
-    options.padding.top = 20;
-    options.padding.right = 30;
-    options.padding.bottom = 10;
-    options.padding.left = 2;
-
-    options.background.fill = '#e5e5e5';
-
-    options.title.enabled = true;
-    options.title.text = 'Precious Metals Production';
-    options.title.fontStyle = 'italic';
-    options.title.fontWeight = '600';
-    options.title.fontSize = 18;
-    options.title.fontFamily = 'Impact, sans-serif';
-    options.title.color = '#414182';
-
-    options.subtitle.enabled = true;
-    options.subtitle.text = 'by country';
-    options.subtitle.fontSize = 14;
-    options.subtitle.fontFamily = 'Monaco, monospace';
-    options.subtitle.color = 'rgb(100, 100, 100)';
-
-    options.legend.enabled = true;
-    options.legend.position = 'left';
-    options.legend.padding = 20;
-
-    options.legend.item.label.fontStyle = 'italic';
-    options.legend.item.label.fontWeight = 'bold';
-    options.legend.item.label.fontSize = 18;
-    options.legend.item.label.fontFamily = 'Palatino, serif';
-    options.legend.item.label.color = '#555';
-
-    options.legend.item.marker.type = 'diamond';
-    options.legend.item.marker.size = 10;
-    options.legend.item.marker.padding = 10;
-    options.legend.item.marker.strokeWidth = 2;
-
-    options.legend.item.paddingX = 120;
-    options.legend.item.paddingY = 20;
-
-    options.tooltipClass = 'my-tooltip-class';
-
-    return options;
-}
 
 function onFirstDataRendered(params) {
     var cellRange = {
