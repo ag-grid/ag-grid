@@ -105,4 +105,6 @@ interface LineTooltipRendererParams {
 
 <?= grid_example('Line Chart Customisations', 'custom-line-chart', 'generated', ['enterprise' => true]) ?>
 
+<?= grid_example('Line Chart Customisations (Theme)', 'custom-line-chart-theme', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
