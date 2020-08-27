@@ -93,33 +93,6 @@ interface LegendMarkerOptions {
     strokeWidth: number; // default: 1
 }
 
-interface NavigatorOptions {
-    enabled: boolean; // default: false
-    height: number; // default: 30
-    min: number; // default: 0
-    max: number; // default: 1
-    mask: NavigatorMaskOptions;
-    minHandle: NavigatorHandleOptions;
-    maxHandle: NavigatorHandleOptions;
-}
-
-interface NavigatorMaskOptions {
-    fill: string; // default: #999999
-    stroke: string; // default: #999999
-    strokeWidth: number; // default: 1
-    fillOpacity: number; // default: 0.2
-}
-
-interface NavigatorHandleOptions {
-    fill: string; // default: #f2f2f2
-    stroke: string; // default: #999999
-    strokeWidth: number; // default: 1
-    width: number; // default: 8
-    height: number; // default: 16
-    gripLineGap: number; // default: 2
-    gripLineLength: number; // default: 8
-}
-
 type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 </snippet>
 
@@ -130,6 +103,8 @@ type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle
     demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= grid_example('General Chart Customisations', 'custom-general', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('General Chart Customisations', 'custom-general', 'generated', ['enterprise' => true]) ?>#
+
+<?= grid_example('General Chart Customisations (Theme)', 'custom-general-theme', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
