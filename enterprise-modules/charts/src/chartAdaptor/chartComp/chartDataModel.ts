@@ -3,6 +3,7 @@ import {
     Autowired,
     BeanStub,
     CellRange,
+    CellRangeParams,
     CellRangeType,
     ChartType,
     Column,
@@ -13,11 +14,10 @@ import {
     PostConstruct,
     RowNode,
     RowRenderer,
-    ValueService,
-    CellRangeParams
+    ValueService
 } from "@ag-grid-community/core";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { ChartTranslator } from './chartTranslator';
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
+import {ChartTranslator} from './chartTranslator';
 
 export interface ColState {
     column?: Column;

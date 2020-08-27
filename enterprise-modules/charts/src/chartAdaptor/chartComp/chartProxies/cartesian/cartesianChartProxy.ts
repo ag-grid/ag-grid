@@ -1,15 +1,18 @@
-import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions, ChartType } from "@ag-grid-community/core";
+import {ChartProxy, ChartProxyParams} from "../chartProxy";
+import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
 import {
-    CartesianChart, CategoryAxis,
+    CartesianChart,
+    CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
+    ChartTheme,
     find,
     GroupedCategoryAxis,
-    GroupedCategoryChart, NumberAxis, TimeAxis, ChartTheme
+    GroupedCategoryChart,
+    NumberAxis,
+    TimeAxis
 } from "ag-charts-community";
-import { ChartDataModel } from "../../chartDataModel";
-import { deepMerge, mergeDeep } from "../../object";
+import {ChartDataModel} from "../../chartDataModel";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
@@ -155,7 +158,6 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             return;
         }
 
-        // const axisClass = ChartBuilder.toAxisClass(baseAxisType);
         const axisClass = this.axisTypeToClassMap[baseAxisType];
 
         if (baseAxis instanceof axisClass) { return; }

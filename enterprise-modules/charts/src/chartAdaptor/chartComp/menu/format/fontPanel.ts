@@ -2,16 +2,16 @@ import {
     _,
     AgColorPicker,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSelect,
     Autowired,
     Component,
     FontStyle,
     FontWeight,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartTranslator} from "../../chartTranslator";
 
 export type Font = {
     family?: string;

@@ -1,6 +1,7 @@
 import {
     _,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     AgToggleButton,
     Autowired,
@@ -9,13 +10,12 @@ import {
     FontWeight,
     PostConstruct,
     RefSelector,
-    AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ShadowPanel } from "./shadowPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
 
 export class BarSeriesPanel extends Component {
 

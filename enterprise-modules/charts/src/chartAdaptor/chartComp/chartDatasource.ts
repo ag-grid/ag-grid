@@ -13,7 +13,7 @@ import {
     RowNode,
     ValueService
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
+import {ChartDataModel, ColState} from "./chartDataModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];

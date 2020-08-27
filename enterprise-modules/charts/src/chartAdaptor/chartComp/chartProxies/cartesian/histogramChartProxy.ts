@@ -1,13 +1,14 @@
-import { _, HistogramSeriesOptions, CartesianChartOptions, HighlightOptions, DropShadowOptions, AgHistogramSeriesOptions, BarSeriesLabelOptions } from "@ag-grid-community/core";
 import {
-    AgCartesianChartOptions,
-    AgChart,
-    CartesianChart,
-    HistogramSeries,
-    ChartTheme
-} from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
+    AgHistogramSeriesOptions,
+    BarSeriesLabelOptions,
+    CartesianChartOptions,
+    DropShadowOptions,
+    HighlightOptions,
+    HistogramSeriesOptions
+} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, HistogramSeries} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
 

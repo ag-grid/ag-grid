@@ -1,8 +1,8 @@
-import { CartesianChartOptions, LineSeriesOptions, AgLineSeriesOptions, DropShadowOptions, HighlightOptions } from "@ag-grid-community/core";
-import { CartesianChart, LineSeries, AgChart, AgCartesianChartOptions, ChartTheme } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { isDate } from '../../typeChecker';
+import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 

@@ -1,7 +1,15 @@
-import { AreaSeriesOptions, CartesianChartOptions, ChartType, DropShadowOptions, AgAreaSeriesOptions, AgCartesianChartOptions, HighlightOptions } from "@ag-grid-community/core";
-import { AreaSeries, CartesianChart, AgChart, ChartTheme } from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
+import {
+    AgAreaSeriesOptions,
+    AgCartesianChartOptions,
+    AreaSeriesOptions,
+    CartesianChartOptions,
+    ChartType,
+    DropShadowOptions,
+    HighlightOptions
+} from "@ag-grid-community/core";
+import {AgChart, AreaSeries, CartesianChart, ChartTheme} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 

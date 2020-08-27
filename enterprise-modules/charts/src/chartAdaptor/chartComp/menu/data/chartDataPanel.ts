@@ -17,9 +17,9 @@ import {
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartDataModel";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartDataModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;

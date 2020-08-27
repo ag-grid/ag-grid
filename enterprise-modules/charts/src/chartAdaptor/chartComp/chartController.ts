@@ -1,5 +1,8 @@
 import {
-    _, AgChartTheme, AgChartThemeName, AgChartThemePalette,
+    _,
+    AgChartTheme,
+    AgChartThemeName,
+    AgChartThemePalette,
     AgEvent,
     Autowired,
     BeanStub,
@@ -16,7 +19,7 @@ import {
 } from "@ag-grid-community/core";
 import {ChartDataModel, ColState} from "./chartDataModel";
 import {ChartProxy} from "./chartProxies/chartProxy";
-import {ChartTheme, getChartTheme} from "ag-charts-community";
+import {getChartTheme} from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

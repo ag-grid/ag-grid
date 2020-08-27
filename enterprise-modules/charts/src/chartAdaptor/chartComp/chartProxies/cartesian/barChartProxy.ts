@@ -119,12 +119,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
-        const isColumnChart = this.isColumnChart();
         const fontOptions = this.getDefaultFontOptions();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
-
-        // options.xAxis.label.rotation = isColumnChart ? 335 : 0;
-        // options.yAxis.label.rotation = isColumnChart ? 0 : 335;
 
         options.seriesDefaults = {
             ...options.seriesDefaults,

@@ -1,9 +1,16 @@
-import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions, AgScatterSeriesOptions, HighlightOptions } from "@ag-grid-community/core";
-import { CartesianChart, ScatterSeries, AgChart, AgCartesianChartOptions, ChartTheme } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
-import { ChartDataModel } from "../../chartDataModel";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { isDate } from "../../typeChecker";
+import {
+    _,
+    AgScatterSeriesOptions,
+    CartesianChartOptions,
+    ChartType,
+    HighlightOptions,
+    ScatterSeriesOptions
+} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries} from "ag-charts-community";
+import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
+import {ChartDataModel} from "../../chartDataModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;

@@ -1,7 +1,7 @@
-import { ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { ICoordinate } from "./miniArea";
-import { LinearScale, BandScale, Path } from "ag-charts-community";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import {ICoordinate} from "./miniArea";
+import {BandScale, LinearScale, Path} from "ag-charts-community";
 
 export class MiniStackedArea extends MiniChartWithAxes {
 

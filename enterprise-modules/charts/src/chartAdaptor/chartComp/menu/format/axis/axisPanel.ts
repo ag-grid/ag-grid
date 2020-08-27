@@ -3,6 +3,7 @@ import {
     AgAngleSelect,
     AgColorPicker,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSelect,
     AgSlider,
     Autowired,
@@ -12,14 +13,13 @@ import {
     FontWeight,
     PostConstruct,
     RefSelector,
-    AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { AxisTicksPanel } from "./axisTicksPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import {ChartController} from "../../../chartController";
+import {AxisTicksPanel} from "./axisTicksPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {AgCartesianAxisOptions, ChartAxisPosition, find} from "ag-charts-community";
+import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 

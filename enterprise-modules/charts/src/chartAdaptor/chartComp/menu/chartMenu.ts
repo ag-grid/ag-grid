@@ -11,8 +11,8 @@ import {
     Promise
 } from "@ag-grid-community/core";
 
-import { TabbedChartMenu } from "./tabbedChartMenu";
-import { ChartController } from "../chartController";
+import {TabbedChartMenu} from "./tabbedChartMenu";
+import {ChartController} from "../chartController";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
