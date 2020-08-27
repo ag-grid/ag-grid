@@ -573,9 +573,6 @@
         "blockLoadDebounceMillis": {
             "description": "Prevents blocks loading until scrolling has stopped for the specified number of milliseconds. When row count (i.e. lastRowIndex) is known, setting this property will enable skipping over blocks when scrolling."
         },
-        "infiniteInitialRowCount": {
-            "description": "How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes and you want the scrollbar to cover many blocks before it has to start re-adjusting for the loading of additional data."
-        },
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
         },
