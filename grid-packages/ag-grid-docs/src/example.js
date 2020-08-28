@@ -194,7 +194,7 @@ var gridOptions = {
     // singleClickEdit: true,
     // suppressClickEdit: true,
     enterMovesDownAfterEdit: true,
-    enterMovesDown: true,
+    // enterMovesDown: true,
     // domLayout: 'autoHeight',
     // domLayout: 'forPrint',
     // groupUseEntireRow: true, //one of [true, false]
