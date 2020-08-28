@@ -108,4 +108,16 @@ $(function() {
 
     var imgs = document.querySelectorAll("#feature-roadshow img, .lazy-load");
     new lazyload((imgs && imgs.length) ? imgs : [], {});
+
+    $(window).on('hashchange', function() {
+        var hash = window.location.hash;
+        var top = 0;
+
+        if (hash) {
+            var $element = $(hash.replace(/\./g, '\\.'));
+            top = $element.position().top;
+        }
+
+        $('.page-content').scrollTop(top);
+    });
 });
