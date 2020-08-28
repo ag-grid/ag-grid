@@ -364,11 +364,14 @@ export class ColumnFactory extends BeanStub {
 
 
         // merge properties from default column definitions
-        _.mergeDeep(colDefMerged, this.gridOptionsWrapper.getDefaultColDef(), true, COL_DEF_PARAM_OBJECTS);
+        const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
+        _.mergeDeep(colDefMerged, defaultColDef, true, COL_DEF_PARAM_OBJECTS);
 
         // merge properties from column type properties
-        if (colDef.type) {
-            this.assignColumnTypes(colDef, colDefMerged);
+        if (colDef.type || defaultColDef.type) {
+            // if type of both colDef and defaultColDef, then colDef gets preference
+            const columnType = colDef.type ? colDef.type : defaultColDef.type;
+            this.assignColumnTypes(columnType, colDefMerged);
         }
 
         // merge properties from column definitions
@@ -377,18 +380,18 @@ export class ColumnFactory extends BeanStub {
         return colDefMerged;
     }
 
-    private assignColumnTypes(colDef: ColDef, colDefMerged: ColDef) {
+    private assignColumnTypes(type: string | string[], colDefMerged: ColDef) {
         let typeKeys: string[];
 
-        if (colDef.type instanceof Array) {
-            const invalidArray = colDef.type.some(a => typeof a !== 'string');
+        if (type instanceof Array) {
+            const invalidArray = type.some(a => typeof a !== 'string');
             if (invalidArray) {
                 console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
             } else {
-                typeKeys = colDef.type;
+                typeKeys = type;
             }
-        } else if (typeof colDef.type === 'string') {
-            typeKeys = colDef.type.split(',');
+        } else if (typeof type === 'string') {
+            typeKeys = type.split(',');
         } else {
             console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
             return;
