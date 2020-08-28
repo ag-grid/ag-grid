@@ -37,123 +37,126 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    chartThemeOverrides: {
-        defaults: {
-            cartesian: {
-                axes: {
-                    number: {
-                        line: {
-                            width: 2,
-                            color: 'gray',
-                        },
-                        tick: {
-                            width: 2,
-                            size: 10,
-                            color: 'gray',
-                        },
-                        label: {
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 15,
-                            fontFamily: 'Arial, sans-serif',
-                            color: '#de7b73',
-                            padding: 10,
-                            rotation: 20,
-                            formatter: function(params) {
-                                return params.value.toString().toUpperCase();
+    customChartThemes: {
+        myCustomTheme: {
+            defaults: {
+                cartesian: {
+                    axes: {
+                        number: {
+                            line: {
+                                width: 2,
+                                color: 'gray',
+                            },
+                            tick: {
+                                width: 2,
+                                size: 10,
+                                color: 'gray',
+                            },
+                            label: {
+                                fontStyle: 'italic',
+                                fontWeight: 'bold',
+                                fontSize: 15,
+                                fontFamily: 'Arial, sans-serif',
+                                color: '#de7b73',
+                                padding: 10,
+                                rotation: 20,
+                                formatter: function(params) {
+                                    return params.value.toString().toUpperCase();
+                                },
+                            },
+                            gridStyle: [
+                                {
+                                    stroke: 'rgba(94,100,178,0.5)'
+                                }
+                            ],
+                            title: {
+                                enabled: true,
+                                text: 'Tonnes',
+                                fontStyle: 'italic',
+                                fontWeight: 'bold',
+                                fontSize: 16,
+                                fontFamily: 'Arial, sans-serif',
+                                color: 'blue',
                             },
                         },
-                        gridStyle: [
-                            {
-                                stroke: 'rgba(94,100,178,0.5)'
-                            }
-                        ],
-                        title: {
-                            enabled: true,
-                            text: 'Tonnes',
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 16,
-                            fontFamily: 'Arial, sans-serif',
-                            color: 'blue',
-                        },
-                    },
-                    category: {
-                        line: {
-                            width: 2,
-                            color: 'blue',
-                        },
-                        tick: {
-                            width: 2,
-                            size: 10,
-                            color: 'blue',
-                        },
-                        label: {
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 15,
-                            fontFamily: 'Arial, sans-serif',
-                            color: '#de7b73',
-                            padding: 10,
-                            rotation: -20,
-                            formatter: function(params) {
-                                var value = String(params.value);
-                                return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
-                            }
-                        },
-                        gridStyle: [
-                            {
-                                stroke: '#80808044',
-                                lineDash: undefined
+                        category: {
+                            line: {
+                                width: 2,
+                                color: 'blue',
                             },
-                            {
-                                stroke: '#80808044',
-                                lineDash: [6, 3]
-                            }
-                        ],
-                        title: {
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 16,
-                            fontFamily: 'Arial, sans-serif',
-                            color: 'blue',
+                            tick: {
+                                width: 2,
+                                size: 10,
+                                color: 'blue',
+                            },
+                            label: {
+                                fontStyle: 'italic',
+                                fontWeight: 'bold',
+                                fontSize: 15,
+                                fontFamily: 'Arial, sans-serif',
+                                color: '#de7b73',
+                                padding: 10,
+                                rotation: -20,
+                                formatter: function(params) {
+                                    var value = String(params.value);
+                                    return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
+                                }
+                            },
+                            gridStyle: [
+                                {
+                                    stroke: '#80808044',
+                                    lineDash: undefined
+                                },
+                                {
+                                    stroke: '#80808044',
+                                    lineDash: [6, 3]
+                                }
+                            ],
+                            title: {
+                                fontStyle: 'italic',
+                                fontWeight: 'bold',
+                                fontSize: 16,
+                                fontFamily: 'Arial, sans-serif',
+                                color: 'blue',
+                            },
                         },
                     },
-                },
-                navigator: {
-                    enabled: true,
-                    height: 9,
-                    min: 0.2,
-                    max: 1,
-                    mask: {
-                        fill: 'lime',
-                        stroke: 'black',
-                        strokeWidth: 2,
-                        fillOpacity: 0.3,
+                    navigator: {
+                        enabled: true,
+                        height: 9,
+                        min: 0.2,
+                        max: 1,
+                        mask: {
+                            fill: 'lime',
+                            stroke: 'black',
+                            strokeWidth: 2,
+                            fillOpacity: 0.3,
 
-                    },
-                    minHandle: {
-                        fill: 'yellow',
-                        stroke: 'blue',
-                        strokeWidth: 2,
-                        width: 12,
-                        height: 22,
-                        gripLineGap: 4,
-                        gripLineLength: 12,
-                    },
-                    maxHandle: {
-                        fill: 'yellow',
-                        stroke: 'blue',
-                        strokeWidth: 2,
-                        width: 12,
-                        height: 22,
-                        gripLineGap: 4,
-                        gripLineLength: 12,
+                        },
+                        minHandle: {
+                            fill: 'yellow',
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                            width: 12,
+                            height: 22,
+                            gripLineGap: 4,
+                            gripLineLength: 12,
+                        },
+                        maxHandle: {
+                            fill: 'yellow',
+                            stroke: 'blue',
+                            strokeWidth: 2,
+                            width: 12,
+                            height: 22,
+                            gripLineGap: 4,
+                            gripLineLength: 12,
+                        }
                     }
-                }
+                },
             },
         }
-    }
+    },
+    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {

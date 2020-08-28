@@ -43,39 +43,33 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered,
     customChartThemes: {
         myCustomTheme: {
-            palette: {
-                fills: ['#e1ba00', 'silver', 'peru'],
-                strokes: ['black', '#ff0000'],
+            defaults: {
+                line: {
+                    series: {
+                        strokeOpacity: 0.7,
+                        strokeWidth: 5,
+                        highlightStyle: {
+                            fill: 'red',
+                            stroke: 'yellow',
+                        },
+                        marker: {
+                            enabled: true,
+                            shape: 'diamond',
+                            size: 12,
+                            strokeWidth: 4,
+                            opacity: 0.2,
+                        },
+                        tooltipRenderer: function(params) {
+                            var x = params.datum[params.xKey];
+                            var y = params.datum[params.yKey];
+                            return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+                        },
+                    }
+                }
             }
         }
     },
     chartThemes: ['myCustomTheme'],
-    chartThemeOverrides: {
-        defaults: {
-            line: {
-                series: {
-                    strokeOpacity: 0.7,
-                    strokeWidth: 5,
-                    highlightStyle: {
-                        fill: 'red',
-                        stroke: 'yellow',
-                    },
-                    marker: {
-                        enabled: true,
-                        shape: 'diamond',
-                        size: 12,
-                        strokeWidth: 4,
-                        opacity: 0.2,
-                    },
-                    tooltipRenderer: function(params) {
-                        var x = params.datum[params.xKey];
-                        var y = params.datum[params.yKey];
-                        return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
-                    },
-                }
-            }
-        }
-    }
 };
 
 function onFirstDataRendered(params) {

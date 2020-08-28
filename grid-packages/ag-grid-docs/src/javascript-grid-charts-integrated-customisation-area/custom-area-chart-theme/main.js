@@ -41,41 +41,40 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    chartThemeOverrides: {
-        palette: {
-            fills: ['#e1ba00', 'silver', 'peru'],
-            strokes: ['black', '#ff0000'],
-        },
-        defaults: {
-            area: {
-                series: {
-                    fillOpacity: 0.5,
-                    strokeOpacity: 0.5,
-                    strokeWidth: 2,
-                    highlightStyle: {
-                        fill: 'red',
-                        stroke: 'yellow',
-                    },
-                    marker: {
-                        enabled: true,
-                        shape: 'triangle',
-                        size: 12,
-                        strokeWidth: 4,
-                    },
-                    shadow: {
-                        color: 'rgba(0, 0, 0, 0.3)',
-                        offset: [5, 5],
-                        blur: 8,
-                    },
-                    tooltipRenderer: function(params) {
-                        var x = params.datum[params.xKey];
-                        var y = params.datum[params.yKey];
-                        return '<u style="color: ' + params.color + '">' + (params.yName || params.title) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
-                    },
+    customChartThemes: {
+        myCustomTheme: {
+            defaults: {
+                area: {
+                    series: {
+                        fillOpacity: 0.5,
+                        strokeOpacity: 0.5,
+                        strokeWidth: 2,
+                        highlightStyle: {
+                            fill: 'red',
+                            stroke: 'yellow',
+                        },
+                        marker: {
+                            enabled: true,
+                            shape: 'triangle',
+                            size: 12,
+                            strokeWidth: 4,
+                        },
+                        shadow: {
+                            color: 'rgba(0, 0, 0, 0.3)',
+                            offset: [5, 5],
+                            blur: 8,
+                        },
+                        tooltipRenderer: function(params) {
+                            var x = params.datum[params.xKey];
+                            var y = params.datum[params.yKey];
+                            return '<u style="color: ' + params.color + '">' + (params.yName || params.title) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+                        },
+                    }
                 }
             }
         }
-    }
+    },
+    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {

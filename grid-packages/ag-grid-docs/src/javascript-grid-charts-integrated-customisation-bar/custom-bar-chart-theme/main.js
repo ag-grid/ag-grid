@@ -41,48 +41,47 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    chartThemeOverrides: {
-        palette: {
-            fills: ['#e1ba00', 'silver', 'peru'],
-            strokes: ['black', '#ff0000'],
-        },
-        defaults: {
-            bar: {
-                series: {
-                    fillOpacity: 0.8,
-                    strokeOpacity: 0.8,
-                    strokeWidth: 2,
-                    shadow: {
-                        enabled: true,
-                        color: 'rgba(0, 0, 0, 0.3)',
-                        xOffset: 10,
-                        yOffset: 5,
-                        blur: 8,
-                    },
-                    label: {
-                        enabled: true,
-                        fontStyle: 'italic',
-                        fontWeight: 'bold',
-                        fontSize: 15,
-                        fontFamily: 'Arial, sans-serif',
-                        color: 'green',
-                        formatter: function(params) {
-                            return '<' + params.value + '>';
+    customChartThemes: {
+        myCustomTheme: {
+            defaults: {
+                bar: {
+                    series: {
+                        fillOpacity: 0.8,
+                        strokeOpacity: 0.8,
+                        strokeWidth: 2,
+                        shadow: {
+                            enabled: true,
+                            color: 'rgba(0, 0, 0, 0.3)',
+                            xOffset: 10,
+                            yOffset: 5,
+                            blur: 8,
                         },
-                    },
-                    highlightStyle: {
-                        fill: 'red',
-                        stroke: 'yellow',
-                    },
-                    tooltipRenderer: function(params) {
-                        var x = params.datum[params.xKey];
-                        var y = params.datum[params.yKey];
-                        return '<u style="color: ' + params.color + '">' + (params.title || params.yName) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
-                    },
+                        label: {
+                            enabled: true,
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                            fontFamily: 'Arial, sans-serif',
+                            color: 'green',
+                            formatter: function(params) {
+                                return '<' + params.value + '>';
+                            },
+                        },
+                        highlightStyle: {
+                            fill: 'red',
+                            stroke: 'yellow',
+                        },
+                        tooltipRenderer: function(params) {
+                            var x = params.datum[params.xKey];
+                            var y = params.datum[params.yKey];
+                            return '<u style="color: ' + params.color + '">' + (params.title || params.yName) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+                        },
+                    }
                 }
             }
         }
-    }
+    },
+    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {

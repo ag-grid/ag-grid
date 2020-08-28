@@ -41,60 +41,67 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    chartThemeOverrides: {
-        defaults: {
-            common: {
-                padding: {
-                    top: 20,
-                    right: 30,
-                    bottom: 10,
-                    left: 2,
-                },
-                background: {
-                    fill: '#e5e5e5'
-                },
-                title: {
-                    enabled: true,
-                    text: 'Precious Metals Production',
-                    fontStyle: 'italic',
-                    fontWeight: '600',
-                    fontSize: 18,
-                    fontFamily: 'Impact, sans-serif',
-                    color: '#414182',
-                },
-                subtitle: {
-                    enabled: true,
-                    text: 'by country',
-                    fontSize: 14,
-                    fontFamily: 'Monaco, monospace',
-                    color: 'rgb(100, 100, 100)',
-                },
-                legend: {
-                    enabled: true,
-                    position: 'left',
-                    padding: 20,
-                    item: {
-                        label: {
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 18,
-                            fontFamily: 'Palatino, serif',
-                            color: '#555',
-                        },
-                        marker: {
-                            type: 'diamond',
-                            size: 10,
-                            padding: 10,
-                            strokeWidth: 2,
-                        },
-                        paddingX: 120,
-                        paddingY: 20,
-                    }
-                },
-                tooltipClass: 'my-tooltip-class',
+    customChartThemes: {
+        myCustomTheme: {
+            palette: {
+                fills: ['#e1ba00', 'silver', 'peru'],
+                strokes: ['black', '#ff0000'],
+            },
+            defaults: {
+                common: {
+                    padding: {
+                        top: 20,
+                        right: 30,
+                        bottom: 10,
+                        left: 2,
+                    },
+                    background: {
+                        fill: '#e5e5e5'
+                    },
+                    title: {
+                        enabled: true,
+                        text: 'Precious Metals Production',
+                        fontStyle: 'italic',
+                        fontWeight: '600',
+                        fontSize: 18,
+                        fontFamily: 'Impact, sans-serif',
+                        color: '#414182',
+                    },
+                    subtitle: {
+                        enabled: true,
+                        text: 'by country',
+                        fontSize: 14,
+                        fontFamily: 'Monaco, monospace',
+                        color: 'rgb(100, 100, 100)',
+                    },
+                    legend: {
+                        enabled: true,
+                        position: 'left',
+                        padding: 20,
+                        item: {
+                            label: {
+                                fontStyle: 'italic',
+                                fontWeight: 'bold',
+                                fontSize: 18,
+                                fontFamily: 'Palatino, serif',
+                                color: '#555',
+                            },
+                            marker: {
+                                type: 'diamond',
+                                size: 10,
+                                padding: 10,
+                                strokeWidth: 2,
+                            },
+                            paddingX: 120,
+                            paddingY: 20,
+                        }
+                    },
+                    tooltipClass: 'my-tooltip-class',
+                }
             }
         }
-    }
+    },
+    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {

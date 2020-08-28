@@ -41,58 +41,57 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    chartThemeOverrides: {
-        palette: {
-            fills: ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'],
-            strokes: ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'],
-        },
-        defaults: {
-            pie: {
-                series: {
-                    fillOpacity: 0.8,
-                    strokeOpacity: 0.8,
-                    strokeWidth: 2,
-                    title: {
-                        enabled: true,
-                        text: 'Custom title',
-                        fontStyle: 'italic',
-                        fontWeight: 'bold',
-                        fontSize: 14,
-                        fontFamily: 'Arial, sans-serif',
-                        color: 'maroon',
-                    },
-                    highlightStyle: {
-                        fill: 'red',
-                        stroke: 'yellow',
-                    },
-                    shadow: {
-                        color: 'rgba(96, 96, 175, 0.5)',
-                        offset: [0, 0],
-                        blur: 1,
-                    },
-                    label: {
-                        enabled: true,
-                        fontStyle: 'italic',
-                        fontWeight: 'bold',
-                        fontSize: 14,
-                        fontFamily: 'Arial, sans-serif',
-                        color: '#2222aa',
-                        minRequiredAngle: 30,
-                    },
-                    callout: {
-                        strokeWidth: 3,
-                        colors: ['black', '#00ff00'],
-                        length: 15,
-                    },
-                    tooltipRenderer: function(params) {
-                        var value = params.datum[params.angleKey];
-                        var label = params.datum[params.labelKey];
-                        return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;
-                    },
+    customChartThemes: {
+        myCustomTheme: {
+            defaults: {
+                pie: {
+                    series: {
+                        fillOpacity: 0.8,
+                        strokeOpacity: 0.8,
+                        strokeWidth: 2,
+                        title: {
+                            enabled: true,
+                            text: 'Custom title',
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            fontFamily: 'Arial, sans-serif',
+                            color: 'maroon',
+                        },
+                        highlightStyle: {
+                            fill: 'red',
+                            stroke: 'yellow',
+                        },
+                        shadow: {
+                            color: 'rgba(96, 96, 175, 0.5)',
+                            offset: [0, 0],
+                            blur: 1,
+                        },
+                        label: {
+                            enabled: true,
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            fontFamily: 'Arial, sans-serif',
+                            color: '#2222aa',
+                            minRequiredAngle: 30,
+                        },
+                        callout: {
+                            strokeWidth: 3,
+                            colors: ['black', '#00ff00'],
+                            length: 15,
+                        },
+                        tooltipRenderer: function(params) {
+                            var value = params.datum[params.angleKey];
+                            var label = params.datum[params.labelKey];
+                            return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;
+                        },
+                    }
                 }
             }
         }
-    }
+    },
+    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {
