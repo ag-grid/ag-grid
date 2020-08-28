@@ -41,11 +41,16 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
+    customChartThemes: {
+        myCustomTheme: {
+            palette: {
+                fills: ['#e1ba00', 'silver', 'peru'],
+                strokes: ['black', '#ff0000'],
+            }
+        }
+    },
+    chartThemes: ['myCustomTheme'],
     chartThemeOverrides: {
-        palette: {
-            fills: ['#e1ba00', 'silver', 'peru'],
-            strokes: ['black', '#ff0000'],
-        },
         defaults: {
             line: {
                 series: {

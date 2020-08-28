@@ -111,7 +111,7 @@ export class ChartController extends BeanStub {
         return this.model.getChartThemeIndex();
     }
 
-    public getThemes(): (AgChartThemeName | AgChartTheme)[] {
+    public getThemes(): string[] {
         return this.gridOptionsWrapper.getChartThemes();
     }
 

@@ -1,5 +1,3 @@
-import {AgChartTheme} from "./interfaces/iAgChartOptions";
-
 /**
  * These keys are used for validating properties supplied on a gridOptions object, and for code generation.
  * If you change the properties on the gridOptions interface, you *must* update this file as well to be consistent.
@@ -17,7 +15,7 @@ export class PropertyKeys {
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams',
         'loadingOverlayComponentParams', 'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault',
-        'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides'
+        'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides', 'customChartThemes'
     ];
 
     public static ARRAY_PROPERTIES = [

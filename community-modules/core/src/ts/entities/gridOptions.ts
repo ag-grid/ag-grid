@@ -407,9 +407,11 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    chartThemeOverrides?: AgChartTheme;
+    chartThemes?: string[];
 
-    chartThemes?: (AgChartThemeName | AgChartTheme)[];
+    customChartThemes?: { [name: string]: AgChartTheme };
+
+    chartThemeOverrides?: AgChartTheme;
 
     processChart?(params: ProcessChartParams): void;
 

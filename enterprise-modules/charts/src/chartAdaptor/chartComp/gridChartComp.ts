@@ -139,6 +139,7 @@ export class GridChartComp extends Component {
 
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
         const processChartFunc = this.gridOptionsWrapper.getProcessChartFunc();
+        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
 
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
@@ -151,6 +152,7 @@ export class GridChartComp extends Component {
             processChartFunc: processChartFunc,
             getChartThemeIndex: this.getChartThemeIndex.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
+            getCustomChartThemes: customChartThemes,
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeIndex,
@@ -179,7 +181,7 @@ export class GridChartComp extends Component {
         return this.chartController.getThemeIndex();
     }
 
-    private getChartThemes(): (string | AgChartTheme)[] {
+    private getChartThemes(): string[] {
         return this.chartController.getThemes();
     }
 
