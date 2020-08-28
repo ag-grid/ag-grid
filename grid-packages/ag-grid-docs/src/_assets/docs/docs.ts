@@ -120,4 +120,9 @@ $(function() {
 
         $('.page-content').scrollTop(top);
     });
+
+    if (window.location.hash) {
+        // ensure content is visible
+        $(window).trigger('hashchange');
+    }
 });
