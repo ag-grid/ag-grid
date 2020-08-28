@@ -614,19 +614,19 @@
         "description": "This object contains configuration for the different series that might be rendered into the chart.<br /><br />For cartesian charts, the following series are supported: `'bar'`, `'column'`, `'histogram'`, `'line'`, `'scatter'`, `'area'`<br />For polar charts, the following series are supported: `'pie'`<br /><br />If the `series` property is being set inside configuration for a specific type of chart (e.g. `line`), instead of supplying the whole series object as specified here, for convenience you can put the relevant series configuration object directly into the `series` property, since all series for a specific chart will be of the same type (e.g. `line`)."
       },
       "bar": {
-        "type": "IBarSeriesConfig",
+        "type": "IBarColumnSeriesConfig",
         "description": "Default configuration for bar series.",
         "more": {
           "name": "Bar/Column Series Configuration",
-          "url": "../javascript-charts-api-themes/#barSeriesConfig"
+          "url": "../javascript-charts-api-themes/#barColumnSeriesConfig"
         }
       },
       "column": {
-        "type": "IBarSeriesConfig",
+        "type": "IBarColumnSeriesConfig",
         "description": "Default configuration for column series.",
         "more": {
           "name": "Bar/Column Series Configuration",
-          "url": "../javascript-charts-api-themes/#barSeriesConfig"
+          "url": "../javascript-charts-api-themes/#barColumnSeriesConfig"
         }
       },
       "histogram": {
@@ -949,7 +949,7 @@
       "description": "A map of event names to event listener functions. The keys can be one of the following: `nodeClick`"
     }
   },
-  "barSeriesConfig": {
+  "barColumnSeriesConfig": {
     "meta": {
       "displayName": "Bar/Column Series Configuration",
       "description": "Configuration for bar/column series."

@@ -664,6 +664,12 @@ body {
     @include roadshow;
 }
 
+div.reference__breadcrumbs {
+    font-size: 0.8rem;
+    color: $blue-2;
+    margin-bottom: 1rem;
+}
+
 table.reference {
     border-collapse: collapse;
     margin-bottom: 3rem;

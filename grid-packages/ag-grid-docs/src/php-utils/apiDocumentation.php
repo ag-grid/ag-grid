@@ -4,21 +4,33 @@
         return json_decode(file_get_contents($path));
     }
 
-    function createPropertyTable($title, $properties, $config = [], $prefix = null, $names = []) {
-        $toProcess = [];
-        $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
+    function createPropertyTable($title, $properties, $config = [], $breadcrumbs = [], $names = []) {
+        $meta = $properties->meta;
+        $displayName = $meta->displayName;
+
+        if (!isset($displayName)) {
+            $displayName = $title;
+        }
+
+        $breadcrumbs[$title] = $displayName;
+        $id = join(array_keys($breadcrumbs), '.');
 
         if (!$config['skipHeader']) {
-            $meta = $properties->meta;
-            $displayName = $meta->displayName;
+            $headerTag = count($breadcrumbs) > 1 ? "h3" : "h2";
 
-            if (!isset($displayName)) {
-                $displayName = $title;
+            echo "<$headerTag id='$id'>$displayName</$headerTag>";
+
+            if (count($breadcrumbs) > 1) {
+                $href = '';
+                $links = [];
+
+                foreach ($breadcrumbs as $key => $text) {
+                    $href .= strlen($href) > 0 ? ".$key" : $key;
+                    $links[] = "<a href='#$href'>$text</a>";
+                }
+
+                echo '<div class="reference__breadcrumbs">' . join($links, ' >> ') . '</div>';
             }
-
-            $headerTag = isset($prefix) ? "h3" : "h2";
-
-            echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
 
             $description = generateCodeTags($meta->description);
 
@@ -33,7 +45,13 @@
             }
         }
 
+        if ($config['showSnippets'] && empty($names)) {
+            createObjectCodeSample($title, $properties);
+        }
+
         echo '<table class="table content reference">';
+
+        $objectProperties = [];
 
         foreach ($properties as $name => $definition) {
             if ($name == 'meta' ||
@@ -77,7 +95,7 @@
                 echo "</td><td>$definition</td>";
             } else {
                 // this must be the parent of a child object
-                $targetId = "$newPrefix.$name";
+                $targetId = "$id.$name";
                 echo "</td><td>";
 
                 if (isset($definition->meta->description)) {
@@ -91,7 +109,7 @@
                 }
 
                 echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td>";
-                $toProcess[$name] = $definition;
+                $objectProperties[$name] = $definition;
             }
 
             if ($definition->relevantTo && empty($names)) {
@@ -103,12 +121,8 @@
 
         echo '</table>';
 
-        if ($config['showSnippets'] && empty($names)) {
-            createObjectCodeSample($title, $properties);
-        }
-
-        foreach ($toProcess as $name => $definition) {
-            createPropertyTable($name, $definition, $config, $newPrefix);
+        foreach ($objectProperties as $name => $definition) {
+            createPropertyTable($name, $definition, $config, $breadcrumbs);
         }
     }
 
@@ -247,7 +261,7 @@
 
             $config['skipHeader'] = true;
 
-            createPropertyTable($key, $properties, $config, $expression, $names);
+            createPropertyTable($key, $properties, $config, [$expression => $expression], $names);
         } else {
             $properties = mergeObjects($propertiesFromFiles);
 
