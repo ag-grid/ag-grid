@@ -154,12 +154,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         let apiThemeOverrides: AgChartTheme = this.chartProxyParams.apiChartThemeOverrides;
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
-            const mergedThemes = deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            this.chartTheme = getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : mergedThemes);
+            this.chartTheme = getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} :
+                deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides));
         } else {
             this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
         }
-
     }
 
     private lookupCustomChartTheme(selectedThemeName: string) {

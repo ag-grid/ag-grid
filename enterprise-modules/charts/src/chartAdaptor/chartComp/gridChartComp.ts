@@ -103,6 +103,8 @@ export class GridChartComp extends Component {
         this.model = this.createBean(new ChartDataModel(modelParams));
         this.chartController = this.createManagedBean(new ChartController(this.model));
 
+        this.validateCustomThemes()
+
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
 
@@ -119,6 +121,19 @@ export class GridChartComp extends Component {
 
         this.refresh();
         this.raiseChartCreatedEvent();
+    }
+
+    private validateCustomThemes() {
+        const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
+        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+        if (customChartThemes) {
+            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+                if (!_.includes(suppliedThemes, customThemeName)) {
+                    console.warn("ag-Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                        "supplied but not added to the 'chartThemes' list");
+                }
+            })
+        }
     }
 
     private createChart(): void {
