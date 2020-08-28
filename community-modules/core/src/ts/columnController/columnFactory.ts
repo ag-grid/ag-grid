@@ -368,7 +368,7 @@ export class ColumnFactory extends BeanStub {
         _.mergeDeep(colDefMerged, defaultColDef, true, COL_DEF_PARAM_OBJECTS);
 
         // merge properties from column type properties
-        if (colDef.type || defaultColDef.type) {
+        if (colDef.type || (defaultColDef && defaultColDef.type) ) {
             // if type of both colDef and defaultColDef, then colDef gets preference
             const columnType = colDef.type ? colDef.type : defaultColDef.type;
             this.assignColumnTypes(columnType, colDefMerged);
