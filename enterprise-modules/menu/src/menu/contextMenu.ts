@@ -127,6 +127,15 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup });
 
+        // there should never be an active menu at this point, however it was found
+        // that you could right click a second time just 1 or 2 pixels from the first
+        // click, and another menu would pop up. so somehow the logic for closing the
+        // first menu (clicking outside should close it) was glitchy somehow. an easy
+        // way to avoid this is just remove the old context menu here if it exists.
+        if (this.activeMenu) {
+            this.hideActiveMenu();
+        }
+
         this.activeMenu = menu;
 
         menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
