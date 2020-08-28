@@ -28,8 +28,6 @@ var columnDefs = [
     { field: 'total', enableValue: true }
 ];
 
-var localeText = AG_GRID_LOCALE_ZZZ;
-
 var gridOptions = {
     defaultColDef: {
         editable: true,
@@ -58,7 +56,9 @@ var gridOptions = {
     paginationPageSize: 500,
     enableRangeSelection: true,
     enableCharts: true,
-    localeText: localeText
+    localeTextFunc: function(key, defaultValue) {
+        return defaultValue ? defaultValue.toUpperCase() : '';
+    }
 };
 
 function setDataSource(allOfTheData) {

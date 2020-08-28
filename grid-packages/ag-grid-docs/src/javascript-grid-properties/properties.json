@@ -807,7 +807,7 @@
             "displayName": "Localisation"
         },
         "localeText<br />localeTextFunc": {
-            "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
+            "description": "A map of key->value pairs for localising text within the grid.",
             "more": {
                 "name": "Localisation",
                 "url": "../javascript-grid-localisation/"
