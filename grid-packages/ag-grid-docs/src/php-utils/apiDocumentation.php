@@ -20,7 +20,7 @@
 
             echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
 
-            $description = $meta->description;
+            $description = generateCodeTags($meta->description);
 
             if (isset($description)) {
                 echo "<p>$description</p>";
@@ -49,7 +49,9 @@
                     echo "<br /><span class='reference__required'>Required</span>";
                 }
 
-                echo "</td><td>$definition->description";
+                $description = generateCodeTags($definition->description);
+
+                echo "</td><td>$description";
 
                 $more = $definition->more;
 
@@ -79,7 +81,13 @@
                 echo "</td><td>";
 
                 if (isset($definition->meta->description)) {
-                    echo $definition->meta->description . " ";
+                    echo generateCodeTags($definition->meta->description);
+
+                    if (strpos($definition->meta->description, '<br')) {
+                        echo '<br /><br />';
+                    } else {
+                        echo ' ';
+                    }
                 }
 
                 echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td>";
@@ -102,6 +110,10 @@
         foreach ($toProcess as $name => $definition) {
             createPropertyTable($name, $definition, $config, $newPrefix);
         }
+    }
+
+    function generateCodeTags($content) {
+        return preg_replace('/\`(.*?)\`/', "<code>$1</code>", $content);
     }
 
     function createObjectCodeSample($name, $properties) {
@@ -259,7 +271,7 @@
 
     function formatJson($value) {
         $json = json_encode($value, JSON_PRETTY_PRINT);
-        $json = preg_replace_callback("/\[(.*)\]/s",
+        $json = preg_replace_callback('/\[(.*)\]/s',
             function($match) {
                 return '[' . preg_replace('/,\s+/', ', ', trim($match[1])) . ']';
             }

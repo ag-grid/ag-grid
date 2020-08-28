@@ -115,7 +115,7 @@ $(function() {
 
         if (hash) {
             var $element = $(hash.replace(/\./g, '\\.'));
-            top = $element.position().top;
+            top = $element.position().top + 10;
         }
 
         $('.page-content').scrollTop(top);

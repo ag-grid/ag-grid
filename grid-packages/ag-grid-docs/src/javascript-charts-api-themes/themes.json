@@ -26,7 +26,7 @@
       },
       "common": {
         "type": "IChartConfig",
-        "description": "Specifies defaults for all chart types. Be careful and only use properties that apply to all chart types here. For example don't use the `navigator` config here, since it's only present in cartesian charts.",
+        "description": "Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -34,7 +34,7 @@
       },
       "cartesian": {
         "type": "IChartConfig",
-        "description": "Specifies defaults for cartesian charts (used for bar, column, line, area, scatter and histogram series).",
+        "description": "Specifies defaults for cartesian charts (used for bar, column, histogram, line, scatter and area series).",
         "more": {
           "name": "Chart Configuration",
           "url": "#chartConfig"
@@ -118,17 +118,17 @@
     },
     "autoSize": {
       "default": true,
-      "description": "By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>."
+      "description": "By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`."
     },
     "width": {
       "type": "number",
-      "description": "The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.",
+      "description": "The width of the chart in pixels. Has no effect if `autoSize` is set to `true`.",
       "min": 1,
       "unit": "px"
     },
     "height": {
       "type": "number",
-      "description": "The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.",
+      "description": "The height of the chart in pixels. Has no effect if `autoSize` is set to `true`.",
       "min": 1,
       "unit": "px"
     },
@@ -610,7 +610,57 @@
       }
     },
     "series": {
-      "description": "The default configuration for all series types supported by this type of chart.<br /><br />For cartesian charts it's:<br /><br /><ul><li><a href='#barSeriesConfig'>'bar'</a> series</li><li><a href='#barSeriesConfig'>'column'</a> series</li><li><a href='#histogramSeriesConfig'>'histogram'</a> series</li><li><a href='#lineSeriesConfig'>'line'</a> series</li><li><a href='#scatterSeriesConfig'>'scatter'</a> series</li><li><a href='#areaSeriesConfig'>'area'</a> series</li></ul>For polar charts:<br /><br/><ul><li><a href='#pieSeriesConfig'>'pie'</a> series</li></ul><br />This config should be an object where the keys are the types of series and the values are the series' default configs."
+      "meta": {
+        "description": "This object contains configuration for the different series that might be rendered into the chart.<br /><br />For cartesian charts, the following series are supported: `'bar'`, `'column'`, `'histogram'`, `'line'`, `'scatter'`, `'area'`<br />For polar charts, the following series are supported: `'pie'`<br /><br />If the `series` property is being set inside configuration for a specific type of chart (e.g. `line`), instead of supplying the whole series object as specified here, for convenience you can put the relevant series configuration object directly into the `series` property, since all series for a specific chart will be of the same type (e.g. `line`)."
+      },
+      "bar": {
+        "type": "IBarSeriesConfig",
+        "description": "Default configuration for bar series.",
+        "more": {
+          "name": "Bar/Column Series Configuration",
+          "url": "../javascript-charts-api-themes/#barSeriesConfig"
+        }
+      },
+      "column": {
+        "type": "IBarSeriesConfig",
+        "description": "Default configuration for column series.",
+        "more": {
+          "name": "Bar/Column Series Configuration",
+          "url": "../javascript-charts-api-themes/#barSeriesConfig"
+        }
+      },
+      "histogram": {
+        "type": "IHistogramSeriesConfig",
+        "description": "Default configuration for histogram series.",
+        "more": {
+          "name": "Histogram Series Configuration",
+          "url": "../javascript-charts-api-themes/#histogramSeriesConfig"
+        }
+      },
+      "line": {
+        "type": "ILineSeriesConfig",
+        "description": "Default configuration for line series.",
+        "more": {
+          "name": "Line Series Configuration",
+          "url": "../javascript-charts-api-themes/#lineSeriesConfig"
+        }
+      },
+      "scatter": {
+        "type": "IScatterSeriesConfig",
+        "description": "Default configuration for scatter/bubble series.",
+        "more": {
+          "name": "Scatter/Bubble Series Configuration",
+          "url": "../javascript-charts-api-themes/#scatterSeriesConfig"
+        }
+      },
+      "area": {
+        "type": "IAreaSeriesConfig",
+        "description": "Default configuration for area series.",
+        "more": {
+          "name": "Area Series Configuration",
+          "url": "../javascript-charts-api-themes/#areaSeriesConfig"
+        }
+      }
     }
   },
   "cartesianAxisConfig": {
@@ -807,7 +857,7 @@
           },
           "returnType": "string"
         },
-        "description": "Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code>."
+        "description": "Function used to render axis labels. If `value` is a number, `fractionDigits` will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of `0.0005` would have `fractionDigits` set to `4`."
       }
     },
     "gridStyle": {
@@ -825,7 +875,7 @@
           2
         ],
         "type": "number[]",
-        "description": "Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+        "description": "Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
       }
     }
   },
@@ -836,7 +886,7 @@
     },
     "nice": {
       "default": true,
-      "description": "If <code>true</code>, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+      "description": "If `true`, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
     },
     "min": {
       "type": "number",
@@ -874,7 +924,7 @@
     },
     "nice": {
       "default": true,
-      "description": "If <code>true</code>, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+      "description": "If `true`, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
     }
   },
   "commonSeriesConfig": {
@@ -896,7 +946,7 @@
     },
     "listeners": {
       "type": "Object",
-      "description": "A map of event names to event listener functions. The keys can be one of the following: <code>nodeClick</code>"
+      "description": "A map of event names to event listener functions. The keys can be one of the following: `nodeClick`"
     }
   },
   "barSeriesConfig": {
@@ -925,7 +975,7 @@
     },
     "normalizedTo": {
       "type": "number",
-      "description": "The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>. For example, if <code>normalizedTo</code> is set to <code>100</code>, the bar stacks will all be scaled proportionally so that each of their totals is 100.",
+      "description": "The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100.",
       "min": 1,
       "max": 100
     },
@@ -1111,11 +1161,11 @@
     },
     "binCount": {
       "type": "number",
-      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+      "description": "The number of bins to try to split the x axis into. Clashes with the `bins` setting."
     },
     "bins": {
       "type": "number[][]",
-      "description": "Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting."
+      "description": "Set the bins explicitly. The bins need not be of equal width. Clashes with the `binCount` setting."
     },
     "aggregation": {
       "type": "string",
@@ -1128,7 +1178,7 @@
     },
     "areaPlot": {
       "type": "boolean",
-      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+      "description": "For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
       "default": "false"
     },
     "highlightStyle": {
@@ -1197,7 +1247,7 @@
     },
     "title": {
       "type": "string",
-      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+      "description": "The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not."
     },
     "stroke": {
       "default": "#aa4520",
@@ -1228,7 +1278,7 @@
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass.",
         "options": [
           "circle",
           "cross",
@@ -1286,7 +1336,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
       }
     },
     "highlightStyle": {
@@ -1326,7 +1376,7 @@
     },
     "normalizedTo": {
       "type": "number",
-      "description": "The number to normalise the area stacks to. For example, if <code>normalizedTo</code> is set to <code>100</code>, the stacks will all be scaled proportionally so that their total height is always 100.",
+      "description": "The number to normalise the area stacks to. For example, if `normalizedTo` is set to `100`, the stacks will all be scaled proportionally so that their total height is always 100.",
       "min": 1,
       "max": 100
     },
@@ -1390,7 +1440,7 @@
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass.",
         "options": [
           "circle",
           "cross",
@@ -1448,7 +1498,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
       }
     },
     "highlightStyle": {
@@ -1526,7 +1576,7 @@
     },
     "title": {
       "type": "string",
-      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+      "description": "The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not."
     },
     "fill": {
       "default": "#f3622d",
@@ -1568,7 +1618,7 @@
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass.",
         "options": [
           "circle",
           "cross",
@@ -1626,7 +1676,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
       }
     },
     "highlightStyle": {

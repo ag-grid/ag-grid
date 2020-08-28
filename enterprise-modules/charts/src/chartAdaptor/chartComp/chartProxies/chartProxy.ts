@@ -22,7 +22,6 @@ import {
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
-    AgChartThemeName,
     AgChartThemePalette,
     AreaSeries,
     BarSeries,
@@ -148,24 +147,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private initChartTheme() {
-        const selectedThemeName = this.getSelectedTheme();
+        const themeName = this.getSelectedTheme();
+        const stockTheme = this.isStockTheme(themeName);
+
         let gridOptionsThemeOverrides: AgChartTheme = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         let apiThemeOverrides: AgChartTheme = this.chartProxyParams.apiChartThemeOverrides;
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
-            if (this.isStockTheme(selectedThemeName)) {
-                this.chartTheme = getChartTheme({baseTheme: selectedThemeName, ...themeOverrides});
-            } else {
-                const mergedThemes = deepMerge(this.lookupCustomChartTheme(selectedThemeName), themeOverrides);
-                this.chartTheme = getChartTheme(mergedThemes);
-            }
+            const mergedThemes = deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
+            this.chartTheme = getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : mergedThemes);
         } else {
-            if (this.isStockTheme(selectedThemeName)) {
-                this.chartTheme = getChartTheme(selectedThemeName);
-            } else {
-                this.chartTheme = getChartTheme(this.lookupCustomChartTheme(selectedThemeName));
-            }
+            this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
         }
+
     }
 
     private lookupCustomChartTheme(selectedThemeName: string) {
