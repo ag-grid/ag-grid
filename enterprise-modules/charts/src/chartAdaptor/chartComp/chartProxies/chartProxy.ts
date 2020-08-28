@@ -50,7 +50,8 @@ export interface ChartProxyParams {
     processChartFunc: (params: ProcessChartParams) => void;
     getChartThemeIndex: () => number;
     getChartThemes: () => (AgChartThemeName | AgChartTheme)[];
-    getChartThemeOverrides: () => AgChartTheme | undefined;
+    getGridOptionsChartThemeOverrides: () => AgChartTheme | undefined;
+    apiChartThemeOverrides: AgChartTheme | undefined;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -128,18 +129,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        const theme = this.getSelectedTheme();
-        let themeOverrides: AgChartTheme = this.chartProxyParams.getChartThemeOverrides();
-        if (themeOverrides) {
-            if (typeof theme === 'string') {
-                this.chartTheme = getChartTheme({baseTheme: theme, ...themeOverrides});
-            } else {
-                const mergedThemes = deepMerge(theme, themeOverrides);
-                this.chartTheme = getChartTheme(mergedThemes);
-            }
-        } else {
-            this.chartTheme = getChartTheme(theme);
-        }
+        this.initChartTheme();
 
         this.chartOptions = this.getDefaultOptionsFromTheme(this.chartTheme);
 
@@ -155,6 +145,29 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
             this.chartOptions = safeOptions;
         }
+    }
+
+    private initChartTheme() {
+        const theme = this.getSelectedTheme();
+        let gridOptionsThemeOverrides: AgChartTheme = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        let apiThemeOverrides: AgChartTheme = this.chartProxyParams.apiChartThemeOverrides;
+        if (gridOptionsThemeOverrides || apiThemeOverrides) {
+            const themeOverrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
+            if (typeof theme === 'string') {
+                this.chartTheme = getChartTheme({baseTheme: theme, ...themeOverrides});
+            } else {
+                const mergedThemes = deepMerge(theme, themeOverrides);
+                this.chartTheme = getChartTheme(mergedThemes);
+            }
+        } else {
+            this.chartTheme = getChartTheme(theme);
+        }
+    }
+
+    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartTheme, apiThemeOverrides: AgChartTheme) {
+        if (!gridOptionsThemeOverrides) return apiThemeOverrides;
+        if (!apiThemeOverrides) return gridOptionsThemeOverrides;
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     integratedToStandaloneChartType(integratedChartType: string): string {
@@ -416,22 +429,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return this.customPalette || this.chartTheme.palette;
     }
 
+    //TODO remove all 'integrated' default chart options
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
         return {
-            background: {
-            },
-            padding: {
-            },
-            title: {
-            },
-            subtitle: {
-            },
-            legend: {
-            },
-            navigator: {
-            },
-            seriesDefaults: {
-            },
+            background: {},
+            padding: {},
+            title: {},
+            subtitle: {},
+            legend: {},
+            navigator: {},
+            seriesDefaults: {},
             listeners: {}
         } as any;
     }

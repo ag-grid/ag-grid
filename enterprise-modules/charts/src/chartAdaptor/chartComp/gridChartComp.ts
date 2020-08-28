@@ -43,6 +43,7 @@ export interface GridChartParams {
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartTheme;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -150,7 +151,8 @@ export class GridChartComp extends Component {
             processChartFunc: processChartFunc,
             getChartThemeIndex: this.getChartThemeIndex.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            getChartThemeOverrides: this.getChartThemeOverrides.bind(this),
+            getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
+            apiChartThemeOverrides: this.params.chartThemeOverrides,
             allowPaletteOverride: !this.params.chartThemeIndex,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
@@ -181,7 +183,7 @@ export class GridChartComp extends Component {
         return this.chartController.getThemes();
     }
 
-    private getChartThemeOverrides(): AgChartTheme | undefined {
+    private getGridOptionsChartThemeOverrides(): AgChartTheme | undefined {
         return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 

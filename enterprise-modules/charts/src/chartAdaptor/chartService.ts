@@ -1,5 +1,5 @@
 import {
-    _,
+    _, AgChartTheme,
     Autowired,
     Bean,
     BeanStub,
@@ -67,6 +67,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.suppressChartRanges,
             params.chartContainer,
             params.aggFunc,
+            params.chartThemeOverrides,
             params.processChartOptions);
     }
 
@@ -98,6 +99,7 @@ export class ChartService extends BeanStub implements IChartService {
             true,
             params.chartContainer,
             undefined,
+            params.chartThemeOverrides,
             params.processChartOptions);
     }
 
@@ -108,6 +110,7 @@ export class ChartService extends BeanStub implements IChartService {
                         suppressChartRanges = false,
                         container?: HTMLElement,
                         aggFunc?: string | IAggFunc,
+                        chartThemeOverrides?: AgChartTheme,
                         processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
@@ -120,6 +123,7 @@ export class ChartService extends BeanStub implements IChartService {
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,
+            chartThemeOverrides,
             processChartOptions,
         };
 
