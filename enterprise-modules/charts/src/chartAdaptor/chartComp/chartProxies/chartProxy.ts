@@ -153,12 +153,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         let gridOptionsThemeOverrides: AgChartTheme = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         let apiThemeOverrides: AgChartTheme = this.chartProxyParams.apiChartThemeOverrides;
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            const themeOverrides = {
-                defaults: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
-            };
-            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            const theme = stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme();
-            this.chartTheme = getChartTheme(theme);
+            const themeOverrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
+            this.chartTheme = getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} :
+                deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides));
         } else {
             this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
         }
@@ -167,8 +164,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private lookupCustomChartTheme(selectedThemeName: string) {
         const customChartTheme = this.chartProxyParams.getCustomChartThemes[selectedThemeName];
         if (!customChartTheme) {
-            console.warn("ag-Grid: no stock theme exists with the name '" + selectedThemeName + "' and no " +
-                "custom chart theme with that name was supplied to 'customChartThemes'");
+            console.warn("ag-Grid: no stock theme exists with the name '" + selectedThemeName + "' and no custom chart " +
+                "theme with that name was supplied to 'customChartThemes'");
         }
         return customChartTheme;
     }

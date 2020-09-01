@@ -27,25 +27,27 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     chartThemeOverrides: {
-        common: {
-            title: {
-                enabled: true,
-                text: 'Medals by Age',
+        defaults: {
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Medals by Age',
+                },
+                legend: {
+                    position: 'bottom',
+                },
             },
-            legend: {
-                position: 'bottom',
-            },
-        },
-        column: {
-            axes: {
-                category: {
-                    label: {
-                        rotation: 0
+            column: {
+                axes: {
+                    category: {
+                        label: {
+                            rotation: 0
+                        }
                     }
+                },
+                series: {
+                    tooltipRenderer: customTooltipRenderer
                 }
-            },
-            series: {
-                tooltipRenderer: customTooltipRenderer
             }
         }
     },
