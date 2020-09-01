@@ -1,22 +1,23 @@
-var columnDefs = [
-    { field: "country", pivot: true },
-    { field: "year", rowGroup: true },
-    { field: "sport", rowGroup: true },
-    { field: "total", aggFunc: 'sum' },
-    { field: "gold", aggFunc: 'sum' },
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", pivot: true },
+        { field: "year", rowGroup: true },
+        { field: "sport", rowGroup: true },
+        { field: "total", aggFunc: 'sum' },
+        { field: "gold", aggFunc: 'sum' },
+    ],
     defaultColDef: {
         editable: true,
         sortable: true,
         flex: 1,
-        minWidth: 100,
+        minWidth: 130,
         filter: true,
         resizable: true
     },
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     pivotMode: true,
-    columnDefs: columnDefs,
     onFirstDataRendered: onFirstDataRendered,
     popupParent: document.body
 };
@@ -27,12 +28,23 @@ function onFirstDataRendered(event) {
     var params = {
         chartType: 'groupedColumn',
         chartContainer: chartContainer,
-        processChartOptions: function(params) {
-            params.options.legend.position = "bottom";
-            params.options.navigator.enabled = true;
-            params.options.navigator.height = 10;
-
-            return params.options;
+        chartThemeOverrides: {
+            common: {
+                padding: {
+                    top: 20,
+                    left: 10,
+                    bottom: 30,
+                    right: 10
+                },
+                legend: {
+                    enabled: true,
+                    position: 'bottom'
+                },
+                navigator: {
+                    enabled: true,
+                    height: 10
+                }
+            }
         }
     };
 

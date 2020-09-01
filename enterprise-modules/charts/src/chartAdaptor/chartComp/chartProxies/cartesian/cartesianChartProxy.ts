@@ -62,9 +62,9 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
         const chartType = this.getStandaloneChartType();
         let userThemeOverrideRotation = undefined;
-        const commonRotation = _.get(themeOverrides, 'defaults.common.axes.category.label.rotation', undefined);
-        const cartesianRotation = _.get(themeOverrides, 'defaults.cartesian.axes.category.label.rotation', undefined);
-        const chartTypeRotation = _.get(themeOverrides, `defaults.${chartType}.axes.category.label.rotation`, undefined);
+        const commonRotation = _.get(themeOverrides, 'common.axes.category.label.rotation', undefined);
+        const cartesianRotation = _.get(themeOverrides, 'cartesian.axes.category.label.rotation', undefined);
+        const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.category.label.rotation`, undefined);
         if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
             userThemeOverrideRotation = chartTypeRotation;
         } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {

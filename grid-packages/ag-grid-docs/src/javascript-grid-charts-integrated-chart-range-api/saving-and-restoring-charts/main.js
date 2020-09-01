@@ -1,11 +1,10 @@
-var columnDefs = [
-    { field: "country", chartDataType: 'category' },
-    { field: "sugar", chartDataType: 'series' },
-    { field: "fat", chartDataType: 'series' },
-    { field: "weight", chartDataType: 'series' },
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", chartDataType: 'category' },
+        { field: "sugar", chartDataType: 'series' },
+        { field: "fat", chartDataType: 'series' },
+        { field: "weight", chartDataType: 'series' },
+    ],
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -14,13 +13,11 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
-    popupParent: document.body,
-    columnDefs: columnDefs,
     rowData: createRowData(),
     enableRangeSelection: true,
+    popupParent: document.body,
     enableCharts: true,
     createChartContainer: createChartContainer,
-    popupParent: document.body
 };
 
 var chartModel;

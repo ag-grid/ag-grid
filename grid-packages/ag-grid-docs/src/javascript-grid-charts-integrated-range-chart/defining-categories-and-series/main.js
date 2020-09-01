@@ -1,19 +1,18 @@
-var columnDefs = [
-    // different ways to define 'categories'
-    { field: 'athlete', width: 150, chartDataType: 'category' },
-    { field: 'age', chartDataType: 'category', sort: 'asc' },
-    { field: 'sport' }, // inferred as category by grid
-
-    // excludes year from charts
-    { field: 'year', chartDataType: 'excluded' },
-
-    // different ways to define 'series'
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze' }, // inferred as series by grid
-];
-
 var gridOptions = {
+    columnDefs: [
+        // different ways to define 'categories'
+        { field: 'athlete', width: 150, chartDataType: 'category' },
+        { field: 'age', chartDataType: 'category', sort: 'asc' },
+        { field: 'sport' }, // inferred as category by grid
+
+        // excludes year from charts
+        { field: 'year', chartDataType: 'excluded' },
+
+        // different ways to define 'series'
+        { field: 'gold', chartDataType: 'series' },
+        { field: 'silver', chartDataType: 'series' },
+        { field: 'bronze' }, // inferred as series by grid
+    ],
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -23,61 +22,30 @@ var gridOptions = {
         resizable: true,
     },
     popupParent: document.body,
-    columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
     chartThemeOverrides: {
-        defaults: {
-            common: {
-                title: {
-                    enabled: true,
-                    text: 'Medals by Age',
-                },
-                legend: {
-                    position: 'bottom',
-                },
+        common: {
+            title: {
+                enabled: true,
+                text: 'Medals by Age',
             },
-            column: {
-                axes: {
-                    category: {
-                        label: {
-                            rotation: 0
-                        }
+            legend: {
+                position: 'bottom',
+            },
+        },
+        column: {
+            axes: {
+                category: {
+                    label: {
+                        rotation: 0
                     }
-                },
-                series: {
-                    tooltipRenderer: customTooltipRenderer
                 }
-            }
+            },
         }
     },
     onFirstDataRendered: onFirstDataRendered,
 };
-
-function customTooltipRenderer(params) {
-    var titleStyle = params.color
-        ? ' style="color: white; background-color:' +
-        params.color +
-        '"'
-        : '';
-    var title = params.title
-        ? '<div class="ag-chart-tooltip-title"' +
-        titleStyle +
-        '>' +
-        params.title +
-        '</div>'
-        : '';
-    var value = params.datum[params.yKey]
-        .toString()
-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
-    return (
-        title +
-        '<div class="ag-chart-tooltip-content" style="text-align: center">' +
-        value +
-        '</div>'
-    );
-}
 
 function onFirstDataRendered(params) {
     var createRangeChartParams = {
