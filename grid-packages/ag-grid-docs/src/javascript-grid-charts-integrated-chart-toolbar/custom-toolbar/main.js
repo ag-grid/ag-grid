@@ -42,39 +42,37 @@ var gridOptions = {
     enableCharts: true,
     getChartToolbarItems: getChartToolbarItems,
     chartThemeOverrides: {
-        defaults: {
-            pie: {
-                title: {
-                    enabled: true,
-                    text: 'Precious Metals Production',
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    color: 'rgb(100, 100, 100)',
+        pie: {
+            title: {
+                enabled: true,
+                text: 'Precious Metals Production',
+                fontWeight: 'bold',
+                fontSize: 20,
+                color: 'rgb(100, 100, 100)',
+            },
+            subtitle: {
+                enabled: true,
+                text: 'by country',
+                fontStyle: 'italic',
+                fontWeight: 'bold',
+                fontSize: 14,
+                color: 'rgb(100, 100, 100)',
+            },
+            padding: {
+                top: 25,
+                right: 20,
+                bottom: 55,
+                left: 20
+            },
+            legend: {
+                enabled: false,
+            },
+            series: {
+                label: {
+                    enabled: true
                 },
-                subtitle: {
-                    enabled: true,
-                    text: 'by country',
-                    fontStyle: 'italic',
-                    fontWeight: 'bold',
-                    fontSize: 14,
-                    color: 'rgb(100, 100, 100)',
-                },
-                padding: {
-                    top: 25,
-                    right: 20,
-                    bottom: 55,
-                    left: 20
-                },
-                legend: {
-                    enabled: false,
-                },
-                series: {
-                    label: {
-                        enabled: true
-                    },
-                    callout: {
-                        length: 20
-                    }
+                callout: {
+                    length: 20
                 }
             }
         }
