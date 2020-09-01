@@ -16,21 +16,11 @@
         $id = join(array_keys($breadcrumbs), '.');
 
         if (!$config['skipHeader']) {
-            $headerTag = count($breadcrumbs) > 1 ? "h3" : "h2";
+            $headerTag = 'h' . (count($breadcrumbs) + 1);
 
             echo "<$headerTag id='$id'>$displayName</$headerTag>";
 
-            if (count($breadcrumbs) > 1) {
-                $href = '';
-                $links = [];
-
-                foreach ($breadcrumbs as $key => $text) {
-                    $href .= strlen($href) > 0 ? ".$key" : $key;
-                    $links[] = "<a href='#$href'>$text</a>";
-                }
-
-                echo '<div class="reference__breadcrumbs">' . join($links, ' &gt; ') . '</div>';
-            }
+            createBreadcrumbsLink($breadcrumbs);
 
             $description = generateCodeTags($meta->description);
 
@@ -48,6 +38,8 @@
         if ($config['showSnippets'] && empty($names)) {
             createObjectCodeSample($title, $properties);
         }
+
+        if (count(array_filter(array_keys(get_object_vars($properties)), function($key) { return $key !== 'meta'; })) < 1) { return; }
 
         echo '<table class="table content reference">';
 
@@ -126,13 +118,29 @@
         }
     }
 
+    function createBreadcrumbsLink($breadcrumbs) {
+        if (count($breadcrumbs) <= 1) { return; }
+
+        $href = '';
+        $links = [];
+
+        foreach ($breadcrumbs as $key => $text) {
+            $href .= strlen($href) > 0 ? ".$key" : $key;
+            $links[] = "<a href='#$href'" . ($text !== $key ? " title='$text'" : '') . ">$key</a>";
+        }
+
+        echo '<div class="reference__breadcrumbs">' . join($links, ' &gt; ') . '</div>';
+    }
+
     function generateCodeTags($content) {
         return preg_replace('/\`(.*?)\`/', "<code>$1</code>", $content);
     }
 
     function createObjectCodeSample($name, $properties) {
+        $type = isset($properties->meta->type) ? $properties->meta->type : 'I' . ucfirst($name);
+
         $lines = [
-            'interface I' . ucfirst($name) . ' {',
+            "interface $type {",
         ];
 
         foreach ($properties as $name => $definition) {
@@ -151,6 +159,9 @@
 
             if (isset($definition->options)) {
                 $line .= implode(' | ', array_map(formatJson, $definition->options));
+            }
+            else if (isset($definition->meta->type)) {
+                $line .= $definition->meta->type;
             }
             else if (isset($definition->type)) {
                 $line .= is_object($definition->type) ? 'Function' : $definition->type;
