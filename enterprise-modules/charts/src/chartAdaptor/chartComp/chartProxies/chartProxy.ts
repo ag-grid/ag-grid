@@ -141,9 +141,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             // ensure we have everything we need, in case the processing removed necessary options
             const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
-
+            this.overridePalette(safeOptions);
             this.chartOptions = safeOptions;
         }
+
+        console.log(this.chartTheme);
+
+        // this.customPalette = this.chartTheme.palette;
     }
 
     private initChartTheme() {
@@ -164,7 +168,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    private lookupCustomChartTheme(selectedThemeName: string) {
+    public lookupCustomChartTheme(selectedThemeName: string) {
         const customChartTheme = this.chartProxyParams.getCustomChartThemes[selectedThemeName];
         if (!customChartTheme) {
             console.warn("ag-Grid: no stock theme exists with the name '" + selectedThemeName + "' and no " +
@@ -173,7 +177,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return customChartTheme;
     }
 
-    private isStockTheme(themeName: string): boolean {
+    public isStockTheme(themeName: string): boolean {
         const stockThemeNames = ['default', 'dark', 'material', 'material-dark', 'pastel', 'pastel-dark', 'solar', 'solar-dark', 'vivid', 'vivid-dark'];
         return _.includes(stockThemeNames, themeName);
     }
@@ -210,6 +214,24 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 return 'pie';
             default:
                 return 'cartesian';
+        }
+    }
+
+    private overridePalette(chartOptions: TOptions): void {
+        if (!this.chartProxyParams.allowPaletteOverride) {
+            return;
+        }
+
+        const { seriesDefaults } = chartOptions;
+        const fillsOverridden = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+        const strokesOverridden = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
+
+        if (fillsOverridden || strokesOverridden) {
+            // both fills and strokes will need to be overridden
+            this.customPalette = {
+                fills: fillsOverridden,
+                strokes: strokesOverridden
+            };
         }
     }
 

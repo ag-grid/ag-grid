@@ -3,7 +3,6 @@ import './Options.css';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
-import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 
 const getType = value => {
     if (value == null) {
