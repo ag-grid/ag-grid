@@ -42,9 +42,6 @@ var gridOptions = {
                     }
                 }
             },
-            series: {
-                tooltipRenderer: customTooltipRenderer
-            }
         }
     },
     onFirstDataRendered: onFirstDataRendered,

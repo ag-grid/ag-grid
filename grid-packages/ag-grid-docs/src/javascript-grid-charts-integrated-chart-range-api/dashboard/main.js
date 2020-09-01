@@ -49,18 +49,16 @@ function onFirstDataRendered(event) {
         chartContainer: eContainer2,
         aggFunc: 'sum',
         chartThemeOverrides: {
-            defaults: {
-                common: {
-                    padding: {
-                        top: 20,
-                        left: 10,
-                        bottom: 30,
-                        right: 10
-                    },
-                    legend: {
-                        enabled: true,
-                        position: 'bottom'
-                    }
+            common: {
+                padding: {
+                    top: 20,
+                    left: 10,
+                    bottom: 30,
+                    right: 10
+                },
+                legend: {
+                    enabled: true,
+                    position: 'bottom'
                 }
             }
         }
@@ -77,18 +75,16 @@ function onFirstDataRendered(event) {
         chartContainer: eContainer3,
         aggFunc: 'sum',
         chartThemeOverrides: {
-            defaults: {
-                common: {
-                    padding: {
-                        top: 20,
-                        left: 10,
-                        bottom: 30,
-                        right: 10
-                    },
-                    legend: {
-                        enabled: true,
-                        position: 'bottom'
-                    }
+            common: {
+                padding: {
+                    top: 20,
+                    left: 10,
+                    bottom: 30,
+                    right: 10
+                },
+                legend: {
+                    enabled: true,
+                    position: 'bottom'
                 }
             }
         }

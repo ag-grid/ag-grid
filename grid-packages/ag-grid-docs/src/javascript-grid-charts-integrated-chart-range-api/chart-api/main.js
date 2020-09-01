@@ -33,12 +33,10 @@ function onChart1() {
         chartType: 'groupedColumn',
         chartPalette: 'bright',
         chartThemeOverrides: {
-            defaults: {
-                common: {
-                    title: {
-                        enabled: true,
-                        text: 'Top 5 Medal Winners'
-                    }
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Top 5 Medal Winners'
                 }
             }
         }
@@ -55,15 +53,13 @@ function onChart2() {
         chartType: 'groupedBar',
         chartPalette: 'pastel',
         chartThemeOverrides: {
-            defaults: {
-                common: {
-                    title: {
-                        enabled: true,
-                        text: 'Bronze Medal by Country'
-                    },
-                    legend: {
-                        enabled: false
-                    }
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Bronze Medal by Country'
+                },
+                legend: {
+                    enabled: false
                 }
             }
         }

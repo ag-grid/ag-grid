@@ -29,22 +29,20 @@ function onFirstDataRendered(event) {
         chartType: 'groupedColumn',
         chartContainer: chartContainer,
         chartThemeOverrides: {
-            defaults: {
-                common: {
-                    padding: {
-                        top: 20,
-                        left: 10,
-                        bottom: 30,
-                        right: 10
-                    },
-                    legend: {
-                        enabled: true,
-                        position: 'bottom'
-                    },
-                    navigator: {
-                        enabled: true,
-                        height: 10
-                    }
+            common: {
+                padding: {
+                    top: 20,
+                    left: 10,
+                    bottom: 30,
+                    right: 10
+                },
+                legend: {
+                    enabled: true,
+                    position: 'bottom'
+                },
+                navigator: {
+                    enabled: true,
+                    height: 10
                 }
             }
         }
