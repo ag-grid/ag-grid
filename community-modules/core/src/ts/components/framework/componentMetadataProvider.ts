@@ -81,11 +81,6 @@ export class ComponentMetadataProvider extends BeanStub {
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
-            groupRowInnerRenderer: {
-                mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
-            },
             groupRowRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],

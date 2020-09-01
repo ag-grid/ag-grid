@@ -1445,6 +1445,33 @@ export class GridOptionsWrapper {
         }
 
         checkRenamedProperty('suppressSetColumnStateEvents', 'suppressColumnStateEvents', '24.0.x');
+
+        if (options.groupRowInnerRenderer || options.groupRowInnerRendererParams || options.groupRowInnerRendererFramework) {
+            console.warn('ag-Grid: since v24.0, grid properties groupRowInnerRenderer, groupRowInnerRendererFramework and groupRowInnerRendererParams are no longer used.');
+            console.warn('  Instead use the grid properties groupRowRendererParams.innerRenderer, groupRowRendererParams.innerRendererFramework and groupRowRendererParams.innerRendererParams.');
+            console.warn('  For example instead of this:');
+            console.warn('    groupRowInnerRenderer: "myRenderer"');
+            console.warn('    groupRowInnerRendererParams: {x: a}');
+            console.warn('  Replace with this:');
+            console.warn('    groupRowRendererParams: {');
+            console.warn('      innerRenderer: "myRenderer",');
+            console.warn('      innerRendererParams: {x: a}');
+            console.warn('    }');
+            console.warn('  We have copied the properties over for you. However to stop this error message, please change your application code.');
+            if (!options.groupRowRendererParams) {
+                options.groupRowRendererParams = {};
+            }
+            const params = options.groupRowRendererParams;
+            if (options.groupRowInnerRenderer) {
+                params.innerRenderer = options.groupRowInnerRenderer;
+            }
+            if (options.groupRowInnerRendererParams) {
+                params.innerRendererParams = options.groupRowInnerRendererParams;
+            }
+            if (options.groupRowInnerRendererFramework) {
+                params.innerRendererFramework = options.groupRowInnerRendererFramework;
+            }
+        }
     }
 
     private checkForViolations() {

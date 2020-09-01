@@ -340,7 +340,9 @@ export interface GridOptions {
     groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
     fillOperation?: (params: FillOperationParams) => any;

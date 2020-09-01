@@ -29,8 +29,9 @@ var gridOptions = {
     components: {
         groupRowInnerRenderer: GroupRowInnerRenderer
     },
-    groupRowInnerRenderer: 'groupRowInnerRenderer',
     groupRowRendererParams: {
+        innerRenderer: 'groupRowInnerRenderer',
+        suppressCount: true,
         flagCodes: {
             'Andorra': 'ad',
             'United Arab Emirates': 'ae',

@@ -49,7 +49,6 @@ colDef = {
         <li><b>suppressEnterExpand:</b> Set to true to to suppress expand on Enter key.</li>
         <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
         <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
-        <li><b>suppressDoubleClickExpand:</b> If true then double clicking will not expand the group.</li>
     </ul>
 
     <h3>Example Group cellRenderer</h3>

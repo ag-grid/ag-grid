@@ -3,7 +3,7 @@ import { ExpressionService } from "../../valueService/expressionService";
 import { Constants } from "../../constants/constants";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
 import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
@@ -29,14 +29,23 @@ import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
+    // only when in fullWidth, this gives whether the comp is pinned or not.
+    // if not doing fullWidth, then this is not provided, as pinned can be got from the column.
     pinned: string;
+    // true if comp is showing full width
+    fullWidth: boolean;
+
     suppressPadding: boolean;
     suppressDoubleClickExpand: boolean;
     suppressEnterExpand: boolean;
     footerValueGetter: any;
     suppressCount: boolean;
-    fullWidth: boolean;
     checkbox: any;
+
+    innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    innerRendererFramework?: any;
+    innerRendererParams?: any;
+
     scope: any;
 
     /** @deprecated */

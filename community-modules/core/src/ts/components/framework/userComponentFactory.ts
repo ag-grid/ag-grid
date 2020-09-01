@@ -36,7 +36,6 @@ import {
     DateComponent,
     FilterComponent,
     FloatingFilterComponent,
-    GroupRowInnerRendererComponent,
     HeaderComponent,
     HeaderGroupComponent,
     InnerRendererComponent,
@@ -105,7 +104,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent(this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
+        return this.createAndInitUserComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.

@@ -364,98 +364,83 @@ SNIPPET
 
 <?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
-<h2>Full Width Groups Rendering</h2>
+<h2>Configuring Full Width Group Rows</h2>
 
 <p>
-    It is possible to override the rendering of the group row using <code>groupRowRenderer</code> and
-    <code>groupRowInnerRenderer</code>. Use groupRowRenderer to take full control of the row rendering,
-    and provide a cellRenderer exactly how you would provide one for custom rendering of cells
-    for non-groups.
+    When using Full Width Group Rows, it is possible to change the rendering of the group row.
+    This done by either replacing the Cell Renderer with your own
+    <a href="../javascript-grid-cell-rendering-components/">Custom Cell Renderer</a>,
+    or configuring the provided <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>.
 </p>
 
 <p>
-    The following pieces of code do the exact same thing:
+    If using Full Width Group Rows and no <code>groupRowRenderer</code> properties are provided,
+    then the default <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>
+    is used with it's default values.
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// option 1 - tell the grid to group by row, the grid defaults to using
+// tell the grid to group by row, the grid defaults to using
 // the default group cell renderer for the row with default settings.
 gridOptions.groupUseEntireRow = true;
 SNIPPET
 ) ?>
 
 <?= createSnippet(<<<SNIPPET
-// option 2 - this does the exact same as the above, except we configure
-// it explicitly rather than letting the grid choose the defaults.
-// we tell the grid what renderer to use (the built in renderer) and we
-// configure the default renderer with our own inner renderer
+// this is identical to the above. it tells the grid to use "agGroupCellRenderer"
+// which is the default, so doesn't change anything.
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer = 'agGroupCellRenderer';
+SNIPPET
+) ?>
+
+<h3>Providing Cell Renderer</h3>
+
+<p>
+    To provide your own Cell Renderer, use the grid properties <code>groupRowRenderer</code>,
+    <code>groupRowRendererFramework</code> and <code>groupRowRendererParams</code>.
+</p>
+
+<p>
+    Using your own Cell Renderer hands over rendering of the full row to your custom
+    Cell Renderer. However that also means the customer Cell Renderer will also need
+    to provide expand / collapse functionality.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// configure Full Width rows with a customer Cell Renderer
+gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowRenderer = 'myCellRenderer';
 gridOptions.groupRowRendererParams = {
-    innerRenderer: function(params) { return params.node.key; },
+    someProp: 'someValue'
 };
 SNIPPET
 ) ?>
 
-<?= createSnippet(<<<SNIPPET
-// option 3 - again the exact same. we allow the grid to choose the group
-// cell renderer, but we provide our own inner renderer.
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowInnerRenderer = function(params) { return params.node.key; };
-SNIPPET
-) ?>
+
+<h3>Configuring Group Cell Renderer</h3>
 
 <p>
-    The above probably reads a bit confusing. So here are rules to help you choose:
-</p>
-
-<ul class="content">
-    <li>
-        If you are happy with what you get with just setting groupUseEntireRow = true,
-        then stick with that, don't bother with the renderers.
-    </li>
-    <li>
-        If you want to change the inside of the renderer, but are happy with the
-        expand / collapse etc of the group row, then just set the groupRowInnerRenderer.
-    </li>
-    <li>
-        If you want to customise the entire row, you are not happy with what you
-        get for free with the group cell renderer, then set your own renderer
-        with groupRowRenderer, or use groupRowRenderer to configure the default
-        group renderer.
-    </li>
-</ul>
-
-<p>
-    Here is an example of taking full control, creating your own renderer. In practice,
-    this example is a bit useless, as you will need to add functionality to at least expand
-    and collapse the group, however it demonstrates the configuration:
+    Configure the default Group Cell Renderer using <code>groupRowRendererParams</code>. Full
+    details on what to configure are provided in the page
+    <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>.
 </p>
 
 <?= createSnippet(<<<SNIPPET
+// use Full Width group rows and configure the Group Cell Renderer
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = function(params) { return params.node.key; };
-SNIPPET
-) ?>
-
-<p>
-    This example takes full control also, but uses the provided group renderer
-    but configured differently by asking for a checkbox for selection:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = 'agGroupCellRenderer';
 gridOptions.groupRowRendererParams = {
-    checkbox: true,
-    // innerRenderer is optional, we could leave this out and use the default
-    innerRenderer: function(params) { return params.node.key; },
-}
+    checkbox: true // puts a checkbox onto each group row
+};
 SNIPPET
 ) ?>
 
 <p>
-    Below shows an example of aggregating with full width rows for groups. The following can be noted:
+    Below shows an example of aggregating with full width rows for groups.
+    It also provides an <code>innerRenderer</code> to configure what gets displaying inside the
+    row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse
+    functionality.
+    The following can be noted:
 </p>
 
 <ul>
