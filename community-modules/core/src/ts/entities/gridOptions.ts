@@ -189,6 +189,8 @@ export interface GridOptions {
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     allowContextMenuWithControlKey?: boolean;
+
+    /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;

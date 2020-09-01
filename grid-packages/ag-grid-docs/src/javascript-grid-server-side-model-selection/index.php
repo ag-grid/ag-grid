@@ -9,24 +9,9 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Server-Side Row Selection</h1>
 
 <p class="lead">
-    Learn how to implement Row Selection with the Server-Side Row Model.
-</p>
-
-<h2>Selection with Server-Side Row Model</h2>
-
-<p>
     Selecting rows and groups in the Server-Side Row Model is supported.
     Just set the property <code>rowSelection</code> to either <code>'single'</code>
     or <code>'multiple'</code> as with any other row model.
-</p>
-
-<h3>Selecting Group Nodes</h3>
-
-<p>
-    When you select a group, the children of that group may or may not be loaded
-    into the grid. For this reason the setting <code>groupSelectsChildren=true</code> (which
-    selects all the children of the group when you select a group) does not make
-    sense. When you select a group, only the group row will be marked as selected.
 </p>
 
 <h2>Example: Click Selection</h2>
@@ -87,6 +72,26 @@ include '../documentation-main/documentation_header.php';
 <p>
     If you do not provide node IDs, the grid will generate the IDs for you,
     and will make sure they are unique.
+</p>
+
+<h2>Selecting Group Nodes</h2>
+
+<p>
+    Group nodes can be selected along with non-group nodes.
+</p>
+
+<p>
+    It is not possible to select all items in a group by selecting the group.
+    When NOT using the Server-Side Row Model (e.g. if using the default Client-side Row Model)
+    it is possible to do this by setting <code>groupSelectsChildren=true</code>.
+    This is not possible in the Server-Side Row Model because the children for
+    a group may not be loaded into the grid. Without all the children loaded,
+    it is not possible to select them all.
+</p>
+<p>
+    If you want selecting a group to also select children, this is something you will
+    need to implement within the application as it will require selecting rows
+    that are not yet loaded into the grid, probably not even loaded into the client.
 </p>
 
 <h2>Next Up</h2>
