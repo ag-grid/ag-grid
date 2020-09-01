@@ -59,8 +59,9 @@ body {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100;
+    height: 100%;
     padding: 10px;
+    padding-top: 0;
 }
 
 .container__chart .ag-chart-wrapper {

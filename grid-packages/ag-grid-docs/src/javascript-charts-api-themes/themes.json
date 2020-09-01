@@ -1184,15 +1184,15 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the markers are hovered over."
+        "description": "Configuration for the highlighting used when the bars are hovered over."
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the bars when hovered over."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the bars when hovered over."
       }
     },
     "fill": {

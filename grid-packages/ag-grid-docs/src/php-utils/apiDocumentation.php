@@ -29,7 +29,7 @@
                     $links[] = "<a href='#$href'>$text</a>";
                 }
 
-                echo '<div class="reference__breadcrumbs">' . join($links, ' >> ') . '</div>';
+                echo '<div class="reference__breadcrumbs">' . join($links, ' &gt; ') . '</div>';
             }
 
             $description = generateCodeTags($meta->description);
@@ -213,7 +213,7 @@
             $lines[] = 'interface I' . ucfirst($name) . ' {';
 
             foreach ($argumentType as $name => $type) {
-                $lines[] = "    $name: $type;";
+                $lines[] = "  $name: $type;";
             }
 
             $lines[] = '}';
@@ -223,7 +223,7 @@
             array_push($lines, '', 'interface IReturn {');
 
             foreach ($returnType as $name => $parameterType) {
-                $lines[] = "    $name: $parameterType;";
+                $lines[] = "  $name: $parameterType;";
             }
 
             $lines[] = '}';
