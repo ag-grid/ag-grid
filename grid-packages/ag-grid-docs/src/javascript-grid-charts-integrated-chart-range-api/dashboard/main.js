@@ -1,46 +1,15 @@
-var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "group", chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "silver", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "bronze", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'a', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'b', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'c', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'd', chartDataType: 'series', editable: true, valueParser: numberValueParser}
-];
-
-function createRowData() {
-    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
-        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-
-    return countries.map(function (country, index) {
-        var group = index % 2 == 0 ? 'Group A' : 'Group B';
-
-        return {
-            country: country,
-            group: group,
-            gold: Math.floor(((index + 1 / 7) * 333) % 100),
-            silver: Math.floor(((index + 1 / 3) * 555) % 100),
-            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
-            a: Math.floor(Math.random() * 1000),
-            b: Math.floor(Math.random() * 1000),
-            c: Math.floor(Math.random() * 1000),
-            d: Math.floor(Math.random() * 1000)
-        };
-    });
-}
-
-function numberValueParser(params) {
-    var res = Number.parseInt(params.newValue);
-
-    if (isNaN(res)) { return undefined; }
-
-    return res;
-}
-
 var gridOptions = {
+    columnDefs: [
+        {field: "country", width: 150, chartDataType: 'category'},
+        {field: "group", chartDataType: 'category'},
+        {field: "gold", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: "silver", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: "bronze", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: 'a', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: 'b', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: 'c', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+        {field: 'd', chartDataType: 'series', editable: true, valueParser: numberValueParser}
+    ],
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -50,17 +19,12 @@ var gridOptions = {
         resizable: true
     },
     rowData: createRowData(),
-    columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
     getChartToolbarItems: getChartToolbarItems,
     popupParent: document.body
 };
-
-function getChartToolbarItems(params) {
-    return [];
-}
 
 function onFirstDataRendered(event) {
     var eContainer1 = document.querySelector('#chart1');
@@ -71,18 +35,7 @@ function onFirstDataRendered(event) {
             columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedBar',
-        chartContainer: eContainer1,
-        processChartOptions: function (params) {
-            params.options.seriesDefaults.tooltip.renderer = function (params) {
-                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
-                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
-            };
-
-            return params.options;
-        }
+        chartContainer: eContainer1
     };
 
     event.api.createRangeChart(params1);
@@ -95,19 +48,21 @@ function onFirstDataRendered(event) {
         chartType: 'pie',
         chartContainer: eContainer2,
         aggFunc: 'sum',
-        processChartOptions: function (params) {
-            params.options.legend.position = 'bottom';
-            params.options.padding = {top: 20, left: 10, bottom: 30, right: 10};
-
-            params.options.seriesDefaults.tooltip.renderer = function (params) {
-                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
-                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
-            };
-
-            return params.options;
+        chartThemeOverrides: {
+            defaults: {
+                common: {
+                    padding: {
+                        top: 20,
+                        left: 10,
+                        bottom: 30,
+                        right: 10
+                    },
+                    legend: {
+                        enabled: true,
+                        position: 'bottom'
+                    }
+                }
+            }
         }
     };
 
@@ -121,23 +76,59 @@ function onFirstDataRendered(event) {
         chartType: 'pie',
         chartContainer: eContainer3,
         aggFunc: 'sum',
-        processChartOptions: function (params) {
-            params.options.legend.position = 'bottom';
-            params.options.padding = {top: 20, left: 10, bottom: 30, right: 10};
-
-            params.options.seriesDefaults.tooltip.renderer = function (params) {
-                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-
-                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
-            };
-
-            return params.options;
+        chartThemeOverrides: {
+            defaults: {
+                common: {
+                    padding: {
+                        top: 20,
+                        left: 10,
+                        bottom: 30,
+                        right: 10
+                    },
+                    legend: {
+                        enabled: true,
+                        position: 'bottom'
+                    }
+                }
+            }
         }
     };
 
     event.api.createRangeChart(params3);
+}
+
+function numberValueParser(params) {
+    var res = Number.parseInt(params.newValue);
+
+    if (isNaN(res)) { return undefined; }
+
+    return res;
+}
+
+function getChartToolbarItems(params) {
+    return [];
+}
+
+function createRowData() {
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+
+    return countries.map(function (country, index) {
+        var group = index % 2 === 0 ? 'Group A' : 'Group B';
+
+        return {
+            country: country,
+            group: group,
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
+            a: Math.floor(Math.random() * 1000),
+            b: Math.floor(Math.random() * 1000),
+            c: Math.floor(Math.random() * 1000),
+            d: Math.floor(Math.random() * 1000)
+        };
+    });
 }
 
 // setup the grid after the page has finished loading

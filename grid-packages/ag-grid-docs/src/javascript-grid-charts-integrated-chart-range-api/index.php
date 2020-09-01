@@ -15,8 +15,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Range Charts</h2>
 
 <p>
-    Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The interface is
-    as follows:
+    Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The
+    interface is as follows:
 </p>
 
 <snippet language="ts">
@@ -30,7 +30,7 @@ interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    chartThemeOverrides?: AgChartTheme;
 }
 
 interface CellRangeParams {
@@ -66,11 +66,6 @@ type ChartType =
 
 interface IAggFunc {
     (input: any[]): any;
-}
-
-interface ProcessChartOptionsParams {
-    type: ChartType;
-    options: ChartOptions;
 }
 </snippet>
 
@@ -113,9 +108,8 @@ interface ProcessChartOptionsParams {
         shown above.
     </li>
     <li>
-        <code>processChartOptions</code>: A callback to configure the rendered chart. This works the same
-        as the grid callback <code>processChartOptions</code> described in
-        <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a>.
+        <code>chartThemeOverrides</code>: Allows specific chart options in the current theme to be overridden, see
+        <a href="../javascript-charts-api-themes/">Chart Theme Reference</a> for more details.
     </li>
 </ul>
 
@@ -162,7 +156,7 @@ interface ProcessChartOptionsParams {
     <li>All data is editable in the grid. Changes to the grid data is reflected in the charts.</li>
     <li>
         The two pie charts have legends beneath. This is configured in the
-        <code>processChartOptions()</code>.
+        <code>chartThemeOverrides</code>.
     </li>
 </ul>
 
@@ -182,7 +176,7 @@ interface CreatePivotChartParams {
     chartType: ChartType;
     chartPalette?: string;
     chartContainer?: HTMLElement;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    chartThemeOverrides?: AgChartTheme;
 }
 </snippet>
 
