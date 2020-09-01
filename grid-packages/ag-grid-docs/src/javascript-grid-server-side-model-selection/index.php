@@ -82,9 +82,9 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     It is not possible to select all items in a group by selecting the group.
-    When NOT using the Server-side Row Model (e.g. if using the default Client-side Row Model)
+    When NOT using the Server-Side Row Model (e.g. if using the default Client-side Row Model)
     it is possible to do this by setting <code>groupSelectsChildren=true</code>.
-    This is not possible in the Server-side Row Model because the children for
+    This is not possible in the Server-Side Row Model because the children for
     a group may not be loaded into the grid. Without all the children loaded,
     it is not possible to select them all.
 </p>
