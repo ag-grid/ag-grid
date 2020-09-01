@@ -122,7 +122,15 @@ export class ChartController extends BeanStub {
             return [customPalette];
         }
 
-        return this.gridOptionsWrapper.getChartThemes().map(theme => getChartTheme(theme).palette);
+        const themeNames = this.gridOptionsWrapper.getChartThemes();
+
+        return themeNames.map(themeName => {
+            if (this.chartProxy.isStockTheme(themeName)) {
+                return getChartTheme(themeName).palette;
+            }
+            const customTheme = this.chartProxy.lookupCustomChartTheme(themeName);
+            return getChartTheme(customTheme).palette;
+        });
     }
 
     public setChartType(chartType: ChartType): void {
