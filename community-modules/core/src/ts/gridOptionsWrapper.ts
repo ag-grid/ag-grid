@@ -1472,6 +1472,10 @@ export class GridOptionsWrapper {
                 params.innerRendererFramework = options.groupRowInnerRendererFramework;
             }
         }
+
+        if (options.rememberGroupStateWhenNewData) {
+            console.warn('ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
+        }
     }
 
     private checkForViolations() {

@@ -676,26 +676,6 @@ SNIPPET
     </ul>
 </note>
 
-<h2 id="keeping-group-state">Keeping Group State</h2>
-
-<p>
-    <note>
-        If using <a href="../javascript-grid-data-update-transactions/">Transactions</a> or
-        <a href="../javascript-grid-immutable-data/">Immutable Data</a>, then
-        you do not need to be concerned with keeping group state. When using transactions or delta updates,
-        the group state is not changed.
-    </note>
-</p>
-
-<p>
-    When you set new data into the group by default all the group open/closed states are reset.
-    If you want to keep the original state, then set the property <code>rememberGroupStateWhenNewData=true</code>.
-    The example below demonstrates this. Only half the data is shown in the grid at any given time,
-    either the odd rows or the even rows. Hitting the 'Refresh Data' will set the data to 'the other half'.
-    Note that not all groups are present in both sets (eg 'Afghanistan' is only present in one group) and
-    as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
-</p>
-
 <?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
