@@ -36,7 +36,7 @@
         }
 
         if ($config['showSnippets'] && empty($names)) {
-            createObjectCodeSample($title, $properties);
+            createObjectCodeSample($breadcrumbs, $properties);
         }
 
         if (count(array_filter(array_keys(get_object_vars($properties)), function($key) { return $key !== 'meta'; })) < 1) { return; }
@@ -136,19 +136,31 @@
         return preg_replace('/\`(.*?)\`/', "<code>$1</code>", $content);
     }
 
-    function createObjectCodeSample($name, $properties) {
-        $type = isset($properties->meta->type) ? $properties->meta->type : 'I' . ucfirst($name);
+    function getIndent($indentationLevel) {
+        return str_repeat('  ', $indentationLevel);
+    }
 
-        $lines = [
-            "interface $type {",
-        ];
+    function createObjectCodeSample($breadcrumbs, $properties) {
+        $lines = [];
+        $indentationLevel = 0;
+
+        foreach ($breadcrumbs as $key => $title) {
+            $indent = getIndent($indentationLevel);
+
+            if ($indentationLevel > 0) {
+                $lines[] = $indent . '...';
+            }
+
+            $lines[] = "$indent$key: {";
+            $indentationLevel++;
+        }
 
         foreach ($properties as $name => $definition) {
             if ($name == 'meta') {
                 continue;
             }
 
-            $line = '  ' . $name;
+            $line = getIndent($indentationLevel) . $name;
 
             // process property object
             if (!isset($definition->isRequired) || !$definition->isRequired) {
@@ -195,7 +207,9 @@
             $lines[] = $line;
         }
 
-        $lines[]= '}';
+        for (; $indentationLevel > 0; $indentationLevel--) {
+            $lines[] = getIndent($indentationLevel - 1) . '}';
+        }
 
         echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
     }
