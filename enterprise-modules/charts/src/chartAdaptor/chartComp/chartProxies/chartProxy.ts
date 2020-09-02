@@ -227,6 +227,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const strokesOverridden = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
 
         if (fillsOverridden || strokesOverridden) {
+            // due to series default refactoring it's possible for fills and strokes to have undefined values
+            const invalidFills = _.includes(fillsOverridden, undefined);
+            const invalidStrokes = _.includes(strokesOverridden, undefined);
+            if (invalidFills || invalidStrokes) return;
+
             // both fills and strokes will need to be overridden
             this.customPalette = {
                 fills: fillsOverridden,
