@@ -15,9 +15,9 @@ import {
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
-import {ChartProxy} from "./chartProxies/chartProxy";
-import {getChartTheme} from "ag-charts-community";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartProxy } from "./chartProxies/chartProxy";
+import { getChartTheme } from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -26,10 +26,10 @@ export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
-    @Autowired('rangeController') rangeController: IRangeController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rangeController') private readonly rangeController: IRangeController;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
 
@@ -84,7 +84,7 @@ export class ChartController extends BeanStub {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartThemeIndex: this.getThemeIndex(),
+            chartThemeName: this.getThemeName(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
             chart: this.chartProxy.getChart(),
@@ -106,8 +106,8 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getThemeIndex(): number {
-        return this.model.getChartThemeIndex();
+    public getThemeName(): string {
+        return this.model.getChartThemeName();
     }
 
     public getThemes(): string[] {
@@ -124,11 +124,10 @@ export class ChartController extends BeanStub {
         const themeNames = this.gridOptionsWrapper.getChartThemes();
 
         return themeNames.map(themeName => {
-            if (this.chartProxy.isStockTheme(themeName)) {
-                return getChartTheme(themeName).palette;
-            }
-            const customTheme = this.chartProxy.lookupCustomChartTheme(themeName);
-            return getChartTheme(customTheme).palette;
+            const theme = this.chartProxy.isStockTheme(themeName) ?
+                themeName : this.chartProxy.lookupCustomChartTheme(themeName);
+
+            return getChartTheme(theme).palette;
         });
     }
 
@@ -138,8 +137,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartThemeIndex(chartThemeIndex: number): void {
-        this.model.setChartThemeIndex(chartThemeIndex);
+    public setChartThemeName(chartThemeName: string): void {
+        this.model.setChartThemeName(chartThemeName);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

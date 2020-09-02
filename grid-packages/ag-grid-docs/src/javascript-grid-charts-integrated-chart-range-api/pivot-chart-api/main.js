@@ -28,6 +28,7 @@ function onFirstDataRendered(event) {
     var params = {
         chartType: 'groupedColumn',
         chartContainer: chartContainer,
+        chartThemeName: 'vivid',
         chartThemeOverrides: {
             common: {
                 padding: {

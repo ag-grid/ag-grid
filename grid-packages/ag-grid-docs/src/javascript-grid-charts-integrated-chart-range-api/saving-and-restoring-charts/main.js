@@ -79,7 +79,7 @@ function restoreChart() {
         chartContainer: document.querySelector('#myChart'),
         cellRange: chartModel.cellRange,
         chartType: chartModel.chartType,
-        chartPalette: chartModel.chartPalette,
+        chartThemeName: chartModel.chartThemeName,
         processChartOptions: function() { return options; }
     };
 

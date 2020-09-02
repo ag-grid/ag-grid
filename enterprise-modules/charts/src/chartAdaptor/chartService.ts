@@ -21,7 +21,7 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
-import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
+import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
@@ -62,7 +62,7 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartThemeIndex,
+            params.chartThemeName,
             false,
             params.suppressChartRanges,
             params.chartContainer,
@@ -94,7 +94,7 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartThemeIndex,
+            params.chartThemeName,
             true,
             true,
             params.chartContainer,
@@ -104,14 +104,14 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private createChart(cellRange: CellRange,
-                        chartType: ChartType,
-                        chartThemeIndex: number = 0,
-                        pivotChart = false,
-                        suppressChartRanges = false,
-                        container?: HTMLElement,
-                        aggFunc?: string | IAggFunc,
-                        chartThemeOverrides?: AgChartTheme,
-                        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
+        chartType: ChartType,
+        chartThemeName?: string,
+        pivotChart = false,
+        suppressChartRanges = false,
+        container?: HTMLElement,
+        aggFunc?: string | IAggFunc,
+        chartThemeOverrides?: AgChartTheme,
+        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -119,7 +119,7 @@ export class ChartService extends BeanStub implements IChartService {
             pivotChart,
             cellRange,
             chartType,
-            chartThemeIndex,
+            chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,

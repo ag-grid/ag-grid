@@ -32,14 +32,16 @@ import {
     DropShadow,
     getChartTheme,
     Padding,
-    PieSeries
+    PieSeries,
+    themes,
 } from "ag-charts-community";
-import {deepMerge} from "../object";
+import { deepMerge } from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
-    chartThemeIndex: number;
+    chartThemeName?: string;
+    customChartThemes?: { [name: string]: AgChartTheme; };
     width?: number;
     height?: number;
     parentElement: HTMLElement;
@@ -47,11 +49,10 @@ export interface ChartProxyParams {
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     processChartFunc: (params: ProcessChartParams) => void;
-    getChartThemeIndex: () => number;
+    getChartThemeName: () => string;
     getChartThemes: () => string[];
-    getCustomChartThemes: { [name: string]: AgChartTheme } | undefined
     getGridOptionsChartThemeOverrides: () => AgChartTheme | undefined;
-    apiChartThemeOverrides: AgChartTheme | undefined;
+    apiChartThemeOverrides?: AgChartTheme;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -134,6 +135,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         // allow users to override options before they are applied
         const { processChartOptions } = this.chartProxyParams;
+
         if (processChartOptions) {
             const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
@@ -152,30 +154,34 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         let gridOptionsThemeOverrides: AgChartTheme = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         let apiThemeOverrides: AgChartTheme = this.chartProxyParams.apiChartThemeOverrides;
+
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
                 defaults: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
+
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            const theme = stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme();
+            const theme = stockTheme ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
+
             this.chartTheme = getChartTheme(theme);
         } else {
             this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
         }
     }
 
-    public lookupCustomChartTheme(selectedThemeName: string) {
-        const customChartTheme = this.chartProxyParams.getCustomChartThemes[selectedThemeName];
+    public lookupCustomChartTheme(name: string) {
+        const customChartTheme = this.chartProxyParams.customChartThemes[name];
+
         if (!customChartTheme) {
-            console.warn("ag-Grid: no stock theme exists with the name '" + selectedThemeName + "' and no " +
+            console.warn(`ag-Grid: no stock theme exists with the name '${name}' and no ` +
                 "custom chart theme with that name was supplied to 'customChartThemes'");
         }
+
         return customChartTheme;
     }
 
     public isStockTheme(themeName: string): boolean {
-        const stockThemeNames = ['default', 'dark', 'material', 'material-dark', 'pastel', 'pastel-dark', 'solar', 'solar-dark', 'vivid', 'vivid-dark'];
-        return _.includes(stockThemeNames, themeName);
+        return _.includes(Object.keys(themes), themeName);
     }
 
     private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartTheme, apiThemeOverrides: AgChartTheme) {
@@ -249,7 +255,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         options.title = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title') as CaptionOptions;
         options.subtitle = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle') as CaptionOptions;
         options.background = theme.getConfig(standaloneChartType + '.background');
-        options.legend =  theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
+        options.legend = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
         options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
         options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
         options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
@@ -260,9 +266,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private getSelectedTheme(): string {
-        const params = this.chartProxyParams;
-        const chartThemeIndex = params.getChartThemeIndex();
-        return params.getChartThemes()[chartThemeIndex];
+        let chartThemeName = this.chartProxyParams.getChartThemeName();
+        const availableThemes = this.chartProxyParams.getChartThemes();
+
+        if (!_.includes(availableThemes, chartThemeName)) {
+            chartThemeName = availableThemes[0];
+        }
+
+        return chartThemeName;
     }
 
     public getChartOptions(): TOptions {
@@ -429,7 +440,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartThemeIndex: this.chartProxyParams.getChartThemeIndex(),
+            chartThemeName: this.chartProxyParams.getChartThemeName(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
