@@ -1,19 +1,19 @@
 var columnDefs = [
-    { field: "country", width: 150, chartDataType: 'category' },
-    { field: "gold", chartDataType: 'series' },
-    { field: "silver", chartDataType: 'series' },
-    { field: "bronze", chartDataType: 'series' },
-    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
+    { field: 'country', width: 150, chartDataType: 'category' },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
+    { headerName: 'A', valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: 'B', valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: 'C', valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: 'D', valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
     var countries = [
-        "Ireland", "Spain", "UK", "France", "Germany", "Luxembourg", "Sweden",
-        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
+        'Ireland', 'Spain', 'UK', 'France', 'Germany', 'Luxembourg', 'Sweden',
+        'Norway', 'Italy', 'Greece', 'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
+        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium'
     ];
 
     return countries.map(function(country, index) {
@@ -60,19 +60,11 @@ var gridOptions = {
                     },
                     title: {
                         enabled: true,
-                        text: 'Precious Metals Production',
                         fontStyle: 'italic',
                         fontWeight: '600',
                         fontSize: 18,
                         fontFamily: 'Impact, sans-serif',
                         color: '#414182',
-                    },
-                    subtitle: {
-                        enabled: true,
-                        text: 'by country',
-                        fontSize: 14,
-                        fontFamily: 'Monaco, monospace',
-                        color: 'rgb(100, 100, 100)',
                     },
                     legend: {
                         enabled: true,
@@ -96,12 +88,11 @@ var gridOptions = {
                             paddingY: 20,
                         }
                     },
-                    tooltipClass: 'my-tooltip-class',
                 }
             }
         }
     },
-    chartThemes: ['myCustomTheme'],
+    chartThemes: ['myCustomTheme', 'pastel', 'vivid'],
 };
 
 function onFirstDataRendered(params) {

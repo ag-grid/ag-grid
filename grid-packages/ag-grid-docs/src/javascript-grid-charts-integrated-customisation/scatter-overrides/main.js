@@ -19,48 +19,39 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    customChartThemes: {
-        myCustomTheme: {
-            palette: {
-                fills: ['#e1ba00', 'silver', 'peru'],
-                strokes: ['black', '#ff0000']
-            },
-            defaults: {
-                scatter: {
-                    series: {
-                        fillOpacity: 0.7,
-                        strokeOpacity: 0.6,
-                        strokeWidth: 2,
-                        highlightStyle: {
-                            fill: 'red',
-                            stroke: 'yellow',
-                        },
-                        marker: {
-                            enabled: true,
-                            shape: 'square',
-                            size: 12,
-                            minSize: 5,
-                            strokeWidth: 4,
-                        },
-                        paired: true,
-                        tooltipRenderer: function(params) {
-                            var x = params.datum[params.xKey];
-                            var y = params.datum[params.yKey];
-                            var label = params.datum[params.labelKey];
-                            var size = params.datum[params.sizeKey];
+    chartThemeOverrides: {
+        scatter: {
+            series: {
+                fillOpacity: 0.7,
+                strokeOpacity: 0.6,
+                strokeWidth: 2,
+                highlightStyle: {
+                    fill: 'red',
+                    stroke: 'yellow',
+                },
+                marker: {
+                    enabled: true,
+                    shape: 'square',
+                    size: 12,
+                    minSize: 5,
+                    strokeWidth: 4,
+                },
+                paired: true,
+                tooltipRenderer: function(params) {
+                    var x = params.datum[params.xKey];
+                    var y = params.datum[params.yKey];
+                    var label = params.datum[params.labelKey];
+                    var size = params.datum[params.sizeKey];
 
-                            return '<u style="color: ' + params.color + '">' + params.title + '</u><br/><br/>' +
-                                (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
-                                '<b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/>' +
-                                '<b>' + params.yName.toUpperCase() + ':</b> ' + y +
-                                (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '');
-                        },
-                    },
-                }
-            }
+                    return '<u style="color: ' + params.color + '">' + params.title + '</u><br/><br/>' +
+                        (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
+                        '<b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/>' +
+                        '<b>' + params.yName.toUpperCase() + ':</b> ' + y +
+                        (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '');
+                },
+            },
         }
-    },
-    chartThemes: ['myCustomTheme'],
+    }
 };
 
 function onFirstDataRendered(params) {

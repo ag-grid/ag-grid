@@ -40,52 +40,43 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    customChartThemes: {
-        myCustomTheme: {
-            palette: {
-                fills: ['#e1ba00', 'silver', 'peru'],
-                strokes: ['black', '#ff0000']
-            },
-            defaults: {
-                line: {
-                    series: {
-                        strokeOpacity: 0.7,
-                        strokeWidth: 5,
-                        highlightStyle: {
-                            fill: 'red',
-                            stroke: 'yellow',
-                        },
-                        marker: {
-                            enabled: true,
-                            shape: 'diamond',
-                            size: 12,
-                            strokeWidth: 4,
-                            opacity: 0.2,
-                        },
-                        tooltipRenderer: function (params) {
-                            var x = params.datum[params.xKey];
-                            var y = params.datum[params.yKey];
-                            return (
-                                '<u style="color: ' +
-                                params.color +
-                                '">' +
-                                params.title +
-                                '</u><br><br><b>' +
-                                params.xName.toUpperCase() +
-                                ':</b> ' +
-                                x +
-                                '<br/><b>' +
-                                params.yName.toUpperCase() +
-                                ':</b> ' +
-                                y
-                            );
-                        },
-                    },
+    chartThemeOverrides: {
+        line: {
+            series: {
+                strokeOpacity: 0.7,
+                strokeWidth: 5,
+                highlightStyle: {
+                    fill: 'red',
+                    stroke: 'yellow',
+                },
+                marker: {
+                    enabled: true,
+                    shape: 'diamond',
+                    size: 12,
+                    strokeWidth: 4,
+                    opacity: 0.2,
+                },
+                tooltipRenderer: function(params) {
+                    var x = params.datum[params.xKey];
+                    var y = params.datum[params.yKey];
+                    return (
+                        '<u style="color: ' +
+                        params.color +
+                        '">' +
+                        params.title +
+                        '</u><br><br><b>' +
+                        params.xName.toUpperCase() +
+                        ':</b> ' +
+                        x +
+                        '<br/><b>' +
+                        params.yName.toUpperCase() +
+                        ':</b> ' +
+                        y
+                    );
                 },
             },
         },
     },
-    chartThemes: ['myCustomTheme'],
 };
 
 function onFirstDataRendered(params) {
@@ -127,7 +118,7 @@ function createRowData() {
         'Belgium',
     ];
 
-    return countries.map(function (country, index) {
+    return countries.map(function(country, index) {
         return {
             country: country,
             gold: Math.floor(((index + 1 / 7) * 333) % 100),
@@ -138,7 +129,7 @@ function createRowData() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

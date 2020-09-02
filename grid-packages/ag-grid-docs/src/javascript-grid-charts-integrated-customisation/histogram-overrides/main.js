@@ -22,56 +22,47 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    customChartThemes: {
-        myCustomTheme: {
-            palette: {
-                fills: ['#cd7f32'],
-                strokes: ['#584f22']
-            },
-            defaults: {
-                histogram: {
-                    series: {
-                        fillOpacity: 0.8,
-                        strokeOpacity: 0.8,
-                        strokeWidth: 4,
-                        shadow: {
-                            enabled: true,
-                            color: 'rgba(0, 0, 0, 0.3)',
-                            xOffset: 10,
-                            yOffset: 10,
-                            blur: 8,
-                        },
-                        label: {
-                            enabled: true,
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 15,
-                            fontFamily: 'Arial, sans-serif',
-                            color: 'green',
-                            formatter: function(params) {
-                                return '<' + params.value + '>';
-                            },
-                        },
-                        highlightStyle: {
-                            fill: 'black',
-                            stroke: 'yellow',
-                        },
-                        tooltipRenderer: function(params) {
-                            var bin = params.datum;
-                            var binSize = bin.frequency;
-                            var binMin = bin.domain[0];
-                            var binMax = bin.domain[1];
-                            var medalColour = params.xKey;
+    chartThemeOverrides: {
+        histogram: {
+            series: {
+                fillOpacity: 0.8,
+                strokeOpacity: 0.8,
+                strokeWidth: 4,
+                shadow: {
+                    enabled: true,
+                    color: 'rgba(0, 0, 0, 0.3)',
+                    xOffset: 10,
+                    yOffset: 10,
+                    blur: 8,
+                },
+                label: {
+                    enabled: true,
+                    fontStyle: 'italic',
+                    fontWeight: 'bold',
+                    fontSize: 15,
+                    fontFamily: 'Arial, sans-serif',
+                    color: 'green',
+                    formatter: function(params) {
+                        return '<' + params.value + '>';
+                    },
+                },
+                highlightStyle: {
+                    fill: 'black',
+                    stroke: 'yellow',
+                },
+                tooltipRenderer: function(params) {
+                    var bin = params.datum;
+                    var binSize = bin.frequency;
+                    var binMin = bin.domain[0];
+                    var binMax = bin.domain[1];
+                    var medalColour = params.xKey;
 
-                            return '<spam style="color: ' + params.color + '">' + binSize + (binSize >= 2 ? ' countries' : ' country') +
-                                ' got between ' + binMin + ' and ' + binMax + ' ' + medalColour + ' medals</span> ';
-                        },
-                    }
-                }
+                    return '<span style="color: ' + params.color + '">' + binSize + (binSize >= 2 ? ' countries' : ' country') +
+                        ' got between ' + binMin + ' and ' + binMax + ' ' + medalColour + ' medals</span>';
+                },
             }
         }
-    },
-    chartThemes: ['myCustomTheme'],
+    }
 };
 
 function onFirstDataRendered(params) {
