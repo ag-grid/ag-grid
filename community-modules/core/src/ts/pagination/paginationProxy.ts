@@ -1,6 +1,6 @@
 import { IRowModel, RowBounds } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
-import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
+import {AgGridEvent, Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -40,8 +40,7 @@ export class PaginationProxy extends BeanStub {
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
 
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-
-        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
 
         this.onModelUpdated();
     }
@@ -62,6 +61,22 @@ export class PaginationProxy extends BeanStub {
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
             keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
+    }
+
+    private onPaginationPageSizeChanged(): void {
+        this.calculatePages();
+        const paginationChangedEvent: PaginationChangedEvent = {
+            type: Events.EVENT_PAGINATION_CHANGED,
+            animate: false,
+            newData: false,
+            newPage: false,
+            // important to keep rendered rows, otherwise every time grid is resized,
+            // we would destroy all the rows.
+            keepRenderedRows: true,
             api: this.gridApi,
             columnApi: this.columnApi
         };
