@@ -13,6 +13,7 @@ export interface ChartModel {
     chartType: ChartType;
     chartThemeIndex: number;
     chartOptions: ChartOptions<any>;
+    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 
