@@ -1,7 +1,5 @@
 import {
     _,
-    AgChartTheme,
-    AgChartThemeName,
     AgChartThemePalette,
     AgEvent,
     Autowired,

@@ -135,6 +135,30 @@ interface ChartDestroyed {
 
 <?= grid_example('Events', 'events', 'generated', ['enterprise' => true]) ?>
 
+<h2>Saving User Preferences</h2>
+
+<p>
+    Chart Events can be used to detect and save user-made changes. Formatting changes made through the Format Panel can
+    be captured using the <code>ChartOptionsChanged</code> event, and changes to the data range used to render the chart
+    can be detected using the <code>ChartRangeSelectionChanged</code> event, which contains a <code>cellRange</code>
+    object that contains information about the range and will allow you to recreate the chart.
+</p>
+
+<p>
+    The example below demonstrates how the <code>ChartOptionsChanged</code> event can be used to save and restore
+    user chart formatting preferences. Notice the following:
+</p>
+
+<ul class="content">
+    <li><b>Saving Options by Chart Type</b>: format changes (via the format panel) are preserved after leaving and
+        returning to the chart by using the <code>savedUserPreferenceByChartType</code> object to keep track of user
+        format changes on a per-chart type basis.</li>
+    <li><b>Saving Global Chart Options</b>: changes made to the legend options are applied to all new charts by using
+        the <code>savedLegendUserPreference</code> object to globally keep track of legend preferences.</li>
+</ul>
+
+<?= grid_example('Saving User Preferences', 'saving-user-preferences', 'generated', ['exampleHeight' => 660,'enterprise' => true]) ?>
+
 <h2>Other Resources</h2>
 
 <p>

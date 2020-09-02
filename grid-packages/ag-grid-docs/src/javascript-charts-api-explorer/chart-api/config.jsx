@@ -119,7 +119,7 @@ const getPaddingOption = position => ({
 
 const getChartContainer = () => document.querySelector('.container__chart') || {};
 
-export const generalConfig = Object.freeze({
+export const chart = Object.freeze({
     meta: {
         displayName: 'General Configuration',
         description: 'Configuration common to all charts.',
@@ -248,9 +248,9 @@ export const generalConfig = Object.freeze({
         markerShape: {
             type: 'string',
             description:
-                `If set, overrides the marker shape from the series and the Legend will show the
+                `If set, overrides the marker shape from the series and the legend will show the
                 specified marker shape instead. If not set, will use a marker shape matching the
-                shape from the series, or fall back to square if there is none.`,
+                shape from the series, or fall back to <code>'square'</code> if there is none.`,
             editor: PresetEditor,
             options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
         },
@@ -346,7 +346,7 @@ export const generalConfig = Object.freeze({
     }
 });
 
-export const axisConfig = Object.freeze({
+export const axis = Object.freeze({
     meta: {
         displayName: 'Axis Configuration',
         description: 'Configuration for axes in cartesian charts.',
@@ -483,7 +483,7 @@ export const axisConfig = Object.freeze({
     }
 });
 
-const seriesConfig = {
+const series = {
     data: {
         type: 'object[]',
         isRequired: true,
@@ -521,7 +521,7 @@ const seriesConfig = {
     },
 };
 
-const markerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
+const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
     marker: {
         meta: {
             description: 'Configuration for the markers used in the series.',
@@ -785,13 +785,13 @@ const getHighlightConfig = (name = 'markers') => ({
     },
 });
 
-export const barSeriesConfig = Object.freeze({
+export const barSeries = Object.freeze({
     meta: {
         displayName: 'Bar/Column Series Configuration',
         description: 'Configuration for bar/column series.',
     },
     ...getCartesianKeyConfig(true),
-    ...seriesConfig,
+    ...series,
     grouped: {
         default: false,
         description: 'Whether to show different y-values as separate bars (grouped) or not (stacked).',
@@ -846,20 +846,20 @@ export const barSeriesConfig = Object.freeze({
     },
 });
 
-export const lineSeriesConfig = Object.freeze({
+export const lineSeries = Object.freeze({
     meta: {
         displayName: 'Line Series Configuration',
         description: 'Configuration for line series.',
     },
     ...getCartesianKeyConfig(),
-    ...seriesConfig,
+    ...series,
     title: {
         type: 'string',
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
     ...getColourConfig('lines', false, false),
-    ...markerConfig(),
+    ...getMarkerConfig(),
     ...getHighlightConfig(),
     listeners: {
         meta: {
@@ -881,13 +881,13 @@ export const lineSeriesConfig = Object.freeze({
     },
 });
 
-export const areaSeriesConfig = Object.freeze({
+export const areaSeries = Object.freeze({
     meta: {
         displayName: 'Area Series Configuration',
         description: 'Configuration for area series.',
     },
     ...getCartesianKeyConfig(true),
-    ...seriesConfig,
+    ...series,
     normalizedTo: {
         type: 'number',
         description:
@@ -898,12 +898,12 @@ export const areaSeriesConfig = Object.freeze({
         max: 100,
     },
     ...getColourConfig('areas', true),
-    ...markerConfig({ enabledByDefault: false }),
+    ...getMarkerConfig({ enabledByDefault: false }),
     ...getHighlightConfig(),
     ...shadowConfig,
 });
 
-export const scatterSeriesConfig = Object.freeze({
+export const scatterSeries = Object.freeze({
     meta: {
         displayName: 'Scatter/Bubble Series Configuration',
         description: 'Configuration for scatter/bubble series.',
@@ -925,7 +925,7 @@ export const scatterSeriesConfig = Object.freeze({
         type: 'string',
         description: 'A human-readable description of the label values.',
     },
-    ...seriesConfig,
+    ...series,
     tooltipRenderer: {
         type: {
             parameters: {
@@ -951,7 +951,7 @@ export const scatterSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig(),
-    ...markerConfig(),
+    ...getMarkerConfig(),
     ...getHighlightConfig(),
     listeners: {
         meta: {
@@ -974,7 +974,7 @@ export const scatterSeriesConfig = Object.freeze({
     },
 });
 
-export const pieSeriesConfig = Object.freeze({
+export const pieSeries = Object.freeze({
     meta: {
         displayName: 'Pie/Doughnut Series Configuration',
         description: 'Configuration for pie/doughnut series.',
@@ -1005,7 +1005,7 @@ export const pieSeriesConfig = Object.freeze({
         type: 'string',
         description: 'A human-readable description of the radius values.',
     },
-    ...seriesConfig,
+    ...series,
     tooltipRenderer: {
         type: {
             parameters: {
@@ -1133,8 +1133,8 @@ export const pieSeriesConfig = Object.freeze({
     },
 });
 
-export const histogramSeriesConfig = Object.freeze({
-    ...seriesConfig,
+export const histogramSeries = Object.freeze({
+    ...series,
     ...getCartesianKeyConfig(false, false),
     meta: {
         displayName: "Histogram Series Configuration",

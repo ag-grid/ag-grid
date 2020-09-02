@@ -170,7 +170,8 @@ export class ChartService extends BeanStub implements IChartService {
                     this.activeCharts.delete(chartRef);
                 }
             },
-            chartElement: chartComp.getGui()
+            chartElement: chartComp.getGui(),
+            chart: chartComp.getUnderlyingChart()
         };
 
         this.activeCharts.add(chartRef);

@@ -68,6 +68,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/grid-angular-boilerplate/',
         './dist/example-runner/grid-vue-boilerplate/',
         './dist/example-runner/grid-react-boilerplate/',
+        './dist/example-runner/grid-reactFunctional-boilerplate/',
         './dist/example-runner/chart-angular-boilerplate/',
         './dist/example-runner/chart-vue-boilerplate/',
         './dist/example-runner/chart-react-boilerplate/',

@@ -87,7 +87,7 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeName} from "../interfaces/iAgChartOptions";
+import { AgChartOptions, AgChartTheme } from "../interfaces/iAgChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -719,6 +719,7 @@ export interface ProcessDataFromClipboardParams {
 }
 
 export interface ChartRef {
+    chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
 }

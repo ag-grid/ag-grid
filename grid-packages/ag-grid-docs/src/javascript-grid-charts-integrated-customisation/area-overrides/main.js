@@ -22,51 +22,35 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,
-    customChartThemes: {
-        myCustomTheme: {
-            palette: {
-                fills: ['#e1ba00', 'silver', 'peru'],
-                strokes: ['black', '#ff0000']
-            },
-            defaults: {
-                bar: {
-                    series: {
-                        fillOpacity: 0.8,
-                        strokeOpacity: 0.8,
-                        strokeWidth: 2,
-                        shadow: {
-                            enabled: true,
-                            color: 'rgba(0, 0, 0, 0.3)',
-                            xOffset: 10,
-                            yOffset: 5,
-                            blur: 8,
-                        },
-                        label: {
-                            enabled: true,
-                            fontStyle: 'italic',
-                            fontWeight: 'bold',
-                            fontSize: 15,
-                            fontFamily: 'Arial, sans-serif',
-                            color: 'green',
-                            formatter: function(params) {
-                                return '<' + params.value + '>';
-                            },
-                        },
-                        highlightStyle: {
-                            fill: 'red',
-                            stroke: 'yellow',
-                        },
-                        tooltipRenderer: function(params) {
-                            var x = params.datum[params.xKey];
-                            var y = params.datum[params.yKey];
-                            return '<u style="color: ' + params.color + '">' + (params.title || params.yName) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
-                        },
-                    }
-                }
+    chartThemeOverrides: {
+        area: {
+            series: {
+                fillOpacity: 0.5,
+                strokeOpacity: 0.5,
+                strokeWidth: 2,
+                highlightStyle: {
+                    fill: 'red',
+                    stroke: 'yellow',
+                },
+                marker: {
+                    enabled: true,
+                    shape: 'triangle',
+                    size: 12,
+                    strokeWidth: 4,
+                },
+                shadow: {
+                    color: 'rgba(0, 0, 0, 0.3)',
+                    offset: [5, 5],
+                    blur: 8,
+                },
+                tooltipRenderer: function(params) {
+                    var x = params.datum[params.xKey];
+                    var y = params.datum[params.yKey];
+                    return '<u style="color: ' + params.color + '">' + (params.yName || params.title) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+                },
             }
         }
-    },
-    chartThemes: ['myCustomTheme'],
+    }
 };
 
 function onFirstDataRendered(params) {
@@ -78,7 +62,7 @@ function onFirstDataRendered(params) {
 
     var createRangeChartParams = {
         cellRange: cellRange,
-        chartType: 'groupedBar'
+        chartType: 'stackedArea'
     };
 
     params.api.createRangeChart(createRangeChartParams);

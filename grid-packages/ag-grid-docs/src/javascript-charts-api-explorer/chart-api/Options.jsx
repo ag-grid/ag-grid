@@ -164,13 +164,13 @@ export class Options extends React.PureComponent {
     render() {
         const { chartType } = this.props;
         const { searchText, hasResults } = this.state;
-        const config = { ...Config.generalConfig };
+        const config = { ...Config.chart };
 
         if (chartType !== 'pie') {
-            config.axes = Config.axisConfig;
+            config.axes = Config.axis;
         }
 
-        config.series = Config[`${chartType}SeriesConfig`];
+        config.series = Config[`${chartType}Series`];
 
         return <div className="options">
             <Search value={searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
