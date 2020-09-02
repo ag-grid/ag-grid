@@ -378,13 +378,16 @@ export class GridChartComp extends Component {
         this.chartProxy.downloadChart();
     }
 
+    public getUnderlyingChart(): any {
+        return this.chartProxy.getChart();
+    }
+
     public refreshCanvasSize(): void {
         if (!this.params.insideDialog) {
             return;
         }
 
         const { chartProxy, eChart } = this;
-
         if (this.chartMenu.isVisible()) {
             // we don't want the menu showing to affect the chart options
             const chart = this.chartProxy.getChart();
