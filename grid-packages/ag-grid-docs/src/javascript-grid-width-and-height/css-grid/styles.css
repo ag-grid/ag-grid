@@ -3,9 +3,9 @@
     display: grid;
     -ms-grid-columns: 1fr 2fr 1fr;
     grid-template-columns: 1fr 2fr 1fr;
-    -ms-grid-rows: 50vh;
-    grid-template-rows: 50vh;
-    width: 100%;
+    -ms-grid-rows: 100vh;
+    grid-template-rows: calc(100vh - 2rem);
+    width: 100%; 
 }
 
 .container > *:nth-child(1) {
