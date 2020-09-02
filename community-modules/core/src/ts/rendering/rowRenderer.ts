@@ -427,13 +427,34 @@ export class RowRenderer extends BeanStub {
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
         const rowsToRecycle: { [key: string]: RowComp; } = this.binRowComps(recycleRows);
 
+        const isFocusedCellGettingRecycled = ()=> {
+            if (focusedCell==null) { return false; }
+            if (rowsToRecycle==null) { return false; }
+            let res = false;
+            Object.values(rowsToRecycle).forEach( (rowComp: RowComp) => {
+                const rowNode = rowComp.getRowNode();
+                const rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
+                const pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;
+                if (rowIndexEqual && pinnedEqual) {
+                    res = true;
+                }
+            });
+            return res;
+        };
+
+        const focusedCellRecycled = isFocusedCellGettingRecycled();
+
         this.redraw(rowsToRecycle, animate);
 
         if (!params.onlyBody) {
             this.refreshFloatingRowComps();
         }
 
-        this.restoreFocusedCell(focusedCell);
+        // if we focus a cell that's already focused, then we get an unnecessary 'cellFocused' event fired.
+        // this was happening when user clicked 'expand' on a rowGroup, then cellFocused was getting fired twice.
+        if (!focusedCellRecycled) {
+            this.restoreFocusedCell(focusedCell);
+        }
         this.releaseLockOnRefresh();
     }
 
