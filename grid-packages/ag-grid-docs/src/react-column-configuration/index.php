@@ -16,10 +16,10 @@ include '../documentation-main/documentation_header.php';
 // Grid Definition
 &lt;AgGridReact
     // listening for events
-    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+    onGridReady=<span ng-non-bindable>{</span>onGridReady}
 
     // binding to array properties
-    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+    rowData=<span ng-non-bindable>{</span>rowData}
 
     // no binding, just providing hard coded strings for the properties
     // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 <p>In all cases all <a href="../javascript-grid-column-properties/">column definition properties</a> can be defined to make up a column definition.</p>
 <p>Defining columns declaratively:</p>
     <snippet language="jsx">
-&lt;AgGridReact rowData={this.state.rowData}&gt;
+&lt;AgGridReact rowData={rowData}&gt;
     &lt;AgGridColumn field="make">&lt;/AgGridColumn>
     &lt;AgGridColumn field="model">&lt;/AgGridColumn>
     &lt;AgGridColumn field="price">&lt;/AgGridColumn>
@@ -102,10 +102,10 @@ render() {
     <snippet language="jsx">
 &lt;AgGridReact
     // listening for events
-    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+    onGridReady=<span ng-non-bindable>{</span>onGridReady}
 
     // binding to array properties
-    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+    rowData=<span ng-non-bindable>{</span>rowData}
 
     // no binding, just providing hard coded strings for the properties
     // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
@@ -117,7 +117,7 @@ render() {
 
     // setting default column properties
     defaultColDef=<span ng-non-bindable>{{</span>
-        sortable: true,
+        sortable: true,ok
         filter: true,
         headerComponentFramework: SortableHeaderComponent,
         headerComponentParams: <span ng-non-bindable>{</span>
