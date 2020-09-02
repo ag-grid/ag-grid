@@ -123,10 +123,18 @@
 
         $href = '';
         $links = [];
+        $index = 0;
 
         foreach ($breadcrumbs as $key => $text) {
             $href .= strlen($href) > 0 ? ".$key" : $key;
-            $links[] = "<a href='#$href'" . ($text !== $key ? " title='$text'" : '') . ">$key</a>";
+
+            if ($index < count($breadcrumbs) - 1) {
+                $links[] = "<a href='#$href'" . ($text !== $key ? " title='$text'" : '') . ">$key</a>";
+            } else {
+                $links[] = $key;
+            }
+
+            $index++;
         }
 
         echo '<div class="reference__breadcrumbs">' . join($links, ' &gt; ') . '</div>';
