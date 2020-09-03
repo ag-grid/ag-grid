@@ -1,7 +1,7 @@
-import {_, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector} from "@ag-grid-community/core";
-import {MiniChartsContainer} from "./miniChartsContainer";
-import {AgChartThemePalette} from "ag-charts-community";
-import {ChartController} from "../../chartController";
+import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { MiniChartsContainer } from "./miniChartsContainer";
+import { AgChartThemePalette } from "ag-charts-community";
+import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 
@@ -53,15 +53,15 @@ export class ChartSettingsPanel extends Component {
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
 
-        this.addManagedListener(this.ePrevBtn, 'click', this.prev.bind(this));
-        this.addManagedListener(this.eNextBtn, 'click', this.next.bind(this));
+        this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
+        this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     }
 
     private resetPalettes(): void {
         const palettes = this.chartController.getPalettes();
 
-        if (palettes === this.palettes) {
+        if (_.shallowCompare(palettes, this.palettes)) {
             return;
         }
 
@@ -109,11 +109,7 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
-            const { activePaletteIndex, isAnimating } = this;
-
-            if (index === activePaletteIndex || isAnimating) {
-                return;
-            }
+            const { activePaletteIndex } = this;
 
             this.setActivePalette(index, index < activePaletteIndex ? 'left' : 'right');
         });
@@ -133,11 +129,7 @@ export class ChartSettingsPanel extends Component {
     }
 
     private prev() {
-        if (this.isAnimating) {
-            return;
-        }
-
-        this.setActivePalette(this.getPrev(), 'left');
+        ;
     }
 
     private getNext(): number {
@@ -150,31 +142,27 @@ export class ChartSettingsPanel extends Component {
         return next;
     }
 
-    private next() {
-        if (this.isAnimating) {
-            return;
-        }
-
-        this.setActivePalette(this.getNext(), 'right');
-    }
-
     private setActivePalette(index: number, animationDirection: AnimationDirection) {
+        if (this.isAnimating || this.activePaletteIndex === index) { return; }
+
         _.radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniCharts[this.activePaletteIndex];
         const currentGui = currentPalette.getGui();
         const futurePalette = this.miniCharts[index];
-        const futureGui = futurePalette.getGui();
+        const nextGui = futurePalette.getGui();
 
         currentPalette.refreshSelected();
         futurePalette.refreshSelected();
 
         const multiplier = animationDirection === 'left' ? -1 : 1;
-        const final = futureGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;
-        _.removeCssClass(futureGui, 'ag-hidden');
+        const final = nextGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;
 
-        _.addCssClass(currentGui, 'ag-animating');
-        _.addCssClass(futureGui, 'ag-animating');
+        const animatingClass = 'ag-animating';
+
+        _.removeCssClass(nextGui, 'ag-hidden');
+        _.addCssClass(currentGui, animatingClass);
+        _.addCssClass(nextGui, animatingClass);
 
         this.activePaletteIndex = index;
 
@@ -183,16 +171,17 @@ export class ChartSettingsPanel extends Component {
         this.isAnimating = true;
 
         window.setTimeout(() => {
-            currentGui.style.left = `${parseFloat(final) * -1}px`;
-            futureGui.style.left = '0px';
-        }, 50);
+            currentGui.style.left = `${-parseFloat(final)}px`;
+            nextGui.style.left = '0px';
+        }, 0);
 
         window.setTimeout(() => {
             this.isAnimating = false;
-            _.removeCssClass(currentGui, 'ag-animating');
-            _.removeCssClass(futureGui, 'ag-animating');
+
+            _.removeCssClass(currentGui, animatingClass);
+            _.removeCssClass(nextGui, animatingClass);
             _.addCssClass(currentGui, 'ag-hidden');
-        }, 500);
+        }, 300);
     }
 
     private destroyMiniCharts(): void {
