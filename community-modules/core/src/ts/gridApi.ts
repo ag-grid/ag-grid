@@ -801,6 +801,8 @@ export class GridApi {
         return null;
     }
 
+    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnController.getColumnDefs(); }
+
     public onFilterChanged() {
         this.filterManager.onFilterChanged();
     }
