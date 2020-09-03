@@ -16,8 +16,8 @@ import {
     RowRenderer,
     ValueService
 } from "@ag-grid-community/core";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { ChartTranslator } from './chartTranslator';
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
+import {ChartTranslator} from './chartTranslator';
 
 export interface ColState {
     column?: Column;

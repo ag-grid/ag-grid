@@ -2,7 +2,6 @@ import {
     AgHistogramSeriesOptions,
     BarSeriesLabelOptions,
     CartesianChartOptions,
-    DropShadowOptions,
     HighlightOptions,
     HistogramSeriesOptions
 } from "@ag-grid-community/core";

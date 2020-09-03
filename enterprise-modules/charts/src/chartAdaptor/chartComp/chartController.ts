@@ -15,9 +15,9 @@ import {
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartProxy } from "./chartProxies/chartProxy";
-import { getChartTheme } from "ag-charts-community";
+import {ChartDataModel, ColState} from "./chartDataModel";
+import {ChartProxy} from "./chartProxies/chartProxy";
+import {getChartTheme} from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

@@ -1,5 +1,6 @@
 import {
-    _, AgChartTheme,
+    _,
+    AgChartTheme,
     Autowired,
     Bean,
     BeanStub,
@@ -21,7 +22,7 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
-import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
