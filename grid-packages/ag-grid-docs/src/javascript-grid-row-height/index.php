@@ -119,20 +119,23 @@ SNIPPET
 </p>
 <ul>
     <li>
-        Columns <strong>Auto A</strong>, <strong>Auto B</strong> and <strong>Auto C</strong> have <code>autoHeight=true</code>,
-        so the height of each row is such that it fits all contents from these
-        three columns.
+        All columns have <code>wrapText=true</code> and <code>autoHeight=true</code>,
+        so the height of each row is such that it fits all contents from all columns.
     </li>
-    <li>All columns with Auto Height have <code>wrapText=true</code> so that cell content is wrapped.
     <li>
         The example listens for the grid event <code>onColumnResized</code>.
         When a column is resized, the grid re-calculates the row heights after
         the resize is finished.
     </li>
+    <li>
+        The example listens for the grid event <code>onColumnVisible</code>.
+        When a column is shown or hidden, the grid re-calculates the row heights after
+        the resize is finished.
+    </li>
 </ul>
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Lazy Height Calculation</h3>
 
