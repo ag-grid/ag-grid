@@ -28,6 +28,7 @@ type ThemeMap = { [key in string]: ChartTheme };
 
 const lightTheme = new ChartTheme();
 const darkTheme = new DarkTheme();
+
 export const lightThemes: ThemeMap = {
     'undefined': lightTheme,
     'null': lightTheme,
@@ -37,6 +38,7 @@ export const lightThemes: ThemeMap = {
     'solar': new SolarLight(),
     'vivid': new VividLight(),
 };
+
 export const darkThemes: ThemeMap = {
     'undefined': darkTheme,
     'null': darkTheme,
@@ -46,23 +48,30 @@ export const darkThemes: ThemeMap = {
     'solar-dark': new SolarDark(),
     'vivid-dark': new VividDark(),
 };
+
 export const themes: ThemeMap = {
     ...darkThemes,
     ...lightThemes,
 };
 
 export function getChartTheme(value?: string | ChartTheme | AgChartTheme): ChartTheme {
-    if (themes[value as string]) {
-        return themes[value as string];
-    }
     if (value instanceof ChartTheme) {
         return value;
     }
+
+    const stockTheme = themes[value as string];
+
+    if (stockTheme) {
+        return stockTheme;
+    }
+
     value = value as AgChartTheme;
-    if (value.defaults || value.palette) {
+
+    if (value.baseTheme || value.defaults || value.palette) {
         const baseTheme: any = getChartTheme(value.baseTheme);
         return new baseTheme.constructor(value);
     }
+
     return themes.default;
 }
 
@@ -189,10 +198,10 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                 if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                     if (Array.isArray(value)) {
                         const subComponents = value
-                        .map(config => {
-                            return create(config, path + '.' + key, undefined, theme);
-                        })
-                        .filter(instance => !!instance);
+                            .map(config => {
+                                return create(config, path + '.' + key, undefined, theme);
+                            })
+                            .filter(instance => !!instance);
                         component[key] = subComponents;
                     } else {
                         if (mapping[key] && component[key]) {

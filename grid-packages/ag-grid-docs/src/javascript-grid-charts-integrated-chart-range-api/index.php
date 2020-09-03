@@ -26,7 +26,7 @@ interface CreateRangeChartParams {
 {
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeName?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -89,8 +89,8 @@ interface IAggFunc {
         <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
     </li>
     <li>
-        <code>chartPalette</code>: The default palette to use for charts. The options are
-        <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
+        <code>chartThemeName</code>: The default theme to use for charts. The options are
+        <code>'default', 'material', 'pastel', 'vivid', 'solar'</code>
     </li>
     <li>
         <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container
@@ -174,7 +174,7 @@ function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
 
 interface CreatePivotChartParams {
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartTheme;
 }
@@ -202,7 +202,7 @@ interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName: string;
     chartOptions: ChartOptions;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
@@ -212,11 +212,11 @@ interface GetChartImageDataUrlParams {
 }
 </snippet>
 
-<h3>Example: Saving and restoring charts</h3>
+<h3>Example: Saving and Restoring Charts</h3>
 
 <p>
-    The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type,
-    palette, data and formatting options and note how the restored chart mirrors the chart that was saved.
+    The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart
+    type, theme, data and formatting options and note how the restored chart looks the same as the chart that was saved.
 </p>
 <p>
     It also shows how you can retrieve images rendered from the chart in multiple formats.
@@ -224,7 +224,7 @@ interface GetChartImageDataUrlParams {
 
 <ul class="content">
     <li>Create a range chart from the grid, which will be shown in a container below the grid.</li>
-    <li>Change the chart type, palette, data and/or formatting in order to see the changes restored later.</li>
+    <li>Change the chart type, theme, data and/or formatting in order to see the changes restored later.</li>
     <li>Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.</li>
     <li>Click "Clear chart" to destroy the existing chart.</li>
     <li>Click "Restore chart" to restore the previously saved chart.</li>

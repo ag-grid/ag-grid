@@ -1,7 +1,7 @@
-import {_, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector} from "@ag-grid-community/core";
-import {MiniChartsContainer} from "./miniChartsContainer";
-import {AgChartThemePalette} from "ag-charts-community";
-import {ChartController} from "../../chartController";
+import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { MiniChartsContainer } from "./miniChartsContainer";
+import { AgChartThemePalette } from "ag-charts-community";
+import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 
@@ -21,21 +21,22 @@ export class ChartSettingsPanel extends Component {
             </div>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('eMiniChartsContainer') eMiniChartsContainer: HTMLElement;
-    @RefSelector('eNavBar') private eNavBar: HTMLElement;
-    @RefSelector('eCardSelector') private eCardSelector: HTMLElement;
-    @RefSelector('ePrevBtn') private ePrevBtn: HTMLElement;
-    @RefSelector('eNextBtn') private eNextBtn: HTMLElement;
+    @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
+    @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
+    @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;
+    @RefSelector('ePrevBtn') private readonly ePrevBtn: HTMLElement;
+    @RefSelector('eNextBtn') private readonly eNextBtn: HTMLElement;
 
     private miniCharts: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
 
     private readonly chartController: ChartController;
 
-    private activePaletteIndex?: number;
+    private activePaletteIndex = 0;
     private palettes: AgChartThemePalette[] = [];
+    private themes: string[] = [];
 
     private isAnimating: boolean;
 
@@ -65,7 +66,17 @@ export class ChartSettingsPanel extends Component {
         }
 
         this.palettes = palettes;
-        this.activePaletteIndex = this.chartController.getThemeIndex();
+        this.themes = this.chartController.getThemes();
+
+        const activeThemeName = this.chartController.getThemeName();
+
+        if (activeThemeName) {
+            const themeIndex = _.findIndex(this.themes, name => name === activeThemeName);
+
+            if (themeIndex >= 0 && themeIndex <= this.palettes.length) {
+                this.activePaletteIndex = themeIndex;
+            }
+        }
 
         this.cardItems = [];
 
@@ -90,22 +101,21 @@ export class ChartSettingsPanel extends Component {
         });
 
         _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.length <= 1);
-
         _.radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
-    private addCardLink(chartThemeIndex: number): void {
+    private addCardLink(index: number): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
             const { activePaletteIndex, isAnimating } = this;
 
-            if (chartThemeIndex === activePaletteIndex || isAnimating) {
+            if (index === activePaletteIndex || isAnimating) {
                 return;
             }
 
-            this.setActivePalette(chartThemeIndex, chartThemeIndex < activePaletteIndex ? 'left' : 'right');
+            this.setActivePalette(index, index < activePaletteIndex ? 'left' : 'right');
         });
 
         this.eCardSelector.appendChild(link);
@@ -148,12 +158,12 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.getNext(), 'right');
     }
 
-    private setActivePalette(chartThemeIndex: number, animationDirection: AnimationDirection) {
-        _.radioCssClass(this.cardItems[chartThemeIndex], 'ag-selected', 'ag-not-selected');
+    private setActivePalette(index: number, animationDirection: AnimationDirection) {
+        _.radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniCharts[this.activePaletteIndex];
         const currentGui = currentPalette.getGui();
-        const futurePalette = this.miniCharts[chartThemeIndex];
+        const futurePalette = this.miniCharts[index];
         const futureGui = futurePalette.getGui();
 
         currentPalette.refreshSelected();
@@ -166,8 +176,9 @@ export class ChartSettingsPanel extends Component {
         _.addCssClass(currentGui, 'ag-animating');
         _.addCssClass(futureGui, 'ag-animating');
 
-        this.activePaletteIndex = chartThemeIndex;
-        this.chartController.setChartThemeIndex(this.activePaletteIndex);
+        this.activePaletteIndex = index;
+
+        this.chartController.setChartThemeName(this.themes[index]);
 
         this.isAnimating = true;
 
