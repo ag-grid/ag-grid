@@ -417,8 +417,6 @@ export interface GridOptions {
 
     chartThemeOverrides?: AgChartThemeOverrides;
 
-    processChart?(params: ProcessChartParams): void;
-
     /** @deprecated */
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
