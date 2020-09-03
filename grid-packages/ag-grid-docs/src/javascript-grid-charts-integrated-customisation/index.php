@@ -18,6 +18,12 @@ include '../documentation-main/documentation_header.php';
     Alternatively, you can just provide overrides to change the provided themes in the way you want.
 </p>
 
+<h2>Chart Themes</h2>
+
+<p>
+    PLACEHOLDER
+</p>
+
 <h2>Custom Chart Themes</h2>
 
 <p>
@@ -31,7 +37,7 @@ gridOptions: {
     ...
     customChartThemes: {
         myCustomTheme: {
-            baseTheme: 'pastel',
+            baseTheme: 'ag-pastel',
             palette: {
                 fills: ['#c16068', '#a2bf8a', '#ebcc87'],
                 strokes: ['#874349', '#718661', '#a48f5f']
@@ -46,7 +52,7 @@ gridOptions: {
             }
         }
     },
-    chartThemes: ['myCustomTheme', 'vivid']
+    chartThemes: ['myCustomTheme', 'ag-vivid']
 }
 SNIPPET
 ) ?>

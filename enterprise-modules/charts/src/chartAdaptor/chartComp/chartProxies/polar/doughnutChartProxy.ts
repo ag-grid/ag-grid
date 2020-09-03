@@ -94,6 +94,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 strokes: seriesDefaults.stroke.colors,
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
+                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
             };
 
             const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;

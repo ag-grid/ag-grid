@@ -3,8 +3,11 @@
         "meta": {
             "displayName": "Columns"
         },
+        "getColumnDefs()": {
+            "description": "Returns the current column definitions."
+        },
         "sizeColumnsToFit()": {
-            "description": "Gets columns to adjust in size to fit the grid horizontally."
+            "description": "Sets columns to adjust in size to fit the grid horizontally."
         },
         "setColumnDefs(colDefs)": {
             "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows."

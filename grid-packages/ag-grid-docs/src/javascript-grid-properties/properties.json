@@ -846,6 +846,16 @@
         "enableCharts": {
             "default": false,
             "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
+        },
+        "chartThemes": {
+            "default": ["ag-default", "ag-material", "ag-pastel", "ag-vivid", "ag-solar"],
+            "description": "The list of chart themes to be used, see <a href='../javascript-grid-charts-integrated-customisation/#chart-themes'>Chart Themes</a>."
+        },
+        "customChartThemes": {
+            "description": "A map containing custom chart themes, see <a href='../javascript-grid-charts-integrated-customisation/#custom-chart-themes'>Custom Chart Themes</a>."
+        },
+        "chartThemeOverrides": {
+            "description": "Chart theme overrides applied to all themes, see <a href='../javascript-grid-charts-integrated-customisation/#overriding-existing-themes'>Overriding Existing Themes</a>."
         }
     },
     "components": {

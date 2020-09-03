@@ -62,7 +62,7 @@ import { iterateObject } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
-import { AgChartTheme } from "./interfaces/iAgChartOptions";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -102,7 +102,7 @@ export interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    chartThemeOverrides?: AgChartTheme;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -110,7 +110,7 @@ export interface CreatePivotChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     chartContainer?: HTMLElement;
-    chartThemeOverrides?: AgChartTheme;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -800,6 +800,8 @@ export class GridApi {
         }
         return null;
     }
+
+    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnController.getColumnDefs(); }
 
     public onFilterChanged() {
         this.filterManager.onFilterChanged();

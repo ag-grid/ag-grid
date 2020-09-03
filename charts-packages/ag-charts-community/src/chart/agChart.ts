@@ -18,13 +18,14 @@ import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgPolarChartOptions,
-    AgChartTheme
+    AgChartTheme,
+    AgChartThemeName
 } from "./agChartOptions";
 import mappings from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
 
-type ThemeMap = { [key in string]: ChartTheme };
+type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
 const lightTheme = new ChartTheme();
 const darkTheme = new DarkTheme();
@@ -32,21 +33,21 @@ const darkTheme = new DarkTheme();
 export const lightThemes: ThemeMap = {
     'undefined': lightTheme,
     'null': lightTheme,
-    'default': lightTheme,
-    'material': new MaterialLight(),
-    'pastel': new PastelLight(),
-    'solar': new SolarLight(),
-    'vivid': new VividLight(),
+    'ag-default': lightTheme,
+    'ag-material': new MaterialLight(),
+    'ag-pastel': new PastelLight(),
+    'ag-solar': new SolarLight(),
+    'ag-vivid': new VividLight(),
 };
 
 export const darkThemes: ThemeMap = {
     'undefined': darkTheme,
     'null': darkTheme,
-    'dark': darkTheme,
-    'material-dark': new MaterialDark(),
-    'pastel-dark': new PastelDark(),
-    'solar-dark': new SolarDark(),
-    'vivid-dark': new VividDark(),
+    'ag-dark': darkTheme,
+    'ag-material-dark': new MaterialDark(),
+    'ag-pastel-dark': new PastelDark(),
+    'ag-solar-dark': new SolarDark(),
+    'ag-vivid-dark': new VividDark(),
 };
 
 export const themes: ThemeMap = {
@@ -59,7 +60,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
         return value;
     }
 
-    const stockTheme = themes[value as string];
+    const stockTheme = themes[value as AgChartThemeName];
 
     if (stockTheme) {
         return stockTheme;
@@ -72,7 +73,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
         return new baseTheme.constructor(value);
     }
 
-    return themes.default;
+    return lightTheme;
 }
 
 type AgChartType<T> =

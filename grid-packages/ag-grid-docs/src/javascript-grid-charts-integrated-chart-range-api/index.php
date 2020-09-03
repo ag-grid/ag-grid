@@ -30,7 +30,7 @@ interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    chartThemeOverrides?: AgChartTheme;
+    chartThemeOverrides?: AgChartThemeOverrides;
 }
 
 interface CellRangeParams {
@@ -89,8 +89,9 @@ interface IAggFunc {
         <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
     </li>
     <li>
-        <code>chartThemeName</code>: The default theme to use for charts. The options are
-        <code>'default', 'material', 'pastel', 'vivid', 'solar'</code>
+        <code>chartThemeName</code>: The default theme to use for charts. The default options are
+        <code>'ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'</code>. You can also provide your own
+        <a href="../javascript-grid-charts-integrated-customisation/#custom-chart-themes">custom chart themes</a>.
     </li>
     <li>
         <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container
@@ -109,7 +110,7 @@ interface IAggFunc {
     </li>
     <li>
         <code>chartThemeOverrides</code>: Allows specific chart options in the current theme to be overridden, see
-        <a href="../javascript-charts-api-themes/">Chart Theme Reference</a> for more details.
+        <a href="../javascript-charts-api-themes/#theme.overrides">Chart Theme Overrides Reference</a> for more details.
     </li>
 </ul>
 

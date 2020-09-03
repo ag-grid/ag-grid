@@ -81,21 +81,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
         }];
 
         agChartOptions.container = parentElement;
-        const chart = AgChart.create(agChartOptions);
-
-        const processChartFunc = this.chartProxyParams.processChartFunc;
-        if (processChartFunc) {
-            processChartFunc({
-                type: ChartType.GroupedColumn,
-                chart: chart,
-                options: agChartOptions
-            });
-        }
-        return chart;
+        return AgChart.create(agChartOptions);
     }
 
     public update(params: UpdateChartParams): void {

@@ -28,7 +28,7 @@ function onFirstDataRendered(event) {
     var params = {
         chartType: 'groupedColumn',
         chartContainer: chartContainer,
-        chartThemeName: 'vivid',
+        chartThemeName: 'ag-vivid',
         chartThemeOverrides: {
             common: {
                 padding: {

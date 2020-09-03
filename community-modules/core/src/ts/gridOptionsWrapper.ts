@@ -39,7 +39,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import { AgChartTheme } from "./interfaces/iAgChartOptions";
+import {AgChartTheme, AgChartThemeOverrides} from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -1170,7 +1170,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getChartToolbarItems;
     }
 
-    public getChartThemeOverrides(): AgChartTheme | undefined {
+    public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
         return this.gridOptions.chartThemeOverrides;
     }
 
@@ -1180,15 +1180,11 @@ export class GridOptionsWrapper {
 
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
-        return this.gridOptions.chartThemes || ['default', 'material', 'pastel', 'vivid', 'solar'];
+        return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
         return this.gridOptions.processChartOptions;
-    }
-
-    public getProcessChartFunc(): (params: ProcessChartParams) => void {
-        return this.gridOptions.processChart;
     }
 
     public getClipboardDeliminator() {

@@ -2,11 +2,11 @@ type FontStyle = 'normal' | 'italic' | 'oblique';
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
     | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-export type AgChartThemeName = 'default' | 'dark'
-    | 'material' | 'material-dark'
-    | 'pastel' | 'pastel-dark'
-    | 'solar' | 'solar-dark'
-    | 'vivid' | 'vivid-dark';
+export type AgChartThemeName = 'ag-default' | 'ag-dark'
+    | 'ag-material' | 'ag-material-dark'
+    | 'ag-pastel' | 'ag-pastel-dark'
+    | 'ag-solar' | 'ag-solar-dark'
+    | 'ag-vivid' | 'ag-vivid-dark';
 
 export interface AgChartThemePalette {
     fills: string[];
@@ -336,7 +336,7 @@ export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRende
 interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
     sizeKey?: string;
     sizeName?: string;
-    
+
     labelKey?: string;
     labelName?: string;
 }
@@ -428,7 +428,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
 }
 
 interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: number; }) => string;
 }
 
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
@@ -454,7 +454,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
 }
 
 interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
-    formatter?: (params: { value: number }) => string;
+    formatter?: (params: { value: number; }) => string;
 }
 
 export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {

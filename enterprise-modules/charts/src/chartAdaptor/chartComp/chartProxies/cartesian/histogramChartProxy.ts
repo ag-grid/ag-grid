@@ -24,7 +24,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
         const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
         options.seriesDefaults = {
-            shadow: seriesDefaults.shadow as DropShadowOptions,
+            shadow: this.getDefaultDropShadowOptions(),
             label: seriesDefaults.label as BarSeriesLabelOptions,
             tooltip: {
                 enabled: seriesDefaults.tooltipEnabled,
@@ -68,7 +68,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             stroke: seriesDefaults.stroke.colors[0],
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer,
+            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
             type: 'histogram'
         }];
 

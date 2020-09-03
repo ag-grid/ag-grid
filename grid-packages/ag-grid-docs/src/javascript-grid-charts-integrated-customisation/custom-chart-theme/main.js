@@ -92,7 +92,7 @@ var gridOptions = {
             }
         }
     },
-    chartThemes: ['myCustomTheme', 'pastel', 'vivid'],
+    chartThemes: ['myCustomTheme', 'ag-pastel', 'ag-vivid'],
 };
 
 function onFirstDataRendered(params) {
