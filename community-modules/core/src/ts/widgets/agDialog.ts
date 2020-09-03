@@ -278,8 +278,8 @@ export class AgDialog extends AgPanel {
     }
 
     private refreshMaximizeIcon() {
-        setDisplayed(this.maximizeIcon, this.isMaximized);
-        setDisplayed(this.minimizeIcon, !this.isMaximized);
+        setDisplayed(this.maximizeIcon, !this.isMaximized);
+        setDisplayed(this.minimizeIcon, this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -366,31 +366,35 @@ export class AgDialog extends AgPanel {
     }
 
     public setMaximizable(maximizable: boolean) {
-        if (maximizable === false) {
+        if (!maximizable) {
             this.clearMaximizebleListeners();
 
             if (this.maximizeButtonComp) {
                 this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
             }
+
             return;
         }
 
         const eTitleBar = this.eTitleBar;
+
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
-        const maximizeButtonComp = this.maximizeButtonComp = new Component(/* html */`<div class="ag-dialog-button"></span>`);
-        this.getContext().createBean(maximizeButtonComp);
+        const maximizeButtonComp = this.maximizeButtonComp =
+            this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
 
         const eGui = maximizeButtonComp.getGui();
+
         eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper));
         addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
+
         eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper));
         addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
-
         addCssClass(this.minimizeIcon, 'ag-hidden');
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
+
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(

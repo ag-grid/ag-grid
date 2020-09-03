@@ -25,8 +25,8 @@ export class AgPanel extends Component {
 
     protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
-    @Autowired('popupService') protected popupService: PopupService;
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('popupService') protected readonly popupService: PopupService;
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
 
     protected closable = true;
     protected config: PanelOptions | undefined;
@@ -47,17 +47,17 @@ export class AgPanel extends Component {
         y: 0
     };
 
-    protected size: { width: number | undefined, height: number | undefined } = {
-        width:undefined,
+    protected size: { width: number | undefined, height: number | undefined; } = {
+        width: undefined,
         height: undefined
     };
 
     public close: () => void;
 
-    @RefSelector('eContentWrapper') protected eContentWrapper: HTMLElement;
-    @RefSelector('eTitleBar') protected eTitleBar: HTMLElement;
-    @RefSelector('eTitleBarButtons') protected eTitleBarButtons: HTMLElement;
-    @RefSelector('eTitle') protected eTitle: HTMLElement;
+    @RefSelector('eContentWrapper') protected readonly eContentWrapper: HTMLElement;
+    @RefSelector('eTitleBar') protected readonly eTitleBar: HTMLElement;
+    @RefSelector('eTitleBarButtons') protected readonly eTitleBarButtons: HTMLElement;
+    @RefSelector('eTitle') protected readonly eTitle: HTMLElement;
 
     constructor(config?: PanelOptions) {
         super(AgPanel.getTemplate(config));
@@ -171,8 +171,8 @@ export class AgPanel extends Component {
         topBuffer?: number,
         anywhereWithin?: boolean,
         isLeft?: boolean,
-        isTop?: boolean
-    }): { movementX: number, movementY: number} {
+        isTop?: boolean;
+    }): { movementX: number, movementY: number; } {
         const parentRect = this.popupParent.getBoundingClientRect();
         const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
         let movementX = e.clientX - this.dragStartPosition.x;
