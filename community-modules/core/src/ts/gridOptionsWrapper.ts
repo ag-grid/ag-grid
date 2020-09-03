@@ -1187,10 +1187,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.processChartOptions;
     }
 
-    public getProcessChartFunc(): (params: ProcessChartParams) => void {
-        return this.gridOptions.processChart;
-    }
-
     public getClipboardDeliminator() {
         return exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     }

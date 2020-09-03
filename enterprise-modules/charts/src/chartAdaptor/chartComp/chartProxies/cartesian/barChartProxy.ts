@@ -85,17 +85,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         }];
 
         agChartOptions.container = parentElement;
-        const chart = AgChart.create(agChartOptions);
-
-        const processChartFunc = this.chartProxyParams.processChartFunc;
-        if (processChartFunc) {
-            processChartFunc({
-                type: ChartType.GroupedColumn,
-                chart: chart,
-                options: agChartOptions
-            });
-        }
-        return chart;
+        return AgChart.create(agChartOptions);
     }
 
     public update(params: UpdateChartParams): void {

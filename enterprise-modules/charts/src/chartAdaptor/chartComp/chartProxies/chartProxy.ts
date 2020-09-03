@@ -49,7 +49,6 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    processChartFunc: (params: ProcessChartParams) => void;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
