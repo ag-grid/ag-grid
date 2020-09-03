@@ -5,9 +5,11 @@ import { RowNode } from "../../entities/rowNode";
 import { CellComp } from "../cellComp";
 import { ColumnController } from "../../columnController/columnController";
 import { BeanStub } from "../../context/beanStub";
-import { addCssClass, clearElement } from "../../utils/dom";
+import { addCssClass } from "../../utils/dom";
 import {RowCssClassCalculator} from "./rowCssClassCalculator";
 import {PaginationProxy} from "../../pagination/paginationProxy";
+import {AngularRowUtils} from "./angularRowUtils";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
@@ -17,6 +19,8 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('$compile') public $compile: any;
 
     private gridPanel: GridPanel;
 
@@ -34,6 +38,10 @@ export class AutoHeightCalculator extends BeanStub {
         const eBodyContainer = this.gridPanel.getCenterContainer();
         eBodyContainer.appendChild(eDummyContainer);
 
+        const scopeResult = AngularRowUtils.createChildScopeOrNull(rowNode, this.$scope, this.beans.gridOptionsWrapper);
+        const scope = scopeResult ? scopeResult.scope : undefined;
+        const scopeDestroyFunc = scopeResult ? scopeResult.scopeDestroyFunc : undefined;
+
         const cellComps: CellComp[] = [];
         const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
         const displayedCols = this.columnController.getAllDisplayedColumns();
@@ -41,7 +49,7 @@ export class AutoHeightCalculator extends BeanStub {
 
         visibleAutoRowHeightCols.forEach(col => {
             const cellComp = new CellComp(
-                this.$scope,
+                scope,
                 this.beans,
                 col,
                 rowNode,
@@ -58,6 +66,10 @@ export class AutoHeightCalculator extends BeanStub {
 
         // this gets any cellComps that are using components to put the components in
         cellComps.forEach(cellComp => cellComp.afterAttached());
+
+        if (scope) {
+            this.$compile(eDummyContainer)(scope);
+        }
 
         // we should be able to just take the height of the row at this point, however
         // the row isn't expanding to cover the cell heights, i don't know why, i couldn't
@@ -78,6 +90,10 @@ export class AutoHeightCalculator extends BeanStub {
             cellComp.detach();
             cellComp.destroy();
         });
+
+        if (scopeDestroyFunc) {
+            scopeDestroyFunc();
+        }
 
         return maxCellHeight;
     }

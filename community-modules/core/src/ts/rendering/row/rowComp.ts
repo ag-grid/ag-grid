@@ -30,6 +30,7 @@ import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { iterateObject, assign } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
+import {AngularRowUtils} from "./angularRowUtils";
 
 interface CellTemplate {
     template: string;
@@ -158,7 +159,7 @@ export class RowComp extends Component {
 
     public init(): void {
         this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
-        this.scope = this.createChildScopeOrNull(this.rowNode.data);
+        this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setupRowContainers();
@@ -173,6 +174,14 @@ export class RowComp extends Component {
             this.createSecondPassFuncs.push(() => {
                 this.eAllRowContainers.forEach(eRow => removeCssClass(eRow, 'ag-opacity-zero'));
             });
+        }
+    }
+
+    private setupAngular1Scope(): void {
+        const scopeResult = AngularRowUtils.createChildScopeOrNull(this.rowNode, this.parentScope, this.beans.gridOptionsWrapper);
+        if (scopeResult) {
+            this.scope = scopeResult.scope;
+            this.addDestroyFunc(scopeResult.scopeDestroyFunc);
         }
     }
 
@@ -313,26 +322,6 @@ export class RowComp extends Component {
                 this.rowContainerReadyCount = 3;
             }
         });
-    }
-
-    private createChildScopeOrNull(data: any) {
-        const isAngularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
-
-        if (!isAngularCompileRows) { return null; }
-
-        const newChildScope = this.parentScope.$new();
-        newChildScope.data = { ...data };
-        newChildScope.rowNode = this.rowNode;
-        newChildScope.context = this.beans.gridOptionsWrapper.getContext();
-
-        this.addDestroyFunc(() => {
-            newChildScope.$destroy();
-            newChildScope.data = null;
-            newChildScope.rowNode = null;
-            newChildScope.context = null;
-        });
-
-        return newChildScope;
     }
 
     private setupRowContainers(): void {
