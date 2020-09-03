@@ -85,6 +85,14 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Localisation', 'localisation', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
 
+<h2>Changing Locale</h2>
+
+<p>
+    The grid uses the locale as it is needed. It does not refresh as the locale changes.
+    If your application allows changing the locale for the application, you must destroy
+    and recreate the grid for it to use the new locale.
+</p>
+
 <h2>Locale Callback</h2>
 
 <p>
