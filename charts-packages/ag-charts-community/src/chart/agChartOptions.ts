@@ -16,6 +16,7 @@ export interface AgChartThemePalette {
 export interface AgChartThemeOverrides {
     palette?: AgChartThemePalette;
     defaults?: AgChartThemeDefaults;
+    overrides?: AgChartThemeDefaults;
 }
 
 export interface AgChartTheme extends AgChartThemeOverrides {
