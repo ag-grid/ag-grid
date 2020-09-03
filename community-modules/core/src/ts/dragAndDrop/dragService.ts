@@ -74,6 +74,10 @@ export class DragService extends BeanStub {
         }
     }
 
+    public isDragging(): boolean {
+        return this.dragging;
+    }
+
     public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
         const mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
@@ -84,7 +88,7 @@ export class DragService extends BeanStub {
 
         if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive:false } as any);
+            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
         }
 
         this.dragSources.push({
@@ -105,18 +109,19 @@ export class DragService extends BeanStub {
         this.touchLastTime = touch;
         this.touchStart = touch;
 
-        if (touchEvent.cancelable) {
-            touchEvent.preventDefault();
-        }
-
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e, params.eElement);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e, params.eElement);
+        const documentTouchMove = (e: TouchEvent) => { if (e.cancelable) { e.preventDefault(); } };
         const target = params.eElement;
 
         const events = [
-            {target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true} },
-            {target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
-            {target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
+            // Prevents the page document from moving while we are dragging items around.
+            // preventDefault needs to be called in the touchmove listener and never inside the
+            // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
+            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
+            { target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
+            { target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
         ];
         // temporally add these listeners, for the duration of the drag
         this.addTemporaryEvents(events);
@@ -234,12 +239,6 @@ export class DragService extends BeanStub {
         if (!touch) { return; }
 
         // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-
-        // if we don't preview default, then the browser will try and do it's own touch stuff,
-        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
-        // with scroll page in the app)
-        // touchEvent.preventDefault();
-
         this.onCommonMove(touch, this.touchStart, el);
     }
 
