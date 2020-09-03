@@ -18,6 +18,12 @@ include '../documentation-main/documentation_header.php';
     Alternatively, you can just provide overrides to change the provided themes in the way you want.
 </p>
 
+<h2>Chart Themes</h2>
+
+<p>
+    PLACEHOLDER
+</p>
+
 <h2>Custom Chart Themes</h2>
 
 <p>
