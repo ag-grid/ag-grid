@@ -19,6 +19,7 @@ var gridOptions = {
         resizable: true
     },
 
+    ensureDomOrder: true,
     enableCellTextSelection: true
 };
 
