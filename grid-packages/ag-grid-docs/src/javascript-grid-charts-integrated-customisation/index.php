@@ -31,7 +31,7 @@ gridOptions: {
     ...
     customChartThemes: {
         myCustomTheme: {
-            baseTheme: 'pastel',
+            baseTheme: 'ag-pastel',
             palette: {
                 fills: ['#c16068', '#a2bf8a', '#ebcc87'],
                 strokes: ['#874349', '#718661', '#a48f5f']
@@ -46,7 +46,7 @@ gridOptions: {
             }
         }
     },
-    chartThemes: ['myCustomTheme', 'vivid']
+    chartThemes: ['myCustomTheme', 'ag-vivid']
 }
 SNIPPET
 ) ?>

@@ -1,5 +1,5 @@
 var myTheme = {
-    baseTheme: 'dark',
+    baseTheme: 'ag-dark',
     palette: {
         fills: [
             '#5C2983',
@@ -29,7 +29,7 @@ var myTheme = {
 };
 
 var options = {
-    
+
     theme: myTheme,
 
     container: document.getElementById('myChart'),

@@ -56,7 +56,7 @@ var gridOptions = {
 
         chartRef = params.api.createRangeChart(createRangeChartParams);
     },
-    chartThemes: ['pastel-dark'],
+    chartThemes: ['ag-pastel-dark'],
     chartThemeOverrides: {
         common: {
             legend: {

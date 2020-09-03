@@ -17,12 +17,12 @@ include '../documentation-main/documentation_header.php';
 <h2>Using stock themes</h2>
 
 <p>
-    Every chart is using the <code>'default'</code> theme unless configured otherwise:
+    Every chart is using the <code>'ag-default'</code> theme unless configured otherwise:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 AgChart.create({
-    theme: 'default', // optional, implied
+    theme: 'ag-default', // optional, implied
     ...
 });
 SNIPPET
@@ -31,15 +31,15 @@ SNIPPET
 <p>The following themes are supported:</p>
 
 <?= createSnippet(<<<SNIPPET
-type AgChartThemeName = 'default' | 'dark'
-    | 'material' | 'material-dark'
-    | 'pastel' | 'pastel-dark'
-    | 'solar' | 'solar-dark'
-    | 'vivid' | 'vivid-dark';
+type AgChartThemeName = 'ag-default' | 'ag-dark'
+    | 'ag-material' | 'ag-material-dark'
+    | 'ag-pastel' | 'ag-pastel-dark'
+    | 'ag-solar' | 'ag-solar-dark'
+    | 'ag-vivid' | 'ag-vivid-dark';
 SNIPPET
 , 'ts') ?>
 
-<p>Let's try using the <code>'dark'</code> theme for example.</p>
+<p>Let's try using the <code>'ag-dark'</code> theme for example.</p>
 
 <h3>Example: Dark Theme</h3>
 
@@ -57,7 +57,7 @@ SNIPPET
     One can create their own themes by providing an override for any of the stock themes.
     A theme override is an object with the following properties:
     <ul>
-        <li><code>baseTheme</code> - the name of the theme to base this theme upon (optional, if not specified, the <code>'default'</code> theme is used)</li>
+        <li><code>baseTheme</code> - the name of the theme to base this theme upon (optional, if not specified, the <code>'ag-default'</code> theme is used)</li>
         <li><code>defaults</code> - the object to be merged with the base theme's defaults and override them (optional)</li>
         <li><code>palette</code> - the palette to use, replaces the palette of the base theme (optional)</li>
     </ul>
@@ -72,14 +72,14 @@ SNIPPET
 </p>
 
 <p>
-    For example, a custom theme that uses the <code>'dark'</code> theme as the base
-    to inherit the dark background and bright strokes but substitutes the pallete
+    For example, a custom theme that uses the <code>'ag-dark'</code> theme as the base
+    to inherit the dark background and bright strokes but substitutes the palette
     and changes some fonts as well as a few other configs can look like this:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 var myTheme = {
-    baseTheme: 'dark',
+    baseTheme: 'ag-dark',
     palette: {
         fills: [
             '#5C2983',

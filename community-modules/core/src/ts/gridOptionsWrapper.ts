@@ -1180,7 +1180,7 @@ export class GridOptionsWrapper {
 
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
-        return this.gridOptions.chartThemes || ['default', 'material', 'pastel', 'vivid', 'solar'];
+        return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
     public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
