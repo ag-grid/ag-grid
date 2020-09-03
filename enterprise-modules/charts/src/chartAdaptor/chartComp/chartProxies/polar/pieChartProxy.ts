@@ -96,6 +96,7 @@ export class PieChartProxy extends PolarChartProxy {
                 strokes: seriesDefaults.stroke.colors,
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
+                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
             }, 'pie.series');
         }
 

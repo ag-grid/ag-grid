@@ -134,6 +134,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
+                    tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                     marker
                 };
 

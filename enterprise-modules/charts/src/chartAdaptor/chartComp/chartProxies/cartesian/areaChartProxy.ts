@@ -83,6 +83,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
+            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer,
             marker
         }];
 
