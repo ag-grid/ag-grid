@@ -5,30 +5,6 @@ import { Series } from "../series/series";
 import { Padding } from "../../util/padding";
 
 export class ChartTheme {
-
-    readonly palette: AgChartThemePalette = {
-        fills: [
-            '#f3622d',
-            '#fba71b',
-            '#57b757',
-            '#41a9c9',
-            '#4258c9',
-            '#9a42c8',
-            '#c84164',
-            '#888888'
-        ],
-        strokes: [
-            '#aa4520',
-            '#b07513',
-            '#3d803d',
-            '#2d768d',
-            '#2e3e8d',
-            '#6c2e8c',
-            '#8c2d46',
-            '#5f5f5f'
-        ]
-    };
-
     private readonly config: any;
 
     private static fontFamily = 'Verdana, sans-serif';
@@ -409,7 +385,12 @@ export class ChartTheme {
         }
     };
 
-    constructor(overrides?: AgChartThemeOverrides) {
+    constructor(
+        overrides?: AgChartThemeOverrides,
+        private readonly palette: AgChartThemePalette = {
+            fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
+            strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f']
+        }) {
         let defaults = this.createChartConfigPerSeries(this.getDefaults());
         if (isObject(overrides)) {
             const mergeOptions = { arrayMerge };
