@@ -151,6 +151,31 @@ SNIPPET
     the child rows are visible.
 </p>
 
+<p>
+    Because the heights of rows are changing as you scroll rows into view, the vertical scrollbar
+    and the row positions change as the grid is scrolling vertically. This leads to the following
+    behaviours:
+</p>
+<ul>
+    <li>
+        The vertical scroll range (how much you can scroll over) will change dynamically to
+        fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb
+        will not follow the mouse. It will either lag behind or jump ahead, depending on whether
+        the row height calculations are increasing or decreasing the vertical scroll range.
+    </li>
+    <li>
+        If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll
+        position and then starts slowly scrolling up), then the row positions will jump as the
+        rows coming into view at the top will get resized and the new height will impact the position
+        of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows
+        below it will get pushed down by 10 rows. If scrolling down this isn't observed as rows below
+        are not in view.
+    </li>
+</ul>
+<p>
+    The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
+</p>
+
 <h3>Auto Height Performance Consideration</h3>
 
 <p>
