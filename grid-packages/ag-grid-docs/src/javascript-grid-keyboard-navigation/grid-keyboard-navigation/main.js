@@ -40,7 +40,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
-    rowDeselection: true,
     defaultColDef: {
         editable: true,
         sortable: true,

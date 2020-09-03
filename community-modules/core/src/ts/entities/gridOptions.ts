@@ -292,7 +292,11 @@ export interface GridOptions {
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
     alignedGrids?: GridOptions[];
+
+    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowSelection?: string;
+
+    suppressRowDeselection?: boolean;
     rowDeselection?: boolean;
     rowMultiSelectWithClick?: boolean;
     isRowSelectable?: IsRowSelectable;

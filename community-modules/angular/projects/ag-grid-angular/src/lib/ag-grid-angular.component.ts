@@ -307,7 +307,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupUseEntireRow : any = undefined;
     @Input() public groupSuppressBlankHeader : any = undefined;
     @Input() public suppressMenuHide : any = undefined;
-    @Input() public rowDeselection : any = undefined;
+    @Input() public suppressRowDeselection : any = undefined;
     @Input() public unSortIcon : any = undefined;
     @Input() public suppressMultiSort : any = undefined;
     @Input() public singleClickEdit : any = undefined;
