@@ -885,7 +885,7 @@ export class RowComp extends Component {
         }
 
         const multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
-        const rowDeselectionWithCtrl = this.beans.gridOptionsWrapper.isRowDeselection();
+        const rowDeselectionWithCtrl = !this.beans.gridOptionsWrapper.isSuppressRowDeselection();
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
@@ -1169,7 +1169,7 @@ export class RowComp extends Component {
     }
 
     private refreshAriaLabel(node: HTMLElement, selected: boolean): void {
-        if (selected && !this.beans.gridOptionsWrapper.isRowDeselection()) {
+        if (selected && this.beans.gridOptionsWrapper.isSuppressRowDeselection()) {
             node.removeAttribute('aria-label');
             return;
         }

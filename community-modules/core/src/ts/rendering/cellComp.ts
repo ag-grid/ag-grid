@@ -1498,7 +1498,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const { gridOptionsWrapper } = this.beans;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
             const newSelection = !this.rowNode.isSelected();
-            if (newSelection || gridOptionsWrapper.isRowDeselection()) {
+            if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
                 this.rowNode.setSelected(newSelection);
             }
         }

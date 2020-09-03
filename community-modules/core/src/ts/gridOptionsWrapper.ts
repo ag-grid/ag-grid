@@ -287,8 +287,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowSelection === 'single' || this.gridOptions.rowSelection === 'multiple';
     }
 
-    public isRowDeselection() {
-        return this.gridOptions.rowDeselection !== false;
+    public isSuppressRowDeselection() {
+        return isTrue(this.gridOptions.suppressRowDeselection);
     }
 
     public isRowSelectionMulti() {
@@ -1416,6 +1416,12 @@ export class GridOptionsWrapper {
             if (options.defaultColDef.floatingFilter == null) {
                 options.defaultColDef.floatingFilter = true;
             }
+        }
+
+        if (options.rowDeselection) {
+            console.warn(
+                'ag-Grid: since v24.x, rowDeselection is deprecated and the behaviour is true by default. Please use `suppressRowDeselection` to prevent rows from being deselected.'
+            );
         }
 
         const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
