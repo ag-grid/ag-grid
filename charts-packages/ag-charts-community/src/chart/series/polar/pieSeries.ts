@@ -459,7 +459,7 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const title = this.title && this.title.enabled ? this.title.text : undefined;
+        const title = this.title ? this.title.text : undefined;
         const color = fills[nodeDatum.index % fills.length];
 
         if (tooltipRenderer) {
