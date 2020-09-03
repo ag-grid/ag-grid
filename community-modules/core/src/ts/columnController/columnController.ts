@@ -1677,7 +1677,7 @@ export class ColumnController extends BeanStub {
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sort = column.getSort() != null ? column.getSort() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
-        const flex = column.getFlex() != null && column.getFlex() > 0 ? null : column.getFlex();
+        const flex = column.getFlex() != null && column.getFlex() > 0 ? column.getFlex() : null;
 
         const res: ColumnState = {
             colId: column.getColId(),
@@ -1758,7 +1758,9 @@ export class ColumnController extends BeanStub {
                     pinned: column.getColDef().pinned,
                     rowGroupIndex: rowGroupIndex,
                     pivotIndex: column.getColDef().pivotIndex,
-                    width: column.getColDef().width
+                    width: column.getColDef().width,
+                    flex: column.getColDef().flex,
+                    sort: column.getColDef().sort
                 };
 
                 if (missing(rowGroupIndex) && rowGroup) {
@@ -1823,8 +1825,6 @@ export class ColumnController extends BeanStub {
                     removeFromArray(columnsWithNoState, column);
                 }
             });
-
-            this.refreshFlexedColumns();
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
@@ -1884,6 +1884,8 @@ export class ColumnController extends BeanStub {
             const autoCol = this.getAutoColumn(stateItem.colId);
             this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
+
+        this.refreshFlexedColumns();
 
         if (this.gridColsArePrimary && params.applyOrder && params.state) {
             const orderOfColIds = params.state.map(stateItem => stateItem.colId);
@@ -2134,11 +2136,22 @@ export class ColumnController extends BeanStub {
         // if width provided and valid, use it, otherwise stick with the old width
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
 
-        const width = getValue('width').value1;
-        if (width != undefined) {
-            if (minColWidth &&
-                (width >= minColWidth)) {
-                column.setActualWidth(width, source);
+        // flex
+        const flex = getValue('flex').value1;
+        if (flex !== undefined) {
+            column.setFlex(flex);
+        }
+
+        // width - we only set width if column is not flexing
+        const noFlexThisCol = column.getFlex() <= 0;
+        if (noFlexThisCol) {
+            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+            const width = getValue('width').value1;
+            if (width != null) {
+                if (minColWidth &&
+                    (width >= minColWidth)) {
+                    column.setActualWidth(width, source);
+                }
             }
         }
 
