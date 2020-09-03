@@ -14,6 +14,21 @@ $title = 'ag-Grid: Datagrid packed with features that your users need with the p
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 23 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-T7JG534');</script>
+    <!-- End Google Tag Manager -->
+
 <?= globalAgGridScript(true) ?>
 
 </head>
@@ -21,6 +36,12 @@ meta_and_links($title, $keywords, $description, false);
 <link rel="stylesheet" href="dist/homepage.css" >
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7JG534" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <header id="nav" class="compact">
         <?php include 'includes/navbar.php' ?>
     </header>
@@ -154,23 +175,7 @@ meta_and_links($title, $keywords, $description, false);
     <script src="example-rich-grid/data.js"></script>
     <script src="example-rich-grid/example.js"></script>
 
-    <!-- Start Alexa Certify Javascript -->
-    <script type="text/javascript">
-        _atrk_opts = { atrk_acct:"AhBRt1DTcA20Ug", domain:"ag-grid.com",dynamic: true};
-        (function() {
-            var as = document.createElement('script');
-            as.type = 'text/javascript';
-            as.async = true;
-            as.src = "https://certify-js.alexametrics.com/atrk.js";
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(as, s);
-        })();
-    </script>
-    <noscript>
-        <img src="https://certify.alexametrics.com/atrk.gif?account=AhBRt1DTcA20Ug" style="display:none" height="1" width="1" alt="" />
-    </noscript>
-    <!-- End Alexa Certify Javascript -->
-        <?php include 'includes/footer.php' ?>
+    <?php include 'includes/footer.php' ?>
     </div>
 </body>
 </html>
