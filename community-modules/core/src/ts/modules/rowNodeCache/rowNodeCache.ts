@@ -101,6 +101,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
+            this.onCacheUpdated();
         }
     }
 
@@ -202,7 +203,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
             this.maxRowFound = true;
-            this.onCacheUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
@@ -210,12 +210,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
-                this.onCacheUpdated();
-            } else if (this.cacheParams.dynamicRowHeight) {
-                // the only other time is if dynamic row height, as loading rows
-                // will change the height of the block, given the height of the rows
-                // is only known after the row is loaded.
-                this.onCacheUpdated();
             }
         }
     }
