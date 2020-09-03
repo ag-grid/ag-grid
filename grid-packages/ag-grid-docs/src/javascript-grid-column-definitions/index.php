@@ -64,6 +64,11 @@ SNIPPET
     <a href="../javascript-grid-grouping-headers/">Column Groups</a>.
 </p>
 
+<h2>Declarative Columns</h2>
+<p>If you're using either Angular (<code>ag-grid-column</code>) or React (<code>AgGridColumn</code>) you additionally have
+    the option to declare your column definitions declaratively - please refer to the <a href="../angular-markup/">Angular</a>
+    and <a href="../react-column-configuration/">React</a> documentation for more information.</p>
+
 <h2 id="default-column-definitions">Custom Column Types</h2>
 
 <p>
