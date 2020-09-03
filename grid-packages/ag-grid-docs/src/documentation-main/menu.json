@@ -71,10 +71,6 @@
                 "url": "react-column-configuration/"
               },
               {
-                "title": "Components",
-                "url": "react-components/"
-              },
-              {
                 "title": "Context API & Redux",
                 "url": "react-apis/"
               },
