@@ -70,6 +70,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 
     if (value.baseTheme || value.defaults || value.palette) {
         const baseTheme: any = getChartTheme(value.baseTheme);
+
         return new baseTheme.constructor(value);
     }
 

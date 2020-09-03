@@ -1,6 +1,7 @@
 import {
     _,
-    AgChartTheme, AgChartThemeOverrides,
+    AgChartTheme,
+    AgChartThemeOverrides,
     AgDialog,
     Autowired,
     CellRange,
@@ -21,19 +22,19 @@ import {
     ProcessChartOptionsParams,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./titleEdit";
-import { ChartController } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartTranslator } from "./chartTranslator";
+import {ChartMenu} from "./menu/chartMenu";
+import {TitleEdit} from "./titleEdit";
+import {ChartController} from "./chartController";
+import {ChartDataModel, ChartModelParams} from "./chartDataModel";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
+import {ChartTranslator} from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;

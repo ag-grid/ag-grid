@@ -17,7 +17,6 @@ import {
     NavigatorOptions,
     PaddingOptions,
     ProcessChartOptionsParams,
-    ProcessChartParams,
     SeriesOptions,
 } from "@ag-grid-community/core";
 import {
@@ -36,7 +35,7 @@ import {
     PieSeries,
     themes,
 } from "ag-charts-community";
-import { deepMerge } from "../object";
+import {deepMerge} from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
