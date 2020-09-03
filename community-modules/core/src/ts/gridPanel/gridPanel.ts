@@ -269,6 +269,7 @@ export class GridPanel extends Component {
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
         this.addMouseListeners();
+        this.addPreventScrollWhileDragging();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
@@ -471,7 +472,6 @@ export class GridPanel extends Component {
     }
 
     private addMouseListeners(): void {
-
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', 'mousedown'];
 
         eventNames.forEach(eventName => {
@@ -479,6 +479,28 @@ export class GridPanel extends Component {
             this.eAllCellContainers.forEach(container =>
                 this.addManagedListener(container, eventName, listener)
             );
+        });
+    }
+
+    // this methods prevents the grid views from being scrolled while the dragService is being used
+    // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
+    private addPreventScrollWhileDragging(): void {
+        const preventScroll = (e: TouchEvent) => {
+            if (this.dragService.isDragging()) {
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+            }
+        };
+
+        this.eAllCellContainers.forEach(container => {
+            container.addEventListener('touchmove', preventScroll, { passive: false });
+        });
+
+        this.addDestroyFunc(() => {
+            this.eAllCellContainers.forEach(container => {
+                container.removeEventListener('touchmove', preventScroll);
+            });
         });
     }
 

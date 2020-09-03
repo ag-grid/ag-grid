@@ -135,7 +135,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private calculateDisplayName(): string {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', true);;
+        return this.columnController.getDisplayNameForColumn(this.column, 'header', true);
     }
 
     private onNewColumnsLoaded(): void {
@@ -147,7 +147,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private refresh(): void {
-
         this.updateState();
 
         const colDef = this.column.getColDef();

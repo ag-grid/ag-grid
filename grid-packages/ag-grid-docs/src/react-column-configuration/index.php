@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 <h2 id="configuring-aggridreact-columns">Configuring the Columns</h2>
 <p>Columns can be defined in three ways: declaratively (i.e. via markup), via <code>GridOptions</code> or by binding to
-<code>columnDefs</code> on the <code>AgGridReact</code> component.</p>
+<code>columnDefs</code>.</p>
 <p>In all cases all <a href="../javascript-grid-column-properties/">column definition properties</a> can be defined to make up a column definition.</p>
 <p>Defining columns declaratively:</p>
     <snippet language="jsx">
@@ -134,6 +134,8 @@ render() {
     &lt;/AgGridColumn&gt;
 &lt;/AgGridReact&gt;
 </snippet>
+    <p>Note that this example also demonstrates nested columns with the <code>Employee</code> column having two child columns: <code>name</code>
+    and <code>country</code>.</p>
 
     <h3>Working Examples</h3>
     <p>You can find fully working examples at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.</p>

@@ -167,12 +167,16 @@ SNIPPET
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
+<p>For more information on how to work with flexbox, please visit: <a href="https://www.w3schools.com/css/css3_flexbox.asp" target="_blank">CSS Flexbox</a></p>
+
 <?= grid_example('Grid Inside a Flexbox Container', 'flexbox', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Inside CSS Grid Container</h3>
 <p>By default the grid watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
+
+<p>For more information on how to work with the Grid Layout, please visit: <a href="https://www.w3schools.com/css/css_grid.asp" target="_blank">CSS Grid Layout</a></p>
 
 <?= grid_example('Grid Inside a CSS Grid Container', 'css-grid', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
