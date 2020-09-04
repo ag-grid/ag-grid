@@ -93,51 +93,35 @@ SNIPPET
 
 <p>These overrides can be used with any chart type.</p>
 
-<?= grid_example('Common Chart Overrides (processChartOptions)', 'common-overrides-old', 'generated', ['enterprise' => true]) ?>
-
 <?= grid_example('Common Chart Overrides', 'common-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Cartesian Chart Overrides</h3>
 
 <p>These overrides can be used with any cartesian chart.</p>
 
-<?= grid_example('Cartesian Chart Overrides (processChartOptions)', 'cartesian-overrides-old', 'generated', ['enterprise' => true]) ?>
-
 <?= grid_example('Cartesian Chart Overrides', 'cartesian-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Line Chart Overrides</h3>
-
-<?= grid_example('Line Chart Overrides (processChartOptions)', 'line-overrides-old', 'generated', ['enterprise' => true]) ?>
 
 <?= grid_example('Line Chart Overrides', 'line-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Bar/Column Chart Overrides</h3>
 
-<?= grid_example('Bar/Column Chart Overrides (processChartOptions)', 'bar-overrides-old', 'generated', ['enterprise' => true]) ?>
-
 <?= grid_example('Bar/Column Chart Overrides', 'bar-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Area Chart Overrides</h3>
-
-<?= grid_example('Area Chart Overrides (processChartOptions)', 'area-overrides-old', 'generated', ['enterprise' => true]) ?>
 
 <?= grid_example('Area Chart Overrides', 'area-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Scatter/Bubble Chart Overrides</h3>
 
-<?= grid_example('Scatter/Bubble Chart Overrides (processChartOptions)', 'scatter-overrides-old', 'generated', ['enterprise' => true]) ?>
-
 <?= grid_example('Scatter/Bubble Chart Overrides', 'scatter-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Pie/Doughnut Chart Overrides</h3>
 
-<?= grid_example('Pie/Doughnut Chart Overrides (processChartOptions)', 'pie-overrides-old', 'generated', ['enterprise' => true]) ?>
-
 <?= grid_example('Pie/Doughnut Chart Overrides', 'pie-overrides', 'generated', ['enterprise' => true]) ?>
 
 <h3>Example: Histogram Chart Overrides</h3>
-
-<?= grid_example('Histogram Chart Overrides (processChartOptions)', 'histogram-overrides-old', 'generated', ['enterprise' => true]) ?>
 
 <?= grid_example('Histogram Chart Overrides', 'histogram-overrides', 'generated', ['enterprise' => true]) ?>
 
