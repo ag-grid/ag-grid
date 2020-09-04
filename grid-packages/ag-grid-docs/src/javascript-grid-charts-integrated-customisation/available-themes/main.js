@@ -1,7 +1,8 @@
+
+
 var gridOptions = {
     columnDefs: [
-        // { field: 'athlete', width: 150, chartDataType: 'category' },
-        { field: 'athlete', chartDataType: 'category' },
+        { field: 'country', width: 150 },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
@@ -17,16 +18,34 @@ var gridOptions = {
     popupParent: document.body,
     enableRangeSelection: true,
     enableCharts: true,
-    chartThemes: ['ag-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'],
+    chartThemes: ['ag-pastel', 'ag-material-dark', 'ag-vivid-dark', 'ag-solar'],
+    rowData: createRowData(),
     onFirstDataRendered: onFirstDataRendered,
 };
+
+function createRowData() {
+    var countries = [
+        'Ireland', 'Spain', 'UK', 'France', 'Germany', 'Luxembourg', 'Sweden',
+        'Norway', 'Italy', 'Greece', 'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
+        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium'
+    ];
+
+    return countries.map(function(country, index) {
+        return {
+            country: country,
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
+        };
+    });
+}
 
 function onFirstDataRendered(params) {
     var createRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 79,
-            columns: ['age', 'gold', 'silver', 'bronze'],
+            columns: ['country', 'gold', 'silver', 'bronze'],
         },
         chartType: 'groupedColumn',
         chartContainer: document.querySelector('#myChart'),
@@ -37,16 +56,7 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    agGrid
-        .simpleHttpRequest({
-            url:
-                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/wideSpreadOfSports.json',
-        })
-        .then(function (data) {
-            gridOptions.api.setRowData(data);
-        });
 });

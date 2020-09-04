@@ -13,15 +13,23 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    ag-Charts support <a href="../javascript-charts-themes/">Themes</a> to change how charts are styled. You can
-    provide your own custom chart theme to the grid to change the colours of charts along with other styling options.
-    Alternatively, you can just provide overrides to change the provided themes in the way you want.
+    ag-Charts support <a href="../javascript-charts-themes/">Chart Themes</a> to change how charts are styled. There are
+    a number of themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid
+    to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides
+    to tweak the provided themes in the way you want.
 </p>
 
-<h2>Chart Themes</h2>
+<h2>Provided Themes</h2>
 
 <p>
-    There are five stock themes that come with
+    There are five themes that are provided by the grid: <code>'ag-default'</code>, <code>'ag-material'</code>,
+    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. There are also dark equivalents of
+    these named with a <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
+</p>
+
+<p>
+    By default, all of these themes are available, and when you create a chart, you can scroll through the different
+    themes in the chart settings.
 </p>
 
 <div class="animated-example">
@@ -29,11 +37,11 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    asdfasdf
+    You can change which themes are available by setting the <code>chartThemes</code> property in
+    <code>gridOptions</code>. The example below shows a different selection of themes configured in this way.
 </p>
 
-<?= grid_example('Dark Stock Themes', 'dark-stock-themes', 'generated', ['exampleHeight' => 690,'enterprise' => true]) ?>
-
+<?= grid_example('Configure Available Themes', 'available-themes', 'generated', ['exampleHeight' => 690, 'enterprise' => true]) ?>
 
 <h2>Custom Chart Themes</h2>
 

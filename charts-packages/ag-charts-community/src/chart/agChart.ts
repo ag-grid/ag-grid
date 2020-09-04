@@ -43,7 +43,7 @@ export const lightThemes: ThemeMap = {
 export const darkThemes: ThemeMap = {
     'undefined': darkTheme,
     'null': darkTheme,
-    'ag-dark': darkTheme,
+    'ag-default-dark': darkTheme,
     'ag-material-dark': new MaterialDark(),
     'ag-pastel-dark': new PastelDark(),
     'ag-solar-dark': new SolarDark(),

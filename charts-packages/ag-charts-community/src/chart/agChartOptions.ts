@@ -2,7 +2,7 @@ type FontStyle = 'normal' | 'italic' | 'oblique';
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
     | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-export type AgChartThemeName = 'ag-default' | 'ag-dark'
+export type AgChartThemeName = 'ag-default' | 'ag-default-dark'
     | 'ag-material' | 'ag-material-dark'
     | 'ag-pastel' | 'ag-pastel-dark'
     | 'ag-solar' | 'ag-solar-dark'

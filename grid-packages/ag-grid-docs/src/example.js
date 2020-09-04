@@ -20,7 +20,7 @@ function onThemeChanged(initial) {
 
     if (isDark) {
         document.body.classList.add('dark');
-        gridOptions.chartThemes = ['ag-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+        gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
     } else {
         document.body.classList.remove('dark');
         gridOptions.chartThemes = null;

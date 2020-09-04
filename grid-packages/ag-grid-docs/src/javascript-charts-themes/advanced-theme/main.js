@@ -1,5 +1,5 @@
 var myTheme = {
-    baseTheme: 'ag-dark',
+    baseTheme: 'ag-default-dark',
     palette: {
         fills: [
             '#5C2983',

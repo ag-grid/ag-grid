@@ -31,7 +31,7 @@ SNIPPET
 <p>The following themes are supported:</p>
 
 <?= createSnippet(<<<SNIPPET
-type AgChartThemeName = 'ag-default' | 'ag-dark'
+type AgChartThemeName = 'ag-default' | 'ag-default-dark'
     | 'ag-material' | 'ag-material-dark'
     | 'ag-pastel' | 'ag-pastel-dark'
     | 'ag-solar' | 'ag-solar-dark'
@@ -39,7 +39,7 @@ type AgChartThemeName = 'ag-default' | 'ag-dark'
 SNIPPET
 , 'ts') ?>
 
-<p>Let's try using the <code>'ag-dark'</code> theme for example.</p>
+<p>Let's try using the <code>'ag-default-dark'</code> theme for example.</p>
 
 <h3>Example: Dark Theme</h3>
 
@@ -72,14 +72,14 @@ SNIPPET
 </p>
 
 <p>
-    For example, a custom theme that uses the <code>'ag-dark'</code> theme as the base
+    For example, a custom theme that uses the <code>'ag-default-dark'</code> theme as the base
     to inherit the dark background and bright strokes but substitutes the palette
     and changes some fonts as well as a few other configs can look like this:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 var myTheme = {
-    baseTheme: 'ag-dark',
+    baseTheme: 'ag-default-dark',
     palette: {
         fills: [
             '#5C2983',
