@@ -30,7 +30,7 @@ interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    chartThemeOverrides?: AgChartThemeOptions;
+    chartThemeOverrides?: AgChartThemeOverrides;
 }
 
 interface CellRangeParams {
