@@ -18,6 +18,7 @@ import {
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
+    AgChartThemeOverrides
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
@@ -50,8 +51,8 @@ export interface ChartProxyParams {
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
-    getGridOptionsChartThemeOverrides: () => AgChartThemeOptions | undefined;
-    apiChartThemeOverrides?: AgChartThemeOptions;
+    getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
+    apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -151,8 +152,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
 
-        let gridOptionsThemeOverrides: AgChartThemeOptions = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        let apiThemeOverrides: AgChartThemeOptions = this.chartProxyParams.apiChartThemeOverrides;
+        let gridOptionsThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        let apiThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
@@ -184,7 +185,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return _.includes(Object.keys(themes), themeName);
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartTheme, apiThemeOverrides: AgChartTheme) {
+    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartThemeOverrides, apiThemeOverrides: AgChartThemeOverrides) {
         if (!gridOptionsThemeOverrides) return apiThemeOverrides;
         if (!apiThemeOverrides) return gridOptionsThemeOverrides;
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);

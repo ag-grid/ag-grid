@@ -1,0 +1,16 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex-grow: 1;
+    height: 58px !important;
+}
+
+ .my-chart {
+     flex-grow: 2;
+     height: 10px !important;
+     display: inline-block;
+ }

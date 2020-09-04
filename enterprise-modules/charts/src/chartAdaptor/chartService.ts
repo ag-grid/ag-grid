@@ -1,6 +1,6 @@
 import {
     _,
-    AgChartTheme,
+    AgChartThemeOverrides,
     Autowired,
     Bean,
     BeanStub,
@@ -111,7 +111,7 @@ export class ChartService extends BeanStub implements IChartService {
         suppressChartRanges = false,
         container?: HTMLElement,
         aggFunc?: string | IAggFunc,
-        chartThemeOverrides?: AgChartTheme,
+        chartThemeOverrides?: AgChartThemeOverrides,
         processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();

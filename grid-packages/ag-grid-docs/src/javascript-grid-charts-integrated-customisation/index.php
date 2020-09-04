@@ -21,8 +21,19 @@ include '../documentation-main/documentation_header.php';
 <h2>Chart Themes</h2>
 
 <p>
-    PLACEHOLDER
+    There are five stock themes that come with
 </p>
+
+<div class="animated-example">
+    <img data-gifffer="theme-picker.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
+</div>
+
+<p>
+    asdfasdf
+</p>
+
+<?= grid_example('Dark Stock Themes', 'dark-stock-themes', 'generated', ['exampleHeight' => 690,'enterprise' => true]) ?>
+
 
 <h2>Custom Chart Themes</h2>
 
