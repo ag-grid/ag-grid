@@ -119,8 +119,6 @@ export class AgDialog extends AgPanel {
             undefined,
             alwaysOnTop
         );
-
-        eGui.focus();
     }
 
     private addResizers() {
