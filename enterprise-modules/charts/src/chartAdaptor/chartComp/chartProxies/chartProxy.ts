@@ -21,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
-    AgChartThemeOverrides,
+    AgChartThemeOptions,
     AgChartThemePalette,
     AreaSeries,
     BarSeries,
@@ -50,8 +50,8 @@ export interface ChartProxyParams {
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
-    getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
-    apiChartThemeOverrides?: AgChartThemeOverrides;
+    getGridOptionsChartThemeOverrides: () => AgChartThemeOptions | undefined;
+    apiChartThemeOverrides?: AgChartThemeOptions;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -151,12 +151,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
 
-        let gridOptionsThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        let apiThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
+        let gridOptionsThemeOverrides: AgChartThemeOptions = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        let apiThemeOverrides: AgChartThemeOptions = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
-                defaults: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
+                overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
 
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);

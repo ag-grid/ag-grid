@@ -13,17 +13,16 @@ export interface AgChartThemePalette {
     strokes: string[];
 }
 
-export interface AgChartThemeOverrides {
+export interface AgChartThemeOptions {
     palette?: AgChartThemePalette;
-    defaults?: AgChartThemeDefaults;
-    overrides?: AgChartThemeDefaults;
+    overrides?: AgChartThemeOverrides;
 }
 
-export interface AgChartTheme extends AgChartThemeOverrides {
+export interface AgChartTheme extends AgChartThemeOptions {
     baseTheme?: AgChartThemeName; // | ChartTheme;
 }
 
-export interface AgChartThemeDefaults {
+export interface AgChartThemeOverrides {
     cartesian?: AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>;
     column?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;
     bar?: AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>;

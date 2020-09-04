@@ -87,7 +87,7 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeDefaults, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import {AgChartOptions, AgChartTheme, AgChartThemeOptions} from "../interfaces/iAgChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -419,7 +419,7 @@ export interface GridOptions {
 
     customChartThemes?: { [name: string]: AgChartTheme };
 
-    chartThemeOverrides?: AgChartThemeOverrides;
+    chartThemeOverrides?: AgChartThemeOptions;
 
     /** @deprecated */
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
