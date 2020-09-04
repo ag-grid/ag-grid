@@ -205,6 +205,7 @@ interface ChartModel {
     chartType: ChartType;
     chartThemeName: string;
     chartOptions: ChartOptions;
+    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 
