@@ -59,26 +59,10 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a> documentation. Note that it is possible
         to provide custom navigation which could come in useful for some accessibility requirements.</p>
 
-    <h2>Skip Navigation</h2>
-
-    <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
-        provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
-
-    <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
-
-    <snippet>
-.skip-link {
-      left: -100%;
-      position: absolute;
-    }
-    .skip-link:focus {
-      left: 50%;
-    }</snippet>
-
     <h2>Screen Readers</h2>
 
     <p>
-        Users who are blind or visually impaired will typically require the assistance of a screen reader to interpret and
+        Users who are visually impaired will typically require the assistance of a screen reader to interpret and
         interact with grid based application.
     </p>
 
@@ -102,18 +86,68 @@ include '../documentation-main/documentation_header.php';
     </p>
 
         <ul class="content">
-            <li><b>role="grid"</b> - marks the enclosing element of the grid</li>
-            <li><b>role="rowgroup"</b> - element that serve as container for the table header rows and grid rows</li>
-            <li><b>role="row"</b> - a row of column headers or grid cells</li>
-            <li><b>role="columnheader"</b> - element containing a column header</li>
-            <li><b>role="gridcell"</b> - element containing a grid cell </li>
-            <li><b>role="presentation"</b> - indicates an element should be ignored</li>
-            <li><b>aria-hidden="true"</b> - indicates an element and child elements should be ignored</li>
+            <li>
+                <b>role="grid"</b> - marks the enclosing element of the grid.
+                <ul>
+                    <li><b>aria-rowcount</b> - announces the number of rows.</li>
+                    <li><b>aria-colcount</b> - announces the number of rows.</li>
+                    <li><b>aria-multiselectable="true"</b> - marks the grid as being able to select multiple rows.</li>
+                </ul>
+            </li>
+            <li><b>role="rowgroup"</b> - element that serve as container for the table header rows and grid rows.</li>
+            <li>
+                <b>role="row"</b> - a row of column headers or grid cells.
+                <ul>
+                    <li><b>aria-rowindex</b> - announces the visible index of the row.</li>
+                    <li><b>aria-selected</b> - only present if the row is selectable, it announces the selection state.</li>
+                    <li><b>aria-expanded</b> - only present in row groups, it announces the expand state.</li>
+                </ul>
+            </li>
+            <li>
+                <b>role="columnheader"</b> - element containing a column header.
+                <ul>
+                    <li><b>aria-colindex</b> - announces the visible index of the column.</li>
+                    <li><b>aria-colspan</b> - only present if the column spans across multiple columns, it helps guide screen readers.</li>
+                    <li><b>aria-expanded</b> - only present in grouped headers, it announces the expand state.</li>
+                    <li><b>aria-sort</b> - only present in sortable columns, it announces the sort state.</li>
+                </ul>
+            </li>
+            <li>
+                <b>role="gridcell"</b> - element containing a grid cell.
+                <ul>
+                    <li><b>aria-colindex</b> - announces the visible index of the cell.</li>
+                    <li><b>aria-selected</b> - only present if the cell is selectable, it announces the selection state.</li>
+                    <li><b>aria-expanded</b> - only present in a group cell, it announces the expand state.</li>
+                </ul>
+            </li>
+            <li><b>role="menu"</b> - element that serve as a container for a single levels of menu items.</li>
+            <li><b>role="menuitem"</b> - marks an element as a menu item.</li>
+            <li><b>role="tree"</b> - element that serve as a container for items that could have multiple levels.</li>
+            <li>
+                <b>role="treeitem"</b> - marks an element as an item of a tree.
+                <ul>
+                    <li><b>aria-level</b> - announces the current level of the tree.
+                    <li><b>aria-expanded</b> - only present if the item has subitems, it announces the current expand state.</li>
+                </ul>
+            </li>
+            <li><b>role="listbox"</b> - element that serve as a container for multiple elements that will be presented as a list.</li>
+            <li>
+                <b>role="option"</b> - marks an element as an item of a listbox.
+                <ul>
+                    <li><b>aria-setsize</b> - announces the total number of items in the listbox.</li>
+                    <li><b>aria-posinset</b> - announces the position of the item within the set.</li>
+                    <li><b>aria-selected</b> - only present if the item is selectable, it announces the current select state.</li>
+                    <li><b>aria-checked</b> - only present if the item has a checkbox, it announces the current check state.</li>
+                </ul>
+            <li><b>role="presentation"</b> - indicates an element should be ignored.</li>
+            <li><b>aria-hidden="true"</b> - indicates an element and child elements should be ignored.</li>
+            <li><b>aria-label</b> - used to provide information about the current focused item.</li>
+            <li><b>aria-labelledby</b> - used to provide the id of an element that has the label for the current focused element.</li>
+            <li><b>aria-describedby</b> - used to provide additional information about the current selected item.</li>
         </ul>
 
     <p>
         These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.
-        Grids with simple layouts (e.g. without column groups, pinned columns or pivoting) will have best results.
     </p>
 
     <note>
@@ -197,7 +231,16 @@ gridOptions.rowBuffer = 9999</snippet>
 
     <?= grid_example('Accessibility', 'accessibility', 'generated', ['enterprise' => true]) ?>
 
-    <note>
-        Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
-    </note>
+    <h2>Known Issues</h2>
+
+    <p>Because of the way the DOM is structured and how screen readers work, the issues below were observed: </p>
+
+    <ul class="content">
+        <li>Navigating from and to pinned columns.</li>
+        <li>Navigating from and to pinned rows.</li>
+        <li>Problems announcing the correct name of columns while using grouped columns.</li>
+        <li>Problems announcing the change of state of a gridcell or gridheader.</li>
+        <li>Server Side Row Model - Announcing the row count in the grid when using SSRM is not supported. This is because the row count cannot be known in all the scenarios where SSRM is in use.</li>
+    </ul>
+
 <?php include '../documentation-main/documentation_footer.php';?>
