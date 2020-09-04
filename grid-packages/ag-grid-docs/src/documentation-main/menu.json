@@ -1188,6 +1188,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Customisation (Old)",
+            "url": "javascript-grid-charts-integrated-customisation-old/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Third-Party Charting",
             "url": "javascript-grid-graphing/"
           }
