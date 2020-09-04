@@ -39,7 +39,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import {AgChartTheme, AgChartThemeOptions} from "./interfaces/iAgChartOptions";
+import {AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -1170,7 +1170,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getChartToolbarItems;
     }
 
-    public getChartThemeOverrides(): AgChartThemeOptions | undefined {
+    public getChartThemeOverrides(): AgChartThemeOverrides | undefined {
         return this.gridOptions.chartThemeOverrides;
     }
 
