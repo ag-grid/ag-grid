@@ -2,12 +2,10 @@ import * as angular from "angular";
 // @ts-ignore
 import * as jQuery from "jquery";
 
-import {trackIfInViewPort, whenInViewPort} from "../lib/viewport";
-import {highlight} from "../lib/highlight";
+import { whenInViewPort } from "../lib/viewport";
+import { highlight } from "../lib/highlight";
 
 const docs: angular.IModule = angular.module("documentation");
-
-const ACTIVE_EXAMPLE_RUNNERS = [];
 
 class ExampleRunnerController {
     private source: any;
@@ -66,8 +64,6 @@ class ExampleRunnerController {
     private openFwDropdown: boolean = false;
     private openImportDropdown: boolean = false;
 
-    private visible: boolean = false;
-
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
     }
@@ -113,7 +109,7 @@ class ExampleRunnerController {
 
         this.titlesToRemove.forEach(titleToRemove => {
             delete this.titles[titleToRemove];
-            delete this.config.types[titleToRemove]
+            delete this.config.types[titleToRemove];
         });
 
         this.title = this.config.title;
@@ -127,18 +123,7 @@ class ExampleRunnerController {
             modules: "Modules"
         };
 
-        const divWrapper = jQuery(this.$element).find("div.example-wrapper");
-
-        this.$timeout(() => {
-            trackIfInViewPort(divWrapper, (visible: boolean) => {
-                this.$timeout(() => {
-                    if (visible && !this.visible) {
-                        this.visible = true;
-                        ACTIVE_EXAMPLE_RUNNERS.push(this);
-                    }
-                });
-            });
-        });
+        const divWrapper = jQuery(this.$element);
 
         whenInViewPort(divWrapper, () => {
             this.$timeout(() => {
@@ -166,7 +151,7 @@ class ExampleRunnerController {
             result = this.availableTypes[0];
         }
 
-        if(result === 'reactfunctional') {
+        if (result === 'reactfunctional') {
             return 'reactFunctional';
         }
         return result;
@@ -373,11 +358,11 @@ ExampleRunnerController.$inject = ["$http", "$timeout", "$sce", "$q", "formPostD
 
 docs.component("exampleRunner", {
     template: `
-        <div ng-class='["example-runner"]'>        
-            <div style="display: flex; justify-content: flex-end">
+        <div class="example-runner">
+            <div class="framework-chooser-wrapper">
                 <div class="framework-chooser" ng-if="$ctrl.showImportsDropdown && $ctrl.currentType !== 'vanilla'">
                     <span style="margin-right: 1em;display: inline-block">Import Type <a href="../javascript-grid-packages/" title="Modules & Packages" target="_blank"><sup><span class="fa fa-question-circle"></span></sup></a>: </span>
-                    <div ng-class="{ 'btn-group': true, 'open': $ctrl.openImportsDropdown }">        
+                    <div ng-class="{ 'btn-group': true, 'open': $ctrl.openImportsDropdown }">
                         <button type="button"
                                 ng-click="$ctrl.toggleImportDropdown()"
                                 ng-blur="$ctrl.hideImportDropdown()"
@@ -385,9 +370,9 @@ docs.component("exampleRunner", {
                                 data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false">
-            
+
                             <span ng-class="[ 'runner-item-' + $ctrl.importType, 'runner-item' ]">{{$ctrl.importTypeTitle($ctrl.importType)}} </span>
-                            <span class="caret"></span>        
+                            <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
                             <li ng-repeat="type in $ctrl.importTypes">
@@ -399,7 +384,7 @@ docs.component("exampleRunner", {
                 </div>
                 <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
                     <span>&nbsp;&nbsp;Example version:</span>
-                    <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">        
+                    <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
                         <button type="button"
                                 ng-click="$ctrl.toggleFwDropdown()"
                                 ng-blur="$ctrl.hideFwDropdown()"
@@ -407,10 +392,10 @@ docs.component("exampleRunner", {
                                 data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false">
-            
+
                             <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
                             <span class="caret"></span>
-            
+
                         </button>
                         <ul class="dropdown-menu">
                             <li ng-repeat="type in $ctrl.availableTypes">
@@ -419,16 +404,16 @@ docs.component("exampleRunner", {
                             </li>
                         </ul>
                     </div>
-                </div>            
+                </div>
             </div>
-                
+
             <div class="example-wrapper">
                 <ul role="tablist" class="primary">
                     <li class="title">
                         <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}"> <i
                                 class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
                     </li>
-        
+
                     <example-tab
                             value="'result'"
                             current-value="$ctrl.selectedTab"
@@ -437,7 +422,7 @@ docs.component("exampleRunner", {
                             icon="'fa-play'"
                             on-click="$ctrl.selectedTab = 'result'">
                     </example-tab>
-        
+
                     <example-tab
                             ng-hide="$ctrl.noCode"
                             value="'code'"
@@ -447,13 +432,13 @@ docs.component("exampleRunner", {
                             icon="'fa-code'"
                             on-click="$ctrl.selectedTab = 'code'">
                     </example-tab>
-        
+
                     <li role="presentation">
                         <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">
                             <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab
                         </a>
                     </li>
-        
+
                     <example-tab
                             ng-hide="$ctrl.noPlunker"
                             value="'plunker'"
@@ -463,29 +448,25 @@ docs.component("exampleRunner", {
                             icon="'fa-external-link-alt'"
                             on-click="$ctrl.openPlunker($event); $event.preventDefault()">
                     </example-tab>
-        
+
                 </ul>
-        
-                <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
-                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                </div>
-        
-                <div class="tab-contents" ng-if="$ctrl.ready">
-                    <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
-                        <iframe ng-if="$ctrl.visible" ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" scrolling="no"
-                                seamless="true"></iframe>
-                        <div ng-show="!$ctrl.visible" class="iframe-placeholder" ng-style="$ctrl.iframeStyle">
-                            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                        </div>
+
+                <div class="tab-contents">
+                    <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
+                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                     </div>
-        
-                    <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
+
+                    <div ng-if="$ctrl.ready" ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
+                        <iframe ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" scrolling="no" seamless="true"></iframe>
+                    </div>
+
+                    <div ng-if="$ctrl.ready && $ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
                         <ul role="tablist" class="secondary" ng-style="$ctrl.iframeStyle">
-        
+
                             <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
                                 App
                             </li>
-        
+
                             <example-tab
                                     ng-repeat="file in $ctrl.files"
                                     value="file"
@@ -494,11 +475,11 @@ docs.component("exampleRunner", {
                                     icon="'fa-file'"
                                     on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                             </example-tab>
-        
+
                             <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
                                 Framework
                             </li>
-        
+
                             <example-tab
                                     ng-repeat="file in $ctrl.boilerplateFiles"
                                     value="file"
@@ -508,11 +489,10 @@ docs.component("exampleRunner", {
                                     on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                             </example-tab>
                         </ul>
-        
+
                         <pre ng-style="$ctrl.iframeStyle"><code ng-bind-html="$ctrl.source"></code></pre>
                     </div>
                 </div>
-        
             </div>
         </div>
 `,

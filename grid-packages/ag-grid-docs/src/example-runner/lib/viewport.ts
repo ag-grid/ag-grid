@@ -5,8 +5,8 @@ const contentEl = document.getElementsByClassName('page-content')[0];
 
 function getCurrentViewPort() {
     const viewport = {
-        top : win.scrollTop(),
-        left : win.scrollLeft(),
+        top: win.scrollTop(),
+        left: win.scrollLeft(),
         right: NaN,
         bottom: NaN
     };
@@ -28,33 +28,13 @@ export function whenInViewPort(element, callback) {
     function comparePosition() {
         const viewPort = getCurrentViewPort();
         const box = getRect(element);
+
         if (viewPort.bottom >= box.top) {
             contentEl.removeEventListener('scroll', comparePosition);
             callback();
-            // window.setTimeout(callback, 2000);
         }
     }
 
-    comparePosition();
     contentEl.addEventListener('scroll', comparePosition);
-}
-
-export function trackIfInViewPort(element, callback) {
-    function comparePosition() {
-        const viewPort = getCurrentViewPort();
-        const box = getRect(element);
-        var inViewPort = viewPort.bottom >= box.top && viewPort.top <= box.bottom;
-
-        callback(inViewPort);
-    }
-
     comparePosition();
-    contentEl.addEventListener('scroll', comparePosition);
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    const link = document.querySelector('a[href="' + location.hash + '"]');
-    if (link && link.scrollIntoView) {
-        link.scrollIntoView();
-    }
-});

@@ -133,6 +133,7 @@
     .loading-placeholder,
     .iframe-placeholder {
         height: 450px;
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -226,6 +227,11 @@
             color: $gray-500;
             margin-bottom: 0;
         }
+    }
+
+    .framework-chooser-wrapper {
+        display: flex;
+        justify-content: flex-end;
     }
 
     .framework-chooser {
