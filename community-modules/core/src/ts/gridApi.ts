@@ -62,7 +62,7 @@ import { iterateObject } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
-import { AgChartThemeOptions } from "./interfaces/iAgChartOptions";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -102,7 +102,7 @@ export interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    chartThemeOverrides?: AgChartThemeOptions;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -110,7 +110,7 @@ export interface CreatePivotChartParams {
     chartType: ChartType;
     chartThemeName?: string;
     chartContainer?: HTMLElement;
-    chartThemeOverrides?: AgChartThemeOptions;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 

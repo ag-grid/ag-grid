@@ -22,7 +22,6 @@ import {
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
-    AgChartThemeOptions,
     AgChartThemePalette,
     AreaSeries,
     BarSeries,
