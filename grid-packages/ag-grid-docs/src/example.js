@@ -1,3 +1,47 @@
+var gridDiv = document.getElementById('myGrid');
+var grid;
+
+function refreshGrid() {
+    if (grid) {
+        grid.destroy();
+    }
+
+    grid = new agGrid.Grid(gridDiv, gridOptions);
+
+    createData();
+}
+
+function onThemeChanged(initial) {
+    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
+
+    gridDiv.className = newTheme;
+
+    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+    if (isDark) {
+        document.body.classList.add('dark');
+        gridOptions.chartThemes = ['ag-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+    } else {
+        document.body.classList.remove('dark');
+        gridOptions.chartThemes = null;
+    }
+
+    refreshGrid();
+
+    if (!initial) {
+        var newUrl;
+        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
+        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
+        if (attrRegex.test(location.href)) {
+            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
+        } else {
+            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
+            newUrl = location.href + sep + "theme=" + urlName;
+        }
+        history.replaceState(null, "", newUrl);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var select = document.getElementById('data-size');
 
@@ -25,12 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
             select.appendChild(option);
         }
     }
-    var gridDiv = document.querySelector('#myGrid');
 
     onThemeChanged(true);
-
-    new agGrid.Grid(gridDiv, gridOptions);
-    createData();
 });
 
 // for easy access in the dev console, we put api and columnApi into global variables
@@ -1131,43 +1171,6 @@ function rowSelected(event) {
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
-    }
-}
-
-function onThemeChanged(initial) {
-    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
-    var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
-
-    themedElements.forEach(function(el) {
-        el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
-    });
-
-    if (gridOptions.api) {
-        gridOptions.api.resetRowHeights();
-        gridOptions.api.redrawRows();
-        gridOptions.api.refreshHeader();
-        gridOptions.api.refreshToolPanel();
-    }
-
-    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
-
-    if (isDark) {
-        document.body.classList.add('dark');
-    } else {
-        document.body.classList.remove('dark');
-    }
-
-    if (!initial) {
-        var newUrl;
-        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
-        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
-        if (attrRegex.test(location.href)) {
-            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
-        } else {
-            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
-            newUrl = location.href + sep + "theme=" + urlName;
-        }
-        history.replaceState(null, "", newUrl);
     }
 }
 

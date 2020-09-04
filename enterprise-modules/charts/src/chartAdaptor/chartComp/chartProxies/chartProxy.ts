@@ -35,7 +35,7 @@ import {
     PieSeries,
     themes,
 } from "ag-charts-community";
-import {deepMerge} from "../object";
+import { deepMerge } from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -169,7 +169,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public lookupCustomChartTheme(name: string) {
-        const customChartTheme = this.chartProxyParams.customChartThemes[name];
+        const { customChartThemes } = this.chartProxyParams;
+        const customChartTheme = customChartThemes && customChartThemes[name];
 
         if (!customChartTheme) {
             console.warn(`ag-Grid: no stock theme exists with the name '${name}' and no ` +
