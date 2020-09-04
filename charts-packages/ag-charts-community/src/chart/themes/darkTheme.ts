@@ -1,5 +1,5 @@
 import { ChartTheme } from "./chartTheme";
-import { AgChartThemeOverrides, AgChartThemePalette } from "../agChartOptions";
+import { AgChartThemePalette, AgChartThemeOptions } from "../agChartOptions";
 
 export class DarkTheme extends ChartTheme {
 
@@ -82,7 +82,7 @@ export class DarkTheme extends ChartTheme {
         });
     }
 
-    constructor(overrides?: AgChartThemeOverrides, palette?: AgChartThemePalette) {
-        super(overrides, palette);
+    constructor(options?: AgChartThemeOptions, palette?: AgChartThemePalette) {
+        super(options, palette);
     }
 }

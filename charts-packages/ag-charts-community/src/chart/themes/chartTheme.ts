@@ -1,6 +1,6 @@
 import { deepMerge, getValue, isObject } from "../../util/object";
 import { copy } from "../../util/array";
-import { AgChartThemeOverrides, AgChartThemePalette, AgChartThemeDefaults } from "../agChartOptions";
+import { AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides } from "../agChartOptions";
 import { Series } from "../series/series";
 import { Padding } from "../../util/padding";
 
@@ -386,36 +386,36 @@ export class ChartTheme {
     };
 
     constructor(
-        overrides?: AgChartThemeOverrides,
+        options?: AgChartThemeOptions,
         readonly palette: AgChartThemePalette = {
             fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
             strokes: ['#aa4520', '#b07513', '#3d803d', '#2d768d', '#2e3e8d', '#6c2e8c', '#8c2d46', '#5f5f5f']
         }) {
         let defaults = this.createChartConfigPerSeries(this.getDefaults());
-        if (isObject(overrides)) {
+        if (isObject(options)) {
             const mergeOptions = { arrayMerge };
-            overrides = deepMerge({}, overrides, mergeOptions) as AgChartThemeOverrides;
-            const overridesDefaults = overrides.overrides || overrides.defaults;
-            if (overridesDefaults) {
-                if (isObject(overridesDefaults.common)) {
+            options = deepMerge({}, options, mergeOptions) as AgChartThemeOptions;
+            const overrides = options.overrides;
+            if (overrides) {
+                if (isObject(overrides.common)) {
                     ChartTheme.seriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.common, mergeOptions);
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.common, mergeOptions);
                     });
                 }
-                if (overridesDefaults.cartesian) {
-                    defaults.cartesian = deepMerge(defaults.cartesian, overridesDefaults.cartesian, mergeOptions);
+                if (overrides.cartesian) {
+                    defaults.cartesian = deepMerge(defaults.cartesian, overrides.cartesian, mergeOptions);
                     ChartTheme.cartesianSeriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.cartesian, mergeOptions);
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.cartesian, mergeOptions);
                     });
                 }
-                if (overridesDefaults.polar) {
-                    defaults.polar = deepMerge(defaults.polar, overridesDefaults.polar, mergeOptions);
+                if (overrides.polar) {
+                    defaults.polar = deepMerge(defaults.polar, overrides.polar, mergeOptions);
                     ChartTheme.polarSeriesTypes.forEach(seriesType => {
-                        defaults[seriesType] = deepMerge(defaults[seriesType], overridesDefaults.polar, mergeOptions);
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.polar, mergeOptions);
                     });
                 }
                 ChartTheme.seriesTypes.forEach(seriesType => {
-                    const chartConfig = overridesDefaults[seriesType];
+                    const chartConfig = overrides[seriesType];
                     if (chartConfig) {
                         if (chartConfig.series) {
                             (chartConfig as any).series = { [seriesType]: chartConfig.series };
@@ -425,16 +425,16 @@ export class ChartTheme {
                 });
                 // defaults = deepMerge(defaults, overridesDefaults, mergeOptions);
             }
-            if (overrides.palette) {
-                this.palette = overrides.palette;
+            if (options.palette) {
+                this.palette = options.palette;
             }
         }
         this.config = Object.freeze(defaults);
     }
 
-    private static cartesianSeriesTypes: (keyof AgChartThemeDefaults)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
-    private static polarSeriesTypes: (keyof AgChartThemeDefaults)[] = ['pie'];
-    private static seriesTypes: (keyof AgChartThemeDefaults)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
+    private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
+    private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
+    private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
 
     private createChartConfigPerSeries(config: any) {
         const typeToAliases: { [key in string]: string[] } = {

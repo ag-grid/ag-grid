@@ -1,7 +1,7 @@
 import {
     _,
     AgChartTheme,
-    AgChartThemeOverrides,
+    AgChartThemeOptions,
     AgDialog,
     Autowired,
     CellRange,
@@ -200,7 +200,7 @@ export class GridChartComp extends Component {
         return this.chartController.getThemes();
     }
 
-    private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
+    private getGridOptionsChartThemeOverrides(): AgChartThemeOptions | undefined {
         return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 
