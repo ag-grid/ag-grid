@@ -20,7 +20,7 @@
 
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {
         @include ag-color-property(background-color, range-selection-background-color);
         &.ag-cell-range-chart {
             @include ag-color-property(background-color, range-selection-chart-background-color);
@@ -32,7 +32,7 @@
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
         @include ag-color-property(background-color, range-selection-background-color-1);
     }
 
