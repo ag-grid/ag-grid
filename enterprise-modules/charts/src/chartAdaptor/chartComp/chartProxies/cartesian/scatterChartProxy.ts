@@ -38,11 +38,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 renderer: seriesDefaults.tooltipRenderer
             },
             fill: {
-                colors: [seriesDefaults.fill],
+                colors: theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity,
             },
             stroke: {
-                colors: [seriesDefaults.stroke],
+                colors: theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

@@ -33,6 +33,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             
         const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
 
+
         options.seriesDefaults = {
             shadow: seriesDefaults.shadow as DropShadowOptions,
             label: seriesDefaults.label as BarSeriesLabelOptions,
@@ -41,11 +42,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
                 renderer: seriesDefaults.tooltipRenderer
             },
             fill: {
-                colors: seriesDefaults.fills,
+                colors: theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: seriesDefaults.strokes,
+                colors: theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

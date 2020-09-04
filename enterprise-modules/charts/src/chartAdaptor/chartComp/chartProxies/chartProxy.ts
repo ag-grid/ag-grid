@@ -136,15 +136,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const { processChartOptions } = this.chartProxyParams;
 
         if (processChartOptions) {
+            const originalOptions = deepMerge({}, this.chartOptions);
             const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
             const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
-            this.overridePalette(safeOptions);
+            this.overridePalette(originalOptions, safeOptions);
             this.chartOptions = safeOptions;
         }
+    }
+
+    private paletteOverridden(originalOptions: any, overriddenOptions: TOptions) {
+        return !_.areEqual(originalOptions.seriesDefaults.fill.colors, overriddenOptions.seriesDefaults.fill.colors) ||
+            !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
     }
 
     private initChartTheme() {
@@ -219,14 +225,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    private overridePalette(chartOptions: TOptions): void {
+    private overridePalette(originalOptions: TOptions, chartOptions: TOptions): void {
         if (!this.chartProxyParams.allowPaletteOverride) {
             return;
         }
 
+        if (!this.paletteOverridden(originalOptions, chartOptions)) {
+            return;
+        }
+
         const { seriesDefaults } = chartOptions;
-        const fillsOverridden = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
-        const strokesOverridden = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
+        const fillsOverridden = seriesDefaults.fill.colors;
+        const strokesOverridden = seriesDefaults.stroke.colors;
 
         if (fillsOverridden || strokesOverridden) {
             // due to series default refactoring it's possible for fills and strokes to have undefined values

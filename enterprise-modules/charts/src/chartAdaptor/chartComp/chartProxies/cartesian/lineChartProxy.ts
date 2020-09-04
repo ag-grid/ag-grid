@@ -27,7 +27,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 opacity: 1
             },
             stroke: {
-                colors: [seriesDefaults.stroke],
+                colors: theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

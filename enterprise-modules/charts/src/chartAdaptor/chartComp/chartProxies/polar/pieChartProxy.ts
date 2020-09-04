@@ -14,7 +14,6 @@ export class PieChartProxy extends PolarChartProxy {
 
     protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
         const options = super.getDefaultOptionsFromTheme(theme);
-        const palette = this.getPalette();
 
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
@@ -30,11 +29,11 @@ export class PieChartProxy extends PolarChartProxy {
                 renderer: seriesDefaults.tooltipRenderer
             },
             fill: {
-                colors: palette.fills,
+                colors: theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: palette.strokes,
+                colors: theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },

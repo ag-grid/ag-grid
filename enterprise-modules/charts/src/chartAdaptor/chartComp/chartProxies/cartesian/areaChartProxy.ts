@@ -31,11 +31,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 renderer: seriesDefaults.tooltipRenderer
             },
             fill: {
-                colors: seriesDefaults.fills,
+                colors: theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: seriesDefaults.strokes,
+                colors: theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
