@@ -3267,6 +3267,7 @@ export class ColumnController extends BeanStub {
         };
         const knownWidthColumns = this.displayedCenterColumns.filter(col => !isColFlex(col));
         const flexingColumns = this.displayedCenterColumns.filter(col => isColFlex(col));
+        const changedColumns: Column[] = [];
 
         if (!flexingColumns.length) {
             return [];
@@ -3292,6 +3293,7 @@ export class ColumnController extends BeanStub {
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
                     removeFromArray(flexingColumns, col);
+                    changedColumns.push(col);
                     knownWidthColumns.push(col);
                     continue outer;
                 }
@@ -3303,6 +3305,7 @@ export class ColumnController extends BeanStub {
         let remainingSpace = spaceForFlexingColumns;
         flexingColumns.forEach((col, i) => {
             col.setActualWidth(Math.min(flexingColumnSizes[i], remainingSpace), source);
+            changedColumns.push(col);
             remainingSpace -= flexingColumnSizes[i];
         });
 
@@ -3315,7 +3318,7 @@ export class ColumnController extends BeanStub {
         }
 
         if (params.fireResizedEvent) {
-            this.fireColumnResizedEvent(flexingColumns, true, source, flexingColumns);
+            this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
         return flexingColumns;
