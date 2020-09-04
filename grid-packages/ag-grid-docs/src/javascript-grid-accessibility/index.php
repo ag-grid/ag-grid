@@ -75,11 +75,18 @@ include '../documentation-main/documentation_header.php';
     <p>
         In order to cover the widest range of use cases and screen readers, ag-Grid has taken a standards-based approach to 
         implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the 
-        W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state. However, different 
-        screen readers interpret the WCAG standard in different ways. As a result, they may generate different announcements for the same 
-        ag-Grid element, or no announcement at all. This is why we recommend testing how different screen readers announce the UI of the 
-        application you're using, selecting the best one and recommending that to your users. We believe this is the best way to guide your 
-        users how to get the best possible experience at this time until screen readers improve their support for the WCAG standard.
+        W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state. 
+    </p>
+    
+    <p>
+        However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different 
+        announcements for the same ag-Grid element, or no announcement at all. 
+    </p>
+    
+    <p>
+        This is why we recommend testing how different screen readers announce the UI of the application you're using, selecting 
+        the best one and recommending that to your users. We believe this is the best way to guide your users how to get the best
+        possible experience at this time until screen readers improve their support for the WCAG standard.
     </p>
 
     <h2>ARIA Attributes</h2>
