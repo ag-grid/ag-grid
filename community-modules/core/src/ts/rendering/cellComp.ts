@@ -129,6 +129,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private suppressRefreshCell = false;
 
+    private tooltipFeatureEnabled = false;
     private tooltip: any;
 
     private scope: any = null;
@@ -257,9 +258,19 @@ export class CellComp extends Component implements TooltipParentComp {
         this.angular1Compile();
         this.refreshHandle();
 
-        if (exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        if (exists(this.tooltip)) {
+            this.createTooltipFeatureIfNeeded();
         }
+    }
+
+    private createTooltipFeatureIfNeeded(): void {
+        if (
+            this.beans.gridOptionsWrapper.isEnableBrowserTooltips() ||
+            this.tooltipFeatureEnabled
+        ) { return; }
+
+        this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        this.tooltipFeatureEnabled = true;
     }
 
     public onColumnHover(): void {
@@ -717,6 +728,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const newTooltip = this.getToolTip();
 
         if (this.tooltip === newTooltip) { return; }
+
+        this.createTooltipFeatureIfNeeded();
 
         const hasNewTooltip = exists(newTooltip);
 
