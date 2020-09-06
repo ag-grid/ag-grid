@@ -1225,15 +1225,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
 
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup(
-            useModelPopup,
-            ePopupGui,
-            true,
-            // callback for when popup disappears
-            () => {
-                this.onPopupEditorClosed();
-            }
-        );
+        this.hideEditorPopup = this.beans.popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: () => { this.onPopupEditorClosed(); }
+        });
 
         const params = {
             column: this.column,

@@ -146,7 +146,17 @@ export class MenuItemComponent extends Component {
             }
         }
 
-        const closePopup = this.popupService.addAsModalPopup(ePopup, false);
+        const eGui = this.getGui();
+
+        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
+            { eventSource: eGui, ePopup })
+
+        const closePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: ePopup,
+            positionCallback: positionCallback,
+            htmlElementToSyncPosition: eGui
+        });
 
         this.subMenuIsOpen = true;
 
@@ -155,10 +165,6 @@ export class MenuItemComponent extends Component {
             this.subMenuIsOpen = false;
             destroySubMenu();
         };
-
-        const eGui = this.getGui();
-
-        this.popupService.positionPopupForMenu({ eventSource: eGui, ePopup });
 
         _.setAriaExpanded(eGui, true);
     }

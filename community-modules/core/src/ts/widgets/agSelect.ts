@@ -53,14 +53,19 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
-        this.hideList = this.popupService.addPopup(true, listGui, true, () => {
-            this.hideList = null;
-            this.isPickerDisplayed = false;
-            destroyFocusOutFunc();
-            destroyMouseWheelFunc();
+        this.hideList = this.popupService.addPopup({
+            modal: true,
+            eChild: listGui,
+            closeOnEsc: true,
+            closedCallback: () => {
+                this.hideList = null;
+                this.isPickerDisplayed = false;
+                destroyFocusOutFunc();
+                destroyMouseWheelFunc();
 
-            if (this.isAlive()) {
-                this.getFocusableElement().focus();
+                if (this.isAlive()) {
+                    this.getFocusableElement().focus();
+                }
             }
         });
 

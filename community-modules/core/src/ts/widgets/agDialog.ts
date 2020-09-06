@@ -111,14 +111,13 @@ export class AgDialog extends AgPanel {
         const eGui = this.getGui();
         const { alwaysOnTop, modal } = this.config;
 
-        this.close = this.popupService.addPopup(
+        this.close = this.popupService.addPopup({
             modal,
-            eGui,
-            true,
-            this.destroy.bind(this),
-            undefined,
+            eChild: eGui,
+            closeOnEsc: true,
+            closedCallback: this.destroy.bind(this),
             alwaysOnTop
-        );
+        });
     }
 
     private addResizers() {

@@ -104,16 +104,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         const eMenuGui = menu.getGui();
 
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        const hidePopup = this.popupService.addAsModalPopup(
-            eMenuGui,
-            true,
-            () => this.destroyBean(menu),
-            mouseEvent
-        );
-
-        this.popupService.positionPopupUnderMouseEvent({
+        const positionParams = {
             column: column,
             rowNode: node,
             type: 'contextMenu',
@@ -123,6 +114,19 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             // won't show the browser's contextmenu
             nudgeX: 1,
             nudgeY: 1
+        };
+        const positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
+
+        const hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenuGui,
+            closeOnEsc: true,
+            closedCallback: () => {
+                this.destroyBean(menu)
+            },
+            click: mouseEvent,
+            positionCallback: positionCallback,
+            htmlElementToSyncPosition: mouseEvent.target as HTMLElement
         });
 
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup });

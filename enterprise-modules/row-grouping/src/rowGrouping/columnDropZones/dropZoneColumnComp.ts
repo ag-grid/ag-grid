@@ -179,11 +179,12 @@ export class DropZoneColumnComp extends Component {
             this.popupShowing = false;
         };
 
-        const hidePopup = this.popupService.addAsModalPopup(
-            ePopup,
-            true,
-            popupHiddenFunc
-        );
+        const hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: ePopup,
+            closeOnEsc: true,
+            closedCallback: popupHiddenFunc
+        });
 
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
 

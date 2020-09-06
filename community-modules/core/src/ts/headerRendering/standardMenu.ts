@@ -87,7 +87,14 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        // hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenu,
+            closeOnEsc: true,
+            closedCallback: closedCallback
+        });
+
         positionCallback(eMenu);
 
         filterWrapper.filterPromise.then(filter => {

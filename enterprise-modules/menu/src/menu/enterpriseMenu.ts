@@ -113,10 +113,11 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        const hidePopup = this.popupService.addAsModalPopup(
-            eMenuGui,
-            true,
-            (e: Event) => { // menu closed callback
+        const hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenuGui,
+            closeOnEsc: true,
+            closedCallback: (e: Event) => { // menu closed callback
                 this.destroyBean(menu);
                 column.setMenuVisible(false, 'contextMenu');
 
@@ -128,7 +129,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                     if (focusableEl) { focusableEl.focus(); }
                 }
             }
-        );
+        });
 
         menu.afterGuiAttached({ hidePopup });
 

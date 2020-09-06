@@ -32,6 +32,23 @@ interface Rect {
     bottom: number;
 }
 
+interface AddPopupParams {
+    // if true then listens to background checking for clicks, so that when the background is clicked,
+    // the child is removed again, giving a model look to popups.
+    modal?: boolean;
+    // the element to place in the popup
+    eChild: any;
+    // if hitting ESC should close the popup
+    closeOnEsc?: boolean;
+    // a callback that gets called when the popup is closed
+    closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
+    // if a clicked caused the popup (eg click a button) then the click that caused it
+    click?: MouseEvent | Touch | null;
+    alwaysOnTop?: boolean;
+    positionCallback?: ()=>void;
+    htmlElementToSyncPosition?: HTMLElement;
+}
+
 @Bean('popupService')
 export class PopupService extends BeanStub {
 
@@ -66,7 +83,7 @@ export class PopupService extends BeanStub {
         return this.gridCore.getRootGui();
     }
 
-    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }) {
+    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
         const y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
@@ -347,26 +364,47 @@ export class PopupService extends BeanStub {
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
 
-    // adds an element to a div, but also listens to background checking for clicks,
-    // so that when the background is clicked, the child is removed again, giving
-    // a model look to popups.
-    public addAsModalPopup(
-        eChild: any,
-        closeOnEsc: boolean,
-        closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void,
-        click?: MouseEvent | Touch | null
-    ): (event?: any) => void {
-        return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
+    private keepPopupPositionedRelativeTo(params: {
+        ePopup: HTMLElement,
+        element: HTMLElement
+    }): ()=>void {
+        const eParent = this.getPopupParent();
+        const parentRect = eParent.getBoundingClientRect();
+
+        const sourceRect = params.element.getBoundingClientRect();
+        const initialDiffTop = parentRect.top - sourceRect.top;
+
+        let lastDiffTop = initialDiffTop;
+
+        const topPx = params.ePopup.style.top;
+        const top = parseInt(topPx.substring(0, topPx.length - 1));
+
+        const intervalId = setInterval( ()=> {
+
+            const parentRect = eParent.getBoundingClientRect();
+            const sourceRect = params.element.getBoundingClientRect();
+
+            const currentDiffTop = parentRect.top - sourceRect.top;
+            if (currentDiffTop!=lastDiffTop) {
+                const newTop = top + initialDiffTop - currentDiffTop;
+                params.ePopup.style.top = `${newTop}px`
+            }
+
+            lastDiffTop = currentDiffTop;
+
+        }, 20);
+
+        const res = ()=> {
+            clearInterval(intervalId);
+        };
+
+        return res;
     }
 
-    public addPopup(
-        modal: boolean,
-        eChild: any,
-        closeOnEsc: boolean,
-        closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void,
-        click?: MouseEvent | Touch | null,
-        alwaysOnTop?: boolean
-    ): (params?: PopupEventParams) => void {
+    public addPopup(params: AddPopupParams): (params?: PopupEventParams) => void {
+
+        const {modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, htmlElementToSyncPosition} = params;
+
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
@@ -387,8 +425,12 @@ export class PopupService extends BeanStub {
         // https://github.com/angular/angular/issues/8563
         ePopupParent.appendChild(eChild);
 
-        eChild.style.top = '0px';
-        eChild.style.left = '0px';
+        if (eChild.style.top == null) {
+            eChild.style.top = '0px';
+        }
+        if (eChild.style.left == null) {
+            eChild.style.left = '0px';
+        }
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
@@ -428,6 +470,8 @@ export class PopupService extends BeanStub {
         const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
         const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
+        let destroyPositionTracker: ()=>void;
+
         const hidePopup = (params: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = params;
             if (
@@ -459,6 +503,10 @@ export class PopupService extends BeanStub {
             }
 
             this.popupList = this.popupList.filter(popup => popup.element !== eChild);
+
+            if (destroyPositionTracker) {
+                destroyPositionTracker();
+            }
         };
 
         // if we add these listeners now, then the current mouse
@@ -480,6 +528,19 @@ export class PopupService extends BeanStub {
             element: eChild,
             hideFunc: hidePopup
         });
+
+        if (positionCallback) {
+            positionCallback();
+        }
+
+        if (htmlElementToSyncPosition) {
+            // keeps popup positioned under created, eg if context menu, if user scrolls
+            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
+            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
+                element: htmlElementToSyncPosition,
+                ePopup: eChild
+            });
+        }
 
         return hidePopup;
     }
