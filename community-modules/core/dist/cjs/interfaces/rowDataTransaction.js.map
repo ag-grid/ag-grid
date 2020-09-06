@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/ts/interfaces/rowDataTransaction.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"rowDataTransaction.js","sourcesContent":["export interface RowDataTransaction {\n    /** deprecated */ addIndex?: number;\n    add?: any[];\n    remove?: any[];\n    update?: any[];\n}\n"]}

@@ -1,0 +1,48 @@
+import { AbstractColDef, Component, ToolPanelColumnCompParams, ManagedFocusComponent, ColumnEventType } from "@ag-grid-community/core";
+import { BaseColumnItem } from "./primaryColsPanel";
+export declare type ColumnItem = BaseColumnItem & Component;
+export declare type ColumnFilterResults = {
+    [id: string]: boolean;
+};
+export declare class PrimaryColsListPanel extends ManagedFocusComponent {
+    static TEMPLATE: string;
+    private columnController;
+    private colDefService;
+    private columnApi;
+    private columnTree;
+    private allowDragging;
+    private selectAllChecked;
+    private filterText;
+    private filterResults;
+    private expandGroupsByDefault;
+    private params;
+    private columnComps;
+    private eventType;
+    constructor();
+    init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    private navigateToNextItem;
+    onColumnsChanged(): void;
+    syncColumnLayout(): void;
+    setColumnLayout(colDefs: AbstractColDef[]): void;
+    private buildTreeFromProvidedColumnDefs;
+    private recursivelyAddComps;
+    private recursivelyAddGroupComps;
+    private addColumnComps;
+    onGroupExpanded(): void;
+    doSetExpandedAll(value: boolean): void;
+    setGroupsExpanded(expand: boolean, groupIds?: string[]): void;
+    private getExpandState;
+    doSetSelectedAll(selectAllChecked: boolean): void;
+    updateSelections(): void;
+    private getSelectionState;
+    setFilterText(filterText: string): void;
+    private filterColumns;
+    private recursivelySetVisibility;
+    private getColumnCompId;
+    private notifyListeners;
+    private fireGroupExpandedEvent;
+    private fireSelectionChangedEvent;
+    private destroyColumnComps;
+    protected destroy(): void;
+}

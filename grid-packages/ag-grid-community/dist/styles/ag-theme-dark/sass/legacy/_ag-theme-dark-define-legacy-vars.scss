@@ -1,0 +1,94 @@
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-rename-legacy-vars";
+
+// In v23 we moved from using global variables to maps of parameters to configure Grid themes.
+// This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
+// and so should not be modified.
+
+// DO NOT EDIT (see note above)
+$ag-foreground-opacity: 1 !default;
+// DO NOT EDIT (see note above)
+$ag-secondary-foreground-color-opacity: 1 !default;
+// DO NOT EDIT (see note above)
+$ag-disabled-foreground-color-opacity: 0.5 !default;
+// DO NOT EDIT (see note above)
+$ag-icon-color: #d6d5d5 !default;
+// DO NOT EDIT (see note above)
+$ag-alt-icon-color: #000 !default;
+// DO NOT EDIT (see note above)
+$ag-foreground-color: #ccc !default;
+// DO NOT EDIT (see note above)
+$secondary-foreground-color: rgba(#ccc, $ag-secondary-foreground-color-opacity) !default;
+// DO NOT EDIT (see note above)
+$disabled-foreground-color: rgba(#e4e4e4, $ag-disabled-foreground-color-opacity) !default;
+// DO NOT EDIT (see note above)
+$ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
+// DO NOT EDIT (see note above)
+$menu-option-active-color: #4a708b !default;
+// DO NOT EDIT (see note above)
+$card-background-color: #302e2e !default;
+// DO NOT EDIT (see note above)
+$ag-border-color: darkgrey !default;
+// DO NOT EDIT (see note above)
+$primary-color: $ag-icon-color !default;
+// DO NOT EDIT (see note above)
+$ag-accent-color: $ag-icon-color !default;
+// DO NOT EDIT (see note above)
+$ag-background-color: #302e2e !default;
+// DO NOT EDIT (see note above)
+$odd-row-background-color: #403e3e !default;
+// DO NOT EDIT (see note above)
+$editor-background-color: #302e2e !default;
+// DO NOT EDIT (see note above)
+$ag-header-foreground-color: $secondary-foreground-color !default;
+// DO NOT EDIT (see note above)
+$ag-header-background-color: #626262 !default;
+// DO NOT EDIT (see note above)
+$header-background-image: none !default;
+// DO NOT EDIT (see note above)
+$header-cell-hover-background-color: $ag-header-background-color !default;
+// DO NOT EDIT (see note above)
+$panel-background-color: #302e2e !default;
+// DO NOT EDIT (see note above)
+$ag-tool-panel-background-color: #302e2e !default;
+// DO NOT EDIT (see note above)
+$chip-background-color: rgb(64, 62, 62) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selection-background-color: rgba(100, 160, 160, 0.4) !default;
+// DO NOT EDIT (see note above)
+$range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
+// DO NOT EDIT (see note above)
+$hover-color: inherit !default;
+// DO NOT EDIT (see note above)
+$selected-color: $menu-option-active-color !default;
+// DO NOT EDIT (see note above)
+$cell-data-changed-color: white !default;
+// DO NOT EDIT (see note above)
+$focused-cell-border-color: darkgrey !default;
+// DO NOT EDIT (see note above)
+$tab-background-color: #626262 !default;
+// DO NOT EDIT (see note above)
+$cell-highlight-border: 2px solid lightgreen !default;
+// DO NOT EDIT (see note above)
+$ag-cell-horizontal-border: 1px dotted grey !default;
+// DO NOT EDIT (see note above)
+$rect-selection-background-color: rgb(100, 160, 160) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-1: transparentize($rect-selection-background-color, 0.6) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-2: transparentize($rect-selection-background-color, 0.4) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-3: transparentize($rect-selection-background-color, 0.3) !default;
+// DO NOT EDIT (see note above)
+$ag-range-selected-color-4: transparentize($rect-selection-background-color, 0.2) !default;
+// DO NOT EDIT (see note above)
+$row-floating-background-color: #333 !default;
+// DO NOT EDIT (see note above)
+$row-stub-background-color: #333 !default;
+// DO NOT EDIT (see note above)
+$value-change-delta-up-color: greenyellow !default;
+// DO NOT EDIT (see note above)
+$value-change-delta-down-color: red !default;
+// DO NOT EDIT (see note above)
+$value-change-value-highlight-background-color: chocolate !default;
+
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-define-legacy-vars";

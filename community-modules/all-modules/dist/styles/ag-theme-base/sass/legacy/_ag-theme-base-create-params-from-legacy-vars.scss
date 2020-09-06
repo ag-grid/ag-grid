@@ -1,0 +1,142 @@
+// We prefixed all global vars with "ag-" to avoid clashes with other libraries
+// Import old-style var names to avoid breaking 3rd party themes that use them
+@import "../ag-theme-base-font-vars";
+
+@function ag-theme-base-create-params-from-legacy-vars($defaults) {
+
+    @if $ag-compatibility-mode and $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "legacy" {
+        @warn "Invalid value for $ag-compatibility-mode: \"#{$ag-compatibility-mode}\". Valid values are \"variables\" and \"legacy\"";
+    }
+    @if not $ag-compatibility-mode {
+        @return $defaults;
+    }
+    $params: (
+        foreground-color: $ag-foreground-color,
+        secondary-foreground-color: $ag-secondary-foreground-color,
+        header-foreground-color: $ag-header-foreground-color,
+        disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity),
+        background-color: $ag-background-color,
+        header-background-color: $ag-header-background-color,
+        control-panel-background-color: $ag-tool-panel-background-color,
+        selected-row-background-color: $ag-selected-color,
+        odd-row-background-color: $ag-odd-row-background-color,
+        row-hover-color: $ag-hover-color,
+        range-selection-border-color: $ag-primary-color,
+        range-selection-background-color: $ag-range-selection-background-color,
+        range-selection-highlight-color: $ag-range-selection-highlight-color,
+        selected-tab-underline-color: $ag-primary-color,
+        range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
+        range-selection-chart-background-color: $ag-range-selection-chart-background-color,
+        header-cell-hover-background-color: $ag-header-cell-hover-background-color,
+        header-cell-moving-background-color: $ag-header-cell-moving-background-color,
+        value-change-value-highlight-background-color: $ag-value-change-value-highlight-background-color,
+        value-change-delta-up-color: $ag-value-change-delta-up-color,
+        value-change-delta-down-color: $ag-value-change-delta-down-color,
+        chip-background-color: $ag-chip-background-color,
+        border-radius: $ag-card-radius,
+        border-color: $ag-border-color,
+        row-border-color: if($ag-row-border-width and $ag-row-border-width > 0, map-get($defaults, "row-border-color"), null),
+        cell-horizontal-border: $ag-cell-horizontal-border,
+        input-disabled-background-color: $ag-input-disabled-background-color,
+        input-border-color: $ag-input-border-color,
+        checkbox-background-color: $ag-alt-icon-color,
+        checkbox-checked-color: $ag-accent-color,
+        checkbox-unchecked-color: $ag-icon-color,
+        checkbox-indeterminate-color: $ag-icon-color,
+        grid-size: $ag-grid-size,
+        icon-size: $ag-icon-size,
+        card-shadow: $ag-card-shadow,
+        cell-horizontal-padding: $ag-cell-horizontal-padding,
+        row-height: $ag-row-height,
+        header-height: $ag-header-height,
+        list-item-height: $ag-virtual-item-height,
+        column-select-indent-size: $ag-toolpanel-indent-size,
+        row-group-indent-size: $ag-row-group-indent-size,
+        full-width-tabs: $ag-full-width-tabs,
+        font-family: $ag-font-family,
+        font-size: $ag-font-size,
+        icon-font-family: $ag-icon-font-family,
+        icons-data: $ag-icons-data,
+        icons-font-codes: (
+            "aggregation": $ag-icon-aggregation,
+            "arrows": $ag-icon-arrows,
+            "asc": $ag-icon-asc,
+            "cancel": $ag-icon-cancel,
+            "chart": $ag-icon-chart,
+            "checkbox-checked": $ag-icon-checkbox-checked,
+            "checkbox-indeterminate": $ag-icon-checkbox-indeterminate,
+            "checkbox-unchecked": $ag-icon-checkbox-unchecked,
+            "color-picker": $ag-icon-color-picker,
+            "column": $ag-icon-column,
+            "columns": $ag-icon-columns,
+            "contracted": $ag-icon-contracted,
+            "copy": $ag-icon-copy,
+            "cross": $ag-icon-cross,
+            "cut": $ag-icon-cut,
+            "data": $ag-icon-data,
+            "desc": $ag-icon-desc,
+            "expanded": $ag-icon-expanded,
+            "eye-slash": $ag-icon-eye-slash,
+            "eye": $ag-icon-eye,
+            "filter": $ag-icon-filter,
+            "first": $ag-icon-first,
+            "grip": $ag-icon-grip,
+            "group": $ag-icon-group,
+            "indeterminate": $ag-icon-indeterminate,
+            "last": $ag-icon-last,
+            "left": $ag-icon-left,
+            "linked": $ag-icon-linked,
+            "loading": $ag-icon-loading,
+            "maximize": $ag-icon-maximize,
+            "menu": $ag-icon-menu,
+            "minimize": $ag-icon-minimize,
+            "minus": $ag-icon-minus,
+            "next": $ag-icon-next,
+            "none": $ag-icon-none,
+            "not-allowed": $ag-icon-not-allowed,
+            "paste": $ag-icon-paste,
+            "pin": $ag-icon-pin,
+            "pivot": $ag-icon-pivot,
+            "plus": $ag-icon-plus,
+            "previous": $ag-icon-previous,
+            "radio-button-off": $ag-icon-radio-button-off,
+            "radio-button-on": $ag-icon-radio-button-on,
+            "right": $ag-icon-right,
+            "save": $ag-icon-save,
+            "small-down": $ag-icon-small-down,
+            "small-left": $ag-icon-small-left,
+            "small-right": $ag-icon-small-right,
+            "small-up": $ag-icon-small-up,
+            "tick": $ag-icon-tick,
+            "tree-closed": $ag-icon-tree-closed,
+            "tree-indeterminate": $ag-icon-tree-indeterminate,
+            "tree-open": $ag-icon-tree-open,
+            "unlinked": $ag-icon-unlinked,
+        ),
+        --internal-legacy-compatibility-mode: $ag-compatibility-mode == "legacy",
+    );
+
+    @if global-variable-exists("ag-theme-override-params") {
+        $params: map-merge($params, $ag-theme-override-params);
+    }
+
+    @if map-has-key($defaults, "material-primary-color") and global-variable-exists("ag-primary-color") {
+        $params: map-merge($params, (
+            material-primary-color: $ag-primary-color
+        ));
+    }
+
+    @if map-has-key($defaults, "material-accent-color") and global-variable-exists("ag-accent-color") {
+        $params: map-merge($params, (
+            material-accent-color: $ag-accent-color
+        ));
+    }
+
+    @if map-has-key($defaults, "balham-active-color") and global-variable-exists("ag-active") {
+        $params: map-merge($params, (
+            balham-active-color: $ag-active
+        ));
+    }
+
+    @return map-merge($defaults, $params);
+};

@@ -1,0 +1,14 @@
+import { AgPickerField } from "./agPickerField";
+import { ListOption, AgList } from "./agList";
+export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
+    protected listComponent: AgList;
+    private hideList;
+    private popupService;
+    constructor();
+    init(): void;
+    showPicker(): AgList;
+    addOptions(options: ListOption[]): this;
+    addOption(option: ListOption): this;
+    setValue(value: string, silent?: boolean, fromPicker?: boolean): this;
+    protected destroy(): void;
+}

@@ -1,0 +1,105 @@
+// Automatically generate rtl styles from provided ltr styles by flipping "left" and "right"
+// in property names and values.
+//
+// For example:
+//
+// .foo {
+//     @include ag-unthemed-rtl((margin-left: 10px));
+// }
+//
+// Will emit:
+//
+// .ag-ltr .foo {
+//   margin-left: 10px;
+// }
+// .ag-rtl .foo {
+//   margin-right: 10px;
+// }
+@mixin ag-unthemed-rtl($rules) {
+    @if length(nth(&, 1)) < 1 {
+        @error "ag-unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
+    }
+    @if str-index(nth(nth(&, 1), 1), ".ag-theme-") != null {
+        @error "ag-unthemed-rtl() should not be used in a theme, use ag-theme-rtl() instead.";
+    }
+    .ag-ltr & {
+        @each $property, $value in $rules {
+            #{$property}: $value;
+        }
+    }
+    .ag-rtl & {
+        @each $property, $value in ag-get-rtl-rules($rules) {
+            #{$property}: $value;
+        }
+    }
+}
+
+@function ag-get-rtl-rules($ltr-rules) {
+    $rtl-rules: ();
+    @each $property, $value in $ltr-rules {
+        @if str-index($property, "-right") {
+            $rtl-property: ag-str-replace($property, "-right", "-left");
+            $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if str-index($property, "-left") {
+            $rtl-property: ag-str-replace($property, "-left", "-right");
+            $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if $property == "right" {
+            $rtl-rules: map-merge($rtl-rules, (left: $value));
+        }
+        @else if $property == "left" {
+            $rtl-rules: map-merge($rtl-rules, (right: $value));
+        }
+        @else if $value == "right" {
+            $rtl-rules: map-merge($rtl-rules, ($property: left));
+        }
+        @else if $value == "left" {
+            $rtl-rules: map-merge($rtl-rules, (property: right));
+        }
+        @else {
+            @error "ag-get-rtl-rules doesn't know how to process the \"#{$property}\" property"
+        }
+    }
+    @return $rtl-rules;
+}
+
+@function ag-insert-class-after-theme($selectors, $class) {
+    // this needs to do a 2-level loop, because the selector list returned by & in Sass is a 2D list,
+    // e.g.  .foo .bar, .foo .baz { ... } is ((".foo", ".bar"), (".foo", ".baz"))
+    $selector-list: ();
+    @each $selector in $selectors {
+        $result: ();
+        @for $i from 1 through length($selector) {
+            $item: nth($selector, $i);
+            $result: append($result, $item);
+            @if $i == 1 {
+                $result: append($result, $class);
+            }
+        }
+        $selector-list: append($selector-list, $result, comma);
+    }
+    @return $selector-list;
+}
+
+@function ag-str-replace($string, $search, $replace: '') {
+    $index: str-index($string, $search);
+    @if $index {
+        @return str-slice($string, 1, $index - 1)
+                + $replace
+                + ag-str-replace(str-slice($string, $index
+                + str-length($search)), $search, $replace);
+    }
+    @return $string;
+}
+
+@mixin ag-selectable($value) {
+    @if $value == null {
+        $value: none;
+    }
+
+    -moz-user-select: $value;
+    -webkit-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
