@@ -82,7 +82,7 @@ export class DarkTheme extends ChartTheme {
         });
     }
 
-    constructor(options?: AgChartThemeOptions, palette?: AgChartThemePalette) {
-        super(options, palette);
+    constructor(options?: AgChartThemeOptions) {
+        super(options);
     }
 }
