@@ -24,19 +24,19 @@ var gridOptions = {
 };
 
 function onChartCreated(event) {
-    console.log('Created chart with ID ' + event.chartId);
+    console.log('Created chart with ID ' + event.chartId, event);
 }
 
 function onChartRangeSelectionChanged(event) {
-    console.log('Changed range selection of chart with ID ' + event.chartId);
+    console.log('Changed range selection of chart with ID ' + event.chartId, event);
 }
 
 function onChartOptionsChanged(event) {
-    console.log('Changed options of chart with ID ' + event.chartId);
+    console.log('Changed options of chart with ID ' + event.chartId, event);
 }
 
 function onChartDestroyed(event) {
-    console.log('Destroyed chart with ID ' + event.chartId);
+    console.log('Destroyed chart with ID ' + event.chartId, event);
 }
 
 // setup the grid after the page has finished loading

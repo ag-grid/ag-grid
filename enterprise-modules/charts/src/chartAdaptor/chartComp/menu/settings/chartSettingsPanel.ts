@@ -67,17 +67,7 @@ export class ChartSettingsPanel extends Component {
 
         this.palettes = palettes;
         this.themes = this.chartController.getThemes();
-
-        const activeThemeName = this.chartController.getThemeName();
-
-        if (activeThemeName) {
-            const themeIndex = _.findIndex(this.themes, name => name === activeThemeName);
-
-            if (themeIndex >= 0 && themeIndex <= this.palettes.length) {
-                this.activePaletteIndex = themeIndex;
-            }
-        }
-
+        this.activePaletteIndex = _.findIndex(this.themes, name => name === this.chartController.getThemeName());
         this.cardItems = [];
 
         _.clearElement(this.eCardSelector);
