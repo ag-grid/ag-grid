@@ -285,12 +285,14 @@ myInput.addEventListener("keydown", function (event) {
                 Tabbing out of the second input box will have the default behavior which is to focus the first grid header.
             </li>
             <li>
-                Shift-Tabbing out third input (below the grid) will have the default focus behavior, which is to focus
-                the first grid header.
-            </li>
-            <li>
                 When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid
                 to scroll to focus the first header.
+            </li>
+            <li>
+                Shift-Tabbing out third input (below the grid) will have the default focus behavior, which is to focus
+                the last element of the grid. This element will vary depending on how many features have been enabled
+                (eg. Row Pagination, Tool Panels, etc...).
+            </li>
         </ul>
 
 
