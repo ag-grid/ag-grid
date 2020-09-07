@@ -380,7 +380,7 @@ export class ChartTheme {
                     labelKey: undefined,
                     labelName: undefined,
                     label: {
-                        enabled: false,
+                        enabled: true,
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -390,7 +390,6 @@ export class ChartTheme {
                         minAngle: 20
                     },
                     callout: {
-                        colors: [],
                         length: 10,
                         strokeWidth: 2
                     },
