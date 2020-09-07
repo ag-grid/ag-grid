@@ -28,11 +28,6 @@ var columnDefs = [
         { field: 'book', enableRowGroup: true, enablePivot: true, rowGroupIndex: 2, hide: true},
         { field: 'trade', width: 100},
 
-        // some string values, that do not get aggregated
-        { field: 'dealType', enableRowGroup: true, enablePivot: true},
-        { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
-        { field: 'comment', editable: true},
-
         // all the other columns (visible and not grouped)
         { field: 'batch', width: 100, cellClass: 'number', aggFunc: 'max', enableValue: true, cellRenderer:'agAnimateShowChangeCellRenderer'},
         { field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
@@ -44,8 +39,13 @@ var columnDefs = [
         { headerName: 'SX / PX', field: 'sxPx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
         { headerName: '99 Out', field: '_99Out', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
         { headerName: 'Submitter ID', field: 'submitterID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        { headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
-    ];
+        { headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+
+        // some string values, that do not get aggregated
+        { field: 'dealType', enableRowGroup: true, enablePivot: true},
+        { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
+        { field: 'comment', editable: true},
+];
 
 // simple value getter, however we can see how many times it gets called. this
 // gives us an indication to how many rows get recalculated when data changes

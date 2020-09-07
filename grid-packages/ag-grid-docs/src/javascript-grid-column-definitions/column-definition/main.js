@@ -18,7 +18,8 @@ var gridOptions = {
                 // using medal column type
                 { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
                 { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
-                { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' }
+                { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' },
+                { headerName: 'Total', field: 'total', type: 'medalColumn', columnGroupShow: 'closed' }
             ]
         }
     ],
