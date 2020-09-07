@@ -9,17 +9,11 @@
 }
 
 .test-header {
-    height: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
     margin-bottom: 1rem;
 }
 
-.test-header label {
-    margin-right: 0.5rem;
-}
-
-.test-header input {
-    position: relative;
-    top: 2px;
+.country-header {
+    background-color: antiquewhite;
 }
