@@ -37,10 +37,18 @@ var GridChartComp = /** @class */ (function (_super) {
         return _this;
     }
     GridChartComp.prototype.init = function () {
+        var availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+        if (availableChartThemes.length < 1) {
+            throw new Error('Cannot create chart: no chart themes are available to be used.');
+        }
+        var chartThemeName = this.params.chartThemeName;
+        if (!_.includes(availableChartThemes, chartThemeName)) {
+            chartThemeName = availableChartThemes[0];
+        }
         var modelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName: this.params.chartThemeName,
+            chartThemeName: chartThemeName,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,

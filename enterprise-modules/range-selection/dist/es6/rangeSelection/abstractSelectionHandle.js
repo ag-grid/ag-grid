@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, _ } from "@ag-grid-community/core";
+import { Autowired, Component, PostConstruct, _, SelectionHandleType } from "@ag-grid-community/core";
 var AbstractSelectionHandle = /** @class */ (function (_super) {
     __extends(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
@@ -47,7 +47,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.rangeController.autoScrollService.ensureCleared();
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                _.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
+                _.removeCssClass(document.body, _this.getDraggingCssClass());
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();
                 }
@@ -91,7 +91,10 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
         this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
-        _.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
+        _.addCssClass(document.body, this.getDraggingCssClass());
+    };
+    AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
+        return "ag-dragging-" + (this.type === SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);

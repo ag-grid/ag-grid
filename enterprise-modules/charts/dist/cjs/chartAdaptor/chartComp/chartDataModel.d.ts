@@ -9,7 +9,7 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
-    chartThemeName?: string;
+    chartThemeName: string;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -33,7 +33,7 @@ export declare class ChartDataModel extends BeanStub {
     private valueColState;
     private chartData;
     private chartType;
-    private chartThemeName?;
+    private chartThemeName;
     private datasource;
     private detached;
     private grouping;

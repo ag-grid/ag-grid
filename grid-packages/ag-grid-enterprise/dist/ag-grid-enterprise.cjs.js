@@ -12446,6 +12446,12 @@ function reactive() {
             Object.defineProperty(target, key, {
                 set: function (value) {
                     var oldValue = this[privateKey];
+                    // This is a way to stop inside the setter by adding the special
+                    // 'debugger' event to a reactive property, for example:
+                    //  @reactive('layoutChange', 'debugger') title?: Caption;
+                    // if (debug) { // DO NOT REMOVE
+                    //     debugger;
+                    // }
                     if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
@@ -25399,7 +25405,7 @@ var ChartTheme = /** @class */ (function () {
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
             },
@@ -25677,16 +25683,16 @@ var ChartTheme = /** @class */ (function () {
             } }),
         polar: __assign$3(__assign$3({}, ChartTheme.getChartDefaults()), { series: {
                 pie: __assign$3(__assign$3({}, ChartTheme.getSeriesDefaults()), { title: {
-                        enabled: false,
+                        enabled: true,
                         padding: new Padding(0),
                         text: '',
                         fontStyle: undefined,
                         fontWeight: undefined,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)'
                     }, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, label: {
-                        enabled: false,
+                        enabled: true,
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -25695,7 +25701,6 @@ var ChartTheme = /** @class */ (function () {
                         offset: 3,
                         minAngle: 20
                     }, callout: {
-                        colors: [],
                         length: 10,
                         strokeWidth: 2
                     }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {
@@ -26670,7 +26675,6 @@ var mappings = (_a = {},
                 }, callout: {
                     meta: {
                         defaults: {
-                            colors: [],
                             length: 10,
                             strokeWidth: 1
                         }
@@ -31739,13 +31743,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         }
         this.palettes = palettes;
         this.themes = this.chartController.getThemes();
-        var activeThemeName = this.chartController.getThemeName();
-        if (activeThemeName) {
-            var themeIndex = agGridCommunity._.findIndex(this.themes, function (name) { return name === activeThemeName; });
-            if (themeIndex >= 0 && themeIndex <= this.palettes.length) {
-                this.activePaletteIndex = themeIndex;
-            }
-        }
+        this.activePaletteIndex = agGridCommunity._.findIndex(this.themes, function (name) { return name === _this.chartController.getThemeName(); });
         this.cardItems = [];
         agGridCommunity._.clearElement(this.eCardSelector);
         this.destroyMiniCharts();
@@ -32947,7 +32945,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
             if (calloutColors) {
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = strokes;
             }
             if (!existingSeries) {
                 seriesMap[f.colId] = pieSeries;
@@ -33094,10 +33092,18 @@ var GridChartComp = /** @class */ (function (_super) {
         return _this;
     }
     GridChartComp.prototype.init = function () {
+        var availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+        if (availableChartThemes.length < 1) {
+            throw new Error('Cannot create chart: no chart themes are available to be used.');
+        }
+        var chartThemeName = this.params.chartThemeName;
+        if (!agGridCommunity._.includes(availableChartThemes, chartThemeName)) {
+            chartThemeName = availableChartThemes[0];
+        }
         var modelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName: this.params.chartThemeName,
+            chartThemeName: chartThemeName,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -34397,7 +34403,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.rangeController.autoScrollService.ensureCleared();
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                agGridCommunity._.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
+                agGridCommunity._.removeCssClass(document.body, _this.getDraggingCssClass());
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();
                 }
@@ -34441,7 +34447,10 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
         this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
-        agGridCommunity._.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
+        agGridCommunity._.addCssClass(document.body, this.getDraggingCssClass());
+    };
+    AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
+        return "ag-dragging-" + (this.type === agGridCommunity.SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
@@ -35131,10 +35140,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionHandleFactory.prototype.createSelectionHandle = function (type) {
-        if (type === agGridCommunity.SelectionHandleType.RANGE) {
-            return this.createBean(new RangeHandle$1());
-        }
-        return this.createBean(new FillHandle());
+        return this.createBean(type === agGridCommunity.SelectionHandleType.RANGE ? new RangeHandle$1() : new FillHandle());
     };
     SelectionHandleFactory = __decorate$1o([
         agGridCommunity.Bean('selectionHandleFactory')
@@ -35594,7 +35600,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: eGui
+            anchorToElement: eGui
         });
         this.subMenuIsOpen = true;
         this.hideSubMenu = function () {
@@ -36546,7 +36552,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: mouseEvent.target
+            anchorToElement: mouseEvent.target
         });
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
         // there should never be an active menu at this point, however it was found

@@ -103,7 +103,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: mouseEvent.target
+            anchorToElement: mouseEvent.target
         });
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
         // there should never be an active menu at this point, however it was found

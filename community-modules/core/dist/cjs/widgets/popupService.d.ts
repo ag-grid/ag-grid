@@ -19,7 +19,7 @@ interface AddPopupParams {
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
     positionCallback?: () => void;
-    htmlElementToSyncPosition?: HTMLElement;
+    anchorToElement?: HTMLElement;
 }
 export declare class PopupService extends BeanStub {
     private gridOptionsWrapper;

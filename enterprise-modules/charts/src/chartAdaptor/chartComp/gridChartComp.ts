@@ -21,19 +21,19 @@ import {
     ProcessChartOptionsParams,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartMenu} from "./menu/chartMenu";
-import {TitleEdit} from "./titleEdit";
-import {ChartController} from "./chartController";
-import {ChartDataModel, ChartModelParams} from "./chartDataModel";
-import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
-import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
-import {ChartTranslator} from "./chartTranslator";
+import { ChartMenu } from "./menu/chartMenu";
+import { TitleEdit } from "./titleEdit";
+import { ChartController } from "./chartController";
+import { ChartDataModel, ChartModelParams } from "./chartDataModel";
+import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
+import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
+import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
+import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -88,16 +88,29 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
+        const availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+
+        if (availableChartThemes.length < 1) {
+            throw new Error('Cannot create chart: no chart themes are available to be used.');
+        }
+
+        let { chartThemeName } = this.params;
+
+        if (!_.includes(availableChartThemes, chartThemeName)) {
+            chartThemeName = availableChartThemes[0];
+        }
+
         const modelParams: ChartModelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName: this.params.chartThemeName,
+            chartThemeName,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
+
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));

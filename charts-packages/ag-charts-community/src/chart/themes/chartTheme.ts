@@ -52,7 +52,7 @@ export class ChartTheme {
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
             },
@@ -364,12 +364,12 @@ export class ChartTheme {
                 pie: {
                     ...ChartTheme.getSeriesDefaults(),
                     title: {
-                        enabled: false,
+                        enabled: true,
                         padding: new Padding(0),
                         text: '',
                         fontStyle: undefined,
                         fontWeight: undefined,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)'
                     },
@@ -380,7 +380,7 @@ export class ChartTheme {
                     labelKey: undefined,
                     labelName: undefined,
                     label: {
-                        enabled: false,
+                        enabled: true,
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -390,7 +390,6 @@ export class ChartTheme {
                         minAngle: 20
                     },
                     callout: {
-                        colors: [],
                         length: 10,
                         strokeWidth: 2
                     },

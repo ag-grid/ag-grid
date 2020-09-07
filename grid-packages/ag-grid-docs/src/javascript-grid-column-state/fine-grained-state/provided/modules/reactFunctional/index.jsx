@@ -66,91 +66,119 @@ const GridExample = () => {
     };
 
     const onBtClearAllSorting = () => {
-        // setColumnState({
-        //     defaultState: {sort: null}
-        // });
+        const defaultState = {sort: null};
+        setColumns([
+            {...defaultState, field: 'athlete'},
+            {...defaultState, field: 'age'},
+            {...defaultState, field: 'country'},
+            {...defaultState, field: 'sport'},
+            {...defaultState, field: 'year'},
+            {...defaultState, field: 'date'},
+            {...defaultState, field: 'gold'},
+            {...defaultState, field: 'silver'},
+            {...defaultState, field: 'bronze'},
+            {...defaultState, field: 'total'}
+        ]);
     };
 
     const onBtRowGroupCountryThenSport = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'country', rowGroupIndex: 0},
-        //         {colId: 'sport', rowGroupIndex: 1}
-        //     ],
-        //     defaultState: {rowGroup: false}
-        // });
+        const defaultState = {rowGroup: false};
+        setColumns([
+            {...defaultState, field: 'athlete'},
+            {...defaultState, field: 'age'},
+            {...defaultState, field: 'country', rowGroup: true, rowGroupIndex: 0},
+            {...defaultState, field: 'sport', rowGroup: true, rowGroupIndex: 1},
+            {...defaultState, field: 'year'},
+            {...defaultState, field: 'date'},
+            {...defaultState, field: 'gold'},
+            {...defaultState, field: 'silver'},
+            {...defaultState, field: 'bronze'},
+            {...defaultState, field: 'total'}
+        ]);
     };
 
     const onBtRemoveCountryRowGroup = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'country', rowGroup: false}
-        //     ]
-        // });
+        const defaultState = {};
+        setColumns([
+            {...defaultState, field: 'athlete'},
+            {...defaultState, field: 'age'},
+            {...defaultState, field: 'country', rowGroup: false},
+            {...defaultState, field: 'sport'},
+            {...defaultState, field: 'year'},
+            {...defaultState, field: 'date'},
+            {...defaultState, field: 'gold'},
+            {...defaultState, field: 'silver'},
+            {...defaultState, field: 'bronze'},
+            {...defaultState, field: 'total'}
+        ]);
     };
 
     const onBtClearAllRowGroups = () => {
-        // setColumnState({
-        //     defaultState: {rowGroup: false}
-        // });
+        const defaultState = {rowGroup: false};
+        setColumns([
+            {...defaultState, field: 'athlete'},
+            {...defaultState, field: 'age'},
+            {...defaultState, field: 'country', rowGroup: false},
+            {...defaultState, field: 'sport'},
+            {...defaultState, field: 'year'},
+            {...defaultState, field: 'date'},
+            {...defaultState, field: 'gold'},
+            {...defaultState, field: 'silver'},
+            {...defaultState, field: 'bronze'},
+            {...defaultState, field: 'total'}
+        ]);
     };
 
     const onBtOrderColsMedalsFirst = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'gold'},
-        //         {colId: 'silver'},
-        //         {colId: 'bronze'},
-        //         {colId: 'total'},
-        //         {colId: 'athlete'},
-        //         {colId: 'age'},
-        //         {colId: 'country'},
-        //         {colId: 'sport'},
-        //         {colId: 'year'},
-        //         {colId: 'date'}
-        //     ],
-        //     applyOrder: true
-        // });
+        setColumns([
+            {field: 'gold'},
+            {field: 'silver'},
+            {field: 'bronze'},
+            {field: 'total'},
+            {field: 'athlete'},
+            {field: 'age'},
+            {field: 'country'},
+            {field: 'sport'},
+            {field: 'year'},
+            {field: 'date'}
+        ]);
     };
 
     const onBtOrderColsMedalsLast = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'athlete'},
-        //         {colId: 'age'},
-        //         {colId: 'country'},
-        //         {colId: 'sport'},
-        //         {colId: 'year'},
-        //         {colId: 'date'},
-        //         {colId: 'gold'},
-        //         {colId: 'silver'},
-        //         {colId: 'bronze'},
-        //         {colId: 'total'}
-        //     ],
-        //     applyOrder: true
-        // });
-    };
+        setColumns([
+            {field: 'athlete'},
+            {field: 'age'},
+            {field: 'country'},
+            {field: 'sport'},
+            {field: 'year'},
+            {field: 'date'},
+            {field: 'gold'},
+            {field: 'silver'},
+            {field: 'bronze'},
+            {field: 'total'}
+        ]);
+    };    
 
     const onBtHideMedals = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'gold', hide: true},
-        //         {colId: 'silver', hide: true},
-        //         {colId: 'bronze', hide: true},
-        //         {colId: 'total', hide: true}
-        //     ]
-        // });
+        const newColumns = [...columns];
+        const medals = ['gold', 'silver', 'bronze', 'total'];
+        newColumns.forEach(column => {
+            if (medals.includes(column.field)) {
+                column.hide = true;
+            }
+        });
+        setColumns(newColumns);
     };
 
     const onBtShowMedals = () => {
-        // setColumnState({
-        //     state: [
-        //         {colId: 'gold', hide: false},
-        //         {colId: 'silver', hide: false},
-        //         {colId: 'bronze', hide: false},
-        //         {colId: 'total', hide: false}
-        //     ]
-        // });
+        const newColumns = [...columns];
+        const medals = ['gold', 'silver', 'bronze', 'total'];
+        newColumns.forEach(column => {
+            if (medals.includes(column.field)) {
+                column.hide = false;
+            }
+        });
+        setColumns(newColumns);
     };
 
     return (
@@ -222,7 +250,8 @@ const GridExample = () => {
                             toolPanels: ['columns']
                         }}
                         rowGroupPanelShow="always"
-                        pivotPanelShow="always">
+                        pivotPanelShow="always"
+                        applyColumnDefOrder={true}>
                         {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
                     </AgGridReact>
                 </div>

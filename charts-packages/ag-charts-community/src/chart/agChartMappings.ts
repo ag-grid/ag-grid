@@ -657,7 +657,6 @@ const mappings: any = {
                 callout: {
                     meta: {
                         defaults: {
-                            colors: [],
                             length: 10,
                             strokeWidth: 1
                         }

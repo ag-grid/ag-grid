@@ -172,7 +172,16 @@ include '../documentation-main/documentation_header.php';
         independent testing and the feedback we've received from our users this is clearly not the case.
     </note>
 
-    <h2 id="dom-order">Column and Row Order</h2>
+    <h2>Customising the Grid for Accessibility</h2>
+
+    <p>
+        In order to support large datasets with a minimised memory footprint and a responsive user experience, the grid uses row and 
+        column virtualisation, loading new rows and columns as they're needed. However, screen readers assume all elements of the grid 
+        are loaded when the page is loaded and they appear in the DOM in order of their visual appearance. In order to meet these 
+        requirements, we recommend making the following changes.
+    </p>
+
+    <h3 id="dom-order">Ensure DOM Element order</h3>
 
     <p>
         By default rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
@@ -186,26 +195,27 @@ gridOptions.ensureDomOrder = true</snippet>
 
     <note>Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
 
-    <h2 id="dom-order">Column and Row Virtualisation</h2>
+    <h3 id="dom-order">Ensure all grid elements are always rendered</h3>
 
     <p>
-        By default the grid uses virtualisation; a technique whereby the grid draws columns and rows as the user scrolls.
-        This can be problematic for keyboard navigation and screen readers as not all rows and columns will be available
-        in the DOM.
-    </p>
-    <p>
-        To overcome this it may be necessary to disable visualisation at the expense of increasing the memory footprint.
+        In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best 
+        way to do this is to use <a href="../javascript-grid-pagination/">pagination</a>. This way you can reduce the initial 
+        loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
     </p>
 
     <p>
-        Column virtualisation can be disabled as follows:
+        If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense 
+        of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to 
+        using pagination instead. 
     </p>
+
+    <p>Column virtualisation can be disabled as follows:</p>
 
     <snippet>
 gridOptions.suppressColumnVirtualisation = true</snippet>
 
     <p>
-        This mean if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
+        This means if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
     </p>
 
     <p> There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer
@@ -223,12 +233,12 @@ gridOptions.rowBuffer = 9999</snippet>
         However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
     </p>
 
-    <p>
+    <!-- <p>
         As an alternative you may want to consider using <a href="../javascript-grid-pagination/">Pagination</a> instead
         to constrain the amount of visible rows.
-    </p>
+    </p> -->
 
-    <h2 id="example-accessibility">Example: Accessibility</h2>
+    <h2 id="example-accessibility">Example of Grid Customised for Accessibility</h2>
 
     <p>
         The example below presents a simple grid layout with the following properties enabled:
@@ -246,18 +256,51 @@ gridOptions.rowBuffer = 9999</snippet>
         </li>
     </ul>
 
-    <?= grid_example('Accessibility', 'accessibility', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Grid Customised for Accessibility', 'accessibility', 'generated', ['enterprise' => true]) ?>
 
-    <h2>Known Issues</h2>
+    <h2>Known Limitations</h2>
 
-    <p>Because of the way the DOM is structured and how screen readers work, the issues below were observed: </p>
+    <p>
+        Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a 
+        few limitations in accessibility when specific functionality is used:
+    </p>
 
     <ul class="content">
-        <li>Navigating from and to pinned columns.</li>
-        <li>Navigating from and to pinned rows.</li>
-        <li>Problems announcing the correct name of columns while using grouped columns.</li>
-        <li>Problems announcing the change of state of a gridcell or gridheader.</li>
-        <li>Server Side Row Model - Announcing the row count in the grid when using SSRM is not supported. This is because the row count cannot be known in all the scenarios where SSRM is in use.</li>
+        <li>
+            <h3>Navigation to pinned rows/columns</h3>
+            <p>
+                Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it 
+                causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a 
+                pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the 
+                columns/rows which are scrollable.
+            </p>
+        </li>
+
+        <li>
+            <h3>Limitations announcing the correct column name in grouped columns</h3>
+            <p>
+                Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags
+                when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing
+                the correct column names.
+            </p>
+        </li>
+
+        <li>
+            <h3>No announcements of state change of a gridcell or gridheader</h3>
+            <p>
+                Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in
+                order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.
+            </p>
+        </li>
+
+        <li>
+            <h3>Server-Side Row Model</h3>
+            <p>
+                Announcing the row count in the grid when using server-side row model (SSRM) is not supported. This is because the row count cannot be 
+                known in all the scenarios where SSRM is in use.
+            </p>
+        </li>
+
     </ul>
 
 <?php include '../documentation-main/documentation_footer.php';?>

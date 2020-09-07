@@ -26,10 +26,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionHandleFactory.prototype.createSelectionHandle = function (type) {
-        if (type === SelectionHandleType.RANGE) {
-            return this.createBean(new RangeHandle());
-        }
-        return this.createBean(new FillHandle());
+        return this.createBean(type === SelectionHandleType.RANGE ? new RangeHandle() : new FillHandle());
     };
     SelectionHandleFactory = __decorate([
         Bean('selectionHandleFactory')

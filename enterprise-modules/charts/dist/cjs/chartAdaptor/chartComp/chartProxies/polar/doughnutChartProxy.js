@@ -117,7 +117,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
             if (calloutColors) {
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = strokes;
             }
             if (!existingSeries) {
                 seriesMap[f.colId] = pieSeries;

@@ -136,7 +136,7 @@ SNIPPET
 </p>
 
 <p>
-    Please see the <a href="#axisConfig.axisConfig.title">API reference</a>
+    Please see the <a href="#reference-axis.title">API reference</a>
     for axis title styling options like font and colour.
 </p>
 
@@ -153,7 +153,7 @@ SNIPPET
 
 <p>
     The <code>width</code>, <code>size</code> and <code>color</code> of chart axis ticks
-    can be configured as explained in the <a href="#axisConfig.axisConfig.tick">API reference</a>
+    can be configured as explained in the <a href="#reference-axis.tick">API reference</a>
     below. These configs apply to all axis types.
 </p>
 
@@ -275,6 +275,6 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'axisConfig') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'axis', [], ['showSnippets' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

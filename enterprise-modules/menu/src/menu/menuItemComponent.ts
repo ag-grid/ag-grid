@@ -155,7 +155,7 @@ export class MenuItemComponent extends Component {
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: eGui
+            anchorToElement: eGui
         });
 
         this.subMenuIsOpen = true;

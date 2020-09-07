@@ -16,9 +16,10 @@
         $id = join(array_keys($breadcrumbs), '.');
 
         if (!$config['skipHeader']) {
-            $headerTag = 'h' . (count($breadcrumbs) + 1);
+            $headerLevel = count($breadcrumbs) + ($config['isSubset'] ? 2 : 1);
+            $headerTag = "h$headerLevel";
 
-            echo "<$headerTag id='$id'>$displayName</$headerTag>";
+            echo "<$headerTag id='reference-$id'>$displayName</$headerTag>";
 
             createBreadcrumbsLink($breadcrumbs);
 
@@ -87,7 +88,6 @@
                 echo "</td><td>$definition</td>";
             } else {
                 // this must be the parent of a child object
-                $targetId = "$id.$name";
                 echo "</td><td>";
 
                 if (isset($definition->meta->description)) {
@@ -100,7 +100,7 @@
                     }
                 }
 
-                echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td>";
+                echo "See <a href='#reference-$id.$name'>$name</a> for more details about this configuration object.</td>";
                 $objectProperties[$name] = $definition;
             }
 
@@ -126,7 +126,7 @@
         $index = 0;
 
         foreach ($breadcrumbs as $key => $text) {
-            $href .= strlen($href) > 0 ? ".$key" : $key;
+            $href .= (strlen($href) > 0 ? '.' : 'reference-') . $key;
 
             if ($index < count($breadcrumbs) - 1) {
                 $links[] = "<a href='#$href'" . ($text !== $key ? " title='$text'" : '') . ">$key</a>";
@@ -292,9 +292,13 @@
 
             $properties = mergeObjects($propertiesFromFiles);
 
-            $config['skipHeader'] = true;
+            if (count($names) > 0) {
+                $config['skipHeader'] = true;
+            } else {
+                $config['isSubset'] = true;
+            }
 
-            createPropertyTable($key, $properties, $config, [$expression => $expression], $names);
+            createPropertyTable($key, $properties, $config, [], $names);
         } else {
             $properties = mergeObjects($propertiesFromFiles);
 

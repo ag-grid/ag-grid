@@ -71,7 +71,7 @@ interface ChartOptionsChanged {
     type: string; // 'chartOptionsChanged'
     chartId: string;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName: string;
     chartOptions: ChartOptions;
     api: GridApi;
     columnApi: ColumnApi;
@@ -95,8 +95,9 @@ type ChartType =
 </snippet>
 
 <p>
-    Here the <code>chartPalette</code> will be set to the name of the currently selected palette, which will be one of the following:
-    <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
+    Here the <code>chartThemeName</code> will be set to the name of the currently selected theme, which will be either
+    one of the <a href="../javascript-grid-charts-integrated-customisation/#provided-themes">Provided Themes</a> or
+    a <a href="../javascript-grid-charts-integrated-customisation/#custom-chart-themes">Custom Theme</a> if used.
 </p>
 
 <h2><code>ChartDestroyed</code></h2>

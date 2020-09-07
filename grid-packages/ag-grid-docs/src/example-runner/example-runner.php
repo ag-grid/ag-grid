@@ -333,7 +333,7 @@ function getExampleInfo($exampleType, $boilerplatePrefix)
 
     if ($plunkerView) {
         $boilerplatePath = "";
-        $appLocation = "";
+        $appLocation = ".";
     } else {
         $boilerplatePath = "$exampleType-$boilerplatePrefix-boilerplate/";
         $appLocation = "$appRoot/";

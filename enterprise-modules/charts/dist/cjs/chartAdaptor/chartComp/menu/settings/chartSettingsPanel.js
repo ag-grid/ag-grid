@@ -51,13 +51,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         }
         this.palettes = palettes;
         this.themes = this.chartController.getThemes();
-        var activeThemeName = this.chartController.getThemeName();
-        if (activeThemeName) {
-            var themeIndex = core_1._.findIndex(this.themes, function (name) { return name === activeThemeName; });
-            if (themeIndex >= 0 && themeIndex <= this.palettes.length) {
-                this.activePaletteIndex = themeIndex;
-            }
-        }
+        this.activePaletteIndex = core_1._.findIndex(this.themes, function (name) { return name === _this.chartController.getThemeName(); });
         this.cardItems = [];
         core_1._.clearElement(this.eCardSelector);
         this.destroyMiniCharts();

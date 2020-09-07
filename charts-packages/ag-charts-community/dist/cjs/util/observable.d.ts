@@ -22,10 +22,4 @@ export declare class Observable {
     protected notifyEventListeners(types: string[]): void;
     fireEvent<E extends TypedEvent>(event: E): void;
 }
-interface DeprecatedParams {
-    since?: string;
-    note?: string;
-}
-export declare function deprecated(params?: DeprecatedParams): (target: any, key: string) => void;
 export declare function reactive(...events: string[]): (target: any, key: string) => void;
-export {};

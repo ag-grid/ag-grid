@@ -128,11 +128,6 @@ var Observable = /** @class */ (function () {
     return Observable;
 }());
 exports.Observable = Observable;
-function deprecated(params) {
-    return function (target, key) {
-    };
-}
-exports.deprecated = deprecated;
 function reactive() {
     var events = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -150,6 +145,12 @@ function reactive() {
             Object.defineProperty(target, key, {
                 set: function (value) {
                     var oldValue = this[privateKey];
+                    // This is a way to stop inside the setter by adding the special
+                    // 'debugger' event to a reactive property, for example:
+                    //  @reactive('layoutChange', 'debugger') title?: Caption;
+                    // if (debug) { // DO NOT REMOVE
+                    //     debugger;
+                    // }
                     if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);

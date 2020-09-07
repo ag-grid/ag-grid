@@ -114,7 +114,7 @@
   "chart": {
     "meta": {
       "displayName": "Chart Configuration",
-      "description": "This is the common configuration shared by all types of chart, as used in the <a href='../javascript-charts-api-themes/#theme.overrides'>overrides</a> object."
+      "description": "This is the common configuration shared by all types of chart, as used in the <a href='../javascript-charts-api-themes/#reference-theme.overrides'>overrides</a> object."
     },
     "autoSize": {
       "default": true,
@@ -579,7 +579,7 @@
       "number": {
         "meta": {
           "type": "INumberAxis",
-          "description": "This extends the <a href='../javascript-charts-api-themes/#axis'>common axis configuration</a> with options specific to number axes."
+          "description": "This extends the <a href='../javascript-charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to number axes."
         },
         "nice": {
           "default": true,
@@ -597,7 +597,7 @@
       "category": {
         "meta": {
           "type": "ICategoryAxis",
-          "description": "This extends the <a href='#axes'>common axis configuration</a> with options specific to category axes."
+          "description": "This extends the <a href=''../javascript-charts-api-themes/#reference-axes'>common axis configuration</a> with options specific to category axes."
         },
         "paddingInner": {
           "type": "number",
@@ -611,13 +611,13 @@
       "groupedCategory": {
         "meta": {
           "type": "IGroupedCategoryAxis",
-          "description": "This extends the <a href='../javascript-charts-api-themes/#axis'>common axis configuration</a> with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
+          "description": "This extends the <a href='../javascript-charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
         }
       },
       "time": {
         "meta": {
           "type": "ITimeCategoryAxis",
-          "description": "This extends the <a href='../javascript-charts-api-themes/#axis'>common axis configuration</a> with options specific to time axes."
+          "description": "This extends the <a href='../javascript-charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to time axes."
         },
         "nice": {
           "default": true,
@@ -1874,7 +1874,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href='../javascript-grid-charts-integrated-customisation-cartesian/#format-string'>click here</a>."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href='../javascript-grid-charts-integrated-axis-types/#format-string'>click here</a>."
       },
       "formatter": {
         "type": {

@@ -678,7 +678,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../javascript-grid-charts-integrated-customisation-cartesian/#format-string\">click here</a>."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../javascript-grid-charts-integrated-axis-types/#format-string\">click here</a>."
       },
       "formatter": {
         "type": {
@@ -712,7 +712,7 @@
       }
     }
   },
-  "barSeries": {
+  "bar": {
     "meta": {
       "displayName": "Bar/Column Series Configuration",
       "description": "Configuration for bar/column series."
@@ -951,7 +951,7 @@
       }
     }
   },
-  "lineSeries": {
+  "line": {
     "meta": {
       "displayName": "Line Series Configuration",
       "description": "Configuration for line series."
@@ -1133,7 +1133,7 @@
       }
     }
   },
-  "areaSeries": {
+  "area": {
     "meta": {
       "displayName": "Area Series Configuration",
       "description": "Configuration for area series."
@@ -1364,7 +1364,7 @@
       }
     }
   },
-  "scatterSeries": {
+  "scatter": {
     "meta": {
       "displayName": "Scatter/Bubble Series Configuration",
       "description": "Configuration for scatter/bubble series."
@@ -1578,7 +1578,7 @@
       }
     }
   },
-  "pieSeries": {
+  "pie": {
     "meta": {
       "displayName": "Pie/Doughnut Series Configuration",
       "description": "Configuration for pie/doughnut series."
@@ -1947,7 +1947,7 @@
       }
     }
   },
-  "histogramSeries": {
+  "histogram": {
     "data": {
       "type": "object[]",
       "isRequired": true,

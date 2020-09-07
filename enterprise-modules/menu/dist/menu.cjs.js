@@ -30674,7 +30674,7 @@ var PopupService = /** @class */ (function (_super) {
                 params.ePopup.style.top = newTop + "px";
             }
             lastDiffTop = currentDiffTop;
-        }, 20);
+        }, 200);
         var res = function () {
             clearInterval(intervalId);
         };
@@ -30682,7 +30682,7 @@ var PopupService = /** @class */ (function (_super) {
     };
     PopupService.prototype.addPopup = function (params) {
         var _this = this;
-        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, htmlElementToSyncPosition = params.htmlElementToSyncPosition;
+        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
         var eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -30783,11 +30783,11 @@ var PopupService = /** @class */ (function (_super) {
         if (positionCallback) {
             positionCallback();
         }
-        if (htmlElementToSyncPosition) {
+        if (anchorToElement) {
             // keeps popup positioned under created, eg if context menu, if user scrolls
             // using touchpad and the cell moves, it moves the popup to keep it with the cell.
             destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: htmlElementToSyncPosition,
+                element: anchorToElement,
                 ePopup: eChild
             });
         }
@@ -41268,7 +41268,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: eGui
+            anchorToElement: eGui
         });
         this.subMenuIsOpen = true;
         this.hideSubMenu = function () {
@@ -46929,7 +46929,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: mouseEvent.target
+            anchorToElement: mouseEvent.target
         });
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
         // there should never be an active menu at this point, however it was found

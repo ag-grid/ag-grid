@@ -109,7 +109,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: eGui
+            anchorToElement: eGui
         });
         this.subMenuIsOpen = true;
         this.hideSubMenu = function () {

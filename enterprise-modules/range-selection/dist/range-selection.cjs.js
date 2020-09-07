@@ -30674,7 +30674,7 @@ var PopupService = /** @class */ (function (_super) {
                 params.ePopup.style.top = newTop + "px";
             }
             lastDiffTop = currentDiffTop;
-        }, 20);
+        }, 200);
         var res = function () {
             clearInterval(intervalId);
         };
@@ -30682,7 +30682,7 @@ var PopupService = /** @class */ (function (_super) {
     };
     PopupService.prototype.addPopup = function (params) {
         var _this = this;
-        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, htmlElementToSyncPosition = params.htmlElementToSyncPosition;
+        var modal = params.modal, eChild = params.eChild, closeOnEsc = params.closeOnEsc, closedCallback = params.closedCallback, click = params.click, alwaysOnTop = params.alwaysOnTop, positionCallback = params.positionCallback, anchorToElement = params.anchorToElement;
         var eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -30783,11 +30783,11 @@ var PopupService = /** @class */ (function (_super) {
         if (positionCallback) {
             positionCallback();
         }
-        if (htmlElementToSyncPosition) {
+        if (anchorToElement) {
             // keeps popup positioned under created, eg if context menu, if user scrolls
             // using touchpad and the cell moves, it moves the popup to keep it with the cell.
             destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: htmlElementToSyncPosition,
+                element: anchorToElement,
                 ePopup: eChild
             });
         }
@@ -41789,7 +41789,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.rangeController.autoScrollService.ensureCleared();
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                _.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
+                _.removeCssClass(document.body, _this.getDraggingCssClass());
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();
                 }
@@ -41833,7 +41833,10 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
         this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
-        _.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
+        _.addCssClass(document.body, this.getDraggingCssClass());
+    };
+    AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
+        return "ag-dragging-" + (this.type === SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
@@ -42523,10 +42526,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionHandleFactory.prototype.createSelectionHandle = function (type) {
-        if (type === SelectionHandleType.RANGE) {
-            return this.createBean(new RangeHandle());
-        }
-        return this.createBean(new FillHandle());
+        return this.createBean(type === SelectionHandleType.RANGE ? new RangeHandle() : new FillHandle());
     };
     SelectionHandleFactory = __decorate$23([
         Bean('selectionHandleFactory')

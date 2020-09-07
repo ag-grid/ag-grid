@@ -495,7 +495,6 @@ var mappings = (_a = {},
                 }, callout: {
                     meta: {
                         defaults: {
-                            colors: [],
                             length: 10,
                             strokeWidth: 1
                         }

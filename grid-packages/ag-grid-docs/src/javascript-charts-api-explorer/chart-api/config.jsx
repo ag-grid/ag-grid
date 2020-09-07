@@ -449,7 +449,7 @@ export const axis = Object.freeze({
         },
         format: {
             type: 'string',
-            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-grid-charts-integrated-customisation-cartesian/#format-string">click here</a>.',
+            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-grid-charts-integrated-axis-types/#format-string">click here</a>.',
         },
         formatter: {
             type: {
@@ -785,7 +785,7 @@ const getHighlightConfig = (name = 'markers') => ({
     },
 });
 
-export const barSeries = Object.freeze({
+export const bar = Object.freeze({
     meta: {
         displayName: 'Bar/Column Series Configuration',
         description: 'Configuration for bar/column series.',
@@ -846,7 +846,7 @@ export const barSeries = Object.freeze({
     },
 });
 
-export const lineSeries = Object.freeze({
+export const line = Object.freeze({
     meta: {
         displayName: 'Line Series Configuration',
         description: 'Configuration for line series.',
@@ -881,7 +881,7 @@ export const lineSeries = Object.freeze({
     },
 });
 
-export const areaSeries = Object.freeze({
+export const area = Object.freeze({
     meta: {
         displayName: 'Area Series Configuration',
         description: 'Configuration for area series.',
@@ -903,7 +903,7 @@ export const areaSeries = Object.freeze({
     ...shadowConfig,
 });
 
-export const scatterSeries = Object.freeze({
+export const scatter = Object.freeze({
     meta: {
         displayName: 'Scatter/Bubble Series Configuration',
         description: 'Configuration for scatter/bubble series.',
@@ -974,7 +974,7 @@ export const scatterSeries = Object.freeze({
     },
 });
 
-export const pieSeries = Object.freeze({
+export const pie = Object.freeze({
     meta: {
         displayName: 'Pie/Doughnut Series Configuration',
         description: 'Configuration for pie/doughnut series.',
@@ -1133,7 +1133,7 @@ export const pieSeries = Object.freeze({
     },
 });
 
-export const histogramSeries = Object.freeze({
+export const histogram = Object.freeze({
     ...series,
     ...getCartesianKeyConfig(false, false),
     meta: {

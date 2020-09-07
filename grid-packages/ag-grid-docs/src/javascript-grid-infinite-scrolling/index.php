@@ -449,10 +449,10 @@ cell renderers.</p>
 <h2 id="changing-columns">Changing Columns</h2>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a>
+    <a href="../javascript-grid-column-updating-definitions/">Changing columns</a>
     is possible using infinite scroll and it does not require the data getting fetched again
     from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort
-    of filter applied is removed), then the grid will fetch data again similar to how data is
+    or filter applied is removed), the grid will fetch data again similar to how data is
     fetched again after the user changes the sort or filter explicitly.
 </p>
 

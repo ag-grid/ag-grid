@@ -31,7 +31,7 @@ function onChart1() {
             columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedColumn',
-        chartPalette: 'bright',
+        chartThemeName: 'ag-vivid',
         chartThemeOverrides: {
             common: {
                 title: {
@@ -51,7 +51,7 @@ function onChart2() {
             columns: ['country', 'bronze']
         },
         chartType: 'groupedBar',
-        chartPalette: 'pastel',
+        chartThemeName: 'ag-pastel',
         chartThemeOverrides: {
             common: {
                 title: {

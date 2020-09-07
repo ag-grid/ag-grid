@@ -92,7 +92,7 @@ var ChartTheme = /** @class */ (function () {
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)'
             },
@@ -370,16 +370,16 @@ var ChartTheme = /** @class */ (function () {
             } }),
         polar: __assign(__assign({}, ChartTheme.getChartDefaults()), { series: {
                 pie: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: {
-                        enabled: false,
+                        enabled: true,
                         padding: new padding_1.Padding(0),
                         text: '',
                         fontStyle: undefined,
                         fontWeight: undefined,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)'
                     }, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, label: {
-                        enabled: false,
+                        enabled: true,
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -388,7 +388,6 @@ var ChartTheme = /** @class */ (function () {
                         offset: 3,
                         minAngle: 20
                     }, callout: {
-                        colors: [],
                         length: 10,
                         strokeWidth: 2
                     }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {

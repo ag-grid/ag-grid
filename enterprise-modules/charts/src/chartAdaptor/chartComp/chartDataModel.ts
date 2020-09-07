@@ -16,8 +16,8 @@ import {
     RowRenderer,
     ValueService
 } from "@ag-grid-community/core";
-import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
-import {ChartTranslator} from './chartTranslator';
+import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { ChartTranslator } from './chartTranslator';
 
 export interface ColState {
     column?: Column;
@@ -30,7 +30,7 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
-    chartThemeName?: string;
+    chartThemeName: string;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -60,7 +60,7 @@ export class ChartDataModel extends BeanStub {
     private chartData: any[];
 
     private chartType: ChartType;
-    private chartThemeName?: string;
+    private chartThemeName: string;
     private datasource: ChartDatasource;
 
     private detached = false;

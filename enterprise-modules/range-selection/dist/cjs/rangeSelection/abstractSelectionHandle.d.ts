@@ -33,6 +33,7 @@ export declare abstract class AbstractSelectionHandle extends Component implemen
     protected getLastCellHovered(): CellPosition | undefined;
     private preventRangeExtension;
     protected onDragStart(e: MouseEvent): void;
+    private getDraggingCssClass;
     private updateLastCellPositionHovered;
     getType(): SelectionHandleType;
     refresh(cellComp: CellComp): void;
