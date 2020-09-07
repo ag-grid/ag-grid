@@ -80,7 +80,6 @@ const GridExample = () => {
                 <AgGridReact
                     modules={[ClientSideRowModelModule]}
                     rowData={rowData}
-                    onGridReady={onGridReady}
                     pinnedTopRowData={pinnedTopRowData}
                     pinnedBottomRowData={pinnedBottomRowData}
                     isFullWidthCell={(rowNode) => rowNode.data.fullWidth}
