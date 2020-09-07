@@ -129,7 +129,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             offset -= 20;
 
             if (calloutColors) {
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = strokes;
             }
 
             if (!existingSeries) {
