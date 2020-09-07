@@ -79,7 +79,6 @@ const GridExample = () => {
                 className="ag-theme-alpine">
                 <AgGridReact
                     rowData={rowData}
-                    onGridReady={onGridReady}
                     pinnedTopRowData={pinnedTopRowData}
                     pinnedBottomRowData={pinnedBottomRowData}
                     isFullWidthCell={(rowNode) => rowNode.data.fullWidth}

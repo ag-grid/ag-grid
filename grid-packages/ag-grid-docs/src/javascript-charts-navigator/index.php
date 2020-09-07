@@ -105,7 +105,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.navigator') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'chart.navigator', [], ['showSnippets' => true]) ?>
 
 <h2>Next Up</h2>
 

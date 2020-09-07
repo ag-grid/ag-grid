@@ -10,9 +10,9 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     All the displayed text in the grid is customisable for the purposes of localisation.
-    This is done by providing locale information to the grid for the required language.
-    This is done by either providing an object of key->value pairs via the <code>localeText</code>
-    property, or providing a <code>localeTextFunc</code> callback to hook the grid up to your
+    This is done by providing locale information to the grid for the required language. 
+    Either provide an object of key->value pairs via the <code>localeText</code>
+    property, or provide a <code>localeTextFunc</code> callback to hook the grid up to your
     applications localisation.
 </p>
 

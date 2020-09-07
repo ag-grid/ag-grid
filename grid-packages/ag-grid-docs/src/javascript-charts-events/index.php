@@ -62,27 +62,27 @@ include '../documentation-main/documentation_header.php';
 
 <h4>Bar/Column series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'barSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'bar.listeners', [], ['skipHeader' => true]) ?>
 
 <h4>Line series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'lineSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'line.listeners', [], ['skipHeader' => true]) ?>
 
 <h4>Area series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'areaSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'area.listeners', [], ['skipHeader' => true]) ?>
 
 <h4>Scatter series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatterSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatter.listeners', [], ['skipHeader' => true]) ?>
 
 <h4>Pie series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pieSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pie.listeners', [], ['skipHeader' => true]) ?>
 
 <h4>Histogram series</h4>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogramSeriesConfig.listeners') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogram.listeners', [], ['skipHeader' => true]) ?>
 
 <p>
     Note that the <code>datum</code> in this case is not an element from the <code>chart.data</code> or

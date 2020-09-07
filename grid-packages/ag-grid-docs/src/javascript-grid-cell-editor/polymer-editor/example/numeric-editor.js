@@ -64,8 +64,17 @@ export default class NumericEditor extends PolymerElement {
         return this.value > 1000000;
     };
 
+    finishedEditingPressed(event) {
+        const KEY_ENTER = 13;
+        const KEY_TAB = 9;
+        const KEY_ESC= 27;
+
+        const charCode = this.getCharCodeFromEvent(event);
+        return charCode === KEY_ENTER || charCode === KEY_TAB || charCode === KEY_ESC;
+    }
+
     onKeyDown(event) {
-        if (!this.isKeyPressedNumeric(event)) {
+        if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     }

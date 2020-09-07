@@ -81,23 +81,23 @@ const GridExample = () => {
                 <div className="test-header">
                     <button onClick={onBtIncludeMedalColumns}>Include Medal Columns</button>
                     <button onClick={onBtExcludeMedalColumns}>Exclude Medal Columns</button>
-                    <div
-                        style={{
-                            height: '100%',
-                            width: '100%'
-                        }}
-                        className="ag-theme-alpine test-grid">
-                        <AgGridReact
-                            rowData={rowData}
-                            onGridReady={onGridReady}
-                            defaultColDef={{
-                                initialWidth: 100,
-                                sortable: true,
-                                resizable: true
-                            }}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
-                        </AgGridReact>
-                    </div>
+                </div>
+                <div
+                    style={{
+                        height: '100%',
+                        width: '100%'
+                    }}
+                    className="ag-theme-alpine test-grid">
+                    <AgGridReact
+                        rowData={rowData}
+                        onGridReady={onGridReady}
+                        defaultColDef={{
+                            initialWidth: 100,
+                            sortable: true,
+                            resizable: true
+                        }}>
+                        {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
+                    </AgGridReact>
                 </div>
             </div>
         </div>

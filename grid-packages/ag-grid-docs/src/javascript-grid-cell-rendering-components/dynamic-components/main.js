@@ -38,7 +38,8 @@ var columnDefs = [
         field: "value",
         cellRenderer: 'childMessageRenderer',
         colId: "params",
-        width: 180
+        editable: false,
+        minWidth: 150
     }
 ];
 

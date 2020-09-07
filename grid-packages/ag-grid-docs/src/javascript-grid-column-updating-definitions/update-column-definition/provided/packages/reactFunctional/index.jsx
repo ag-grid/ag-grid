@@ -48,7 +48,7 @@ const GridExample = () => {
     };
 
     const setHeaderNames = () => {
-        const newColumns = [...columns];
+        const newColumns = gridApi.getColumnDefs();
         newColumns.forEach((newColumn, index) => {
             newColumn.headerName = 'C' + index;
         });
@@ -56,7 +56,7 @@ const GridExample = () => {
     };
 
     const removeHeaderNames = () => {
-        const newColumns = [...columns];
+        const newColumns = gridApi.getColumnDefs();
         newColumns.forEach((newColumn, index) => {
             newColumn.headerName = undefined;
         });
@@ -64,7 +64,7 @@ const GridExample = () => {
     };
 
     const setValueFormatters = () => {
-        const newColumns = [...columns];
+        const newColumns = gridApi.getColumnDefs();
         newColumns.forEach((newColumn, index) => {
             newColumn.valueFormatter = params => '[ ' + params.value + ' ]';
         });
@@ -74,7 +74,7 @@ const GridExample = () => {
     };
 
     const removeValueFormatters = () => {
-        const newColumns = [...columns];
+        const newColumns = gridApi.getColumnDefs();
         newColumns.forEach((newColumn, index) => {
             newColumn.valueFormatter = undefined;
         });
