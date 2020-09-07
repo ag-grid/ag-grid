@@ -126,7 +126,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            htmlElementToSyncPosition: mouseEvent.target as HTMLElement
+            anchorToElement: mouseEvent.target as HTMLElement
         });
 
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup });

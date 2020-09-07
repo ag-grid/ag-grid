@@ -46,7 +46,7 @@ interface AddPopupParams {
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
     positionCallback?: ()=>void;
-    htmlElementToSyncPosition?: HTMLElement;
+    anchorToElement?: HTMLElement;
 }
 
 @Bean('popupService')
@@ -392,7 +392,7 @@ export class PopupService extends BeanStub {
 
             lastDiffTop = currentDiffTop;
 
-        }, 20);
+        }, 200);
 
         const res = ()=> {
             clearInterval(intervalId);
@@ -403,7 +403,7 @@ export class PopupService extends BeanStub {
 
     public addPopup(params: AddPopupParams): (params?: PopupEventParams) => void {
 
-        const {modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, htmlElementToSyncPosition} = params;
+        const {modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, anchorToElement} = params;
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
@@ -533,11 +533,11 @@ export class PopupService extends BeanStub {
             positionCallback();
         }
 
-        if (htmlElementToSyncPosition) {
+        if (anchorToElement) {
             // keeps popup positioned under created, eg if context menu, if user scrolls
             // using touchpad and the cell moves, it moves the popup to keep it with the cell.
             destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: htmlElementToSyncPosition,
+                element: anchorToElement,
                 ePopup: eChild
             });
         }
