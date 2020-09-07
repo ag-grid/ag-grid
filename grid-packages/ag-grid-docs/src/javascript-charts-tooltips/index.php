@@ -211,33 +211,27 @@ SNIPPET
 
 <h3>Bar/Column Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'barSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'bar', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h3>Area Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'areaSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'area', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h3>Line Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'lineSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'line', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h3>Scatter/Bubble Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatterSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatter', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h3>Pie/Doughnut Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pieSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pie', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h3>Histogram Tooltips</h3>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogramSeriesConfig',
-    ['tooltipEnabled', 'tooltipRenderer']) ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogram', ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <h2>Next Up</h2>
 

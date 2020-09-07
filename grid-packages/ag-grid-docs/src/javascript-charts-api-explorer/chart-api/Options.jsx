@@ -170,7 +170,7 @@ export class Options extends React.PureComponent {
             config.axes = Config.axis;
         }
 
-        config.series = Config[`${chartType}Series`];
+        config.series = Config[chartType];
 
         return <div className="options">
             <Search value={searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />

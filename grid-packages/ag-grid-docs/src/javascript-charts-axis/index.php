@@ -275,6 +275,6 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'axisConfig') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'axis', [], ['showSnippets' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

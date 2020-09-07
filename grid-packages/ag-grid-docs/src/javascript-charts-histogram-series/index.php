@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     than could be plotted on a bar chart and can be used to find underlying trends in continuous data.
 </p>
 
-<h2>Simple histogram</h2>
+<h2>Simple Histogram</h2>
 
 <p>
     Histograms require at least one numeric attribute in the data to be specified using the
@@ -23,6 +23,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     The simplest configuration for a Histogram Series is shown below:
 </p>
+
 <?= createSnippet(<<<SNIPPET
 series: [{
     type: 'histogram'
@@ -44,6 +45,7 @@ SNIPPET
     The number of bins to aim for can be overridden by setting the <code>binCount</code>
     property on a histogram series.
 </p>
+
 <p>
     Given enough data, charts with more bins are able to more precisely illustrate
     underlying trends, but are also more sensitive to random noise.
@@ -60,7 +62,7 @@ SNIPPET
 
 <?= chart_example('Larger Bin Count', 'larger-bin-count', 'generated'); ?>
 
-<h2>Irregular intervals</h2>
+<h2>Irregular Intervals</h2>
 
 <p>
     Rather than specify the number of bins, for cases where you know exactly which bins
@@ -103,22 +105,21 @@ SNIPPET
 <h2>XY Histogram</h2>
 
 <p>
-    The histograms shown above all contain a single <code>xKey</code> with it's frequency plotted on the y axis.
+    The histograms shown above all contain a single <code>xKey</code> with its frequency plotted on the y axis.
     However it is sometimes useful to visualise an <code>xKey</code> and <code>yKey</code> using a Histogram.
 </p>
 
 <p>
     When using XY Histograms it is also useful to control how bins are aggregated using the <code>aggregation</code>
-    series property. The following sections contrast the <code>sum</code> and <code>mean</code> aggregation functions.
+    series property. The following sections compare the <code>sum</code> and <code>mean</code> aggregation functions.
 </p>
-
 
 <h3>Summing Bins</h3>
 
 <p>
-    To show the summing of one column or attribute for each of the bins. When a <code>yKey</code> is given the default
-    behaviour is to plot a total of the <code>yKey</code> values. The kind of aggregation to use is controlled by the
-    <code>series.aggregation</code> property.
+    This is used to show the summing of one column or attribute for each of the bins. When a <code>yKey</code> is given,
+    the default behaviour is to plot a total of the <code>yKey</code> values. The kind of aggregation to use is
+    controlled by the <code>series.aggregation</code> property.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -163,7 +164,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogramSeriesConfig') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogram', [], ['showSnippets' => true]) ?>
 
 <h2>Next Up</h2>
 
