@@ -34,8 +34,8 @@ function cloneObject(obj) {
 }
 
 var columnDefs = [
-    {field: "first_name", width: 120, editable: true},
-    {field: "last_name", width: 120, editable: true},
+    {field: "first_name", headerName: "First Name", width: 120, editable: true},
+    {field: "last_name", headerName: "Last Name", width: 120, editable: true},
     {
         field: "gender",
         width: 100,
