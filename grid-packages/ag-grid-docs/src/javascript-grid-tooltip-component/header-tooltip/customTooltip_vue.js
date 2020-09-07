@@ -32,8 +32,6 @@ export default Vue.extend({
             isHeader: isHeader,
             isGroupedHeader: isGroupedHeader
         });
-
-        data.color = this.params.color || 'white';
     },
     methods: {
         setState(obj) {
