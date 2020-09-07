@@ -20,15 +20,16 @@ include '../documentation-main/documentation_header.php';
             level</strong> module:</p>
     <snippet>
 @NgModule({
-imports: [
-    BrowserModule,
-    FormsModule,
-    RouterModule.forRoot(appRoutes),
-    AgGridModule.withComponents(
-        [
-            SquareComponent,
-            CubeComponent,
-            // ...other components</snippet>
+    imports: [
+        BrowserModule,
+        FormsModule,
+        RouterModule.forRoot(appRoutes),
+        AgGridModule.withComponents(
+            [
+                SquareComponent,
+                CubeComponent,
+                // ...other components
+</snippet>
 
     <p>You can then use these components as editors, renderers or filters. For example, to use an Angular
         Component as a
