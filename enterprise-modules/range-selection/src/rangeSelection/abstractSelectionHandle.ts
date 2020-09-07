@@ -1,4 +1,4 @@
-import { 
+import {
     Autowired,
     CellComp,
     RowRenderer,
@@ -14,6 +14,7 @@ import {
     ISelectionHandle,
     RowPositionUtils,
     _,
+
     SelectionHandleType
 } from "@ag-grid-community/core";
 import { RangeController } from "./rangeController";
@@ -38,7 +39,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private lastCellHovered: CellPosition | undefined;
     private changedCell: boolean = false;
     private dragging: boolean = false;
-    
+
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
@@ -61,9 +62,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 this.onDragEnd(e);
                 this.clearValues();
                 this.rangeController.autoScrollService.ensureCleared();
+
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
+                _.removeCssClass(document.body, this.getDraggingCssClass());
+
                 if (this.shouldDestroyOnEndDragging) {
                     this.destroy();
                 }
@@ -127,19 +130,23 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addManagedListener(
-            this.rowRenderer.getGridCore().getRootGui(), 
-            'mousemove', 
+            this.rowRenderer.getGridCore().getRootGui(),
+            'mousemove',
             this.updateLastCellPositionHovered.bind(this)
         );
 
-        _.addCssClass(document.body, `ag-dragging-${this.type}-handle`);
+        _.addCssClass(document.body, this.getDraggingCssClass());
+    }
+
+    private getDraggingCssClass(): string {
+        return `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
     }
 
     private updateLastCellPositionHovered(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
         if (cell === this.lastCellHovered) {
-            this.changedCell = false; 
-            return; 
+            this.changedCell = false;
+            return;
         }
         this.lastCellHovered = cell;
         this.changedCell = true;
@@ -157,7 +164,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
         const start = cellRange.startRow as RowPosition;
         const end = cellRange.endRow as RowPosition;
-        
+
         if (start && end) {
             const isBefore = this.rowPositionUtils.before(end, start);
 

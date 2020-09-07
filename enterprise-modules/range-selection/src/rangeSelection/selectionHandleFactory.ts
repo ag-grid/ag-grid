@@ -4,13 +4,7 @@ import { FillHandle } from "./fillHandle";
 
 @Bean('selectionHandleFactory')
 export class SelectionHandleFactory extends BeanStub implements ISelectionHandleFactory {
-
     public createSelectionHandle(type: SelectionHandleType): ISelectionHandle {
-        if (type === SelectionHandleType.RANGE) {
-            return this.createBean(new RangeHandle());
-        }
-
-        return this.createBean(new FillHandle());
+        return this.createBean(type === SelectionHandleType.RANGE ? new RangeHandle() : new FillHandle());
     }
-
 }
