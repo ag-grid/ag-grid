@@ -110,7 +110,7 @@ interface IAggFunc {
     </li>
     <li>
         <code>chartThemeOverrides</code>: Allows specific chart options in the current theme to be overridden, see
-        <a href="../javascript-charts-api-themes/#theme.overrides">Chart Theme Overrides Reference</a> for more details.
+        <a href="../javascript-charts-api-themes/#reference-theme.overrides">Chart Theme Overrides Reference</a> for more details.
     </li>
 </ul>
 

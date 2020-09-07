@@ -457,7 +457,7 @@ SNIPPET
 <p>
     The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.
     A default <code>displayName</code> should also be provided but can be replaced by a locale-specific value using a
-    <a href="../javascript-grid-localisation/#using-localetextfunc">localeTextFunc</a>.
+    <a href="../javascript-grid-localisation/#locale-callback">localeTextFunc</a>.
 </p>
 
 <p>

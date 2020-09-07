@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a> allows you to
+    <a href="../javascript-grid-column-updating-definitions/">Changing columns</a> allows you to
     specify new column definitions to the grid and the grid will work out which columns are new
     and which are old, keeping the state of the old columns.
 </p>

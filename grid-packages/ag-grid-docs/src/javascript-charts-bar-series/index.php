@@ -151,7 +151,7 @@ SNIPPET
 
 <p>
     To learn more about label configuration please refer to the
-    <a href="#barSeriesConfig.barSeriesConfig.label">API reference</a> below.
+    <a href="#reference-bar.label">API reference</a> below.
 </p>
 
 <h2>Bar Series</h2>
