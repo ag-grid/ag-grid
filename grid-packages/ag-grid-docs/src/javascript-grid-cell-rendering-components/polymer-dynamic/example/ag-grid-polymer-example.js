@@ -78,14 +78,13 @@ class AgGridPolymerExample extends PolymerElement {
                     currency: "EUR"
                 },
                 colId: "params",
-                width: 135
+                minWidth: 135
             },
             {
                 headerName: "Child/Parent",
                 field: "value",
                 cellRendererFramework: 'child-cell-renderer',
-                colId: "params",
-                width: 120
+                colId: "params"
             }
         ];
     }
