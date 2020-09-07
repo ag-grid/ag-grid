@@ -269,29 +269,27 @@ gridOptions.rowBuffer = 9999</snippet>
         <li>
             <h3>Navigation to pinned rows/columns</h3>
             <p>
-                One of the assumptions that screen readers make is that the visual and DOM element order are identical. Specifically, 
-                when you pin a row/column, it is displayed in a layer above the remaining rows/columns to prevent it from being scrolled 
-                out of view. This is why you cannot use the screen reader to navigate into a pinned row/column cells, because the fact 
-                they're pinned means they're rendered in a different layer from the rest of the columns/rows which are scrollable.
+                Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it 
+                causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a 
+                pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the 
+                columns/rows which are scrollable.
             </p>
         </li>
 
         <li>
             <h3>Limitations announcing the correct column name in grouped columns</h3>
             <p>
-                Screen readers assume that a table is a regular grid of header cells, data cells formed in rows without any cell merging 
-                applied, horizontally or vertically. Grouped columns break this assumption - they represent merged header cells as one group 
-                column has more than one column as its children. This is why there are limitations in announcing the correct column name in 
-                group columns.
+                Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags
+                when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing
+                the correct column names.
             </p>
         </li>
 
         <li>
             <h3>No announcements of state change of a gridcell or gridheader</h3>
             <p>
-                Screen readers assume that all the elements and data that are displayed to the user are loaded during the initial page load 
-                and do not change from that point on. This is why when there are state updates in grid cells and headers, these aren't automatically 
-                announced to the user.
+                Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in
+                order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.
             </p>
         </li>
 
