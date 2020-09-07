@@ -212,8 +212,8 @@ interface CellPosition {
 
     <note>
         The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to navigate
-        within the grid header. If you need to use these methods to into the grid header, you can pass <strong>rowIndex: -1</strong>, but
-        one focus is within the header, the standard keyboard navigation will take place.
+        within the grid header. If you need to navigate into the grid header, you can pass <strong>rowIndex: -1</strong>, but
+        once focus is within the header, the standard keyboard navigation will take place.
     </note>
 
     <h2>Example Custom Navigation</h2>
