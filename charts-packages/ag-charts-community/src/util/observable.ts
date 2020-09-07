@@ -136,19 +136,8 @@ export class Observable {
     }
 }
 
-interface DeprecatedParams {
-    since?: string;
-    note?: string;
-}
-
-export function deprecated(params?: DeprecatedParams) {
-    return function (target: any, key: string) {
-
-    }
-}
-
 export function reactive(...events: string[]) {
-    // let debug = events.indexOf('debugger') >= 0;
+    let debug = events.indexOf('debugger') >= 0;
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = Observable.privateKeyPrefix + key;
@@ -161,7 +150,12 @@ export function reactive(...events: string[]) {
             Object.defineProperty(target, key, {
                 set: function (value: any) {
                     const oldValue = this[privateKey];
-
+                    // This is a way to stop inside the setter by adding the special
+                    // 'debugger' event to a reactive property, for example:
+                    //  @reactive('layoutChange', 'debugger') title?: Caption;
+                    if (debug) { // DO NOT REMOVE
+                        debugger;
+                    }
                     if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
