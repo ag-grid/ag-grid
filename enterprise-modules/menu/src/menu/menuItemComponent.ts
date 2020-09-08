@@ -159,14 +159,14 @@ export class MenuItemComponent extends Component {
         });
 
         this.subMenuIsOpen = true;
+        _.setAriaExpanded(eGui, true);
 
         this.hideSubMenu = () => {
             closePopup();
             this.subMenuIsOpen = false;
+            _.setAriaExpanded(eGui, false);
             destroySubMenu();
         };
-
-        _.setAriaExpanded(eGui, true);
     }
 
     public closeSubMenu(): void {
