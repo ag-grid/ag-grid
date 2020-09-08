@@ -1,3 +1,13 @@
+function myAggFunc(params) {
+    aggCallCount++;
+
+    var total = 0;
+    for (var i = 0; i < params.values.length; i++) {
+        total += params.values[i];
+    }
+    return total;
+}
+
 var myFilter = getMyFilter();
 
 var columnDefs = [
@@ -22,16 +32,6 @@ var CITIES = ['Tokyo', 'Jakarta', 'Delhi', 'Manila', 'Seoul', 'Shanghai', 'Mumba
     'Moscow', 'Cairo', 'Bangkok', 'Los Angeles', 'Buenos Aires'];
 
 var LAPTOPS = ['Hewlett Packard', 'Lenovo', 'Dell', 'Asus', 'Apple', 'Acer', 'Microsoft', 'Razer'];
-
-function myAggFunc(values) {
-    aggCallCount++;
-
-    var total = 0;
-    for (var i = 0; i < values.length; i++) {
-        total += values[i];
-    }
-    return total;
-}
 
 function myComparator(a, b) {
     compareCallCount++;

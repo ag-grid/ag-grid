@@ -94,7 +94,7 @@ colDef = {
             var day = Number(dateParts[2]);
             var month = Number(dateParts[1]) - 1;
             var year = Number(dateParts[0]);
-            var cellDate = new Date(day, month, year);
+            var cellDate = new Date(year, month, day);
 
             // Now that both parameters are Date objects, we can compare
             if (cellDate < filterLocalDateAtMidnight) {

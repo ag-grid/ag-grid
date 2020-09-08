@@ -1,3 +1,15 @@
+var ragCellClassRules = {
+    'rag-green-outer': function (params) {
+        return params.value === 2008;
+    },
+    'rag-amber-outer': function (params) {
+        return params.value === 2004;
+    },
+    'rag-red-outer': function (params) {
+        return params.value === 2000;
+    }
+};
+
 var columnDefs = [
     {field: "athlete"},
     {
@@ -45,18 +57,6 @@ var columnDefs = [
         cellStyle: cellStyle
     }
 ];
-
-var ragCellClassRules = {
-    'rag-green-outer': function (params) {
-        return params.value === 2008;
-    },
-    'rag-amber-outer': function (params) {
-        return params.value === 2004;
-    },
-    'rag-red-outer': function (params) {
-        return params.value === 2000;
-    }
-}
 
 function cellStyle(params) {
     var color = numberToColor(params.value);

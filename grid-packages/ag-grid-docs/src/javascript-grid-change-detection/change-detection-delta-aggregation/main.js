@@ -40,7 +40,8 @@ var gridOptions = {
     // set this to true, so only the column in question gets updated
     aggregateOnlyChangedColumns: true,
     aggFuncs: {
-        sum: function(values) {
+        sum: function(params) {
+            var values = params && params.values ? params.values : [];
             var result = 0;
             if (values) {
                 values.forEach(function(value) {
