@@ -7,8 +7,8 @@ export interface ITextInputField extends IInputField {
 }
 
 export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, ITextInputField> {
-    constructor(className = 'ag-text-field', inputType = 'text', config?: ITextInputField) {
-        super(className, 'input', inputType, config);
+    constructor(config?: ITextInputField, className = 'ag-text-field', inputType = 'text') {
+        super(config, className, inputType);
     }
 
     protected postConstruct() {

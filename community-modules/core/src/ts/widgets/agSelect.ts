@@ -4,6 +4,7 @@ import { ListOption, AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
+import { IAgLabel } from './agAbstractLabel';
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
@@ -11,8 +12,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
     @Autowired('popupService') private popupService: PopupService;
 
-    constructor() {
-        super('ag-select', 'smallDown', 'listbox');
+    constructor(config?: IAgLabel) {
+        super(config, 'ag-select', 'smallDown', 'listbox');
     }
 
     @PostConstruct
