@@ -32,7 +32,14 @@ function processCellForClipboard(params) {
 }
 
 function processHeaderForClipboard(params) {
-    return 'H-' + params.column.getColDef().headerName;
+    var colDef = params.column.getColDef();
+    var headerName = colDef.headerName || colDef.field;
+
+    if (colDef.headerName == null) {
+        headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1);
+    }
+
+    return 'H-' + headerName;
 }
 
 function processCellFromClipboard(params) {
