@@ -39,10 +39,6 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
-        minWidth: 250,
-    },
-    groupMultiAutoColumn: true,
     enableRangeSelection: true,
     groupSuppressAutoColumn: true,
     animateRows: true,

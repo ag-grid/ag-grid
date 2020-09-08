@@ -130,7 +130,7 @@ var rowSelection = 'checkbox';
 var groupColumn = {
     headerName: "Group",
     width: 250,
-    field: 'name',
+    // field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRenderer: 'agGroupCellRenderer',
@@ -327,7 +327,7 @@ var gridOptions = {
     // groupSuppressAutoColumn: true,
     // contractColumnSelection: true,
     // groupAggFields: ['bankBalance','totalWinnings'],
-    // groupMultiAutoColumn: true,
+    groupMultiAutoColumn: true,
     // groupHideOpenParents: true,
     // suppressMenuFilterPanel: true,
     // clipboardDeliminator: ',',

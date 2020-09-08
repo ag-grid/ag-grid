@@ -169,28 +169,6 @@ SNIPPET
 
 <?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
-<p>
-    Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
-    in the following example. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
-        return the country so that country is used for filtering.
-    </li>
-    <li>
-        The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
-        set, the filter will use the field value for filtering.
-    </li>
-    <li>
-        This is an example of a case where not using auto group columns lets us add custom different behaviour to
-        each of the grouping columns.
-    </li>
-</ul>
-
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
-
 <h2>Group Cell Rendering</h2>
 
 <p>
@@ -815,6 +793,28 @@ SNIPPET
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
     and for backwards compatibility for when we only supported this style of configuration.</note>
+
+<p>
+    Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
+    in the following example. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
+        return the country so that country is used for filtering.
+    </li>
+    <li>
+        The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
+        set, the filter will use the field value for filtering.
+    </li>
+    <li>
+        This is an example of a case where not using auto group columns lets us add custom different behaviour to
+        each of the grouping columns.
+    </li>
+</ul>
+
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2>Grid Grouping Properties</h2>
 
