@@ -75,7 +75,7 @@
                 </article>
             </section>
             <section>
-                <h1 id="core-development-team"> Core Development Team</h1>
+                <h1 id="core-development-team">The Dev Team</h1>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -131,14 +131,6 @@
                             <h3>Viqas Hussain</h3>
                             <h4>Lead Developer, E-commerce</h4>
                         </div>
-                    </div>
-                </article>
-            </section>
-
-            <section>
-                <h1 id="customer_services_and_consultancy"> Customer Services & Consultancy</h1>
-                <article class="inline-container team">
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services"/>
@@ -153,6 +145,8 @@
                             <h3>Davis Jaunbruns</h3>
                             <h4>Developer</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/ahmed2.jpg' alt=" Ahmed Gadir, Developer"/>
@@ -160,8 +154,6 @@
                             <h3>Ahmed Gadir</h3>
                             <h4>Developer</h4>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/bam2.jpg' alt=" Bamdad Fard, Developer"/>
@@ -176,6 +168,8 @@
                             <h3>Shuheb Ahmed</h3>
                             <h4>Developer</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/louis.jpg' alt=" Louis Moore, Developer"/>
@@ -183,8 +177,6 @@
                             <h3>Louis Moore</h3>
                             <h4>Developer</h4>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/kiril.png' alt="Kiril Matev, Developer"/>
@@ -192,11 +184,18 @@
                             <h3>Kiril Matev</h3>
                             <h4>Developer</h4>
                         </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate"/>
+                            </div>
+                            <h3>Max Koretskyi</h3>
+                            <h4>Developer Advocate</h4>
+                        </div>
                     </div>
                 </article>
             </section>
             <section>
-                <h1 id="operations_team"> The Operations Team</h1>
+                <h1 id="operations_team">The Operations Team</h1>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -208,11 +207,20 @@
                         </div>
                         <div class="col-md-4">
                             <div>
+                                <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
+                            </div>
+                            <h3>Simon Kenny</h3>
+                            <h4>Sales Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
                                 <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
                             </div>
                             <h3>Alex Price</h3>
                             <h4>Operations Manager</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
@@ -220,8 +228,6 @@
                             <h3>Dimple Unalkat</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/ashley2.jpg' alt="Ashley Lam, Business Development Manager"/>
@@ -236,6 +242,8 @@
                             <h3>Najma Mahomud</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/robD.jpg' alt="Rob Dunkiert, Customer Experience Manager"/>
@@ -243,8 +251,6 @@
                             <h3>Rob Dunkiert</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/julia.jpg' alt="Julia O'Dell, Customer Experience Manager"/>
@@ -254,17 +260,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager"/>
+                                <img src='images/team/victoria.jpg'
+                                     alt="Victoria Tennant, Business Development Manager"/>
                             </div>
-                            <h3>Simon Kenny</h3>
-                            <h4>Sales Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/laura.png'
-                                     alt="laura Hachman-Tsira, Business Development Manager"/>
-                            </div>
-                            <h3>Laura Hachman-Tsira</h3>
+                            <h3>Victoria Tennant</h3>
                             <h4>Business Development Manager</h4>
                         </div>
                     </div>
@@ -283,21 +282,24 @@
                             <h3>Hannah Conway-Laws</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
+                            </div>
+                            <h3>Ryan Short</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
                     </div>
-                </article>
-            </section>
-            <section>
-                <h1 id="marketing_team"> The Marketing Team</h1>
-                <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate"/>
+                                <img src='images/team/sachshell.png' alt="Sachshell Rhoden, Customer Experience Manager"/>
                             </div>
-                            <h3>Max Koretskyi</h3>
-                            <h4>Developer Advocate</h4>
+                            <h3>Sachshell Rhoden</h3>
+                            <h4>Customer Experience Manager</h4>
                         </div>
                     </div>
+
                 </article>
             </section>
 
