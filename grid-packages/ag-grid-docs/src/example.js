@@ -327,7 +327,7 @@ var gridOptions = {
     // groupSuppressAutoColumn: true,
     // contractColumnSelection: true,
     // groupAggFields: ['bankBalance','totalWinnings'],
-    groupMultiAutoColumn: true,
+    // groupMultiAutoColumn: true,
     // groupHideOpenParents: true,
     // suppressMenuFilterPanel: true,
     // clipboardDeliminator: ',',
