@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
     <h2>How Flashing Works</h2>
 
@@ -91,7 +91,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Changing Flashing Delay', 'flashing-delay-changes', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Changing Flashing Delay', 'flashing-delay-changes', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
     <h2>Filtering & Aggregations</h2>
 

@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         one page.</li>
 </ul>
 
-<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
+<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated', ['reactFunctional' => true]) ?>
 
 
 <h2>

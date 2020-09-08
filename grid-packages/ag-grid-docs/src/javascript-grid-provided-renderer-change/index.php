@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', ['exampleHeight' => 530]) ?>
+<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', ['exampleHeight' => 530, 'reactFunctional' => true]) ?>
 
     <note>
         We hope you like the animation cell renderers. However you can also take inspiration from them,
