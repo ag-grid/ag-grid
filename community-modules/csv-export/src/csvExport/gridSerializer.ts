@@ -10,7 +10,6 @@ import {
     Constants,
     DisplayedGroupCreator,
     ExportParams,
-    GridApi,
     GridOptionsWrapper,
     GroupInstanceIdCreator,
     IClientSideRowModel,
@@ -37,11 +36,8 @@ export interface GridSerializingSession<T> {
     prepare(columnsToExport: Column[]): void;
 
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
-    
     onNewHeaderRow(): RowAccumulator;
-    
     onNewBodyRow(): RowAccumulator;
-
     addCustomContent(customContent: T): void;
 
     /**
@@ -95,19 +91,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processRowGroupCallback = processRowGroupCallback;
     }
 
+    abstract addCustomContent(customContent: T): void;
+    abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
+    abstract onNewHeaderRow(): RowAccumulator;
+    abstract onNewBodyRow(): RowAccumulator;
+    abstract parse(): string;
+
     public prepare(columnsToExport: Column[]): void {
         this.groupColumns = _.filter(columnsToExport, col => !!col.getColDef().showRowGroup);
     }
-
-    abstract addCustomContent(customContent: T): void;
-
-    abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
-
-    abstract onNewHeaderRow(): RowAccumulator;
-
-    abstract onNewBodyRow(): RowAccumulator;
-
-    abstract parse(): string;
 
     public extractHeaderValue(column: Column): string {
         const value = this.getHeaderName(this.processHeaderCallback, column);
@@ -160,9 +152,11 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
         const keys = [node.key];
-        while (node.parent) {
-            node = node.parent;
-            keys.push(node.key);
+        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            while (node.parent) {
+                node = node.parent;
+                keys.push(node.key);
+            }
         }
         return keys.reverse().join(' -> ');
     }
@@ -295,6 +289,7 @@ export class GridSerializer extends BeanStub {
             if (node.group && (params.skipGroups || shouldSkipCurrentGroup)) {
                 return;
             }
+
             if (params.skipFooters && node.footer) {
                 return;
             }
@@ -314,6 +309,7 @@ export class GridSerializer extends BeanStub {
             // if we are in pivotMode, then the grid will show the root node only
             // if it's not a leaf group
             const nodeIsRootNode = node.level === -1;
+
             if (nodeIsRootNode && !node.leafGroup) {
                 return;
             }
@@ -360,7 +356,6 @@ export class GridSerializer extends BeanStub {
     }
 
     private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[], processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined) {
-
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
