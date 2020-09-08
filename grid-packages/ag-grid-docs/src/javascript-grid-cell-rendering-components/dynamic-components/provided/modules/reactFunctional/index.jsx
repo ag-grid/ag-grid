@@ -4,7 +4,7 @@ import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import {AllCommunityModules} from "@ag-grid-community/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
@@ -103,7 +103,7 @@ const GridExample = () => {
                         }}
                         className="ag-theme-alpine test-grid">
                         <AgGridReact
-                            modules={AllModules}
+                            modules={AllCommunityModules}
                             rowData={rowData}
                             // we use immutableData here to ensure that we only re-render what has changed in the grid
                             // see https://www.ag-grid.com/javascript-grid-immutable-data/ for more information
