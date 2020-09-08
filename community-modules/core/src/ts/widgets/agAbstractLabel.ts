@@ -19,7 +19,7 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
     protected labelAlignment: LabelAlignment = 'left';
     private label: HTMLElement | string = '';
 
-    constructor(template?: string, config?: TConfig) {
+    constructor(config?: TConfig, template?: string) {
         super(template);
 
         this.config = config || {} as any;

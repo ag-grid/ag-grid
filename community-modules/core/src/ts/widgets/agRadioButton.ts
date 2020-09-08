@@ -1,10 +1,11 @@
 import { AgCheckbox } from './agCheckbox';
 import { Events } from '../eventKeys';
 import { CheckboxChangedEvent } from '../events';
+import { IInputField } from './agAbstractInputField';
 
 export class AgRadioButton extends AgCheckbox {
-    constructor() {
-        super('ag-radio-button', 'radio');
+    constructor(config?: IInputField) {
+        super(config, 'ag-radio-button', 'radio');
     }
 
     protected isSelected(): boolean {

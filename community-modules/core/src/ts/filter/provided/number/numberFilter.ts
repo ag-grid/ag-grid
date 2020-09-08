@@ -28,11 +28,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.IN_RANGE
     ];
 
-    @RefSelector('eValueFrom1') private eValueFrom1: AgInputTextField;
-    @RefSelector('eValueTo1') private eValueTo1: AgInputTextField;
+    @RefSelector('eValueFrom1') private readonly eValueFrom1: AgInputTextField;
+    @RefSelector('eValueTo1') private readonly eValueTo1: AgInputTextField;
 
-    @RefSelector('eValueFrom2') private eValueFrom2: AgInputTextField;
-    @RefSelector('eValueTo2') private eValueTo2: AgInputTextField;
+    @RefSelector('eValueFrom2') private readonly eValueFrom2: AgInputTextField;
+    @RefSelector('eValueTo2') private readonly eValueTo2: AgInputTextField;
 
     private numberFilterParams: INumberFilterParams;
 

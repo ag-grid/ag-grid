@@ -1,4 +1,4 @@
-import { AgAbstractLabel } from "./agAbstractLabel";
+import { AgAbstractLabel, IAgLabel } from "./agAbstractLabel";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
@@ -22,12 +22,12 @@ export class AgAngleSelect extends AgAbstractLabel {
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eParentCircle') private eParentCircle: HTMLElement;
-    @RefSelector('eChildCircle') private eChildCircle: HTMLElement;
-    @RefSelector('eAngleValue') private eAngleValue: AgInputNumberField;
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eParentCircle') private readonly eParentCircle: HTMLElement;
+    @RefSelector('eChildCircle') private readonly eChildCircle: HTMLElement;
+    @RefSelector('eAngleValue') private readonly eAngleValue: AgInputNumberField;
 
-    @Autowired("dragService") protected dragService: DragService;
+    @Autowired('dragService') protected readonly dragService: DragService;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;
@@ -36,8 +36,8 @@ export class AgAngleSelect extends AgAbstractLabel {
     private offsetY: number = 0;
     private dragListener: DragListenerParams;
 
-    constructor() {
-        super(AgAngleSelect.TEMPLATE);
+    constructor(config?: IAgLabel) {
+        super(config, AgAngleSelect.TEMPLATE);
     }
 
     postConstruct() {
@@ -50,7 +50,7 @@ export class AgAngleSelect extends AgAbstractLabel {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
-            onDragStop: () => {}
+            onDragStop: () => { }
         };
 
         this.dragService.addDragSource(this.dragListener);

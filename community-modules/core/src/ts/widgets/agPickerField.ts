@@ -8,6 +8,7 @@ import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
 import { setElementWidth, isVisible } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
+import { IAgLabel } from './agAbstractLabel';
 
 export abstract class AgPickerField<TElement extends HTMLElement, TValue> extends AgAbstractField<TValue> {
     public abstract showPicker(): Component;
@@ -24,8 +25,8 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
-    constructor(className: string, private readonly pickerIcon?: string, popupRole?: string) {
-        super(className, /* html */
+    constructor(config?: IAgLabel, className?: string, private readonly pickerIcon?: string, popupRole?: string) {
+        super(config, /* html */
             `<div class="ag-picker-field" role="presentation">
                 <div ref="eLabel"></div>
                 <div ref="eWrapper"
@@ -35,7 +36,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
                     <div ref="eDisplayField" class="ag-picker-field-display"></div>
                     <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                 </div>
-            </div>`);
+            </div>`, className);
     }
 
     protected postConstruct() {

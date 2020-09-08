@@ -16,14 +16,14 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
     @RefSelector('eInput') protected readonly eInput: TElement;
 
-    constructor(className: string, displayFieldTag = 'input', private readonly inputType?: string, config?: TConfig) {
-        super(className, /* html */`
+    constructor(config?: TConfig, className?: string, private readonly inputType = 'text', displayFieldTag = 'input') {
+        super(config, /* html */`
             <div role="presentation">
                 <div ref="eLabel" class="ag-input-field-label"></div>
                 <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
                     <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
                 </div>
-            </div>`, config);
+            </div>`, className);
     }
 
     protected postConstruct() {
