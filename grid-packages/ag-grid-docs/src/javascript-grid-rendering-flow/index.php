@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Cell Content</h1>
 
 <p class="lead">
-    Cell content with with regards how values are provided into the cells. There are different aspects
+    Cell content with regards how values are provided into the cells. There are different aspects
     of the grid that assist this.
 </p>
 
@@ -34,17 +34,16 @@ include '../documentation-main/documentation_header.php';
         Use strings instead of functions for value getters and formatters.
     </li>
     <li>
-        <a href="../javascript-grid-reference-data/">Reference Data</a>:
-        Reference data is used to display alternative values rather that what is in your
-        data, eg you data could have USA but you want to display 'America'.
+        <a href="../javascript-grid-reference-data/">Reference Data</a>: Reference data is used to display alternative 
+        values rather that what is in your data, eg your data could be 'USA' but you want to display 'America' instead.
     </li>
 </ul>
 
 <h2>Rendering Flow</h2>
 
 <p>
-    How value getters, formatters and cell renderers work together to provide the
-    end result is helpful. The flow diagram below illustrates how these different steps work together.
+    It is helpful to understand how value getters, formatters and cell renderers work together to 
+    provide the end result.
 </p>
 
 <img src="valueGetterFlow.svg" class="img-fluid" alt="Value Getter Flow" />

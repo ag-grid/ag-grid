@@ -32,8 +32,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Saving Flow</h2>
 
 <p>
-    How value parsers, setters and cell editors work together to provide the
-    end result is helpful. The flow diagram below illustrates how these different steps work together.
+    It is helpful to understand how value parsers, setters and cell editors work together to 
+    provide the end result. The flow diagram below illustrates how these different steps work together.
 </p>
 
 <img src="valueSetterFlow.svg" class="img-fluid" alt="Value Setter Flow" />

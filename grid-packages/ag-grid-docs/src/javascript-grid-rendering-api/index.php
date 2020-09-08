@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     In the example below <code>getDisplayedRowCount()</code> will return back 7. This is composed of 5 top level
     'Language' rows and two second level 'Country' rows. Each of the 7 displayed rows will have a row index from
-    0 to 6. All rows not displayed (as they are contained withing closed groups) are not displayed and do not have
+    0 to 6. All rows not displayed (as they are contained within closed groups) are not displayed and do not have 
     a row index.
 </p>
 
