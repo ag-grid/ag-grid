@@ -74,6 +74,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void>;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected setParams(params: ISimpleFilterParams): void;
+    private getDefaultJoinOperator;
     private putOptionsIntoDropdown;
     isAllowTwoConditions(): boolean;
     protected createBodyTemplate(): string;

@@ -18,8 +18,8 @@ import { IFilterDef } from '../interfaces/iFilter';
 // when merging columns (eg column types, defaultColDef and the colDef) we give special treatment to param
 // objects, as we want param objects to be merged.
 export const COL_DEF_PARAM_OBJECTS = [
-    'tooltipComponentParams','headerGroupComponentParams','cellRendererParams',
-    'cellEditorParams','pinnedRowCellRendererParams','columnsMenuParams',
+    'tooltipComponentParams', 'headerGroupComponentParams', 'cellRendererParams',
+    'cellEditorParams', 'pinnedRowCellRendererParams', 'columnsMenuParams',
     'headerComponentParams'];
 
 /** AbstractColDef can be a group or a column definition */
@@ -101,7 +101,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     sortIndex?: number;
     initialSortIndex?: number;
 
-    /** @deprecated since v24 - use sordOrder instead*/
+    /** @deprecated since v24 - use sortOrder instead*/
     sortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
@@ -160,7 +160,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * space should be assigned to the column.
      */
     flex?: number;
-    initialFlex?:number;
+    initialFlex?: number;
 
     /** True if this column should stretch rows height to fit contents */
     autoHeight?: boolean;
@@ -413,7 +413,7 @@ export interface ColumnsMenuParams {
     suppressColumnFilter?: boolean,
     suppressColumnSelectAll?: boolean,
     suppressColumnExpandAll?: boolean,
-    contractColumnSelection?: boolean
+    contractColumnSelection?: boolean;
 }
 
 export interface BaseColDefParams {

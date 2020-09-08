@@ -1910,8 +1910,6 @@ export class ColumnController extends BeanStub {
             this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
 
-        this.refreshFlexedColumns();
-
         if (this.gridColsArePrimary && params.applyOrder && params.state) {
             const orderOfColIds = params.state.map(stateItem => stateItem.colId);
 
@@ -3067,8 +3065,8 @@ export class ColumnController extends BeanStub {
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
-        this.updateVirtualSets();
         this.refreshFlexedColumns();
+        this.updateVirtualSets();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 

@@ -165,9 +165,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
-        this.defaultJoinOperator = params.defaultJoinOperator || 'AND';
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    };
+    SimpleFilter.prototype.getDefaultJoinOperator = function (defaultJoinOperator) {
+        return array_1.includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     };
     SimpleFilter.prototype.putOptionsIntoDropdown = function () {
         var _this = this;

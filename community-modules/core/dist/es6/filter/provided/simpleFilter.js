@@ -27,7 +27,7 @@ import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
-import { forEach, every, some } from '../../utils/array';
+import { forEach, every, some, includes } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
 export var ConditionPosition;
 (function (ConditionPosition) {
@@ -163,9 +163,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
-        this.defaultJoinOperator = params.defaultJoinOperator || 'AND';
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    };
+    SimpleFilter.prototype.getDefaultJoinOperator = function (defaultJoinOperator) {
+        return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     };
     SimpleFilter.prototype.putOptionsIntoDropdown = function () {
         var _this = this;
