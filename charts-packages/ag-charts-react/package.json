@@ -7,7 +7,7 @@
   "scripts": {
     "build": "gulp && npm run hash",
     "umd": "rollup -c",
-    "test": "jest --passWithNoTests",
+    "test": "npx jest --passWithNoTests",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
