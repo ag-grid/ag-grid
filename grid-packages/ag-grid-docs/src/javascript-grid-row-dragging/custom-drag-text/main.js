@@ -1,5 +1,6 @@
 var rowDragText = function(params) {
-    if (params.rowNode.data.year === '2012') {
+    // keep double equals here because data can be a string or number
+    if (params.rowNode.data.year == '2012') {
         return params.defaultTextValue + ' (London Olympics)';
     }
     return params.defaultTextValue;
