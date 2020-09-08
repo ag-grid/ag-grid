@@ -34,8 +34,8 @@ interface ITooltipParams {
     api: any; // the grid API
     columnApi: any; // the column API
     colDef: any; // the grid colDef
-    column: any; // the column bound to this tooltip
     context: any; // the grid context
+    column?: any; // the column bound to this tooltip
     value?: any; // the value to be rendered by the tooltip
     valueFormatted?: any; // the formatted value to be rendered by the tooltip
 
