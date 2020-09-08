@@ -32,8 +32,8 @@ var gridOptions = {
                 marker: {
                     enabled: true,
                     shape: 'square',
-                    size: 12,
-                    minSize: 5,
+                    size: 5,
+                    maxSize: 12,
                     strokeWidth: 4,
                 },
                 paired: true,

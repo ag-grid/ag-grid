@@ -20,8 +20,8 @@ var options = {
             sizeName: 'Commits',
             title: 'Punch Card',
             marker: {
-                size: 30,
-                minSize: 0,
+                size: 0,
+                maxSize: 30,
             },
             fill: '#cc5b58',
             fillOpacity: 0.85,

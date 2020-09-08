@@ -410,8 +410,8 @@ const mappings: any = {
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -448,8 +448,8 @@ const mappings: any = {
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -483,8 +483,8 @@ const mappings: any = {
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
