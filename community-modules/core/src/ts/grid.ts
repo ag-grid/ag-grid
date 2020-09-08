@@ -317,9 +317,7 @@ export class Grid {
         const columnController: ColumnController = this.context.getBean('columnController');
         const columnDefs = gridOptionsWrapper.getColumnDefs();
 
-        if (exists(columnDefs)) {
-            columnController.setColumnDefs(columnDefs, "gridInitializing");
-        }
+        columnController.setColumnDefs(columnDefs || [], "gridInitializing");
 
         const rowModel: IRowModel = this.context.getBean('rowModel');
         rowModel.start();
