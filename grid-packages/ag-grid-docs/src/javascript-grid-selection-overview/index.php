@@ -39,15 +39,13 @@ include '../documentation-main/documentation_header.php';
     <h2>Cell Text Selection</h2>
 
     <p>
-        If you want to use a regular text selection as if the grid were a regular table. Use <code>enableCellTextSelection=true</code>
-        in the gridOptions.
+        If you want to use a regular text selection as if the grid were a regular table, set 
+        <code>enableCellTextSelection=true</code> and <code>ensureDomOrder=true</code> in the gridOptions.
     </p>
 
     <p>
         <img class="selection-image" src="./cellTextSelection.png" title="Cell Text Selection" />
     </p>
-
-    <note>This config should be used in combination with <code>ensureDomOrder=true</code> in the gridOptions.
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

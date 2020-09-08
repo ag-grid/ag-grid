@@ -177,14 +177,14 @@
 
             $line .= ': ';
 
-            if (isset($definition->options)) {
-                $line .= implode(' | ', array_map(formatJson, $definition->options));
-            }
-            else if (isset($definition->meta->type)) {
+            if (isset($definition->meta->type)) {
                 $line .= $definition->meta->type;
             }
             else if (isset($definition->type)) {
                 $line .= is_object($definition->type) ? 'Function' : $definition->type;
+            }
+            else if (isset($definition->options)) {
+                $line .= implode(' | ', array_map(formatJson, $definition->options));
             }
             else if (isset($definition->default)) {
                 $type = gettype($definition->default);
