@@ -322,7 +322,7 @@ function update(component: any, options: any, path?: string, theme?: ChartTheme)
 }
 
 function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
-    const allSeries = chart.series;
+    const allSeries = chart.series.slice();
     let prevSeries: Series | undefined;
     let i = 0;
     for (; i < configs.length; i++) {
