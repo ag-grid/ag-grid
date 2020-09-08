@@ -252,9 +252,7 @@ var Grid = /** @class */ (function () {
         var gridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
         var columnController = this.context.getBean('columnController');
         var columnDefs = gridOptionsWrapper.getColumnDefs();
-        if (generic_1.exists(columnDefs)) {
-            columnController.setColumnDefs(columnDefs, "gridInitializing");
-        }
+        columnController.setColumnDefs(columnDefs || [], "gridInitializing");
         var rowModel = this.context.getBean('rowModel');
         rowModel.start();
     };

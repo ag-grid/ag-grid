@@ -33,8 +33,8 @@ var generic_1 = require("../utils/generic");
 var dom_1 = require("../utils/dom");
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
-    function AgAngleSelect() {
-        var _this = _super.call(this, AgAngleSelect.TEMPLATE) || this;
+    function AgAngleSelect(config) {
+        var _this = _super.call(this, config, AgAngleSelect.TEMPLATE) || this;
         _this.radius = 0;
         _this.offsetX = 0;
         _this.offsetY = 0;
@@ -213,7 +213,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         componentAnnotations_1.RefSelector('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
     __decorate([
-        context_1.Autowired("dragService")
+        context_1.Autowired('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
 }(agAbstractLabel_1.AgAbstractLabel));

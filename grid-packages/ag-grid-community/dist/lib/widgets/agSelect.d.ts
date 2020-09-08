@@ -1,10 +1,11 @@
 import { AgPickerField } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
+import { IAgLabel } from './agAbstractLabel';
 export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
     private hideList;
     private popupService;
-    constructor();
+    constructor(config?: IAgLabel);
     init(): void;
     showPicker(): AgList;
     addOptions(options: ListOption[]): this;

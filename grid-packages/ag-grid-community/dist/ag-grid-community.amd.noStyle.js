@@ -8614,7 +8614,6 @@ var ColumnController = /** @class */ (function (_super) {
             var autoCol = _this.getAutoColumn(stateItem.colId);
             _this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
-        this.refreshFlexedColumns();
         if (this.gridColsArePrimary && params.applyOrder && params.state) {
             var orderOfColIds_1 = params.state.map(function (stateItem) { return stateItem.colId; });
             this.gridColumns.sort(function (colA, colB) {
@@ -9598,8 +9597,8 @@ var ColumnController = /** @class */ (function (_super) {
     ColumnController.prototype.updateGroupsAndDisplayedColumns = function (source) {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
-        this.updateVirtualSets();
         this.refreshFlexedColumns();
+        this.updateVirtualSets();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         var event = {
@@ -12493,9 +12492,12 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
-        this.defaultJoinOperator = params.defaultJoinOperator || 'AND';
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    };
+    SimpleFilter.prototype.getDefaultJoinOperator = function (defaultJoinOperator) {
+        return Object(_utils_array__WEBPACK_IMPORTED_MODULE_4__["includes"])(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     };
     SimpleFilter.prototype.putOptionsIntoDropdown = function () {
         var _this = this;

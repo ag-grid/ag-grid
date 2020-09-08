@@ -25,7 +25,7 @@ import { addCssClass } from "../utils/dom";
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this, 'ag-color-picker', 'colorPicker') || this;
+        var _this = _super.call(this, config, 'ag-color-picker', 'colorPicker') || this;
         if (config && config.color) {
             _this.value = config.color;
         }

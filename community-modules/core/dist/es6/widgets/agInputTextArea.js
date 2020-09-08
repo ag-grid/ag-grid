@@ -21,7 +21,7 @@ import { AgAbstractInputField } from "./agAbstractInputField";
 var AgInputTextArea = /** @class */ (function (_super) {
     __extends(AgInputTextArea, _super);
     function AgInputTextArea(config) {
-        return _super.call(this, 'ag-text-area', 'textarea', undefined, config) || this;
+        return _super.call(this, config, 'ag-text-area', 'textarea') || this;
     }
     AgInputTextArea.prototype.setValue = function (value, silent) {
         var ret = _super.prototype.setValue.call(this, value, silent);

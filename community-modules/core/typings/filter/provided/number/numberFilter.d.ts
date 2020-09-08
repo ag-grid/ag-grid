@@ -12,10 +12,10 @@ export interface INumberFilterParams extends IScalarFilterParams {
 }
 export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     static DEFAULT_FILTER_OPTIONS: string[];
-    private eValueFrom1;
-    private eValueTo1;
-    private eValueFrom2;
-    private eValueTo2;
+    private readonly eValueFrom1;
+    private readonly eValueTo1;
+    private readonly eValueFrom2;
+    private readonly eValueTo2;
     private numberFilterParams;
     constructor();
     protected mapRangeFromModel(filterModel: NumberFilterModel): {

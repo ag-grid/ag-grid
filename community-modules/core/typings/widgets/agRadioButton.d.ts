@@ -1,6 +1,7 @@
 import { AgCheckbox } from './agCheckbox';
+import { IInputField } from './agAbstractInputField';
 export declare class AgRadioButton extends AgCheckbox {
-    constructor();
+    constructor(config?: IInputField);
     protected isSelected(): boolean;
     toggle(): void;
     protected addInputListeners(): void;

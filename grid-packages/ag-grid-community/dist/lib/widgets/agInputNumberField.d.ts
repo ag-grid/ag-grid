@@ -1,10 +1,10 @@
-import { AgInputTextField } from "./agInputTextField";
+import { AgInputTextField, ITextInputField } from "./agInputTextField";
 export declare class AgInputNumberField extends AgInputTextField {
     private precision?;
     private step?;
     private min?;
     private max?;
-    constructor();
+    constructor(config?: ITextInputField);
     postConstruct(): void;
     normalizeValue(value: string): string;
     private adjustPrecision;

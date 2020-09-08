@@ -23,8 +23,8 @@ var dom_1 = require("../utils/dom");
 var agCheckbox_1 = require("./agCheckbox");
 var AgToggleButton = /** @class */ (function (_super) {
     __extends(AgToggleButton, _super);
-    function AgToggleButton() {
-        return _super.call(this, 'ag-toggle-button') || this;
+    function AgToggleButton(config) {
+        return _super.call(this, config, 'ag-toggle-button') || this;
     }
     AgToggleButton.prototype.setValue = function (value, silent) {
         _super.prototype.setValue.call(this, value, silent);

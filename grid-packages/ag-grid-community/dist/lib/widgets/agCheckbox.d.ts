@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
-import { AgAbstractInputField } from './agAbstractInputField';
+import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
@@ -11,7 +11,7 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     private selected?;
     private readOnly;
     private passive;
-    constructor(className?: string, inputType?: string);
+    constructor(config?: IInputField, className?: string, inputType?: string);
     protected addInputListeners(): void;
     getNextValue(): boolean;
     setPassive(passive: boolean): void;

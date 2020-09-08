@@ -3,6 +3,7 @@
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
+import { IAgLabel } from './agAbstractLabel';
 export declare abstract class AgPickerField<TElement extends HTMLElement, TValue> extends AgAbstractField<TValue> {
     private readonly pickerIcon?;
     abstract showPicker(): Component;
@@ -16,7 +17,7 @@ export declare abstract class AgPickerField<TElement extends HTMLElement, TValue
     protected readonly eWrapper: HTMLElement;
     protected readonly eDisplayField: TElement;
     private readonly eIcon;
-    constructor(className: string, pickerIcon?: string, popupRole?: string);
+    constructor(config?: IAgLabel, className?: string, pickerIcon?: string, popupRole?: string);
     protected postConstruct(): void;
     protected refreshLabel(): void;
     setAriaLabel(label: string): this;

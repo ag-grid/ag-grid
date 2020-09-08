@@ -15,7 +15,7 @@ export declare abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabe
     protected labelSeparator: string;
     protected labelAlignment: LabelAlignment;
     private label;
-    constructor(template?: string, config?: TConfig);
+    constructor(config?: TConfig, template?: string);
     protected postConstruct(): void;
     protected refreshLabel(): void;
     setLabelSeparator(labelSeparator: string): this;

@@ -23,8 +23,8 @@ var agCheckbox_1 = require("./agCheckbox");
 var eventKeys_1 = require("../eventKeys");
 var AgRadioButton = /** @class */ (function (_super) {
     __extends(AgRadioButton, _super);
-    function AgRadioButton() {
-        return _super.call(this, 'ag-radio-button', 'radio') || this;
+    function AgRadioButton(config) {
+        return _super.call(this, config, 'ag-radio-button', 'radio') || this;
     }
     AgRadioButton.prototype.isSelected = function () {
         return this.eInput.checked;

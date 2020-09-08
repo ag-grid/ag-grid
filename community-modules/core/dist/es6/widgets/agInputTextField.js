@@ -22,10 +22,10 @@ import { some } from '../utils/array';
 import { exists } from '../utils/generic';
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
-    function AgInputTextField(className, inputType, config) {
+    function AgInputTextField(config, className, inputType) {
         if (className === void 0) { className = 'ag-text-field'; }
         if (inputType === void 0) { inputType = 'text'; }
-        return _super.call(this, className, 'input', inputType, config) || this;
+        return _super.call(this, config, className, inputType) || this;
     }
     AgInputTextField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);

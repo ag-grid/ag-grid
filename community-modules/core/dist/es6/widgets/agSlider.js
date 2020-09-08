@@ -30,8 +30,8 @@ import { PostConstruct } from "../context/context";
 import { addCssClass } from "../utils/dom";
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
-    function AgSlider() {
-        var _this = _super.call(this, AgSlider.TEMPLATE) || this;
+    function AgSlider(config) {
+        var _this = _super.call(this, config, AgSlider.TEMPLATE) || this;
         _this.labelAlignment = 'top';
         return _this;
     }

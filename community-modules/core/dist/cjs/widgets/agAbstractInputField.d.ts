@@ -8,11 +8,11 @@ export interface IInputField extends IAgLabel {
     width?: number;
 }
 export declare abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField> extends AgAbstractField<TValue, TConfig> {
-    private readonly inputType?;
+    private readonly inputType;
     protected readonly eLabel: HTMLElement;
     protected readonly eWrapper: HTMLElement;
     protected readonly eInput: TElement;
-    constructor(className: string, displayFieldTag?: string, inputType?: string, config?: TConfig);
+    constructor(config?: TConfig, className?: string, inputType?: string, displayFieldTag?: string);
     protected postConstruct(): void;
     protected refreshLabel(): void;
     protected addInputListeners(): void;

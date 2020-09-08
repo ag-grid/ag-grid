@@ -29,10 +29,10 @@ import { AgAbstractInputField } from './agAbstractInputField';
 import { addOrRemoveCssClass } from '../utils/dom';
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
-    function AgCheckbox(className, inputType) {
+    function AgCheckbox(config, className, inputType) {
         if (className === void 0) { className = 'ag-checkbox'; }
         if (inputType === void 0) { inputType = 'checkbox'; }
-        var _this = _super.call(this, className, 'input', inputType) || this;
+        var _this = _super.call(this, config, className, inputType) || this;
         _this.labelAlignment = 'right';
         _this.selected = false;
         _this.readOnly = false;

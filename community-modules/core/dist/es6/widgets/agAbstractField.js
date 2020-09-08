@@ -21,8 +21,8 @@ import { AgAbstractLabel } from './agAbstractLabel';
 import { setDisabled, addOrRemoveCssClass, setFixedWidth, addCssClass } from '../utils/dom';
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
-    function AgAbstractField(className, template, config) {
-        var _this = _super.call(this, template, config) || this;
+    function AgAbstractField(config, template, className) {
+        var _this = _super.call(this, config, template) || this;
         _this.className = className;
         _this.disabled = false;
         return _this;

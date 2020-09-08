@@ -31,8 +31,8 @@ import { exists } from "../utils/generic";
 import { setFixedWidth } from "../utils/dom";
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
-    function AgAngleSelect() {
-        var _this = _super.call(this, AgAngleSelect.TEMPLATE) || this;
+    function AgAngleSelect(config) {
+        var _this = _super.call(this, config, AgAngleSelect.TEMPLATE) || this;
         _this.radius = 0;
         _this.offsetX = 0;
         _this.offsetY = 0;
@@ -211,7 +211,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         RefSelector('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
     __decorate([
-        Autowired("dragService")
+        Autowired('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
 }(AgAbstractLabel));

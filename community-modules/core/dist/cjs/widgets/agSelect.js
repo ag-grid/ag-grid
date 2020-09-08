@@ -32,8 +32,8 @@ var context_1 = require("../context/context");
 var dom_1 = require("../utils/dom");
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
-    function AgSelect() {
-        return _super.call(this, 'ag-select', 'smallDown', 'listbox') || this;
+    function AgSelect(config) {
+        return _super.call(this, config, 'ag-select', 'smallDown', 'listbox') || this;
     }
     AgSelect.prototype.init = function () {
         var _this = this;

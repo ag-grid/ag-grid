@@ -30,9 +30,10 @@ import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
 import { exists } from '../utils/generic';
 var AgAbstractInputField = /** @class */ (function (_super) {
     __extends(AgAbstractInputField, _super);
-    function AgAbstractInputField(className, displayFieldTag, inputType, config) {
+    function AgAbstractInputField(config, className, inputType, displayFieldTag) {
+        if (inputType === void 0) { inputType = 'text'; }
         if (displayFieldTag === void 0) { displayFieldTag = 'input'; }
-        var _this = _super.call(this, className, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", config) || this;
+        var _this = _super.call(this, config, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", className) || this;
         _this.inputType = inputType;
         return _this;
     }

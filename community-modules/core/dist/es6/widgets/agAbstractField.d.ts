@@ -4,11 +4,11 @@
 import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
-    protected readonly className: string;
+    protected readonly className?: string;
     static EVENT_CHANGED: string;
     protected value: TValue;
     protected disabled: boolean;
-    constructor(className: string, template?: string, config?: TConfig);
+    constructor(config?: TConfig, template?: string, className?: string);
     protected postConstruct(): void;
     onValueChange(callbackFn: (newValue: TValue) => void): this;
     getWidth(): number;

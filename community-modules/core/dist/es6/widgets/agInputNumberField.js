@@ -21,8 +21,8 @@ import { AgInputTextField } from "./agInputTextField";
 import { addOrRemoveAttribute } from '../utils/dom';
 var AgInputNumberField = /** @class */ (function (_super) {
     __extends(AgInputNumberField, _super);
-    function AgInputNumberField() {
-        return _super.call(this, 'ag-number-field', 'number') || this;
+    function AgInputNumberField(config) {
+        return _super.call(this, config, 'ag-number-field', 'number') || this;
     }
     AgInputNumberField.prototype.postConstruct = function () {
         var _this = this;

@@ -24,7 +24,7 @@ var browser_1 = require("../utils/browser");
 var AgInputRange = /** @class */ (function (_super) {
     __extends(AgInputRange, _super);
     function AgInputRange(config) {
-        return _super.call(this, 'ag-range-field', 'input', 'range', config) || this;
+        return _super.call(this, config, 'ag-range-field', 'range') || this;
     }
     AgInputRange.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);

@@ -1,14 +1,14 @@
 // Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgAbstractLabel, LabelAlignment } from "./agAbstractLabel";
+import { AgAbstractLabel, LabelAlignment, IAgLabel } from "./agAbstractLabel";
 export declare class AgSlider extends AgAbstractLabel {
     private static TEMPLATE;
-    protected eLabel: HTMLElement;
-    private eSlider;
-    private eText;
+    protected readonly eLabel: HTMLElement;
+    private readonly eSlider;
+    private readonly eText;
     protected labelAlignment: LabelAlignment;
-    constructor();
+    constructor(config?: IAgLabel);
     private init;
     onValueChange(callbackFn: (newValue: number) => void): this;
     setSliderWidth(width: number): this;

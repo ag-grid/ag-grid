@@ -28,7 +28,7 @@ import { PostConstruct } from "../context/context";
 import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
 var AgAbstractLabel = /** @class */ (function (_super) {
     __extends(AgAbstractLabel, _super);
-    function AgAbstractLabel(template, config) {
+    function AgAbstractLabel(config, template) {
         var _this = _super.call(this, template) || this;
         _this.labelSeparator = '';
         _this.labelAlignment = 'left';
