@@ -676,8 +676,6 @@ SNIPPET
     </ul>
 </note>
 
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
-
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
 <?= videoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1029s", "17:09") ?>

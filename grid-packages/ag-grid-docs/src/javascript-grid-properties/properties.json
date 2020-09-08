@@ -446,14 +446,6 @@
             ],
             "description": "When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if <code>pivotMode</code> is off."
         },
-        "rememberGroupStateWhenNewData": {
-            "default": false,
-            "description": "When <code>true</code>, if you set new data into the grid and have groups open, the grid will keep groups open if they exist in the new dataset.",
-            "more": {
-                "name": "Keeping Group State",
-                "url": "../javascript-grid-grouping/#keeping-group-state"
-            }
-        },
         "suppressAggFuncInHeader": {
             "default": false,
             "description": "When <code>true</code>, column headers won't include the <code>aggFunc</code>, e.g. <code>'sum(Bank Balance)</code>' will just be <code>'Bank Balance'</code>."
