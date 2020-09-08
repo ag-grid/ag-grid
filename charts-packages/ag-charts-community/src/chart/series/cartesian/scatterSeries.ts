@@ -220,7 +220,7 @@ export class ScatterSeries extends CartesianSeries {
 
         const { data, xData, yData, sizeData, sizeScale, marker } = this;
 
-        sizeScale.range = [marker.minSize, marker.size];
+        sizeScale.range = [marker.size, marker.maxSize];
 
         const nodeData: ScatterNodeDatum[] = [];
         for (let i = 0; i < xData.length; i++) {

@@ -132,7 +132,7 @@ export class ChartTheme {
             enabled: true,
             shape: 'circle',
             size: 6,
-            minSize: 6,
+            maxSize: 30,
             strokeWidth: 1,
             formatter: undefined
         };

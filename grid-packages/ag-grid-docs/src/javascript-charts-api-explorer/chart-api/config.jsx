@@ -546,9 +546,9 @@ const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true 
             max: 20,
             unit: 'px',
         },
-        minSize: {
-            default: 12,
-            description: 'For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.',
+        maxSize: {
+            default: 30,
+            description: 'For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels.',
             editor: NumberEditor,
             min: 1,
             max: 20,
