@@ -1746,21 +1746,46 @@ export class ColumnController extends BeanStub {
 
         if (primaryColumns) {
             primaryColumns.forEach((column) => {
-                const rowGroupIndex: number = column.getColDef().rowGroupIndex;
-                const rowGroup: boolean = column.getColDef().rowGroup;
-                const pivotIndex: number = column.getColDef().pivotIndex;
-                const pivot: boolean = column.getColDef().pivot;
+
+                const colDef = column.getColDef();
+
+                const sort = colDef.sort!=null ? colDef.sort : null;
+                const sortIndex = colDef.sortIndex;
+                const hide = colDef.hide ? true : false;
+                const pinned = colDef.pinned ? colDef.pinned : null;
+
+                const width = colDef.width;
+                const flex = colDef.flex != null ? colDef.flex : null;
+
+                let rowGroupIndex: number = colDef.rowGroupIndex;
+                let rowGroup: boolean = colDef.rowGroup;
+                if (rowGroupIndex==null && (rowGroup==null || rowGroup==false)) {
+                    rowGroupIndex = null;
+                    rowGroup = null;
+                }
+                let pivotIndex: number = colDef.pivotIndex;
+                let pivot: boolean = colDef.pivot;
+                if (pivotIndex==null && (pivot==null || pivot==false)) {
+                    pivotIndex = null;
+                    pivot = null;
+                }
+                const aggFunc = colDef.aggFunc!=null ? colDef.aggFunc : null;
 
                 const stateItem = {
                     colId: column.getColId(),
-                    aggFunc: column.getColDef().aggFunc,
-                    hide: column.getColDef().hide,
-                    pinned: column.getColDef().pinned,
-                    rowGroupIndex: rowGroupIndex,
-                    pivotIndex: column.getColDef().pivotIndex,
-                    width: column.getColDef().width,
-                    flex: column.getColDef().flex,
-                    sort: column.getColDef().sort
+                    sort,
+                    sortIndex,
+                    hide,
+                    pinned,
+
+                    width,
+                    flex,
+
+                    rowGroup,
+                    rowGroupIndex,
+                    pivot,
+                    pivotIndex,
+                    aggFunc,
                 };
 
                 if (missing(rowGroupIndex) && rowGroup) {
