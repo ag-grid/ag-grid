@@ -42,10 +42,10 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        When you pass data to the grid, it wraps each data item in an node. This is explained
-        in the section <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>. When you query for
-        the selected rows, there are two method types: ones that return nodes, and ones that
-        return data items. To get the selected nodes / rows from the grid, use the following
+        When you pass data to the grid, it wraps each data item in a node object. This is explained
+        in the section <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>. 
+        When you query for the selected rows, there are two method types: ones that return nodes, and 
+        ones that return data items. To get the selected nodes / rows from the grid, use the following
         API methods:
     </p>
 
@@ -91,7 +91,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="multi-select-single-click">Example: Multi Select With Click</h3>
 
     <p>
-        The example below shows multi select with click. Clicking multiple rows will
+        The example below shows multi-select with click. Clicking multiple rows will
         select a range of rows without the need for <code>Ctrl</code> or <code>Shift</code>
         keys. Clicking a selected row will deselect it. This is useful for touch devices where
         <code>Ctrl</code> and <code>Shift</code> clicks are not available.
@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
             selection with clicks.
         </li>
         <li>
-            Clicking multiple rows will select multiple rows without needing to hit <code>Ctrl</code>
+            Clicking multiple rows will select multiple rows without needing to press <code>Ctrl</code>
             or <code>Shift</code> keys.
         </li>
         <li>
@@ -197,10 +197,15 @@ include '../documentation-main/documentation_header.php';
         <ol>
             <li>Filter on swimming</li>
             <li>Select a country</li>
-            <li>Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows are not selected.</li>
-            <li>Notice that the group becomes intermediate while all its filtered children get selected. This is because
-            the selected state of the group node is independent to the filter, so it becomes intermediate as not all of its
-            children are selected.</li>
+            <li>
+                Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows 
+                are not selected.
+            </li>
+            <li>
+                Notice that the group checkbox becomes indeterminate while all its filtered children get selected. 
+                This is because the selected state of the group node is independent to the filter, so it becomes 
+                indeterminate as not all of its children are selected.
+            </li>
         </ol>
     </p>
 
