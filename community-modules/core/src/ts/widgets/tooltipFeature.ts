@@ -182,12 +182,14 @@ export class TooltipFeature extends BeanStub {
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
 
+        const hasColumn = !!this.parentComp.getColumn;
+
         const params: ITooltipParams = {
             location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn(),
+            column: hasColumn ? this.parentComp.getColumn() : undefined,
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText
