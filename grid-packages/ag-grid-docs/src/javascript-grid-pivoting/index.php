@@ -219,21 +219,6 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'filterpanel', 'setfilter', 'menu']]) ?>
 
-    <h2>Sorting with Pivot</h2>
-
-    <p>
-        Sorting with pivot works as you would expect, either click the column header or use the API to sort.
-    </p>
-
-    <p>
-        The example below demonstrates sorting with pivot. Each sort button looks up the colId in different
-        ways. The first uses the provided API, the second does it manually. There is no benefit to doing it
-        manually, the code below is only given to the curious who want to understand the column structure
-        underneath the hood.
-    </p>
-
-    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
-
     <h2>Pivot Column Groups</h2>
     <p>
         Multiple group columns will be shown in the grid when there is more than one active pivot column. These columns
