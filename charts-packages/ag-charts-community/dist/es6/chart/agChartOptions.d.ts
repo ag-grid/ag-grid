@@ -288,7 +288,7 @@ interface AgSeriesMarker {
     enabled?: boolean;
     shape?: string;
     size?: number;
-    minSize?: number;
+    maxSize?: number;
     fill?: string;
     stroke?: string;
     strokeWidth?: number;

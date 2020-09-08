@@ -22,8 +22,8 @@ var options = {
             labelKey: 'city',
             labelName: 'City',
             marker: {
-                size: 100,
-                minSize: 5,
+                size: 5,
+                maxSize: 100,
             },
             fillOpacity: 0.5,
         }

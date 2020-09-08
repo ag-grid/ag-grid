@@ -7184,20 +7184,39 @@ var ColumnController = /** @class */ (function (_super) {
         var letPivotIndex = 1000;
         if (primaryColumns) {
             primaryColumns.forEach(function (column) {
-                var rowGroupIndex = column.getColDef().rowGroupIndex;
-                var rowGroup = column.getColDef().rowGroup;
-                var pivotIndex = column.getColDef().pivotIndex;
-                var pivot = column.getColDef().pivot;
+                var colDef = column.getColDef();
+                var sort = colDef.sort != null ? colDef.sort : null;
+                var sortIndex = colDef.sortIndex;
+                var hide = colDef.hide ? true : false;
+                var pinned = colDef.pinned ? colDef.pinned : null;
+                var width = colDef.width;
+                var flex = colDef.flex != null ? colDef.flex : null;
+                var rowGroupIndex = colDef.rowGroupIndex;
+                var rowGroup = colDef.rowGroup;
+                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                    rowGroupIndex = null;
+                    rowGroup = null;
+                }
+                var pivotIndex = colDef.pivotIndex;
+                var pivot = colDef.pivot;
+                if (pivotIndex == null && (pivot == null || pivot == false)) {
+                    pivotIndex = null;
+                    pivot = null;
+                }
+                var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
                 var stateItem = {
                     colId: column.getColId(),
-                    aggFunc: column.getColDef().aggFunc,
-                    hide: column.getColDef().hide,
-                    pinned: column.getColDef().pinned,
+                    sort: sort,
+                    sortIndex: sortIndex,
+                    hide: hide,
+                    pinned: pinned,
+                    width: width,
+                    flex: flex,
+                    rowGroup: rowGroup,
                     rowGroupIndex: rowGroupIndex,
-                    pivotIndex: column.getColDef().pivotIndex,
-                    width: column.getColDef().width,
-                    flex: column.getColDef().flex,
-                    sort: column.getColDef().sort
+                    pivot: pivot,
+                    pivotIndex: pivotIndex,
+                    aggFunc: aggFunc,
                 };
                 if (missing(rowGroupIndex) && rowGroup) {
                     stateItem.rowGroupIndex = letRowGroupIndex++;
@@ -18571,12 +18590,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         }
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
+        var hasColumn = !!this.parentComp.getColumn;
         var params = {
             location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn(),
+            column: hasColumn ? this.parentComp.getColumn() : undefined,
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText
@@ -41267,12 +41287,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
             anchorToElement: eGui
         });
         this.subMenuIsOpen = true;
+        _.setAriaExpanded(eGui, true);
         this.hideSubMenu = function () {
             closePopup();
             _this.subMenuIsOpen = false;
+            _.setAriaExpanded(eGui, false);
             destroySubMenu();
         };
-        _.setAriaExpanded(eGui, true);
     };
     MenuItemComponent.prototype.closeSubMenu = function () {
         if (!this.hideSubMenu) {
@@ -43166,7 +43187,7 @@ var AggregationStage = /** @class */ (function (_super) {
         }
         var deprecationWarning = function () {
             _.doOnce(function () {
-                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. please move your aggregation function to use params.values');
+                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
             }, 'aggregationStage.aggregateValues Deprecation');
         };
         var aggFuncAny = aggFunc;

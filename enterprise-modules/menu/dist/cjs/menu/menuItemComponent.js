@@ -114,12 +114,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
             anchorToElement: eGui
         });
         this.subMenuIsOpen = true;
+        core_1._.setAriaExpanded(eGui, true);
         this.hideSubMenu = function () {
             closePopup();
             _this.subMenuIsOpen = false;
+            core_1._.setAriaExpanded(eGui, false);
             destroySubMenu();
         };
-        core_1._.setAriaExpanded(eGui, true);
     };
     MenuItemComponent.prototype.closeSubMenu = function () {
         if (!this.hideSubMenu) {

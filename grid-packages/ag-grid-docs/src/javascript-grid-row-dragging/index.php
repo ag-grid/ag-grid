@@ -76,7 +76,7 @@ SNIPPET
     </li>
 </ul>
 
-<?//= g rid_example('Row Drag Simple Managed', 'simple-managed', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>The logic for managed dragging is simple and has the following constraints:</p>
 
@@ -354,7 +354,7 @@ SNIPPET
     </li>
 </ul>
 
-<?//= g rid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <p>
     The simple example doesn't add anything that managed dragging gives (the first

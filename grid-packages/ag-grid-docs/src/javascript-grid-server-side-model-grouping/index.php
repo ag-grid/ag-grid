@@ -286,8 +286,8 @@ SNIPPET
 ) ?>
 
 <p>
-    Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field
-    with dot notation, i.e. <code>year.name</code>
+    Then the columns are set up so that country uses a <code>valueGetter</code> that uses the field
+    with dot notation, i.e. <code>data.country.name</code>
 </p>
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>

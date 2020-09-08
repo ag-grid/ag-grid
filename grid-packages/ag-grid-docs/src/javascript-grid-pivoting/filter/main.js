@@ -64,7 +64,7 @@ function filterUsaAndCanadaBoxing() {
         },
         sport: {
             type: 'set',
-            values: ['Boxing']
+            values: ['Bobsleigh']
         }
     });
     setTitle('USA and Canada - Boxing');

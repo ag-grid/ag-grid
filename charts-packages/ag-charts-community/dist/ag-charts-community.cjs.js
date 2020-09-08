@@ -9271,14 +9271,14 @@ var SeriesMarker = /** @class */ (function (_super) {
          * A series will create one marker instance per data point.
          */
         _this.shape = Circle;
-        _this.size = 8;
+        _this.size = 6;
         /**
-         * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
+         * In case a series has the `sizeKey` set, the `sizeKey` values along with the `size` and `maxSize` configs
          * will be used to determine the size of the marker. All values will be mapped to a marker size
-         * within the `[minSize, size]` range, where the largest values will correspond to the `size`
-         * and the lowest to the `minSize`.
+         * within the `[size, maxSize]` range, where the largest values will correspond to the `maxSize`
+         * and the lowest to the `size`.
          */
-        _this.minSize = 8;
+        _this.maxSize = 30;
         _this.strokeWidth = 1;
         return _this;
     }
@@ -9293,7 +9293,7 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "size", void 0);
     __decorate$3([
         reactive('change')
-    ], SeriesMarker.prototype, "minSize", void 0);
+    ], SeriesMarker.prototype, "maxSize", void 0);
     __decorate$3([
         reactive('change')
     ], SeriesMarker.prototype, "fill", void 0);
@@ -13189,7 +13189,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
-        sizeScale.range = [marker.minSize, marker.size];
+        sizeScale.range = [marker.size, marker.maxSize];
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];
@@ -15234,7 +15234,7 @@ var ChartTheme = /** @class */ (function () {
             enabled: true,
             shape: 'circle',
             size: 6,
-            minSize: 6,
+            maxSize: 30,
             strokeWidth: 1,
             formatter: undefined
         };
@@ -16290,8 +16290,8 @@ var mappings = (_a = {},
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -16312,8 +16312,8 @@ var mappings = (_a = {},
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -16331,8 +16331,8 @@ var mappings = (_a = {},
                         defaults: {
                             enabled: true,
                             shape: 'circle',
-                            size: 8,
-                            minSize: 8,
+                            size: 6,
+                            maxSize: 30,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -16764,7 +16764,7 @@ function update(component, options, path, theme) {
     }
 }
 function updateSeries(chart, configs, keyPath, theme) {
-    var allSeries = chart.series;
+    var allSeries = chart.series.slice();
     var prevSeries;
     var i = 0;
     for (; i < configs.length; i++) {

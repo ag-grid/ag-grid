@@ -79,9 +79,11 @@ var BaseGridSerializingSession = /** @class */ (function () {
             });
         }
         var keys = [node.key];
-        while (node.parent) {
-            node = node.parent;
-            keys.push(node.key);
+        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            while (node.parent) {
+                node = node.parent;
+                keys.push(node.key);
+            }
         }
         return keys.reverse().join(' -> ');
     };

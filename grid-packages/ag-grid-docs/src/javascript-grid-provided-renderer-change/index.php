@@ -17,8 +17,8 @@ include '../documentation-main/documentation_header.php';
             with a directional arrow showing increase or decrease in value. The old value is then faded out.
         </li>
         <li>
-            <code>agAnimateSlideCellRenderer:</code> The previous value shown in a faded fashion and slides, giving a ghosting effect
-            as the old value fades adn slides away.
+            <code>agAnimateSlideCellRenderer:</code> The previous value shown in a faded fashion and slides, giving a 
+            ghosting effect as the old value fades and slides away.
         </li>
     </ul>
 
@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', ['exampleHeight' => 530]) ?>
+<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', ['exampleHeight' => 530, 'reactFunctional' => true]) ?>
 
     <note>
         We hope you like the animation cell renderers. However you can also take inspiration from them,

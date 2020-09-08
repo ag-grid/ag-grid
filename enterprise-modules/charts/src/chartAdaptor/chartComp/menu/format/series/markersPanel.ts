@@ -106,8 +106,8 @@ export class MarkersPanel extends Component {
         };
 
         if (this.chartController.getChartType() === ChartType.Bubble) {
-            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 60);
+            initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         } else {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
             initInput("marker.size", this.seriesMarkerSizeSlider, "size", 60);

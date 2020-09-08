@@ -1381,20 +1381,39 @@ var ColumnController = /** @class */ (function (_super) {
         var letPivotIndex = 1000;
         if (primaryColumns) {
             primaryColumns.forEach(function (column) {
-                var rowGroupIndex = column.getColDef().rowGroupIndex;
-                var rowGroup = column.getColDef().rowGroup;
-                var pivotIndex = column.getColDef().pivotIndex;
-                var pivot = column.getColDef().pivot;
+                var colDef = column.getColDef();
+                var sort = colDef.sort != null ? colDef.sort : null;
+                var sortIndex = colDef.sortIndex;
+                var hide = colDef.hide ? true : false;
+                var pinned = colDef.pinned ? colDef.pinned : null;
+                var width = colDef.width;
+                var flex = colDef.flex != null ? colDef.flex : null;
+                var rowGroupIndex = colDef.rowGroupIndex;
+                var rowGroup = colDef.rowGroup;
+                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+                    rowGroupIndex = null;
+                    rowGroup = null;
+                }
+                var pivotIndex = colDef.pivotIndex;
+                var pivot = colDef.pivot;
+                if (pivotIndex == null && (pivot == null || pivot == false)) {
+                    pivotIndex = null;
+                    pivot = null;
+                }
+                var aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
                 var stateItem = {
                     colId: column.getColId(),
-                    aggFunc: column.getColDef().aggFunc,
-                    hide: column.getColDef().hide,
-                    pinned: column.getColDef().pinned,
+                    sort: sort,
+                    sortIndex: sortIndex,
+                    hide: hide,
+                    pinned: pinned,
+                    width: width,
+                    flex: flex,
+                    rowGroup: rowGroup,
                     rowGroupIndex: rowGroupIndex,
-                    pivotIndex: column.getColDef().pivotIndex,
-                    width: column.getColDef().width,
-                    flex: column.getColDef().flex,
-                    sort: column.getColDef().sort
+                    pivot: pivot,
+                    pivotIndex: pivotIndex,
+                    aggFunc: aggFunc,
                 };
                 if (missing(rowGroupIndex) && rowGroup) {
                     stateItem.rowGroupIndex = letRowGroupIndex++;

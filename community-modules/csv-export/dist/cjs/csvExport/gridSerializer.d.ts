@@ -40,12 +40,12 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
     private groupColumns?;
     constructor(config: GridSerializingParams);
-    prepare(columnsToExport: Column[]): void;
     abstract addCustomContent(customContent: T): void;
     abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
     abstract onNewHeaderRow(): RowAccumulator;
     abstract onNewBodyRow(): RowAccumulator;
     abstract parse(): string;
+    prepare(columnsToExport: Column[]): void;
     extractHeaderValue(column: Column): string;
     extractRowCellValue(column: Column, index: number, type: string, node: RowNode): any;
     private getHeaderName;

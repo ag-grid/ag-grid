@@ -198,7 +198,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
-        sizeScale.range = [marker.minSize, marker.size];
+        sizeScale.range = [marker.size, marker.maxSize];
         var nodeData = [];
         for (var i = 0; i < xData.length; i++) {
             var xDatum = xData[i];

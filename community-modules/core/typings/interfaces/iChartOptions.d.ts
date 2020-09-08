@@ -227,7 +227,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     paired: boolean;
 }
 export interface ScatterMarkerOptions extends MarkerOptions {
-    minSize?: number;
+    maxSize?: number;
 }
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
     sizeKey?: string;

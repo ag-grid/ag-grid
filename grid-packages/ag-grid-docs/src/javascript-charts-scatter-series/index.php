@@ -65,8 +65,8 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 marker: {
-    minSize: 8, // defaults to 8
-    size: 30    // defaults to 8
+    size: 6,       // defaults to 6
+    maxSize: 30    // defaults to 30
 }
 SNIPPET
 ) ?>

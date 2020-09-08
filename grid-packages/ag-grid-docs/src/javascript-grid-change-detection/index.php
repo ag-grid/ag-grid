@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
+    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'reactFunctional' => true]) ?>
 
     <h2>1. Value Change Detection</h2>
 
@@ -418,6 +418,6 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

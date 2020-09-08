@@ -303,7 +303,7 @@ function update(component, options, path, theme) {
     }
 }
 function updateSeries(chart, configs, keyPath, theme) {
-    var allSeries = chart.series;
+    var allSeries = chart.series.slice();
     var prevSeries;
     var i = 0;
     for (; i < configs.length; i++) {

@@ -78,11 +78,11 @@ colDef.cellEditorParams = {
 
 <note>
     <p>
-        We have found the standard HTML Select doesn't have an API sufficient enough to play
-        property with the grid. When a cell is double clicked to started editing, it is desired that
-        the Select is a) shown and b) opened ready for selection. There is no API to open
-        a browsers Select. For this reason to edit there are two interactions needed 1)
-        double click to start editing and 2) single click to open the Select.
+        We have found the standard HTML Select doesn't have an API that's rich enough to play 
+        properly with the grid. When a cell is double clicked to start editing, it is desired that 
+        the Select is a) shown and b) opened ready for selection. There is no API to open a browsers 
+        Select. For this reason to edit there are two interactions needed 1) double click to start 
+        editing and 2) single click to open the Select.
     </p>
     <p>
         We also observed different results while using keyboard navigation to control editing, e.g.
@@ -91,10 +91,10 @@ colDef.cellEditorParams = {
         Select, there is nothing the grid can do.
     </p>
     <p>
-        If you are unhappy with the additional click required, we advise you don't depend
-        on the browsers standard Select (ie avoid <code>agSelectCellEditor</code>
-        and <code>agPopupSelectCellEditor</code>) and instead us <code>agRichSelectCellEditor</code>
-        or create your own using a <a href="../javascript-grid-cell-editor/">Cell Editor Component</a>.
+        If you are unhappy with the additional click required, we advise you don't depend on the 
+        browsers standard Select (ie avoid <code>agSelectCellEditor</code> and 
+        <code>agPopupSelectCellEditor</code>) and instead use <code>agRichSelectCellEditor</code> or 
+        create your own using a <a href="../javascript-grid-cell-editor/">Cell Editor Component</a>.
     </p>
 </note>
 

@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     This event is raised whenever a chart is first created.
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 interface ChartCreated {
     type: string; // 'chartCreated'
     chartId: string;
@@ -26,7 +26,8 @@ interface ChartCreated {
     api: GridApi;
     columnApi: ColumnApi;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <h2><code>ChartRangeSelectionChanged</code></h2>
 
@@ -36,7 +37,7 @@ interface ChartCreated {
     information about the range, allowing you to recreate the chart.
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 interface ChartRangeSelectionChanged {
     type: string; // 'chartRangeSelectionChanged'
     id: string;
@@ -58,7 +59,8 @@ interface CellRangeParams {
     // columns
     columns: (string | Column)[];
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <h2><code>ChartOptionsChanged</code></h2>
 
@@ -66,7 +68,7 @@ interface CellRangeParams {
     Formatting changes made by users through the Format Panel will raise the <code>ChartOptionsChanged</code> event:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 interface ChartOptionsChanged {
     type: string; // 'chartOptionsChanged'
     chartId: string;
@@ -92,7 +94,8 @@ type ChartType =
     'area' |
     'stackedArea' |
     'normalizedArea';
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Here the <code>chartThemeName</code> will be set to the name of the currently selected theme, which will be either
@@ -104,14 +107,15 @@ type ChartType =
 
 <p>This is raised when a chart is destroyed.</p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 interface ChartDestroyed {
     type: string; // 'chartDestroyed'
     chartId: string;
     api: GridApi;
     columnApi: ColumnApi;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <h2>Example: Chart Events</h2>
 
@@ -158,7 +162,27 @@ interface ChartDestroyed {
         the <code>savedLegendUserPreference</code> object to globally keep track of legend preferences.</li>
 </ul>
 
-<?= grid_example('Saving User Preferences', 'saving-user-preferences', 'generated', ['exampleHeight' => 660,'enterprise' => true]) ?>
+<?= grid_example('Saving User Preferences', 'saving-user-preferences', 'generated', ['exampleHeight' => 660, 'enterprise' => true]) ?>
+
+<h2>Accessing Chart Instance</h2>
+
+<p>
+    Charts in the grid are produced by the <a href="../javascript-charts-overview/">ag-Charts</a> library, which is
+    integrated directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
+    instance that is produced by ag-Charts, in order to interact with the chart directly.
+</p>
+
+<p>
+    The chart instance can be found inside the <code>ChartModel</code>, which is provided in the
+    <a href="#chartcreated"><code>ChartCreated</code></a> event.
+</p>
+
+<p>
+    The example below shows how the chart instance can be used, creating a subtitle and updating it dynamically as you
+    change the range selection.
+</p>
+
+<?= grid_example('Accessing Chart Instance', 'accessing-chart-instance', 'generated', ['enterprise' => true]) ?>
 
 <h2>Other Resources</h2>
 

@@ -89,8 +89,8 @@ var MarkersPanel = /** @class */ (function (_super) {
                 .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         if (this.chartController.getChartType() === core_1.ChartType.Bubble) {
-            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 60);
+            initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         }
         else {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);

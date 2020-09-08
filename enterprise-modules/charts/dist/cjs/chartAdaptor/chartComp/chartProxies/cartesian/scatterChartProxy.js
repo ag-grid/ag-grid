@@ -154,8 +154,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: isBubble ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 shape: 'circle',
                 enabled: true,
-                size: isBubble ? 30 : 6,
-                minSize: isBubble ? 6 : undefined,
+                size: 6,
+                maxSize: 30,
                 strokeWidth: 1,
             }, tooltip: {
                 enabled: true,

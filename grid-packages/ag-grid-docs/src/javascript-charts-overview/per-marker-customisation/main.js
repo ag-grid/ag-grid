@@ -56,8 +56,8 @@ var options = {
             sizeKey: 'magnitude',
             sizeName: 'Magnitude',
             marker: {
-                size: maxSize,
-                minSize: minSize,
+                size: minSize,
+                maxSize: maxSize,
                 formatter: function(params) {
                     return {
                         fill: params.highlighted ? params.fill : calculateColour(params.size)

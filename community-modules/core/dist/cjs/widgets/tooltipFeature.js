@@ -142,12 +142,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         }
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
+        var hasColumn = !!this.parentComp.getColumn;
         var params = {
             location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn(),
+            column: hasColumn ? this.parentComp.getColumn() : undefined,
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText

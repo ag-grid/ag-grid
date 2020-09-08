@@ -212,7 +212,7 @@ var AggregationStage = /** @class */ (function (_super) {
         }
         var deprecationWarning = function () {
             _.doOnce(function () {
-                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. please move your aggregation function to use params.values');
+                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
             }, 'aggregationStage.aggregateValues Deprecation');
         };
         var aggFuncAny = aggFunc;
