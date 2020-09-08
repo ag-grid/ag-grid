@@ -5,7 +5,7 @@ import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { forEach, every, some } from '../../utils/array';
+import { forEach, every, some, includes } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
 import { IFilterLocaleText } from '../filterLocaleText';
 
@@ -234,10 +234,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
         this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
-        this.defaultJoinOperator = params.defaultJoinOperator || 'AND';
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    }
+
+    private getDefaultJoinOperator(defaultJoinOperator: JoinOperator): JoinOperator {
+        return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     }
 
     private putOptionsIntoDropdown(): void {
