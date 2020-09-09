@@ -115,6 +115,9 @@ $(function() {
 
         if (hash) {
             var $element = $(hash.replace(/\./g, '\\.'));
+
+            if (!$element.position()) { return; }
+
             top = $element.position().top + 10;
         }
 

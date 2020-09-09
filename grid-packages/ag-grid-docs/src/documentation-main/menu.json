@@ -1177,11 +1177,6 @@
             "enterprise": true
           },
           {
-            "title": "Chart Axis Types",
-            "url": "javascript-grid-charts-integrated-axis-types/",
-            "enterprise": true
-          },
-          {
             "title": "Customisation",
             "url": "javascript-grid-charts-integrated-customisation/",
             "enterprise": true,
