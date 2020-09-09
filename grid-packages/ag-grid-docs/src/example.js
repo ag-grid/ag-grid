@@ -694,7 +694,7 @@ var desktopDefaultCols = [
                 headerCheckboxSelectionFilteredOnly: true
             },
             {
-                headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
+                headerName: "Language", field: "language", width: 150, editable: true,
                 cellEditor: 'agSelectCellEditor',
                 cellClass: 'vAlign',
                 enableRowGroup: true,
@@ -707,10 +707,22 @@ var desktopDefaultCols = [
                 },
                 // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
+                filter: 'agMultiColumnFilter',
                 filterParams: {
-                    newRowsAction: 'keep',
-                    buttons: ['reset']
-                }
+                    filters: [
+                        {
+                            filter: 'agTextColumnFilter',
+                            display: 'subMenu'
+                        },
+                        {
+                            filter: 'agSetColumnFilter',
+                            filterParams: {
+                                newRowsAction: 'keep',
+                                buttons: ['reset']
+                            }
+                        }
+                    ]
+                },
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
@@ -757,12 +769,24 @@ var desktopDefaultCols = [
                 },
                 // pinned: 'left',
                 floatCell: true,
+                filter: 'agMultiColumnFilter',
                 filterParams: {
-                    cellRenderer: 'countryCellRenderer',
-                    // cellHeight: 20,
-                    newRowsAction: 'keep',
-                    buttons: ['reset'],
-                    // suppressSelectAll: true
+                    filters: [
+                        {
+                            filter: 'agTextColumnFilter',
+                            display: 'subMenu'
+                        },
+                        {
+                            filter: 'agSetColumnFilter',
+                            filterParams: {
+                                cellRenderer: 'countryCellRenderer',
+                                // cellHeight: 20,
+                                newRowsAction: 'keep',
+                                buttons: ['reset'],
+                                // suppressSelectAll: true
+                            }
+                        }
+                    ]
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
