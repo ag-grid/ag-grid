@@ -93,6 +93,15 @@
         <li>rowDeselection no longer has any affect as the grid now allows row deselection by default. To block row deselection set suppressRowDeselection to true..</li>
     </ul>
 
+    <p><u>Configuring 'Full Width Group Row Inner Renderer'</u></p>
+    <p>
+        How <code>innerRenderer</code> was configured as a grid option was wrong and has been corrected to the correct way.
+        The old way was using grid properties <code>groupRowInnerRenderer</code> and
+        <code>groupRowInnerRendererParams</code>. The new correct way is to use
+        <code>groupRowRendererParams.innerRenderer</code> and
+        <code>groupRowRendererParams.innerRendererParams</code>.
+    </p>
+
     <p><b>Removed Deprecations:</b></p>
 
     <p>The following have been deprecated for over a year and have now been removed:</p>
