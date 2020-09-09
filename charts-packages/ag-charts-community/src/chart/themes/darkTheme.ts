@@ -75,7 +75,10 @@ export class DarkTheme extends ChartTheme {
                 ...chartDefaults,
                 series: {
                     pie: {
-                        ...seriesLabelDefaults
+                        ...seriesLabelDefaults,
+                        title: {
+                            color: fontColor
+                        }
                     }
                 }
             }
