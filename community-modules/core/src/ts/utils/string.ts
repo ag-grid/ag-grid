@@ -142,3 +142,9 @@ export function camelCaseToHumanText(camelCase: string | undefined): string | nu
 
     return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
 }
+
+export function startsWith(str: string, matchStart: string): boolean {
+    if (str === matchStart) { return true; }
+
+    return str != null && str.slice(0, matchStart.length) === matchStart;
+}
