@@ -383,7 +383,7 @@ docs.component("exampleRunner", {
                     </div>
                 </div>
                 <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
-                    <span>&nbsp;&nbsp;Example version:</span>
+                    <span>&nbsp;&nbsp;Framework:</span>
                     <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
                         <button type="button"
                                 ng-click="$ctrl.toggleFwDropdown()"
