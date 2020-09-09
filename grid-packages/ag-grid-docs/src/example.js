@@ -771,13 +771,11 @@ var desktopDefaultCols = [
                 floatCell: true,
                 filter: 'agSetColumnFilter',
                 filterParams: {
-                    filterParams: {
-                        cellRenderer: 'countryCellRenderer',
-                        // cellHeight: 20,
-                        newRowsAction: 'keep',
-                        buttons: ['reset'],
-                        // suppressSelectAll: true
-                    }
+                    cellRenderer: 'countryCellRenderer',
+                    // cellHeight: 20,
+                    newRowsAction: 'keep',
+                    buttons: ['reset'],
+                    // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
