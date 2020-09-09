@@ -78,7 +78,9 @@ var DarkTheme = /** @class */ (function (_super) {
                     histogram: __assign({}, seriesLabelDefaults)
                 } }),
             polar: __assign(__assign({}, chartDefaults), { series: {
-                    pie: __assign({}, seriesLabelDefaults)
+                    pie: __assign(__assign({}, seriesLabelDefaults), { title: {
+                            color: fontColor
+                        } })
                 } })
         });
     };

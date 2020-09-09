@@ -3691,6 +3691,12 @@ function camelCaseToHumanText(camelCase) {
     var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
+function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
+}
 
 var StringUtils = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -3699,7 +3705,8 @@ var StringUtils = /*#__PURE__*/Object.freeze({
     hyphenToCamelCase: hyphenToCamelCase,
     capitalise: capitalise,
     escapeString: escapeString,
-    camelCaseToHumanText: camelCaseToHumanText
+    camelCaseToHumanText: camelCaseToHumanText,
+    startsWith: startsWith
 });
 
 /**
@@ -7473,13 +7480,15 @@ var ColumnController = /** @class */ (function (_super) {
                 return;
             }
             params.state.forEach(function (state) {
+                var groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
+                var colId = state.colId;
                 // auto group columns are re-created so deferring syncing with ColumnState
-                var isAutoGroupColumn = state.colId && state.colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                var isAutoGroupColumn = startsWith(colId, groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
-                var column = _this.getPrimaryColumn(state.colId);
+                var column = _this.getPrimaryColumn(colId);
                 if (!column) {
                     // we don't log the failure, as it's possible the user is applying that has extra
                     // cols in it. for example they could of save while row-grouping (so state includes

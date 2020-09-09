@@ -135,3 +135,9 @@ export function camelCaseToHumanText(camelCase) {
     var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
+export function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
+}

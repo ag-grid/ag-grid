@@ -28,3 +28,4 @@ export declare function escapeString(toEscape: string | null): string | null;
  * @return {string}
  */
 export declare function camelCaseToHumanText(camelCase: string | undefined): string | null;
+export declare function startsWith(str: string, matchStart: string): boolean;

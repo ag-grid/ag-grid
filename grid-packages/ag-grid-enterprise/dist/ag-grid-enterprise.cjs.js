@@ -25804,7 +25804,9 @@ var DarkTheme = /** @class */ (function (_super) {
                     histogram: __assign$4({}, seriesLabelDefaults)
                 } }),
             polar: __assign$4(__assign$4({}, chartDefaults), { series: {
-                    pie: __assign$4({}, seriesLabelDefaults)
+                    pie: __assign$4(__assign$4({}, seriesLabelDefaults), { title: {
+                            color: fontColor
+                        } })
                 } })
         });
     };

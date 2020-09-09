@@ -15572,7 +15572,9 @@
                         histogram: __assign$3({}, seriesLabelDefaults)
                     } }),
                 polar: __assign$3(__assign$3({}, chartDefaults), { series: {
-                        pie: __assign$3({}, seriesLabelDefaults)
+                        pie: __assign$3(__assign$3({}, seriesLabelDefaults), { title: {
+                                color: fontColor
+                            } })
                     } })
             });
         };

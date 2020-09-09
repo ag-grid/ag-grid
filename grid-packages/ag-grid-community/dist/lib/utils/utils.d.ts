@@ -5,6 +5,7 @@ export declare const _: {
     capitalise(str: string): string;
     escapeString(toEscape: string): string;
     camelCaseToHumanText(camelCase: string): string;
+    startsWith(str: string, matchStart: string): boolean;
     convertToSet<T>(list: T[]): Set<T>;
     sortRowNodesByOrder(rowNodes: import("../main").RowNode[], rowNodeOrder: {
         [id: string]: number;

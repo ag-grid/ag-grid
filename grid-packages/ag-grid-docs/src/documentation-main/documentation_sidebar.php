@@ -3,33 +3,33 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.2.0">Version 23.2.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jun 5</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=24.0.0">Version 24.0.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Sep 9</h6>
         <p class="card-text">
-            Minor release with new features and bug fixes:
+            Major release with new features and bug fixes:
         </p>
         <ul>
             <li>
-                <a class="learn-more" href="/javascript-grid-keyboard-navigation/">Keyboard Navigation Enhancements</a>
+                <a class="learn-more" href="/javascript-grid-filter-multi/">Multi Filter</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-charts-navigator/">Charts Navigator</a>
+                   href="/javascript-grid-column-updating-definitions/">Reactive Columns</a>
+            </li>
+
+            <li>
+                <a class="learn-more" href="/javascript-grid-accessibility/">Accessibility Enhancements</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-grid-filter-set-excel-mode/">Set Filter Excel Mode</a>
-            </li>
-
-            <li>
-                <a class="learn-more" href="/javascript-grid-master-detail/">Master Detail Enhancements</a>
+                   href="/javascript-charts-themes/">Chart Themes</a>
             </li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.2.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=24.0.0">Change Log</a>
         </p>
     </div>
 </div>

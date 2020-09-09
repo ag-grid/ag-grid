@@ -143,5 +143,12 @@ function camelCaseToHumanText(camelCase) {
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
 exports.camelCaseToHumanText = camelCaseToHumanText;
+function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
+}
+exports.startsWith = startsWith;
 
 //# sourceMappingURL=string.js.map

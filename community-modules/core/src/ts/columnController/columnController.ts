@@ -45,7 +45,7 @@ import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertI
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText } from '../utils/string';
+import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 
 export interface ColumnResizeSet {
@@ -1749,7 +1749,7 @@ export class ColumnController extends BeanStub {
 
                 const colDef = column.getColDef();
 
-                const sort = colDef.sort!=null ? colDef.sort : null;
+                const sort = colDef.sort != null ? colDef.sort : null;
                 const sortIndex = colDef.sortIndex;
                 const hide = colDef.hide ? true : false;
                 const pinned = colDef.pinned ? colDef.pinned : null;
@@ -1759,17 +1759,17 @@ export class ColumnController extends BeanStub {
 
                 let rowGroupIndex: number = colDef.rowGroupIndex;
                 let rowGroup: boolean = colDef.rowGroup;
-                if (rowGroupIndex==null && (rowGroup==null || rowGroup==false)) {
+                if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
                     rowGroupIndex = null;
                     rowGroup = null;
                 }
                 let pivotIndex: number = colDef.pivotIndex;
                 let pivot: boolean = colDef.pivot;
-                if (pivotIndex==null && (pivot==null || pivot==false)) {
+                if (pivotIndex == null && (pivot == null || pivot == false)) {
                     pivotIndex = null;
                     pivot = null;
                 }
-                const aggFunc = colDef.aggFunc!=null ? colDef.aggFunc : null;
+                const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
 
                 const stateItem = {
                     colId: column.getColId(),
@@ -1828,15 +1828,17 @@ export class ColumnController extends BeanStub {
                 return;
             }
             params.state.forEach((state: ColumnState) => {
+                const groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
+                const colId = state.colId;
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = state.colId && state.colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                const isAutoGroupColumn = startsWith(colId, groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
 
-                const column = this.getPrimaryColumn(state.colId);
+                const column = this.getPrimaryColumn(colId);
 
                 if (!column) {
                     // we don't log the failure, as it's possible the user is applying that has extra

@@ -36,7 +36,7 @@ import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/
 import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText } from '../utils/string';
+import { camelCaseToHumanText, startsWith } from '../utils/string';
 var ColumnController = /** @class */ (function (_super) {
     __extends(ColumnController, _super);
     function ColumnController() {
@@ -1448,13 +1448,15 @@ var ColumnController = /** @class */ (function (_super) {
                 return;
             }
             params.state.forEach(function (state) {
+                var groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
+                var colId = state.colId;
                 // auto group columns are re-created so deferring syncing with ColumnState
-                var isAutoGroupColumn = state.colId && state.colId.startsWith(Constants.GROUP_AUTO_COLUMN_ID);
+                var isAutoGroupColumn = startsWith(colId, groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
-                var column = _this.getPrimaryColumn(state.colId);
+                var column = _this.getPrimaryColumn(colId);
                 if (!column) {
                     // we don't log the failure, as it's possible the user is applying that has extra
                     // cols in it. for example they could of save while row-grouping (so state includes

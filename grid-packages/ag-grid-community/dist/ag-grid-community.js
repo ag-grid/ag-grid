@@ -12732,6 +12732,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_function__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
 /* harmony import */ var _filterLocaleText__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(64);
 /* harmony import */ var _widgets_managedFocusComponent__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(65);
+/* harmony import */ var _utils_set__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(41);
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v24.0.0
@@ -12757,6 +12758,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -12865,7 +12867,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
-        new Set(buttons).forEach(function (type) { return addButton(type); });
+        Object(_utils_set__WEBPACK_IMPORTED_MODULE_6__["convertToSet"])(buttons).forEach(function (type) { return addButton(type); });
         this.getGui().appendChild(eButtonsPanel);
     };
     ProvidedFilter.checkForDeprecatedParams = function (params) {
@@ -20729,6 +20731,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_array__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(15);
 /* harmony import */ var _utils_function__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(16);
 /* harmony import */ var _constants_keyCode__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(37);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(23);
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v24.0.0
@@ -20757,6 +20760,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+
 
 
 
@@ -21055,7 +21059,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 return false;
             }
             var res = false;
-            Object.values(rowsToRecycle).forEach(function (rowComp) {
+            _utils__WEBPACK_IMPORTED_MODULE_14__["_"].iterateObject(rowsToRecycle, function (key, rowComp) {
                 var rowNode = rowComp.getRowNode();
                 var rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 var pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;

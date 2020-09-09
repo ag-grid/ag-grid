@@ -1450,13 +1450,15 @@ var ColumnController = /** @class */ (function (_super) {
                 return;
             }
             params.state.forEach(function (state) {
+                var groupAutoColumnId = constants_1.Constants.GROUP_AUTO_COLUMN_ID;
+                var colId = state.colId;
                 // auto group columns are re-created so deferring syncing with ColumnState
-                var isAutoGroupColumn = state.colId && state.colId.startsWith(constants_1.Constants.GROUP_AUTO_COLUMN_ID);
+                var isAutoGroupColumn = string_1.startsWith(colId, groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
-                var column = _this.getPrimaryColumn(state.colId);
+                var column = _this.getPrimaryColumn(colId);
                 if (!column) {
                     // we don't log the failure, as it's possible the user is applying that has extra
                     // cols in it. for example they could of save while row-grouping (so state includes
