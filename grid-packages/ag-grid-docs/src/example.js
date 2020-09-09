@@ -769,24 +769,15 @@ var desktopDefaultCols = [
                 },
                 // pinned: 'left',
                 floatCell: true,
-                filter: 'agMultiColumnFilter',
+                filter: 'agSetColumnFilter',
                 filterParams: {
-                    filters: [
-                        {
-                            filter: 'agTextColumnFilter',
-                            display: 'subMenu'
-                        },
-                        {
-                            filter: 'agSetColumnFilter',
-                            filterParams: {
-                                cellRenderer: 'countryCellRenderer',
-                                // cellHeight: 20,
-                                newRowsAction: 'keep',
-                                buttons: ['reset'],
-                                // suppressSelectAll: true
-                            }
-                        }
-                    ]
+                    filterParams: {
+                        cellRenderer: 'countryCellRenderer',
+                        // cellHeight: 20,
+                        newRowsAction: 'keep',
+                        buttons: ['reset'],
+                        // suppressSelectAll: true
+                    }
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
