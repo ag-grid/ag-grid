@@ -26,7 +26,7 @@
     <li><code>init()</code> is not used. Instead use the React props passed to your Component.</li>
     <li><code>destroy()</code> is not used. Instead use the React <code>componentWillUnmount()</code> method for
         any cleanup you need to do.
-    </li>
+     </li>
     <li><code>getGui()</code> is not used. Instead do normal React magic in your <code>render()</code> method.</li>
 </ul>
 
@@ -35,10 +35,14 @@
     should be put onto your React component and will work as normal.
 </p>
 
-<h3>React Hooks</h3>
-<p>Please see <a href="../react-hooks/#hooks-with-methods">here</a> for information on using Hooks as Cell Editors.</p>
-
 <h3>Example: Cell Editing using React Components</h3>
 <p> Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  </p>
 
-<?= grid_example('React Editor Components', 'component-editor', 'generated', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'react', 'extras' => ['bootstrap']]) ?>
+<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'react', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>
+
+<h3>React Hook Cell Editors</h3>
+
+<p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
+            href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
+
+<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'reactFunctional', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>

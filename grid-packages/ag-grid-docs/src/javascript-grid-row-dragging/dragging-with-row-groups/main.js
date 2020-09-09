@@ -373,13 +373,15 @@ var olympicWinnersData = [
     }
 ];
 
+var rowDrag = function(params) {
+    // only rows that are NOT groups should be draggable
+    return !params.node.group;
+}
+
 var gridOptions = {
     columnDefs: [
         {   field: "athlete",
-            rowDrag: function(params) {
-                // only rows that are NOT groups should be draggable
-                return !params.node.group;
-            }
+            rowDrag: rowDrag
         },
         { field: "country", rowGroup: true },
         { field: "year", width: 100 },

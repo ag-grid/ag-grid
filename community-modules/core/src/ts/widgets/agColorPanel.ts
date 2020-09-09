@@ -1,8 +1,9 @@
 import { Component } from "./component";
-import { Color, _ } from "../utils";
+import { Color } from "../utils";
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { AgColorPicker } from "./agColorPicker";
+import { exists } from "../utils/generic";
 
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
@@ -270,7 +271,7 @@ export class AgColorPanel extends Component {
     private onRecentColorClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
 
-        if (!_.exists(target.id)) {
+        if (!exists(target.id)) {
             return;
         }
 

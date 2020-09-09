@@ -1,12 +1,13 @@
-import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import {
-    HistogramSeriesOptions as InternalHistogramSeriesOptions,
-    CartesianChart,
-    ChartBuilder,
-    HistogramSeries
-} from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
+    AgHistogramSeriesOptions,
+    BarSeriesLabelOptions,
+    CartesianChartOptions,
+    HighlightOptions,
+    HistogramSeriesOptions
+} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, HistogramSeries} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
 
@@ -17,21 +18,63 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         this.recreateChart();
     }
 
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
+        options.seriesDefaults = {
+            shadow: this.getDefaultDropShadowOptions(),
+            label: seriesDefaults.label as BarSeriesLabelOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as HistogramSeriesOptions;
+
+        return options;
+    }
+
     protected createChart(options?: CartesianChartOptions<HistogramSeriesOptions>): CartesianChart {
         const { parentElement } = this.chartProxyParams;
+        const seriesDefaults = this.getSeriesDefaults();
 
-        const chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
-        const histogramSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+        options = options || this.chartOptions;
+        const agChartOptions = options as AgCartesianChartOptions;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [{
+            type: 'number',
+            position: 'bottom',
+            ...options.xAxis
+        }, {
+            type: 'number',
+            position: 'left',
+            ...options.yAxis
+        }];
+        agChartOptions.series = [{
+            ...seriesDefaults,
+            fill: seriesDefaults.fill.colors[0],
+            fillOpacity: seriesDefaults.fill.opacity,
+            stroke: seriesDefaults.stroke.colors[0],
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            type: 'histogram'
+        }];
 
-        if (histogramSeries) {
-            chart.addSeries(histogramSeries);
-        }
-
-        return chart;
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
-
         const [xField] = params.fields;
 
         const chart = this.chart;
@@ -73,11 +116,9 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         return options;
     }
 
-    private getSeriesDefaults(): InternalHistogramSeriesOptions {
-
+    private getSeriesDefaults(): HistogramSeriesOptions {
         return {
-            ...this.chartOptions.seriesDefaults,
-            type: 'histogram'
+            ...this.chartOptions.seriesDefaults
         };
     }
 }

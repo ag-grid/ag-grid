@@ -24,7 +24,6 @@ var line_1 = require("../../../scene/shape/line");
 var text_1 = require("../../../scene/shape/text");
 var selection_1 = require("../../../scene/selection");
 var linearScale_1 = require("../../../scale/linearScale");
-var palettes_1 = require("../../palettes");
 var sector_1 = require("../../../scene/shape/sector");
 var label_1 = require("../../label");
 var node_1 = require("../../../scene/node");
@@ -61,7 +60,7 @@ var PieSeriesCallout = /** @class */ (function (_super) {
     __extends(PieSeriesCallout, _super);
     function PieSeriesCallout() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.colors = palettes_1.default.strokes;
+        _this.colors = [];
         _this.length = 10;
         _this.strokeWidth = 1;
         return _this;
@@ -105,8 +104,8 @@ var PieSeries = /** @class */ (function (_super) {
          */
         _this.angleKey = '';
         _this.angleName = '';
-        _this._fills = palettes_1.default.fills;
-        _this._strokes = palettes_1.default.strokes;
+        _this._fills = [];
+        _this._strokes = [];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         /**
@@ -122,7 +121,9 @@ var PieSeries = /** @class */ (function (_super) {
         _this.label.addEventListener('dataChange', _this.scheduleData, _this);
         _this.callout.addEventListener('change', _this.scheduleLayout, _this);
         _this.addPropertyListener('data', function (event) {
-            event.source.seriesItemEnabled = event.value.map(function () { return true; });
+            if (event.value) {
+                event.source.seriesItemEnabled = event.value.map(function () { return true; });
+            }
         });
         return _this;
     }
@@ -175,6 +176,11 @@ var PieSeries = /** @class */ (function (_super) {
     });
     PieSeries.prototype.onHighlightChange = function () {
         this.updateNodes();
+    };
+    PieSeries.prototype.setColors = function (fills, strokes) {
+        this.fills = fills;
+        this.strokes = strokes;
+        this.callout.colors = strokes;
     };
     PieSeries.prototype.getDomain = function (direction) {
         if (direction === chartAxis_1.ChartAxisDirection.X) {
@@ -295,6 +301,9 @@ var PieSeries = /** @class */ (function (_super) {
         this.groupSelection = updateGroups.merge(enterGroups);
     };
     PieSeries.prototype.updateNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
         var highlightedDatum = this.chart.highlightedDatum;
         var minOuterRadius = Infinity;
@@ -375,8 +384,8 @@ var PieSeries = /** @class */ (function (_super) {
         if (!angleKey) {
             return '';
         }
-        var _a = this, title = _a.title, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
-        var text = title ? title.text : undefined;
+        var _a = this, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
+        var title = this.title ? this.title.text : undefined;
         var color = fills[nodeDatum.index % fills.length];
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -387,17 +396,15 @@ var PieSeries = /** @class */ (function (_super) {
                 radiusName: radiusName,
                 labelKey: labelKey,
                 labelName: labelName,
-                title: text,
+                title: title,
                 color: color,
             });
         }
         else {
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = title ? "<div class=\"" + chart_1.Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + text + "</div>" : '';
             var label = labelKey ? nodeDatum.seriesDatum[labelKey] + ": " : '';
             var value = nodeDatum.seriesDatum[angleKey];
             var formattedValue = typeof value === 'number' ? number_1.toFixed(value) : value.toString();
-            return titleString + "<div class=\"" + chart_1.Chart.defaultTooltipClass + "-content\">" + label + formattedValue + "</div>";
+            return chart_1.toTooltipHtml(label + formattedValue, title, color);
         }
     };
     PieSeries.prototype.listSeriesItems = function (legendData) {

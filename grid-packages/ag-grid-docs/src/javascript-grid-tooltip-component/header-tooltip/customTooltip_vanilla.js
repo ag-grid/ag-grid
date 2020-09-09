@@ -1,4 +1,4 @@
-function CustomTooltip () {}
+function CustomTooltip() { }
 
 CustomTooltip.prototype.init = function(params) {
     var eGui = this.eGui = document.createElement('div'),
@@ -9,7 +9,7 @@ CustomTooltip.prototype.init = function(params) {
     eGui.classList.add('custom-tooltip');
 
     if (isHeader) {
-        str =  '<p>Group Name: ' + params.value + '</p>';
+        str = '<p>Group Name: ' + params.value + '</p>';
         if (isGroupedHeader) {
             str += '<hr>';
             params.colDef.children.forEach(function(header, idx) {
@@ -21,7 +21,7 @@ CustomTooltip.prototype.init = function(params) {
         valueToDisplay = params.value.value ? params.value.value : '- Missing -';
 
         eGui.innerHTML =
-            '<p>Athletes name:</p>' +
+            '<p>Athlete\'s name:</p>' +
             '<p><span class"name">' + valueToDisplay + '</span></p>';
     }
 };

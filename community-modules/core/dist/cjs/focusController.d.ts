@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -10,14 +10,14 @@ import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { ColumnGroup } from "./entities/columnGroup";
 import { GridCore } from "./gridCore";
 export declare class FocusController extends BeanStub {
-    private gridOptionsWrapper;
-    private columnController;
-    private headerNavigationService;
-    private columnApi;
-    private gridApi;
-    private rowRenderer;
-    private rowPositionUtils;
-    private rangeController;
+    private readonly gridOptionsWrapper;
+    private readonly columnController;
+    private readonly headerNavigationService;
+    private readonly columnApi;
+    private readonly gridApi;
+    private readonly rowRenderer;
+    private readonly rowPositionUtils;
+    private readonly rangeController;
     private static FOCUSABLE_SELECTOR;
     private static FOCUSABLE_EXCLUDE;
     private gridCore;
@@ -45,12 +45,11 @@ export declare class FocusController extends BeanStub {
     isAnyCellFocused(): boolean;
     isRowFocused(rowIndex: number, floating: string): boolean;
     findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[];
-    focusFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean;
-    focusLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean;
+    focusInto(rootNode: HTMLElement, up?: boolean, onlyUnmanaged?: boolean): boolean;
     findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean, backwards?: boolean): HTMLElement;
     isFocusUnderManagedComponent(rootNode: HTMLElement): boolean;
     findTabbableParent(node: HTMLElement, limit?: number): HTMLElement;
     private onCellFocused;
-    focusGridView(column?: Column): boolean;
+    focusGridView(column?: Column, backwards?: boolean): boolean;
     focusNextGridCoreContainer(backwards: boolean): boolean;
 }

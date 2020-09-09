@@ -28,6 +28,7 @@ export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
     api: GridApi;
+    context: any;
 }
 export interface ICellRenderer {
     /** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),

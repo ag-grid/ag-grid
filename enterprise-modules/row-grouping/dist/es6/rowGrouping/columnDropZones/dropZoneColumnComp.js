@@ -103,7 +103,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         else {
             displayValue = this.displayName;
         }
-        var displayValueSanitised = _.escape(displayValue);
+        var displayValueSanitised = _.escapeString(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
     DropZoneColumnComp.prototype.onShowAggFuncSelection = function () {
@@ -129,7 +129,12 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             _this.destroyBean(virtualList);
             _this.popupShowing = false;
         };
-        var hidePopup = this.popupService.addAsModalPopup(ePopup, true, popupHiddenFunc);
+        var hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: ePopup,
+            closeOnEsc: true,
+            closedCallback: popupHiddenFunc
+        });
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',

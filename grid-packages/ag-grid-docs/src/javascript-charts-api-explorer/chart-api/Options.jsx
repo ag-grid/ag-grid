@@ -3,7 +3,6 @@ import './Options.css';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
-import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 
 const getType = value => {
     if (value == null) {
@@ -165,13 +164,13 @@ export class Options extends React.PureComponent {
     render() {
         const { chartType } = this.props;
         const { searchText, hasResults } = this.state;
-        const config = { ...Config.generalConfig };
+        const config = { ...Config.chart };
 
         if (chartType !== 'pie') {
-            config.axes = Config.axisConfig;
+            config.axes = Config.axis;
         }
 
-        config.series = Config[`${chartType}SeriesConfig`];
+        config.series = Config[chartType];
 
         return <div className="options">
             <Search value={searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />

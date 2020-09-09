@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,10 +17,6 @@ exports.HeaderComponent = {
 exports.HeaderGroupComponent = {
     propertyName: 'headerGroupComponent',
     isCellRenderer: function () { return false; },
-};
-exports.GroupRowInnerRendererComponent = {
-    propertyName: 'groupRowInnerRenderer',
-    isCellRenderer: function () { return true; },
 };
 exports.CellRendererComponent = {
     propertyName: 'cellRenderer',

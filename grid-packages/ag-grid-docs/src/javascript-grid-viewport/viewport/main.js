@@ -42,12 +42,12 @@ var gridOptions = {
     rowSelection: 'multiple',
     rowModelType: 'viewport',
     // implement this so that we can do selection
-    getRowNodeId: function (data) {
+    getRowNodeId: function(data) {
         // the code is unique, so perfect for the id
         return data.code;
     },
     components: {
-        rowIdRenderer: function (params) {
+        rowIdRenderer: function(params) {
             return '' + params.rowIndex;
         }
     },
@@ -63,13 +63,13 @@ function numberFormatter(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json' }).then(function(data) {
         // set up a mock server - real code will not do this, it will contact your
         // real server to get what it needs
         var mockServer = createMockServer();
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var viewportDatasource = createViewportDatasource(mockServer);
         gridOptions.api.setViewportDatasource(viewportDatasource);
         // put the 'size cols to fit' into a timeout, so that the scroll is taken into consideration
-        setTimeout(function () {
+        setTimeout(function() {
             gridOptions.api.sizeColumnsToFit();
         }, 100);
     });
@@ -86,31 +86,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function createViewportDatasource(mockServer) {
     // client code (ie your code) will call this constructor, pass in whatever you need for the
-// viewport to do its job
+    // viewport to do its job
     function ViewportDatasource(mockServer) {
         this.mockServer = mockServer;
         this.connectionId = this.mockServer.connect(this.eventListener.bind(this));
     }
 
-// gets called by the grid, tells us what rows the grid is displaying, so time for
-// us to tell the server to give us the rows for that displayed range
-    ViewportDatasource.prototype.setViewportRange = function (firstRow, lastRow) {
+    // gets called by the grid, tells us what rows the grid is displaying, so time for
+    // us to tell the server to give us the rows for that displayed range
+    ViewportDatasource.prototype.setViewportRange = function(firstRow, lastRow) {
         console.log('setViewportRange: ' + firstRow + ' to ' + lastRow);
         this.mockServer.setViewportRange(this.connectionId, firstRow, lastRow);
     };
 
-// gets called by the grid, provides us with the callbacks we need
-    ViewportDatasource.prototype.init = function (params) {
+    // gets called by the grid, provides us with the callbacks we need
+    ViewportDatasource.prototype.init = function(params) {
         this.params = params;
     };
 
-// gets called by grid, when grid is destroyed or this datasource is swapped out for another one
-    ViewportDatasource.prototype.destroy = function () {
+    // gets called by grid, when grid is destroyed or this datasource is swapped out for another one
+    ViewportDatasource.prototype.destroy = function() {
         this.mockServer.disconnect(this.connectionId);
     };
 
-// manages events back from the server
-    ViewportDatasource.prototype.eventListener = function (event) {
+    // manages events back from the server
+    ViewportDatasource.prototype.eventListener = function(event) {
         switch (event.eventType) {
             case 'rowCountChanged':
                 this.onRowCountChanged(event);
@@ -124,16 +124,16 @@ function createViewportDatasource(mockServer) {
         }
     };
 
-// process rowData event
-    ViewportDatasource.prototype.onRowData = function (event) {
+    // process rowData event
+    ViewportDatasource.prototype.onRowData = function(event) {
         var rowDataFromServer = event.rowDataMap;
         this.params.setRowData(rowDataFromServer);
     };
 
-// process dataUpdated event
-    ViewportDatasource.prototype.onDataUpdated = function (event) {
+    // process dataUpdated event
+    ViewportDatasource.prototype.onDataUpdated = function(event) {
         var that = this;
-        event.changes.forEach(function (change) {
+        event.changes.forEach(function(change) {
             var rowNode = that.params.getRow(change.rowIndex);
             // if the rowNode is missing, it means the grid is not displaying that row.
             // if the data is missing, it means the rowNode is there, but that data has not
@@ -147,8 +147,8 @@ function createViewportDatasource(mockServer) {
         });
     };
 
-// process rowCount event
-    ViewportDatasource.prototype.onRowCountChanged = function (event) {
+    // process rowCount event
+    ViewportDatasource.prototype.onRowCountChanged = function(event) {
         var rowCountFromServer = event.rowCount;
         // this will get the grid to make set the height of the row container, so we can scroll vertically properly
         var keepRenderedRows = true; // prevents unnecessary row redraws
@@ -165,7 +165,7 @@ function createMockServer() {
         setInterval(this.periodicallyUpdateData.bind(this), 100);
     }
 
-    MockServer.prototype.periodicallyUpdateData = function () {
+    MockServer.prototype.periodicallyUpdateData = function() {
 
         // keep a record of all the items that changed
         var changes = [];
@@ -178,14 +178,14 @@ function createMockServer() {
         this.informConnectionsOfChanges(changes);
     };
 
-    MockServer.prototype.informConnectionsOfChanges = function (changes) {
+    MockServer.prototype.informConnectionsOfChanges = function(changes) {
         var that = this;
         // go through each connection
-        Object.keys(this.connections).forEach(function (connectionId) {
+        Object.keys(this.connections).forEach(function(connectionId) {
             var connection = that.connections[connectionId];
             // create a list of changes that are applicable to this connection only
             var changesThisConnection = [];
-            changes.forEach(function (change) {
+            changes.forEach(function(change) {
                 // see if the index of this change is within the connections viewport
                 var changeInRange = change.rowIndex >= connection.firstRow && change.rowIndex <= connection.lastRow;
                 if (changeInRange) {
@@ -195,13 +195,13 @@ function createMockServer() {
             // send msg to this connection if one or more changes
             if (changesThisConnection.length > 0) {
                 that.sendEventAsync(
-                    connectionId, {eventType: 'dataUpdated', changes: changesThisConnection}
+                    connectionId, { eventType: 'dataUpdated', changes: changesThisConnection }
                 );
             }
         });
     };
 
-    MockServer.prototype.makeSomeVolumeChanges = function (changes) {
+    MockServer.prototype.makeSomeVolumeChanges = function(changes) {
         for (var i = 0; i < 10; i++) {
             // pick a data item at random
             var index = Math.floor(this.allData.length * Math.random());
@@ -220,7 +220,7 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.makeSomePriceChanges = function (changes) {
+    MockServer.prototype.makeSomePriceChanges = function(changes) {
         // randomly update data for some rows
         for (var i = 0; i < 10; i++) {
             var index = Math.floor(this.allData.length * Math.random());
@@ -251,12 +251,12 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.init = function (allData) {
+    MockServer.prototype.init = function(allData) {
         this.allData = allData;
 
         // the sample data has just name and code, we need to add in dummy figures
         var that = this;
-        this.allData.forEach(function (dataItem) {
+        this.allData.forEach(function(dataItem) {
 
             // have volume a random between 100 and 10,000
             dataItem.volume = Math.floor((Math.random() * 10000) + 100);
@@ -268,12 +268,12 @@ function createMockServer() {
         });
     };
 
-    MockServer.prototype.setBidAndAsk = function (dataItem) {
+    MockServer.prototype.setBidAndAsk = function(dataItem) {
         dataItem.bid = dataItem.mid * 0.98;
         dataItem.ask = dataItem.mid * 1.02;
     };
 
-    MockServer.prototype.connect = function (listener) {
+    MockServer.prototype.connect = function(listener) {
         var connectionId = this.nextConnectionId;
         this.nextConnectionId++;
         // keep a record of the connection
@@ -290,25 +290,25 @@ function createMockServer() {
         };
 
         this.sendEventAsync(
-            connectionId, {eventType: 'rowCountChanged', rowCount: this.allData.length}
+            connectionId, { eventType: 'rowCountChanged', rowCount: this.allData.length }
         );
 
         return connectionId;
     };
 
-// pretend we are on a network, send message to client after 20ms
-    MockServer.prototype.sendEventAsync = function (connectionId, event) {
+    // pretend we are on a network, send message to client after 20ms
+    MockServer.prototype.sendEventAsync = function(connectionId, event) {
         var listener = this.connections[connectionId].listener;
-        setTimeout(function () {
+        setTimeout(function() {
             listener(event);
         }, 20);
     };
 
-    MockServer.prototype.disconnect = function (connectionId) {
+    MockServer.prototype.disconnect = function(connectionId) {
         delete this.connections[connectionId];
     };
 
-    MockServer.prototype.setViewportRange = function (connectionId, firstRow, lastRow) {
+    MockServer.prototype.setViewportRange = function(connectionId, firstRow, lastRow) {
         var connection = this.connections[connectionId];
         connection.firstRow = firstRow;
         connection.lastRow = lastRow;
@@ -319,9 +319,9 @@ function createMockServer() {
         this.sendResultsToClient(connectionId, firstRow, lastRow);
     };
 
-// removes any entries outside the viewport (firstRow to lastRow)
-    MockServer.prototype.purgeFromClientRows = function (rowsInClient, firstRow, lastRow) {
-        Object.keys(rowsInClient).forEach(function (rowIndexStr) {
+    // removes any entries outside the viewport (firstRow to lastRow)
+    MockServer.prototype.purgeFromClientRows = function(rowsInClient, firstRow, lastRow) {
+        Object.keys(rowsInClient).forEach(function(rowIndexStr) {
             var rowIndex = parseInt(rowIndexStr);
             if (rowIndex < firstRow || rowIndex > lastRow) {
                 delete rowsInClient[rowIndex];
@@ -329,7 +329,7 @@ function createMockServer() {
         });
     };
 
-    MockServer.prototype.sendResultsToClient = function (connectionId, firstRow, lastRow) {
+    MockServer.prototype.sendResultsToClient = function(connectionId, firstRow, lastRow) {
         if (firstRow < 0 || lastRow < firstRow) {
             console.warn('start or end is not valid');
             return;
@@ -348,18 +348,17 @@ function createMockServer() {
             // otherwise send the row. we send a copy of the row to mimic
             // going over network, so any further changes to the row in
             // the mock server is not reflected in the grid's copy
-            var copyOfData = Object.assign({}, this.allData[i]);
-            rowDataMap[i] = copyOfData;
+            rowDataMap[i] = JSON.parse(JSON.stringify(this.allData[i]));
             // and record that the client has this row
             rowsInClient[i] = true;
         }
 
         this.sendEventAsync(
-            connectionId, {eventType: 'rowData', rowDataMap: rowDataMap}
+            connectionId, { eventType: 'rowData', rowDataMap: rowDataMap }
         );
     };
 
-    MockServer.prototype.getRowCount = function () {
+    MockServer.prototype.getRowCount = function() {
         return this.allData.length;
     };
 

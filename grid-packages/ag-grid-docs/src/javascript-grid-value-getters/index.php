@@ -90,7 +90,7 @@ colDef.valueGetter = function(params) {
 
     </ul>
 
-    <?= grid_example('Value Getters', 'value-getters', 'generated', ['modules' => true]) ?>
+    <?= grid_example('Value Getters', 'value-getters', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
     <h3>Header Value Getters</h3>
 
@@ -133,29 +133,29 @@ colDef.valueGetter = function(params) {
     <p>
         Each time the grid requires a value from a value getter, the value getter is executed. For most use
         cases, this will not be an issue, as value getters will execute quickly and not have any noticeable performance
-        implications for your application. However sometimes you might implement time intensive tasks in your
+        implications for your application. However sometimes you might implement time-intensive tasks in your
         value getters. If this is the case, then you can opt to turn on the value cache to store the results of the
         value getters.
     </p>
 
     <p>
-        When the value cache is turned on, each time a value getter is executed, it's result is stored in the value cache.
+        When the value cache is turned on, each time a value getter is executed, its result is stored in the value cache.
         If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved
         from the cache instead of executing the value getter again.
     </p>
 
     <p>
-        This value cache is for advanced users who have time consuming value getters and want to speed up their
+        This value cache is for advanced users who have time-consuming value getters and want to speed up their 
         applications by introducing a cache to reduce the number of times value getters get executed.
     </p>
 
     <note>
         <p>
-            One client of ag-Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
-            maths, using third party maths API in the valueGetter for 8 of the columns. The client was also grouping
-            and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
-            recomputed the aggregations, resulting in all the value getters getting called again, causing the grid
-            to stall for around 1,000ms as rows were added.
+            One client of ag-Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced maths, 
+            using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping and the 
+            summing by the columns containing the value getters. This meant, if more rows were added, the grid recomputed 
+            the aggregations, resulting in all the value getters getting called again, causing the grid to stall for 
+            around 1,000ms as rows were added.
         </p>
         <p>
             Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
@@ -198,7 +198,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Value Cache', 'value-cache', 'vanilla', ['enterprise' => true]) ?>
+    <?= grid_example('Value Cache', 'value-cache', 'vanilla', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
     <note>
         Note that the example still works fast when the value cache is turned off. This emphasises
@@ -293,7 +293,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', ['enterprise' => true, 'modules' => true]) ?>
+    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -344,7 +344,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules'=>['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

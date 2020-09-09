@@ -12,20 +12,21 @@ import {
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams,
     ManagedFocusComponent,
-    Constants
+    KeyCode,
+    ColumnEventType
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
-import { EXPAND_STATE } from "./primaryColsHeaderPanel";
+import { ExpandState } from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
-export type ColumnFilterResults = { [id: string]: boolean };
+export type ColumnFilterResults = { [id: string]: boolean; };
 
 export class PrimaryColsListPanel extends ManagedFocusComponent {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
@@ -40,14 +41,19 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
     private columnComps: Map<string, ColumnItem> = new Map();
+    private eventType: ColumnEventType;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
     }
 
-    public init(params: ToolPanelColumnCompParams, allowDragging: boolean): void {
+    public init(
+        params: ToolPanelColumnCompParams,
+        allowDragging: boolean,
+        eventType: ColumnEventType): void {
         this.params = params;
         this.allowDragging = allowDragging;
+        this.eventType = eventType;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
@@ -79,16 +85,16 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 e.preventDefault();
-                this.nagivateToNextItem(e.keyCode === Constants.KEY_UP);
+                this.navigateToNextItem(e.keyCode === KeyCode.UP);
                 break;
         }
-        
+
     }
 
-    private nagivateToNextItem(up: boolean): void {
+    private navigateToNextItem(up: boolean): void {
         const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), true, up);
 
         if (nextEl) {
@@ -159,7 +165,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
         if (!columnGroup.isPadding()) {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.allowDragging, this.expandGroupsByDefault,
-                this.onGroupExpanded.bind(this), () => this.filterResults);
+                this.onGroupExpanded.bind(this), () => this.filterResults, this.eventType);
 
             this.getContext().createBean(renderedGroup);
             const renderedGroupGui = renderedGroup.getGui();
@@ -234,7 +240,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         }
     }
 
-    private getExpandState(): EXPAND_STATE {
+    private getExpandState(): ExpandState {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
@@ -265,14 +271,14 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         recursiveFunc(this.columnTree);
 
         if (expandedCount > 0 && notExpandedCount > 0) {
-            return EXPAND_STATE.INDETERMINATE;
-        }
-        
-        if (notExpandedCount > 0) {
-            return EXPAND_STATE.COLLAPSED;
+            return ExpandState.INDETERMINATE;
         }
 
-        return EXPAND_STATE.EXPANDED;
+        if (notExpandedCount > 0) {
+            return ExpandState.COLLAPSED;
+        }
+
+        return ExpandState.EXPANDED;
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
@@ -288,13 +294,17 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         } else {
             // we don't want to change visibility on lock visible columns
             const primaryCols = this.columnApi.getPrimaryColumns();
-            const colsToChange = primaryCols.filter(col => !col.getColDef().lockVisible);
+
+            const filterColsToChange = (col: Column) =>
+                !col.getColDef().lockVisible && !col.getColDef().suppressColumnsToolPanel;
+
+            const colsToChange = primaryCols.filter(filterColsToChange);
 
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
-                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, 'columnMenu');
+                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, this.eventType);
                 return;
             }
 
@@ -308,11 +318,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 const filteredColsToChange = colsToChange.filter(col => _.includes(filteredCols, col.getColId()));
 
                 // update visibility of columns currently filtered
-                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
+                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, this.eventType);
 
                 // update select all header with new state
-                const selectionState = this.selectAllChecked ? true : false;
-                this.dispatchEvent({type: 'selectionChanged', state: selectionState});
+                this.dispatchEvent({ type: 'selectionChanged', state: this.selectAllChecked });
             }
         }
     }
@@ -354,22 +363,12 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 checked = col.isVisible();
             }
 
-            if (checked) {
-                checkedCount++;
-            } else {
-                uncheckedCount++;
-            }
+            checked ? checkedCount++ : uncheckedCount++;
         });
 
-        if (checkedCount > 0 && uncheckedCount > 0) {
-            return undefined;
-        }
-        
-        if (checkedCount === 0 || uncheckedCount > 0) {
-            return false
-        }
+        if (checkedCount > 0 && uncheckedCount > 0) return undefined;
 
-        return true;
+        return !(checkedCount === 0 || uncheckedCount > 0);
     }
 
     public setFilterText(filterText: string) {
@@ -390,10 +389,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private filterColumns(): void {
-        const filterResults: { [id: string]: boolean } = {};
+        const filterResults: { [id: string]: boolean; } = {};
 
         const passesFilter = (item: OriginalColumnGroupChild) => {
-            if(!_.exists(this.filterText)) return true;
+            if (!_.exists(this.filterText)) return true;
 
             const columnCompId = this.getColumnCompId(item);
             const comp = this.columnComps.get(columnCompId);
@@ -464,7 +463,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         }
 
         return columnGroupChild.getId();
-    }
+    };
 
     private notifyListeners(): void {
         this.fireGroupExpandedEvent();
@@ -473,12 +472,12 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();
-        this.dispatchEvent({type: 'groupExpanded', state: expandState});
+        this.dispatchEvent({ type: 'groupExpanded', state: expandState });
     }
 
     private fireSelectionChangedEvent(): void {
         const selectionState = this.getSelectionState();
-        this.dispatchEvent({type: 'selectionChanged', state: selectionState});
+        this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }
 
     private destroyColumnComps(): void {

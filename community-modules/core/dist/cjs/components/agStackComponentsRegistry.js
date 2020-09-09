@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,7 @@ var AgStackComponentsRegistry = /** @class */ (function (_super) {
     };
     AgStackComponentsRegistry.prototype.addComponent = function (componentMeta) {
         // get name of the class as a string
-        // let className = _.getNameOfClass(ComponentClass);
+        // let className = getNameOfClass(ComponentClass);
         // insert a dash after every capital letter
         // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
         var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();

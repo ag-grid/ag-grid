@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgRadioButton } from './agRadioButton';
-export declare class AgToggleButton extends AgRadioButton {
-    protected className: string;
-    protected inputType: string;
+import { AgCheckbox } from './agCheckbox';
+import { IInputField } from './agAbstractInputField';
+export declare class AgToggleButton extends AgCheckbox {
+    constructor(config?: IInputField);
     setValue(value: boolean, silent?: boolean): this;
 }

@@ -6,10 +6,11 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { CellValueChangedEvent, Events } from "../events";
-import { EventService } from "../eventService";
 import { ValueCache } from "./valueCache";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { getValueUsingField } from "../utils/object";
+import { missing, exists } from "../utils/generic";
+import { doOnce } from "../utils/function";
 
 @Bean('valueService')
 export class ValueService extends BeanStub {
@@ -63,7 +64,7 @@ export class ValueService extends BeanStub {
         } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
-            result = _.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData[colId];
         } else if (aggDataExists) {
@@ -71,7 +72,7 @@ export class ValueService extends BeanStub {
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (field && data) {
-            result = _.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
@@ -91,7 +92,7 @@ export class ValueService extends BeanStub {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (_.missing(rowNode.data)) {
+        if (missing(rowNode.data)) {
             rowNode.data = {};
         }
 
@@ -99,7 +100,7 @@ export class ValueService extends BeanStub {
         const { field, newValueHandler, valueSetter } = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
-        if (_.missing(field) && _.missing(newValueHandler) && _.missing(valueSetter)) {
+        if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
             console.warn(`ag-Grid: you need either field or valueSetter set on colDef for editing to work`);
             return;
@@ -121,9 +122,9 @@ export class ValueService extends BeanStub {
 
         let valueWasDifferent: boolean;
 
-        if (newValueHandler && _.exists(newValueHandler)) {
+        if (newValueHandler && exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
-        } else if (_.exists(valueSetter)) {
+        } else if (exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
@@ -272,7 +273,7 @@ export class ValueService extends BeanStub {
         result = String(result);
 
         if (result === '[object Object]') {
-            _.doOnce(() => {
+            doOnce(() => {
                 console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }

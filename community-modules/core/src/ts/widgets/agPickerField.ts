@@ -1,44 +1,60 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Autowired } from "../context/context";
 import { Component } from "./component";
-import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "./componentAnnotations";
-import { _ } from "../utils";
+import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy } from "../utils/aria";
+import { createIconNoSpan } from "../utils/icon";
+import { exists } from "../utils/generic";
+import { setElementWidth, isVisible } from "../utils/dom";
+import { KeyCode } from '../constants/keyCode';
+import { IAgLabel } from './agAbstractLabel';
 
-export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
-    protected TEMPLATE = /* html */
-        `<div class="ag-picker-field" role="presentation">
-            <label ref="eLabel"></label>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
-                <%displayField% ref="eDisplayField" class="ag-picker-field-display"></%displayField%>
-                <div ref="eIcon" class="ag-picker-field-icon"></div>
-            </div>
-        </div>`;
-
-    protected abstract showPicker(): Component;
-    protected abstract pickerIcon: string;
-    protected value: K;
+export abstract class AgPickerField<TElement extends HTMLElement, TValue> extends AgAbstractField<TValue> {
+    public abstract showPicker(): Component;
+    protected value: TValue;
+    protected isPickerDisplayed: boolean = false;
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
     private pickerComponent: Component;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected eDisplayField: T;
-    @RefSelector('eIcon') private eIcon: HTMLButtonElement;
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
+    @RefSelector('eDisplayField') protected readonly eDisplayField: TElement;
+    @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
+
+    constructor(config?: IAgLabel, className?: string, private readonly pickerIcon?: string, popupRole?: string) {
+        super(config, /* html */
+            `<div class="ag-picker-field" role="presentation">
+                <div ref="eLabel"></div>
+                <div ref="eWrapper"
+                    class="ag-wrapper ag-picker-field-wrapper"
+                    tabIndex="-1"
+                    ${popupRole ? `aria-haspopup="${popupRole}"` : ''}>
+                    <div ref="eDisplayField" class="ag-picker-field-display"></div>
+                    <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                </div>
+            </div>`, className);
+    }
 
     protected postConstruct() {
         super.postConstruct();
+
+        const displayId = `${this.getCompId()}-display`;
+
+        this.eDisplayField.setAttribute('id', displayId);
+        setAriaDescribedBy(this.eWrapper, displayId);
 
         const clickHandler = () => {
             if (this.skipClick) {
                 this.skipClick = false;
                 return;
             }
+
             if (this.isDisabled()) { return; }
+
             this.pickerComponent = this.showPicker();
         };
 
@@ -49,7 +65,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 !this.skipClick &&
                 this.pickerComponent &&
                 this.pickerComponent.isAlive() &&
-                _.isVisible(this.pickerComponent.getGui()) &&
+                isVisible(this.pickerComponent.getGui()) &&
                 eGui.contains(e.target as HTMLElement)
             ) {
                 this.skipClick = true;
@@ -58,13 +74,15 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
 
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             switch (e.keyCode) {
-                case Constants.KEY_UP:
-                case Constants.KEY_DOWN:
-                case Constants.KEY_ENTER:
-                case Constants.KEY_SPACE:
+                case KeyCode.UP:
+                case KeyCode.DOWN:
+                case KeyCode.ENTER:
+                case KeyCode.SPACE:
                     clickHandler();
-                case Constants.KEY_ESCAPE:
-                    e.preventDefault();
+                case KeyCode.ESCAPE:
+                    if (this.isPickerDisplayed) {
+                        e.preventDefault();
+                    }
                     break;
             }
         });
@@ -73,12 +91,28 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper));
         }
     }
 
+    protected refreshLabel() {
+        if (exists(this.getLabel())) {
+            setAriaLabelledBy(this.eWrapper, this.getLabelId());
+        } else {
+            this.eWrapper.removeAttribute('aria-labelledby');
+        }
+
+        super.refreshLabel();
+    }
+
+    public setAriaLabel(label: string): this {
+        setAriaLabel(this.eWrapper, label);
+
+        return this;
+    }
+
     public setInputWidth(width: number | 'flex'): this {
-        _.setElementWidth(this.eWrapper, width);
+        setElementWidth(this.eWrapper, width);
         return this;
     }
 

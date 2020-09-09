@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
@@ -17,13 +17,14 @@ import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCell
 import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
-import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { IFilterComp, IFilterParams, IFilterDef } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
 import { IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { ComponentType } from "./componentTypes";
 import { BeanStub } from "../../context/beanStub";
-export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
+export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
 export declare type AgComponentPropertyInput<A extends IComponent<TParams>, TParams> = AgGridRegisteredComponentInput<A> | string | boolean;
 export declare enum ComponentSource {
     DEFAULT = 0,
@@ -48,15 +49,12 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
     source: ComponentSource;
     paramsFromSelector: TParams;
 }
-export interface ModifyParamsCallback<TParams> {
-    (params: TParams, component: IComponent<TParams>): TParams;
-}
 export declare class UserComponentFactory extends BeanStub {
-    private gridOptions;
-    private agComponentUtils;
-    private componentMetadataProvider;
-    private userComponentRegistry;
-    private frameworkComponentWrapper;
+    private readonly gridOptions;
+    private readonly agComponentUtils;
+    private readonly componentMetadataProvider;
+    private readonly userComponentRegistry;
+    private readonly frameworkComponentWrapper;
     newDateComponent(params: IDateParams): Promise<IDateComp>;
     newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp>;
     newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp>;
@@ -68,9 +66,9 @@ export declare class UserComponentFactory extends BeanStub {
     newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp>;
     newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp>;
     newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp>;
-    newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string, modifyParamsCallback: ModifyParamsCallback<IFilterParams>): Promise<IFilterComp>;
+    newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp>;
     newSetFilterCellRenderer(target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp>;
-    newFloatingFilterComponent(colDef: ColDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
+    newFloatingFilterComponent(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
     newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
     newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp>;
     /**
@@ -86,10 +84,8 @@ export declare class UserComponentFactory extends BeanStub {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
      */
-    private createAndInitUserComponent;
+    createAndInitUserComponent<A extends IComponent<TParams>, TParams>(definitionObject: DefinitionObject, paramsFromGrid: TParams, componentType: ComponentType, defaultComponentName?: string, optional?: boolean): Promise<A>;
     private addReactHacks;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated

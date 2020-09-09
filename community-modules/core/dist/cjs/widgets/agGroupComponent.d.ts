@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "./component";
+import { Component } from './component';
 declare type GroupItem = Component | HTMLElement;
 declare type Align = 'start' | 'end' | 'center' | 'stretch';
 declare type Direction = 'horizontal' | 'vertical';

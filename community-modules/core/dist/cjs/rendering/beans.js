@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -129,6 +129,9 @@ var Beans = /** @class */ (function () {
     __decorate([
         context_1.Optional('selectionHandleFactory')
     ], Beans.prototype, "selectionHandleFactory", void 0);
+    __decorate([
+        context_1.Autowired('rowCssClassCalculator')
+    ], Beans.prototype, "rowCssClassCalculator", void 0);
     __decorate([
         context_1.PostConstruct
     ], Beans.prototype, "postConstruct", null);

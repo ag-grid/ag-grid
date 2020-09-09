@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
+<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Understanding Full Width</h2>
 
@@ -117,6 +117,6 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-<?= grid_example('Basic Full Width', 'basic-full-width', 'generated', ['exampleHeight' => 595, 'modules' => true]) ?>
+<?= grid_example('Basic Full Width', 'basic-full-width', 'mixed', ['exampleHeight' => 595, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

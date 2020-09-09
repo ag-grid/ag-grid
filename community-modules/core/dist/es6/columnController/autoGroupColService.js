@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,9 +25,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { mergeDeep, assign } from "../utils/object";
+import { missing } from "../utils/generic";
 var AutoGroupColService = /** @class */ (function (_super) {
     __extends(AutoGroupColService, _super);
     function AutoGroupColService() {
@@ -68,14 +69,14 @@ var AutoGroupColService = /** @class */ (function (_super) {
             colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
         var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-        _.mergeDeep(defaultAutoColDef, userAutoColDef);
+        mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
         defaultAutoColDef.colId = colId;
         // For tree data the filter is always allowed
         if (!this.gridOptionsWrapper.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            var noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
+            var noFieldOrValueGetter = missing(defaultAutoColDef.field) && missing(defaultAutoColDef.valueGetter) && missing(defaultAutoColDef.filterValueGetter);
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.filter = false;
             }
@@ -103,13 +104,13 @@ var AutoGroupColService = /** @class */ (function (_super) {
         // defaultAutoColDef.suppressMovable = true;
         if (rowGroupCol) {
             var rowGroupColDef = rowGroupCol.getColDef();
-            _.assign(defaultAutoColDef, {
+            assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
             if (rowGroupColDef.cellRenderer) {
-                _.assign(defaultAutoColDef, {
+                assign(defaultAutoColDef, {
                     cellRendererParams: {
                         innerRenderer: rowGroupColDef.cellRenderer,
                         innerRendererParams: rowGroupColDef.cellRendererParams

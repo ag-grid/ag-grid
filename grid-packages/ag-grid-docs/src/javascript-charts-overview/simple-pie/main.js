@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     title: {
         text: 'Religions of London Population (2016)',
         fontSize: 18,

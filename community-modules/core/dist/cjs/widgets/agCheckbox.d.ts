@@ -1,23 +1,20 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
-import { AgAbstractInputField } from './agAbstractInputField';
+import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    protected className: string;
-    protected displayTag: string;
-    protected inputType: string;
+    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected labelAlignment: LabelAlignment;
-    protected gridOptionsWrapper: GridOptionsWrapper;
-    private selected;
+    private selected?;
     private readOnly;
     private passive;
-    constructor();
+    constructor(config?: IInputField, className?: string, inputType?: string);
     protected addInputListeners(): void;
     getNextValue(): boolean;
     setPassive(passive: boolean): void;
@@ -26,7 +23,7 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     setDisabled(disabled: boolean): this;
     toggle(): void;
     getValue(): boolean;
-    setValue(value: boolean | undefined, silent?: boolean): this;
+    setValue(value?: boolean, silent?: boolean): this;
     setName(name: string): this;
     protected isSelected(): boolean;
     private setSelected;

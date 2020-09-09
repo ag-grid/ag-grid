@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,7 +37,6 @@ export { Column } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { OriginalColumnGroup } from "./entities/originalColumnGroup";
 export { RowNode } from "./entities/rowNode";
-// filter
 export { FilterManager } from "./filter/filterManager";
 export { ProvidedFilter } from "./filter/provided/providedFilter";
 export { SimpleFilter } from "./filter/provided/simpleFilter";
@@ -45,6 +44,9 @@ export { ScalarFilter } from "./filter/provided/scalarFilter";
 export { NumberFilter } from "./filter/provided/number/numberFilter";
 export { TextFilter } from "./filter/provided/text/textFilter";
 export { DateFilter } from "./filter/provided/date/dateFilter";
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
+export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
+export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";
 export { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
@@ -80,7 +82,7 @@ export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
-export { RowComp } from "./rendering/rowComp";
+export { RowComp } from "./rendering/row/rowComp";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 // row models
@@ -120,7 +122,8 @@ export { CellRangeType, SelectionHandleType } from "./interfaces/iRangeControlle
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
-export { Constants } from "./constants";
+export { Constants } from "./constants/constants";
+export { KeyCode } from "./constants/keyCode";
 export { Grid } from "./grid";
 export { GridApi } from "./gridApi";
 export { Events } from "./eventKeys";

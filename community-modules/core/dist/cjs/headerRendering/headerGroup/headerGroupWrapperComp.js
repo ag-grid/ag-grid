@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var column_1 = require("../../entities/column");
 var columnGroup_1 = require("../../entities/columnGroup");
-var constants_1 = require("../../constants");
+var constants_1 = require("../../constants/constants");
 var context_1 = require("../../context/context");
 var cssClassApplier_1 = require("../cssClassApplier");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
@@ -35,7 +35,11 @@ var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var hoverFeature_1 = require("../hoverFeature");
 var tooltipFeature_1 = require("../../widgets/tooltipFeature");
 var abstractHeaderWrapper_1 = require("../header/abstractHeaderWrapper");
-var utils_1 = require("../../utils");
+var originalColumnGroup_1 = require("../../entities/originalColumnGroup");
+var aria_1 = require("../../utils/aria");
+var array_1 = require("../../utils/array");
+var dom_1 = require("../../utils/dom");
+var keyCode_1 = require("../../constants/keyCode");
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
@@ -58,6 +62,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
+        this.setupExpandable();
         this.createManagedBean(new hoverFeature_1.HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         this.createManagedBean(new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans));
     };
@@ -71,16 +76,34 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         var activeEl = document.activeElement;
         var eGui = this.getGui();
         var wrapperHasFocus = activeEl === eGui;
-        switch (e.keyCode) {
-            case constants_1.Constants.KEY_ENTER:
-                if (wrapperHasFocus) {
-                    var column = this.getColumn();
-                    var expandable = column.isExpandable();
-                    if (expandable) {
-                        var newExpandedValue = !column.isExpanded();
-                        this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
-                    }
-                }
+        if (!this.expandable || !wrapperHasFocus) {
+            return;
+        }
+        if (e.keyCode === keyCode_1.KeyCode.ENTER) {
+            var column = this.getColumn();
+            var newExpandedValue = !column.isExpanded();
+            this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+        }
+    };
+    HeaderGroupWrapperComp.prototype.onTabKeyDown = function () { };
+    HeaderGroupWrapperComp.prototype.setupExpandable = function () {
+        var column = this.getColumn();
+        var originalColumnGroup = column.getOriginalColumnGroup();
+        this.refreshExpanded();
+        this.addManagedListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
+        this.addManagedListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
+    };
+    HeaderGroupWrapperComp.prototype.refreshExpanded = function () {
+        var column = this.getColumn();
+        var eGui = this.getGui();
+        var expandable = column.isExpandable();
+        var expanded = column.isExpanded();
+        this.expandable = expandable;
+        if (!expandable) {
+            eGui.removeAttribute('aria-expanded');
+        }
+        else {
+            aria_1.setAriaExpanded(eGui, expanded);
         }
     };
     HeaderGroupWrapperComp.prototype.setupMovingCss = function () {
@@ -115,7 +138,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
+        dom_1.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
         this.getGui().setAttribute("col-id", this.column.getUniqueId());
@@ -203,7 +226,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.columnController.getAllDisplayedColumns().forEach(function (column) {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
-                utils_1._.removeFromArray(allColumnsOriginalOrder, column);
+                array_1.removeFromArray(allColumnsOriginalOrder, column);
             }
         });
         // we are left with non-visible columns, stick these in at the end
@@ -266,7 +289,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         var _this = this;
         this.eHeaderCellResize = this.getRefElement('agResize');
         if (!this.column.isResizable()) {
-            utils_1._.removeFromParent(this.eHeaderCellResize);
+            dom_1.removeFromParent(this.eHeaderCellResize);
             return;
         }
         var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
@@ -318,7 +341,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.resizeTakeFromStartWidth = null;
             this.resizeTakeFromRatios = null;
         }
-        utils_1._.addCssClass(this.getGui(), 'ag-column-resizing');
+        dom_1.addCssClass(this.getGui(), 'ag-column-resizing');
     };
     HeaderGroupWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var resizeSets = [];
@@ -337,7 +360,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         }
         this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
         if (finished) {
-            utils_1._.removeCssClass(this.getGui(), 'ag-column-resizing');
+            dom_1.removeCssClass(this.getGui(), 'ag-column-resizing');
         }
     };
     // optionally inverts the drag, depending on pinned and RTL
@@ -356,7 +379,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         }
         return result;
     };
-    HeaderGroupWrapperComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"agResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
+    HeaderGroupWrapperComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"columnheader\" tabindex=\"-1\">\n            <div ref=\"agResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);

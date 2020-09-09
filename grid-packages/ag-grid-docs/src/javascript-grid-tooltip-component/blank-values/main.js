@@ -1,6 +1,8 @@
+var toolTipValueGetter = function(params) { return { value: params.value }; }
+
 var columnDefs = [
     { headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete' },
-    { headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: function(params) { return { value: params.value }; } },
+    { headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: toolTipValueGetter },
     { field: "sport", width: 110 },
     { field: "gold", width: 100 },
     { field: "silver", width: 100 },

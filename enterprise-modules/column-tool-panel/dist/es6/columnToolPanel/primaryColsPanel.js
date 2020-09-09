@@ -17,17 +17,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { RefSelector, ManagedFocusComponent } from "@ag-grid-community/core";
+import { RefSelector, ManagedFocusComponent, } from "@ag-grid-community/core";
 var PrimaryColsPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsPanel, _super);
     function PrimaryColsPanel() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, PrimaryColsPanel.TEMPLATE, true) || this;
     }
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    PrimaryColsPanel.prototype.init = function (allowDragging, params) {
-        this.setTemplate(PrimaryColsPanel.TEMPLATE);
+    PrimaryColsPanel.prototype.init = function (allowDragging, params, eventType) {
         this.allowDragging = allowDragging;
         this.params = params;
+        this.eventType = eventType;
         this.primaryColsHeaderPanel.init(this.params);
         var hideFilter = this.params.suppressColumnFilter;
         var hideSelect = this.params.suppressColumnSelectAll;
@@ -37,23 +37,12 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         }
         this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
         this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
-        this.primaryColsListPanel.init(this.params, this.allowDragging);
+        this.primaryColsListPanel.init(this.params, this.allowDragging, this.eventType);
         this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
-        this.wireFocusManagement();
-    };
-    PrimaryColsPanel.prototype.isFocusableContainer = function () {
-        return true;
-    };
-    PrimaryColsPanel.prototype.onTabKeyDown = function (e) {
-        var nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-        if (nextEl) {
-            e.preventDefault();
-            nextEl.focus();
-        }
     };
     PrimaryColsPanel.prototype.onExpandAll = function () {
         this.primaryColsListPanel.doSetExpandedAll(true);

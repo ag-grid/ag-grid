@@ -30,6 +30,7 @@ export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
     api: GridApi;
+    context: any;
 }
 
 export interface ICellRenderer {

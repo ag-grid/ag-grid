@@ -1,5 +1,6 @@
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: true,
     title: {
         text: 'Height vs Weight'
     },
@@ -21,8 +22,8 @@ var options = {
             stroke: '#9f4e4a',
             marker: {
                 shape: 'square',
-                minSize: 8,
-                size: 30
+                size: 6,
+                maxSize: 30
             }
         },
         {
@@ -38,8 +39,8 @@ var options = {
             fill: 'rgba(123,145,222,0.71)',
             stroke: '#56659b',
             marker: {
-                minSize: 8,
-                size: 30
+                size: 6,
+                maxSize: 30
             }
         }
     ],

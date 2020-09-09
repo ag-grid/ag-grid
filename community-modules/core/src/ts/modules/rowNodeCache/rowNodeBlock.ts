@@ -1,4 +1,4 @@
-import { NumberSequence, _ } from "../../utils";
+import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { Context, PreDestroy } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
@@ -6,6 +6,7 @@ import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { cleanNumber } from "../../utils/number";
 
 export interface RowNodeBlockBeans {
     context: Context;
@@ -257,7 +258,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             this.populateWithRowData(rows);
         }
 
-        lastRow = _.cleanNumber(lastRow);
+        lastRow = cleanNumber(lastRow);
 
         // check here if lastRow should be set
         const event: LoadCompleteEvent = {

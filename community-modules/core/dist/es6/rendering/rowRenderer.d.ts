@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -89,7 +89,7 @@ export declare class RowRenderer extends BeanStub {
     private flushContainers;
     private onDisplayedColumnsChanged;
     private redrawFullWidthEmbeddedRows;
-    refreshFullWidthRows(): void;
+    refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void;
     private createOrUpdateRowComp;
     private destroyRowComps;
     private checkAngularCompile;

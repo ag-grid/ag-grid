@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,18 +23,17 @@ var agCheckbox_1 = require("./agCheckbox");
 var eventKeys_1 = require("../eventKeys");
 var AgRadioButton = /** @class */ (function (_super) {
     __extends(AgRadioButton, _super);
-    function AgRadioButton() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.className = 'ag-radio-button';
-        _this.inputType = 'radio';
-        return _this;
+    function AgRadioButton(config) {
+        return _super.call(this, config, 'ag-radio-button', 'radio') || this;
     }
     AgRadioButton.prototype.isSelected = function () {
         return this.eInput.checked;
     };
     AgRadioButton.prototype.toggle = function () {
-        var nextValue = this.getNextValue();
-        this.setValue(nextValue);
+        // do not allow an active radio button to be deselected
+        if (!this.isSelected()) {
+            this.setValue(true);
+        }
     };
     AgRadioButton.prototype.addInputListeners = function () {
         _super.prototype.addInputListeners.call(this);

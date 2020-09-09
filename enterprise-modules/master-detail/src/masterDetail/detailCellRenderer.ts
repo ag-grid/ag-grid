@@ -6,6 +6,7 @@ import {
     Environment,
     Grid,
     GridOptions,
+    GridOptionsWrapper,
     ICellRenderer,
     ICellRendererParams,
     RefSelector,
@@ -23,6 +24,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     @Autowired('environment') private environment: Environment;
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private detailGridOptions: GridOptions;
 
@@ -133,15 +135,16 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        const gridApi = this.params.api;
-        const onRowHeightChangedDebounced = _.debounce(gridApi.onRowHeightChanged.bind(gridApi), 20);
-
         const checkRowSizeFunc = () => {
             const clientHeight = this.getGui().clientHeight;
 
-            if (clientHeight != null) {
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight != null && clientHeight > 0) {
                 this.params.node.setRowHeight(clientHeight);
-                onRowHeightChangedDebounced();
+                this.params.api.onRowHeightChanged();
             }
         };
 
@@ -276,7 +279,8 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             // we take data from node, rather than params.data
             // as the data could have been updated with new instance
             data: this.params.node.data,
-            successCallback: successCallback
+            successCallback: successCallback,
+            context: this.gridOptionsWrapper.getContext()
         };
         userFunc(funcParams);
     }

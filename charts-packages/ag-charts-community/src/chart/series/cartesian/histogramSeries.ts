@@ -3,7 +3,6 @@ import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
-import palette from "../../palettes";
 import {
     HighlightStyle,
     SeriesNodeDatum,
@@ -26,7 +25,7 @@ enum HistogramSeriesNodeTag {
 }
 
 class HistogramSeriesLabel extends Label {
-    @reactive('change') formatter?: (bin: HistogramBin) => string;
+    @reactive('change') formatter?: (params: { value: number }) => string;
 }
 
 const defaultBinCount = 10;
@@ -41,16 +40,16 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-    label: {
+    label?: {
         text: string;
         x: number;
         y: number;
-        fontStyle: FontStyle;
-        fontWeight: FontWeight;
+        fontStyle?: FontStyle;
+        fontWeight?: FontWeight;
         fontSize: number;
         fontFamily: string;
         fill: string;
-    }
+    };
 }
 
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
@@ -60,10 +59,10 @@ export interface HistogramSeriesNodeClickEvent extends TypedEvent {
     xKey: string;
 }
 
-type AggregationName = 'count' | 'sum' | 'mean';
+export type HistogramAggregation = 'count' | 'sum' | 'mean';
 type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
-const aggregationFunctions: { [key in AggregationName]: AggregationFunction } = {
+const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction } = {
     count: bin => bin.data.length,
     sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
     mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey)
@@ -93,7 +92,7 @@ export class HistogramBin {
         return this.aggregatedValue / this.domainWidth;
     };
 
-    calculateAggregatedValue(aggregationName: AggregationName, yKey: string) {
+    calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string) {
         if (!yKey) {
             // not having a yKey forces us into a frequency plot
             aggregationName = 'count';
@@ -134,8 +133,8 @@ export class HistogramSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
 
-    @reactive('dataChange') fill: string = palette.fills[0];
-    @reactive('dataChange') stroke: string = palette.strokes[0];
+    @reactive('dataChange') fill: string | undefined = undefined;
+    @reactive('dataChange') stroke: string | undefined = undefined;
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
@@ -205,13 +204,13 @@ export class HistogramSeries extends CartesianSeries {
         return this._bins;
     }
 
-    private _aggregation: AggregationName;
-    set aggregation(aggregation: AggregationName) {
+    private _aggregation: HistogramAggregation;
+    set aggregation(aggregation: HistogramAggregation) {
         this._aggregation = aggregation;
 
         this.scheduleData();
     }
-    get aggregation(): AggregationName {
+    get aggregation(): HistogramAggregation {
         return this._aggregation;
     }
 
@@ -283,12 +282,21 @@ export class HistogramSeries extends CartesianSeries {
         this.updateRectNodes();
     }
 
+    setColors(fills: string[], strokes: string[]) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
+    }
+
     protected highlightedDatum?: HistogramNodeDatum;
 
     /*  during processData phase, used to unify different ways of the user specifying
         the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
     private deriveBins(): [number, number][] {
         const { bins, binCount } = this;
+
+        if (!this.data) {
+            return [];
+        }
 
         if (bins && binCount) {
             console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
@@ -362,7 +370,7 @@ export class HistogramSeries extends CartesianSeries {
         const yData = this.binnedData.map(b => b.getY(this.areaPlot));
         const yMinMax = numericExtent(yData);
 
-        this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
+        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
 
         const firstBin = this.binnedData[0];
         const lastBin = this.binnedData[this.binnedData.length - 1];
@@ -423,7 +431,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const nodeData: HistogramNodeDatum[] = [];
 
-        const defaultLabelFormatter = (b: HistogramBin) => String(b.aggregatedValue);
+        const defaultLabelFormatter = (params: { value: number }) => String(params.value);
         const {
             label: {
                 formatter: labelFormatter = defaultLabelFormatter,
@@ -448,8 +456,8 @@ export class HistogramSeries extends CartesianSeries {
                 w = xMaxPx - xMinPx,
                 h = Math.abs(yMaxPx - yZeroPx);
 
-            const selectionDatumLabel = y !== 0 && {
-                text: labelFormatter(binOfData),
+            const selectionDatumLabel = y !== 0 ? {
+                text: labelFormatter({ value: binOfData.aggregatedValue }),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
@@ -457,7 +465,7 @@ export class HistogramSeries extends CartesianSeries {
                 fill: labelColor,
                 x: xMinPx + w / 2,
                 y: yMaxPx + h / 2
-            };
+            } : undefined;
 
             nodeData.push({
                 series: this,
@@ -490,6 +498,9 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     private updateRectNodes(): void {
+        if (!this.chart) {
+            return;
+        }
         const { highlightedDatum } = this.chart;
         const {
             fillOpacity,
@@ -607,8 +618,8 @@ export class HistogramSeries extends CartesianSeries {
                     text: yName || yKey || 'Frequency'
                 },
                 marker: {
-                    fill,
-                    stroke,
+                    fill: fill || 'rgba(0, 0, 0, 0)',
+                    stroke: stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

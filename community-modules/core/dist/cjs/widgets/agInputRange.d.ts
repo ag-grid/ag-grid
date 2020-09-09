@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
@@ -7,14 +7,9 @@ interface IInputRange extends IInputField {
     max?: number;
     step?: number;
 }
-export declare class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
-    protected className: string;
-    protected displayTag: string;
-    protected inputType: string;
-    protected config: IInputRange;
+export declare class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
     private min;
     private max;
-    private step;
     constructor(config?: IInputRange);
     protected postConstruct(): void;
     protected addInputListeners(): void;

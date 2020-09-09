@@ -31,8 +31,29 @@ var chartDataModel_1 = require("../../chartDataModel");
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.axisTypeToClassMap = {
+            number: ag_charts_community_1.NumberAxis,
+            category: ag_charts_community_1.CategoryAxis,
+            groupedCategory: ag_charts_community_1.GroupedCategoryAxis,
+            time: ag_charts_community_1.TimeAxis
+        };
+        return _this;
     }
+    CartesianChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var _a;
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var standaloneChartType = this.getStandaloneChartType();
+        var flipXY = standaloneChartType === 'bar';
+        var xAxisType = 'category';
+        var yAxisType = 'number';
+        if (flipXY) {
+            _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
+        }
+        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
+        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+        return options;
+    };
     CartesianChartProxy.prototype.getAxisProperty = function (expression) {
         return core_1._.get(this.chartOptions.xAxis, expression, undefined);
     };
@@ -48,10 +69,30 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (isHorizontalChart === void 0) { isHorizontalChart = false; }
         var labelRotation = 0;
         var axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
+        var themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        var chartType = this.getStandaloneChartType();
+        var userThemeOverrideRotation = undefined;
+        var commonRotation = core_1._.get(themeOverrides, 'common.axes.category.label.rotation', undefined);
+        var cartesianRotation = core_1._.get(themeOverrides, 'cartesian.axes.category.label.rotation', undefined);
+        var chartTypeRotation = core_1._.get(themeOverrides, chartType + ".axes.category.label.rotation", undefined);
+        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+            userThemeOverrideRotation = chartTypeRotation;
+        }
+        else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
+            userThemeOverrideRotation = cartesianRotation;
+        }
+        else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
+            userThemeOverrideRotation = commonRotation;
+        }
         if (categoryId !== chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             var label = this.chartOptions[axisKey].label;
-            if (label && label.rotation) {
-                labelRotation = label.rotation;
+            if (label) {
+                if (userThemeOverrideRotation !== undefined) {
+                    labelRotation = userThemeOverrideRotation;
+                }
+                else {
+                    labelRotation = label.rotation || 335;
+                }
             }
         }
         var axisPosition = isHorizontalChart ? ag_charts_community_1.ChartAxisPosition.Left : ag_charts_community_1.ChartAxisPosition.Bottom;
@@ -88,6 +129,9 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         options.yAxis = this.getDefaultAxisOptions();
         return options;
     };
+    CartesianChartProxy.prototype.getAxisClass = function (axisType) {
+        return this.axisTypeToClassMap[axisType];
+    };
     CartesianChartProxy.prototype.updateAxes = function (baseAxisType, isHorizontalChart) {
         if (baseAxisType === void 0) { baseAxisType = 'category'; }
         if (isHorizontalChart === void 0) { isHorizontalChart = false; }
@@ -101,16 +145,16 @@ var CartesianChartProxy = /** @class */ (function (_super) {
             }
             return;
         }
-        var axisClass = ag_charts_community_1.ChartBuilder.toAxisClass(baseAxisType);
+        var axisClass = this.axisTypeToClassMap[baseAxisType];
         if (baseAxis instanceof axisClass) {
             return;
         }
         var options = this.chartOptions;
         if (isHorizontalChart && !options.yAxis.type) {
-            options = __assign(__assign({}, options), { yAxis: __assign(__assign({}, options.yAxis), { type: baseAxisType }) });
+            options = __assign(__assign({}, options), { yAxis: __assign({ type: baseAxisType }, options.yAxis) });
         }
         else if (!isHorizontalChart && !options.xAxis.type) {
-            options = __assign(__assign({}, options), { xAxis: __assign(__assign({}, options.xAxis), { type: baseAxisType }) });
+            options = __assign(__assign({}, options), { xAxis: __assign({ type: baseAxisType }, options.xAxis) });
         }
         this.recreateChart(options);
     };

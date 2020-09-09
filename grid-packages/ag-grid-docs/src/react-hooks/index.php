@@ -73,6 +73,9 @@ export default forwardRef((props, ref) => {
 
 <p>The same applies to any other component to be used within the grid that requires lifecycle methods to be present.</p>
 
+    <p>Please refer to our <a href="../javascript-grid-components/">Components</a> documentation for working examples for the specific
+    type of component you're interested in.</p>
+
     <h2 id="react-null">Rendering Null</h2>
 
     <p>If you don't want to output anything on <code>render</code> then return an empty string rather than <code>null</code>.</p>

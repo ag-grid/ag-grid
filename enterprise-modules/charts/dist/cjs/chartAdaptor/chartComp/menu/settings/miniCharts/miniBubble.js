@@ -26,10 +26,10 @@ var MiniBubble = /** @class */ (function (_super) {
         var data = [
             [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
         ];
-        var xScale = ag_charts_community_1.linearScale();
+        var xScale = new ag_charts_community_1.LinearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
-        var yScale = ag_charts_community_1.linearScale();
+        var yScale = new ag_charts_community_1.LinearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
         var points = [];

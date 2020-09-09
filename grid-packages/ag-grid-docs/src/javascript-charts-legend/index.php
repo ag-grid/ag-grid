@@ -179,7 +179,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.legend') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'chart.legend', [], ['showSnippets' => true]) ?>
 
 <h2>Next Up</h2>
 

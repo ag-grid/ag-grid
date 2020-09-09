@@ -1,11 +1,20 @@
 // Custom `Array.find` implementation for legacy browsers.
-export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
-    for (let i = 0, ln = arr.length; i < ln; i++) {
+export function find<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): T | undefined {
+    for (let i = 0; i < arr.length; i++) {
         const value = arr[i];
         if (predicate(value, i, arr)) {
             return value;
         }
     }
+}
+
+export function findIndex<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): number {
+    for (let i = 0; i < arr.length; i++) {
+        if (predicate(arr[i], i, arr)) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 /**
@@ -119,4 +128,17 @@ export function findLargestMinMax(totals: { min: number, max: number }[]): { min
     }
 
     return {min, max};
+}
+
+export function copy(array: any[], start: number = 0, count: number = array.length): any[] {
+    const result = [];
+    let n = array.length;
+
+    if (n) {
+        for (let i = 0; i < count; i++) {
+            result.push(array[(start + i) % n]);
+        }
+    }
+
+    return result;
 }

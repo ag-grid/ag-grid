@@ -1,18 +1,18 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import {RowNode} from "./rowNode";
-import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnApi";
-import {Column} from "./column";
-import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {ICellRenderer, ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
-import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
-import {IDatasource} from "../interfaces/iDatasource";
-import {CellPosition} from "./cellPosition";
-import {IDateComp} from "../rendering/dateComponent";
-import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
-import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../interfaces/exportParams";
+import { RowNode } from "./rowNode";
+import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { Column } from "./column";
+import { IViewportDatasource } from "../interfaces/iViewportDatasource";
+import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { IDatasource } from "../interfaces/iDatasource";
+import { CellPosition } from "./cellPosition";
+import { IDateComp } from "../rendering/dateComponent";
+import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
     BodyScrollEvent,
     CellClickedEvent,
@@ -80,13 +80,14 @@ import {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {IComponent} from "../interfaces/iComponent";
-import {AgGridRegisteredComponentInput} from "../components/framework/userComponentRegistry";
-import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
-import {StatusPanelDef} from "../interfaces/iStatusPanel";
-import {SideBarDef} from "./sideBar";
-import {ChartMenuOptions, ChartOptions, ChartType} from "../interfaces/iChartOptions";
+import { IComponent } from "../interfaces/iComponent";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
+import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
+import { StatusPanelDef } from "../interfaces/iStatusPanel";
+import { SideBarDef } from "./sideBar";
+import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
+import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -104,27 +105,11 @@ export interface GridOptions {
     deltaRowDataMode?: boolean;
     /** @deprecated */
     deltaColumnMode?: boolean;
+    applyColumnDefOrder?: boolean;
     immutableData?: boolean;
+    /** @deprecated */
     immutableColumns?: boolean;
     scrollbarWidth?: number;
-    /** @deprecated */
-    toolPanelSuppressRowGroups?: boolean;
-    /** @deprecated */
-    toolPanelSuppressValues?: boolean;
-    /** @deprecated */
-    toolPanelSuppressPivots?: boolean;
-    /** @deprecated */
-    toolPanelSuppressPivotMode?: boolean;
-    /** @deprecated */
-    toolPanelSuppressSideButtons?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnFilter?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnSelectAll?: boolean;
-    /** @deprecated */
-    toolPanelSuppressColumnExpandAll?: boolean;
-    /** @deprecated */
-    contractColumnSelection?: boolean;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
@@ -137,26 +122,16 @@ export interface GridOptions {
     deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
     alwaysShowVerticalScroll?: boolean;
-    suppressTabbing?: boolean;
+    debounceVerticalScrollbar?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
     tooltipShowDelay?: number;
     tooltipMouseTrack?: boolean;
     enableRtl?: boolean;
-    /** @deprecated in v20, use colDef.resizable instead */
-    enableColResize?: boolean;
     enableBrowserTooltips?: boolean;
     colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableCellTextSelection?: boolean;
-    /** @deprecated in v20, use colDef.sortable instead */
-    enableSorting?: boolean;
-    /** @deprecated in v20,  use colDef.sortable instead */
-    enableServerSideSorting?: boolean;
-    /** @deprecated in v20, use colDef.filter = true instead */
-    enableFilter?: boolean;
-    /** @deprecated in v20, use colDef.filter = true instead */
-    enableServerSideFilter?: boolean;
     enableGroupEdit?: boolean;
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;
@@ -176,7 +151,7 @@ export interface GridOptions {
     icons?: any; // should be typed
     angularCompileRows?: boolean;
     angularCompileFilters?: boolean;
-    angularCompileHeaders?: boolean;
+
     suppressLoadingOverlay?: boolean;
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
@@ -199,20 +174,23 @@ export interface GridOptions {
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
-    /** @deprecated */
-    pivotTotals?: boolean;
     pivotColumnGroupTotals?: string;
     pivotRowTotals?: string;
+    suppressExpandablePivotGroups?: boolean;
+
     suppressEnterpriseResetOnNewColumns?: boolean;
     // enterprise only
     enableRangeSelection?: boolean;
     enableRangeHandle?: boolean;
     enableFillHandle?: boolean;
+    fillHandleDirection?: string;
     suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     allowContextMenuWithControlKey?: boolean;
+
+    /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
@@ -229,7 +207,6 @@ export interface GridOptions {
     maxConcurrentDatasourceRequests?: number;
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
-    gridAutoHeight?: boolean;
     domLayout?: string;
     suppressChangeDetection?: boolean;
     aggregateOnlyChangedColumns?: boolean;
@@ -238,7 +215,9 @@ export interface GridOptions {
     batchUpdateWaitMillis?: number;
     asyncTransactionWaitMillis?: number;
     suppressRowTransform?: boolean;
+    /** @deprecated */
     suppressSetColumnStateEvents?: boolean;
+    suppressColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
     excludeChildrenWhenTreeDataFiltering?: boolean;
@@ -251,7 +230,6 @@ export interface GridOptions {
     cacheBlockSize?: number;
     blockLoadDebounceMillis?: number;
     paginationAutoPageSize?: boolean;
-    paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
 
     pagination?: boolean;
@@ -266,7 +244,8 @@ export interface GridOptions {
 
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
-    /** @deprecated Use floatingFilter on the colDef instead */ floatingFilter?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */
+    floatingFilter?: boolean;
     suppressExcelExport?: boolean;
     suppressCsvExport?: boolean;
 
@@ -287,10 +266,6 @@ export interface GridOptions {
     localeText?: any;
     localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
-    /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
-    // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
-    /* a map of strings (cellEditor keys) to cellEditors */
-    // cellEditors?: {[key: string]: {new(): ICellEditor}};
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
@@ -304,14 +279,10 @@ export interface GridOptions {
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupRemoveLowestSingleChildren?: boolean;
-    groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
-    /** @deprecated in v11.0 substituted by autoGroupColumnDef */
-    groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
-    forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
 
@@ -320,10 +291,12 @@ export interface GridOptions {
     rowStyle?: any;
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
-    /** @deprecated slaveGrids, replace with alignedGrids */
-    slaveGrids?: GridOptions[];
     alignedGrids?: GridOptions[];
+
+    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowSelection?: string;
+
+    suppressRowDeselection?: boolean;
     rowDeselection?: boolean;
     rowMultiSelectWithClick?: boolean;
     isRowSelectable?: IsRowSelectable;
@@ -345,8 +318,6 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    /** @deprecated */
-    showToolPanel?: boolean;
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
     columnTypes?: { [key: string]: ColDef; };
@@ -375,7 +346,9 @@ export interface GridOptions {
     groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
     groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
     fillOperation?: (params: FillOperationParams) => any;
@@ -417,9 +390,6 @@ export interface GridOptions {
 
     getBusinessKeyForNode?(node: RowNode): string;
 
-    /** @deprecated */
-    getNodeChildDetails?: GetNodeChildDetails;
-
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
@@ -430,8 +400,6 @@ export interface GridOptions {
     getRowNodeId?: GetRowNodeIdFunc;
 
     getChildCount?(dataItem: any): number;
-
-    doesDataFlower?(dataItem: any): boolean;
 
     processRowPostCreate?(params: ProcessRowParams): void;
 
@@ -447,6 +415,13 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
+    chartThemes?: string[];
+
+    customChartThemes?: { [name: string]: AgChartTheme };
+
+    chartThemeOverrides?: AgChartThemeOverrides;
+
+    /** @deprecated */
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
     /**********************************************************************************************************
@@ -604,6 +579,7 @@ export interface FillOperationParams {
     values: any[];
     initialValues: any[];
     currentIndex: number;
+    currentCellValue: any;
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
@@ -624,10 +600,6 @@ export interface GetServerSideGroupKey {
     (dataItem: any): string;
 }
 
-export interface GetNodeChildDetails {
-    (dataItem: any): NodeChildDetails;
-}
-
 export interface IsRowMaster {
     (dataItem: any): boolean;
 }
@@ -636,17 +608,15 @@ export interface IsRowSelectable {
     (node: RowNode): boolean;
 }
 
-export interface NodeChildDetails {
-    group: boolean;
-    children?: any[];
-    expanded?: boolean;
-    field?: string;
-    key?: any;
-}
-
 export interface ProcessChartOptionsParams {
     type: ChartType;
     options: ChartOptions<any>;
+}
+
+export interface ProcessChartParams {
+    type: ChartType;
+    options: AgChartOptions;
+    chart: any;
 }
 
 export interface GetContextMenuItemsParams {
@@ -680,7 +650,7 @@ export interface MenuItemDef {
     action?: () => void;
     checked?: boolean;
     icon?: HTMLElement | string;
-    subMenu?: (MenuItemDef | string)[];
+    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
     cssClasses?: string[];
     tooltip?: string;
 }
@@ -751,6 +721,7 @@ export interface ProcessDataFromClipboardParams {
 }
 
 export interface ChartRef {
+    chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
 }

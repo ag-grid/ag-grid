@@ -45,8 +45,8 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>All top level groups are the same height.</li>
-    <li>All bottom level rows are auto-sized based on the contents of the Auto A, Auto B and Auto C columns.</li>
-    <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+    <li>Column A & B have <code>autoHeight=true</code> and <code>wrapText=true</code>.
+        See <a href="../javascript-grid-row-height/">Row Height</a> for details on these properties.</li>
 </ul>
 
 <?= grid_example('Auto Row Height Example', 'auto-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>

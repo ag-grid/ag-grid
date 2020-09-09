@@ -3,8 +3,11 @@
         "meta": {
             "displayName": "Columns"
         },
+        "getColumnDefs()": {
+            "description": "Returns the current column definitions."
+        },
         "sizeColumnsToFit()": {
-            "description": "Gets columns to adjust in size to fit the grid horizontally."
+            "description": "Sets columns to adjust in size to fit the grid horizontally."
         },
         "setColumnDefs(colDefs)": {
             "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows."
@@ -25,6 +28,9 @@
         },
         "applyTransactionAsync(transaction, callback)": {
             "description": "Same as applyTransaction except executes asynchronous for efficiency."
+        },
+        "flushAsyncTransactions()": {
+            "description": "Executes any remaining grid async transaction, if any are waiting to be executed."
         },
         "setPinnedTopRowData(rowData)<br />setPinnedBottomRowData()<br />getPinnedTopRowCount()<br />getPinnedBottomRowCount()<br />getPinnedTopRow(index)<br />getPinnedBottomRow(index)": {
             "description": "Methods for getting and setting the data and getting the Row Nodes of the pinned rows."
@@ -193,12 +199,6 @@
         },
         "onSortChanged()": {
             "description": "Gets the grid to act as if the sort was changed. Useful if you update some values and want to get the grid to reorder them according to the new values."
-        },
-        "setSortModel(model)": {
-            "description": "Sets the sort state."
-        },
-        "getSortModel()": {
-            "description": "Returns the sort state."
         }
     },
     "navigation": {
@@ -470,6 +470,23 @@
             "description": "Returns the status bar component instance for the <code>key</code> provided."
         }
     },
+    "UndoRedo": {
+        "meta": {
+            "displayName": "Undo / Redo"
+        },
+        "undoCellEditing()": {
+            "description": "Undo's last cell edit."
+        },
+        "redoCellEditing()": {
+            "description": "Redo's last cell edit undo."
+        },
+        "getCurrentUndoSize()": {
+            "description": "Returns current number of available cell edit undo's."
+        },
+        "getCurrentRedoSize()": {
+            "description": "Returns current number of available cell edit redo's."
+        }
+    },
     "charts": {
         "meta": {
             "displayName": "Charts"
@@ -559,6 +576,13 @@
             "more": {
                 "name": "Purging Groups",
                 "url": "../javascript-grid-server-side-model-grouping/#purging-groups"
+            }
+        },
+        "setFillHandleDirection(direction)": {
+            "description": "Sets the preferred direction for the selection fill handle.",
+            "more": {
+                "name": "Fill Handle",
+                "url": "../javascript-grid-range-selection-fill-handle/"
             }
         }
     }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,9 +27,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var column_1 = require("../entities/column");
-var constants_1 = require("../constants");
+var constants_1 = require("../constants/constants");
 var beanStub_1 = require("../context/beanStub");
-var utils_1 = require("../utils");
+var object_1 = require("../utils/object");
+var generic_1 = require("../utils/generic");
 var AutoGroupColService = /** @class */ (function (_super) {
     __extends(AutoGroupColService, _super);
     function AutoGroupColService() {
@@ -70,14 +71,14 @@ var AutoGroupColService = /** @class */ (function (_super) {
             colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
         var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-        utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
+        object_1.mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
         defaultAutoColDef.colId = colId;
         // For tree data the filter is always allowed
         if (!this.gridOptionsWrapper.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            var noFieldOrValueGetter = utils_1._.missing(defaultAutoColDef.field) && utils_1._.missing(defaultAutoColDef.valueGetter) && utils_1._.missing(defaultAutoColDef.filterValueGetter);
+            var noFieldOrValueGetter = generic_1.missing(defaultAutoColDef.field) && generic_1.missing(defaultAutoColDef.valueGetter) && generic_1.missing(defaultAutoColDef.filterValueGetter);
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.filter = false;
             }
@@ -105,13 +106,13 @@ var AutoGroupColService = /** @class */ (function (_super) {
         // defaultAutoColDef.suppressMovable = true;
         if (rowGroupCol) {
             var rowGroupColDef = rowGroupCol.getColDef();
-            utils_1._.assign(defaultAutoColDef, {
+            object_1.assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
             if (rowGroupColDef.cellRenderer) {
-                utils_1._.assign(defaultAutoColDef, {
+                object_1.assign(defaultAutoColDef, {
                     cellRendererParams: {
                         innerRenderer: rowGroupColDef.cellRenderer,
                         innerRendererParams: rowGroupColDef.cellRendererParams

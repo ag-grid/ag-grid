@@ -1,11 +1,13 @@
+var colSpan = function(params) {
+    return params.data === 2 ? 3 : 1
+}
+
 var columnDefs = [
     {
         headerName: "A",
         field: "author",
         width: 300,
-        colSpan: function(params) {
-            return params.data === 2 ? 3 : 1
-        }
+        colSpan: colSpan
     },
     {
         headerName: "Flexed Columns",

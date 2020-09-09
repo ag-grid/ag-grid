@@ -11,7 +11,8 @@
     .ag-filter-toolpanel-search,
     .ag-status-bar,
     .ag-header-row,
-    .ag-panel-title-bar-title {
+    .ag-panel-title-bar-title,
+    .ag-multi-filter-group-title-bar {
         font-weight: 700;
         @include ag-color-property(color, header-foreground-color);
     }
@@ -249,7 +250,7 @@
         @include ag-color-property(background-color, control-panel-background-color);
         border-left: dashed 1px;
         @include ag-color-property(border-left-color, border-color);
-        margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
+        margin-left: ag-param(icon-size) / 2;
         padding-left: ag-param(icon-size) / 2;
         margin-right: ag-param(grid-size) * 2;
     }

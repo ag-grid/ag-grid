@@ -13,7 +13,7 @@ function convertStyles(code: string) {
 
         return `style={${JSON.stringify(parsed)}}`;
     });
-};
+}
 
 export function convertTemplate(template: string) {
     // React events are case sensitive, so need to ensure casing is correct
@@ -31,7 +31,30 @@ export function convertTemplate(template: string) {
     });
 
     template = template
-        .replace(/,\s+event([\)\,])/g, '$1')
+        .replace(/,\s+event([),])/g, '$1')
+        .replace(/<input (.+?[^=])>/g, '<input $1 />')
+        .replace(/ class=/g, ' className=');
+
+    return convertStyles(template);
+}
+
+export function convertFunctionalTemplate(template: string) {
+    // React events are case sensitive, so need to ensure casing is correct
+    const caseSensitiveEvents =
+    {
+        dragover: 'onDragOver',
+        dragstart: 'onDragStart',
+    };
+
+    recognizedDomEvents.forEach(event => {
+        const jsEvent = caseSensitiveEvents[event] || `on${toTitleCase(event)}`;
+        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
+
+        template = template.replace(matcher, `${jsEvent}={() => $1($2)}`);
+    });
+
+    template = template
+        .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
         .replace(/ class=/g, ' className=');
 

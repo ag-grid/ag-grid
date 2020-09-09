@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from '../../interfaces/iComponent';
@@ -11,6 +11,7 @@ export interface IFloatingFilterParams {
     filterParams: IFilterParams;
     currentParentModel: () => any;
     parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => void;
+    showParentFilter: () => void;
     suppressFilterButton: boolean;
     api: GridApi;
     /** @deprecated in v21, use parentFilterInstance() callback instead and tell filter directly */

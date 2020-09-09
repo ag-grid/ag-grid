@@ -32,9 +32,6 @@ export interface ITextFilterParams extends ISimpleFilterParams {
 }
 
 export class TextFilter extends SimpleFilter<TextFilterModel> {
-
-    private static readonly FILTER_TYPE = 'text';
-
     public static DEFAULT_FILTER_OPTIONS = [
         SimpleFilter.CONTAINS,
         SimpleFilter.NOT_CONTAINS,
@@ -71,13 +68,17 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         }
     };
 
-    @RefSelector('eValue1') private eValue1: AgInputTextField;
-    @RefSelector('eValue2') private eValue2: AgInputTextField;
+    @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
+    @RefSelector('eValue2') private readonly eValue2: AgInputTextField;
 
     private comparator: TextComparator;
     private formatter: TextFormatter;
 
     private textFilterParams: ITextFilterParams;
+
+    constructor() {
+        super('textFilter');
+    }
 
     protected getDefaultDebounceMs(): number {
         return 500;
@@ -126,9 +127,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
         const value = this.getValue(eValue);
+
         const model: TextFilterModel = {
-            filterType: TextFilter.FILTER_TYPE,
-            type: type
+            filterType: this.getFilterType(),
+            type
         };
 
         if (!this.doesFilterHaveHiddenInput(type)) {
@@ -139,7 +141,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected getFilterType(): string {
-        return TextFilter.FILTER_TYPE;
+        return 'text';
     }
 
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean {
@@ -156,7 +158,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     private resetPlaceholder(): void {
         const placeholder = this.translate('filterOoo');
 
-        this.forEachInput(field => field.setInputPlaceholder(placeholder));
+        this.forEachInput(field => {
+            field.setInputPlaceholder(placeholder);
+            field.setInputAriaLabel('Filter value');
+        });
     }
 
     private forEachInput(action: (field: AgInputTextField) => void): void {
@@ -184,18 +189,18 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
-        const showValue1 = this.showValueFrom(this.getCondition1Type());
-        setDisplayed(this.eValue1.getGui(), showValue1);
-
-        const showValue2 = this.showValueFrom(this.getCondition2Type());
-        setDisplayed(this.eValue2.getGui(), showValue2);
+        setDisplayed(this.eCondition1Body, this.showValueFrom(this.getCondition1Type()));
+        setDisplayed(this.eCondition2Body, this.isCondition2Enabled() && this.showValueFrom(this.getCondition2Type()));
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams) {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams) {
         super.afterGuiAttached(params);
 
         this.resetPlaceholder();
-        this.eValue1.getInputElement().focus();
+
+        if (!params || !params.suppressFocus) {
+            this.eValue1.getInputElement().focus();
+        }
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
@@ -208,7 +213,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return this.getValue(positionOne ? this.eValue1 : this.eValue2) != null;
     }
 
-    public individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
         const filterText = filterModel.filter;
         const filterOption = filterModel.type;
         const cellValue = this.textFilterParams.valueGetter(params.node);

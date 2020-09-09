@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from "../../utils";
+import { exists } from "../../utils/generic";
+import { KeyCode } from '../../constants/keyCode';
 var LargeTextCellEditor = /** @class */ (function (_super) {
     __extends(LargeTextCellEditor, _super);
     function LargeTextCellEditor() {
@@ -39,22 +39,23 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
             .setMaxLength(params.maxLength || 200)
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
-        if (_.exists(params.value)) {
+        if (exists(params.value)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     };
     LargeTextCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
-        if (key == Constants.KEY_LEFT ||
-            key == Constants.KEY_UP ||
-            key == Constants.KEY_RIGHT ||
-            key == Constants.KEY_DOWN ||
-            (event.shiftKey && key == Constants.KEY_ENTER)) { // shift+enter allows for newlines
+        if (key === KeyCode.LEFT ||
+            key === KeyCode.UP ||
+            key === KeyCode.RIGHT ||
+            key === KeyCode.DOWN ||
+            (event.shiftKey && key === KeyCode.ENTER)) { // shift+enter allows for newlines
             event.stopPropagation();
         }
     };
     LargeTextCellEditor.prototype.afterGuiAttached = function () {
+        this.eTextArea.setInputAriaLabel('Input Editor');
         if (this.focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();
         }

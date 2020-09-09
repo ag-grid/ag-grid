@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,13 +20,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var agInputTextField_1 = require("./agInputTextField");
+var dom_1 = require("../utils/dom");
 var AgInputNumberField = /** @class */ (function (_super) {
     __extends(AgInputNumberField, _super);
-    function AgInputNumberField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.className = 'ag-number-field';
-        _this.inputType = 'number';
-        return _this;
+    function AgInputNumberField(config) {
+        return _super.call(this, config, 'ag-number-field', 'number') || this;
     }
     AgInputNumberField.prototype.postConstruct = function () {
         var _this = this;
@@ -67,12 +65,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.min = min;
-        if (this.min != null) {
-            this.eInput.setAttribute('min', min.toString());
-        }
-        else {
-            this.eInput.removeAttribute('min');
-        }
+        dom_1.addOrRemoveAttribute(this.eInput, 'min', min);
         return this;
     };
     AgInputNumberField.prototype.setMax = function (max) {
@@ -80,12 +73,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.max = max;
-        if (this.max != null) {
-            this.eInput.setAttribute('max', max.toString());
-        }
-        else {
-            this.eInput.removeAttribute('max');
-        }
+        dom_1.addOrRemoveAttribute(this.eInput, 'max', max);
         return this;
     };
     AgInputNumberField.prototype.setPrecision = function (precision) {
@@ -97,12 +85,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
             return this;
         }
         this.step = step;
-        if (step != null) {
-            this.eInput.setAttribute('step', step.toString());
-        }
-        else {
-            this.eInput.removeAttribute('step');
-        }
+        dom_1.addOrRemoveAttribute(this.eInput, 'step', step);
         return this;
     };
     AgInputNumberField.prototype.setValue = function (value, silent) {

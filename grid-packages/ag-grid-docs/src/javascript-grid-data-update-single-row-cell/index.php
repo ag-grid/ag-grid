@@ -70,6 +70,6 @@ include '../documentation-main/documentation_header.php';
         edit the data so the filter is broken (i.e. a row is present that should not be present), then hit this button to fix the filter.</li>
 </ul>
 
-<?= grid_example('Updating Row Nodes', 'updating-row-nodes', 'generated') ?>
+<?= grid_example('Updating Row Nodes', 'updating-row-nodes', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,7 +1,7 @@
-import { ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart } from "ag-charts-community";
-import { PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PolarChartProxy } from "./polarChartProxy";
+import {AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart} from "ag-charts-community";
+import {AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {PolarChartProxy} from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -12,8 +12,54 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: {
+                ...seriesDefaults.label,
+                minRequiredAngle: seriesDefaults.label.minAngle
+            },
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+        } as PieSeriesOptions;
+
+        return options;
+    }
+
+    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        options = options || this.chartOptions;
+        const seriesDefaults = options.seriesDefaults;
+        const agChartOptions = options as AgPolarChartOptions;
+
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [{
+            ...seriesDefaults,
+            fills: seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'pie'
+        }];
+
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -36,19 +82,21 @@ export class PieChartProxy extends PolarChartProxy {
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
 
-            const seriesOptions: PieSeriesInternalOptions = {
+            pieSeries = AgChart.createComponent({
                 ...seriesDefaults,
-                type: "pie",
-                field: {
-                    angleKey: pieSeriesField.colId,
-                },
+                type: 'pie',
+                angleKey: pieSeriesField.colId,
                 title: {
                     ...seriesDefaults.title,
                     text: seriesDefaults.title.text || params.fields[0].displayName,
-                }
-            };
-
-            pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
+                },
+                fills: seriesDefaults.fill.colors,
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokes: seriesDefaults.stroke.colors,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
+                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            }, 'pie.series');
         }
 
         pieSeries.angleName = pieSeriesField.displayName;
@@ -59,7 +107,7 @@ export class PieChartProxy extends PolarChartProxy {
         pieSeries.strokes = strokes;
 
         if (calloutColors) {
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = strokes;
         }
 
         chart.addSeries(pieSeries);

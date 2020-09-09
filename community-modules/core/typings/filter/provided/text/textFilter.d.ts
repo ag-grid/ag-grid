@@ -17,16 +17,16 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     textFormatter?: (from: string) => string;
 }
 export declare class TextFilter extends SimpleFilter<TextFilterModel> {
-    private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
     static DEFAULT_FORMATTER: TextFormatter;
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter;
     static DEFAULT_COMPARATOR: TextComparator;
-    private eValue1;
-    private eValue2;
+    private readonly eValue1;
+    private readonly eValue2;
     private comparator;
     private formatter;
     private textFilterParams;
+    constructor();
     protected getDefaultDebounceMs(): number;
     private getValue;
     private addValueChangedListeners;
@@ -42,7 +42,7 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;
     protected updateUiVisibility(): void;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     protected isConditionUiComplete(position: ConditionPosition): boolean;
-    individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean;
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean;
 }

@@ -10,9 +10,9 @@ const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const generateExamples = require('./example-generator').generateExamples;
-const {updateBetweenStrings, getAllModules} = require("./utils");
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const { generateExamples } = require('./example-generator');
+const { updateBetweenStrings, getAllModules } = require('./utils');
+const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
 
 const flattenArray = array => [].concat.apply([], array);
 
@@ -36,22 +36,8 @@ const WINDOWS = /^win/.test(os.platform());
 //     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 // }
 
-const lernaBuildChainInfo = {};
-(async () => {
-    Object.assign(lernaBuildChainInfo, await getFlattenedBuildChainInfo());
-
-    // we filter out all "core" modules as they'll be dealt with by TSC itself
-    // this will leave us with frameworks and "legacy" packages like ag-grid-community
-    const includes = ['angular', 'react', 'vue']
-    Object.keys(lernaBuildChainInfo).forEach(packageName => {
-        lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
-            .filter(dependent => (dependent.startsWith('@ag-') && includes.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-'));
-    })
-})();
-
-
 function reporter(middlewareOptions, options) {
-    const {log, state, stats} = options;
+    const { log, state, stats } = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -103,13 +89,13 @@ function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: {AG_DEV: 'true'}
+        env: { AG_DEV: 'true' }
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -158,7 +144,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -257,9 +243,9 @@ function regenerateExamplesForFileChange(file) {
     }
 }
 
-function watchAndGenerateExamples(scope) {
+function watchAndGenerateExamples() {
     if (moduleChanged('.')) {
-        generateExamples(scope);
+        generateExamples();
 
         const npm = WINDOWS ? 'npm.cmd' : 'npm';
         cp.spawnSync(npm, ['run', 'hash']);
@@ -267,7 +253,7 @@ function watchAndGenerateExamples(scope) {
         console.log("Docs contents haven't changed - skipping example generation");
     }
 
-    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], {ignored: ['**/_gen/**/*']}).on('change', regenerateExamplesForFileChange);
+    chokidar.watch([`./src/**/*.{php,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -421,7 +407,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         [],
         cssFile => {
             return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",
-        "@ag-grid-community/core/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/core/dist/styles/${cssFile}",`
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/core/dist/styles/${cssFile}",`;
         },
         () => {
         });
@@ -450,7 +436,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         [],
         cssFile => {
             return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",
-        "@ag-grid-community/core/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`;
         },
         () => {
         });
@@ -458,8 +444,34 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
-    const modulesState = readModulesState()
+const getLernaChainBuildInfo = async (skipFrameworks) => {
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
+
+    const frameworks = ['angular', 'react', 'vue'];
+
+    const filterBuildChain = filter => {
+        Object.keys(lernaBuildChainInfo).forEach(packageName => {
+            lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName].filter(filter);
+        });
+    };
+
+    if (skipFrameworks) {
+        // if we're skipping frameworks then only return "legacy" packages (ie ag-grid-community)
+        const excludeFrameworksFilter = dependent => dependent === 'ag-grid-community' || dependent === 'ag-grid-enterprise' || dependent === 'ag-charts-community';
+        filterBuildChain(excludeFrameworksFilter);
+    } else {
+        // we filter out all "core" modules as they'll be dealt with by TSC itself
+        // this will leave us with frameworks and "legacy" packages like ag-grid-community
+        const includeFrameworksFilter = dependent => (dependent.startsWith('@ag-') && frameworks.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-');
+        filterBuildChain(includeFrameworksFilter);
+    }
+
+    return lernaBuildChainInfo;
+};
+
+const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks = false) => {
+    const lernaBuildChainInfo = await getLernaChainBuildInfo(skipFrameworks);
+    const modulesState = readModulesState();
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
@@ -471,7 +483,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
     if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
 
-        await buildPackages(Array.from(lernaPackagesToRebuild))
+        await buildPackages(Array.from(lernaPackagesToRebuild));
 
         if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
             await buildCss();
@@ -479,9 +491,9 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
     } else {
         console.log("No non-core packages are out of date - skipping");
     }
-}
+};
 
-const watchCoreModules = async () => {
+const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
@@ -492,7 +504,7 @@ const watchCoreModules = async () => {
         const output = data.toString().trim();
         console.log(output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            await rebuildPackagesBasedOnChangeState()
+            await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
             // because we use TSC to build the core modules (and not npm) we need to manuall update the changed
             // hashes on build
@@ -506,7 +518,7 @@ const watchCoreModules = async () => {
     process.on('SIGINT', () => {
         tsWatch.kill();
     });
-}
+};
 
 const updateCoreModuleHashes = () => {
     const coreModuleRootNames = ['community-modules', 'enterprise-modules'];
@@ -523,7 +535,7 @@ const updateCoreModuleHashes = () => {
 
         moduleRootSubDirNames.forEach(moduleRoot => updateModuleChangedHash(moduleRoot));
     });
-}
+};
 
 const buildCoreModules = async (exitOnError) => {
     console.log("Building Core Modules...");
@@ -537,20 +549,20 @@ const buildCoreModules = async (exitOnError) => {
         console.log('ERROR Building Modules');
 
         if (exitOnError) {
-            process.exit(result.status)
+            process.exit(result.status);
         }
 
         return result.status;
     }
 
-    await rebuildPackagesBasedOnChangeState(false);
+    await rebuildPackagesBasedOnChangeState(false, false);
 
     // because we use TSC to build the core modules (and not npm) we need to manually update the changed
     // hashes on build
     updateCoreModuleHashes();
 
     return 0;
-}
+};
 
 function moduleChanged(moduleRoot) {
     let changed = true;
@@ -634,9 +646,9 @@ const addWebpackMiddleware = (app) => {
     addWebpackMiddlewareForConfig(app, 'webpack.site.config.js', '/dist', 'site bundle');
 };
 
-const watchCoreModulesAndCss = async () => {
+const watchCoreModulesAndCss = async (skipFrameworks) => {
     watchCss();
-    await watchCoreModules();
+    await watchCoreModules(skipFrameworks);
 };
 
 const watchFrameworkModules = async () => {
@@ -644,7 +656,7 @@ const watchFrameworkModules = async () => {
     const moduleFrameworks = ['angular', 'vue', 'react'];
     const moduleRootDirectory = WINDOWS ? `..\\..\\community-modules\\` : `../../community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
-        const frameworkDirectory = `${moduleRootDirectory}${moduleFramework}`
+        const frameworkDirectory = `${moduleRootDirectory}${moduleFramework}`;
         chokidar.watch([`${frameworkDirectory}`], {
             ignored: [
                 '**/node_modules/**/*',
@@ -656,9 +668,9 @@ const watchFrameworkModules = async () => {
             cwd: frameworkDirectory,
             persistent: true
         }).on('change', async (data) => {
-            await rebuildPackagesBasedOnChangeState(false);
+            await rebuildPackagesBasedOnChangeState(false, false);
         });
-    })
+    });
 };
 
 const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) => {
@@ -693,14 +705,14 @@ const readModulesState = () => {
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)}
-            })
+                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
+            });
     });
 
     return modulesState;
-}
+};
 
-module.exports = async (done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -716,12 +728,18 @@ module.exports = async (done) => {
                 process.exit(0);
             });
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+            // Formatting code when generating examples takes ages, so disable it for local development.
+            if (skipExampleFormatting) {
+                console.log("Skipping example formatting");
+                process.env.AG_EXAMPLE_DISABLE_FORMATTING = 'true';
+            }
+
+            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function (req, res, next) {
+            app.use(function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -729,11 +747,15 @@ module.exports = async (done) => {
             updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
             await performInitialBuild();
-            await watchCoreModulesAndCss();
-            watchFrameworkModules();
+            await watchCoreModulesAndCss(skipFrameworks);
+
+            if (!skipFrameworks) {
+                watchFrameworkModules();
+            }
 
             addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
@@ -744,9 +766,18 @@ module.exports = async (done) => {
             // PHP
             launchPhpCP(app);
 
-            app.listen(EXPRESS_PORT, function () {
+            app.listen(EXPRESS_PORT, function() {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();
         });
 };
+
+// *** Don't remove these unused vars! ***
+//     node dev-server.js generate-examples [src directory]
+// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+const [cmd, script, execFunc, exampleDir, watch] = process.argv;
+
+if (process.argv.length >= 3 && execFunc === 'generate-examples') {
+    generateExamples(exampleDir);
+}

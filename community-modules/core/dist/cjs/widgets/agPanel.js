@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var componentAnnotations_1 = require("./componentAnnotations");
 var context_1 = require("../context/context");
 var component_1 = require("./component");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
+var icon_1 = require("../utils/icon");
 var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
     function AgPanel(config) {
@@ -68,7 +69,7 @@ var AgPanel = /** @class */ (function (_super) {
             this.setClosable(closable != null ? closable : this.closable);
         }
         else {
-            utils_1._.addCssClass(this.eTitleBar, 'ag-hidden');
+            dom_1.addCssClass(this.eTitleBar, 'ag-hidden');
         }
         this.addManagedListener(this.eTitleBar, 'mousedown', function (e) {
             if (eGui.contains(e.relatedTarget) ||
@@ -215,8 +216,8 @@ var AgPanel = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var isPercent = false;
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            utils_1._.setFixedHeight(eGui, height);
-            height = utils_1._.getAbsoluteHeight(eGui);
+            dom_1.setFixedHeight(eGui, height);
+            height = dom_1.getAbsoluteHeight(eGui);
             isPercent = true;
         }
         else {
@@ -231,7 +232,7 @@ var AgPanel = /** @class */ (function (_super) {
         }
         this.size.height = height;
         if (!isPercent) {
-            utils_1._.setFixedHeight(eGui, height);
+            dom_1.setFixedHeight(eGui, height);
         }
         else {
             eGui.style.maxHeight = 'unset';
@@ -245,8 +246,8 @@ var AgPanel = /** @class */ (function (_super) {
         var eGui = this.getGui();
         var isPercent = false;
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            utils_1._.setFixedWidth(eGui, width);
-            width = utils_1._.getAbsoluteWidth(eGui);
+            dom_1.setFixedWidth(eGui, width);
+            width = dom_1.getAbsoluteWidth(eGui);
             isPercent = true;
         }
         else {
@@ -261,7 +262,7 @@ var AgPanel = /** @class */ (function (_super) {
         }
         this.size.width = width;
         if (!isPercent) {
-            utils_1._.setFixedWidth(eGui, width);
+            dom_1.setFixedWidth(eGui, width);
         }
         else {
             eGui.style.maxWidth = 'unset';
@@ -282,7 +283,7 @@ var AgPanel = /** @class */ (function (_super) {
             var closeButtonComp = this.closeButtonComp = new component_1.Component(AgPanel.CLOSE_BTN_TEMPLATE);
             this.getContext().createBean(closeButtonComp);
             var eGui = closeButtonComp.getGui();
-            eGui.appendChild(utils_1._.addCssClass(utils_1._.createIconNoSpan('close', this.gridOptionsWrapper), 'ag-panel-title-bar-button-icon'));
+            eGui.appendChild(dom_1.addCssClass(icon_1.createIconNoSpan('close', this.gridOptionsWrapper), 'ag-panel-title-bar-button-icon'));
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
         }
@@ -305,7 +306,7 @@ var AgPanel = /** @class */ (function (_super) {
         }
         position = Math.max(0, Math.min(position, len));
         var eGui = button.getGui();
-        utils_1._.addCssClass(eGui, 'ag-panel-title-bar-button');
+        dom_1.addCssClass(eGui, 'ag-panel-title-bar-button');
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
         }
@@ -318,10 +319,10 @@ var AgPanel = /** @class */ (function (_super) {
         button.setParentComponent(this);
     };
     AgPanel.prototype.getBodyHeight = function () {
-        return utils_1._.getInnerHeight(this.eContentWrapper);
+        return dom_1.getInnerHeight(this.eContentWrapper);
     };
     AgPanel.prototype.getBodyWidth = function () {
-        return utils_1._.getInnerWidth(this.eContentWrapper);
+        return dom_1.getInnerWidth(this.eContentWrapper);
     };
     AgPanel.prototype.setTitle = function (title) {
         this.eTitle.innerText = title;

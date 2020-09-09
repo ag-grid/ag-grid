@@ -19,14 +19,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, Autowired, BeanStub, ChartType, Events, PostConstruct, } from "@ag-grid-community/core";
 import { ChartDataModel } from "./chartDataModel";
-import { palettes } from "ag-charts-community";
+import { getChartTheme } from "ag-charts-community";
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
-    function ChartController(model, paletteName) {
-        if (paletteName === void 0) { paletteName = 'borneo'; }
+    function ChartController(model) {
         var _this = _super.call(this) || this;
         _this.model = model;
-        _this.chartPaletteName = paletteName;
         return _this;
     }
     ChartController.prototype.init = function () {
@@ -71,9 +69,10 @@ var ChartController = /** @class */ (function (_super) {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartPalette: this.getPaletteName(),
+            chartThemeName: this.getThemeName(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
+            chart: this.chartProxy.getChart(),
             getChartImageDataURL: function (params) {
                 return _this.chartProxy.getChartImageDataURL(params.type);
             }
@@ -88,25 +87,32 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.isGrouping = function () {
         return this.model.isGrouping();
     };
-    ChartController.prototype.getPaletteName = function () {
-        return this.chartPaletteName;
+    ChartController.prototype.getThemeName = function () {
+        return this.model.getChartThemeName();
+    };
+    ChartController.prototype.getThemes = function () {
+        return this.gridOptionsWrapper.getChartThemes();
     };
     ChartController.prototype.getPalettes = function () {
+        var _this = this;
         var customPalette = this.chartProxy.getCustomPalette();
         if (customPalette) {
-            var map = new Map();
-            map.set(undefined, customPalette);
-            return map;
+            return [customPalette];
         }
-        return palettes;
+        var themeNames = this.gridOptionsWrapper.getChartThemes();
+        return themeNames.map(function (themeName) {
+            var theme = _this.chartProxy.isStockTheme(themeName) ?
+                themeName : _this.chartProxy.lookupCustomChartTheme(themeName);
+            return getChartTheme(theme).palette;
+        });
     };
     ChartController.prototype.setChartType = function (chartType) {
         this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     };
-    ChartController.prototype.setChartPaletteName = function (palette) {
-        this.chartPaletteName = palette;
+    ChartController.prototype.setChartThemeName = function (chartThemeName) {
+        this.model.setChartThemeName(chartThemeName);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     };
@@ -178,6 +184,9 @@ var ChartController = /** @class */ (function (_super) {
     __decorate([
         Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);
+    __decorate([
+        Autowired('gridOptionsWrapper')
+    ], ChartController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('gridApi')
     ], ChartController.prototype, "gridApi", void 0);

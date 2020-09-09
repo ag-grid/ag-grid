@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, ChartType, Optional, PreDestroy, BeanStub } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, ChartType, Optional, PreDestroy } from "@ag-grid-community/core";
 import { GridChartComp } from "./chartComp/gridChartComp";
 var ChartService = /** @class */ (function (_super) {
     __extends(ChartService, _super);
@@ -47,7 +47,7 @@ var ChartService = /** @class */ (function (_super) {
             console.warn("ag-Grid - unable to create chart as no range is selected");
             return;
         }
-        return this.createChart(cellRange, params.chartType, params.chartPalette, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, params.processChartOptions);
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.processChartOptions);
     };
     ChartService.prototype.createPivotChart = function (params) {
         // if required enter pivot mode
@@ -65,9 +65,9 @@ var ChartService = /** @class */ (function (_super) {
             console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
-        return this.createChart(cellRange, params.chartType, params.chartPalette, true, true, params.chartContainer, undefined, params.processChartOptions);
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.processChartOptions);
     };
-    ChartService.prototype.createChart = function (cellRange, chartType, chartPaletteName, pivotChart, suppressChartRanges, container, aggFunc, processChartOptions) {
+    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, processChartOptions) {
         var _this = this;
         if (pivotChart === void 0) { pivotChart = false; }
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
@@ -76,10 +76,11 @@ var ChartService = /** @class */ (function (_super) {
             pivotChart: pivotChart,
             cellRange: cellRange,
             chartType: chartType,
-            chartPaletteName: chartPaletteName,
+            chartThemeName: chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges: suppressChartRanges,
             aggFunc: aggFunc,
+            chartThemeOverrides: chartThemeOverrides,
             processChartOptions: processChartOptions,
         };
         var chartComp = new GridChartComp(params);
@@ -120,7 +121,8 @@ var ChartService = /** @class */ (function (_super) {
                     _this.activeCharts.delete(chartRef);
                 }
             },
-            chartElement: chartComp.getGui()
+            chartElement: chartComp.getGui(),
+            chart: chartComp.getUnderlyingChart()
         };
         this.activeCharts.add(chartRef);
         this.activeChartComps.add(chartComp);

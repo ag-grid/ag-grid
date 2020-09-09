@@ -171,6 +171,7 @@
     width: 100%;
     min-height: 100%;
     overflow: hidden;
+
     &.ag-animating {
         transition: left 0.3s;
         transition-timing-function: ease-in-out;

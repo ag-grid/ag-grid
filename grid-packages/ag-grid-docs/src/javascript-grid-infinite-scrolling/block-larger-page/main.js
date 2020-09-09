@@ -113,6 +113,7 @@ function countries() {
     ];
 }
 
+var filterParams = { values: countries() };
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {
@@ -136,7 +137,7 @@ var columnDefs = [
     {
         field: 'country',
         filter: 'agSetColumnFilter',
-        filterParams: { values: countries() }
+        filterParams: filterParams
     },
     {
         field: 'year',
@@ -171,7 +172,6 @@ var gridOptions = {
         }
     },
     rowSelection: 'multiple',
-    rowDeselection: true,
     rowModelType: 'infinite',
     paginationPageSize: 100,
     cacheOverflowSize: 2,

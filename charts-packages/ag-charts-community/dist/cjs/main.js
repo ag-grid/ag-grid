@@ -4,13 +4,14 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./caption"));
+__export(require("./chart/axis/numberAxis"));
 __export(require("./chart/axis/categoryAxis"));
 __export(require("./chart/axis/groupedCategoryAxis"));
+__export(require("./chart/axis/timeAxis"));
 __export(require("./chart/cartesianChart"));
 __export(require("./chart/chart"));
 __export(require("./chart/chartAxis"));
 __export(require("./chart/groupedCategoryChart"));
-__export(require("./chart/palettes"));
 __export(require("./chart/polarChart"));
 __export(require("./chart/marker/marker"));
 __export(require("./chart/series/cartesian/areaSeries"));
@@ -19,12 +20,8 @@ __export(require("./chart/series/cartesian/lineSeries"));
 __export(require("./chart/series/cartesian/scatterSeries"));
 __export(require("./chart/series/cartesian/histogramSeries"));
 __export(require("./chart/series/polar/pieSeries"));
-__export(require("./chartBuilder"));
-__export(require("./chartOptions"));
 __export(require("./scale/bandScale"));
 __export(require("./scale/linearScale"));
-var linearScale_1 = require("./scale/linearScale");
-exports.linearScale = linearScale_1.default;
 __export(require("./scene/clipRect"));
 __export(require("./scene/dropShadow"));
 __export(require("./scene/group"));
@@ -67,4 +64,5 @@ exports.time = {
     utcYear: utcYear_1.utcYear
 };
 __export(require("./chart/agChart"));
+__export(require("./chart/themes/chartTheme"));
 //# sourceMappingURL=main.js.map

@@ -17,22 +17,24 @@ var rowData = [
     { id: 15, filePath: ['Misc', 'temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101 }
 ];
 
+var valueFormatter = function (params) {
+    return params.value ? params.value + ' MB' : '';
+};
+
+var cellClassRules = {
+    'hover-over': function(params) { return params.node === potentialParent; }
+};
+
 var gridOptions = {
     columnDefs: [
         {
             field: 'dateModified',
-            cellClassRules: {
-                'hover-over': function(params) { return params.node === potentialParent; }
-            }
+            cellClassRules: cellClassRules
         },
         {
             field: 'size',
-            valueFormatter: function(params) {
-                return params.value ? params.value + ' MB' : '';
-            },
-            cellClassRules: {
-                'hover-over': function(params) { return params.node === potentialParent; }
-            }
+            valueFormatter: valueFormatter,
+            cellClassRules: cellClassRules
         }
     ],
     defaultColDef: {

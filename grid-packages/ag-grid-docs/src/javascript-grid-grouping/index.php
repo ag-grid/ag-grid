@@ -54,7 +54,7 @@ SNIPPET
     by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
 </ul>
 
-<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
 
@@ -74,7 +74,7 @@ SNIPPET
         This is done by setting <code>colDef.hide = true</code>.</li>
 </ul>
 
-<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -125,7 +125,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>Filtering on Group Columns</h2>
 
@@ -167,29 +167,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
-
-<p>
-    Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
-    in the following example. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
-        return the country so that country is used for filtering.
-    </li>
-    <li>
-        The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
-        set, the filter will use the field value for filtering.
-    </li>
-    <li>
-        This is an example of a case where not using auto group columns lets us add custom different behaviour to
-        each of the grouping columns.
-    </li>
-</ul>
-
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2>Group Cell Rendering</h2>
 
@@ -258,7 +236,7 @@ SNIPPET
     Year is grouped first and Country is grouped second.
 </p>
 
-<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>Hide Open Parents</h2>
 
@@ -295,7 +273,7 @@ SNIPPET
     the grouped column - eg for Country, it will filter on Country.
 </p>
 
-<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
@@ -345,7 +323,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
@@ -362,100 +340,85 @@ SNIPPET
     Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
 </p>
 
-<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
-<h2>Full Width Groups Rendering</h2>
+<h2>Configuring Full Width Group Rows</h2>
 
 <p>
-    It is possible to override the rendering of the group row using <code>groupRowRenderer</code> and
-    <code>groupRowInnerRenderer</code>. Use groupRowRenderer to take full control of the row rendering,
-    and provide a cellRenderer exactly how you would provide one for custom rendering of cells
-    for non-groups.
+    When using Full Width Group Rows, it is possible to change the rendering of the group row.
+    This done by either replacing the Cell Renderer with your own
+    <a href="../javascript-grid-cell-rendering-components/">Custom Cell Renderer</a>,
+    or configuring the provided <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>.
 </p>
 
 <p>
-    The following pieces of code do the exact same thing:
+    If using Full Width Group Rows and no <code>groupRowRenderer</code> properties are provided,
+    then the default <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>
+    is used with it's default values.
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// option 1 - tell the grid to group by row, the grid defaults to using
+// tell the grid to group by row, the grid defaults to using
 // the default group cell renderer for the row with default settings.
 gridOptions.groupUseEntireRow = true;
 SNIPPET
 ) ?>
 
 <?= createSnippet(<<<SNIPPET
-// option 2 - this does the exact same as the above, except we configure
-// it explicitly rather than letting the grid choose the defaults.
-// we tell the grid what renderer to use (the built in renderer) and we
-// configure the default renderer with our own inner renderer
+// this is identical to the above. it tells the grid to use "agGroupCellRenderer"
+// which is the default, so doesn't change anything.
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer = 'agGroupCellRenderer';
+SNIPPET
+) ?>
+
+<h3>Providing Cell Renderer</h3>
+
+<p>
+    To provide your own Cell Renderer, use the grid properties <code>groupRowRenderer</code>,
+    <code>groupRowRendererFramework</code> and <code>groupRowRendererParams</code>.
+</p>
+
+<p>
+    Using your own Cell Renderer hands over rendering of the full row to your custom
+    Cell Renderer. However that also means the customer Cell Renderer will also need
+    to provide expand / collapse functionality.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// configure Full Width rows with a customer Cell Renderer
+gridOptions.groupUseEntireRow = true;
+gridOptions.groupRowRenderer = 'myCellRenderer';
 gridOptions.groupRowRendererParams = {
-    innerRenderer: function(params) { return params.node.key; },
+    someProp: 'someValue'
 };
 SNIPPET
 ) ?>
 
-<?= createSnippet(<<<SNIPPET
-// option 3 - again the exact same. we allow the grid to choose the group
-// cell renderer, but we provide our own inner renderer.
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowInnerRenderer = function(params) { return params.node.key; };
-SNIPPET
-) ?>
+
+<h3>Configuring Group Cell Renderer</h3>
 
 <p>
-    The above probably reads a bit confusing. So here are rules to help you choose:
-</p>
-
-<ul class="content">
-    <li>
-        If you are happy with what you get with just setting groupUseEntireRow = true,
-        then stick with that, don't bother with the renderers.
-    </li>
-    <li>
-        If you want to change the inside of the renderer, but are happy with the
-        expand / collapse etc of the group row, then just set the groupRowInnerRenderer.
-    </li>
-    <li>
-        If you want to customise the entire row, you are not happy with what you
-        get for free with the group cell renderer, then set your own renderer
-        with groupRowRenderer, or use groupRowRenderer to configure the default
-        group renderer.
-    </li>
-</ul>
-
-<p>
-    Here is an example of taking full control, creating your own renderer. In practice,
-    this example is a bit useless, as you will need to add functionality to at least expand
-    and collapse the group, however it demonstrates the configuration:
+    Configure the default Group Cell Renderer using <code>groupRowRendererParams</code>. Full
+    details on what to configure are provided in the page
+    <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>.
 </p>
 
 <?= createSnippet(<<<SNIPPET
+// use Full Width group rows and configure the Group Cell Renderer
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = function(params) { return params.node.key; };
-SNIPPET
-) ?>
-
-<p>
-    This example takes full control also, but uses the provided group renderer
-    but configured differently by asking for a checkbox for selection:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer = 'agGroupCellRenderer';
 gridOptions.groupRowRendererParams = {
-    checkbox: true,
-    // innerRenderer is optional, we could leave this out and use the default
-    innerRenderer: function(params) { return params.node.key; },
-}
+    checkbox: true // puts a checkbox onto each group row
+};
 SNIPPET
 ) ?>
 
 <p>
-    Below shows an example of aggregating with full width rows for groups. The following can be noted:
+    Below shows an example of aggregating with full width rows for groups.
+    It also provides an <code>innerRenderer</code> to configure what gets displaying inside the
+    row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse
+    functionality.
+    The following can be noted:
 </p>
 
 <ul>
@@ -488,7 +451,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome']]) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome'], 'reactFunctional' => true]) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 
@@ -531,7 +494,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
@@ -549,7 +512,7 @@ SNIPPET
     <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
 </ul>
 
-<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <p>
     If you do not want rows with null or undefined to be left out of groups, but want
@@ -557,7 +520,7 @@ SNIPPET
     values with something (eg the string 'Empty' or a string with a blank space character i.e. ' ').
 </p>
 
-<h2>Grouping API</h2>
+<h2>Expanding Rows via API</h2>
 
 <?= videoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=750s", "12:30") ?>
 
@@ -622,7 +585,7 @@ colDef = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2 id="grouping-footers">Grouping Footers</h2>
 
@@ -678,7 +641,7 @@ SNIPPET
     <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
 </ul>
 
-<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <note>
     Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
@@ -690,28 +653,6 @@ SNIPPET
         <li>Footer nodes are not exported to CSV or Excel.</li>
     </ul>
 </note>
-
-<h2 id="keeping-group-state">Keeping Group State</h2>
-
-<p>
-    <note>
-        If using <a href="../javascript-grid-data-update-transactions/">Transactions</a> or
-        <a href="../javascript-grid-immutable-data/">Immutable Data</a>, then
-        you do not need to be concerned with keeping group state. When using transactions or delta updates,
-        the group state is not changed.
-    </note>
-</p>
-
-<p>
-    When you set new data into the group by default all the group open/closed states are reset.
-    If you want to keep the original state, then set the property <code>rememberGroupStateWhenNewData=true</code>.
-    The example below demonstrates this. Only half the data is shown in the grid at any given time,
-    either the odd rows or the even rows. Hitting the 'Refresh Data' will set the data to 'the other half'.
-    Note that not all groups are present in both sets (eg 'Afghanistan' is only present in one group) and
-    as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
-</p>
-
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -755,7 +696,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <note>
     Filtering does not impact what groups get removed. For example if you have a group with two
@@ -836,22 +777,44 @@ SNIPPET
 
 <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <p>The following example shows how to display all the groups in a single column</p>
 
-<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <p>
     The last example of explicitly setting groups shows an alternative for Hide Open Parents.
     The example below demonstrates hiding open parents using explicit group columns.
 </p>
 
-<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
     and for backwards compatibility for when we only supported this style of configuration.</note>
+
+<p>
+    Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
+    in the following example. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
+        return the country so that country is used for filtering.
+    </li>
+    <li>
+        The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
+        set, the filter will use the field value for filtering.
+    </li>
+    <li>
+        This is an example of a case where not using auto group columns lets us add custom different behaviour to
+        each of the grouping columns.
+    </li>
+</ul>
+
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
 
 <h2>Grid Grouping Properties</h2>
 

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -26,10 +26,10 @@ export declare class GridCore extends ManagedFocusComponent {
     private eRootWrapperBody;
     private doingVirtualPaging;
     private logger;
+    constructor();
     protected postConstruct(): void;
     getFocusableElement(): HTMLElement;
     private createTemplate;
-    protected isFocusableContainer(): boolean;
     protected getFocusableContainers(): HTMLElement[];
     focusNextInnerContainer(backwards: boolean): boolean;
     focusInnerElement(fromBottom?: boolean): boolean;
@@ -50,4 +50,5 @@ export declare class GridCore extends ManagedFocusComponent {
     isToolPanelShowing(): boolean;
     protected destroy(): void;
     ensureNodeVisible(comparator: any, position?: string | null): void;
+    protected onTabKeyDown(): void;
 }

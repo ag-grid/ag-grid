@@ -24,7 +24,7 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     };
     var valueFormatterService = mock_1.mock('formatValue');
     valueFormatterService.formatValue.mockImplementation(function (_1, _2, _3, value) { return value; });
-    return new setValueModel_1.SetValueModel(rowModel, colDef, null, function (node) { return node.data.value; }, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? 'Blanks' : null; });
+    return new setValueModel_1.SetValueModel(rowModel, function (node) { return node.data.value; }, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
 }
 function getDisplayedValues(model) {
     var values = [];

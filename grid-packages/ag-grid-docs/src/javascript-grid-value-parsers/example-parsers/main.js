@@ -1,3 +1,7 @@
+function onCellValueChanged(event) {
+    console.log('data after changes is: ', event.data);
+};
+
 var gridOptions = {
     columnDefs: [
         {headerName: "Name", field: "simple" },
@@ -11,9 +15,7 @@ var gridOptions = {
     },
     rowData: createRowData(),
     enableRangeSelection: true,
-    onCellValueChanged: function(event) {
-        console.log('data after changes is: ', event.data);
-    }
+    onCellValueChanged: onCellValueChanged
 };
 
 

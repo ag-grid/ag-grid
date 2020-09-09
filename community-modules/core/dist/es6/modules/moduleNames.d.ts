@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ModuleNames {
@@ -12,9 +12,10 @@ export declare enum ModuleNames {
     EnterpriseAllModules = "@ag-grid-enterprise/all",
     RowGroupingModule = "@ag-grid-enterprise/row-grouping",
     ColumnToolPanelModule = "@ag-grid-enterprise/column-tool-panel",
-    FiltersToolPanelModule = "@ag-grid-enterprise/filters-tool-panel",
+    FiltersToolPanelModule = "@ag-grid-enterprise/filter-tool-panel",
     MenuModule = "@ag-grid-enterprise/menu",
     SetFilterModule = "@ag-grid-enterprise/set-filter",
+    MultiFilterModule = "@ag-grid-enterprise/multi-filter",
     StatusBarModule = "@ag-grid-enterprise/status-bar",
     SideBarModule = "@ag-grid-enterprise/side-bar",
     RangeSelectionModule = "@ag-grid-enterprise/range-selection",

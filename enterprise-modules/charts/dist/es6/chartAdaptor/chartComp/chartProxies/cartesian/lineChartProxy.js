@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ChartBuilder } from "ag-charts-community";
+import { AgChart } from "ag-charts-community";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
 var LineChartProxy = /** @class */ (function (_super) {
@@ -33,9 +33,40 @@ var LineChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    LineChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('line.series.line');
+        options.seriesDefaults = {
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [],
+                opacity: 1
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle
+        };
+        return options;
+    };
     LineChartProxy.prototype.createChart = function (options) {
         var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
-        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [__assign({ type: 'category', position: 'bottom' }, options.xAxis), __assign({ type: 'number', position: 'left' }, options.yAxis)];
+        return AgChart.create(agChartOptions, parentElement);
     };
     LineChartProxy.prototype.update = function (params) {
         var _this = this;
@@ -79,13 +110,14 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.chartOptions.seriesDefaults;
-                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, field: {
-                        xKey: params.category.id,
-                        xName: params.category.name,
-                        yKey: f.colId,
-                        yName: f.displayName,
-                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: fill }), marker: __assign(__assign({}, seriesDefaults.marker), { stroke: stroke }) });
-                lineSeries = ChartBuilder.createSeries(options);
+                var marker = __assign(__assign({}, seriesDefaults.marker), { fill: fill,
+                    stroke: stroke });
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
+                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, xKey: params.category.id, xName: params.category.name, yKey: f.colId, yName: f.displayName, fill: fill, stroke: fill, fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, marker: marker });
+                lineSeries = AgChart.createComponent(options, 'line.series');
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
             previousSeries = lineSeries;

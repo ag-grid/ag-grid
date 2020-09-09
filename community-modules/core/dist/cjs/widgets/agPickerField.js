@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,14 +27,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var agAbstractField_1 = require("./agAbstractField");
 var context_1 = require("../context/context");
-var constants_1 = require("../constants");
 var componentAnnotations_1 = require("./componentAnnotations");
-var utils_1 = require("../utils");
+var aria_1 = require("../utils/aria");
+var icon_1 = require("../utils/icon");
+var generic_1 = require("../utils/generic");
+var dom_1 = require("../utils/dom");
+var keyCode_1 = require("../constants/keyCode");
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
-    function AgPickerField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.TEMPLATE = "<div class=\"ag-picker-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-picker-field-wrapper\" tabIndex=\"-1\">\n                <%displayField% ref=\"eDisplayField\" class=\"ag-picker-field-display\"></%displayField%>\n                <div ref=\"eIcon\" class=\"ag-picker-field-icon\"></div>\n            </div>\n        </div>";
+    function AgPickerField(config, className, pickerIcon, popupRole) {
+        var _this = _super.call(this, config, /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper\"\n                    tabIndex=\"-1\"\n                    " + (popupRole ? "aria-haspopup=\"" + popupRole + "\"" : '') + ">\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>", className) || this;
+        _this.pickerIcon = pickerIcon;
+        _this.isPickerDisplayed = false;
         _this.isDestroyingPicker = false;
         _this.skipClick = false;
         return _this;
@@ -42,6 +46,9 @@ var AgPickerField = /** @class */ (function (_super) {
     AgPickerField.prototype.postConstruct = function () {
         var _this = this;
         _super.prototype.postConstruct.call(this);
+        var displayId = this.getCompId() + "-display";
+        this.eDisplayField.setAttribute('id', displayId);
+        aria_1.setAriaDescribedBy(this.eWrapper, displayId);
         var clickHandler = function () {
             if (_this.skipClick) {
                 _this.skipClick = false;
@@ -57,31 +64,46 @@ var AgPickerField = /** @class */ (function (_super) {
             if (!_this.skipClick &&
                 _this.pickerComponent &&
                 _this.pickerComponent.isAlive() &&
-                utils_1._.isVisible(_this.pickerComponent.getGui()) &&
+                dom_1.isVisible(_this.pickerComponent.getGui()) &&
                 eGui.contains(e.target)) {
                 _this.skipClick = true;
             }
         });
         this.addManagedListener(eGui, 'keydown', function (e) {
             switch (e.keyCode) {
-                case constants_1.Constants.KEY_UP:
-                case constants_1.Constants.KEY_DOWN:
-                case constants_1.Constants.KEY_ENTER:
-                case constants_1.Constants.KEY_SPACE:
+                case keyCode_1.KeyCode.UP:
+                case keyCode_1.KeyCode.DOWN:
+                case keyCode_1.KeyCode.ENTER:
+                case keyCode_1.KeyCode.SPACE:
                     clickHandler();
-                case constants_1.Constants.KEY_ESCAPE:
-                    e.preventDefault();
+                case keyCode_1.KeyCode.ESCAPE:
+                    if (_this.isPickerDisplayed) {
+                        e.preventDefault();
+                    }
                     break;
             }
         });
         this.addManagedListener(this.eWrapper, 'click', clickHandler);
         this.addManagedListener(this.eLabel, 'click', clickHandler);
         if (this.pickerIcon) {
-            this.eIcon.appendChild(utils_1._.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(icon_1.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper));
         }
     };
+    AgPickerField.prototype.refreshLabel = function () {
+        if (generic_1.exists(this.getLabel())) {
+            aria_1.setAriaLabelledBy(this.eWrapper, this.getLabelId());
+        }
+        else {
+            this.eWrapper.removeAttribute('aria-labelledby');
+        }
+        _super.prototype.refreshLabel.call(this);
+    };
+    AgPickerField.prototype.setAriaLabel = function (label) {
+        aria_1.setAriaLabel(this.eWrapper, label);
+        return this;
+    };
     AgPickerField.prototype.setInputWidth = function (width) {
-        utils_1._.setElementWidth(this.eWrapper, width);
+        dom_1.setElementWidth(this.eWrapper, width);
         return this;
     };
     AgPickerField.prototype.getFocusableElement = function () {

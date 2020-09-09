@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,8 +23,9 @@ var agAbstractLabel_1 = require("./agAbstractLabel");
 var dom_1 = require("../utils/dom");
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
-    function AgAbstractField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function AgAbstractField(config, template, className) {
+        var _this = _super.call(this, config, template) || this;
+        _this.className = className;
         _this.disabled = false;
         return _this;
     }

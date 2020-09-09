@@ -247,6 +247,10 @@ export class OHLCSeries extends CartesianSeries {
     protected highlightedDatum?: GroupSelectionDatum;
 
     update(): void {
+        if (!this.data) {
+            return;
+        }
+
         const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;

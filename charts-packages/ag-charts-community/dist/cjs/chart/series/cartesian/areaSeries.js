@@ -23,7 +23,6 @@ var group_1 = require("../../../scene/group");
 var selection_1 = require("../../../scene/selection");
 var node_1 = require("../../../scene/node");
 var path_1 = require("../../../scene/shape/path");
-var palettes_1 = require("../../palettes");
 var cartesianSeries_1 = require("./cartesianSeries");
 var chartAxis_1 = require("../../chartAxis");
 var util_1 = require("../../marker/util");
@@ -56,8 +55,8 @@ var AreaSeries = /** @class */ (function (_super) {
             y: ['yKeys']
         };
         _this.marker = new cartesianSeries_1.CartesianSeriesMarker();
-        _this.fills = palettes_1.default.fills;
-        _this.strokes = palettes_1.default.strokes;
+        _this.fills = [];
+        _this.strokes = [];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         _this._xKey = '';
@@ -109,6 +108,10 @@ var AreaSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    AreaSeries.prototype.setColors = function (fills, strokes) {
+        this.fills = fills;
+        this.strokes = strokes;
+    };
     Object.defineProperty(AreaSeries.prototype, "normalizedTo", {
         get: function () {
             return this._normalizedTo;
@@ -210,7 +213,11 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
             return;
         }
-        var _b = this.generateSelectionData(), areaSelectionData = _b.areaSelectionData, markerSelectionData = _b.markerSelectionData;
+        var selectionData = this.generateSelectionData();
+        if (!selectionData) {
+            return;
+        }
+        var areaSelectionData = selectionData.areaSelectionData, markerSelectionData = selectionData.markerSelectionData;
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
@@ -219,6 +226,9 @@ var AreaSeries = /** @class */ (function (_super) {
     };
     AreaSeries.prototype.generateSelectionData = function () {
         var _this = this;
+        if (!this.data) {
+            return;
+        }
         var _a = this, yKeys = _a.yKeys, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
@@ -262,11 +272,12 @@ var AreaSeries = /** @class */ (function (_super) {
         return { areaSelectionData: areaSelectionData, markerSelectionData: markerSelectionData };
     };
     AreaSeries.prototype.updateAreaSelection = function (areaSelectionData) {
-        var _a = this, fills = _a.fills, fillOpacity = _a.fillOpacity, seriesItemEnabled = _a.seriesItemEnabled, shadow = _a.shadow;
+        var _a = this, fills = _a.fills, fillOpacity = _a.fillOpacity, strokes = _a.strokes, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, shadow = _a.shadow;
         var updateAreas = this.areaSelection.setData(areaSelectionData);
         updateAreas.exit.remove();
         var enterAreas = updateAreas.enter.append(path_1.Path)
             .each(function (path) {
+            path.lineJoin = 'round';
             path.stroke = undefined;
             path.pointerEvents = node_1.PointerEvents.None;
         });
@@ -275,6 +286,9 @@ var AreaSeries = /** @class */ (function (_super) {
             var path = shape.path;
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
+            shape.stroke = strokes[index % strokes.length];
+            shape.strokeOpacity = strokeOpacity;
+            shape.strokeWidth = strokeWidth;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             path.clear();
@@ -293,6 +307,9 @@ var AreaSeries = /** @class */ (function (_super) {
         this.areaSelection = areaSelection;
     };
     AreaSeries.prototype.updateStrokeSelection = function (areaSelectionData) {
+        if (!this.data) {
+            return;
+        }
         var _a = this, strokes = _a.strokes, strokeWidth = _a.strokeWidth, strokeOpacity = _a.strokeOpacity, data = _a.data, seriesItemEnabled = _a.seriesItemEnabled;
         var updateStrokes = this.strokeSelection.setData(areaSelectionData);
         updateStrokes.exit.remove();
@@ -335,6 +352,9 @@ var AreaSeries = /** @class */ (function (_super) {
         this.markerSelection = updateMarkers.merge(enterMarkers);
     };
     AreaSeries.prototype.updateMarkerNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var marker = this.marker;
         var markerFormatter = marker.formatter;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
-var constants_1 = require("../constants");
-var utils_1 = require("../utils");
+var constants_1 = require("../constants/constants");
+var generic_1 = require("../utils/generic");
 var RowPositionUtils = /** @class */ (function (_super) {
     __extends(RowPositionUtils, _super);
     function RowPositionUtils() {
@@ -42,11 +42,31 @@ var RowPositionUtils = /** @class */ (function (_super) {
         }
         else if (this.rowModel.getRowCount()) {
             rowPinned = null;
+            rowIndex = this.paginationProxy.getPageFirstRow();
         }
         else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
             rowPinned = constants_1.Constants.PINNED_BOTTOM;
         }
         return rowPinned === undefined ? null : { rowIndex: rowIndex, rowPinned: rowPinned };
+    };
+    RowPositionUtils.prototype.getLastRow = function () {
+        var rowIndex;
+        var rowPinned;
+        var pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
+        var pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
+        if (pinnedBottomCount) {
+            rowPinned = constants_1.Constants.PINNED_BOTTOM;
+            rowIndex = pinnedBottomCount - 1;
+        }
+        else if (this.rowModel.getRowCount()) {
+            rowPinned = null;
+            rowIndex = this.paginationProxy.getPageLastRow();
+        }
+        else if (pinnedTopCount) {
+            rowPinned = constants_1.Constants.PINNED_TOP;
+            rowIndex = pinnedTopCount - 1;
+        }
+        return rowIndex === undefined ? null : { rowIndex: rowIndex, rowPinned: rowPinned };
     };
     RowPositionUtils.prototype.getRowNode = function (gridRow) {
         switch (gridRow.rowPinned) {
@@ -87,7 +107,7 @@ var RowPositionUtils = /** @class */ (function (_super) {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (utils_1._.exists(rowB.rowPinned)) {
+                if (generic_1.exists(rowB.rowPinned)) {
                     return rowB.rowPinned !== constants_1.Constants.PINNED_TOP;
                 }
                 break;
@@ -98,11 +118,11 @@ var RowPositionUtils = /** @class */ (function (_super) {
         context_1.Autowired('rowModel')
     ], RowPositionUtils.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('rowRenderer')
-    ], RowPositionUtils.prototype, "rowRenderer", void 0);
-    __decorate([
         context_1.Autowired('pinnedRowModel')
     ], RowPositionUtils.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        context_1.Autowired('paginationProxy')
+    ], RowPositionUtils.prototype, "paginationProxy", void 0);
     RowPositionUtils = __decorate([
         context_1.Bean('rowPositionUtils')
     ], RowPositionUtils);

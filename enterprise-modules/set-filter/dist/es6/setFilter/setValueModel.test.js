@@ -22,7 +22,7 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     };
     var valueFormatterService = mock('formatValue');
     valueFormatterService.formatValue.mockImplementation(function (_1, _2, _3, value) { return value; });
-    return new SetValueModel(rowModel, colDef, null, function (node) { return node.data.value; }, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? 'Blanks' : null; });
+    return new SetValueModel(rowModel, function (node) { return node.data.value; }, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
 }
 function getDisplayedValues(model) {
     var values = [];

@@ -6,19 +6,19 @@ export declare class Text extends Shape {
     static className: string;
     protected static defaultStyles: {
         fill: string;
-        stroke: any;
+        stroke: undefined;
         strokeWidth: number;
-        lineDash: any;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        fillShadow: any;
-        strokeShadow: any;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         textAlign: CanvasTextAlign;
-        fontStyle: any;
-        fontWeight: any;
+        fontStyle: undefined;
+        fontWeight: undefined;
         fontSize: number;
         fontFamily: string;
         textBaseline: CanvasTextBaseline;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { FillUndoRedoAction, UndoRedoAction, UndoRedoStack } from "./undoRedoStack";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { BeanStub } from "../context/beanStub";
@@ -86,6 +86,12 @@ var UndoRedoService = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
+    };
+    UndoRedoService.prototype.getCurrentUndoStackSize = function () {
+        return this.undoStack ? this.undoStack.getCurrentStackSize() : 0;
+    };
+    UndoRedoService.prototype.getCurrentRedoStackSize = function () {
+        return this.redoStack ? this.redoStack.getCurrentStackSize() : 0;
     };
     UndoRedoService.prototype.undo = function () {
         if (!this.undoStack) {

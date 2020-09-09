@@ -41,7 +41,13 @@ var sizeMonitor_1 = require("../util/sizeMonitor");
 var observable_1 = require("../util/observable");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 var id_1 = require("../util/id");
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
+function toTooltipHtml(content, title, color) {
+    if (color === void 0) { color = '#888'; }
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n            style=\"color: white; background-color: " + color + "\">" + title + "</div>" : '';
+    return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
+}
+exports.toTooltipHtml = toTooltipHtml;
 var Chart = /** @class */ (function (_super) {
     __extends(Chart, _super);
     function Chart(document) {
@@ -87,9 +93,7 @@ var Chart = /** @class */ (function (_super) {
         background.fill = 'white';
         root.appendChild(background);
         var element = _this._element = document.createElement('div');
-        element.style.boxSizing = 'border-box';
-        element.style.overflow = 'hidden';
-        element.style.height = '100%';
+        element.setAttribute('class', 'ag-chart-wrapper');
         var scene = new scene_1.Scene(document);
         _this.scene = scene;
         scene.root = root;
@@ -179,6 +183,7 @@ var Chart = /** @class */ (function (_super) {
         set: function (value) {
             if (this._autoSize !== value) {
                 this._autoSize = value;
+                var style = this.element.style;
                 if (value) {
                     var chart_1 = this; // capture `this` for IE11
                     sizeMonitor_1.SizeMonitor.observe(this.element, function (size) {
@@ -187,11 +192,15 @@ var Chart = /** @class */ (function (_super) {
                             chart_1.fireEvent({ type: 'layoutChange' });
                         }
                     });
-                    this.element.style.display = 'block';
+                    style.display = 'block';
+                    style.width = '100%';
+                    style.height = '100%';
                 }
                 else {
                     sizeMonitor_1.SizeMonitor.unobserve(this.element);
-                    this.element.style.display = 'inline-block';
+                    style.display = 'inline-block';
+                    style.width = 'auto';
+                    style.height = 'auto';
                 }
             }
         },
@@ -700,7 +709,7 @@ var Chart = /** @class */ (function (_super) {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node : undefined);
             }
             else {
                 hideTooltip = true;
@@ -725,7 +734,7 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
         if (lastPick && lastPick.node) {
-            var datum = this.lastPick.datum;
+            var datum = lastPick.datum;
             datum.series.fireNodeClickEvent(datum);
         }
     };

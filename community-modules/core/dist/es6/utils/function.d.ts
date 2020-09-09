@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -7,6 +7,7 @@
  * @param {string} key
  */
 export declare function doOnce(func: () => void, key: string): void;
+export declare function getFunctionName(funcConstructor: any): any;
 /** @deprecated */
 export declare function getFunctionParameters(func: any): any;
 export declare function isFunction(val: any): boolean;

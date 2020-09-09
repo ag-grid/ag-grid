@@ -26,8 +26,6 @@ export interface IDateComparatorFunc {
 }
 
 export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
-    private static readonly FILTER_TYPE = 'date';
-
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.GREATER_THAN,
@@ -46,10 +44,13 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     private dateCondition2FromComp: DateCompWrapper;
     private dateCondition2ToComp: DateCompWrapper;
 
-    @Autowired('userComponentFactory')
-    private userComponentFactory: UserComponentFactory;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private dateFilterParams: IDateFilterParams;
+
+    constructor() {
+        super('dateFilter');
+    }
 
     protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date; to: Date; } {
         // unlike the other filters, we do two things here:
@@ -150,10 +151,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body">
-                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom">
-                </div>
-                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo">
-                </div>
+                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom"></div>
+                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo"></div>
             </div>`;
     }
 
@@ -169,7 +168,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         const [compFrom, compTo] = this.getFromToComponents(position);
 
-        return compFrom.getDate() != null && (option !== SimpleFilter.IN_RANGE || compTo.getDate() != null);
+        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
@@ -178,9 +177,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             && aSimple.type === bSimple.type;
     }
 
-    // needed for creating filter model
     protected getFilterType(): string {
-        return DateFilter.FILTER_TYPE;
+        return 'date';
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
@@ -192,18 +190,25 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             dateFrom: serialiseDate(compFrom.getDate()),
             dateTo: serialiseDate(compTo.getDate()),
             type,
-            filterType: DateFilter.FILTER_TYPE
+            filterType: this.getFilterType()
         };
     }
 
     private resetPlaceholder(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const placeholder = translate('dateFormatOoo', 'yyyy-mm-dd');
+        const placeholder = this.translate('dateFormatOoo');
+        const ariaLabel = 'Filter value';
 
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
+        this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
+
         this.dateCondition1ToComp.setInputPlaceholder(placeholder);
+        this.dateCondition1ToComp.setInputAriaLabel(ariaLabel);
+
         this.dateCondition2FromComp.setInputPlaceholder(placeholder);
+        this.dateCondition2FromComp.setInputAriaLabel(ariaLabel);
+
         this.dateCondition2ToComp.setInputPlaceholder(placeholder);
+        this.dateCondition2ToComp.setInputAriaLabel(ariaLabel);
     }
 
     protected updateUiVisibility(): void {

@@ -80,4 +80,4 @@ laterOnInYourApplicationSomewhere() {
 SNIPPET
 ) ?>
 
-<?= grid_example('Vue Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'vue', 'extras' => ['bootstrap']]) ?>
+<?= grid_example('Vue Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'vue', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>

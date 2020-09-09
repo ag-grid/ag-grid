@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, Optional } from "../../context/context";
 import { RegisteredComponentSource } from "./userComponentRegistry";
 import { Promise } from "../../utils";
-import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, GroupRowInnerRendererComponent, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, NoRowsOverlayComponent, PinnedRowCellRendererComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes";
+import { CellEditorComponent, CellRendererComponent, DateComponent, FilterComponent, FloatingFilterComponent, HeaderComponent, HeaderGroupComponent, InnerRendererComponent, LoadingOverlayComponent, NoRowsOverlayComponent, PinnedRowCellRendererComponent, StatusPanelComponent, ToolPanelComponent, TooltipComponent } from "./componentTypes";
 import { BeanStub } from "../../context/beanStub";
 import { cloneObject, mergeDeep } from '../../utils/object';
 export var ComponentSource;
@@ -50,15 +50,12 @@ var UserComponentFactory = /** @class */ (function (_super) {
         return this.createAndInitUserComponent(params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, 'agColumnGroupHeader');
     };
     UserComponentFactory.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
+        return this.createAndInitUserComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
     };
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     UserComponentFactory.prototype.newFullWidthCellRenderer = function (params, cellRendererType, cellRendererName) {
-        return this.createAndInitUserComponent(null, params, {
-            propertyName: cellRendererType,
-            isCellRenderer: function () { return true; }
-        }, cellRendererName);
+        return this.createAndInitUserComponent(null, params, { propertyName: cellRendererType, isCellRenderer: function () { return true; } }, cellRendererName);
     };
     UserComponentFactory.prototype.newCellRenderer = function (target, params, isPinned) {
         if (isPinned === void 0) { isPinned = false; }
@@ -79,14 +76,14 @@ var UserComponentFactory = /** @class */ (function (_super) {
     UserComponentFactory.prototype.newTooltipComponent = function (params) {
         return this.createAndInitUserComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
     };
-    UserComponentFactory.prototype.newFilterComponent = function (colDef, params, defaultFilter, modifyParamsCallback) {
-        return this.createAndInitUserComponent(colDef, params, FilterComponent, defaultFilter, false, modifyParamsCallback);
+    UserComponentFactory.prototype.newFilterComponent = function (def, params, defaultFilter) {
+        return this.createAndInitUserComponent(def, params, FilterComponent, defaultFilter, false);
     };
     UserComponentFactory.prototype.newSetFilterCellRenderer = function (target, params) {
         return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     };
-    UserComponentFactory.prototype.newFloatingFilterComponent = function (colDef, params, defaultFloatingFilter) {
-        return this.createAndInitUserComponent(colDef, params, FloatingFilterComponent, defaultFloatingFilter, true);
+    UserComponentFactory.prototype.newFloatingFilterComponent = function (def, params, defaultFloatingFilter) {
+        return this.createAndInitUserComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
     };
     UserComponentFactory.prototype.newToolPanelComponent = function (toolPanelDef, params) {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
@@ -107,14 +104,10 @@ var UserComponentFactory = /** @class */ (function (_super) {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
      */
     UserComponentFactory.prototype.createAndInitUserComponent = function (definitionObject, paramsFromGrid, componentType, defaultComponentName, 
     // optional items are: FloatingFilter, CellComp (for cellRenderer)
-    optional, 
-    // used by FilterManager only
-    modifyParamsCallback) {
+    optional) {
         if (optional === void 0) { optional = false; }
         if (!definitionObject) {
             definitionObject = this.gridOptions;
@@ -128,10 +121,7 @@ var UserComponentFactory = /** @class */ (function (_super) {
         // Wire the component and call the init method with the correct params
         var params = this.createFinalParams(definitionObject, componentType.propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
         this.addReactHacks(params);
-        // give caller chance to set any params that depend on the componentInstance (need here as the
-        // componentInstance was not available when createUserComponent was called)
-        var paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
-        var deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
+        var deferredInit = this.initComponent(componentInstance, params);
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);
         }
@@ -383,19 +373,19 @@ var UserComponentFactory = /** @class */ (function (_super) {
         return component.init(params);
     };
     __decorate([
-        Autowired("gridOptions")
+        Autowired('gridOptions')
     ], UserComponentFactory.prototype, "gridOptions", void 0);
     __decorate([
-        Autowired("agComponentUtils")
+        Autowired('agComponentUtils')
     ], UserComponentFactory.prototype, "agComponentUtils", void 0);
     __decorate([
-        Autowired("componentMetadataProvider")
+        Autowired('componentMetadataProvider')
     ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
     __decorate([
-        Autowired("userComponentRegistry")
+        Autowired('userComponentRegistry')
     ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
     __decorate([
-        Optional("frameworkComponentWrapper")
+        Optional('frameworkComponentWrapper')
     ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
     UserComponentFactory = __decorate([
         Bean('userComponentFactory')

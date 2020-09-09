@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { RowContainerComponent } from '../rendering/rowContainerComponent';
+import { RowContainerComponent } from '../rendering/row/rowContainerComponent';
 import { RowDragFeature } from './rowDragFeature';
 import { Component } from '../widgets/component';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
@@ -102,6 +102,7 @@ export declare class GridPanel extends Component {
     private addEventListeners;
     private addDragListeners;
     private addMouseListeners;
+    private addPreventScrollWhileDragging;
     private addKeyboardEvents;
     private addBodyViewportListener;
     getBodyClientRect(): ClientRect;

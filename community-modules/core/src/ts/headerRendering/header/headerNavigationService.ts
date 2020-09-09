@@ -10,7 +10,7 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { GridPanel } from "../../gridPanel/gridPanel";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
-import { _ } from "../../utils";
+import { last } from "../../utils/array";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -165,7 +165,7 @@ export class HeaderNavigationService extends BeanStub {
 
         if (column instanceof ColumnGroup) {
             const columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? _.last(columns) : columns[0];
+            columnToScrollTo = direction === 'Before' ? last(columns) : columns[0];
         } else {
             columnToScrollTo = column;
         }

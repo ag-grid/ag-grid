@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
-var utils_1 = require("../utils");
+var function_1 = require("../utils/function");
+var dom_1 = require("../utils/dom");
 var ResizeObserverService = /** @class */ (function (_super) {
     __extends(ResizeObserverService, _super);
     function ResizeObserverService() {
@@ -39,7 +40,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
         var frameworkFactory = this.getFrameworkOverrides();
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        var debouncedCallback = utils_1._.debounce(callback, debounceDelay);
+        var debouncedCallback = function_1.debounce(callback, debounceDelay);
         var useBrowserResizeObserver = function () {
             var resizeObserver = new window.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
@@ -47,14 +48,14 @@ var ResizeObserverService = /** @class */ (function (_super) {
         };
         var usePolyfill = function () {
             // initialise to the current width and height, so first call will have no changes
-            var widthLastTime = utils_1._.offsetWidth(element);
-            var heightLastTime = utils_1._.offsetHeight(element);
+            var widthLastTime = dom_1.offsetWidth(element);
+            var heightLastTime = dom_1.offsetHeight(element);
             // when finished, this gets turned to false.
             var running = true;
             var periodicallyCheckWidthAndHeight = function () {
                 if (running) {
-                    var newWidth = utils_1._.offsetWidth(element);
-                    var newHeight = utils_1._.offsetHeight(element);
+                    var newWidth = dom_1.offsetWidth(element);
+                    var newHeight = dom_1.offsetHeight(element);
                     var changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {
                         widthLastTime = newWidth;

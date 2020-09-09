@@ -1,14 +1,13 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgInputTextField } from "./agInputTextField";
+import { AgInputTextField, ITextInputField } from "./agInputTextField";
 export declare class AgInputNumberField extends AgInputTextField {
-    protected className: string;
-    protected inputType: string;
-    private precision;
-    private step;
-    private min;
-    private max;
+    private precision?;
+    private step?;
+    private min?;
+    private max?;
+    constructor(config?: ITextInputField);
     postConstruct(): void;
     normalizeValue(value: string): string;
     private adjustPrecision;

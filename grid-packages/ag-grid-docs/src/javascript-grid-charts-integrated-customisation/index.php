@@ -9,102 +9,139 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Chart Customisation</h1>
 
 <p class="lead">
-    Charts can be customised in a number of ways to suit your applications' requirements.
+    Chart themes can be used to customise the look and feel of your charts to match your application.
 </p>
-
-<h2>Overriding Chart Options</h2>
 
 <p>
-    The primary mechanism for customising charts is via the following <code>gridOptions</code> callback:
+    ag-Charts support <a href="../javascript-charts-themes/">Chart Themes</a> to change how charts are styled. There are
+    a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to
+    the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide
+    overrides to tweak the provided chart themes in the way you want.
 </p>
 
-<snippet language="ts">
-gridOptions.processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
+<h2>Provided Themes</h2>
 
-interface ProcessChartOptionsParams {
-    type: ChartType;
-    options: ChartOptions;
+<p>
+    There are five chart themes that are provided by the grid: <code>'ag-default'</code>, <code>'ag-material'</code>,
+    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. When using a dark theme for the grid
+    (e.g. <code>ag-theme-alpine-dark</code>), dark equivalents of the chart themes are provided by default instead,
+    named with a <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
+</p>
+
+<p>
+    When you create a chart, you can scroll through the different available themes in the chart settings.
+</p>
+
+<div class="animated-example">
+    <img data-gifffer="theme-picker.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
+</div>
+
+<p>
+    You can change which themes are available by setting the <code>chartThemes</code> property in
+    <code>gridOptions</code>. The example below shows a different selection of themes configured in this way.
+</p>
+
+<?= grid_example('Configure Available Themes', 'available-themes', 'generated', ['exampleHeight' => 690, 'enterprise' => true]) ?>
+
+<h2>Custom Chart Themes</h2>
+
+<p>
+    You can create your own chart theme and provide it to the grid in the <code>customChartThemes</code> map on
+    <code>gridOptions</code>. Your theme should then be specified in <code>chartThemes</code> to make it available to
+    your users.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+gridOptions: {
+    ...
+    customChartThemes: {
+        myCustomTheme: {
+            baseTheme: 'ag-pastel',
+            palette: {
+                fills: ['#c16068', '#a2bf8a', '#ebcc87'],
+                strokes: ['#874349', '#718661', '#a48f5f']
+            },
+            overrides: {
+                common: {
+                    title: {
+                        fontSize: 22,
+                        fontFamily: 'Arial, sans-serif'
+                    }
+                }
+            }
+        }
+    },
+    chartThemes: ['myCustomTheme', 'ag-vivid']
 }
-
-type ChartType =
-    'groupedColumn' |
-    'stackedColumn' |
-    'normalizedColumn' |
-    'groupedBar' |
-    'stackedBar' |
-    'normalizedBar' |
-    'line' |
-    'scatter' |
-    'bubble' |
-    'pie' |
-    'doughnut' |
-    'area' |
-    'stackedArea' |
-    'normalizedArea';
-</snippet>
+SNIPPET
+) ?>
 
 <p>
-    This callback is invoked once, before the chart is created, with <code>ProcessChartOptionsParams</code>.
+    The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used
+    alongside a custom theme, and are unaffected by the settings in the custom theme.
 </p>
+
+<?= grid_example('Custom Chart Theme', 'custom-chart-theme', 'generated', ['exampleHeight' => 660,'enterprise' => true]) ?>
+
+<h2>Overriding Existing Themes</h2>
 
 <p>
-    The params object contains a <code>type</code> property corresponding to the chart about to be created, along with
-    the <code>ChartOptions</code> that are about to be applied.
+    Instead of providing a whole custom chart theme, you can instead supply just a set of theme overrides. These will be
+    applied on top of every available theme. This can be useful for tweaking the style of your charts without having
+    to provide a whole theme, or to make changes across multiple themes.
 </p>
 
-<p>
-    There are different available options to configure depending on the type of chart. Please refer to the relevant section below for more details:
-    <ul>
-        <li><a href="../javascript-grid-charts-integrated-customisation-general/">General Chart Customisation</a> (these apply to all chart types)</li>
-        <li><a href="../javascript-grid-charts-integrated-customisation-bar/">Bar/Column Chart Customisation</a></li>
-        <li><a href="../javascript-grid-charts-integrated-customisation-line/">Line Chart Customisation</a></li>
-        <li><a href="../javascript-grid-charts-integrated-customisation-scatter/">Scatter/Bubble Chart Customisation</a></li>
-        <li><a href="../javascript-grid-charts-integrated-customisation-area/">Area Chart Customisation</a></li>
-        <li><a href="../javascript-grid-charts-integrated-customisation-pie/">Pie/Doughnut Chart Customisation</a></li>
-    </ul>
-</p>
+<?= createSnippet(<<<SNIPPET
+gridOptions: {
+    ...
+    chartThemeOverrides: {
+        common: {
+            title: {
+                fontSize: 22,
+                fontFamily: 'Arial, sans-serif'
+            }
+        }
+    }
+}
+SNIPPET
+) ?>
 
-<h3>Example: Customising Charts</h3>
+<p>The following examples show different types of chart being customised using theme overrides.</p>
 
-<p>
-    The example below demonstrates:
-</p>
+<h3>Example: Common Chart Overrides</h3>
 
-<ul class="content">
-    <li><b>Stacked Bar</b>, <b>Grouped Bar</b> and <b>Normalized Bar</b> charts have the legend docked to the <code>bottom</code>.</li>
-    <li><b>Stacked Column</b>, <b>Grouped Column</b> and <b>Normalized Column</b> charts have the legend docked to the <code>right</code>.</li>
-    <li><b>Line</b> charts have the legend docked to the <code>left</code>.</li>
-    <li><b>Scatter</b> charts have the legend docked to the <code>right</code>.</li>
-    <li><b>Pie</b> charts have the legend docked to the <code>top</code>.</li>
-    <li><b>Doughnut</b> charts have the legend docked to the <code>right</code>.</li>
-</ul>
+<p>These overrides can be used with any chart type.</p>
 
-<?= grid_example('Customising Charts', 'custom-chart', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Common Chart Overrides', 'common-overrides', 'generated', ['enterprise' => true]) ?>
 
-<h2>Saving User Preferences</h2>
+<h3>Example: Cartesian Chart Overrides</h3>
 
-<p>
-    <a href="../javascript-grid-charts-integrated-chart-events/">Chart events</a> can be used to detect and save user-made changes.
-    Formatting changes made through the Format Panel can be captured using the <code>ChartOptionsChanged</code> event, and changes
-    to the data range used to render the chart can be detected using the <code>ChartRangeSelectionChanged</code> event, which
-    contains a <code>cellRange</code> object that contains information about the range and will allow you to recreate the chart.
-</p>
+<p>These overrides can be used with any cartesian chart.</p>
 
-<h3>Example: Saving User Preferences</h3>
+<?= grid_example('Cartesian Chart Overrides', 'cartesian-overrides', 'generated', ['enterprise' => true]) ?>
 
-<p>
-    The example below demonstrates how the <code>ChartOptionsChanged</code> event can be used to save and restore
-    user chart formatting preferences. Notice the following:
-</p>
+<h3>Example: Line Chart Overrides</h3>
 
-<ul class="content">
-    <li><b>Saving Options by Chart Type</b>: format changes (via the format panel) are preserved after leaving and
-        returning to the chart by using the <code>savedUserPreferenceByChartType</code> object to keep track of user
-        format changes on a per-chart type basis.</li>
-    <li><b>Saving Global Chart Options</b>: changes made to the legend options are applied to all new charts by using
-        the <code>savedLegendUserPreference</code> object to globally keep track of legend preferences.</li>
-</ul>
+<?= grid_example('Line Chart Overrides', 'line-overrides', 'generated', ['enterprise' => true]) ?>
 
-<?= grid_example('Saving User Preferences', 'saving-user-preferences', 'generated', ['exampleHeight' => 660,'enterprise' => true]) ?>
+<h3>Example: Bar/Column Chart Overrides</h3>
+
+<?= grid_example('Bar/Column Chart Overrides', 'bar-overrides', 'generated', ['enterprise' => true]) ?>
+
+<h3>Example: Area Chart Overrides</h3>
+
+<?= grid_example('Area Chart Overrides', 'area-overrides', 'generated', ['enterprise' => true]) ?>
+
+<h3>Example: Scatter/Bubble Chart Overrides</h3>
+
+<?= grid_example('Scatter/Bubble Chart Overrides', 'scatter-overrides', 'generated', ['enterprise' => true]) ?>
+
+<h3>Example: Pie/Doughnut Chart Overrides</h3>
+
+<?= grid_example('Pie/Doughnut Chart Overrides', 'pie-overrides', 'generated', ['enterprise' => true]) ?>
+
+<h3>Example: Histogram Chart Overrides</h3>
+
+<?= grid_example('Histogram Chart Overrides', 'histogram-overrides', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

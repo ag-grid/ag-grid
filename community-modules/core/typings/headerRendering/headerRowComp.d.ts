@@ -10,15 +10,14 @@ export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
     private columnController;
     private focusController;
-    private readonly dept;
     private readonly pinned;
     private readonly dropTarget;
     private readonly type;
-    private rowIndex;
+    private dept;
     private headerComps;
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget);
     forEachHeaderElement(callback: (comp: Component) => void): void;
-    setRowIndex(idx: number): void;
+    private setRowIndex;
     getRowIndex(): number;
     getType(): HeaderRowType;
     private destroyAllChildComponents;
@@ -28,8 +27,6 @@ export declare class HeaderRowComp extends Component {
     private onColumnResized;
     private setWidth;
     private getWidthForRow;
-    private onGridColumnsChanged;
-    private removeAndDestroyAllChildComponents;
     private onDisplayedColumnsChanged;
     private getItemsAtDepth;
     private onVirtualColumnsChanged;

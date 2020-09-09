@@ -17,14 +17,16 @@ var rowData = [
     {id: 15, filePath: ['Misc', 'temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
 ];
 
+var valueFormatter = function(params) {
+    return params.value ? params.value + ' MB' : '';
+}
+
 var gridOptions = {
     columnDefs: [
         { field: 'dateModified'},
         {
             field: 'size',
-            valueFormatter: function(params) {
-                return params.value ? params.value + ' MB' : '';
-            }
+            valueFormatter: valueFormatter
         }
     ],
     defaultColDef: {

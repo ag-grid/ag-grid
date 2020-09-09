@@ -1,12 +1,11 @@
 import { Column } from "../entities/column";
 import { CellChangedEvent, RowNode } from "../entities/rowNode";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import {
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEditingStoppedEvent,
     CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -21,14 +20,53 @@ import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/iRangeController";
-import { RowComp } from "./rowComp";
-import { RowDragComp } from "./rowDragComp";
+import { RowComp } from "./row/rowComp";
+import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
-import { _, Promise } from "../utils";
+import { Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
 import { TooltipFeature } from "../widgets/tooltipFeature";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
+import { setAriaColIndex, setAriaSelected } from "../utils/aria";
+import { get, getValueUsingField } from "../utils/object";
+import { escapeString } from "../utils/string";
+import { exists, missing } from "../utils/generic";
+import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass } from "../utils/dom";
+import { last, areEqual, pushAll, includes } from "../utils/array";
+import { cssStyleObjectToMarkup } from "../utils/general";
+import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
+import { isEventFromPrintableCharacter } from "../utils/keyboard";
+import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
+import { doOnce } from "../utils/function";
+import { KeyCode } from '../constants/keyCode';
+
+const CSS_CELL = 'ag-cell';
+const CSS_CELL_VALUE = 'ag-cell-value';
+const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
+
+const CSS_RANGE_TOP = 'ag-cell-range-top';
+const CSS_RANGE_RIGHT = 'ag-cell-range-right';
+const CSS_RANGE_BOTTOM = 'ag-cell-range-bottom';
+const CSS_RANGE_LEFT = 'ag-cell-range-left';
+
+const CSS_CELL_FOCUS = 'ag-cell-focus';
+
+const CSS_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
+const CSS_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
+
+const CSS_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
+const CSS_INLINE_EDITING = 'ag-cell-inline-editing';
+const CSS_POPUP_EDITING = 'ag-cell-popup-editing';
+
+const CSS_RANGE_SELECTED = 'ag-cell-range-selected';
+const CSS_COLUMN_HOVER = 'ag-column-hover';
+const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
+
+const CSS_RANGE_CHART = 'ag-cell-range-chart';
+const CSS_RANGE_SINGLE_CELL = 'ag-cell-range-single-cell';
+const CSS_RANGE_CHART_CATEGORY = 'ag-cell-range-chart-category';
+const CSS_RANGE_HANDLE = 'ag-cell-range-handle';
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -39,7 +77,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private eCellWrapper: HTMLElement;
     private eCellValue: HTMLElement;
-    private eParentOfValue: HTMLElement;
 
     private beans: Beans;
     private column: Column;
@@ -92,6 +129,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private suppressRefreshCell = false;
 
+    private tooltipFeatureEnabled = false;
     private tooltip: any;
 
     private scope: any = null;
@@ -147,10 +185,10 @@ export class CellComp extends Component implements TooltipParentComp {
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
 
         const valueToRender = this.getInitialValueToRender();
-        const valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
+        const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
         this.tooltip = this.getToolTip();
-        const tooltipSanitised = _.escape(this.tooltip);
-        const colIdSanitised = _.escape(col.getId());
+        const tooltipSanitised = escapeString(this.tooltip);
+        const colIdSanitised = escapeString(col.getId());
 
         let wrapperStartTemplate: string = '';
         let wrapperEndTemplate: string = '';
@@ -159,35 +197,37 @@ export class CellComp extends Component implements TooltipParentComp {
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
-        const colIdxSanitised = _.escape(this.getAriaColumnIndex());
-
-        if (this.usingWrapper) {
-            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="gridcell" aria-colindex="${colIdxSanitised}" class="ag-cell-value" ${unselectable}>`;
-            wrapperEndTemplate = '</span></div>';
-        }
+        const colIdxSanitised = escapeString(this.beans.columnController.getAriaColumnIndex(this.column).toString());
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` ${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-        templateParts.push(` role="${this.usingWrapper ? 'presentation' : 'gridcell'}"`);
-
-        if (!this.usingWrapper) {
-            templateParts.push(` aria-colindex=${colIdxSanitised}`);
-        }
+        templateParts.push(` role="gridcell"`);
+        templateParts.push(` aria-colindex="${colIdxSanitised}"`);
 
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
-        templateParts.push(` class="${_.escape(cssClasses.join(' '))}"`);
+        templateParts.push(` class="${escapeString(cssClasses.join(' '))}"`);
 
-        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
-            templateParts.push(`title="${tooltipSanitised}"`);
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && exists(tooltipSanitised)) {
+            templateParts.push(` title="${tooltipSanitised}"`);
         }
 
-        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${_.escape(stylesFromColDef)} ${_.escape(stylesForRowSpanning)}" >`);
+        if (this.rangeSelectionEnabled) {
+            templateParts.push(` aria-selected="${this.rangeCount ? 'true' : 'false'}"`);
+        }
+
+        if (this.usingWrapper) {
+            wrapperStartTemplate =
+                `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}" ${unselectable}>`;
+            wrapperEndTemplate = '</span></div>';
+        }
+
+        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${escapeString(stylesFromColDef)} ${escapeString(stylesForRowSpanning)}">`);
         templateParts.push(wrapperStartTemplate);
 
-        if (_.exists(valueSanitised, true)) {
+        if (exists(valueSanitised, true)) {
             templateParts.push(valueSanitised);
         }
 
@@ -218,14 +258,24 @@ export class CellComp extends Component implements TooltipParentComp {
         this.angular1Compile();
         this.refreshHandle();
 
-        if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        if (exists(this.tooltip)) {
+            this.createTooltipFeatureIfNeeded();
         }
+    }
+
+    private createTooltipFeatureIfNeeded(): void {
+        if (
+            this.beans.gridOptionsWrapper.isEnableBrowserTooltips() ||
+            this.tooltipFeatureEnabled
+        ) { return; }
+
+        this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        this.tooltipFeatureEnabled = true;
     }
 
     public onColumnHover(): void {
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        this.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
     public onCellChanged(event: CellChangedEvent): void {
@@ -239,7 +289,7 @@ export class CellComp extends Component implements TooltipParentComp {
         let mostLeftCol: Column;
 
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            mostLeftCol = _.last(this.colsSpanning);
+            mostLeftCol = last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;
         }
@@ -265,7 +315,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private setupColSpan(): void {
         // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (_.missing(this.getComponentHolder().colSpan)) { return; }
+        if (missing(this.getComponentHolder().colSpan)) { return; }
 
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
         this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
@@ -291,7 +341,7 @@ export class CellComp extends Component implements TooltipParentComp {
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
                 pointer = this.beans.columnController.getDisplayedColAfter(pointer);
-                if (!pointer || _.missing(pointer)) {
+                if (!pointer || missing(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -307,61 +357,57 @@ export class CellComp extends Component implements TooltipParentComp {
     private onDisplayColumnsChanged(): void {
         const colsSpanning: Column[] = this.getColSpanningList();
 
-        if (!_.areEqual(this.colsSpanning, colsSpanning)) {
+        if (!areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
         }
     }
 
-    private getAriaColumnIndex(): string {
-        const allColumns = this.beans.columnController.getAllDisplayedColumns();
-
-        return (allColumns.indexOf(this.column) + 1).toString();
-    }
-
     private refreshAriaIndex(): void {
-        const colIdx = this.getAriaColumnIndex();
-        const el = this.usingWrapper ? this.eCellValue : this.getGui();
-
-        el.setAttribute('aria-colindex', colIdx);
+        const colIdx = this.beans.columnController.getAriaColumnIndex(this.column);
+        setAriaColIndex(this.getGui(), colIdx);
     }
 
     private getInitialCssClasses(): string[] {
-        const cssClasses = ["ag-cell", "ag-cell-not-inline-editing"];
+        const cssClasses = [CSS_CELL, CSS_NOT_INLINE_EDITING];
 
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push('ag-cell-auto-height');
+            cssClasses.push(CSS_AUTO_HEIGHT);
         }
 
         const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
 
         if (doingFocusCss && this.cellFocused) {
             // otherwise the class depends on the focus state
-            cssClasses.push('ag-cell-focus');
+            cssClasses.push(CSS_CELL_FOCUS);
         }
 
         if (this.firstRightPinned) {
-            cssClasses.push('ag-cell-first-right-pinned');
+            cssClasses.push(CSS_FIRST_RIGHT_PINNED);
         }
 
         if (this.lastLeftPinned) {
-            cssClasses.push('ag-cell-last-left-pinned');
+            cssClasses.push(CSS_LAST_LEFT_PINNED);
         }
 
         if (this.beans.columnHoverService.isHovered(this.column)) {
-            cssClasses.push('ag-column-hover');
+            cssClasses.push(CSS_COLUMN_HOVER);
         }
 
-        _.pushAll(cssClasses, this.preProcessClassesFromColDef());
-        _.pushAll(cssClasses, this.preProcessCellClassRules());
-        _.pushAll(cssClasses, this.getInitialRangeClasses());
+        pushAll(cssClasses, this.preProcessClassesFromColDef());
+        pushAll(cssClasses, this.preProcessCellClassRules());
+        pushAll(cssClasses, this.getInitialRangeClasses());
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
-            cssClasses.push('ag-cell-value');
+            cssClasses.push(CSS_CELL_VALUE);
+        }
+
+        if (this.column.getColDef().wrapText) {
+            cssClasses.push(CSS_CELL_WRAP_TEXT);
         }
 
         return cssClasses;
@@ -503,17 +549,17 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         // we want to highlight the cells, without any animation
-        _.addCssClass(element, fullName);
-        _.removeCssClass(element, animationFullName);
+        this.addCssClass(fullName);
+        this.removeCssClass(animationFullName);
 
         // then once that is applied, we remove the highlight with animation
         window.setTimeout(() => {
-            _.removeCssClass(element, fullName);
-            _.addCssClass(element, animationFullName);
+            this.removeCssClass(fullName);
+            this.addCssClass(animationFullName);
             element.style.transition = `background-color ${fadeDelay}ms`;
             window.setTimeout(() => {
                 // and then to leave things as we got them, we remove the animation
-                _.removeCssClass(element, animationFullName);
+                this.removeCssClass(animationFullName);
                 element.style.transition = null;
             }, fadeDelay);
         }, flashDelay);
@@ -521,7 +567,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private replaceContentsAfterRefresh(): void {
         // otherwise we rip out the cell and replace it
-        _.clearElement(this.eParentOfValue);
+        clearElement(this.eCellValue);
 
         // remove old renderer component if it exists
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
@@ -557,12 +603,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const stylesToUse = this.processStylesFromColDef();
 
         if (stylesToUse) {
-            _.addStylesToElement(this.getGui(), stylesToUse);
+            addStylesToElement(this.getGui(), stylesToUse);
         }
     }
 
     private preProcessStylesFromColDef(): string {
-        return _.cssStyleObjectToMarkup(this.processStylesFromColDef());
+        return cssStyleObjectToMarkup(this.processStylesFromColDef());
     }
 
     private processStylesFromColDef(): any {
@@ -593,7 +639,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private postProcessClassesFromColDef() {
-        this.processClassesFromColDef(className => _.addCssClass(this.getGui(), className));
+        this.processClassesFromColDef(className => this.addCssClass(className));
     }
 
     private preProcessClassesFromColDef(): string[] {
@@ -631,7 +677,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
-            this.eParentOfValue.innerHTML = colDef.template;
+            this.eCellValue.innerHTML = colDef.template;
         } else if (colDef.templateUrl) {
             // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
             // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
@@ -639,7 +685,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
 
             if (template) {
-                this.eParentOfValue.innerHTML = template;
+                this.eCellValue.innerHTML = template;
             }
         } else {
             // we can switch from using a cell renderer back to the default if a user
@@ -652,14 +698,14 @@ export class CellComp extends Component implements TooltipParentComp {
                 const valueToUse = this.getValueToUse();
 
                 if (valueToUse != null) {
-                    this.eParentOfValue.innerHTML = _.escape(valueToUse);
+                    this.eCellValue.innerHTML = escapeString(valueToUse);
                 }
             }
         }
     }
 
     public attemptCellRendererRefresh(): boolean {
-        if (_.missing(this.cellRenderer) || !this.cellRenderer || _.missing(this.cellRenderer.refresh)) {
+        if (missing(this.cellRenderer) || !this.cellRenderer || missing(this.cellRenderer.refresh)) {
             return false;
         }
 
@@ -683,18 +729,19 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.tooltip === newTooltip) { return; }
 
-        const hasNewTooltip = _.exists(newTooltip);
+        this.createTooltipFeatureIfNeeded();
+
+        const hasNewTooltip = exists(newTooltip);
 
         if (hasNewTooltip && this.tooltip === newTooltip.toString()) { return; }
 
-        const hadTooltip = _.exists(this.tooltip);
         this.tooltip = newTooltip;
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             if (hasNewTooltip) {
-                this.eParentOfValue.setAttribute('title', this.tooltip);
+                this.eCellValue.setAttribute('title', this.tooltip);
             } else {
-                this.eParentOfValue.removeAttribute('title');
+                this.eCellValue.removeAttribute('title');
             }
         }
     }
@@ -711,11 +758,11 @@ export class CellComp extends Component implements TooltipParentComp {
         const colDef = this.getComponentHolder();
         const data = this.rowNode.data;
 
-        if (colDef.tooltipField && _.exists(data)) {
-            return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+        if (colDef.tooltipField && exists(data)) {
+            return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
         }
 
-        const valueGetter = colDef.tooltipValueGetter || colDef.tooltip;
+        const valueGetter = colDef.tooltipValueGetter;
 
         if (valueGetter) {
             return valueGetter({
@@ -736,7 +783,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public getTooltipText(escape: boolean = true) {
-        return escape ? _.escape(this.tooltip) : this.tooltip;
+        return escape ? escapeString(this.tooltip) : this.tooltip;
     }
 
     private processCellClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
@@ -759,8 +806,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private postProcessCellClassRules(): void {
         this.processCellClassRules(
-            className => _.addCssClass(this.getGui(), className),
-            className => _.removeCssClass(this.getGui(), className)
+            className => this.addCssClass(className),
+            className => this.removeCssClass(className)
         );
     }
 
@@ -879,13 +926,13 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellRenderer = cellRenderer;
         this.cellRendererGui = this.cellRenderer.getGui();
 
-        if (_.missing(this.cellRendererGui)) {
+        if (missing(this.cellRendererGui)) {
             return;
         }
 
         // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
-            this.eParentOfValue.appendChild(this.cellRendererGui);
+            this.eCellValue.appendChild(this.cellRendererGui);
         }
     }
 
@@ -908,7 +955,7 @@ export class CellComp extends Component implements TooltipParentComp {
             refreshCell: this.refreshCell.bind(this),
 
             eGridCell: this.getGui(),
-            eParentOfValue: this.eParentOfValue,
+            eParentOfValue: this.eCellValue,
 
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
@@ -963,7 +1010,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         switch (eventName) {
             case 'click':
@@ -1082,7 +1129,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
         // of user hitting tab quickly (more quickly than renderers getting created) won't work
-        const cellEditorAsync = _.missing(this.cellEditor);
+        const cellEditorAsync = missing(this.cellEditor);
 
         if (cellEditorAsync && cellStartedEdit) {
             this.focusCell(true);
@@ -1165,7 +1212,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addInCellEditor(): void {
-        _.clearElement(this.getGui());
+        clearElement(this.getGui());
 
         if (this.cellEditor) {
             this.getGui().appendChild(this.cellEditor.getGui());
@@ -1178,15 +1225,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
 
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
-        this.hideEditorPopup = this.beans.popupService.addPopup(
-            useModelPopup,
-            ePopupGui,
-            true,
-            // callback for when popup disappears
-            () => {
-                this.onPopupEditorClosed();
-            }
-        );
+        this.hideEditorPopup = this.beans.popupService.addPopup({
+            modal: useModelPopup,
+            eChild: ePopupGui,
+            closeOnEsc: true,
+            closedCallback: () => { this.onPopupEditorClosed(); }
+        });
 
         const params = {
             column: this.column,
@@ -1244,11 +1288,11 @@ export class CellComp extends Component implements TooltipParentComp {
         const editingInline = this.editingCell && !this.cellEditorInPopup;
         const popupEditorShowing = this.editingCell && this.cellEditorInPopup;
 
-        _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
-        _.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
-        _.addOrRemoveCssClass(this.getGui(), "ag-cell-popup-editing", popupEditorShowing);
-        _.addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-inline-editing", editingInline);
-        _.addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-not-inline-editing", !editingInline);
+        this.addOrRemoveCssClass(CSS_INLINE_EDITING, editingInline);
+        this.addOrRemoveCssClass(CSS_NOT_INLINE_EDITING, !editingInline);
+        this.addOrRemoveCssClass(CSS_POPUP_EDITING, popupEditorShowing);
+        addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-inline-editing", editingInline);
+        addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-not-inline-editing", !editingInline);
     }
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
@@ -1301,7 +1345,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const valueParser = colDef.valueParser;
 
-        return _.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
+        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
     public focusCell(forceBrowserFocus = false): void {
@@ -1330,26 +1374,26 @@ export class CellComp extends Component implements TooltipParentComp {
         const key = event.which || event.keyCode;
 
         switch (key) {
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
                 break;
-            case Constants.KEY_F2:
+            case KeyCode.F2:
                 this.onF2KeyDown();
                 break;
-            case Constants.KEY_ESCAPE:
+            case KeyCode.ESCAPE:
                 this.onEscapeKeyDown();
                 break;
-            case Constants.KEY_TAB:
+            case KeyCode.TAB:
                 this.onTabKeyDown(event);
                 break;
-            case Constants.KEY_BACKSPACE:
-            case Constants.KEY_DELETE:
+            case KeyCode.BACKSPACE:
+            case KeyCode.DELETE:
                 this.onBackspaceOrDeleteKeyPressed(key);
                 break;
-            case Constants.KEY_DOWN:
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_LEFT:
+            case KeyCode.DOWN:
+            case KeyCode.UP:
+            case KeyCode.RIGHT:
+            case KeyCode.LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
         }
@@ -1399,10 +1443,16 @@ export class CellComp extends Component implements TooltipParentComp {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
+                this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
             } else {
-                e.preventDefault();
-                this.startRowOrCellEdit(Constants.KEY_ENTER);
+                this.startRowOrCellEdit(KeyCode.ENTER);
+                if (this.editingCell) {
+                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                    // preventing default results in a 'new line' character getting inserted in the text area
+                    // when the editing was started
+                    e.preventDefault();
+                }
             }
         }
     }
@@ -1415,13 +1465,13 @@ export class CellComp extends Component implements TooltipParentComp {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
+            this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
         }
     }
 
     private onF2KeyDown(): void {
         if (!this.editingCell) {
-            this.startRowOrCellEdit(Constants.KEY_F2);
+            this.startRowOrCellEdit(KeyCode.F2);
         }
     }
 
@@ -1435,7 +1485,7 @@ export class CellComp extends Component implements TooltipParentComp {
     public onKeyPress(event: KeyboardEvent): void {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
-        const eventTarget = _.getTarget(event);
+        const eventTarget = getTarget(event);
         const eventOnChildComponent = eventTarget !== this.getGui();
 
         if (eventOnChildComponent || this.editingCell) { return; }
@@ -1443,7 +1493,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const pressedChar = String.fromCharCode(event.charCode);
         if (pressedChar === ' ') {
             this.onSpaceKeyPressed(event);
-        } else if (_.isEventFromPrintableCharacter(event)) {
+        } else if (isEventFromPrintableCharacter(event)) {
             this.startRowOrCellEdit(null, pressedChar);
             // if we don't prevent default, then the keypress also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
@@ -1458,7 +1508,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const { gridOptionsWrapper } = this.beans;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
             const newSelection = !this.rowNode.isSelected();
-            if (newSelection || gridOptionsWrapper.isRowDeselection()) {
+            if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
                 this.rowNode.setSelected(newSelection);
             }
         }
@@ -1481,7 +1531,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (_.isBrowserIE() || _.isBrowserEdge()) && !this.editingCell;
+            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
 
             this.focusCell(forceBrowserFocus);
         } else {
@@ -1524,12 +1574,12 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private containsWidget(target: HTMLElement): boolean {
-        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
+        return isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!_.isIOSUserAgent() || _.isEventSupported('dblclick')) { return false; }
+        if (!isIOSUserAgent() || isEventSupported('dblclick')) { return false; }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -1723,31 +1773,31 @@ export class CellComp extends Component implements TooltipParentComp {
             return classes;
         }
 
-        classes.push('ag-cell-range-selected');
+        classes.push(CSS_RANGE_SELECTED);
 
         if (this.hasChartRange) {
-            classes.push('ag-cell-range-chart');
+            classes.push(CSS_RANGE_CHART);
         }
 
         const count = Math.min(this.rangeCount, 4);
 
-        classes.push(`ag-cell-range-selected-${count}`);
+        classes.push(`${CSS_RANGE_SELECTED}-${count}`);
 
         if (this.isSingleCell()) {
-            classes.push('ag-cell-range-single-cell');
+            classes.push(CSS_RANGE_SINGLE_CELL);
         }
 
         if (this.rangeCount > 0) {
             const borders = this.getRangeBorders();
 
-            if (borders.top) { classes.push('ag-cell-range-top'); }
-            if (borders.right) { classes.push('ag-cell-range-right'); }
-            if (borders.bottom) { classes.push('ag-cell-range-bottom'); }
-            if (borders.left) { classes.push('ag-cell-range-left'); }
+            if (borders.top) { classes.push(CSS_RANGE_TOP); }
+            if (borders.right) { classes.push(CSS_RANGE_RIGHT); }
+            if (borders.bottom) { classes.push(CSS_RANGE_BOTTOM); }
+            if (borders.left) { classes.push(CSS_RANGE_LEFT); }
         }
 
         if (!!this.selectionHandle) {
-            classes.push('ag-cell-range-handle');
+            classes.push(CSS_RANGE_HANDLE);
         }
 
         return classes;
@@ -1774,24 +1824,26 @@ export class CellComp extends Component implements TooltipParentComp {
         const element = this.getGui();
 
         if (rangeCount !== newRangeCount) {
-            _.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount !== 0);
-            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount === 1);
-            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-2', newRangeCount === 2);
-            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-3', newRangeCount === 3);
-            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-4', newRangeCount >= 4);
+            this.addOrRemoveCssClass(CSS_RANGE_SELECTED, newRangeCount !== 0);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-1`, newRangeCount === 1);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-2`, newRangeCount === 2);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-3`, newRangeCount === 3);
+            this.addOrRemoveCssClass(`${CSS_RANGE_SELECTED}-4`, newRangeCount >= 4);
             this.rangeCount = newRangeCount;
         }
+
+        setAriaSelected(element, this.rangeCount > 0);
 
         const hasChartRange = this.getHasChartRange();
 
         if (hasChartRange !== this.hasChartRange) {
             this.hasChartRange = hasChartRange;
-            _.addOrRemoveCssClass(element, 'ag-cell-range-chart', this.hasChartRange);
+            this.addOrRemoveCssClass(CSS_RANGE_CHART, this.hasChartRange);
         }
 
         this.updateRangeBorders();
 
-        _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', this.isSingleCell());
+        this.addOrRemoveCssClass(CSS_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.refreshHandle();
     }
@@ -1805,7 +1857,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const cellRanges = rangeController.getCellRanges();
 
-        return cellRanges.length > 0 && cellRanges.every(range => _.includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
+        return cellRanges.length > 0 && cellRanges.every(range => includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
     }
 
     private shouldHaveSelectionHandle(): boolean {
@@ -1817,7 +1869,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return false;
         }
 
-        const cellRange = _.last(cellRanges);
+        const cellRange = last(cellRanges);
         const cellPosition = this.getCellPosition();
         let fillHandleIsAvailable = rangesLen === 1 &&
             (gridOptionsWrapper.isEnableFillHandle() || gridOptionsWrapper.isEnableRangeHandle()) &&
@@ -1827,8 +1879,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
             const isCategoryCell = hasCategoryRange && rangeController.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-range-chart-category', isCategoryCell);
-
+            this.addOrRemoveCssClass(CSS_RANGE_CHART_CATEGORY, isCategoryCell);
             fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 
@@ -1840,8 +1891,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addSelectionHandle() {
         const { gridOptionsWrapper, context, rangeController } = this.beans;
-        const cellRangeType = _.last(rangeController.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && _.missing(cellRangeType);
+        const cellRangeType = last(rangeController.getCellRanges()).type;
+        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
@@ -1876,7 +1927,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.addSelectionHandle();
         }
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-range-handle', !!this.selectionHandle);
+        this.addOrRemoveCssClass(CSS_RANGE_HANDLE, !!this.selectionHandle);
     }
 
     private updateRangeBorders(): void {
@@ -1887,12 +1938,10 @@ export class CellComp extends Component implements TooltipParentComp {
         const isBottom = !isSingleCell && rangeBorders.bottom;
         const isLeft = !isSingleCell && rangeBorders.left;
 
-        const element = this.getGui();
-
-        _.addOrRemoveCssClass(element, 'ag-cell-range-top', isTop);
-        _.addOrRemoveCssClass(element, 'ag-cell-range-right', isRight);
-        _.addOrRemoveCssClass(element, 'ag-cell-range-bottom', isBottom);
-        _.addOrRemoveCssClass(element, 'ag-cell-range-left', isLeft);
+        this.addOrRemoveCssClass(CSS_RANGE_TOP, isTop);
+        this.addOrRemoveCssClass(CSS_RANGE_RIGHT, isRight);
+        this.addOrRemoveCssClass(CSS_RANGE_BOTTOM, isBottom);
+        this.addOrRemoveCssClass(CSS_RANGE_LEFT, isLeft);
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -1900,7 +1949,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
+            this.addOrRemoveCssClass(CSS_FIRST_RIGHT_PINNED, firstRightPinned);
         }
     }
 
@@ -1909,16 +1958,15 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
+            this.addOrRemoveCssClass(CSS_LAST_LEFT_PINNED, lastLeftPinned);
         }
     }
 
     private populateTemplate(): void {
         if (this.usingWrapper) {
 
-            this.eParentOfValue = this.getRefElement('eCellValue');
-            this.eCellWrapper = this.getRefElement('eCellWrapper');
             this.eCellValue = this.getRefElement('eCellValue');
+            this.eCellWrapper = this.getRefElement('eCellWrapper');
 
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
@@ -1932,7 +1980,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.addSelectionCheckbox();
             }
         } else {
-            this.eParentOfValue = this.getGui();
+            this.eCellValue = this.getGui();
         }
     }
 
@@ -1948,14 +1996,14 @@ export class CellComp extends Component implements TooltipParentComp {
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                _.doOnce(() => console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'),
+                doOnce(() => console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'),
                     'CellComp.addRowDragging');
 
                 return;
             }
 
             if (pagination) {
-                _.doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
+                doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
                     'CellComp.addRowDragging');
 
                 return;
@@ -1966,7 +2014,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);
     }
 
     private addDndSource(): void {
@@ -1974,7 +2022,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createManagedBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eCellValue);
     }
 
     private addSelectionCheckbox(): void {
@@ -1988,7 +2036,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
     }
 
     private addDomData(): void {
@@ -2013,7 +2061,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
 
             if (doingFocusCss) {
-                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+                this.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
             }
 
             this.cellFocused = cellFocused;
@@ -2088,7 +2136,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
-            _.clearElement(this.getGui());
+            clearElement(this.getGui());
 
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
@@ -2128,7 +2176,12 @@ export class CellComp extends Component implements TooltipParentComp {
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-        const event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
-        this.beans.eventService.dispatchEvent(event);
+        const editingStoppedEvent = {
+            ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
+            oldValue,
+            newValue
+        };
+
+        this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 }

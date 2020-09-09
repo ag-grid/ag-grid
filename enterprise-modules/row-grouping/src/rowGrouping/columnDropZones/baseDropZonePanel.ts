@@ -286,8 +286,10 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private addColumns(columnsToAdd: Column[]): void {
+        if (!columnsToAdd) { return; }
         const newColumnList = this.getExistingColumns().slice();
-        _.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        const colsToAddNoDuplicates = columnsToAdd.filter( col => newColumnList.indexOf(col)<0 );
+        _.insertArrayIntoArray(newColumnList, colsToAddNoDuplicates, this.insertIndex);
         this.updateColumns(newColumnList);
     }
 

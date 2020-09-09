@@ -20,36 +20,32 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var EXPAND_STATE;
-(function (EXPAND_STATE) {
-    EXPAND_STATE[EXPAND_STATE["EXPANDED"] = 0] = "EXPANDED";
-    EXPAND_STATE[EXPAND_STATE["COLLAPSED"] = 1] = "COLLAPSED";
-    EXPAND_STATE[EXPAND_STATE["INDETERMINATE"] = 2] = "INDETERMINATE";
-})(EXPAND_STATE = exports.EXPAND_STATE || (exports.EXPAND_STATE = {}));
+var ExpandState;
+(function (ExpandState) {
+    ExpandState[ExpandState["EXPANDED"] = 0] = "EXPANDED";
+    ExpandState[ExpandState["COLLAPSED"] = 1] = "COLLAPSED";
+    ExpandState[ExpandState["INDETERMINATE"] = 2] = "INDETERMINATE";
+})(ExpandState = exports.ExpandState || (exports.ExpandState = {}));
 var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsHeaderPanel, _super);
     function PrimaryColsHeaderPanel() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, PrimaryColsHeaderPanel.TEMPLATE) || this;
     }
-    PrimaryColsHeaderPanel.prototype.preConstruct = function () {
-        this.setTemplate(/* html */ "<div class=\"ag-column-select-header\" role=\"presentation\" tabindex=\"-1\">\n                <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n                <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n                <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n            </div>");
-    };
     PrimaryColsHeaderPanel.prototype.postConstruct = function () {
         var _this = this;
         this.createExpandIcons();
-        this.addManagedListener(this.eExpand, "click", this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
         this.addManagedListener(this.eExpand, 'keydown', function (e) {
-            if (e.keyCode === core_1.Constants.KEY_SPACE) {
+            if (e.keyCode === core_1.KeyCode.SPACE) {
                 _this.onExpandClicked();
             }
         });
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
         this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
-        this.addManagedListener(this.eFilterTextField.getInputElement(), "keypress", this.onMiniFilterKeyPress.bind(this));
+        this.addManagedListener(this.eFilterTextField.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
         this.eSelect.setInputAriaLabel('Toggle Select All Columns');
         this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
-        _super.prototype.postConstruct.call(this);
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -57,18 +53,11 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             this.showOrHideOptions();
         }
     };
-    PrimaryColsHeaderPanel.prototype.onTabKeyDown = function (e) {
-        var nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-        if (nextEl) {
-            e.preventDefault();
-            nextEl.focus();
-        }
-    };
     PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
-        this.eExpand.appendChild((this.eExpandChecked = core_1._.createIconNoSpan("columnSelectOpen", this.gridOptionsWrapper)));
-        this.eExpand.appendChild((this.eExpandUnchecked = core_1._.createIconNoSpan("columnSelectClosed", this.gridOptionsWrapper)));
-        this.eExpand.appendChild((this.eExpandIndeterminate = core_1._.createIconNoSpan("columnSelectIndeterminate", this.gridOptionsWrapper)));
-        this.setExpandState(EXPAND_STATE.EXPANDED);
+        this.eExpand.appendChild((this.eExpandChecked = core_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)));
+        this.eExpand.appendChild((this.eExpandUnchecked = core_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)));
+        this.eExpand.appendChild((this.eExpandIndeterminate = core_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper)));
+        this.setExpandState(ExpandState.EXPANDED);
     };
     // we only show expand / collapse if we are showing columns
     PrimaryColsHeaderPanel.prototype.showOrHideOptions = function () {
@@ -88,33 +77,36 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             this.onFilterTextChangedDebounced = core_1._.debounce(function () {
                 var filterText = _this.eFilterTextField.getValue();
                 _this.dispatchEvent({ type: "filterChanged", filterText: filterText });
-            }, 300);
+            }, PrimaryColsHeaderPanel.DEBOUNCE_DELAY);
         }
         this.onFilterTextChangedDebounced();
     };
     PrimaryColsHeaderPanel.prototype.onMiniFilterKeyPress = function (e) {
-        if (core_1._.isKeyPressed(e, core_1.Constants.KEY_ENTER)) {
-            this.onSelectClicked();
+        var _this = this;
+        if (core_1._.isKeyPressed(e, core_1.KeyCode.ENTER)) {
+            // we need to add a delay that corresponds to the filter text debounce delay to ensure
+            // the text filtering has happened, otherwise all columns will be deselected
+            setTimeout(function () { return _this.onSelectClicked(); }, PrimaryColsHeaderPanel.DEBOUNCE_DELAY);
         }
     };
     PrimaryColsHeaderPanel.prototype.onSelectClicked = function () {
-        var eventType = this.selectState === true ? "unselectAll" : "selectAll";
-        this.dispatchEvent({ type: eventType });
+        this.dispatchEvent({ type: this.selectState ? 'unselectAll' : 'selectAll' });
     };
     PrimaryColsHeaderPanel.prototype.onExpandClicked = function () {
-        var eventType = this.expandState === EXPAND_STATE.EXPANDED ? "collapseAll" : "expandAll";
-        this.dispatchEvent({ type: eventType });
+        this.dispatchEvent({ type: this.expandState === ExpandState.EXPANDED ? 'collapseAll' : 'expandAll' });
     };
     PrimaryColsHeaderPanel.prototype.setExpandState = function (state) {
         this.expandState = state;
-        core_1._.setDisplayed(this.eExpandChecked, this.expandState === EXPAND_STATE.EXPANDED);
-        core_1._.setDisplayed(this.eExpandUnchecked, this.expandState === EXPAND_STATE.COLLAPSED);
-        core_1._.setDisplayed(this.eExpandIndeterminate, this.expandState === EXPAND_STATE.INDETERMINATE);
+        core_1._.setDisplayed(this.eExpandChecked, this.expandState === ExpandState.EXPANDED);
+        core_1._.setDisplayed(this.eExpandUnchecked, this.expandState === ExpandState.COLLAPSED);
+        core_1._.setDisplayed(this.eExpandIndeterminate, this.expandState === ExpandState.INDETERMINATE);
     };
     PrimaryColsHeaderPanel.prototype.setSelectionState = function (state) {
         this.selectState = state;
         this.eSelect.setValue(this.selectState);
     };
+    PrimaryColsHeaderPanel.DEBOUNCE_DELAY = 300;
+    PrimaryColsHeaderPanel.TEMPLATE = "<div class=\"ag-column-select-header\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n            <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n            <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n        </div>";
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
@@ -131,9 +123,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         core_1.RefSelector('eFilterTextField')
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
-        core_1.PreConstruct
-    ], PrimaryColsHeaderPanel.prototype, "preConstruct", null);
+        core_1.PostConstruct
+    ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
-}(core_1.ManagedFocusComponent));
+}(core_1.Component));
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
 //# sourceMappingURL=primaryColsHeaderPanel.js.map

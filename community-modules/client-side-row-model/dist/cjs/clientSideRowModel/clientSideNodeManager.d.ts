@@ -1,7 +1,9 @@
-import { RowNode, GridOptionsWrapper, Context, EventService, ColumnController, GridApi, ColumnApi, SelectionController, RowDataTransaction, RowNodeTransaction } from "@ag-grid-community/core";
+import { ColumnApi, ColumnController, Context, EventService, GridApi, GridOptionsWrapper, RowDataTransaction, RowNode, RowNodeTransaction, SelectionController } from "@ag-grid-community/core";
 export declare class ClientSideNodeManager {
     private static TOP_LEVEL;
-    private rootNode;
+    private readonly columnApi;
+    private readonly gridApi;
+    private readonly rootNode;
     private gridOptionsWrapper;
     private context;
     private eventService;
@@ -9,16 +11,11 @@ export declare class ClientSideNodeManager {
     private selectionController;
     private nextId;
     private static ROOT_NODE_ID;
-    private getNodeChildDetails;
-    private doesDataFlower;
     private isRowMasterFunc;
     private suppressParentsInRowNodes;
-    private doingLegacyTreeData;
     private doingTreeData;
     private doingMasterDetail;
     private allNodesMap;
-    private columnApi;
-    private gridApi;
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi, selectionController: SelectionController);
     postConstruct(): void;
     getCopyOfNodesMap(): {
@@ -40,5 +37,4 @@ export declare class ClientSideNodeManager {
     private setMasterForRow;
     private isExpanded;
     private setLeafChildren;
-    isLegacyTreeData(): boolean;
 }

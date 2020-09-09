@@ -8,13 +8,14 @@ import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
 import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
-import { _ } from "../utils";
+import { exists, missing, missingOrEmpty } from "../utils/generic";
+import { assign, getAllKeysInObjects } from "../utils/object";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -67,6 +68,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_HAS_CHILDREN_CHANGED = 'hasChildrenChanged';
     public static EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
@@ -86,64 +88,80 @@ export class RowNode implements IEventEmitter {
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     public id: string;
+
     /** The group data */
     public groupData: any;
+
     /** The aggregated data */
     public aggData: any;
+
     /** The user provided data */
     public data: any;
+
     /** The parent node to this node, or empty if top level */
     public parent: RowNode | null;
+
     /** How many levels this node is from the top */
     public level: number;
+
     /** How many levels this node is from the top in the UI (different to the level when removing parents)*/
     public uiLevel: number;
+
     /** If doing in memory grouping, this is the index of the group column this cell is for.
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
     public rowGroupIndex: number | null;
+
     /** True if this node is a group node (ie has children) */
     public group: boolean | undefined;
+
     /** True if this row is getting dragged */
     public dragging: boolean;
 
     /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
     public master: boolean;
+
     /** True if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
     public detail: boolean;
+
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
+
     /** If master detail, this contains details about the detail grid */
     public detailGridInfo: DetailGridInfo | null;
 
-    /** Same as master, kept for legacy reasons */
-    public canFlower: boolean;
-    /** Same as detail, kept for legacy reasons */
-    public flower: boolean;
-    /** Same as detailNode, kept for legacy reasons */
-    public childFlower: RowNode;
-
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
+
     /** True if this is the first child in this group */
     public firstChild: boolean;
+
     /** True if this is the last child in this group */
     public lastChild: boolean;
+
     /** The index of this node in the group */
     public childIndex: number;
+
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     public rowIndex: number;
+
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     public rowPinned: string;
+
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string;
+
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     public footer: boolean;
+
     /** Groups only - The field we are grouping on eg Country*/
     public field: string | null;
+
     /** Groups only - the row group column for this group */
     public rowGroupColumn: Column | null;
+
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
+
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
@@ -152,21 +170,25 @@ export class RowNode implements IEventEmitter {
 
     /** Groups only - Children of this group */
     public childrenAfterGroup: RowNode[];
+
     /** Groups only - Filtered children of this group */
     public childrenAfterFilter: RowNode[];
+
     /** Groups only - Sorted children of this group */
     public childrenAfterSort: RowNode[];
+
     /** Groups only - Number of children and grand children */
     public allChildrenCount: number | null;
 
     /** Children mapped by the pivot columns */
-    public childrenMapped: { [key: string]: any } | null = {};
+    public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
     public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
+
     /** Groups only - If doing footers, reference to the footer node for this group */
     public sibling: RowNode;
 
@@ -181,9 +203,11 @@ export class RowNode implements IEventEmitter {
 
     /** The top pixel for this row */
     public rowTop: number;
+
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
     public oldRowTop: number;
+
     /** True if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
      * representing a different entity, so the selection controller, if the node is selected, takes
@@ -194,12 +218,17 @@ export class RowNode implements IEventEmitter {
     public selectable = true;
 
     /** Used by the value service, stores values for a particular change detection turn. */
-    public __cacheData: { [colId: string]: any };
+    public __cacheData: { [colId: string]: any; };
     public __cacheVersion: number;
 
     /** Used by sorting service - to give deterministic sort to groups. Previously we
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
+
+    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+     * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
+     * method, however that would be a breaking change. */
+    private __hasChildren: boolean;
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -293,7 +322,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setDataAndId(data: any, id: string | undefined): void {
-        const oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
+        const oldNode = exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
 
         this.data = data;
@@ -309,7 +338,7 @@ export class RowNode implements IEventEmitter {
 
     private checkRowSelectable() {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        const shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
+        const shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
 
         this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     }
@@ -479,14 +508,14 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+        const event = assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
             expanded
         });
 
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({rowNodes: [this]});
+            this.gridApi.redrawRows({ rowNodes: [this] });
         }
     }
 
@@ -525,7 +554,7 @@ export class RowNode implements IEventEmitter {
     public setGroupValue(colKey: string | Column, newValue: any): void {
         const column = this.columnController.getGridColumn(colKey);
 
-        if (_.missing(this.groupData)) { this.groupData = {}; }
+        if (missing(this.groupData)) { this.groupData = {}; }
 
         const columnId = column.getColId();
         const oldValue = this.groupData[columnId];
@@ -539,7 +568,7 @@ export class RowNode implements IEventEmitter {
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
         // find out all keys that could potentially change
-        const colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
+        const colIds = getAllKeysInObjects([this.aggData, newAggData]);
         const oldAggData = this.aggData;
 
         this.aggData = newAggData;
@@ -555,15 +584,28 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public hasChildren(): boolean {
+    public updateHasChildren(): void {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        const newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        if (newValue!==this.__hasChildren) {
+            this.__hasChildren = newValue;
+            if (this.eventService) {
+                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
+            }
+        }
+    }
+
+    public hasChildren(): boolean {
+        if (this.__hasChildren==null) {
+            this.updateHasChildren();
+        }
+        return this.__hasChildren;
     }
 
     public isEmptyRowGroupNode(): boolean {
-        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
+        return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any, oldValue: any): void {
@@ -683,8 +725,7 @@ export class RowNode implements IEventEmitter {
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (this.footer) {
-            const count = this.sibling.setSelectedParams(params);
-            return count;
+            return this.sibling.setSelectedParams(params);
         }
 
         if (rangeSelect) {
@@ -796,7 +837,7 @@ export class RowNode implements IEventEmitter {
         const selectionNotAllowed = !this.selectable && newValue;
         const selectionNotChanged = this.selected === newValue;
 
-        if ( selectionNotAllowed || selectionNotChanged) { return false; }
+        if (selectionNotAllowed || selectionNotChanged) { return false; }
 
         this.selected = newValue;
 
@@ -814,7 +855,7 @@ export class RowNode implements IEventEmitter {
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         const children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
 
-        if (_.missing(children)) { return; }
+        if (missing(children)) { return; }
 
         let updatedCount = 0;
 
@@ -859,7 +900,7 @@ export class RowNode implements IEventEmitter {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             const parentRowNode = currentRowNode.parent;
-            const firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
+            const firstChild = exists(parentRowNode) && currentRowNode.firstChild;
 
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
@@ -878,7 +919,6 @@ export class RowNode implements IEventEmitter {
 
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
-
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
 }

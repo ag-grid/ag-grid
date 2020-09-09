@@ -1,27 +1,28 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-import { _ } from '../utils';
+import { missing } from "../utils/generic";
+import { addCssClass } from "../utils/dom";
 var CssClassApplier = /** @class */ (function () {
     function CssClassApplier() {
     }
     CssClassApplier.addHeaderClassesFromColDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (_.missing(abstractColDef)) {
+        if (missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     };
     CssClassApplier.addToolPanelClassesFromColDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (_.missing(abstractColDef)) {
+        if (missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     };
     CssClassApplier.addColumnClassesFromCollDef = function (classesOrFunc, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (_.missing(classesOrFunc)) {
+        if (missing(classesOrFunc)) {
             return;
         }
         var classToUse;
@@ -43,11 +44,11 @@ var CssClassApplier = /** @class */ (function () {
             classToUse = classesOrFunc;
         }
         if (typeof classToUse === 'string') {
-            _.addCssClass(eHeaderCell, classToUse);
+            addCssClass(eHeaderCell, classToUse);
         }
         else if (Array.isArray(classToUse)) {
             classToUse.forEach(function (cssClassItem) {
-                _.addCssClass(eHeaderCell, cssClassItem);
+                addCssClass(eHeaderCell, cssClassItem);
             });
         }
     };

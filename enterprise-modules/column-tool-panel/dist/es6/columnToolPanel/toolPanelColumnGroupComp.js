@@ -17,10 +17,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgCheckbox, Autowired, Column, CssClassApplier, DragSourceType, Events, PostConstruct, RefSelector, TouchListener, ManagedFocusComponent, Constants } from "@ag-grid-community/core";
+import { _, AgCheckbox, Autowired, Column, CssClassApplier, DragSourceType, Events, PostConstruct, RefSelector, TouchListener, ManagedFocusComponent, KeyCode } from "@ag-grid-community/core";
 var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnGroupComp, _super);
-    function ToolPanelColumnGroupComp(columnGroup, columnDept, allowDragging, expandByDefault, expandedCallback, getFilterResults) {
+    function ToolPanelColumnGroupComp(columnGroup, columnDept, allowDragging, expandByDefault, expandedCallback, getFilterResults, eventType) {
         var _this = _super.call(this) || this;
         _this.processingColumnStateChange = false;
         _this.columnGroup = columnGroup;
@@ -29,6 +29,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         _this.expanded = expandByDefault;
         _this.expandedCallback = expandedCallback;
         _this.getFilterResultsCallback = getFilterResults;
+        _this.eventType = eventType;
         return _this;
     }
     ToolPanelColumnGroupComp.prototype.init = function () {
@@ -37,11 +38,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
-        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
         }
-        this.cbSelect.setInputAriaLabel(this.displayName + " Toggle Selection");
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
@@ -52,18 +52,20 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.setupDragging();
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
+        this.refreshAriaExpanded();
+        this.refreshAriaLabel();
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     };
     ToolPanelColumnGroupComp.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
-            case Constants.KEY_LEFT:
-            case Constants.KEY_RIGHT:
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
                 e.preventDefault();
                 if (this.isExpandable()) {
-                    this.toggleExpandOrContract(e.keyCode === Constants.KEY_RIGHT);
+                    this.toggleExpandOrContract(e.keyCode === KeyCode.RIGHT);
                 }
                 break;
-            case Constants.KEY_SPACE:
+            case KeyCode.SPACE:
                 e.preventDefault();
                 if (this.isSelectable()) {
                     this.onSelectAllChanged(!this.isSelected());
@@ -121,6 +123,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.onChangeCommon(event.selected);
     };
     ToolPanelColumnGroupComp.prototype.onChangeCommon = function (nextState) {
+        this.refreshAriaLabel();
         if (this.processingColumnStateChange) {
             return;
         }
@@ -140,8 +143,12 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             var passesFilter = function (c) { return !filterResults_1 || filterResults_1[c.getColId()]; };
             var visibleColumns = allowedColumns.filter(passesFilter);
             // only columns that are 'allowed' and pass filter should be visible
-            this.columnController.setColumnsVisible(visibleColumns, nextState, "toolPanelUi");
+            this.columnController.setColumnsVisible(visibleColumns, nextState, this.eventType);
         }
+    };
+    ToolPanelColumnGroupComp.prototype.refreshAriaLabel = function () {
+        var state = this.cbSelect.getValue() ? 'visible' : 'hidden';
+        _.setAriaLabel(this.getGui(), this.displayName + " column group toggle visibility (" + state + ")");
     };
     ToolPanelColumnGroupComp.prototype.actionUnCheckedReduce = function (columns) {
         var columnsToUnPivot = [];
@@ -159,13 +166,13 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
         });
         if (columnsToUnPivot.length > 0) {
-            this.columnController.removePivotColumns(columnsToUnPivot, "toolPanelUi");
+            this.columnController.removePivotColumns(columnsToUnPivot, this.eventType);
         }
         if (columnsToUnGroup.length > 0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup, "toolPanelUi");
+            this.columnController.removeRowGroupColumns(columnsToUnGroup, this.eventType);
         }
         if (columnsToUnValue.length > 0) {
-            this.columnController.removeValueColumns(columnsToUnValue, "toolPanelUi");
+            this.columnController.removeValueColumns(columnsToUnValue, this.eventType);
         }
     };
     ToolPanelColumnGroupComp.prototype.actionCheckedReduce = function (columns) {
@@ -188,13 +195,13 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
         });
         if (columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(columnsToAggregate, "toolPanelUi");
+            this.columnController.addValueColumns(columnsToAggregate, this.eventType);
         }
         if (columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(columnsToGroup, "toolPanelUi");
+            this.columnController.addRowGroupColumns(columnsToGroup, this.eventType);
         }
         if (columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(columnsToPivot, "toolPanelUi");
+            this.columnController.addPivotColumns(columnsToPivot, this.eventType);
         }
     };
     ToolPanelColumnGroupComp.prototype.onColumnStateChanged = function () {
@@ -284,11 +291,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
+        this.refreshAriaExpanded();
     };
     ToolPanelColumnGroupComp.prototype.setOpenClosedIcons = function () {
         var folderOpen = this.expanded;
         _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
         _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    };
+    ToolPanelColumnGroupComp.prototype.refreshAriaExpanded = function () {
+        _.setAriaExpanded(this.getGui(), this.expanded);
     };
     ToolPanelColumnGroupComp.prototype.isExpanded = function () {
         return this.expanded;
@@ -297,11 +308,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         return this.displayName;
     };
     ToolPanelColumnGroupComp.prototype.onSelectAllChanged = function (value) {
-        if ((value && !this.cbSelect.getValue()) ||
-            (!value && this.cbSelect.getValue())) {
-            if (!this.cbSelect.isReadOnly()) {
-                this.cbSelect.toggle();
-            }
+        var cbValue = this.cbSelect.getValue();
+        var readOnly = this.cbSelect.isReadOnly();
+        if (!readOnly && ((value && !cbValue) || (!value && cbValue))) {
+            this.cbSelect.toggle();
         }
     };
     ToolPanelColumnGroupComp.prototype.isSelected = function () {
@@ -321,7 +331,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setSelected = function (selected) {
         this.cbSelect.setValue(selected, true);
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\" tabindex=\"-1\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\" tabindex=\"-1\" role=\"treeitem\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\" aria-hidden=\"true\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\" role=\"presentation\"></span>\n        </div>";
     __decorate([
         Autowired('columnController')
     ], ToolPanelColumnGroupComp.prototype, "columnController", void 0);

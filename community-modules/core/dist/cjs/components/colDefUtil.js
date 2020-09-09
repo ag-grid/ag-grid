@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,7 @@ var ColDefUtil = /** @class */ (function () {
         'groupId',
         'colId',
         'sort',
+        'initialSort',
         'field',
         'type',
         'tooltipComponent',
@@ -36,10 +37,12 @@ var ColDefUtil = /** @class */ (function () {
         'template',
         'templateUrl',
         'filter',
+        'initialAggFunc',
         'aggFunc',
         'cellRenderer',
         'cellEditor',
         'pinned',
+        'initialPinned',
         'chartDataType'
     ];
     ColDefUtil.OBJECT_PROPERTIES = [
@@ -64,7 +67,8 @@ var ColDefUtil = /** @class */ (function () {
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
-        'refData'
+        'refData',
+        'columnsMenuParams'
     ];
     ColDefUtil.ARRAY_PROPERTIES = [
         'children',
@@ -77,12 +81,18 @@ var ColDefUtil = /** @class */ (function () {
     ];
     ColDefUtil.NUMBER_PROPERTIES = [
         'sortedAt',
+        'sortIndex',
+        'initialSortIndex',
         'flex',
+        'initialFlex',
         'width',
+        'initialWidth',
         'minWidth',
         'maxWidth',
         'rowGroupIndex',
-        'pivotIndex'
+        'initialRowGroupIndex',
+        'pivotIndex',
+        'initialPivotIndex'
     ];
     ColDefUtil.BOOLEAN_PROPERTIES = [
         'suppressCellFlash',
@@ -91,21 +101,21 @@ var ColDefUtil = /** @class */ (function () {
         'openByDefault',
         'marryChildren',
         'hide',
+        'initialHide',
         'rowGroup',
+        'initialRowGroup',
         'pivot',
+        'initialPivot',
         'checkboxSelection',
         'headerCheckboxSelection',
         'headerCheckboxSelectionFilteredOnly',
         'suppressMenu',
-        'suppressSorting',
         'suppressMovable',
-        'suppressFilter',
         'lockPosition',
         'lockVisible',
         'lockPinned',
         'unSortIcon',
         'suppressSizeToFit',
-        'suppressResize',
         'suppressAutoSize',
         'enableRowGroup',
         'enablePivot',
@@ -117,6 +127,7 @@ var ColDefUtil = /** @class */ (function () {
         'rowDrag',
         'dndSource',
         'autoHeight',
+        'wrapText',
         'sortable',
         'resizable',
         'singleClickEdit',
@@ -147,7 +158,6 @@ var ColDefUtil = /** @class */ (function () {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'rowDragText',
-        'tooltip',
         'tooltipValueGetter',
         'tooltipComponent',
         'tooltipComponentFramework',

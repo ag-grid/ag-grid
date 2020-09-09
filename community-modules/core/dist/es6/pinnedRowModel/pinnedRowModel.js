@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,9 +26,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../events";
-import { Constants } from "../constants";
-import { _ } from '../utils';
+import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
+import { missingOrEmpty } from "../utils/generic";
+import { last } from "../utils/array";
 var PinnedRowModel = /** @class */ (function (_super) {
     __extends(PinnedRowModel, _super);
     function PinnedRowModel() {
@@ -40,14 +41,14 @@ var PinnedRowModel = /** @class */ (function (_super) {
     };
     PinnedRowModel.prototype.isEmpty = function (floating) {
         var rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        return _.missingOrEmpty(rows);
+        return missingOrEmpty(rows);
     };
     PinnedRowModel.prototype.isRowsToRender = function (floating) {
         return !this.isEmpty(floating);
     };
     PinnedRowModel.prototype.getRowAtPixel = function (pixel, floating) {
         var rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (_.missingOrEmpty(rows)) {
+        if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (var i = 0; i < rows.length; i++) {
@@ -122,13 +123,13 @@ var PinnedRowModel = /** @class */ (function (_super) {
         return this.pinnedBottomRows[index];
     };
     PinnedRowModel.prototype.forEachPinnedTopRow = function (callback) {
-        if (_.missingOrEmpty(this.pinnedTopRows)) {
+        if (missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     };
     PinnedRowModel.prototype.forEachPinnedBottomRow = function (callback) {
-        if (_.missingOrEmpty(this.pinnedBottomRows)) {
+        if (missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -140,10 +141,8 @@ var PinnedRowModel = /** @class */ (function (_super) {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         }
-        else {
-            var lastNode = _.last(rowNodes);
-            return lastNode.rowTop + lastNode.rowHeight;
-        }
+        var lastNode = last(rowNodes);
+        return lastNode.rowTop + lastNode.rowHeight;
     };
     __decorate([
         Autowired('gridOptionsWrapper')

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var events_1 = require("../events");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var object_1 = require("../utils/object");
+var generic_1 = require("../utils/generic");
+var function_1 = require("../utils/function");
 var ValueService = /** @class */ (function (_super) {
     __extends(ValueService, _super);
     function ValueService() {
@@ -70,7 +72,7 @@ var ValueService = /** @class */ (function (_super) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
-            result = utils_1._.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = object_1.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         else if (groupDataExists) {
             result = rowNode.groupData[colId];
@@ -82,7 +84,7 @@ var ValueService = /** @class */ (function (_super) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (field && data) {
-            result = utils_1._.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = object_1.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
@@ -98,13 +100,13 @@ var ValueService = /** @class */ (function (_super) {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (utils_1._.missing(rowNode.data)) {
+        if (generic_1.missing(rowNode.data)) {
             rowNode.data = {};
         }
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
         var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter;
         // need either a field or a newValueHandler for this to work
-        if (utils_1._.missing(field) && utils_1._.missing(newValueHandler) && utils_1._.missing(valueSetter)) {
+        if (generic_1.missing(field) && generic_1.missing(newValueHandler) && generic_1.missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
             console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
             return;
@@ -122,10 +124,10 @@ var ValueService = /** @class */ (function (_super) {
         };
         params.newValue = newValue;
         var valueWasDifferent;
-        if (newValueHandler && utils_1._.exists(newValueHandler)) {
+        if (newValueHandler && generic_1.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         }
-        else if (utils_1._.exists(valueSetter)) {
+        else if (generic_1.exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
@@ -249,7 +251,7 @@ var ValueService = /** @class */ (function (_super) {
         }
         result = String(result);
         if (result === '[object Object]') {
-            utils_1._.doOnce(function () {
+            function_1.doOnce(function () {
                 console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }

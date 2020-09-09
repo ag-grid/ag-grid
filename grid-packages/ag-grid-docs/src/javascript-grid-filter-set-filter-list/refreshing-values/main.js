@@ -8,6 +8,15 @@ function valuesCallback(params) {
     setTimeout(function() { params.success(valuesCallbackList); }, 1000);
 }
 
+var arrayFilterParams = {
+    values: valuesArray
+};
+
+var callbackFilterParams = {
+    values: valuesCallback,
+    refreshValuesOnOpen: true
+};
+
 var gridOptions = {
     columnDefs: [
         {
@@ -15,19 +24,14 @@ var gridOptions = {
             headerName: 'Values Array',
             field: 'animal',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                values: valuesArray
-            }
+            filterParams: arrayFilterParams
         },
         {
             colId: 'callback',
             headerName: 'Values Callback',
             field: 'animal',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                values: valuesCallback,
-                refreshValuesOnOpen: true
-            }
+            filterParams: callbackFilterParams
         },
     ],
     defaultColDef: {
@@ -44,6 +48,7 @@ function onFirstDataRendered(params) {
     params.api.getToolPanelInstance('filters').expandFilters();
 }
 
+// inScope[useList]
 function useList(list) {
     console.log('Updating values to ' + list);
     valuesArray.length = 0;
@@ -56,11 +61,11 @@ function useList(list) {
 }
 
 function useList1() {
-    useList(list1);
+    this.useList(list1);
 }
 
 function useList2() {
-    useList(list2);
+    this.useList(list2);
 }
 
 // setup the grid after the page has finished loading

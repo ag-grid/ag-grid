@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var context_1 = require("../context/context");
 var animateSlideCellRenderer_1 = require("./cellRenderers/animateSlideCellRenderer");
 var animateShowChangeCellRenderer_1 = require("./cellRenderers/animateShowChangeCellRenderer");
 var groupCellRenderer_1 = require("./cellRenderers/groupCellRenderer");
-var utils_1 = require("../utils");
+var generic_1 = require("../utils/generic");
 var CellRendererFactory = /** @class */ (function () {
     function CellRendererFactory() {
         this.cellRendererMap = {};
@@ -30,7 +30,7 @@ var CellRendererFactory = /** @class */ (function () {
     };
     // private registerRenderersFromGridOptions(): void {
     //     let userProvidedCellRenderers = this.gridOptionsWrapper.getCellRenderers();
-    //     _.iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
+    //     iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
     //         this.addCellRenderer(key, cellRenderer);
     //     });
     // }
@@ -39,7 +39,7 @@ var CellRendererFactory = /** @class */ (function () {
     };
     CellRendererFactory.prototype.getCellRenderer = function (key) {
         var result = this.cellRendererMap[key];
-        if (utils_1._.missing(result)) {
+        if (generic_1.missing(result)) {
             console.warn('ag-Grid: unable to find cellRenderer for key ' + key);
             return null;
         }

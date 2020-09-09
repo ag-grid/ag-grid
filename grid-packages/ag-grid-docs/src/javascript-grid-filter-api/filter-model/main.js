@@ -1,3 +1,29 @@
+var filterParams = {
+    comparator: function(filterLocalDateAtMidnight, cellValue) {
+        var dateAsString = cellValue;
+        if (dateAsString == null) return -1;
+        var dateParts = dateAsString.split('/');
+        var cellDate = new Date(
+            Number(dateParts[2]),
+            Number(dateParts[1]) - 1,
+            Number(dateParts[0])
+        );
+
+        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+            return 0;
+        }
+
+        if (cellDate < filterLocalDateAtMidnight) {
+            return -1;
+        }
+
+        if (cellDate > filterLocalDateAtMidnight) {
+            return 1;
+        }
+    },
+    // browserDatePicker: true,
+};
+
 var columnDefs = [
     { field: 'athlete', filter: 'agTextColumnFilter' },
     { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
@@ -6,31 +32,7 @@ var columnDefs = [
     {
         field: 'date',
         filter: 'agDateColumnFilter',
-        filterParams: {
-            comparator: function(filterLocalDateAtMidnight, cellValue) {
-                var dateAsString = cellValue;
-                if (dateAsString == null) return -1;
-                var dateParts = dateAsString.split('/');
-                var cellDate = new Date(
-                    Number(dateParts[2]),
-                    Number(dateParts[1]) - 1,
-                    Number(dateParts[0])
-                );
-
-                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                    return 0;
-                }
-
-                if (cellDate < filterLocalDateAtMidnight) {
-                    return -1;
-                }
-
-                if (cellDate > filterLocalDateAtMidnight) {
-                    return 1;
-                }
-            },
-            // browserDatePicker: true,
-        },
+        filterParams: filterParams
     },
     { field: 'sport' },
     { field: 'gold', filter: 'agNumberColumnFilter' },
@@ -49,25 +51,23 @@ var gridOptions = {
     },
 };
 
+var savedFilterModel = null;
+
 function clearFilters() {
     gridOptions.api.setFilterModel(null);
-    gridOptions.api.onFilterChanged();
 }
 
 function saveFilterModel() {
-    var savedFilters = '[]';
-    window.savedModel = gridOptions.api.getFilterModel();
-    if (window.savedModel) {
-        savedFilters = Object.keys(window.savedModel);
-    } else {
-        savedFilters = '-none-';
-    }
-    document.querySelector('#savedFilters').innerHTML = JSON.stringify(savedFilters);
+    savedFilterModel = gridOptions.api.getFilterModel();
+
+    var keys = Object.keys(savedFilterModel);
+    var savedFilters = keys.length > 0 ? keys.join(', ') : '(none)';
+
+    document.querySelector('#savedFilters').innerHTML = savedFilters;
 }
 
 function restoreFilterModel() {
-    gridOptions.api.setFilterModel(window.savedModel);
-    gridOptions.api.onFilterChanged();
+    gridOptions.api.setFilterModel(savedFilterModel);
 }
 
 function restoreFromHardCoded() {
@@ -80,8 +80,12 @@ function restoreFromHardCoded() {
         athlete: { type: 'startsWith', filter: 'Mich' },
         date: { type: 'lessThan', dateFrom: '2010-01-01' }
     };
+
     gridOptions.api.setFilterModel(hardcodedFilter);
-    gridOptions.api.onFilterChanged();
+}
+
+function destroyFilter() {
+    gridOptions.api.destroyFilter('athlete');
 }
 
 // setup the grid after the page has finished loading

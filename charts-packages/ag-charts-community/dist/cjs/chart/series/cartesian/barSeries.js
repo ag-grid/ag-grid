@@ -31,7 +31,6 @@ var selection_1 = require("../../../scene/selection");
 var rect_1 = require("../../../scene/shape/rect");
 var text_1 = require("../../../scene/shape/text");
 var bandScale_1 = require("../../../scale/bandScale");
-var palettes_1 = require("../../palettes");
 var label_1 = require("../../label");
 var node_1 = require("../../../scene/node");
 var cartesianSeries_1 = require("./cartesianSeries");
@@ -79,8 +78,8 @@ var BarSeries = /** @class */ (function (_super) {
          */
         _this.seriesItemEnabled = new Map();
         _this.flipXY = false;
-        _this.fills = palettes_1.default.fills;
-        _this.strokes = palettes_1.default.strokes;
+        _this.fills = [];
+        _this.strokes = [];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         /**
@@ -187,6 +186,10 @@ var BarSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    BarSeries.prototype.setColors = function (fills, strokes) {
+        this.fills = fills;
+        this.strokes = strokes;
+    };
     Object.defineProperty(BarSeries.prototype, "normalizedTo", {
         get: function () {
             return this._normalizedTo;
@@ -327,10 +330,15 @@ var BarSeries = /** @class */ (function (_super) {
     };
     BarSeries.prototype.generateNodeData = function () {
         var _this = this;
-        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, flipXY = _a.flipXY;
-        var xScale = (flipXY ? yAxis : xAxis).scale;
-        var yScale = (flipXY ? xAxis : yAxis).scale;
-        var _b = this, groupScale = _b.groupScale, yKeys = _b.yKeys, fills = _b.fills, strokes = _b.strokes, grouped = _b.grouped, strokeWidth = _b.strokeWidth, seriesItemEnabled = _b.seriesItemEnabled, data = _b.data, xData = _b.xData, yData = _b.yData;
+        if (!this.data) {
+            return [];
+        }
+        var flipXY = this.flipXY;
+        var xAxis = flipXY ? this.yAxis : this.xAxis;
+        var yAxis = flipXY ? this.xAxis : this.yAxis;
+        var xScale = xAxis.scale;
+        var yScale = yAxis.scale;
+        var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, fills = _a.fills, strokes = _a.strokes, grouped = _a.grouped, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData;
         var label = this.label;
         var labelFontStyle = label.fontStyle;
         var labelFontWeight = label.fontWeight;
@@ -347,15 +355,19 @@ var BarSeries = /** @class */ (function (_super) {
             var x = xScale.convert(category);
             var prevMin = 0;
             var prevMax = 0;
-            yDatum.forEach(function (curr, j) {
+            for (var j = 0; j < yDatum.length; j++) {
+                var curr = yDatum[j];
                 var yKey = yKeys[j];
                 var barX = grouped ? x + groupScale.convert(yKey) : x;
+                if (!xAxis.inRange(barX, barWidth)) {
+                    continue;
+                }
                 var prev = curr < 0 ? prevMin : prevMax;
                 var y = yScale.convert(grouped ? curr : prev + curr);
                 var bottomY = yScale.convert(grouped ? 0 : prev);
                 var yValue = seriesDatum[yKey]; // unprocessed y-value
                 var yValueIsNumber = typeof yValue === 'number';
-                var labelText;
+                var labelText = void 0;
                 if (labelFormatter) {
                     labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                 }
@@ -393,7 +405,7 @@ var BarSeries = /** @class */ (function (_super) {
                         prevMax += curr;
                     }
                 }
-            });
+            }
         });
         return nodeData;
     };
@@ -420,6 +432,9 @@ var BarSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     BarSeries.prototype.updateRectNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
         var highlightedDatum = this.chart.highlightedDatum;
         this.rectSelection.each(function (rect, datum) {

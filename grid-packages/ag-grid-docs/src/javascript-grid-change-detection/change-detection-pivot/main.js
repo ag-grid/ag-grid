@@ -1,3 +1,5 @@
+var studentIdSequence = 10023;
+
 var gridOptions = {
     columnDefs: [
         {headerName: 'Student ID', field: 'student'},
@@ -41,8 +43,6 @@ function ageRangeValueGetter(params) {
     }
 }
 
-var studentIdSequence = 10023;
-
 // pretty basic, but deterministic (so same numbers each time we run), random number generator
 var seed;
 function random() {
@@ -72,17 +72,17 @@ function createRow() {
 }
 
 function pivotMode() {
-    var checked = document.getElementById('pivot-mode').checked;
+    var pivotModeOn = document.getElementById('pivot-mode').checked;
 
-    if (checked) {
-        gridOptions.columnApi.setPivotMode(true);
-        gridOptions.columnApi.setRowGroupColumns(['yearGroup']);
-        gridOptions.columnApi.setPivotColumns(['course', 'ageRange']);
-    } else {
-        gridOptions.columnApi.setPivotMode(false);
-        gridOptions.columnApi.setRowGroupColumns([]);
-        gridOptions.columnApi.setPivotColumns([]);
-    }
+    gridOptions.columnApi.setPivotMode(pivotModeOn);
+
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            {colId: 'yearGroup', rowGroup: pivotModeOn},
+            {colId: 'course', pivot: pivotModeOn},
+            {colId: 'ageRange', pivot: pivotModeOn}
+        ]
+    });
 }
 
 function updateOneRecord() {

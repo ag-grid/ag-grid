@@ -58,6 +58,10 @@ export default class CustomDateComponent extends Component {
         this.eInput.setAttribute('placeholder', placeholder);
     }
 
+    setInputAriaLabel(label) {
+        this.eInput.setAttribute('aria-label', label);
+    }
+
     //*********************************************************************************
     //          LINKS THE INTERNAL STATE AND AG-GRID
     //*********************************************************************************

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,13 +28,18 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var colDef_1 = require("../entities/colDef");
 var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
 var context_1 = require("../context/context");
 var defaultColumnTypes_1 = require("../entities/defaultColumnTypes");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var constants_1 = require("../constants/constants");
+var object_1 = require("../utils/object");
+var generic_1 = require("../utils/generic");
+var array_1 = require("../utils/array");
+var utils_1 = require("../utils");
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 var ColumnFactory = /** @class */ (function (_super) {
     __extends(ColumnFactory, _super);
@@ -198,8 +203,8 @@ var ColumnFactory = /** @class */ (function (_super) {
     };
     ColumnFactory.prototype.createMergedColGroupDef = function (colGroupDef) {
         var colGroupDefMerged = {};
-        utils_1._.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
-        utils_1._.assign(colGroupDefMerged, colGroupDef);
+        object_1.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        object_1.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
         return colGroupDefMerged;
     };
@@ -216,30 +221,73 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
         else {
             column.setColDef(colDefMerged, colDef);
+            this.applyColumnState(column, colDefMerged);
         }
         return column;
     };
-    ColumnFactory.prototype.findExistingColumn = function (colDef, existingColsCopy) {
-        var res = utils_1._.find(existingColsCopy, function (col) {
-            var oldColDef = col.getUserProvidedColDef();
-            if (!oldColDef) {
+    ColumnFactory.prototype.applyColumnState = function (column, colDef) {
+        // flex
+        var flex = generic_1.attrToNumber(colDef.flex);
+        if (flex !== undefined) {
+            column.setFlex(flex);
+        }
+        // width - we only set width if column is not flexing
+        var noFlexThisCol = column.getFlex() <= 0;
+        if (noFlexThisCol) {
+            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+            var width = generic_1.attrToNumber(colDef.width);
+            if (width != null) {
+                column.setActualWidth(width);
+            }
+        }
+        // sort - anything but undefined will set sort, thus null or empty string will clear the sort
+        if (colDef.sort !== undefined) {
+            if (colDef.sort == constants_1.Constants.SORT_ASC || colDef.sort == constants_1.Constants.SORT_DESC) {
+                column.setSort(colDef.sort);
+            }
+            else {
+                column.setSort(undefined);
+            }
+        }
+        // sorted at - anything but undefined, thus null will clear the sortIndex
+        var sortIndex = generic_1.attrToNumber(colDef.sortIndex);
+        if (sortIndex !== undefined) {
+            column.setSortIndex(sortIndex);
+        }
+        // hide - anything but undefined, thus null will clear the hide
+        var hide = generic_1.attrToBoolean(colDef.hide);
+        if (hide !== undefined) {
+            column.setVisible(!hide);
+        }
+        // pinned - anything but undefined, thus null or empty string will remove pinned
+        if (colDef.pinned !== undefined) {
+            column.setPinned(colDef.pinned);
+        }
+    };
+    ColumnFactory.prototype.findExistingColumn = function (newColDef, existingColsCopy) {
+        var res = generic_1.find(existingColsCopy, function (existingCol) {
+            var existingColDef = existingCol.getUserProvidedColDef();
+            if (!existingColDef) {
                 return false;
             }
-            // first check object references
-            if (oldColDef === colDef) {
-                return true;
+            var newHasId = newColDef.colId != null;
+            var newHasField = newColDef.field != null;
+            if (newHasId) {
+                return existingCol.getId() === newColDef.colId;
             }
-            // second check id's
-            var oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
-            if (oldColHadId) {
-                return oldColDef.colId === colDef.colId;
+            if (newHasField) {
+                return existingColDef.field === newColDef.field;
+            }
+            // if no id or field present, then try object equivalence.
+            if (existingColDef === newColDef) {
+                return true;
             }
             return false;
         });
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (res) {
-            utils_1._.removeFromArray(existingColsCopy, res);
+            array_1.removeFromArray(existingColsCopy, res);
         }
         return res;
     };
@@ -247,37 +295,40 @@ var ColumnFactory = /** @class */ (function (_super) {
         // start with empty merged definition
         var colDefMerged = {};
         // merge properties from default column definitions
-        utils_1._.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
+        var defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
+        utils_1._.mergeDeep(colDefMerged, defaultColDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
         // merge properties from column type properties
-        if (colDef.type) {
-            this.assignColumnTypes(colDef, colDefMerged);
+        if (colDef.type || (defaultColDef && defaultColDef.type)) {
+            // if type of both colDef and defaultColDef, then colDef gets preference
+            var columnType = colDef.type ? colDef.type : defaultColDef.type;
+            this.assignColumnTypes(columnType, colDefMerged);
         }
         // merge properties from column definitions
-        utils_1._.assign(colDefMerged, colDef);
+        utils_1._.mergeDeep(colDefMerged, colDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
         return colDefMerged;
     };
-    ColumnFactory.prototype.assignColumnTypes = function (colDef, colDefMerged) {
+    ColumnFactory.prototype.assignColumnTypes = function (type, colDefMerged) {
         var typeKeys;
-        if (colDef.type instanceof Array) {
-            var invalidArray = colDef.type.some(function (a) { return typeof a !== 'string'; });
+        if (type instanceof Array) {
+            var invalidArray = type.some(function (a) { return typeof a !== 'string'; });
             if (invalidArray) {
                 console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
             }
             else {
-                typeKeys = colDef.type;
+                typeKeys = type;
             }
         }
-        else if (typeof colDef.type === 'string') {
-            typeKeys = colDef.type.split(',');
+        else if (typeof type === 'string') {
+            typeKeys = type.split(',');
         }
         else {
             console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
             return;
         }
         // merge user defined with default column types
-        var allColumnTypes = utils_1._.assign({}, defaultColumnTypes_1.DefaultColumnTypes);
+        var allColumnTypes = object_1.assign({}, defaultColumnTypes_1.DefaultColumnTypes);
         var userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
-        utils_1._.iterateObject(userTypes, function (key, value) {
+        object_1.iterateObject(userTypes, function (key, value) {
             if (key in allColumnTypes) {
                 console.warn("ag-Grid: the column type '" + key + "' is a default column type and cannot be overridden.");
             }
@@ -288,7 +339,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         typeKeys.forEach(function (t) {
             var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                utils_1._.assign(colDefMerged, typeColDef);
+                utils_1._.mergeDeep(colDefMerged, typeColDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
             }
             else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");

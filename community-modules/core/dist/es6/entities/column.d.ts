@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -38,7 +38,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private oldLeft;
     private aggFunc;
     private sort;
-    private sortedAt;
+    private sortIndex;
     private moving;
     private menuVisible;
     private lastLeftPinned;
@@ -57,13 +57,14 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private parent;
     private originalParent;
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean);
+    private setState;
     setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void;
     getUserProvidedColDef(): ColDef;
     setParent(parent: ColumnGroup): void;
     getParent(): ColumnGroup;
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
     getOriginalParent(): OriginalColumnGroup | null;
-    initialise(): void;
+    private initialise;
     resetActualWidth(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
@@ -95,8 +96,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSortDescending(): boolean;
     isSortNone(): boolean;
     isSorting(): boolean;
-    getSortedAt(): number;
-    setSortedAt(sortedAt: number | null): void;
+    getSortIndex(): number;
+    setSortIndex(sortOrder: number | null): void;
     setAggFunc(aggFunc: string | IAggFunc | null | undefined): void;
     getAggFunc(): string | IAggFunc;
     getLeft(): number;

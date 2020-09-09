@@ -51,9 +51,12 @@ interface IDateComp {
     // Sets the input text placeholder
     setInputPlaceholder(placeholder: string): void;
 
+    // Sets the input text aria label
+    setInputAriaLabel(label: string): void;
+
     // Gets called when the component is destroyed. If your custom component needs to do
     // any resource cleaning up, do it here.
-    destroy?(): void;
+    destroy(): void; 
 }
 SNIPPET
 , 'ts') ?>
@@ -70,7 +73,7 @@ SNIPPET
 interface IDateParams {
     // Callback method to call when the date has changed
     onDateChanged: () => void;
-}
+} 
 SNIPPET
 , 'ts') ?>
 
@@ -84,6 +87,6 @@ SNIPPET
     Our way of fixing this problem is to add the <code>ag-custom-component-popup</code> class to the floating calendar.
 </p>
 
-<?= grid_example('Custom Date Component', 'custom-date', 'generated', ['extras' => ['fontawesome', 'flatpickr']]) ?>
+<?= grid_example('Custom Date Component', 'custom-date', 'generated', ['extras' => ['fontawesome', 'flatpickr'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

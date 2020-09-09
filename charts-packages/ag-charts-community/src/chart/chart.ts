@@ -93,11 +93,22 @@ const defaultTooltipCss = `
 
     margin: 0 auto;
 }
+
+.ag-chart-wrapper {
+    box-sizing: border-box;
+    overflow: hidden;
+}
 `;
 
 export interface TooltipMeta {
     pageX: number;
     pageY: number;
+}
+
+export function toTooltipHtml(content: string, title?: string, color: string = '#888'): string {
+    const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
+            style="color: white; background-color: ${color}">${title}</div>` : '';
+    return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }
 
 export abstract class Chart extends Observable {
@@ -168,6 +179,7 @@ export abstract class Chart extends Observable {
     set autoSize(value: boolean) {
         if (this._autoSize !== value) {
             this._autoSize = value;
+            const { style } = this.element;
             if (value) {
                 const chart = this; // capture `this` for IE11
                 SizeMonitor.observe(this.element, size => {
@@ -176,10 +188,14 @@ export abstract class Chart extends Observable {
                         chart.fireEvent({ type: 'layoutChange' });
                     }
                 });
-                this.element.style.display = 'block';
+                style.display = 'block';
+                style.width = '100%';
+                style.height = '100%';
             } else {
                 SizeMonitor.unobserve(this.element);
-                this.element.style.display = 'inline-block';
+                style.display = 'inline-block';
+                style.width = 'auto';
+                style.height = 'auto';
             }
         }
     }
@@ -207,9 +223,7 @@ export abstract class Chart extends Observable {
         root.appendChild(background);
 
         const element = this._element = document.createElement('div');
-        element.style.boxSizing = 'border-box';
-        element.style.overflow = 'hidden';
-        element.style.height = '100%';
+        element.setAttribute('class', 'ag-chart-wrapper');
 
         const scene = new Scene(document);
         this.scene = scene;
@@ -754,7 +768,7 @@ export abstract class Chart extends Observable {
         }
 
         let minDistance = Infinity;
-        let closestDatum: SeriesNodeDatum;
+        let closestDatum: SeriesNodeDatum | undefined;
 
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
@@ -827,7 +841,7 @@ export abstract class Chart extends Observable {
                 this.onSeriesDatumPick({
                     pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
                     pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                }, closestDatum, nodeDatum === closestDatum ? pick.node as Shape : undefined);
+                }, closestDatum, nodeDatum === closestDatum && pick ? pick.node as Shape : undefined);
             } else {
                 hideTooltip = true;
             }
@@ -856,7 +870,7 @@ export abstract class Chart extends Observable {
         const { lastPick } = this;
 
         if (lastPick && lastPick.node) {
-            const { datum } = this.lastPick;
+            const { datum } = lastPick;
             datum.series.fireNodeClickEvent(datum);
         }
     }

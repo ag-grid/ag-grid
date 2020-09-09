@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var component_1 = require("./component");
 var utils_1 = require("../utils");
 var componentAnnotations_1 = require("./componentAnnotations");
 var context_1 = require("../context/context");
+var generic_1 = require("../utils/generic");
 var AgColorPanel = /** @class */ (function (_super) {
     __extends(AgColorPanel, _super);
     function AgColorPanel(config) {
@@ -195,7 +196,7 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.prototype.onRecentColorClick = function (e) {
         var target = e.target;
-        if (!utils_1._.exists(target.id)) {
+        if (!generic_1.exists(target.id)) {
             return;
         }
         var id = parseInt(target.id, 10);

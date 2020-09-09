@@ -59,26 +59,10 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a> documentation. Note that it is possible
         to provide custom navigation which could come in useful for some accessibility requirements.</p>
 
-    <h2>Skip Navigation</h2>
-
-    <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
-        provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
-
-    <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
-
-    <snippet>
-.skip-link {
-      left: -100%;
-      position: absolute;
-    }
-    .skip-link:focus {
-      left: 50%;
-    }</snippet>
-
     <h2>Screen Readers</h2>
 
     <p>
-        Users who are blind or visually impaired will typically require the assistance of a screen reader to interpret and
+        Users who are visually impaired will typically require the assistance of a screen reader to interpret and
         interact with grid based application.
     </p>
 
@@ -86,6 +70,23 @@ include '../documentation-main/documentation_header.php';
        <a href="https://www.freedomscientific.com/Downloads/JAWS">JAWS</a> and for MAC users it is the embedded
        <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. Our testing has focused on these
         screen readers.
+    </p>
+
+    <p>
+        In order to cover the widest range of use cases and screen readers, ag-Grid has taken a standards-based approach to 
+        implementing accessibility support. Instead of optimizing our implementation for specific screen readers, we have followed the 
+        W3C WCAG standard and added the relevant ARIA-tags to let screen readers announce any ag-Grid element and its state. 
+    </p>
+    
+    <p>
+        However, different screen readers interpret the WCAG standard in different ways. As a result, they may generate different 
+        announcements for the same ag-Grid element, or no announcement at all. 
+    </p>
+    
+    <p>
+        This is why we recommend testing how different screen readers announce the UI of the application you're using, selecting 
+        the best one and recommending that to your users. We believe this is the best way to guide your users how to get the best
+        possible experience at this time until screen readers improve their support for the WCAG standard.
     </p>
 
     <h2>ARIA Attributes</h2>
@@ -102,18 +103,68 @@ include '../documentation-main/documentation_header.php';
     </p>
 
         <ul class="content">
-            <li><b>role="grid"</b> - marks the enclosing element of the grid</li>
-            <li><b>role="rowgroup"</b> - element that serve as container for the table header rows and grid rows</li>
-            <li><b>role="row"</b> - a row of column headers or grid cells</li>
-            <li><b>role="columnheader"</b> - element containing a column header</li>
-            <li><b>role="gridcell"</b> - element containing a grid cell </li>
-            <li><b>role="presentation"</b> - indicates an element should be ignored</li>
-            <li><b>aria-hidden="true"</b> - indicates an element and child elements should be ignored</li>
+            <li>
+                <b>role="grid"</b> - marks the enclosing element of the grid.
+                <ul>
+                    <li><b>aria-rowcount</b> - announces the number of rows.</li>
+                    <li><b>aria-colcount</b> - announces the number of rows.</li>
+                    <li><b>aria-multiselectable="true"</b> - marks the grid as being able to select multiple rows.</li>
+                </ul>
+            </li>
+            <li><b>role="rowgroup"</b> - element that serve as container for the table header rows and grid rows.</li>
+            <li>
+                <b>role="row"</b> - a row of column headers or grid cells.
+                <ul>
+                    <li><b>aria-rowindex</b> - announces the visible index of the row.</li>
+                    <li><b>aria-selected</b> - only present if the row is selectable, it announces the selection state.</li>
+                    <li><b>aria-expanded</b> - only present in row groups, it announces the expand state.</li>
+                </ul>
+            </li>
+            <li>
+                <b>role="columnheader"</b> - element containing a column header.
+                <ul>
+                    <li><b>aria-colindex</b> - announces the visible index of the column.</li>
+                    <li><b>aria-colspan</b> - only present if the column spans across multiple columns, it helps guide screen readers.</li>
+                    <li><b>aria-expanded</b> - only present in grouped headers, it announces the expand state.</li>
+                    <li><b>aria-sort</b> - only present in sortable columns, it announces the sort state.</li>
+                </ul>
+            </li>
+            <li>
+                <b>role="gridcell"</b> - element containing a grid cell.
+                <ul>
+                    <li><b>aria-colindex</b> - announces the visible index of the cell.</li>
+                    <li><b>aria-selected</b> - only present if the cell is selectable, it announces the selection state.</li>
+                    <li><b>aria-expanded</b> - only present in a group cell, it announces the expand state.</li>
+                </ul>
+            </li>
+            <li><b>role="menu"</b> - element that serve as a container for a single levels of menu items.</li>
+            <li><b>role="menuitem"</b> - marks an element as a menu item.</li>
+            <li><b>role="tree"</b> - element that serve as a container for items that could have multiple levels.</li>
+            <li>
+                <b>role="treeitem"</b> - marks an element as an item of a tree.
+                <ul>
+                    <li><b>aria-level</b> - announces the current level of the tree.
+                    <li><b>aria-expanded</b> - only present if the item has subitems, it announces the current expand state.</li>
+                </ul>
+            </li>
+            <li><b>role="listbox"</b> - element that serve as a container for multiple elements that will be presented as a list.</li>
+            <li>
+                <b>role="option"</b> - marks an element as an item of a listbox.
+                <ul>
+                    <li><b>aria-setsize</b> - announces the total number of items in the listbox.</li>
+                    <li><b>aria-posinset</b> - announces the position of the item within the set.</li>
+                    <li><b>aria-selected</b> - only present if the item is selectable, it announces the current select state.</li>
+                    <li><b>aria-checked</b> - only present if the item has a checkbox, it announces the current check state.</li>
+                </ul>
+            <li><b>role="presentation"</b> - indicates an element should be ignored.</li>
+            <li><b>aria-hidden="true"</b> - indicates an element and child elements should be ignored.</li>
+            <li><b>aria-label</b> - used to provide information about the current focused item.</li>
+            <li><b>aria-labelledby</b> - used to provide the id of an element that has the label for the current focused element.</li>
+            <li><b>aria-describedby</b> - used to provide additional information about the current selected item.</li>
         </ul>
 
     <p>
         These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.
-        Grids with simple layouts (e.g. without column groups, pinned columns or pivoting) will have best results.
     </p>
 
     <note>
@@ -121,7 +172,16 @@ include '../documentation-main/documentation_header.php';
         independent testing and the feedback we've received from our users this is clearly not the case.
     </note>
 
-    <h2 id="dom-order">Column and Row Order</h2>
+    <h2>Customising the Grid for Accessibility</h2>
+
+    <p>
+        In order to support large datasets with a minimised memory footprint and a responsive user experience, the grid uses row and 
+        column virtualisation, loading new rows and columns as they're needed. However, screen readers assume all elements of the grid 
+        are loaded when the page is loaded and they appear in the DOM in order of their visual appearance. In order to meet these 
+        requirements, we recommend making the following changes.
+    </p>
+
+    <h3 id="dom-order">Ensure DOM Element order</h3>
 
     <p>
         By default rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
@@ -135,26 +195,27 @@ gridOptions.ensureDomOrder = true</snippet>
 
     <note>Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
 
-    <h2 id="dom-order">Column and Row Virtualisation</h2>
+    <h3 id="dom-order">Ensure all grid elements are always rendered</h3>
 
     <p>
-        By default the grid uses virtualisation; a technique whereby the grid draws columns and rows as the user scrolls.
-        This can be problematic for keyboard navigation and screen readers as not all rows and columns will be available
-        in the DOM.
-    </p>
-    <p>
-        To overcome this it may be necessary to disable visualisation at the expense of increasing the memory footprint.
+        In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best 
+        way to do this is to use <a href="../javascript-grid-pagination/">pagination</a>. This way you can reduce the initial 
+        loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
     </p>
 
     <p>
-        Column virtualisation can be disabled as follows:
+        If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense 
+        of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to 
+        using pagination instead. 
     </p>
+
+    <p>Column virtualisation can be disabled as follows:</p>
 
     <snippet>
 gridOptions.suppressColumnVirtualisation = true</snippet>
 
     <p>
-        This mean if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
+        This means if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
     </p>
 
     <p> There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer
@@ -172,12 +233,12 @@ gridOptions.rowBuffer = 9999</snippet>
         However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
     </p>
 
-    <p>
+    <!-- <p>
         As an alternative you may want to consider using <a href="../javascript-grid-pagination/">Pagination</a> instead
         to constrain the amount of visible rows.
-    </p>
+    </p> -->
 
-    <h2 id="example-accessibility">Example: Accessibility</h2>
+    <h2 id="example-accessibility">Example of Grid Customised for Accessibility</h2>
 
     <p>
         The example below presents a simple grid layout with the following properties enabled:
@@ -195,9 +256,51 @@ gridOptions.rowBuffer = 9999</snippet>
         </li>
     </ul>
 
-    <?= grid_example('Accessibility', 'accessibility', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Grid Customised for Accessibility', 'accessibility', 'generated', ['enterprise' => true]) ?>
 
-    <note>
-        Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
-    </note>
+    <h2>Known Limitations</h2>
+
+    <p>
+        Using advanced functionality in ag-Grid makes the DOM structure incompatible with the assumptions screen readers make. This results in a 
+        few limitations in accessibility when specific functionality is used:
+    </p>
+
+    <ul class="content">
+        <li>
+            <h3>Navigation to pinned rows/columns</h3>
+            <p>
+                Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it 
+                causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a 
+                pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the 
+                columns/rows which are scrollable.
+            </p>
+        </li>
+
+        <li>
+            <h3>Limitations announcing the correct column name in grouped columns</h3>
+            <p>
+                Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags
+                when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing
+                the correct column names.
+            </p>
+        </li>
+
+        <li>
+            <h3>No announcements of state change of a gridcell or gridheader</h3>
+            <p>
+                Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in
+                order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.
+            </p>
+        </li>
+
+        <li>
+            <h3>Server-Side Row Model</h3>
+            <p>
+                Announcing the row count in the grid when using server-side row model (SSRM) is not supported. This is because the row count cannot be 
+                known in all the scenarios where SSRM is in use.
+            </p>
+        </li>
+
+    </ul>
+
 <?php include '../documentation-main/documentation_footer.php';?>

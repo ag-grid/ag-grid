@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
-var utils_1 = require("../../utils");
+var dom_1 = require("../../utils/dom");
+var generic_1 = require("../../utils/generic");
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
@@ -51,7 +52,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         if (this.ePrevious) {
             this.getGui().removeChild(this.ePrevious);
         }
-        this.ePrevious = utils_1._.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
+        this.ePrevious = dom_1.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
@@ -61,7 +62,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
             if (refreshCountCopy !== _this.refreshCount) {
                 return;
             }
-            utils_1._.addCssClass(_this.ePrevious, 'ag-value-slide-out-end');
+            dom_1.addCssClass(_this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
         window.setTimeout(function () {
             if (refreshCountCopy !== _this.refreshCount) {
@@ -73,7 +74,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     };
     AnimateSlideCellRenderer.prototype.refresh = function (params) {
         var value = params.value;
-        if (utils_1._.missing(value)) {
+        if (generic_1.missing(value)) {
             value = '';
         }
         if (value === this.lastValue) {
@@ -86,14 +87,14 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         }
         this.addSlideAnimation();
         this.lastValue = value;
-        if (utils_1._.exists(params.valueFormatted)) {
+        if (generic_1.exists(params.valueFormatted)) {
             this.eCurrent.innerHTML = params.valueFormatted;
         }
-        else if (utils_1._.exists(params.value)) {
+        else if (generic_1.exists(params.value)) {
             this.eCurrent.innerHTML = value;
         }
         else {
-            utils_1._.clearElement(this.eCurrent);
+            dom_1.clearElement(this.eCurrent);
         }
         return true;
     };

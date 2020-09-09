@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PopupComponent } from "../../widgets/popupComponent";
 import { Autowired } from "../../context/context";
-import { _ } from "../../utils";
+import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 var PopupEditorWrapper = /** @class */ (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(cellEditor) {
@@ -35,7 +35,7 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         return _this;
     }
     PopupEditorWrapper.prototype.onKeyDown = function (event) {
-        if (!_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
+        if (!isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
             this.params.onKeyDown(event);
         }
     };

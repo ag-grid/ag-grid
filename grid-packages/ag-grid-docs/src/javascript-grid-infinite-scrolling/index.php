@@ -245,7 +245,7 @@ SNIPPET
     Notice that the grid will load more data when you bring the scroll all the way to the bottom.
 </p>
 
-<?= grid_example('Simple Example', 'simple', 'generated', [ 'modules' => ['infinite']]) ?>
+<?= grid_example('Simple Example', 'simple', 'generated', [ 'modules' => ['infinite'], 'reactFunctional' => true]) ?>
 
 <h3>Selection</h3>
 
@@ -304,7 +304,7 @@ SNIPPET
     filtering. ag-Grid Enterprise is not required for infinite scrolling.
 </note>
 
-<?= grid_example('Server-Side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Server-Side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <note>
     When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -331,7 +331,7 @@ gridOptions.isRowSelectable: function(data) {
 SNIPPET
 ) ?>
 
-<?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['modules' => ['infinite']]) ?>
+<?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['modules' => ['infinite'], 'reactFunctional' => true]) ?>
 
 <p>
     Note that in the above example we have also included an optional checkbox to help highlight which rows
@@ -444,15 +444,15 @@ cell renderers.</p>
     get called after the data is set as well as when the row is created (when the data may not yet be available).
 </p>
 
-<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated', ['modules' => ['infinite']]) ?>
+<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated', ['modules' => ['infinite'], 'reactFunctional' => true]) ?>
 
 <h2 id="changing-columns">Changing Columns</h2>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a>
+    <a href="../javascript-grid-column-updating-definitions/">Changing columns</a>
     is possible using infinite scroll and it does not require the data getting fetched again
     from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort
-    of filter applied is removed), then the grid will fetch data again similar to how data is
+    or filter applied is removed), the grid will fetch data again similar to how data is
     fetched again after the user changes the sort or filter explicitly.
 </p>
 
@@ -474,7 +474,7 @@ cell renderers.</p>
     </li>
 </ul>
 
-<?= grid_example('Changing Columns', 'changing-columns', 'generated', ['modules' => ['infinite']]) ?>
+<?= grid_example('Changing Columns', 'changing-columns', 'generated', ['modules' => ['infinite'], 'reactFunctional' => true]) ?>
 
 <h2 id="pagination">Pagination</h2>
 
@@ -522,7 +522,7 @@ cell renderers.</p>
     sided call is needed.
 </p>
 
-<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -531,7 +531,7 @@ cell renderers.</p>
     every time a new page is navigated to.
 </p>
 
-<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Overlays</h2>
 

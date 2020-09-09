@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,14 +25,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = require("../../constants");
+var constants_1 = require("../../constants/constants");
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
 var rowNode_1 = require("../../entities/rowNode");
 var checkboxSelectionComponent_1 = require("../checkboxSelectionComponent");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var userComponentFactory_1 = require("../../components/framework/userComponentFactory");
-var utils_1 = require("../../utils");
+var function_1 = require("../../utils/function");
+var object_1 = require("../../utils/object");
+var general_1 = require("../../utils/general");
+var dom_1 = require("../../utils/dom");
+var icon_1 = require("../../utils/icon");
+var keyboard_1 = require("../../utils/keyboard");
+var generic_1 = require("../../utils/generic");
+var event_1 = require("../../utils/event");
+var aria_1 = require("../../utils/aria");
+var keyCode_1 = require("../../constants/keyCode");
 var GroupCellRenderer = /** @class */ (function (_super) {
     __extends(GroupCellRenderer, _super);
     function GroupCellRenderer() {
@@ -101,7 +110,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         var params = this.params;
         var rowNode = params.node;
-        var paddingCount = rowNode.uiLevel;
+        // if we are only showing one group column, we don't want to be indenting based on level
+        var fullWithRow = !!params.colDef;
+        var manyDimensionThisColumn = !fullWithRow || params.colDef.showRowGroup === true;
+        var paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
@@ -114,7 +126,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.addCssClass(this.indentClass);
     };
     GroupCellRenderer.prototype.setPaddingDeprecatedWay = function (paddingCount, padding) {
-        utils_1._.doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
+        function_1.doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
         var paddingPx = paddingCount * padding;
         var eGui = this.getGui();
         var paddingSide = this.gridOptionsWrapper.isEnableRtl() ? 'paddingRight' : 'paddingLeft';
@@ -138,8 +150,8 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.createFooterCell();
         }
         else if (rowNode.hasChildren() ||
-            utils_1._.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
-            utils_1._.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)) {
+            object_1.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
+            object_1.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)) {
             this.createGroupCell();
             if (rowNode.hasChildren()) {
                 this.addChildCount();
@@ -154,7 +166,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var footerValue;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            var paramsClone = utils_1._.cloneObject(this.params);
+            var paramsClone = object_1.cloneObject(this.params);
             paramsClone.value = this.params.value;
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
@@ -227,7 +239,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             }
             else if (groupColumnRendererClass &&
                 groupColumnRendererClass.source == userComponentFactory_1.ComponentSource.DEFAULT &&
-                (utils_1._.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
+                (object_1.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
                 cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
@@ -243,7 +255,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
                     _this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
                 }
-                utils_1._.bindCellRendererToHtmlElement(cellRendererPromise, _this.eValue);
+                general_1.bindCellRendererToHtmlElement(cellRendererPromise, _this.eValue);
             });
         }
         else {
@@ -254,7 +266,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.useFullWidth = function (params) {
         var cellRendererPromise = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
         if (cellRendererPromise != null) {
-            utils_1._.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
+            general_1.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
         }
         else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -276,7 +288,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.eChildCount.innerHTML = allChildrenCount >= 0 ? "(" + allChildrenCount + ")" : "";
     };
     GroupCellRenderer.prototype.createLeafCell = function () {
-        if (utils_1._.exists(this.params.value)) {
+        if (generic_1.exists(this.params.value)) {
             this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     };
@@ -304,13 +316,14 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
             this.addDestroyFunc(function () { return _this.getContext().destroyBean(cbSelectionComponent_1); });
         }
-        utils_1._.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
+        dom_1.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
     };
     GroupCellRenderer.prototype.addExpandAndContract = function () {
         var params = this.params;
         var eGroupCell = params.eGridCell;
-        var eExpandedIcon = utils_1._.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
-        var eContractedIcon = utils_1._.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        var eExpandedIcon = icon_1.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
+        var eContractedIcon = icon_1.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+        aria_1.setAriaExpanded(eGroupCell, !!params.node.expanded);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
         this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
@@ -321,8 +334,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.showExpandAndContractIcons();
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
-        this.addManagedListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onRowNodeIsExpandableChanged.bind(this));
-        this.addManagedListener(this.displayedGroup, rowNode_1.RowNode.EVENT_MASTER_CHANGED, this.onRowNodeIsExpandableChanged.bind(this));
+        var expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
+        this.addManagedListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroup, rowNode_1.RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroup, rowNode_1.RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
@@ -335,7 +350,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.setIndent();
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
-        var enterKeyPressed = utils_1._.isKeyPressed(event, constants_1.Constants.KEY_ENTER);
+        var enterKeyPressed = keyboard_1.isKeyPressed(event, keyCode_1.KeyCode.ENTER);
         if (!enterKeyPressed || this.params.suppressEnterExpand) {
             return;
         }
@@ -373,7 +388,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (this.draggedFromHideOpenParents) {
             var pointer = rowNode.parent;
             while (true) {
-                if (utils_1._.missing(pointer)) {
+                if (generic_1.missing(pointer)) {
                     break;
                 }
                 if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
@@ -384,28 +399,28 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             }
         }
         // if we didn't find a displayed group, set it to the row node
-        if (utils_1._.missing(this.displayedGroup)) {
+        if (generic_1.missing(this.displayedGroup)) {
             this.displayedGroup = rowNode;
         }
     };
     GroupCellRenderer.prototype.onExpandClicked = function (mouseEvent) {
-        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+        if (event_1.isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
         // so if we expand a node, it does not also get selected.
-        utils_1._.stopPropagationForAgGrid(mouseEvent);
+        event_1.stopPropagationForAgGrid(mouseEvent);
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.onCellDblClicked = function (mouseEvent) {
-        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+        if (event_1.isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        var targetIsExpandIcon = utils_1._.isElementInEventPath(this.eExpanded, mouseEvent)
-            || utils_1._.isElementInEventPath(this.eContracted, mouseEvent);
+        var targetIsExpandIcon = event_1.isElementInEventPath(this.eExpanded, mouseEvent)
+            || event_1.isElementInEventPath(this.eContracted, mouseEvent);
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();
         }
@@ -413,7 +428,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.onExpandOrContract = function () {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
-        rowNode.setExpanded(!rowNode.expanded);
+        var params = this.params;
+        var nextExpandState = !rowNode.expanded;
+        rowNode.setExpanded(nextExpandState);
+        aria_1.setAriaExpanded(params.eGridCell, nextExpandState);
     };
     GroupCellRenderer.prototype.isExpandable = function () {
         var rowNode = this.params.node;
@@ -422,22 +440,23 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
     };
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
-        var rowNode = this.params.node;
+        var _a = this, eContracted = _a.eContracted, eExpanded = _a.eExpanded, params = _a.params, displayedGroup = _a.displayedGroup, columnController = _a.columnController;
+        var eGridCell = params.eGridCell, node = params.node;
         if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
-            var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
-            utils_1._.setDisplayed(this.eContracted, !expanded);
-            utils_1._.setDisplayed(this.eExpanded, expanded);
+            var expanded = this.draggedFromHideOpenParents ? true : node.expanded;
+            dom_1.setDisplayed(eContracted, !expanded);
+            dom_1.setDisplayed(eExpanded, expanded);
         }
         else {
             // it not expandable, show neither
-            utils_1._.setDisplayed(this.eExpanded, false);
-            utils_1._.setDisplayed(this.eContracted, false);
+            aria_1.removeAriaExpanded(eGridCell);
+            dom_1.setDisplayed(eExpanded, false);
+            dom_1.setDisplayed(eContracted, false);
         }
-        var displayedGroup = this.displayedGroup;
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        var pivotModeAndLeafGroup = columnController.isPivotMode() && displayedGroup.leafGroup;
         var notExpandable = !displayedGroup.isExpandable();
         var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
         this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
@@ -452,13 +471,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.refresh = function () {
         return false;
     };
-    GroupCellRenderer.TEMPLATE = '<span class="ag-cell-wrapper">' +
-        '<span class="ag-group-expanded" ref="eExpanded"></span>' +
-        '<span class="ag-group-contracted" ref="eContracted"></span>' +
-        '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
-        '<span class="ag-group-value" ref="eValue"></span>' +
-        '<span class="ag-group-child-count" ref="eChildCount"></span>' +
-        '</span>';
+    GroupCellRenderer.TEMPLATE = "<span class=\"ag-cell-wrapper\">\n            <span class=\"ag-group-expanded\" ref=\"eExpanded\"></span>\n            <span class=\"ag-group-contracted\" ref=\"eContracted\"></span>\n            <span class=\"ag-group-checkbox ag-invisible\" ref=\"eCheckbox\"></span>\n            <span class=\"ag-group-value\" ref=\"eValue\"></span>\n            <span class=\"ag-group-child-count\" ref=\"eChildCount\"></span>\n        </span>";
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], GroupCellRenderer.prototype, "gridOptionsWrapper", void 0);

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
+var clientSideValueExtractor_1 = require("../clientSideValueExtractor");
 var SetFilterModelValuesType;
 (function (SetFilterModelValuesType) {
     SetFilterModelValuesType[SetFilterModelValuesType["PROVIDED_LIST"] = 0] = "PROVIDED_LIST";
@@ -8,11 +9,10 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(rowModel, colDef, column, valueGetter, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
+    function SetValueModel(rowModel, valueGetter, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
         var _this = this;
         this.colDef = colDef;
         this.column = column;
-        this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.suppressSorting = suppressSorting;
         this.setIsLoading = setIsLoading;
@@ -33,7 +33,7 @@ var SetValueModel = /** @class */ (function () {
         /** Values that have been selected for this filter. */
         this.selectedValues = new Set();
         if (rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = rowModel;
+            this.clientSideValuesExtractor = new clientSideValueExtractor_1.ClientSideValuesExtractor(rowModel, colDef, valueGetter);
         }
         this.filterParams = this.colDef.filterParams || {};
         this.formatter = this.filterParams.textFormatter || core_1.TextFilter.DEFAULT_FORMATTER;
@@ -86,9 +86,9 @@ var SetValueModel = /** @class */ (function () {
     };
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
         var _this = this;
-        if (this.showAvailableOnly()) {
-            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); });
-        }
+        return this.showAvailableOnly() ?
+            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); }) :
+            core_1.Promise.resolve();
     };
     SetValueModel.prototype.updateAllValues = function () {
         var _this = this;
@@ -161,33 +161,12 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
         var _this = this;
         if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
-        if (!this.clientSideRowModel) {
+        if (!this.clientSideValuesExtractor) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
-        var values = new Set();
-        var keyCreator = this.colDef.keyCreator;
-        this.clientSideRowModel.forEachLeafNode(function (node) {
-            // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data || (removeUnavailableValues && !_this.doesRowPassOtherFilters(node))) {
-                return;
-            }
-            var value = _this.valueGetter(node);
-            if (keyCreator) {
-                value = keyCreator({ value: value });
-            }
-            value = core_1._.makeNull(value);
-            if (value != null && Array.isArray(value)) {
-                core_1._.forEach(value, function (x) {
-                    var formatted = core_1._.toStringOrNull(core_1._.makeNull(x));
-                    values.add(formatted);
-                });
-            }
-            else {
-                values.add(core_1._.toStringOrNull(value));
-            }
-        });
-        return core_1._.values(values);
+        var predicate = function (node) { return (!removeUnavailableValues || _this.doesRowPassOtherFilters(node)); };
+        return this.clientSideValuesExtractor.extractUniqueValues(predicate);
     };
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
     SetValueModel.prototype.setMiniFilter = function (value) {
@@ -219,7 +198,7 @@ var SetValueModel = /** @class */ (function () {
         };
         this.availableValues.forEach(function (value) {
             if (value == null) {
-                if (_this.filterParams.excelMode && matchesFilter("(" + _this.translate('blanks') + ")")) {
+                if (_this.filterParams.excelMode && matchesFilter(_this.translate('blanks'))) {
                     _this.displayedValues.push(value);
                 }
             }

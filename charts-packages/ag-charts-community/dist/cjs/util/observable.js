@@ -30,10 +30,13 @@ var Observable = /** @class */ (function () {
             allPropertyListeners.set(name, propertyListeners);
         }
         if (!propertyListeners.has(listener)) {
-            var scopes = new Set();
-            propertyListeners.set(listener, scopes);
+            var scopes_1 = new Set();
+            propertyListeners.set(listener, scopes_1);
         }
-        propertyListeners.get(listener).add(scope);
+        var scopes = propertyListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     };
     Observable.prototype.removePropertyListener = function (name, listener, scope) {
         if (scope === void 0) { scope = this; }
@@ -42,9 +45,11 @@ var Observable = /** @class */ (function () {
         if (propertyListeners) {
             if (listener) {
                 var scopes = propertyListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    propertyListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        propertyListeners.delete(listener);
+                    }
                 }
             }
             else {
@@ -71,10 +76,13 @@ var Observable = /** @class */ (function () {
             allEventListeners.set(type, eventListeners);
         }
         if (!eventListeners.has(listener)) {
-            var scopes = new Set();
-            eventListeners.set(listener, scopes);
+            var scopes_2 = new Set();
+            eventListeners.set(listener, scopes_2);
         }
-        eventListeners.get(listener).add(scope);
+        var scopes = eventListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     };
     Observable.prototype.removeEventListener = function (type, listener, scope) {
         if (scope === void 0) { scope = this; }
@@ -83,9 +91,11 @@ var Observable = /** @class */ (function () {
         if (eventListeners) {
             if (listener) {
                 var scopes = eventListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    eventListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        eventListeners.delete(listener);
+                    }
                 }
             }
             else {
@@ -123,6 +133,7 @@ function reactive() {
     for (var _i = 0; _i < arguments.length; _i++) {
         events[_i] = arguments[_i];
     }
+    // let debug = events.indexOf('debugger') >= 0;
     return function (target, key) {
         // `target` is either a constructor (static member) or prototype (instance member)
         var privateKey = Observable.privateKeyPrefix + key;
@@ -133,9 +144,14 @@ function reactive() {
             }
             Object.defineProperty(target, key, {
                 set: function (value) {
-                    var oldValue;
-                    oldValue = this[privateKey];
-                    if (oldValue !== value || (typeof value === 'object' && value !== null)) {
+                    var oldValue = this[privateKey];
+                    // This is a way to stop inside the setter by adding the special
+                    // 'debugger' event to a reactive property, for example:
+                    //  @reactive('layoutChange', 'debugger') title?: Caption;
+                    // if (debug) { // DO NOT REMOVE
+                    //     debugger;
+                    // }
+                    if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
                         var events_1 = this[privateKeyEvents];
@@ -145,9 +161,7 @@ function reactive() {
                     }
                 },
                 get: function () {
-                    var value;
-                    value = this[privateKey];
-                    return value;
+                    return this[privateKey];
                 },
                 enumerable: true,
                 configurable: true

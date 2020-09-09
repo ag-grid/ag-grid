@@ -2,18 +2,18 @@ import { RowNode } from "./rowNode";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
-import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
-import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
-import { IRowDragItem } from "../rendering/rowDragComp";
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. PLEASE!*
- ****************************************************************/
+import { IRowDragItem } from "../rendering/row/rowDragComp";
+import { IFilterDef } from '../interfaces/iFilter';
+/***********************************************************************
+ * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ ***********************************************************************/
+export declare const COL_DEF_PARAM_OBJECTS: string[];
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -28,8 +28,6 @@ export interface AbstractColDef {
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
-    /** @deprecated since v22 - use suppressColumnsToolPanel / suppressFiltersToolPanel instead */
-    suppressToolPanel?: boolean;
     /** Set to true to not include this column in the Columns Tool Panel */
     suppressColumnsToolPanel?: boolean;
     /** Set to true to not include this column / filter in the Filters Tool Panel */
@@ -61,19 +59,33 @@ export interface ColGroupDef extends AbstractColDef {
     headerGroupComponentParams?: any;
 }
 export interface IAggFunc {
-    (input: any[]): any;
+    (params: IAggFuncParams): any;
 }
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. PLEASE!*
- ****************************************************************/
-export interface ColDef extends AbstractColDef {
+export interface IAggFuncParams {
+    values: any[];
+    column: Column;
+    colDef: ColDef;
+    rowNode: RowNode;
+    data: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+}
+/***********************************************************************
+ * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ ***********************************************************************/
+export interface ColDef extends AbstractColDef, IFilterDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
     colId?: string;
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
     sort?: string;
-    /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
+    initialSort?: string;
+    /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
+    sortIndex?: number;
+    initialSortIndex?: number;
+    /** @deprecated since v24 - use sortOrder instead*/
     sortedAt?: number;
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
     sortingOrder?: (string | null)[];
@@ -87,13 +99,13 @@ export interface ColDef extends AbstractColDef {
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
+    initialHide?: boolean;
     /** Whether this column is pinned or not. */
     pinned?: boolean | string;
+    initialPinned?: boolean | string;
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
-    /** @deprecated since v20.1, use colDef.tooltipValueGetter instead*/
-    tooltip?: (params: ITooltipParams) => string;
-    /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
+    /** The function used to calculate the tooltip of the object, tooltipField takes precedence */
     tooltipValueGetter?: (params: ITooltipParams) => string;
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
@@ -104,8 +116,10 @@ export interface ColDef extends AbstractColDef {
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
     keyCreator?: (value: any) => string;
-    /** Initial width, in pixels, of the cell */
+    /** Actual width, in pixels, of the cell */
     width?: number;
+    /** Default width, in pixels, of the cell */
+    initialWidth?: number;
     /** Min width, in pixels, of the cell */
     minWidth?: number;
     /** Max width, in pixels, of the cell */
@@ -114,8 +128,11 @@ export interface ColDef extends AbstractColDef {
      * space should be assigned to the column.
      */
     flex?: number;
+    initialFlex?: number;
     /** True if this column should stretch rows height to fit contents */
     autoHeight?: boolean;
+    /** True if this column should wrap cell contents - typically used with autoHeight */
+    wrapText?: boolean;
     /** Class to use for the cell. Can be string, array of strings, or function. */
     cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
     /** An object of css values. Or a function returning an object of css values. */
@@ -148,17 +165,22 @@ export interface ColDef extends AbstractColDef {
     valueParser?: ((params: ValueParserParams) => any) | string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
+    initialAggFunc?: string | IAggFunc;
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
     allowedAggFuncs?: string[];
     /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
     rowGroupIndex?: number;
     rowGroup?: boolean;
+    initialRowGroupIndex?: number;
+    initialRowGroup?: boolean;
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
     showRowGroup?: string | boolean;
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
     pivot?: boolean;
+    initialPivotIndex?: number;
+    initialPivot?: boolean;
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
     /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */
@@ -189,8 +211,6 @@ export interface ColDef extends AbstractColDef {
     menuTabs?: string[];
     /** Set to true if sorting allowed for this column. */
     sortable?: boolean;
-    /** @deprecated since v20, use colDef.sortable=false instead */
-    suppressSorting?: boolean;
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
     /** Set to true to not flash this column for value changes */
@@ -201,14 +221,10 @@ export interface ColDef extends AbstractColDef {
     lockVisible?: boolean;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
     lockPinned?: boolean;
-    /** @deprecated since v20, use colDef.filter=false instead */
-    suppressFilter?: boolean;
     /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
     /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
     suppressSizeToFit?: boolean;
-    /** @deprecated since v20, use colDef.resizable=false instead */
-    suppressResize?: boolean;
     /** Set to true if this column should be resizable */
     resizable?: boolean;
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
@@ -242,13 +258,6 @@ export interface ColDef extends AbstractColDef {
     template?: string;
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
-    /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | {
-        new (): IFilterComp;
-    } | boolean;
-    filterFramework?: any;
-    /** The filter params are specific to each filter! */
-    filterParams?: any;
     /** Rules for applying css classes */
     cellClassRules?: {
         [cssClassName: string]: (Function | string);
@@ -281,17 +290,13 @@ export interface ColDef extends AbstractColDef {
     headerComponentParams?: any;
     /** Whether to display a floating filter for this column. */
     floatingFilter?: boolean;
-    /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: string | {
-        new (): IFloatingFilterComp;
-    };
-    floatingFilterComponentParams?: any;
-    floatingFilterComponentFramework?: any;
     refData?: {
         [key: string]: string;
     };
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;
+    /** Params to customise the columns menu behaviour and appearance */
+    columnsMenuParams?: ColumnsMenuParams;
 }
 export interface IsColumnFunc {
     (params: IsColumnFuncParams): boolean;
@@ -312,6 +317,13 @@ export interface GetQuickFilterTextParams {
     column: Column;
     colDef: ColDef;
     context: any;
+}
+export interface ColumnsMenuParams {
+    suppressSyncLayoutWithGrid?: boolean;
+    suppressColumnFilter?: boolean;
+    suppressColumnSelectAll?: boolean;
+    suppressColumnExpandAll?: boolean;
+    contractColumnSelection?: boolean;
 }
 export interface BaseColDefParams {
     node: RowNode;

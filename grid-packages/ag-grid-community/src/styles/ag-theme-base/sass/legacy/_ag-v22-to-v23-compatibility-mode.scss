@@ -191,10 +191,6 @@
         @extend .ag-button !optional;
     }
     
-    .ag-paging-button-wrapper {
-        @extend .ag-paging-button !optional;
-    }
-    
     .ag-cell-auto-height {
         @extend .ag-cell-with-height !optional;
     }
@@ -257,10 +253,6 @@
     
     .ag-loading {
         @extend .ag-stub-cell !optional;
-    }
-    
-    .ag-paging-button-wrapper {
-        @extend .ag-paging-button !optional;
     }
     
     .ag-column-select-column {

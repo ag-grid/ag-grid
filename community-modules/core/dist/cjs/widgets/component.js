@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
 var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
+var array_1 = require("../utils/array");
+var function_1 = require("../utils/function");
 var compIdSequence = new utils_1.NumberSequence();
 var Component = /** @class */ (function (_super) {
     __extends(Component, _super);
@@ -42,6 +45,9 @@ var Component = /** @class */ (function (_super) {
         // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
         // around as we create a new rowComp instance for the same row node).
         _this.compId = compIdSequence.next();
+        // to minimise DOM hits, we only apply CSS classes if they have changed. as addding a CSS class that is already
+        // there, or removing one that wasn't present, all takes CPU.
+        _this.cssClassStates = {};
         if (template) {
             _this.setTemplate(template);
         }
@@ -55,8 +61,8 @@ var Component = /** @class */ (function (_super) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        var childNodeList = utils_1._.copyNodeList(parentNode.childNodes);
-        utils_1._.forEach(childNodeList, function (childNode) {
+        var childNodeList = dom_1.copyNodeList(parentNode.childNodes);
+        array_1.forEach(childNodeList, function (childNode) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
@@ -67,7 +73,7 @@ var Component = /** @class */ (function (_super) {
             }, paramsMap);
             if (childComp) {
                 if (childComp.addItems && childNode.children.length) {
-                    _this.createChildComponentsFromTags(childNode);
+                    _this.createChildComponentsFromTags(childNode, paramsMap);
                     // converting from HTMLCollection to Array
                     var items = Array.prototype.slice.call(childNode.children);
                     childComp.addItems(items);
@@ -76,7 +82,7 @@ var Component = /** @class */ (function (_super) {
                 _this.swapComponentForNode(childComp, parentNode, childNode);
             }
             else if (childNode.childNodes) {
-                _this.createChildComponentsFromTags(childNode);
+                _this.createChildComponentsFromTags(childNode, paramsMap);
             }
         });
     };
@@ -92,7 +98,7 @@ var Component = /** @class */ (function (_super) {
         return null;
     };
     Component.prototype.copyAttributesFromNode = function (source, dest) {
-        utils_1._.iterateNamedNodeMap(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
+        dom_1.iterateNamedNodeMap(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
         var eComponent = newComponent.getGui();
@@ -113,15 +119,15 @@ var Component = /** @class */ (function (_super) {
         var thisPrototype = Object.getPrototypeOf(this);
         while (thisPrototype != null) {
             var metaData = thisPrototype.__agComponentMetaData;
-            var currentProtoName = (thisPrototype.constructor).name;
+            var currentProtoName = function_1.getFunctionName(thisPrototype.constructor);
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                utils_1._.forEach(metaData[currentProtoName].querySelectors, function (querySelector) { return action(querySelector); });
+                array_1.forEach(metaData[currentProtoName].querySelectors, function (querySelector) { return action(querySelector); });
             }
             thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     };
     Component.prototype.setTemplate = function (template, paramsMap) {
-        var eGui = utils_1._.loadTemplate(template);
+        var eGui = dom_1.loadTemplate(template);
         this.setTemplateFromElement(eGui, paramsMap);
     };
     Component.prototype.setTemplateFromElement = function (element, paramsMap) {
@@ -196,17 +202,7 @@ var Component = /** @class */ (function (_super) {
         var thisProto = Object.getPrototypeOf(this);
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
-            var currentProtoName = (thisProto.constructor).name;
-            // IE does not support Function.prototype.name, so we need to extract
-            // the name using a RegEx
-            // from: https://matt.scharley.me/2012/03/monkey-patch-name-ie.html
-            if (currentProtoName === undefined) {
-                var funcNameRegex = /function\s([^(]{1,})\(/;
-                var results = funcNameRegex.exec(thisProto.constructor.toString());
-                if (results && results.length > 1) {
-                    currentProtoName = results[1].trim();
-                }
-            }
+            var currentProtoName = function_1.getFunctionName(thisProto.constructor);
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
             }
@@ -218,7 +214,7 @@ var Component = /** @class */ (function (_super) {
         if (!this.annotatedGuiListeners) {
             return;
         }
-        utils_1._.forEach(this.annotatedGuiListeners, function (e) {
+        array_1.forEach(this.annotatedGuiListeners, function (e) {
             e.element.removeEventListener(e.eventName, e.listener);
         });
         this.annotatedGuiListeners = [];
@@ -250,7 +246,10 @@ var Component = /** @class */ (function (_super) {
         if (!container) {
             container = this.eGui;
         }
-        if (utils_1._.isNodeOrElement(newChild)) {
+        if (newChild == null) {
+            return;
+        }
+        if (dom_1.isNodeOrElement(newChild)) {
             container.appendChild(newChild);
         }
         else {
@@ -265,13 +264,13 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.setVisible = function (visible) {
         if (visible !== this.visible) {
             this.visible = visible;
-            utils_1._.setVisible(this.eGui, visible);
+            dom_1.setVisible(this.eGui, visible);
         }
     };
     Component.prototype.setDisplayed = function (displayed) {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
-            utils_1._.setDisplayed(this.eGui, displayed);
+            dom_1.setDisplayed(this.eGui, displayed);
             var event_1 = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
                 visible: this.displayed
@@ -289,13 +288,25 @@ var Component = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.eGui.removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
-        utils_1._.addCssClass(this.eGui, className);
+        var updateNeeded = this.cssClassStates[className] !== true;
+        if (updateNeeded) {
+            dom_1.addCssClass(this.eGui, className);
+            this.cssClassStates[className] = true;
+        }
     };
     Component.prototype.removeCssClass = function (className) {
-        utils_1._.removeCssClass(this.eGui, className);
+        var updateNeeded = this.cssClassStates[className] !== false;
+        if (updateNeeded) {
+            dom_1.removeCssClass(this.eGui, className);
+            this.cssClassStates[className] = false;
+        }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-        utils_1._.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        var updateNeeded = this.cssClassStates[className] !== addOrRemove;
+        if (updateNeeded) {
+            dom_1.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+            this.cssClassStates[className] = addOrRemove;
+        }
     };
     Component.prototype.getAttribute = function (key) {
         var eGui = this.eGui;

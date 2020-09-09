@@ -1,18 +1,17 @@
-import { AgEvent, BeanStub, ChartModel, ChartType, IRangeController } from "@ag-grid-community/core";
+import { AgChartThemePalette, AgEvent, BeanStub, ChartModel, ChartType } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
 export declare class ChartController extends BeanStub {
     private readonly model;
     static EVENT_CHART_UPDATED: string;
-    rangeController: IRangeController;
-    private gridApi;
-    private columnApi;
+    private readonly rangeController;
+    private readonly gridOptionsWrapper;
+    private readonly gridApi;
+    private readonly columnApi;
     private chartProxy;
-    private chartPaletteName;
-    constructor(model: ChartDataModel, paletteName?: ChartPaletteName);
+    constructor(model: ChartDataModel);
     private init;
     updateForGridChange(): void;
     updateForDataChange(): void;
@@ -22,10 +21,11 @@ export declare class ChartController extends BeanStub {
     getChartType(): ChartType;
     isPivotChart(): boolean;
     isGrouping(): boolean;
-    getPaletteName(): ChartPaletteName;
-    getPalettes(): Map<ChartPaletteName | undefined, ChartPalette>;
+    getThemeName(): string;
+    getThemes(): string[];
+    getPalettes(): AgChartThemePalette[];
     setChartType(chartType: ChartType): void;
-    setChartPaletteName(palette: ChartPaletteName): void;
+    setChartThemeName(chartThemeName: string): void;
     getColStateForMenu(): {
         dimensionCols: ColState[];
         valueCols: ColState[];

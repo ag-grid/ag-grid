@@ -97,13 +97,15 @@ function onGroupingEnabled(enabled) {
 
 function setGroupingEnabled(enabled, columnApi) {
     if (enabled) {
-        columnApi.setRowGroupColumns(['group']);
-        columnApi.setColumnVisible('group', false);
-        columnApi.setColumnVisible('symbol', false);
+        columnApi.applyColumnState({state: [
+            {colId: 'group', rowGroup: true, hide: true},
+            {colId: 'symbol', hide: true}
+        ]});
     } else {
-        columnApi.setRowGroupColumns([]);
-        columnApi.setColumnVisible('group', true);
-        columnApi.setColumnVisible('symbol', true);
+        columnApi.applyColumnState({state: [
+            {colId: 'group', rowGroup: false, hide: false},
+            {colId: 'symbol', hide: false}
+        ]});
     }
     setItemVisible('groupingOn', !enabled);
     setItemVisible('groupingOff', enabled);

@@ -20,7 +20,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     @Autowired('columnController') private columnController: ColumnController;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eFilterTextField') private eSearchTextField: AgInputTextField;
+    @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
@@ -44,7 +44,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        this.eSearchTextField.onValueChange(this.onSearchTextChanged.bind(this));
+        this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
+        this.eFilterTextField.setInputAriaLabel('Search');
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
@@ -72,19 +73,19 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const showExpand = !this.params.suppressExpandAll;
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        this.eSearchTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
+        this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
 
-        _.setDisplayed(this.eSearchTextField.getGui(), showFilterSearch);
+        _.setDisplayed(this.eFilterTextField.getGui(), showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _.debounce(() => {
-                this.dispatchEvent({type: 'searchChanged', searchText: this.eSearchTextField.getValue()});
+                this.dispatchEvent({type: 'searchChanged', searchText: this.eFilterTextField.getValue()});
             }, 300);
         }
 

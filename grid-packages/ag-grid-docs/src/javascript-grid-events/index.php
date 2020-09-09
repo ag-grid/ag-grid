@@ -156,6 +156,7 @@ SNIPPET
         │   │      }</span>
         │   ├── ColumnResizedEvent <span class="event-properties">{
         │   │        <span class="event-attribute">finished</span>: boolean // set to true for last event in a sequence of move events
+        │   │        <span class="event-attribute">flexColumns</span>: Column[] // any columns resized due to flex
         │   │      }</span>
         │   ├── ColumnVisibleEvent <span class="event-properties">{
         │   │        <span class="event-attribute">visible</span>: boolean // true if column was set to visible, false if set to hide
@@ -193,9 +194,12 @@ SNIPPET
                 ├── CellMouseOutEvent <span class="event-properties">{}</span>
                 ├── CellContextMenuEvent <span class="event-properties">{}</span>
                 ├── CellEditingStartedEvent <span class="event-properties">{}</span>
-                ├── CellEditingStoppedEvent <span class="event-properties">{}</span>
                 ├── CellKeyDown <span class="event-properties">{}</span>
                 ├── CellKeyPress <span class="event-properties">{}</span>
+                ├── CellEditingStoppedEvent <span class="event-properties">{
+                        <span class="event-attribute">oldValue</span>: any, // the old value before editing
+                        <span class="event-attribute">newValue</span>: any // the new value after editing
+                      }</span>
                 └── CellValueChangedEvent <span class="event-properties">{
                         <span class="event-attribute">oldValue</span>: any, // the old value before editing
                         <span class="event-attribute">newValue</span>: any // the new value after editing

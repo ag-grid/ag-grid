@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,23 +19,20 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agRadioButton_1 = require("./agRadioButton");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
+var agCheckbox_1 = require("./agCheckbox");
 var AgToggleButton = /** @class */ (function (_super) {
     __extends(AgToggleButton, _super);
-    function AgToggleButton() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.className = 'ag-toggle-button';
-        _this.inputType = 'checkbox';
-        return _this;
+    function AgToggleButton(config) {
+        return _super.call(this, config, 'ag-toggle-button') || this;
     }
     AgToggleButton.prototype.setValue = function (value, silent) {
         _super.prototype.setValue.call(this, value, silent);
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
+        dom_1.addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
         return this;
     };
     return AgToggleButton;
-}(agRadioButton_1.AgRadioButton));
+}(agCheckbox_1.AgCheckbox));
 exports.AgToggleButton = AgToggleButton;
 
 //# sourceMappingURL=agToggleButton.js.map

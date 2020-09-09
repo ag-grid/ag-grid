@@ -13,7 +13,6 @@ var gridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-        sortable: true,
         resizable: true,
     },
     columnTypes: {
@@ -30,8 +29,9 @@ var gridOptions = {
     components: {
         groupRowInnerRenderer: GroupRowInnerRenderer
     },
-    groupRowInnerRenderer: 'groupRowInnerRenderer',
     groupRowRendererParams: {
+        innerRenderer: 'groupRowInnerRenderer',
+        suppressCount: true,
         flagCodes: {
             'Andorra': 'ad',
             'United Arab Emirates': 'ae',

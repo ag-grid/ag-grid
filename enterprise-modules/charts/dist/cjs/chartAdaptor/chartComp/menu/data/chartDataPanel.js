@@ -94,7 +94,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var inputName = "chartDimension" + this.getCompId();
         columns.forEach(function (col) {
             var comp = _this.categoriesGroupComp.createManagedBean(new core_1.AgRadioButton());
-            comp.setLabel(core_1._.escape(col.displayName));
+            comp.setLabel(core_1._.escapeString(col.displayName));
             comp.setValue(col.selected);
             comp.setInputName(inputName);
             _this.addChangeListener(comp, col);
@@ -166,7 +166,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.generateGetSeriesLabel = function () {
         if (!this.chartController.isActiveXYChart()) {
-            return function (col) { return core_1._.escape(col.displayName); };
+            return function (col) { return core_1._.escapeString(col.displayName); };
         }
         var isBubble = this.chartType === core_1.ChartType.Bubble;
         var isInPairedMode = this.isInPairedMode();
@@ -176,7 +176,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         indexToAxisLabel.set(1, 'Y');
         indexToAxisLabel.set(2, 'size');
         return function (col) {
-            var escapedLabel = core_1._.escape(col.displayName);
+            var escapedLabel = core_1._.escapeString(col.displayName);
             if (!col.selected) {
                 return escapedLabel;
             }

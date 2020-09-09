@@ -1,4 +1,4 @@
-function CustomTooltip () {}
+function CustomTooltip() { }
 
 CustomTooltip.prototype.init = function(params) {
     var eGui = this.eGui = document.createElement('div');
@@ -7,7 +7,7 @@ CustomTooltip.prototype.init = function(params) {
     var valueToDisplay = params.value.value ? params.value.value : '- Missing -';
 
     eGui.innerHTML =
-        '<p>Athletes name:</p>' +
+        '<p>Athlete\'s name:</p>' +
         '<p><span class"name">' + valueToDisplay + '</span></p>';
 };
 

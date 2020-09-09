@@ -7,7 +7,6 @@
             "description": "The name to render in the column header. If not specified and field is specified, the field name will be used as the header name."
         },
         "columnGroupShow": {
-            "default": false,
             "description": "Whether to show the column when the group is open / closed."
         },
         "headerClass": {
@@ -41,6 +40,9 @@
         "width": {
             "description": "Initial width in pixels for the cell."
         },
+        "defaultWidth": {
+            "description": "Same as 'width', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "minWidth": {
             "description": "Minimum width in pixels for the cell."
         },
@@ -53,6 +55,9 @@
                 "name": "Column Flex",
                 "url": "../javascript-grid-resizing/#column-flex"
             }
+        },
+        "initialFlex": {
+            "description": "Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "filter<br />filterFramework": {
             "description": "Filter component to use for this column. Set to <code>true</code> to use the default filter."
@@ -74,12 +79,18 @@
             "default": false,
             "description": "Set to <code>true</code> for this column to be hidden. You might think it would make more sense to call this field <code>visible</code> and mark it <code>false</code> to hide, but we want all default values to be <code>false</code> and we want columns to be visible by default."
         },
+        "initialHide": {
+            "description": "Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "pinned": {
             "options": [
                 "left",
                 "right"
             ],
             "description": "Pin a column to one side."
+        },
+        "initialPinned": {
+            "description": "Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "lockPosition": {
             "default": false,
@@ -103,10 +114,16 @@
                 "asc",
                 "desc"
             ],
-            "description": "Set to sort this column by default."
+            "description": "Set to sort this column."
         },
-        "sortedAt": {
-            "description": "If doing multi-sort by default, this property should say when the sort for each column was performed in milliseconds, so the grid knows which order to execute the sort."
+        "initialSort": {
+            "description": "Same as 'sort', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "sortIndex": {
+            "description": "If doing multi-sort by default, the order which column sorts are applied."
+        },
+        "initialSortIndex": {
+            "description": "Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "sortingOrder": {
             "options": [
@@ -126,7 +143,7 @@
         "tooltipField": {
             "description": "The field of the tooltip to apply to the cell."
         },
-        "tooltip": {
+        "tooltipValueGetter": {
             "type": {
                 "parameters": {
                     "api": "GridApi",
@@ -142,7 +159,7 @@
                 },
                 "returnType": "string"
             },
-            "description": "Callback that should return the string used for a tooltip. <code>tooltipField</code> takes precedence."
+            "description": "Callback that should return the string used for a tooltip."
         },
         "checkboxSelection": {
             "default": false,
@@ -262,14 +279,35 @@
             ],
             "description": "Name of function to use for aggregation. You can also provide your own agg function."
         },
+        "initialAggFunc": {
+            "description": "Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "allowedAggFuncs": {
             "description": "Aggregation functions allowed on this column e.g. <code>['sum', 'avg']</code>. If missing, all installed functions are allowed. This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API."
+        },
+        "rowGroup": {
+            "description": "Set to true to row group by this column"
+        },
+        "initialRowGroup": {
+            "description": "Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "rowGroupIndex": {
             "description": "Set this in columns you want to group by. If only grouping by one column, set this to any number (e.g. <code>0</code>). If grouping by multiple columns, set this to where you want this column to be in the group (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
         },
+        "initialRowGroupIndex": {
+            "description": "Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "pivot": {
+            "description": "Set to true to pivot by this column"
+        },
+        "initialPivot": {
+            "description": "Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions."
+        },
         "pivotIndex": {
             "description": "Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (e.g. <code>0</code>). If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. <code>0</code> for first, <code>1</code> for second, and so on)."
+        },
+        "initialPivotIndex": {
+            "description": "Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "comparator(valueA, valueB, nodeA, nodeB, isInverted)": {
             "description": "Comparator function for custom sorting."
@@ -288,10 +326,6 @@
         "enablePivot": {
             "default": false,
             "description": "(Enterprise only) Set to <code>true</code> if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot."
-        },
-        "pivotTotals": {
-            "default": false,
-            "description": "(Enterprise only) Set to <code>true</code> if you want to introduce pivot total columns when in pivot mode."
         },
         "enableValue": {
             "default": false,
@@ -341,6 +375,10 @@
             "default": false,
             "description": "Set to <code>true</code> to have the grid calculate the height of a row based on contents of this column."
         },
+        "wrapText": {
+            "default": false,
+            "description": "Set to <code>true</code> to have the text wrap inside the cell."
+        },
         "singleClickEdit": {
             "default": false,
             "description": "Set to <code>true</code> to have cells under this column enter edit mode after single click."
@@ -352,6 +390,13 @@
                 "excluded"
             ],
             "description": "Defines the chart data type that should be used for a column."
+        },
+        "columnsMenuParams": {
+            "description": "Params used to change the behaviour and appearance of the Columns Menu tab.",
+            "more": {
+                "name": "Customising the Columns Menu Tab",
+                "url": "../javascript-grid-column-menu/#customising-the-columns-menu-tab"
+            }
         }
     },
     "columnGroupsOnly": {

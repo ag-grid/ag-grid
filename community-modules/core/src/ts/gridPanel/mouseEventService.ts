@@ -3,11 +3,13 @@ import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CellComp } from "../rendering/cellComp";
-import { NumberSequence, _ } from '../utils';
+import { NumberSequence } from '../utils';
 import { GridPanel } from "./gridPanel";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
+import { getEventPath, getCellCompForEvent } from "../utils/event";
+import { exists } from "../utils/generic";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
@@ -38,7 +40,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getRenderedCellForEvent(event: Event): CellComp {
-        return _.getCellCompForEvent(this.gridOptionsWrapper, event);
+        return getCellCompForEvent(this.gridOptionsWrapper, event);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
@@ -46,12 +48,12 @@ export class MouseEventService extends BeanStub {
     // getting executed on many grids at the same time.
     public isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean {
 
-        const path = _.getEventPath(event);
+        const path = getEventPath(event);
 
         for (let i = 0; i < path.length; i++) {
             const element = path[i];
             const instanceId = (element as any)[MouseEventService.GRID_DOM_KEY];
-            if (_.exists(instanceId)) {
+            if (exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
@@ -65,7 +67,7 @@ export class MouseEventService extends BeanStub {
         return cellComp ? cellComp.getCellPosition() : null;
     }
 
-    getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number } {
+    getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
         const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         const { x, y } = event;
 
@@ -73,7 +75,7 @@ export class MouseEventService extends BeanStub {
             const vRange = this.gridPanel.getVScrollPosition();
             const hRange = this.gridPanel.getHScrollPosition();
 
-            return {x: x + hRange.left, y: y + vRange.top };
+            return { x: x + hRange.left, y: y + vRange.top };
         }
 
         return { x, y };

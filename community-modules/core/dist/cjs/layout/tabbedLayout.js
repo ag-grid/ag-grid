@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,10 +25,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
-var constants_1 = require("../constants");
 var managedFocusComponent_1 = require("../widgets/managedFocusComponent");
+var dom_1 = require("../utils/dom");
+var aria_1 = require("../utils/aria");
+var generic_1 = require("../utils/generic");
+var function_1 = require("../utils/function");
+var keyCode_1 = require("../constants/keyCode");
 var TabbedLayout = /** @class */ (function (_super) {
     __extends(TabbedLayout, _super);
     function TabbedLayout(params) {
@@ -41,17 +44,17 @@ var TabbedLayout = /** @class */ (function (_super) {
         return _this;
     }
     TabbedLayout.getTemplate = function (cssClass) {
-        return /* html */ "<div class=\"ag-tabs " + cssClass + "\">\n            <div ref=\"eHeader\" class=\"ag-tabs-header " + (cssClass ? cssClass + "-header" : '') + "\"></div>\n            <div ref=\"eBody\" class=\"ag-tabs-body " + (cssClass ? cssClass + "-body" : '') + "\"></div>\n        </div>";
+        return /* html */ "<div class=\"ag-tabs " + cssClass + "\">\n            <div ref=\"eHeader\" role=\"menu\" class=\"ag-tabs-header " + (cssClass ? cssClass + "-header" : '') + "\"></div>\n            <div ref=\"eBody\" role=\"presentation\" class=\"ag-tabs-body " + (cssClass ? cssClass + "-body" : '') + "\"></div>\n        </div>";
     };
     TabbedLayout.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
-            case constants_1.Constants.KEY_RIGHT:
-            case constants_1.Constants.KEY_LEFT:
+            case keyCode_1.KeyCode.RIGHT:
+            case keyCode_1.KeyCode.LEFT:
                 if (!this.eHeader.contains(document.activeElement)) {
                     return;
                 }
                 var currentPosition = this.items.indexOf(this.activeItem);
-                var nextPosition = e.keyCode === constants_1.Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                var nextPosition = e.keyCode === keyCode_1.KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
                 if (currentPosition === nextPosition) {
                     return;
                 }
@@ -60,36 +63,37 @@ var TabbedLayout = /** @class */ (function (_super) {
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();
                 break;
-            case constants_1.Constants.KEY_UP:
-            case constants_1.Constants.KEY_DOWN:
+            case keyCode_1.KeyCode.UP:
+            case keyCode_1.KeyCode.DOWN:
                 e.stopPropagation();
                 break;
         }
     };
     TabbedLayout.prototype.onTabKeyDown = function (e) {
+        if (e.defaultPrevented) {
+            return;
+        }
         var _a = this, focusController = _a.focusController, eHeader = _a.eHeader, eBody = _a.eBody, activeItem = _a.activeItem;
         var activeElement = document.activeElement;
-        var focusInHeader = eHeader.contains(activeElement);
         e.preventDefault();
-        if (focusInHeader) {
-            if (e.shiftKey) {
-                focusController.focusLastFocusableElement(eBody);
-            }
-            else {
-                focusController.focusFirstFocusableElement(eBody);
-            }
+        if (eHeader.contains(activeElement)) {
+            // focus is in header, move into body of popup
+            focusController.focusInto(eBody, e.shiftKey);
         }
         else {
-            var isFocusManaged = focusController.isFocusUnderManagedComponent(eBody);
-            if (isFocusManaged) {
+            // focus is in body, establish if it should return to header
+            if (focusController.isFocusUnderManagedComponent(eBody)) {
+                // focus was in a managed focus component and has now left, so we can return to the header
                 activeItem.eHeaderButton.focus();
             }
             else {
                 var nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
                 if (nextEl) {
+                    // if another element exists in the body that can be focussed, go to that
                     nextEl.focus();
                 }
                 else {
+                    // otherwise return to the header
                     activeItem.eHeaderButton.focus();
                 }
             }
@@ -109,7 +113,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         var minWidth = 0;
         var minHeight = 0;
         this.items.forEach(function (itemWrapper) {
-            utils_1._.clearElement(eDummyBody);
+            dom_1.clearElement(eDummyBody);
             var eClone = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, function (body) { return body.cloneNode(true); });
             if (eClone == null) {
                 return;
@@ -132,11 +136,12 @@ var TabbedLayout = /** @class */ (function (_super) {
     };
     TabbedLayout.prototype.addItem = function (item) {
         var eHeaderButton = document.createElement('span');
-        eHeaderButton.tabIndex = -1;
+        eHeaderButton.setAttribute('tabIndex', '-1');
+        eHeaderButton.setAttribute('role', 'menuitem');
         eHeaderButton.appendChild(item.title);
-        utils_1._.addCssClass(eHeaderButton, 'ag-tab');
+        dom_1.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
-        eHeaderButton.setAttribute('aria-label', item.titleLabel);
+        aria_1.setAriaLabel(eHeaderButton, item.titleLabel);
         var wrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
@@ -145,7 +150,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     };
     TabbedLayout.prototype.showItem = function (tabbedItem) {
-        var itemWrapper = utils_1._.find(this.items, function (wrapper) {
+        var itemWrapper = generic_1.find(this.items, function (wrapper) {
             return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
@@ -158,19 +163,19 @@ var TabbedLayout = /** @class */ (function (_super) {
             this.params.onItemClicked({ item: wrapper.tabbedItem });
         }
         if (this.activeItem === wrapper) {
-            utils_1._.callIfPresent(this.params.onActiveItemClicked);
+            function_1.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
-        utils_1._.clearElement(this.eBody);
+        dom_1.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(function (body) {
             _this.eBody.appendChild(body);
             var onlyUnmanaged = !_this.focusController.isKeyboardFocus();
-            _this.focusController.focusFirstFocusableElement(_this.eBody, onlyUnmanaged);
+            _this.focusController.focusInto(_this.eBody, false, onlyUnmanaged);
         });
         if (this.activeItem) {
-            utils_1._.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
+            dom_1.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
-        utils_1._.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+        dom_1.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
         this.activeItem = wrapper;
         if (wrapper.tabbedItem.afterAttachedCallback) {
             wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);

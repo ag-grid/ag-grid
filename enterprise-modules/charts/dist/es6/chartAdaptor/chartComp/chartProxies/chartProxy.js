@@ -9,8 +9,9 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _, Events, LegendPosition, } from "@ag-grid-community/core";
-import { CategoryAxis, DropShadow, Padding, palettes } from "ag-charts-community";
+import { _, ChartType, Events } from "@ag-grid-community/core";
+import { CategoryAxis, DropShadow, getChartTheme, Padding, themes, } from "ag-charts-community";
+import { deepMerge } from "../object";
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
         var _this = this;
@@ -45,36 +46,138 @@ var ChartProxy = /** @class */ (function () {
         return this.chart.scene.getDataURL(type);
     };
     ChartProxy.prototype.initChartOptions = function () {
-        var processChartOptions = this.chartProxyParams.processChartOptions;
+        this.initChartTheme();
+        this.chartOptions = this.getDefaultOptionsFromTheme(this.chartTheme);
         // allow users to override options before they are applied
+        var processChartOptions = this.chartProxyParams.processChartOptions;
         if (processChartOptions) {
-            var params = { type: this.chartType, options: this.getDefaultOptions() };
+            var originalOptions = deepMerge({}, this.chartOptions);
+            var params = { type: this.chartType, options: this.chartOptions };
             var overriddenOptions = processChartOptions(params);
-            var safeOptions = this.getDefaultOptions();
             // ensure we have everything we need, in case the processing removed necessary options
+            var safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
-            this.overridePalette(safeOptions);
+            this.overridePalette(originalOptions, safeOptions);
             this.chartOptions = safeOptions;
         }
+    };
+    ChartProxy.prototype.paletteOverridden = function (originalOptions, overriddenOptions) {
+        return !_.areEqual(originalOptions.seriesDefaults.fill.colors, overriddenOptions.seriesDefaults.fill.colors) ||
+            !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
+    };
+    ChartProxy.prototype.initChartTheme = function () {
+        var _this = this;
+        var themeName = this.getSelectedTheme();
+        var stockTheme = this.isStockTheme(themeName);
+        var gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        var apiThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
+        if (gridOptionsThemeOverrides || apiThemeOverrides) {
+            var themeOverrides_1 = {
+                overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
+            };
+            var getCustomTheme = function () { return deepMerge(_this.lookupCustomChartTheme(themeName), themeOverrides_1); };
+            var theme = stockTheme ? __assign({ baseTheme: themeName }, themeOverrides_1) : getCustomTheme();
+            this.chartTheme = getChartTheme(theme);
+        }
         else {
-            this.chartOptions = this.getDefaultOptions();
+            this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
         }
     };
-    ChartProxy.prototype.overridePalette = function (chartOptions) {
+    ChartProxy.prototype.lookupCustomChartTheme = function (name) {
+        var customChartThemes = this.chartProxyParams.customChartThemes;
+        var customChartTheme = customChartThemes && customChartThemes[name];
+        if (!customChartTheme) {
+            console.warn("ag-Grid: no stock theme exists with the name '" + name + "' and no " +
+                "custom chart theme with that name was supplied to 'customChartThemes'");
+        }
+        return customChartTheme;
+    };
+    ChartProxy.prototype.isStockTheme = function (themeName) {
+        return _.includes(Object.keys(themes), themeName);
+    };
+    ChartProxy.prototype.mergeThemeOverrides = function (gridOptionsThemeOverrides, apiThemeOverrides) {
+        if (!gridOptionsThemeOverrides)
+            return apiThemeOverrides;
+        if (!apiThemeOverrides)
+            return gridOptionsThemeOverrides;
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
+    };
+    ChartProxy.prototype.integratedToStandaloneChartType = function (integratedChartType) {
+        switch (integratedChartType) {
+            case ChartType.GroupedBar:
+            case ChartType.StackedBar:
+            case ChartType.NormalizedBar:
+                return 'bar';
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
+                return 'column';
+            case ChartType.Line:
+                return 'line';
+            case ChartType.Area:
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
+                return 'area';
+            case ChartType.Scatter:
+            case ChartType.Bubble:
+                return 'scatter';
+            case ChartType.Histogram:
+                return 'histogram';
+            case ChartType.Pie:
+            case ChartType.Doughnut:
+                return 'pie';
+            default:
+                return 'cartesian';
+        }
+    };
+    ChartProxy.prototype.overridePalette = function (originalOptions, chartOptions) {
         if (!this.chartProxyParams.allowPaletteOverride) {
             return;
         }
-        var _a = this.getPredefinedPalette(), defaultFills = _a.fills, defaultStrokes = _a.strokes;
+        if (!this.paletteOverridden(originalOptions, chartOptions)) {
+            return;
+        }
         var seriesDefaults = chartOptions.seriesDefaults;
-        var fills = seriesDefaults.fill.colors, strokes = seriesDefaults.stroke.colors;
-        var fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-        var strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+        var fillsOverridden = seriesDefaults.fill.colors;
+        var strokesOverridden = seriesDefaults.stroke.colors;
         if (fillsOverridden || strokesOverridden) {
+            // due to series default refactoring it's possible for fills and strokes to have undefined values
+            var invalidFills = _.includes(fillsOverridden, undefined);
+            var invalidStrokes = _.includes(strokesOverridden, undefined);
+            if (invalidFills || invalidStrokes)
+                return;
+            // both fills and strokes will need to be overridden
             this.customPalette = {
-                fills: fillsOverridden ? fills : defaultFills,
-                strokes: strokesOverridden ? strokes : defaultStrokes
+                fills: fillsOverridden,
+                strokes: strokesOverridden
             };
         }
+    };
+    ChartProxy.prototype.getStandaloneChartType = function () {
+        return this.integratedToStandaloneChartType(this.chartType);
+    };
+    // Merges theme defaults into default options. To be overridden in subclasses.
+    ChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = {};
+        var standaloneChartType = this.getStandaloneChartType();
+        options.title = theme.getConfig(standaloneChartType + '.title');
+        options.subtitle = theme.getConfig(standaloneChartType + '.subtitle');
+        options.background = theme.getConfig(standaloneChartType + '.background');
+        options.legend = theme.getConfig(standaloneChartType + '.legend');
+        options.navigator = theme.getConfig(standaloneChartType + '.navigator');
+        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
+        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.listeners = theme.getConfig(standaloneChartType + '.listeners');
+        options.padding = theme.getConfig(standaloneChartType + '.padding');
+        return options;
+    };
+    ChartProxy.prototype.getSelectedTheme = function () {
+        var chartThemeName = this.chartProxyParams.getChartThemeName();
+        var availableThemes = this.chartProxyParams.getChartThemes();
+        if (!_.includes(availableThemes, chartThemeName)) {
+            chartThemeName = availableThemes[0];
+        }
+        return chartThemeName;
     };
     ChartProxy.prototype.getChartOptions = function () {
         return this.chartOptions;
@@ -199,7 +302,7 @@ var ChartProxy = /** @class */ (function () {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartThemeName: this.chartProxyParams.getChartThemeName(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -225,88 +328,21 @@ var ChartProxy = /** @class */ (function () {
         };
     };
     ChartProxy.prototype.getPredefinedPalette = function () {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
+        return this.chartTheme.palette;
     };
     ChartProxy.prototype.getPalette = function () {
-        return this.customPalette || this.getPredefinedPalette();
+        return this.customPalette || this.chartTheme.palette;
     };
+    //TODO remove all 'integrated' default chart options
     ChartProxy.prototype.getDefaultChartOptions = function () {
-        var _a = this.getPredefinedPalette(), fills = _a.fills, strokes = _a.strokes;
-        var fontOptions = this.getDefaultFontOptions();
         return {
-            background: {
-                fill: this.getBackgroundColor(),
-                visible: true,
-            },
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-            },
-            title: __assign(__assign({}, fontOptions), { enabled: false, fontWeight: 'bold', fontSize: 16 }),
-            subtitle: __assign(__assign({}, fontOptions), { enabled: false }),
-            legend: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                item: {
-                    label: __assign({}, fontOptions),
-                    marker: {
-                        shape: 'square',
-                        size: 15,
-                        padding: 8,
-                        strokeWidth: 1,
-                    },
-                    paddingX: 16,
-                    paddingY: 8,
-                },
-            },
-            navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            },
-            seriesDefaults: {
-                fill: {
-                    colors: fills,
-                    opacity: 1,
-                },
-                stroke: {
-                    colors: strokes,
-                    opacity: 1,
-                    width: 1,
-                },
-                highlightStyle: {
-                    fill: 'yellow',
-                },
-                listeners: {}
-            },
+            background: {},
+            padding: {},
+            title: {},
+            subtitle: {},
+            legend: {},
+            navigator: {},
+            seriesDefaults: {},
             listeners: {}
         };
     };

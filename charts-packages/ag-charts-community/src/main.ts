@@ -1,11 +1,12 @@
 export * from "./caption";
+export * from "./chart/axis/numberAxis";
 export * from "./chart/axis/categoryAxis";
 export * from "./chart/axis/groupedCategoryAxis";
+export * from "./chart/axis/timeAxis";
 export * from "./chart/cartesianChart";
 export * from "./chart/chart";
 export * from "./chart/chartAxis";
 export * from "./chart/groupedCategoryChart";
-export * from "./chart/palettes";
 export * from "./chart/polarChart";
 export * from "./chart/marker/marker";
 export * from "./chart/series/cartesian/areaSeries";
@@ -14,11 +15,8 @@ export * from "./chart/series/cartesian/lineSeries";
 export * from "./chart/series/cartesian/scatterSeries";
 export * from "./chart/series/cartesian/histogramSeries";
 export * from "./chart/series/polar/pieSeries";
-export * from "./chartBuilder";
-export * from "./chartOptions";
 export * from "./scale/bandScale";
 export * from "./scale/linearScale";
-export { default as linearScale} from "./scale/linearScale";
 export * from "./scene/clipRect";
 export * from "./scene/dropShadow";
 export * from "./scene/group";
@@ -62,4 +60,6 @@ export const time = {
     utcYear
 };
 
+export * from "./chart/agChartOptions";
 export * from "./chart/agChart";
+export * from "./chart/themes/chartTheme";

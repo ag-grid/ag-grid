@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,8 +13,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { EventService } from "../eventService";
 import { Events } from "../events";
 import { Autowired } from "../context/context";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { Constants } from "../constants/constants";
+import { exists, missing, missingOrEmpty } from "../utils/generic";
+import { assign, getAllKeysInObjects } from "../utils/object";
 var RowNode = /** @class */ (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
@@ -98,7 +99,7 @@ var RowNode = /** @class */ (function () {
         return oldNode;
     };
     RowNode.prototype.setDataAndId = function (data, id) {
-        var oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
+        var oldNode = exists(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
         this.updateDataOnDetailNode();
@@ -110,7 +111,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.checkRowSelectable = function () {
         var isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        var shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
+        var shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
         this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     };
     RowNode.prototype.setRowSelectable = function (newVal) {
@@ -261,7 +262,7 @@ var RowNode = /** @class */ (function () {
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
-        var event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+        var event = assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
             expanded: expanded
         });
         this.mainEventService.dispatchEvent(event);
@@ -299,7 +300,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.setGroupValue = function (colKey, newValue) {
         var column = this.columnController.getGridColumn(colKey);
-        if (_.missing(this.groupData)) {
+        if (missing(this.groupData)) {
             this.groupData = {};
         }
         var columnId = column.getColId();
@@ -314,7 +315,7 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
-        var colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
+        var colIds = getAllKeysInObjects([this.aggData, newAggData]);
         var oldAggData = this.aggData;
         this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
@@ -327,14 +328,26 @@ var RowNode = /** @class */ (function () {
             });
         }
     };
-    RowNode.prototype.hasChildren = function () {
+    RowNode.prototype.updateHasChildren = function () {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        var newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        if (newValue !== this.__hasChildren) {
+            this.__hasChildren = newValue;
+            if (this.eventService) {
+                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
+            }
+        }
+    };
+    RowNode.prototype.hasChildren = function () {
+        if (this.__hasChildren == null) {
+            this.updateHasChildren();
+        }
+        return this.__hasChildren;
     };
     RowNode.prototype.isEmptyRowGroupNode = function () {
-        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
+        return this.group && missingOrEmpty(this.childrenAfterGroup);
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue, oldValue) {
         var cellChangedEvent = {
@@ -443,8 +456,7 @@ var RowNode = /** @class */ (function () {
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (this.footer) {
-            var count = this.sibling.setSelectedParams(params);
-            return count;
+            return this.sibling.setSelectedParams(params);
         }
         if (rangeSelect) {
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
@@ -547,7 +559,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
-        if (_.missing(children)) {
+        if (missing(children)) {
             return;
         }
         var updatedCount = 0;
@@ -585,7 +597,7 @@ var RowNode = /** @class */ (function () {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             var parentRowNode = currentRowNode.parent;
-            var firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
+            var firstChild = exists(parentRowNode) && currentRowNode.firstChild;
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
                     foundFirstChildPath = true;
@@ -621,6 +633,7 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    RowNode.EVENT_HAS_CHILDREN_CHANGED = 'hasChildrenChanged';
     RowNode.EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';

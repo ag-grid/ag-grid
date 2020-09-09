@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var beanStub_1 = require("../../context/beanStub");
 var rowNodeBlock_1 = require("./rowNodeBlock");
 var utils_1 = require("../../utils");
 var context_1 = require("../../context/context");
+var generic_1 = require("../../utils/generic");
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -73,6 +74,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.logger.log("onPageLoaded: page = " + event.page.getBlockNumber() + ", lastRow = " + event.lastRow);
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
+            this.onCacheUpdated();
         }
     };
     RowNodeCache.prototype.purgeBlocksIfNeeded = function (blockToExclude) {
@@ -158,7 +160,6 @@ var RowNodeCache = /** @class */ (function (_super) {
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
             this.maxRowFound = true;
-            this.onCacheUpdated();
         }
         else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
@@ -166,13 +167,6 @@ var RowNodeCache = /** @class */ (function (_super) {
             var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
-                this.onCacheUpdated();
-            }
-            else if (this.cacheParams.dynamicRowHeight) {
-                // the only other time is if dynamic row height, as loading rows
-                // will change the height of the block, given the height of the rows
-                // is only known after the row is loaded.
-                this.onCacheUpdated();
             }
         }
     };
@@ -180,7 +174,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.virtualRowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (utils_1._.exists(maxRowFound)) {
+        if (generic_1.exists(maxRowFound)) {
             this.maxRowFound = maxRowFound;
         }
         // if we are still searching, then the row count must not end at the end
@@ -284,7 +278,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         var inActiveRange = false;
         var numberSequence = new utils_1.NumberSequence();
         // if only one node passed, we start the selection at the top
-        if (utils_1._.missing(firstInRange)) {
+        if (generic_1.missing(firstInRange)) {
             inActiveRange = true;
         }
         var foundGapInSelection = false;

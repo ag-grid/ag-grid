@@ -17,8 +17,8 @@ export interface PanelOptions {
 }
 export declare class AgPanel extends Component {
     protected static CLOSE_BTN_TEMPLATE: string;
-    protected popupService: PopupService;
-    protected gridOptionsWrapper: GridOptionsWrapper;
+    protected readonly popupService: PopupService;
+    protected readonly gridOptionsWrapper: GridOptionsWrapper;
     protected closable: boolean;
     protected config: PanelOptions | undefined;
     protected closeButtonComp: Component;
@@ -39,10 +39,10 @@ export declare class AgPanel extends Component {
         height: number | undefined;
     };
     close: () => void;
-    protected eContentWrapper: HTMLElement;
-    protected eTitleBar: HTMLElement;
-    protected eTitleBarButtons: HTMLElement;
-    protected eTitle: HTMLElement;
+    protected readonly eContentWrapper: HTMLElement;
+    protected readonly eTitleBar: HTMLElement;
+    protected readonly eTitleBarButtons: HTMLElement;
+    protected readonly eTitle: HTMLElement;
     constructor(config?: PanelOptions);
     private static getTemplate;
     protected postConstruct(): void;

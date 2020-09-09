@@ -27,7 +27,7 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public setColumnState(columnState: ColumnState[]): boolean { return this.columnController.setColumnState(columnState, false, 'api'); }
+    public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
     public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState(); }
@@ -114,6 +114,11 @@ export class ColumnApi {
 
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
+    // public getColumnDefs(): (ColDef | ColGroupDef)[] {
+    //     this.setColumnGroupOpened(group, newValue);
+    //     return null;
+    // }
+
     public columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
@@ -131,6 +136,7 @@ export class ColumnApi {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
+
     public getState(): ColumnState[] {
         console.error('ag-Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
@@ -174,4 +180,15 @@ export class ColumnApi {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     }
+
+    public setColumnState(columnState: ColumnState[]): boolean {
+        return this.columnController.applyColumnState({state: columnState, applyOrder: true}, 'api');
+    }
+
+}
+
+export interface ApplyColumnStateParams {
+    state?: ColumnState[];
+    applyOrder?: boolean;
+    defaultState?: ColumnState;
 }

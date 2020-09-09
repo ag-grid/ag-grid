@@ -1,3 +1,47 @@
+var gridDiv = document.getElementById('myGrid');
+var grid;
+
+function refreshGrid() {
+    if (grid) {
+        grid.destroy();
+    }
+
+    grid = new agGrid.Grid(gridDiv, gridOptions);
+
+    createData();
+}
+
+function onThemeChanged(initial) {
+    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
+
+    gridDiv.className = newTheme;
+
+    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+    if (isDark) {
+        document.body.classList.add('dark');
+        gridOptions.chartThemes = ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'];
+    } else {
+        document.body.classList.remove('dark');
+        gridOptions.chartThemes = null;
+    }
+
+    refreshGrid();
+
+    if (!initial) {
+        var newUrl;
+        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
+        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
+        if (attrRegex.test(location.href)) {
+            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
+        } else {
+            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
+            newUrl = location.href + sep + "theme=" + urlName;
+        }
+        history.replaceState(null, "", newUrl);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var select = document.getElementById('data-size');
 
@@ -25,12 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
             select.appendChild(option);
         }
     }
-    var gridDiv = document.querySelector('#myGrid');
 
     onThemeChanged(true);
-
-    new agGrid.Grid(gridDiv, gridOptions);
-    createData();
 });
 
 // for easy access in the dev console, we put api and columnApi into global variables
@@ -209,6 +249,7 @@ var gridOptions = {
     // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
     // alwaysShowVerticalScroll: true,
+    // debounceVerticalScrollbar: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
     // suppressTouch: true,
@@ -229,7 +270,7 @@ var gridOptions = {
     suppressClearOnFillReduction: false,
 
     rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
-    rowDeselection: true,
+    // suppressRowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     // pagination: true,
@@ -411,6 +452,7 @@ var gridOptions = {
         var options = params.options;
 
         if (type === 'pie' || type === 'doughnut') {
+            options.seriesDefaults.label.enabled = false;
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
@@ -653,7 +695,7 @@ var desktopDefaultCols = [
                 headerCheckboxSelectionFilteredOnly: true
             },
             {
-                headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
+                headerName: "Language", field: "language", width: 150, editable: true,
                 cellEditor: 'agSelectCellEditor',
                 cellClass: 'vAlign',
                 enableRowGroup: true,
@@ -666,10 +708,22 @@ var desktopDefaultCols = [
                 },
                 // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
+                filter: 'agMultiColumnFilter',
                 filterParams: {
-                    newRowsAction: 'keep',
-                    buttons: ['reset']
-                }
+                    filters: [
+                        {
+                            filter: 'agTextColumnFilter',
+                            display: 'subMenu'
+                        },
+                        {
+                            filter: 'agSetColumnFilter',
+                            filterParams: {
+                                newRowsAction: 'keep',
+                                buttons: ['reset']
+                            }
+                        }
+                    ]
+                },
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
@@ -716,6 +770,7 @@ var desktopDefaultCols = [
                 },
                 // pinned: 'left',
                 floatCell: true,
+                filter: 'agSetColumnFilter',
                 filterParams: {
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
@@ -736,14 +791,25 @@ var desktopDefaultCols = [
         headerName: 'Game of Choice',
         children: [
             {
-                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
+                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agMultiColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function() {
                     return 'alphabet';
                 },
                 filterParams: {
-                    newRowsAction: 'keep',
-                    buttons: ['reset'],
+                    filters: [
+                        {
+                            filter: 'agTextColumnFilter',
+                            display: 'subMenu'
+                        },
+                        {
+                            filter: 'agSetColumnFilter',
+                            filterParams: {
+                                newRowsAction: 'keep',
+                                buttons: ['reset'],
+                            }
+                        }
+                    ]
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -1122,43 +1188,6 @@ function rowSelected(event) {
     }
 }
 
-function onThemeChanged(initial) {
-    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
-    var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
-
-    themedElements.forEach(function(el) {
-        el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
-    });
-
-    if (gridOptions.api) {
-        gridOptions.api.resetRowHeights();
-        gridOptions.api.redrawRows();
-        gridOptions.api.refreshHeader();
-        gridOptions.api.refreshToolPanel();
-    }
-
-    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
-
-    if (isDark) {
-        document.body.classList.add('dark');
-    } else {
-        document.body.classList.remove('dark');
-    }
-
-    if (!initial) {
-        var newUrl;
-        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
-        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
-        if (attrRegex.test(location.href)) {
-            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
-        } else {
-            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
-            newUrl = location.href + sep + "theme=" + urlName;
-        }
-        history.replaceState(null, "", newUrl);
-    }
-}
-
 var filterCount = 0;
 
 function onFilterChanged(newFilter) {
@@ -1222,10 +1251,10 @@ PersonFilter.prototype.setupGui = function() {
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
-        '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" aria-label="Full name search" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
-        '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
+        '<div><img src="images/ag-Grid2-200.png" alt="ag-grid" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
     this.eFilterText = this.gui.querySelector('#filterText');
@@ -1420,16 +1449,24 @@ function ratingRenderer(params) {
 }
 
 function ratingRendererGeneral(value, forFilter) {
+    if (value === '(Select All)') {
+        return value;
+    }
+
     var result = '<span>';
+
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width=12 height=12 />';
+            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width="12" height="12" />';
         }
     }
-    if (forFilter && value === 0) {
-        result += '(no stars)';
+
+    if (forFilter && Number(value) === 0) {
+        result += '(No stars)';
     }
+
     result += '</span>';
+
     return result;
 }
 
@@ -1501,10 +1538,13 @@ function booleanCellRenderer(params) {
 
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
+
     if (valueCleaned === true) {
         return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
         return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
+    } else if (params.value === '(Select All)') {
+        return params.value;
     } else {
         return "(empty)";
     }
@@ -1569,8 +1609,8 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(dataMod
 
 function countryCellRenderer(params) {
     //get flags from here: http://www.freeflagicons.com/
-    if (params.value === "" || params.value === undefined || params.value === null) {
-        return '';
+    if (params.value == null || params.value === "" || params.value === '(Select All)') {
+        return params.value;
     } else {
         var flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;

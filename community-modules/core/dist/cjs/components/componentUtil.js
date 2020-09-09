@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,8 +15,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = require("../events");
 var propertyKeys_1 = require("../propertyKeys");
-var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var utils_1 = require("../utils");
+var object_1 = require("../utils/object");
+var generic_1 = require("../utils/generic");
 var ComponentUtil = /** @class */ (function () {
     function ComponentUtil() {
     }
@@ -28,7 +28,6 @@ var ComponentUtil = /** @class */ (function () {
     };
     ComponentUtil.copyAttributesToGridOptions = function (gridOptions, component, skipEventDeprecationCheck) {
         if (skipEventDeprecationCheck === void 0) { skipEventDeprecationCheck = false; }
-        checkForDeprecated(component);
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {};
@@ -45,13 +44,6 @@ var ComponentUtil = /** @class */ (function () {
         ComponentUtil.NUMBER_PROPERTIES
             .filter(keyExists)
             .forEach(function (key) { return pGridOptions[key] = ComponentUtil.toNumber(component[key]); });
-        // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
-        if (!skipEventDeprecationCheck) {
-            ComponentUtil.EVENTS
-                // React uses onXXX, not sure why this is different to the other frameworks
-                .filter(function (event) { return keyExists(event) || keyExists(ComponentUtil.getCallbackForEvent(event)); })
-                .forEach(function (event) { return gridOptionsWrapper_1.GridOptionsWrapper.checkEventDeprecation(event); });
-        }
         return gridOptions;
     };
     ComponentUtil.getCallbackForEvent = function (eventName) {
@@ -66,7 +58,6 @@ var ComponentUtil = /** @class */ (function () {
         if (!changes) {
             return;
         }
-        checkForDeprecated(changes);
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         var pGridOptions = gridOptions;
         var keyExists = function (key) { return changes[key]; };
@@ -81,9 +72,6 @@ var ComponentUtil = /** @class */ (function () {
             .forEach(function (key) { return pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue); });
         if (changes.enableCellTextSelection) {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
-        }
-        if (changes.showToolPanel) {
-            api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
         }
         if (changes.quickFilterText) {
             api.setQuickFilter(changes.quickFilterText.currentValue);
@@ -127,9 +115,6 @@ var ComponentUtil = /** @class */ (function () {
         if (changes.suppressRowClickSelection) {
             api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
         }
-        if (changes.gridAutoHeight) {
-            api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
-        }
         if (changes.suppressClipboardPaste) {
             api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }
@@ -142,7 +127,7 @@ var ComponentUtil = /** @class */ (function () {
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
-        utils_1._.iterateObject(changes, function (key, value) {
+        object_1.iterateObject(changes, function (key, value) {
             event[key] = value;
         });
         api.dispatchEvent(event);
@@ -183,11 +168,6 @@ var ComponentUtil = /** @class */ (function () {
     return ComponentUtil;
 }());
 exports.ComponentUtil = ComponentUtil;
-ComponentUtil.EVENTS = utils_1._.values(events_1.Events);
-function checkForDeprecated(changes) {
-    if (changes.rowDeselected || changes.onRowDeselected) {
-        console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
-    }
-}
+ComponentUtil.EVENTS = generic_1.values(events_1.Events);
 
 //# sourceMappingURL=componentUtil.js.map

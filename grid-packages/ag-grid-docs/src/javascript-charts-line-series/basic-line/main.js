@@ -1,5 +1,6 @@
 var options = {
     container: document.getElementById('myChart'),
+    autoSize: true,
     title: {
         text: 'Average expenditure on coffee'
     },

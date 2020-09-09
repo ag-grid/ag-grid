@@ -15,7 +15,7 @@ import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxisPosition } from "./chartAxis";
+import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
@@ -189,6 +189,8 @@ var CartesianChart = /** @class */ (function (_super) {
         this.navigator.onMouseUp(event);
     };
     CartesianChart.prototype.updateAxes = function () {
+        var navigator = this.navigator;
+        var clipSeries = false;
         this.axes.forEach(function (axis) {
             var _a;
             var direction = axis.direction, boundSeries = axis.boundSeries;
@@ -203,8 +205,15 @@ var CartesianChart = /** @class */ (function (_super) {
                 var domain = (_a = new Array()).concat.apply(_a, domains_1);
                 axis.domain = numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
             }
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.visibleRange = [navigator.min, navigator.max];
+            }
+            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+                clipSeries = true;
+            }
             axis.update();
         });
+        this.seriesRoot.enabled = clipSeries;
     };
     CartesianChart.className = 'CartesianChart';
     CartesianChart.type = 'cartesian';

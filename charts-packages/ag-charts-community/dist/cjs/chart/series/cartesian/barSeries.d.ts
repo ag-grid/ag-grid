@@ -6,6 +6,14 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TypedEvent } from "../../../util/observable";
+export interface BarSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: BarSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+}
+export { BarTooltipRendererParams };
 interface BarNodeDatum extends SeriesNodeDatum {
     yKey: string;
     yValue: number;
@@ -27,20 +35,10 @@ interface BarNodeDatum extends SeriesNodeDatum {
         y: number;
     };
 }
-export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-}
-export { BarTooltipRendererParams };
-export interface BarLabelFormatterParams {
-    value: number;
-}
-export declare type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 declare class BarSeriesLabel extends Label {
-    formatter?: BarLabelFormatter;
+    formatter?: (params: {
+        value: number;
+    }) => string;
 }
 export declare class BarSeries extends CartesianSeries {
     static className: string;
@@ -88,6 +86,7 @@ export declare class BarSeries extends CartesianSeries {
     yKeys: string[];
     protected _yNames: string[];
     yNames: string[];
+    setColors(fills: string[], strokes: string[]): void;
     grouped: boolean;
     /**
      * The value to normalize the stacks to, when {@link grouped} is `false`.

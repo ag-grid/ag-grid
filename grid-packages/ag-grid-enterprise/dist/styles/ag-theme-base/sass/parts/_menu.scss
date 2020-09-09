@@ -7,53 +7,48 @@
 
     .ag-menu-list {
         cursor: default;
-        width: 100%;
-        padding-top: ag-param(grid-size);
-        padding-bottom: ag-param(grid-size);
+        padding: ag-param(grid-size) 0;
     }
-
-    .ag-menu-option-part {
-        padding-top: ag-param(grid-size) + 2;
-        padding-bottom: ag-param(grid-size) + 2;
-        line-height: ag-param(icon-size);
-    }
-
-    .ag-menu-option-active {
-        @include ag-color-property(background-color, row-hover-color);
-    }
-
-    .ag-menu-option-disabled {
-        opacity: 0.5;
-    }
-
-    .ag-menu-option-text {
-        margin-left: ag-param(grid-size);
-    }
-
-    .ag-menu-option-icon {
-        padding-left: ag-param(grid-size) * 2;
-        padding-right: ag-param(grid-size);
-        min-width: ag-param(icon-size) + ag-param(grid-size) * 2;
-    }
-
-    .ag-menu-option-shortcut {
-        padding-left: ag-param(grid-size) * 2;
-    }
-
 
     .ag-menu-separator {
-        height: ag-param(grid-size) * 2;
+        height: (ag-param(grid-size) * 2) + 1;
     }
 
-    .ag-menu-separator-cell:after {
+    .ag-menu-separator-part:after {
         content: "";
         display: block;
         @include ag-border(critical, top);
     }
 
-    .ag-menu-option-popup-pointer {
-        width: ag-param(icon-size) + ag-param(grid-size) * 2;
-        text-align: center;
+    .ag-menu-option-active, .ag-compact-menu-option-active {
+        @include ag-color-property(background-color, row-hover-color);
+    }
+
+    .ag-menu-option-part, .ag-compact-menu-option-part {
+        line-height: ag-param(icon-size);
+        padding: (ag-param(grid-size) + 2) 0;
+    }
+
+    .ag-menu-option-disabled, .ag-compact-menu-option-disabled {
+        opacity: 0.5;
+    }
+
+    .ag-menu-option-icon, .ag-compact-menu-option-icon {
+        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
+        width: ag-param(icon-size);
+    }
+
+    .ag-menu-option-text, .ag-compact-menu-option-text {
+        padding-left: ag-param(grid-size) * 2;
+        padding-right: ag-param(grid-size) * 2;
+    }
+
+    .ag-menu-option-shortcut, .ag-compact-menu-option-shortcut {
+        @include ag-theme-rtl((padding-right: ag-param(grid-size)));
+    }
+
+    .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
+        padding-right: ag-param(grid-size);
     }
 
     ////////////////////////////////////////
@@ -92,6 +87,10 @@
         @include ag-color-property(color, secondary-foreground-color);
     }
 
+    .ag-filter-separator {
+        @include ag-border(critical, top);
+    }
+
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////
@@ -108,7 +107,7 @@
         padding-top: ag-param(widget-container-vertical-padding);
     }
 
-    .ag-set-filter-list {
+    .ag-set-filter-list, .ag-filter-no-matches {
         height: ag-param(list-item-height) * 6;
     }
 
@@ -124,7 +123,6 @@
 
     .ag-mini-filter {
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
-        margin-bottom: 0;
     }
 
     .ag-set-filter-item {
@@ -135,14 +133,8 @@
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
     }
 
-    .ag-filter-header-container {
-        padding-bottom: ag-param(widget-container-vertical-padding);
-        @include ag-border(secondary, bottom);
-    }
-
     .ag-filter-apply-panel {
         padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
-
         @include ag-border(secondary, top);
     }
 
@@ -156,6 +148,17 @@
     }
 
     .ag-filter-no-matches {
-        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     }
+
+    .ag-multi-filter-menu-item {
+        margin: ag-param(grid-size) 0;
+    }
+
+    .ag-multi-filter-group-title-bar {
+        padding: ag-param(grid-size) * 2 ag-param(grid-size);
+        background-color: transparent;
+    }
+
+    @include ag-keyboard-focus((ag-multi-filter-group-title-bar), 4px);
 }

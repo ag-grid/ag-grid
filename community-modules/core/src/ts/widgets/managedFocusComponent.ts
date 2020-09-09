@@ -1,8 +1,8 @@
-import { PostConstruct, Autowired } from "../context/context";
-import { Component } from "./component";
-import { Constants } from "../constants";
-import { FocusController } from "../focusController";
-import { _ } from "../utils";
+import { PostConstruct, Autowired } from '../context/context';
+import { Component } from './component';
+import { FocusController } from '../focusController';
+import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
+import { KeyCode } from '../constants/keyCode';
 
 /**
  * This provides logic to override the default browser focus logic.
@@ -16,132 +16,158 @@ import { _ } from "../utils";
  */
 export class ManagedFocusComponent extends Component {
 
-    protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+
     private topTabGuard: HTMLElement;
     private bottomTabGuard: HTMLElement;
-    private skipTabGuardFocus:boolean = false;
+    private skipTabGuardFocus: boolean = false;
 
-    @Autowired('focusController') protected focusController: FocusController;
+    @Autowired('focusController') protected readonly focusController: FocusController;
+
+    /*
+     * Set isFocusableContainer to true if this component will contain multiple focus-managed
+     * elements within. When set to true, this component will add tabGuards that will be responsible
+     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
+     */
+    constructor(template?: string, private readonly isFocusableContainer = false) {
+        super(template);
+    }
 
     @PostConstruct
     protected postConstruct(): void {
         const focusableElement = this.getFocusableElement();
+
         if (!focusableElement) { return; }
 
-        this.wireFocusManagement();
-    }
+        addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
-    protected wireFocusManagement() {
-        const focusableElement = this.getFocusableElement();
-
-        _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
-
-        if (this.isFocusableContainer()) {
+        if (this.isFocusableContainer) {
             this.topTabGuard = this.createTabGuard('top');
             this.bottomTabGuard = this.createTabGuard('bottom');
             this.addTabGuards();
             this.activateTabGuards();
-            this.forEachTabGuard(tabGuards => {
-                this.addManagedListener(tabGuards, 'focus', this.onFocus.bind(this));
-            });
+            this.forEachTabGuard(guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this)));
         }
 
-        if (this.onTabKeyDown || this.handleKeyDown) {
-            this.addKeyDownListeners(focusableElement);
-        }
+        this.addKeyDownListeners(focusableElement);
 
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
     }
 
     /*
-     * Override this method to return true if this component will contain multiple focus-managed
-     * elements within. When set to true, this component will add tabGuards that will be responsible
-     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
-     */
-    protected isFocusableContainer(): boolean {
-        return false;
-    }
-
-    /*
      * Override this method if focusing the default element requires special logic.
      */
-    protected focusInnerElement(fromBottom?: boolean): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard, :not([tabindex="-1"])');
+    protected focusInnerElement(fromBottom = false): void {
+        const focusable = this.focusController.findFocusableElements(this.getFocusableElement());
+
+        if (this.isFocusableContainer && this.tabGuardsAreActive()) {
+            // remove tab guards from this component from list of focusable elements
+            focusable.splice(0, 1);
+            focusable.splice(focusable.length - 1, 1);
+        }
 
         if (!focusable.length) { return; }
 
         focusable[fromBottom ? focusable.length - 1 : 0].focus();
     }
 
-    protected onFocusIn(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
+    /**
+     * By default this will tab though the elements in the default order. Override if you require special logic.
+     */
+    protected onTabKeyDown(e: KeyboardEvent) {
+        if (e.defaultPrevented) { return; }
 
-        this.deactivateTabGuards();
+        const tabGuardsAreActive = this.tabGuardsAreActive();
+
+        if (this.isFocusableContainer && tabGuardsAreActive) {
+            this.deactivateTabGuards();
+        }
+
+        const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (this.isFocusableContainer && tabGuardsAreActive) {
+            // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
+            // tabbing to the tab guard from inside the component
+            setTimeout(() => this.activateTabGuards(), 0);
+        }
+
+        if (!nextRoot) { return; }
+
+        nextRoot.focus();
+        e.preventDefault();
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        if (this.isFocusableContainer) {
+            this.deactivateTabGuards();
+        }
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
-
-        const focusEl = this.getFocusableElement();
-
-        if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
+        if (this.isFocusableContainer && !this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.activateTabGuards();
         }
     }
 
-    public forceFocusOutOfContainer(): void {
+    public forceFocusOutOfContainer(up = false): void {
+        if (!this.isFocusableContainer) { return; }
+
         this.activateTabGuards();
-
         this.skipTabGuardFocus = true;
-        this.bottomTabGuard.focus();
 
+        const tabGuardToFocus = up ? this.topTabGuard : this.bottomTabGuard;
+
+        if (tabGuardToFocus) { tabGuardToFocus.focus(); }
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
-        if (!this.isFocusableContainer()) {
-            super.appendChild(newChild, container);
-        } else {
-            if (!_.isNodeOrElement(newChild)) {
+        if (this.isFocusableContainer) {
+            if (!isNodeOrElement(newChild)) {
                 newChild = (newChild as Component).getGui();
             }
 
-            const bottomTabGuard = this.bottomTabGuard;
+            const { bottomTabGuard } = this;
 
             if (bottomTabGuard) {
                 bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
             } else {
                 super.appendChild(newChild, container);
             }
+        } else {
+            super.appendChild(newChild, container);
         }
     }
 
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
+
         tabGuard.classList.add('ag-tab-guard');
         tabGuard.classList.add(`ag-tab-guard-${side}`);
+        tabGuard.setAttribute('role', 'presentation');
 
-        return tabGuard as HTMLElement;
+        return tabGuard;
     }
 
     private addTabGuards(): void {
         const focusableEl = this.getFocusableElement();
+
         focusableEl.insertAdjacentElement('afterbegin', this.topTabGuard);
         focusableEl.insertAdjacentElement('beforeend', this.bottomTabGuard);
     }
 
     private forEachTabGuard(callback: (tabGuard: HTMLElement) => void) {
-        [this.topTabGuard, this.bottomTabGuard].forEach(callback);
+        if (this.topTabGuard) { callback(this.topTabGuard); }
+        if (this.bottomTabGuard) { callback(this.bottomTabGuard); }
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.defaultPrevented) { return; }
 
-            if (e.keyCode === Constants.KEY_TAB && this.onTabKeyDown) {
+            if (e.keyCode === KeyCode.TAB) {
                 this.onTabKeyDown(e);
             } else if (this.handleKeyDown) {
                 this.handleKeyDown(e);
@@ -150,7 +176,6 @@ export class ManagedFocusComponent extends Component {
     }
 
     private onFocus(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
         if (this.skipTabGuardFocus) {
             this.skipTabGuardFocus = false;
             return;
@@ -160,10 +185,28 @@ export class ManagedFocusComponent extends Component {
     }
 
     private activateTabGuards(): void {
-        this.forEachTabGuard(tabGuard => tabGuard.setAttribute('tabIndex', '0'));
+        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', '0'));
     }
 
     private deactivateTabGuards(): void {
-        this.forEachTabGuard(tabGuards => tabGuards.removeAttribute('tabindex'));
+        this.forEachTabGuard(guard => guard.removeAttribute('tabIndex'));
+    }
+
+    private tabGuardsAreActive(): boolean {
+        return !!this.topTabGuard && this.topTabGuard.hasAttribute('tabIndex');
+    }
+
+    protected clearGui(): void {
+        const tabGuardsAreActive = this.tabGuardsAreActive();
+
+        clearElement(this.getFocusableElement());
+
+        if (this.isFocusableContainer) {
+            this.addTabGuards();
+
+            if (tabGuardsAreActive) {
+                this.activateTabGuards();
+            }
+        }
     }
 }

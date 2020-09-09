@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var beanStub_1 = require("../context/beanStub");
 var events_1 = require("../events");
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
+var generic_1 = require("../utils/generic");
+var number_1 = require("../utils/number");
 var PaginationProxy = /** @class */ (function (_super) {
     __extends(PaginationProxy, _super);
     function PaginationProxy() {
@@ -44,7 +45,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         this.active = this.gridOptionsWrapper.isPagination();
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onPaginationPageSizeChanged.bind(this));
         this.onModelUpdated();
     };
     PaginationProxy.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) {
@@ -67,11 +68,23 @@ var PaginationProxy = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(paginationChangedEvent);
     };
+    PaginationProxy.prototype.onPaginationPageSizeChanged = function () {
+        this.calculatePages();
+        var paginationChangedEvent = {
+            type: events_1.Events.EVENT_PAGINATION_CHANGED,
+            animate: false,
+            newData: false,
+            newPage: false,
+            // important to keep rendered rows, otherwise every time grid is resized,
+            // we would destroy all the rows.
+            keepRenderedRows: true,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
+    };
     PaginationProxy.prototype.goToPage = function (page) {
-        if (!this.active) {
-            return;
-        }
-        if (this.currentPage === page) {
+        if (!this.active || this.currentPage === page) {
             return;
         }
         this.currentPage = page;
@@ -99,7 +112,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         return this.rowModel.getRowIndexAtPixel(pixel);
     };
     PaginationProxy.prototype.getCurrentPageHeight = function () {
-        if (utils_1._.missing(this.topRowBounds) || utils_1._.missing(this.bottomRowBounds)) {
+        if (generic_1.missing(this.topRowBounds) || generic_1.missing(this.bottomRowBounds)) {
             return 0;
         }
         return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
@@ -140,12 +153,22 @@ var PaginationProxy = /** @class */ (function (_super) {
     PaginationProxy.prototype.getRowCount = function () {
         return this.rowModel.getRowCount();
     };
+    PaginationProxy.prototype.getPageForIndex = function (index) {
+        return Math.floor(index / this.pageSize);
+    };
     PaginationProxy.prototype.goToPageWithIndex = function (index) {
         if (!this.active) {
             return;
         }
-        var pageNumber = Math.floor(index / this.pageSize);
+        var pageNumber = this.getPageForIndex(index);
         this.goToPage(pageNumber);
+    };
+    PaginationProxy.prototype.isRowInPage = function (row) {
+        if (!this.active) {
+            return true;
+        }
+        var rowPage = this.getPageForIndex(row.rowIndex);
+        return rowPage === this.currentPage;
     };
     PaginationProxy.prototype.isLastPageFound = function () {
         return this.rowModel.isLastRowFound();
@@ -201,9 +224,17 @@ var PaginationProxy = /** @class */ (function (_super) {
         if (this.bottomRowBounds) {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
-        this.pixelOffset = utils_1._.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0;
+        this.setPixelOffset(generic_1.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+    };
+    PaginationProxy.prototype.setPixelOffset = function (value) {
+        if (this.pixelOffset === value) {
+            return;
+        }
+        this.pixelOffset = value;
+        this.eventService.dispatchEvent({ type: events_1.Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED });
     };
     PaginationProxy.prototype.setZeroRows = function () {
+        this.masterRowCount = 0;
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = -1;
         this.currentPage = 0;
@@ -214,7 +245,8 @@ var PaginationProxy = /** @class */ (function (_super) {
         // const rootNode = csrm.getRootNode();
         // const masterRows = rootNode.childrenAfterSort;
         this.masterRowCount = this.rowModel.getTopLevelRowCount();
-        if (this.masterRowCount === 0) {
+        // we say <=0 (rather than =0) as viewport returns -1 when no rows
+        if (this.masterRowCount <= 0) {
             this.setZeroRows();
             return;
         }
@@ -223,7 +255,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         if (this.currentPage >= this.totalPages) {
             this.currentPage = this.totalPages - 1;
         }
-        if (!utils_1._.isNumeric(this.currentPage) || this.currentPage < 0) {
+        if (!number_1.isNumeric(this.currentPage) || this.currentPage < 0) {
             this.currentPage = 0;
         }
         var masterPageStartIndex = this.pageSize * this.currentPage;
@@ -259,7 +291,7 @@ var PaginationProxy = /** @class */ (function (_super) {
         if (this.currentPage >= this.totalPages) {
             this.currentPage = this.totalPages - 1;
         }
-        if (!utils_1._.isNumeric(this.currentPage) || this.currentPage < 0) {
+        if (!number_1.isNumeric(this.currentPage) || this.currentPage < 0) {
             this.currentPage = 0;
         }
         this.topDisplayedRowIndex = this.pageSize * this.currentPage;
@@ -281,9 +313,6 @@ var PaginationProxy = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], PaginationProxy.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('selectionController')
-    ], PaginationProxy.prototype, "selectionController", void 0);
     __decorate([
         context_1.Autowired('columnApi')
     ], PaginationProxy.prototype, "columnApi", void 0);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -13,9 +13,9 @@ export declare class BeanStub implements IEventEmitter {
     protected localEventService: EventService;
     private destroyFunctions;
     private destroyed;
-    private frameworkOverrides;
-    protected context: Context;
-    protected eventService: EventService;
+    private readonly frameworkOverrides;
+    protected readonly context: Context;
+    protected readonly eventService: EventService;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     getContext: () => Context;
     protected destroy(): void;

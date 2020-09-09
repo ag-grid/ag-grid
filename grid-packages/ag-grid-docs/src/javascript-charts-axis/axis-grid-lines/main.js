@@ -40,9 +40,9 @@ function useGridStyle1() {
         stroke: 'lightgray',
         lineDash: [5, 5]
     }];
-    chart.axes[0].gridStyle = gridStyle;
-    chart.axes[1].gridStyle = gridStyle;
-    chart.performLayout();
+    options.axes[0].gridStyle = gridStyle;
+    options.axes[1].gridStyle = gridStyle;
+    agCharts.AgChart.update(chart, options);
 }
 
 function useGridStyle2() {
@@ -54,9 +54,9 @@ function useGridStyle2() {
         stroke: 'green',
         lineDash: [8, 3, 3, 3]
     }];
-    chart.axes[0].gridStyle = xGridStyle;
-    chart.axes[1].gridStyle = yGridStyle;
-    chart.performLayout();
+    options.axes[0].gridStyle = xGridStyle;
+    options.axes[1].gridStyle = yGridStyle;
+    agCharts.AgChart.update(chart, options);
 }
 
 function useDefaultGridStyle() {
@@ -64,7 +64,7 @@ function useDefaultGridStyle() {
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    chart.axes[0].gridStyle = gridStyle;
-    chart.axes[1].gridStyle = gridStyle;
-    chart.performLayout();
+    options.axes[0].gridStyle = gridStyle;
+    options.axes[1].gridStyle = gridStyle;
+    agCharts.AgChart.update(chart, options);
 }

@@ -1,5 +1,5 @@
 import * as angular from "angular";
-import {highlight} from "../lib/highlight";
+import { highlight } from "../lib/highlight";
 
 const docs: angular.IModule = angular.module("documentation");
 

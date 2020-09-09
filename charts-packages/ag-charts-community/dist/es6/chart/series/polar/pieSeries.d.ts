@@ -91,6 +91,7 @@ export declare class PieSeries extends PolarSeries {
     shadow?: DropShadow;
     highlightStyle: PieHighlightStyle;
     onHighlightChange(): void;
+    setColors(fills: string[], strokes: string[]): void;
     getDomain(direction: ChartAxisDirection): any[];
     processData(): boolean;
     update(): void;

@@ -37,6 +37,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     navigator: NavigatorOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    tooltipTracking?: boolean;
     listeners?: { [key in string]: Function };
 }
 
@@ -264,7 +265,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 }
 
 export interface ScatterMarkerOptions extends MarkerOptions {
-    minSize?: number;
+    maxSize?: number;
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {

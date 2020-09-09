@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,16 +26,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired } from '../context/context';
 import { RefSelector } from './componentAnnotations';
 import { ManagedFocusComponent } from './managedFocusComponent';
-import { Constants } from '../constants';
-import { _ } from '../utils';
+import { addCssClass, containsClass } from '../utils/dom';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
+import { KeyCode } from '../constants/keyCode';
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList(cssIdentifier) {
         if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
-        var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier)) || this;
+        var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier), true) || this;
         _this.cssIdentifier = cssIdentifier;
         _this.renderedRows = new Map();
         _this.rowHeight = 20;
+        _this.isDestroyed = false;
         return _this;
     }
     VirtualList.prototype.postConstruct = function () {
@@ -43,43 +45,46 @@ var VirtualList = /** @class */ (function (_super) {
         this.rowHeight = this.getItemHeight();
         _super.prototype.postConstruct.call(this);
     };
-    VirtualList.prototype.isFocusableContainer = function () {
-        return true;
-    };
     VirtualList.prototype.focusInnerElement = function (fromBottom) {
-        var rowCount = this.model.getRowCount();
-        this.focusRow(fromBottom ? rowCount - 1 : 0);
+        this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
     };
     VirtualList.prototype.onFocusIn = function (e) {
         _super.prototype.onFocusIn.call(this, e);
         var target = e.target;
-        if (_.containsClass(target, 'ag-virtual-list-item')) {
-            this.lastFocusedRow = parseInt(target.getAttribute('aria-rowindex'), 10) - 1;
+        if (containsClass(target, 'ag-virtual-list-item')) {
+            this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
     };
     VirtualList.prototype.onFocusOut = function (e) {
         _super.prototype.onFocusOut.call(this, e);
         if (!this.getFocusableElement().contains(e.relatedTarget)) {
-            this.lastFocusedRow = null;
+            this.lastFocusedRowIndex = null;
         }
     };
     VirtualList.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
-            case Constants.KEY_TAB:
-                if (this.navigate(e.keyCode === Constants.KEY_UP ||
-                    (e.keyCode === Constants.KEY_TAB && e.shiftKey))) {
+            case KeyCode.UP:
+            case KeyCode.DOWN:
+                if (this.navigate(e.keyCode === KeyCode.UP)) {
                     e.preventDefault();
                 }
                 break;
         }
     };
+    VirtualList.prototype.onTabKeyDown = function (e) {
+        if (this.navigate(e.shiftKey)) {
+            e.preventDefault();
+        }
+        else {
+            // focus on the first or last focusable element to ensure that any other handlers start from there
+            this.focusController.focusInto(this.getGui(), !e.shiftKey);
+        }
+    };
     VirtualList.prototype.navigate = function (up) {
-        if (!_.exists(this.lastFocusedRow)) {
+        if (this.lastFocusedRowIndex == null) {
             return false;
         }
-        var nextRow = this.lastFocusedRow + (up ? -1 : 1);
+        var nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
         if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
             return false;
         }
@@ -87,7 +92,7 @@ var VirtualList = /** @class */ (function (_super) {
         return true;
     };
     VirtualList.prototype.getLastFocusedRow = function () {
-        return this.lastFocusedRow;
+        return this.lastFocusedRowIndex;
     };
     VirtualList.prototype.focusRow = function (rowNumber) {
         var _this = this;
@@ -104,7 +109,7 @@ var VirtualList = /** @class */ (function (_super) {
         return comp && comp.rowComponent;
     };
     VirtualList.getTemplate = function (cssIdentifier) {
-        return /* html */ "\n            <div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\">\n                <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\" ref=\"eContainer\"></div>\n            </div>";
+        return /* html */ "\n            <div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\" role=\"listbox\">\n                <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\" ref=\"eContainer\"></div>\n            </div>";
     };
     VirtualList.prototype.getItemHeight = function () {
         return this.gridOptionsWrapper.getListItemHeight();
@@ -148,14 +153,16 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.refresh = function () {
         var _this = this;
-        if (this.model == null) {
+        if (this.model == null || this.isDestroyed) {
             return;
         }
         var rowCount = this.model.getRowCount();
         this.eContainer.style.height = rowCount * this.rowHeight + "px";
-        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
         // ensure height is applied before attempting to redraw rows
         setTimeout(function () {
+            if (_this.isDestroyed) {
+                return;
+            }
             _this.clearVirtualRows();
             _this.drawVirtualRows();
         }, 0);
@@ -176,7 +183,7 @@ var VirtualList = /** @class */ (function (_super) {
         var _this = this;
         // remove any rows that are no longer required
         this.renderedRows.forEach(function (_, rowIndex) {
-            if ((rowIndex < start || rowIndex > finish) && rowIndex !== _this.lastFocusedRow) {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== _this.lastFocusedRowIndex) {
                 _this.removeRow(rowIndex);
             }
         });
@@ -187,22 +194,40 @@ var VirtualList = /** @class */ (function (_super) {
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (rowIndex < this.model.getRowCount()) {
-                var value = this.model.getRow(rowIndex);
-                this.insertRow(value, rowIndex);
+                this.insertRow(rowIndex);
             }
         }
     };
-    VirtualList.prototype.insertRow = function (value, rowIndex) {
+    VirtualList.prototype.insertRow = function (rowIndex) {
+        var _this = this;
+        var value = this.model.getRow(rowIndex);
         var eDiv = document.createElement('div');
-        _.addCssClass(eDiv, 'ag-virtual-list-item');
-        _.addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
-        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
+        addCssClass(eDiv, 'ag-virtual-list-item');
+        addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
+        eDiv.setAttribute('role', 'option');
+        setAriaSetSize(eDiv, this.model.getRowCount());
+        setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
+        if (typeof this.model.isRowSelected === 'function') {
+            var isSelected = this.model.isRowSelected(rowIndex);
+            setAriaSelected(eDiv, !!isSelected);
+            setAriaChecked(eDiv, isSelected);
+        }
         eDiv.style.height = this.rowHeight + "px";
         eDiv.style.top = this.rowHeight * rowIndex + "px";
         var rowComponent = this.componentCreator(value);
+        rowComponent.addGuiEventListener('focusin', function () { return _this.lastFocusedRowIndex = rowIndex; });
         eDiv.appendChild(rowComponent.getGui());
-        this.eContainer.appendChild(eDiv);
+        // keep the DOM order consistent with the order of the rows
+        if (this.renderedRows.has(rowIndex - 1)) {
+            this.renderedRows.get(rowIndex - 1).eDiv.insertAdjacentElement('afterend', eDiv);
+        }
+        else if (this.renderedRows.has(rowIndex + 1)) {
+            this.renderedRows.get(rowIndex + 1).eDiv.insertAdjacentElement('beforebegin', eDiv);
+        }
+        else {
+            this.eContainer.appendChild(eDiv);
+        }
         this.renderedRows.set(rowIndex, { rowComponent: rowComponent, eDiv: eDiv });
     };
     VirtualList.prototype.removeRow = function (rowIndex) {
@@ -217,6 +242,14 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
+    };
+    VirtualList.prototype.destroy = function () {
+        if (this.isDestroyed) {
+            return;
+        }
+        this.clearVirtualRows();
+        this.isDestroyed = true;
+        _super.prototype.destroy.call(this);
     };
     __decorate([
         Autowired('gridOptionsWrapper')

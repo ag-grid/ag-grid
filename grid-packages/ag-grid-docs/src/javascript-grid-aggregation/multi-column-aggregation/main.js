@@ -22,7 +22,6 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 220
     },
-    sideBar: true,
     suppressAggFuncInHeader: true
 };
 
@@ -38,10 +37,10 @@ function ratioValueGetter(params) {
     }
 }
 
-function ratioAggFunc(values) {
+function ratioAggFunc(params) {
     var goldSum = 0;
     var silverSum = 0;
-    values.forEach(function(value) {
+    params.values.forEach(function(value) {
         if (value && value.gold) {
             goldSum += value.gold;
         }
@@ -65,11 +64,6 @@ function createValueObject(gold, silver) {
 function ratioFormatter(params) {
     if (!params.value || params.value === 0) return '';
     return '' + Math.round(params.value * 100) / 100;
-}
-
-function gcd(a, b) {
-    if (isNaN(a) || b < 0.0000001) return a;
-    return gcd(b, Math.floor(a % b));
 }
 
 // setup the grid after the page has finished loading

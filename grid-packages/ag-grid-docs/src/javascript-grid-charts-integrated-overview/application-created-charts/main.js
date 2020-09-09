@@ -56,22 +56,36 @@ var gridOptions = {
 
         chartRef = params.api.createRangeChart(createRangeChartParams);
     },
-    processChartOptions: function(params) {
-        var opts = params.options;
+    chartThemes: ['ag-pastel-dark'],
+    chartThemeOverrides: {
+        common: {
+            legend: {
+                position: 'bottom',
+            }
+        },
+        column: {
+            axes: {
+                number: {
+                    label: {
+                        formatter: yAxisLabelFormatter
+                    }
+                },
+                category: {
+                    label: {
+                        rotation: 0,
+                    },
+                },
+            },
+            series: {
+                tooltipRenderer: tooltipRenderer
+            }
+        },
+        line: {
+            series: {
+                tooltipRenderer: tooltipRenderer
+            }
+        }
 
-        opts.legend.position = 'bottom';
-        opts.yAxis.label.formatter = yAxisLabelFormatter;
-        opts.seriesDefaults.tooltip.enabled = true;
-        opts.seriesDefaults.fill.colors = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
-        opts.seriesDefaults.stroke.colors = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
-
-        opts.seriesDefaults.tooltip.renderer = function(params) {
-            var value = '$' + params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-            var title = params.title || params.yName;
-            return '<div style="padding: 5px"><b>' + title + '</b>: ' + value + '</div>';
-        };
-
-        return opts;
     },
     getChartToolbarItems: function() {
         return []; // hide toolbar items
@@ -108,6 +122,12 @@ function yAxisLabelFormatter(params) {
     if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
     if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + "B";
     if (n >= 1e12) return +(n / 1e12).toFixed(1) + "T";
+}
+
+function tooltipRenderer(params) {
+    var value = '$' + params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    var title = params.title || params.yName;
+    return '<div style="padding: 5px"><b>' + title + '</b>: ' + value + '</div>';
 }
 
 // after page is loaded, create the grid

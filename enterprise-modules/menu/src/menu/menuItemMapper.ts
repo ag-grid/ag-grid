@@ -45,10 +45,13 @@ export class MenuItemMapper extends BeanStub {
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) { return; }
 
-            if ((result as MenuItemDef).subMenu) {
-                const resultDef = result as MenuItemDef;
-                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu!, column);
+            const resultDef = result as MenuItemDef;
+            const { subMenu } = resultDef;
+
+            if (subMenu && subMenu instanceof Array) {
+                resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu as (MenuItemDef | string)[], column);
             }
+
             if (result != null) {
                 resultList.push(result);
             }
@@ -109,13 +112,13 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnController.addRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnController.removeRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };

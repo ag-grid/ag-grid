@@ -54,7 +54,6 @@ var FlattenStage = /** @class */ (function (_super) {
         if (core_1._.missingOrEmpty(rowsToFlatten)) {
             return;
         }
-        var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         var hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
         // these two are mutually exclusive, so if first set, we don't set the second
         var groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
@@ -63,7 +62,6 @@ var FlattenStage = /** @class */ (function (_super) {
             var rowNode = rowsToFlatten[i];
             // check all these cases, for working out if this row should be included in the final mapped list
             var isParent = rowNode.hasChildren();
-            var isGroupSuppressedNode = groupSuppressRow && isParent;
             var isSkippedLeafNode = skipLeafNodes && !isParent;
             var isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
                 isParent &&
@@ -77,11 +75,8 @@ var FlattenStage = /** @class */ (function (_super) {
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
             var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             var isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
-            var thisRowShouldBeRendered = !isSkippedLeafNode &&
-                !isGroupSuppressedNode &&
-                !isHiddenOpenParent &&
-                !isRemovedSingleChildrenGroup &&
-                !isRemovedLowestSingleChildrenGroup;
+            var thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
             }
@@ -147,8 +142,6 @@ var FlattenStage = /** @class */ (function (_super) {
         this.context.createBean(detailNode);
         detailNode.detail = true;
         detailNode.selectable = false;
-        // flower was renamed to 'detail', but keeping for backwards compatibility
-        detailNode.flower = detailNode.detail;
         detailNode.parent = masterNode;
         if (core_1._.exists(masterNode.id)) {
             detailNode.id = 'detail_' + masterNode.id;
@@ -156,7 +149,6 @@ var FlattenStage = /** @class */ (function (_super) {
         detailNode.data = masterNode.data;
         detailNode.level = masterNode.level + 1;
         masterNode.detailNode = detailNode;
-        masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
         return detailNode;
     };
     __decorate([

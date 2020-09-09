@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BeanStub } from "../context/beanStub";
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
-import { _ } from "../utils";
+import { escapeString } from "../utils/string";
+import { createIcon } from "../utils/icon";
+import { removeFromArray } from "../utils/array";
+import { find } from "../utils/generic";
+import { getBodyHeight, getBodyWidth } from "../utils/browser";
+import { loadTemplate, addCssClass, clearElement, addOrRemoveCssClass } from "../utils/dom";
+import { isFunction } from "../utils/function";
 export var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
@@ -53,15 +59,15 @@ var DragAndDropService = /** @class */ (function (_super) {
     }
     DragAndDropService_1 = DragAndDropService;
     DragAndDropService.prototype.init = function () {
-        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.eHideIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
-        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
-        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
-        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
-        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
-        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
-        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
-        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
+        this.ePinnedIcon = createIcon('columnMovePin', this.gridOptionsWrapper, null);
+        this.eHideIcon = createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eMoveIcon = createIcon('columnMoveMove', this.gridOptionsWrapper, null);
+        this.eLeftIcon = createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
+        this.eRightIcon = createIcon('columnMoveRight', this.gridOptionsWrapper, null);
+        this.eGroupIcon = createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
+        this.eAggregateIcon = createIcon('columnMoveValue', this.gridOptionsWrapper, null);
+        this.ePivotIcon = createIcon('columnMovePivot', this.gridOptionsWrapper, null);
+        this.eDropNotAllowedIcon = createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
     };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
@@ -76,10 +82,10 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.dragService.addDragSource(params, allowTouch);
     };
     DragAndDropService.prototype.removeDragSource = function (dragSource) {
-        var sourceAndParams = _.find(this.dragSourceAndParamsList, function (item) { return item.dragSource === dragSource; });
+        var sourceAndParams = find(this.dragSourceAndParamsList, function (item) { return item.dragSource === dragSource; });
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
-            _.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
+            removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
         }
     };
     DragAndDropService.prototype.clearDragSourceParamsList = function () {
@@ -123,7 +129,7 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eventLastTime = mouseEvent;
         this.positionGhost(mouseEvent);
         // check if mouseEvent intersects with any of the drop targets
-        var dropTarget = _.find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
+        var dropTarget = find(this.dropTargets, this.isMouseOnDropTarget.bind(this, mouseEvent));
         if (dropTarget !== this.lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -192,7 +198,7 @@ var DragAndDropService = /** @class */ (function (_super) {
     };
     DragAndDropService.prototype.findExternalZone = function (params) {
         var externalTargets = this.dropTargets.filter(function (target) { return target.external; });
-        return _.find(externalTargets, function (zone) { return zone.getContainer() === params.getContainer(); });
+        return find(externalTargets, function (zone) { return zone.getContainer() === params.getContainer(); });
     };
     DragAndDropService.prototype.getHorizontalDirection = function (event) {
         var clientX = this.eventLastTime.clientX;
@@ -226,8 +232,8 @@ var DragAndDropService = /** @class */ (function (_super) {
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
-        var browserWidth = _.getBodyWidth() - 2;
-        var browserHeight = _.getBodyHeight() - 2;
+        var browserWidth = getBodyWidth() - 2;
+        var browserHeight = getBodyHeight() - 2;
         var top = event.pageY - (ghostHeight / 2);
         var left = event.pageX - 10;
         var usrDocument = this.gridOptionsWrapper.getDocument();
@@ -256,19 +262,19 @@ var DragAndDropService = /** @class */ (function (_super) {
         this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eGhost = _.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
+        this.eGhost = loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
         var theme = this.environment.getTheme().theme;
         if (theme) {
-            _.addCssClass(this.eGhost, theme);
+            addCssClass(this.eGhost, theme);
         }
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         var dragItemName = this.dragSource.dragItemName;
-        if (_.isFunction(dragItemName)) {
+        if (isFunction(dragItemName)) {
             dragItemName = dragItemName();
         }
-        eText.innerHTML = _.escape(dragItemName);
+        eText.innerHTML = escapeString(dragItemName);
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
@@ -283,7 +289,7 @@ var DragAndDropService = /** @class */ (function (_super) {
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
-        _.clearElement(this.eGhostIcon);
+        clearElement(this.eGhostIcon);
         var eIcon;
         if (!iconName) {
             iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
@@ -317,7 +323,7 @@ var DragAndDropService = /** @class */ (function (_super) {
                 eIcon = this.eHideIcon;
                 break;
         }
-        _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+        addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
         if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
             return;
         }

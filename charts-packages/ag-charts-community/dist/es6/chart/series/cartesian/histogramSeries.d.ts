@@ -7,7 +7,9 @@ import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TypedEvent } from "../../../util/observable";
 declare class HistogramSeriesLabel extends Label {
-    formatter?: (bin: HistogramBin) => string;
+    formatter?: (params: {
+        value: number;
+    }) => string;
 }
 export { HistogramTooltipRendererParams };
 interface HistogramNodeDatum extends SeriesNodeDatum {
@@ -18,12 +20,12 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-    label: {
+    label?: {
         text: string;
         x: number;
         y: number;
-        fontStyle: FontStyle;
-        fontWeight: FontWeight;
+        fontStyle?: FontStyle;
+        fontWeight?: FontWeight;
         fontSize: number;
         fontFamily: string;
         fill: string;
@@ -35,7 +37,7 @@ export interface HistogramSeriesNodeClickEvent extends TypedEvent {
     datum: any;
     xKey: string;
 }
-declare type AggregationName = 'count' | 'sum' | 'mean';
+export declare type HistogramAggregation = 'count' | 'sum' | 'mean';
 export declare class HistogramBin {
     data: any[];
     aggregatedValue: number;
@@ -45,7 +47,7 @@ export declare class HistogramBin {
     addDatum(datum: any): void;
     readonly domainWidth: number;
     readonly relativeHeight: number;
-    calculateAggregatedValue(aggregationName: AggregationName, yKey: string): void;
+    calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string): void;
     getY(areaPlot: boolean): number;
 }
 export declare class HistogramSeries extends CartesianSeries {
@@ -61,8 +63,8 @@ export declare class HistogramSeries extends CartesianSeries {
     readonly label: HistogramSeriesLabel;
     private seriesItemEnabled;
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
-    fill: string;
-    stroke: string;
+    fill: string | undefined;
+    stroke: string | undefined;
     fillOpacity: number;
     strokeOpacity: number;
     constructor();
@@ -78,7 +80,7 @@ export declare class HistogramSeries extends CartesianSeries {
     private _bins;
     bins: [number, number][];
     private _aggregation;
-    aggregation: AggregationName;
+    aggregation: HistogramAggregation;
     private _binCount;
     binCount: number;
     protected _xName: string;
@@ -93,6 +95,7 @@ export declare class HistogramSeries extends CartesianSeries {
     shadow: DropShadow | undefined;
     highlightStyle: HighlightStyle;
     onHighlightChange(): void;
+    setColors(fills: string[], strokes: string[]): void;
     protected highlightedDatum?: HistogramNodeDatum;
     private deriveBins;
     private placeDataInBins;

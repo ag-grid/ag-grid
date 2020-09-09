@@ -71,9 +71,3 @@ var LinearScale = /** @class */ (function (_super) {
     return LinearScale;
 }(ContinuousScale));
 export { LinearScale };
-/**
- * Creates a continuous scale with the default interpolator and no clamping.
- */
-export default function scaleLinear() {
-    return new LinearScale();
-}

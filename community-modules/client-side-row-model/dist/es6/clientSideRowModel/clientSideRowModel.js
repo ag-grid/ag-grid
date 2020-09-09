@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, ChangedPath, Constants as constants, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, RowNode, BeanStub, _ } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, ChangedPath, Constants as constants, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, RowNode } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 var RecursionType;
 (function (RecursionType) {
@@ -33,7 +33,12 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     }
     ClientSideRowModel.prototype.init = function () {
         var refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
-        var refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true, keepRenderedRows: true });
+        var refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
+            step: Constants.STEP_EVERYTHING,
+            afterColumnsChanged: true,
+            keepRenderedRows: true,
+            animate: true
+        });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
@@ -325,16 +330,8 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         }
     };
     ClientSideRowModel.prototype.isEmpty = function () {
-        var rowsMissing;
-        var doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) {
-            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
-        }
-        else {
-            rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        }
-        var empty = _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
-        return empty;
+        var rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
+        return _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
     };
     ClientSideRowModel.prototype.isRowsToRender = function () {
         return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
@@ -535,11 +532,6 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         });
     };
     ClientSideRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransactions, rowNodeOrder, changedPath, afterColumnsChanged) {
-        // grouping is enterprise only, so if service missing, skip the step
-        var doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) {
-            return;
-        }
         if (this.groupStage) {
             if (rowNodeTransactions) {
                 this.groupStage.execute({
@@ -566,6 +558,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         }
         else {
             this.rootNode.childrenAfterGroup = this.rootNode.allLeafChildren;
+            this.rootNode.updateHasChildren();
         }
     };
     ClientSideRowModel.prototype.restoreGroupState = function (groupState) {
@@ -628,15 +621,20 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     };
     ClientSideRowModel.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
         var _this = this;
-        if (!this.rowDataTransactionBatch) {
+        if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
             var waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
-            window.setTimeout(function () {
+            this.applyAsyncTransactionsTimeout = window.setTimeout(function () {
                 _this.executeBatchUpdateRowData();
-                _this.rowDataTransactionBatch = null;
             }, waitMillis);
         }
         this.rowDataTransactionBatch.push({ rowDataTransaction: rowDataTransaction, callback: callback });
+    };
+    ClientSideRowModel.prototype.flushAsyncTransactions = function () {
+        if (this.applyAsyncTransactionsTimeout != null) {
+            clearTimeout(this.applyAsyncTransactionsTimeout);
+            this.executeBatchUpdateRowData();
+        }
     };
     ClientSideRowModel.prototype.executeBatchUpdateRowData = function () {
         var _this = this;
@@ -659,6 +657,8 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                 callbackFuncsBound.forEach(function (func) { return func(); });
             }, 0);
         }
+        this.rowDataTransactionBatch = null;
+        this.applyAsyncTransactionsTimeout = undefined;
     };
     ClientSideRowModel.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         this.valueCache.onDataChanged();
@@ -691,11 +691,13 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     };
     ClientSideRowModel.prototype.resetRowHeights = function () {
         this.forEachNode(function (rowNode) {
-            rowNode.setRowHeight(null);
-            // forEachNode doesn't go through detail rows, so need to check
-            // for detail nodes explicitly.
-            if (rowNode.detailNode) {
-                rowNode.detailNode.setRowHeight(null);
+            rowNode.setRowHeight(rowNode.rowHeight, true);
+            // we keep the height each row is at, however we set estimated=true rather than clear the height.
+            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
+            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
+            var detailNode = rowNode.detailNode;
+            if (detailNode) {
+                detailNode.setRowHeight(detailNode.rowHeight, true);
             }
         });
         this.onRowHeightChanged();

@@ -1,8 +1,8 @@
 import { RangeHandle } from "../shapes/rangeHandle";
 export declare class NavigatorHandle {
     private readonly rh;
-    fill: string;
-    stroke: string;
+    fill: string | undefined;
+    stroke: string | undefined;
     strokeWidth: number;
     width: number;
     height: number;

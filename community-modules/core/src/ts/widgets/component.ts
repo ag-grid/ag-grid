@@ -2,7 +2,20 @@ import { AgEvent } from "../events";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { _, NumberSequence } from "../utils";
+import { NumberSequence } from "../utils";
+import {
+    isNodeOrElement,
+    copyNodeList,
+    iterateNamedNodeMap,
+    loadTemplate,
+    setVisible,
+    setDisplayed,
+    addCssClass,
+    removeCssClass,
+    addOrRemoveCssClass
+} from '../utils/dom';
+import { forEach } from '../utils/array';
+import { getFunctionName } from '../utils/function';
 
 const compIdSequence = new NumberSequence();
 
@@ -16,7 +29,7 @@ export class Component extends BeanStub {
     private eGui: HTMLElement;
     private annotatedGuiListeners: any[] = [];
 
-    @Autowired('agStackComponentsRegistry') protected agStackComponentsRegistry: AgStackComponentsRegistry;
+    @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -31,6 +44,10 @@ export class Component extends BeanStub {
     // around as we create a new rowComp instance for the same row node).
     private compId = compIdSequence.next();
 
+    // to minimise DOM hits, we only apply CSS classes if they have changed. as addding a CSS class that is already
+    // there, or removing one that wasn't present, all takes CPU.
+    private cssClassStates: {[cssClass: string]: boolean } = {};
+
     constructor(template?: string) {
         super();
 
@@ -44,12 +61,12 @@ export class Component extends BeanStub {
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    private createChildComponentsFromTags(parentNode: Element, paramsMap?: any): void {
+    private createChildComponentsFromTags(parentNode: Element, paramsMap?: { [key: string]: any; }): void {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = copyNodeList(parentNode.childNodes);
 
-        _.forEach(childNodeList, childNode => {
+        forEach(childNodeList, childNode => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
@@ -62,7 +79,7 @@ export class Component extends BeanStub {
 
             if (childComp) {
                 if ((childComp as any).addItems && childNode.children.length) {
-                    this.createChildComponentsFromTags(childNode);
+                    this.createChildComponentsFromTags(childNode, paramsMap);
 
                     // converting from HTMLCollection to Array
                     const items = Array.prototype.slice.call(childNode.children);
@@ -72,15 +89,16 @@ export class Component extends BeanStub {
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {
-                this.createChildComponentsFromTags(childNode);
+                this.createChildComponentsFromTags(childNode, paramsMap);
             }
         });
     }
 
-    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
+    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: { [key: string]: any; }): Component {
         const key = element.nodeName;
         const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
+
         if (ComponentClass) {
             const newComponent = new ComponentClass(componentParams) as Component;
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -90,7 +108,7 @@ export class Component extends BeanStub {
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {
-        _.iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
+        iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
@@ -116,22 +134,22 @@ export class Component extends BeanStub {
 
         while (thisPrototype != null) {
             const metaData = thisPrototype.__agComponentMetaData;
-            const currentProtoName = (thisPrototype.constructor).name;
+            const currentProtoName = getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                _.forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
+                forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
             }
 
             thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     }
 
-    public setTemplate(template: string, paramsMap?: any): void {
-        const eGui = _.loadTemplate(template as string);
+    public setTemplate(template: string, paramsMap?: { [key: string]: any; }): void {
+        const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
+    public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.addAnnotatedGuiEventListeners();
@@ -214,19 +232,7 @@ export class Component extends BeanStub {
 
         while (thisProto != null) {
             const metaData = thisProto.__agComponentMetaData;
-            let currentProtoName = (thisProto.constructor).name;
-
-            // IE does not support Function.prototype.name, so we need to extract
-            // the name using a RegEx
-            // from: https://matt.scharley.me/2012/03/monkey-patch-name-ie.html
-            if (currentProtoName === undefined) {
-                const funcNameRegex = /function\s([^(]{1,})\(/;
-                const results = funcNameRegex.exec(thisProto.constructor.toString());
-
-                if (results && results.length > 1) {
-                    currentProtoName = results[1].trim();
-                }
-            }
+            const currentProtoName = getFunctionName(thisProto.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
@@ -243,7 +249,7 @@ export class Component extends BeanStub {
             return;
         }
 
-        _.forEach(this.annotatedGuiListeners, e => {
+        forEach(this.annotatedGuiListeners, e => {
             e.element.removeEventListener(e.eventName, e.listener);
         });
 
@@ -285,7 +291,9 @@ export class Component extends BeanStub {
             container = this.eGui;
         }
 
-        if (_.isNodeOrElement(newChild)) {
+        if (newChild == null) { return; }
+
+        if (isNodeOrElement(newChild)) {
             container.appendChild(newChild as HTMLElement);
         } else {
             const childComponent = newChild as Component;
@@ -302,7 +310,7 @@ export class Component extends BeanStub {
         if (visible !== this.visible) {
             this.visible = visible;
 
-            _.setVisible(this.eGui, visible);
+            setVisible(this.eGui, visible);
         }
     }
 
@@ -310,7 +318,7 @@ export class Component extends BeanStub {
         if (displayed !== this.displayed) {
             this.displayed = displayed;
 
-            _.setDisplayed(this.eGui, displayed);
+            setDisplayed(this.eGui, displayed);
 
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
@@ -332,15 +340,27 @@ export class Component extends BeanStub {
     }
 
     public addCssClass(className: string): void {
-        _.addCssClass(this.eGui, className);
+        const updateNeeded = this.cssClassStates[className]!==true;
+        if (updateNeeded) {
+            addCssClass(this.eGui, className);
+            this.cssClassStates[className] = true;
+        }
     }
 
     public removeCssClass(className: string): void {
-        _.removeCssClass(this.eGui, className);
+        const updateNeeded = this.cssClassStates[className]!==false;
+        if (updateNeeded) {
+            removeCssClass(this.eGui, className);
+            this.cssClassStates[className] = false;
+        }
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        const updateNeeded = this.cssClassStates[className]!==addOrRemove;
+        if (updateNeeded) {
+            addOrRemoveCssClass(this.eGui, className, addOrRemove);
+            this.cssClassStates[className] = addOrRemove;
+        }
     }
 
     public getAttribute(key: string): string | null {

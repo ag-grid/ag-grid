@@ -7,13 +7,13 @@
     "generate-config": "node -r esm toJson.js"
   },
   "dependencies": {
-    "react-color": "^2.18.0"
+    "react-color": "^2.18.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-react": "^7.8.3",
-    "@babel/register": "^7.8.3",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/register": "^7.10.5",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "esm": "^3.2.25"
   }

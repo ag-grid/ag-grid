@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { Component } from "./component";
-import { _ } from "../utils";
+import { addCssClass, removeCssClass } from "../utils/dom";
 var PopupComponent = /** @class */ (function (_super) {
     __extends(PopupComponent, _super);
     function PopupComponent() {
@@ -28,14 +28,14 @@ var PopupComponent = /** @class */ (function (_super) {
         return true;
     };
     PopupComponent.prototype.setParentComponent = function (container) {
-        _.addCssClass(container.getGui(), 'ag-has-popup');
+        addCssClass(container.getGui(), 'ag-has-popup');
         _super.prototype.setParentComponent.call(this, container);
     };
     PopupComponent.prototype.destroy = function () {
         var parentComp = this.parentComponent;
         var hasParent = parentComp && parentComp.isAlive();
         if (hasParent) {
-            _.removeCssClass(parentComp.getGui(), 'ag-has-popup');
+            removeCssClass(parentComp.getGui(), 'ag-has-popup');
         }
         _super.prototype.destroy.call(this);
     };

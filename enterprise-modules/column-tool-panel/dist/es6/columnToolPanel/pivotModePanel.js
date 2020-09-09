@@ -28,7 +28,6 @@ var PivotModePanel = /** @class */ (function (_super) {
     };
     PivotModePanel.prototype.init = function () {
         this.setTemplate(this.createTemplate());
-        this.cbPivotMode.setInputAriaLabel('Toggle Pivot Mode');
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));

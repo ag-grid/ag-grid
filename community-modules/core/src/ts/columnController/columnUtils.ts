@@ -6,8 +6,9 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { getMaxSafeInteger } from "../utils/number";
+import { attrToNumber } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
@@ -18,8 +19,18 @@ export class ColumnUtils extends BeanStub {
     public calculateColInitialWidth(colDef: any): number {
         const optionsWrapper = this.gridOptionsWrapper;
         const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
-        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || _.getMaxSafeInteger());
-        const width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || getMaxSafeInteger());
+
+        let width : number;
+        const colDefWidth = attrToNumber(colDef.width);
+        const colDefInitialWidth = attrToNumber(colDef.initialWidth);
+        if (colDefWidth != null) {
+            width = colDefWidth;
+        } else if (colDefInitialWidth != null) {
+            width = colDefInitialWidth;
+        } else {
+            width = optionsWrapper.getColWidth();
+        }
 
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
@@ -50,41 +61,6 @@ export class ColumnUtils extends BeanStub {
         // will make it fail rather than provide a 'hard to track down' bug
         return found ? result : null;
     }
-
-/*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
-        let result: ColumnGroup[] = [];
-        let found = false;
-
-        recursePath(allDisplayedColumnGroups, 0);
-
-        // we should always find the path, but in case there is a bug somewhere, returning null
-        // will make it fail rather than provide a 'hard to track down' bug
-        if (found) {
-            return result;
-        } else {
-            return null;
-        }
-
-        function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
-
-            for (let i = 0; i<balancedColumnTree.length; i++) {
-                if (found) {
-                    // quit the search, so 'result' is kept with the found result
-                    return;
-                }
-                let node = balancedColumnTree[i];
-                if (node instanceof ColumnGroup) {
-                    let nextNode = <ColumnGroup> node;
-                    recursePath(nextNode.getChildren(), dept+1);
-                    result[dept] = node;
-                } else {
-                    if (node === column) {
-                        found = true;
-                    }
-                }
-            }
-        }
-    }*/
 
     public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void {
         if (!tree) { return; }

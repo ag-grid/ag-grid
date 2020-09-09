@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,8 +29,9 @@ var context_1 = require("../context/context");
 var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var context_2 = require("../context/context");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var array_1 = require("../utils/array");
+var generic_1 = require("../utils/generic");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var DisplayedGroupCreator = /** @class */ (function (_super) {
     __extends(DisplayedGroupCreator, _super);
@@ -84,7 +85,7 @@ var DisplayedGroupCreator = /** @class */ (function (_super) {
                 result.push(currentColumn);
             }
             else {
-                var leafGroup = utils_1._.last(currentRealPath);
+                var leafGroup = array_1.last(currentRealPath);
                 leafGroup.addChild(currentColumn);
             }
             previousRealPath = currentRealPath;
@@ -104,7 +105,7 @@ var DisplayedGroupCreator = /** @class */ (function (_super) {
         if (columnGroup && columnGroup.getOriginalColumnGroup() !== originalGroup) {
             columnGroup = null;
         }
-        if (utils_1._.exists(columnGroup)) {
+        if (generic_1.exists(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         }

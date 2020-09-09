@@ -11,6 +11,10 @@
     },
     "refreshStrategy": {
       "description": "Defines how to refresh the Detail Grids as data is changing in the Master Grid."
+    },
+    "autoHeight": {
+      "default": false,
+      "description": "Set to true to have the detail grid to dynamically change it's height to fit it's rows."
     }
   }
 }

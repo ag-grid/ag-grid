@@ -210,7 +210,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
         const massageText = (val: string) => {
             if (this.config.suppressTextAsCDATA) {
-                return _.escape(val);
+                return _.escapeString(val);
             }
             const cdataStart = '<![CDATA[';
             const cdataEnd = ']]>';

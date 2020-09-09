@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ChartType {
@@ -39,6 +39,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     navigator: NavigatorOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    tooltipTracking?: boolean;
     listeners?: {
         [key in string]: Function;
     };
@@ -229,7 +230,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     paired: boolean;
 }
 export interface ScatterMarkerOptions extends MarkerOptions {
-    minSize?: number;
+    maxSize?: number;
 }
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
     sizeKey?: string;

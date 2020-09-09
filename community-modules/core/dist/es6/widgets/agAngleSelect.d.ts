@@ -1,22 +1,22 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgAbstractLabel } from "./agAbstractLabel";
+import { AgAbstractLabel, IAgLabel } from "./agAbstractLabel";
 import { DragService } from "../dragAndDrop/dragService";
 export declare class AgAngleSelect extends AgAbstractLabel {
     private static TEMPLATE;
-    protected eLabel: HTMLElement;
-    private eParentCircle;
-    private eChildCircle;
-    private eAngleValue;
-    protected dragService: DragService;
+    protected readonly eLabel: HTMLElement;
+    private readonly eParentCircle;
+    private readonly eChildCircle;
+    private readonly eAngleValue;
+    protected readonly dragService: DragService;
     private parentCircleRect;
     private degrees;
     private radius;
     private offsetX;
     private offsetY;
     private dragListener;
-    constructor();
+    constructor(config?: IAgLabel);
     postConstruct(): void;
     private updateNumberInput;
     private positionChildCircle;

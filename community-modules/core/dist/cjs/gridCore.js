@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,11 +32,12 @@ var sideBar_1 = require("./entities/sideBar");
 var moduleNames_1 = require("./modules/moduleNames");
 var moduleRegistry_1 = require("./modules/moduleRegistry");
 var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
-var utils_1 = require("./utils");
+var dom_1 = require("./utils/dom");
+var array_1 = require("./utils/array");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, undefined, true) || this;
     }
     GridCore.prototype.postConstruct = function () {
         var _this = this;
@@ -72,10 +73,10 @@ var GridCore = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
         this.addManagedListener(this.eventService, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            utils_1._.addCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.addCssClass(eGui, 'ag-keyboard-focus');
         });
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MOUSE_FOCUS, function () {
-            utils_1._.removeCssClass(eGui, 'ag-keyboard-focus');
+            dom_1.removeCssClass(eGui, 'ag-keyboard-focus');
         });
         _super.prototype.postConstruct.call(this);
     };
@@ -94,9 +95,6 @@ var GridCore = /** @class */ (function (_super) {
         var template = "<div ref=\"eRootWrapper\" class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
         return template;
     };
-    GridCore.prototype.isFocusableContainer = function () {
-        return true;
-    };
     GridCore.prototype.getFocusableContainers = function () {
         var focusableContainers = [
             this.gridPanel.getGui()
@@ -104,11 +102,11 @@ var GridCore = /** @class */ (function (_super) {
         if (this.sideBarComp) {
             focusableContainers.push(this.sideBarComp.getGui());
         }
-        return focusableContainers.filter(function (el) { return utils_1._.isVisible(el); });
+        return focusableContainers.filter(function (el) { return dom_1.isVisible(el); });
     };
     GridCore.prototype.focusNextInnerContainer = function (backwards) {
         var focusableContainers = this.getFocusableContainers();
-        var idxWithFocus = utils_1._.findIndex(focusableContainers, function (container) { return container.contains(document.activeElement); });
+        var idxWithFocus = array_1.findIndex(focusableContainers, function (container) { return container.contains(document.activeElement); });
         var nextIdx = idxWithFocus + (backwards ? -1 : 1);
         if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
             return false;
@@ -116,12 +114,18 @@ var GridCore = /** @class */ (function (_super) {
         if (nextIdx === 0) {
             return this.focusGridHeader();
         }
-        return this.focusController.focusFirstFocusableElement(focusableContainers[nextIdx]);
+        return this.focusController.focusInto(focusableContainers[nextIdx]);
     };
     GridCore.prototype.focusInnerElement = function (fromBottom) {
         var focusableContainers = this.getFocusableContainers();
-        if (fromBottom && focusableContainers.length > 1) {
-            return this.focusController.focusFirstFocusableElement(utils_1._.last(focusableContainers));
+        if (fromBottom) {
+            if (focusableContainers.length > 1) {
+                return this.focusController.focusInto(array_1.last(focusableContainers));
+            }
+            var lastColumn = array_1.last(this.columnController.getAllDisplayedColumns());
+            if (this.focusController.focusGridView(lastColumn, true)) {
+                return true;
+            }
         }
         return this.focusGridHeader();
     };
@@ -151,7 +155,7 @@ var GridCore = /** @class */ (function (_super) {
     };
     GridCore.prototype.addRtlSupport = function () {
         var cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
-        utils_1._.addCssClass(this.getGui(), cssClass);
+        dom_1.addCssClass(this.getGui(), cssClass);
     };
     GridCore.prototype.getRootGui = function () {
         return this.getGui();
@@ -260,6 +264,7 @@ var GridCore = /** @class */ (function (_super) {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
+    GridCore.prototype.onTabKeyDown = function () { };
     __decorate([
         context_1.Autowired('gridOptions')
     ], GridCore.prototype, "gridOptions", void 0);

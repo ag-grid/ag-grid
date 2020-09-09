@@ -36,7 +36,7 @@ var gridOptions = {
     columnDefs: [
         {
             field: 'make',
-            cellEditor: 'select',
+            cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(carMappings)
             },
@@ -47,9 +47,6 @@ var gridOptions = {
             },
             valueFormatter: function(params) {
                 return lookupValue(carMappings, params.value);
-            },
-            valueParser: function(params) {
-                return lookupKey(carMappings, params.newValue);
             }
         },
         {
@@ -154,6 +151,8 @@ function lookupKey(mappings, name) {
 }
 
 function colourCellRenderer(params) {
+    if (params.value === '(Select All)') { return params.value; }
+
     return '<span style="color: ' + removeSpaces(params.valueFormatted) + '">' + params.valueFormatted + '</span>';
 }
 

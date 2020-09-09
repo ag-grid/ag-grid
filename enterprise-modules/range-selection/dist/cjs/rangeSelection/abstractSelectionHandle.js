@@ -49,7 +49,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.rangeController.autoScrollService.ensureCleared();
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                core_1._.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
+                core_1._.removeCssClass(document.body, _this.getDraggingCssClass());
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();
                 }
@@ -93,7 +93,10 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
         this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
-        core_1._.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
+        core_1._.addCssClass(document.body, this.getDraggingCssClass());
+    };
+    AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
+        return "ag-dragging-" + (this.type === core_1.SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);

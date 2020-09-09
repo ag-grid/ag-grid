@@ -6,7 +6,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ChangedPath } from "../utils/changedPath";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { CellValueChangedEvent, Events } from "../events";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 

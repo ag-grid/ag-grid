@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var beanStub_1 = require("./context/beanStub");
-var utils_1 = require("./utils");
+var dom_1 = require("./utils/dom");
+var function_1 = require("./utils/function");
 var MAT_GRID_SIZE = 8;
 var BASE_GRID_SIZE = 4;
 var BALHAM_GRID_SIZE = 4;
@@ -102,11 +103,11 @@ var Environment = /** @class */ (function (_super) {
             div.style.position = 'absolute';
             var el = classList.reduce(function (el, currentClass, idx) {
                 if (idx === 0) {
-                    utils_1._.addCssClass(el, theme);
+                    dom_1.addCssClass(el, theme);
                 }
                 var div = document.createElement('div');
                 div.style.position = 'static';
-                utils_1._.addCssClass(div, currentClass);
+                dom_1.addCssClass(div, currentClass);
                 el.appendChild(div);
                 return div;
             }, div);
@@ -148,7 +149,7 @@ var Environment = /** @class */ (function (_super) {
         var usingOldTheme = themeMatch[2] === undefined;
         if (usingOldTheme) {
             var newTheme_1 = theme.replace('ag-', 'ag-theme-');
-            utils_1._.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
+            function_1.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
         }
         return { theme: theme, el: el, themeFamily: theme.replace(/-dark$/, '') };
     };

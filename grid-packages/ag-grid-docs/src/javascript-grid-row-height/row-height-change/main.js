@@ -12,14 +12,16 @@ var gridOptions = {
         { field: "total" }
     ],
     animateRows: true,
-    getRowHeight: function(params) {
-        if (params.node.group) {
-            return groupHeight;
-        } else if (params.data && params.data.sport === 'Swimming') {
-            return swimmingHeight;
-        }
-    }
+    getRowHeight: getRowHeight
 };
+
+function getRowHeight(params) {
+    if (params.node.group) {
+        return groupHeight;
+    } else if (params.data && params.data.sport === 'Swimming') {
+        return swimmingHeight;
+    }
+}
 
 function setSwimmingHeight(height) {
     swimmingHeight = height;

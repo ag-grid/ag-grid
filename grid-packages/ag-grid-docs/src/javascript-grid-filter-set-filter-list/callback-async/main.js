@@ -1,3 +1,11 @@
+var filterParams = {
+    values: function (params) {
+        setTimeout(function () {
+            params.success(['value 1', 'value 2']);
+        }, 3000);
+    }
+};
+
 var gridOptions = {
     rowData: [
         { value: 'value 1' },
@@ -17,13 +25,7 @@ var gridOptions = {
             flex: 1,
             filter: 'agSetColumnFilter',
             floatingFilter: true,
-            filterParams: {
-                values: function (params) {
-                    setTimeout(function () {
-                        params.success(['value 1', 'value 2']);
-                    }, 3000);
-                }
-            },
+            filterParams: filterParams,
         }
     ]
 };

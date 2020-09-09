@@ -15,109 +15,13 @@ include '../documentation-main/documentation_header.php';
 <h2>Range Charts</h2>
 
 <p>
-    Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The interface is
-    as follows:
+    Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The
+    interface is as follows:
 </p>
 
-<snippet language="ts">
-function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
+<?= createSnippet('function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;', 'ts') ?>
 
-interface CreateRangeChartParams {
-{
-    cellRange: CellRangeParams;
-    chartType: ChartType;
-    chartPalette?: string;
-    chartContainer?: HTMLElement;
-    suppressChartRanges?: boolean;
-    aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
-}
-
-interface CellRangeParams {
-    // start row
-    rowStartIndex?: number;
-    rowStartPinned?: string;
-
-    // end row
-    rowEndIndex?: number;
-    rowEndPinned?: string;
-
-    // columns
-    columnStart?: string | Column;
-    columnEnd?: string | Column;
-    columns?: (string | Column)[];
-}
-
-type ChartType =
-    'groupedColumn' |
-    'stackedColumn' |
-    'normalizedColumn' |
-    'groupedBar' |
-    'stackedBar' |
-    'normalizedBar' |
-    'line' |
-    'scatter' |
-    'bubble' |
-    'pie' |
-    'doughnut' |
-    'area' |
-    'stackedArea' |
-    'normalizedArea';
-
-interface IAggFunc {
-    (input: any[]): any;
-}
-
-interface ProcessChartOptionsParams {
-    type: ChartType;
-    options: ChartOptions;
-}
-</snippet>
-
-<p>
-    The provided params contains the following attributes:
-</p>
-
-<ul class="content">
-    <li>
-        <code>cellRange</code>: Defines the range of cells to be charted. A range is normally defined
-        with start and end rows and a list of columns. If the start and end rows are omitted, the range
-        covers all rows (i.e. entire columns are selected).
-        The columns can either be defined using a start and end column (the range will cover the start
-        and end columns and all columns in between), or columns can be supplied specifically in cases
-        where the required columns are not adjacent to each other.
-        See <a href="../javascript-grid-range-selection/#api-addcellrange-rangeselection">Add Cell Range</a>
-        for more details.
-    </li>
-    <li>
-        <code>chartType</code>: The type of chart to create. The options are
-        <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
-    </li>
-    <li>
-        <code>chartPalette</code>: The default palette to use for charts. The options are
-        <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
-    </li>
-    <li>
-        <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container
-        should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as <code>undefined</code>.
-    </li>
-    <li>
-        <code>suppressChartRanges</code>: By default, when a chart is displayed using the grid, the grid will
-        highlight the range the chart is charting when the chart gets focus. To suppress this behaviour,
-        set <code>suppressChartRanges=true</code>.
-    </li>
-    <li>
-        <code>aggFunc</code>: The aggregation function that should be applied to all series data. The built-in aggregation
-        functions are <code>'sum', 'min', 'max', 'count', 'avg', 'first', 'last'</code>.
-        Alternatively, custom aggregation functions can be provided if they conform to the <code>IAggFunc</code> interface
-        shown above.
-    </li>
-    <li>
-        <code>processChartOptions</code>: A callback to configure the rendered chart. This works the same
-        as the grid callback <code>processChartOptions</code> described in
-        <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a>.
-    </li>
-</ul>
+<?php createDocumentationFromFile('chart-api.json', 'params', [], ['showSnippets' => true]) ?>
 
 <p>
     The API returns a <code>ChartRef</code> object when a <code>chartContainer</code> is provided.
@@ -162,7 +66,7 @@ interface ProcessChartOptionsParams {
     <li>All data is editable in the grid. Changes to the grid data is reflected in the charts.</li>
     <li>
         The two pie charts have legends beneath. This is configured in the
-        <code>processChartOptions()</code>.
+        <code>chartThemeOverrides</code>.
     </li>
 </ul>
 
@@ -180,9 +84,9 @@ function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
 
 interface CreatePivotChartParams {
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeName?: string;
     chartContainer?: HTMLElement;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    chartThemeOverrides?: AgChartTheme;
 }
 </snippet>
 
@@ -208,8 +112,9 @@ interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName: string;
     chartOptions: ChartOptions;
+    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 
@@ -218,11 +123,11 @@ interface GetChartImageDataUrlParams {
 }
 </snippet>
 
-<h3>Example: Saving and restoring charts</h3>
+<h3>Example: Saving and Restoring Charts</h3>
 
 <p>
-    The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type,
-    palette, data and formatting options and note how the restored chart mirrors the chart that was saved.
+    The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart
+    type, theme, data and formatting options and note how the restored chart looks the same as the chart that was saved.
 </p>
 <p>
     It also shows how you can retrieve images rendered from the chart in multiple formats.
@@ -230,7 +135,7 @@ interface GetChartImageDataUrlParams {
 
 <ul class="content">
     <li>Create a range chart from the grid, which will be shown in a container below the grid.</li>
-    <li>Change the chart type, palette, data and/or formatting in order to see the changes restored later.</li>
+    <li>Change the chart type, theme, data and/or formatting in order to see the changes restored later.</li>
     <li>Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.</li>
     <li>Click "Clear chart" to destroy the existing chart.</li>
     <li>Click "Restore chart" to restore the previously saved chart.</li>

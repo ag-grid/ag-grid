@@ -1,5 +1,4 @@
 import {
-    AgCheckbox,
     AgInputTextField,
     Autowired,
     CellValueChangedEvent,
@@ -15,30 +14,25 @@ import {
     VirtualListModel,
     IAfterGuiAttachedParams,
     Promise,
-    FocusController,
-    _
+    _,
+    KeyCode,
 } from '@ag-grid-community/core';
-
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
-import { SetFilterListItem } from './setFilterListItem';
+import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFilter extends ProvidedFilter {
+    public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
+
+    @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;
+    @RefSelector('eFilterLoading') private readonly eFilterLoading: HTMLElement;
+    @RefSelector('eSetFilterList') private readonly eSetFilterList: HTMLElement;
+    @RefSelector('eFilterNoMatches') private readonly eNoMatches: HTMLElement;
+
+    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+
     private valueModel: SetValueModel;
-
-    @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
-    @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
-    @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
-    @RefSelector('eFilterLoading') private eFilterLoading: HTMLElement;
-    @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
-    @RefSelector('eFilterNoMatches') private eNoMatches: HTMLElement;
-    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
-
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('focusController') private focusController: FocusController;
-
-    private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
 
@@ -47,73 +41,34 @@ export class SetFilter extends ProvidedFilter {
     // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
     private appliedModelValues: { [key: string]: boolean; } | null = null;
 
+    constructor() {
+        super('setFilter');
+    }
+
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void { }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-
-        const focusableEl = this.getFocusableElement();
-
-        if (focusableEl) {
-            this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
-        }
-    }
-
     protected createBodyTemplate(): string {
         return /* html */`
-            <div>
-                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
-                <div class="ag-filter-header-container" role="presentation">
-                    <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                    <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
-                        <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
-                        <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
-                    </label>
-                </div>
-                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
+            <div class="ag-set-filter">
+                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translateForSetFilter('loadingOoo')}</div>
+                <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
+                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translateForSetFilter('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
 
-    private handleKeyDown(e: KeyboardEvent) {
+    protected handleKeyDown(e: KeyboardEvent): void {
         if (e.defaultPrevented) { return; }
 
         switch (e.which || e.keyCode) {
-            case Constants.KEY_TAB:
-                this.handleKeyTab(e);
-                break;
-            case Constants.KEY_SPACE:
+            case KeyCode.SPACE:
                 this.handleKeySpace(e);
                 break;
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.handleKeyEnter(e);
                 break;
-        }
-    }
-
-    private handleKeyTab(e: KeyboardEvent): void {
-        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
-
-        const focusableElement = this.getFocusableElement();
-        const method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
-
-        let currentRoot = this.eSetFilterList;
-        let nextRoot: HTMLElement;
-
-        while (currentRoot !== focusableElement && !nextRoot) {
-            nextRoot = currentRoot[method] as HTMLElement;
-            currentRoot = currentRoot.parentElement;
-        }
-
-        if (!nextRoot) { return; }
-
-        if (
-            (e.shiftKey && this.focusController.focusLastFocusableElement(nextRoot)) ||
-            (!e.shiftKey && this.focusController.focusFirstFocusableElement(nextRoot))
-        ) {
-            e.preventDefault();
         }
     }
 
@@ -122,12 +77,12 @@ export class SetFilter extends ProvidedFilter {
 
         const currentItem = this.virtualList.getLastFocusedRow();
 
-        if (_.exists(currentItem)) {
+        if (currentItem != null) {
             const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
 
             if (component) {
                 e.preventDefault();
-                component.setSelected(!component.isSelected(), true);
+                component.toggleSelected();
             }
         }
     }
@@ -182,7 +137,15 @@ export class SetFilter extends ProvidedFilter {
             return (values as any) as SetFilterModel;
         }
 
-        return { values, filterType: 'set' };
+        return { values, filterType: this.getFilterType() };
+    }
+
+    public getModel(): SetFilterModel {
+        return super.getModel() as SetFilterModel;
+    }
+
+    public getFilterType(): string {
+        return 'set';
     }
 
     public getValueModel(): SetValueModel {
@@ -206,24 +169,21 @@ export class SetFilter extends ProvidedFilter {
 
         this.valueModel = new SetValueModel(
             params.rowModel,
+            params.valueGetter,
             params.colDef,
             params.column,
-            params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
-            loading => this.setLoading(loading),
+            loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
-            key => this.translate(key),
+            key => this.translateForSetFilter(key),
         );
 
         this.initialiseFilterBodyUi();
 
-        const syncValuesAfterDataChange =
-            this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
             !params.values &&
-            !params.suppressSyncValuesAfterDataChange;
-
-        if (syncValuesAfterDataChange) {
+            !params.suppressSyncValuesAfterDataChange) {
             this.addEventListenersForDataChanges();
         }
     }
@@ -296,7 +256,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
-        let promise = Promise.resolve<void>(null);
+        let promise = Promise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
@@ -315,13 +275,16 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         _.doOnce(() => console.warn(message), 'setFilter.setLoading');
 
-        _.setDisplayed(this.eFilterLoading, loading);
+        this.showOrHideLoadingScreen(loading);
+    }
+
+    private showOrHideLoadingScreen(isLoading: boolean): void {
+        _.setDisplayed(this.eFilterLoading, isLoading);
     }
 
     private initialiseFilterBodyUi(): void {
         this.initVirtualList();
         this.initMiniFilter();
-        this.initSelectAll();
     }
 
     private initVirtualList() {
@@ -339,16 +302,47 @@ export class SetFilter extends ProvidedFilter {
         }
 
         virtualList.setComponentCreator(value => this.createSetListItem(value));
-        virtualList.setModel(new ModelWrapper(this.valueModel));
+
+        let model: VirtualListModel;
+
+        if (this.setFilterParams.suppressSelectAll) {
+            model = new ModelWrapper(this.valueModel);
+        } else {
+            model = new ModelWrapperWithSelectAll(this.valueModel, () => this.isSelectAllSelected());
+        }
+
+        virtualList.setModel(model);
+    }
+
+    private getSelectAllLabel(): string {
+        const key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
+            'selectAll' : 'selectAllSearchResults';
+
+        return this.translateForSetFilter(key);
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translate(key)));
-        const selected = this.valueModel.isValueSelected(value);
+        if (value === SetFilter.SELECT_ALL_VALUE) {
+            const listItem = this.createBean(new SetFilterListItem(
+                () => this.getSelectAllLabel(),
+                this.setFilterParams,
+                key => this.translateForSetFilter(key),
+                this.isSelectAllSelected()));
 
-        listItem.setSelected(selected);
+            listItem.addEventListener(
+                SetFilterListItem.EVENT_SELECTION_CHANGED,
+                (e: SetFilterListItemSelectionChangedEvent) => this.onSelectAll(e.isSelected)
+            );
+
+            return listItem;
+        }
+
+        const listItem = this.createBean(new SetFilterListItem(
+            value, this.setFilterParams, key => this.translateForSetFilter(key), this.valueModel.isValueSelected(value)));
+
         listItem.addEventListener(
-            SetFilterListItem.EVENT_SELECTED, () => this.onItemSelected(value, listItem.isSelected())
+            SetFilterListItem.EVENT_SELECTION_CHANGED,
+            (e: SetFilterListItemSelectionChangedEvent) => this.onItemSelected(value, e.isSelected)
         );
 
         return listItem;
@@ -361,21 +355,14 @@ export class SetFilter extends ProvidedFilter {
 
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
+        eMiniFilter.setInputAriaLabel('Search filter values');
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
     }
 
-    private initSelectAll() {
-        if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, false);
-        } else {
-            this.eSelectAll.onValueChange(() => this.onSelectAll());
-        }
-    }
-
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
         this.refreshVirtualList();
@@ -386,8 +373,11 @@ export class SetFilter extends ProvidedFilter {
 
         const { eMiniFilter } = this;
 
-        eMiniFilter.setInputPlaceholder(this.translate('searchOoo'));
-        eMiniFilter.getFocusableElement().focus();
+        eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
+
+        if (!params || !params.suppressFocus) {
+            eMiniFilter.getFocusableElement().focus();
+        }
     }
 
     public applyModel(): boolean {
@@ -401,7 +391,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (result) {
             // keep appliedModelValues in sync with the applied model
-            const appliedModel = this.getModel() as SetFilterModel;
+            const appliedModel = this.getModel();
 
             if (appliedModel) {
                 this.appliedModelValues = {};
@@ -478,20 +468,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onAnyFilterChanged(): void {
-        this.valueModel.refreshAfterAnyFilterChanged();
-        this.virtualList.refresh();
-    }
-
-    private updateSelectAllCheckbox(): void {
-        if (this.valueModel.isEverythingVisibleSelected()) {
-            this.selectAllState = true;
-        } else if (this.valueModel.isNothingVisibleSelected()) {
-            this.selectAllState = false;
-        } else {
-            this.selectAllState = undefined;
-        }
-
-        this.eSelectAll.setValue(this.selectAllState, true);
+        // don't block the current action when updating the values for this filter
+        setTimeout(() => this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh()), 0);
     }
 
     private onMiniFilterInput() {
@@ -517,31 +495,24 @@ export class SetFilter extends ProvidedFilter {
             this.refresh();
         }
 
+        this.showOrHideResults();
+    }
+
+    private showOrHideResults(): void {
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
         _.setDisplayed(this.eNoMatches, hideResults);
-
-        if (!this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, !hideResults);
-        }
+        _.setDisplayed(this.eSetFilterList, !hideResults);
     }
 
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => this.onUiChanged(false, 'prevent'));
-    }
-
-    private updateSelectAllLabel() {
-        const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            this.translate('selectAll') :
-            this.translate('selectAllSearchResults');
-
-        this.eSelectAllLabel.innerText = `(${label})`;
+        this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER) && !this.setFilterParams.excelMode) {
+        if (_.isKeyPressed(e, KeyCode.ENTER) && !this.setFilterParams.excelMode) {
             this.filterOnAllVisibleValues();
         }
     }
@@ -550,23 +521,33 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
+        this.showOrHideResults();
     }
 
-    private onSelectAll() {
-        this.selectAllState = !this.selectAllState;
+    private focusRowIfAlive(rowIndex: number): void {
+        window.setTimeout(() => {
+            if (this.isAlive()) {
+                this.virtualList.focusRow(rowIndex);
+            }
+        }, 0);
+    }
 
-        if (this.selectAllState) {
+    private onSelectAll(isSelected: boolean): void {
+        if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
         } else {
             this.valueModel.deselectAllMatchingMiniFilter();
         }
 
+        const focusedRow = this.virtualList.getLastFocusedRow();
+
         this.refresh();
         this.onUiChanged();
+        this.focusRowIfAlive(focusedRow);
     }
 
-    private onItemSelected(value: any, selected: boolean) {
-        if (selected) {
+    private onItemSelected(value: any, isSelected: boolean): void {
+        if (isSelected) {
             this.valueModel.selectValue(value);
         } else {
             this.valueModel.deselectValue(value);
@@ -574,16 +555,9 @@ export class SetFilter extends ProvidedFilter {
 
         const focusedRow = this.virtualList.getLastFocusedRow();
 
-        this.updateSelectAllCheckbox();
+        this.refresh();
         this.onUiChanged();
-
-        if (_.exists(focusedRow)) {
-            window.setTimeout(() => {
-                if (this.isAlive()) {
-                    this.virtualList.focusRow(focusedRow);
-                }
-            }, 10);
-        }
+        this.focusRowIfAlive(focusedRow);
     }
 
     public setMiniFilter(newMiniFilter: string): void {
@@ -591,7 +565,7 @@ export class SetFilter extends ProvidedFilter {
         this.onMiniFilterInput();
     }
 
-    public getMiniFilter() {
+    public getMiniFilter(): string {
         return this.valueModel.getMiniFilter();
     }
 
@@ -633,8 +607,6 @@ export class SetFilter extends ProvidedFilter {
 
     private refresh() {
         this.virtualList.refresh();
-        this.updateSelectAllCheckbox();
-        this.updateSelectAllLabel();
     }
 
     /** @deprecated since version 23.2. Please use getModel instead. */
@@ -686,14 +658,35 @@ export class SetFilter extends ProvidedFilter {
             this.refreshFilterValues();
         }
         else {
-            this.virtualList.refresh();
+            this.refresh();
         }
     }
 
-    private translate(key: keyof ISetFilterLocaleText): string {
+    private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
+    }
+
+    private isSelectAllSelected(): boolean | undefined {
+        if (this.valueModel.isEverythingVisibleSelected()) {
+            return true;
+        }
+
+        if (this.valueModel.isNothingVisibleSelected()) {
+            return false;
+        }
+
+        return undefined;
+    }
+
+    public destroy(): void {
+        if (this.virtualList != null) {
+            this.virtualList.destroy();
+            this.virtualList = null;
+        }
+
+        super.destroy();
     }
 }
 
@@ -707,5 +700,28 @@ class ModelWrapper implements VirtualListModel {
 
     public getRow(index: number): string {
         return this.model.getDisplayedValue(index);
+    }
+
+    public isRowSelected(index: number): boolean {
+        return this.model.isValueSelected(this.getRow(index));
+    }
+}
+
+class ModelWrapperWithSelectAll implements VirtualListModel {
+    constructor(
+        private readonly model: SetValueModel,
+        private readonly isSelectAllSelected: (() => boolean | undefined)) {
+    }
+
+    public getRowCount(): number {
+        return this.model.getDisplayedValueCount() + 1;
+    }
+
+    public getRow(index: number): string {
+        return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedValue(index - 1);
+    }
+
+    public isRowSelected(index: number): boolean | undefined {
+        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
     }
 }

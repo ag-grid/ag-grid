@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var dom_1 = require("../../../utils/dom");
 var DateFilter = /** @class */ (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, 'dateFilter') || this;
     }
     DateFilter.prototype.mapRangeFromModel = function (filterModel) {
         // unlike the other filters, we do two things here:
@@ -122,7 +122,7 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.createValueTemplate = function (position) {
         var pos = position === simpleFilter_1.ConditionPosition.One ? '1' : '2';
-        return /* html */ "\n            <div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                <div class=\"ag-filter-from ag-filter-date-from\" ref=\"eCondition" + pos + "PanelFrom\">\n                </div>\n                <div class=\"ag-filter-to ag-filter-date-to\" ref=\"eCondition" + pos + "PanelTo\">\n                </div>\n            </div>";
+        return /* html */ "\n            <div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                <div class=\"ag-filter-from ag-filter-date-from\" ref=\"eCondition" + pos + "PanelFrom\"></div>\n                <div class=\"ag-filter-to ag-filter-date-to\" ref=\"eCondition" + pos + "PanelTo\"></div>\n            </div>";
     };
     DateFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -134,16 +134,15 @@ var DateFilter = /** @class */ (function (_super) {
             return true;
         }
         var _a = this.getFromToComponents(position), compFrom = _a[0], compTo = _a[1];
-        return compFrom.getDate() != null && (option !== simpleFilter_1.SimpleFilter.IN_RANGE || compTo.getDate() != null);
+        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
     };
     DateFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.dateFrom === bSimple.dateFrom
             && aSimple.dateTo === bSimple.dateTo
             && aSimple.type === bSimple.type;
     };
-    // needed for creating filter model
     DateFilter.prototype.getFilterType = function () {
-        return DateFilter.FILTER_TYPE;
+        return 'date';
     };
     DateFilter.prototype.createCondition = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -153,16 +152,20 @@ var DateFilter = /** @class */ (function (_super) {
             dateFrom: date_1.serialiseDate(compFrom.getDate()),
             dateTo: date_1.serialiseDate(compTo.getDate()),
             type: type,
-            filterType: DateFilter.FILTER_TYPE
+            filterType: this.getFilterType()
         };
     };
     DateFilter.prototype.resetPlaceholder = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var placeholder = translate('dateFormatOoo', 'yyyy-mm-dd');
+        var placeholder = this.translate('dateFormatOoo');
+        var ariaLabel = 'Filter value';
         this.dateCondition1FromComp.setInputPlaceholder(placeholder);
+        this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
         this.dateCondition1ToComp.setInputPlaceholder(placeholder);
+        this.dateCondition1ToComp.setInputAriaLabel(ariaLabel);
         this.dateCondition2FromComp.setInputPlaceholder(placeholder);
+        this.dateCondition2FromComp.setInputAriaLabel(ariaLabel);
         this.dateCondition2ToComp.setInputPlaceholder(placeholder);
+        this.dateCondition2ToComp.setInputAriaLabel(ariaLabel);
     };
     DateFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
@@ -179,7 +182,6 @@ var DateFilter = /** @class */ (function (_super) {
             [this.dateCondition1FromComp, this.dateCondition1ToComp] :
             [this.dateCondition2FromComp, this.dateCondition2ToComp];
     };
-    DateFilter.FILTER_TYPE = 'date';
     DateFilter.DEFAULT_FILTER_OPTIONS = [
         scalarFilter_1.ScalarFilter.EQUALS,
         scalarFilter_1.ScalarFilter.GREATER_THAN,

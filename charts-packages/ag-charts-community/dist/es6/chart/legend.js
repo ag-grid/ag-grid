@@ -35,6 +35,95 @@ export var LegendPosition;
     LegendPosition["Bottom"] = "bottom";
     LegendPosition["Left"] = "left";
 })(LegendPosition || (LegendPosition = {}));
+var LegendLabel = /** @class */ (function (_super) {
+    __extends(LegendLabel, _super);
+    function LegendLabel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.color = 'black';
+        _this.fontSize = 12;
+        _this.fontFamily = 'Verdana, sans-serif';
+        return _this;
+    }
+    __decorate([
+        reactive('change')
+    ], LegendLabel.prototype, "color", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendLabel.prototype, "fontStyle", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendLabel.prototype, "fontWeight", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendLabel.prototype, "fontSize", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendLabel.prototype, "fontFamily", void 0);
+    return LegendLabel;
+}(Observable));
+export { LegendLabel };
+var LegendMarker = /** @class */ (function (_super) {
+    __extends(LegendMarker, _super);
+    function LegendMarker() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.size = 15;
+        /**
+         * Padding between the marker and the label within each legend item.
+         */
+        _this.padding = 8;
+        _this.strokeWidth = 1;
+        return _this;
+    }
+    __decorate([
+        reactive('layoutChange')
+    ], LegendMarker.prototype, "size", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendMarker.prototype, "shape", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendMarker.prototype, "padding", void 0);
+    __decorate([
+        reactive('change')
+    ], LegendMarker.prototype, "strokeWidth", void 0);
+    return LegendMarker;
+}(Observable));
+export { LegendMarker };
+var LegendItem = /** @class */ (function (_super) {
+    __extends(LegendItem, _super);
+    function LegendItem() {
+        var _this = _super.call(this) || this;
+        _this.marker = new LegendMarker();
+        _this.label = new LegendLabel();
+        /**
+         * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+         * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
+         * padding between legend items.
+         */
+        _this.paddingX = 16;
+        /**
+         * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+         * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
+         * padding between legend items.
+         */
+        _this.paddingY = 8;
+        var changeListener = function () { return _this.fireEvent({ type: 'change' }); };
+        _this.marker.addEventListener('change', changeListener);
+        _this.label.addEventListener('change', changeListener);
+        var layoutChangeListener = function () { return _this.fireEvent({ type: 'layoutChange' }); };
+        _this.marker.addEventListener('layoutChange', layoutChangeListener);
+        _this.label.addEventListener('layoutChange', layoutChangeListener);
+        return _this;
+    }
+    __decorate([
+        reactive('layoutChange')
+    ], LegendItem.prototype, "paddingX", void 0);
+    __decorate([
+        reactive('layoutChange')
+    ], LegendItem.prototype, "paddingY", void 0);
+    return LegendItem;
+}(Observable));
+export { LegendItem };
 var Legend = /** @class */ (function (_super) {
     __extends(Legend, _super);
     function Legend() {
@@ -43,6 +132,7 @@ var Legend = /** @class */ (function (_super) {
         _this.group = new Group();
         _this.itemSelection = Selection.select(_this.group).selectAll();
         _this.oldSize = [0, 0];
+        _this.item = new LegendItem();
         _this.data = [];
         _this.enabled = true;
         _this.orientation = LegendOrientation.Vertical;
@@ -51,35 +141,159 @@ var Legend = /** @class */ (function (_super) {
          * Spacing between the legend and the edge of the chart's element.
          */
         _this.spacing = 20;
-        /**
-         * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-         * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
-         * spacing between legend items.
-         */
-        _this.layoutHorizontalSpacing = 16;
-        /**
-         * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-         * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
-         * spacing between legend items.
-         */
-        _this.layoutVerticalSpacing = 8;
-        /**
-         * Spacing between the marker and the label within each legend item.
-         */
-        _this.itemSpacing = 8;
-        _this.markerSize = 15;
-        _this.strokeWidth = 1;
-        _this.color = 'black';
-        _this.fontSize = 12;
-        _this.fontFamily = 'Verdana, sans-serif';
         _this._size = [0, 0];
         _this.addPropertyListener('data', _this.onDataChange);
         _this.addPropertyListener('enabled', _this.onEnabledChange);
         _this.addPropertyListener('position', _this.onPositionChange);
         _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
         _this.addEventListener('change', _this.update);
+        _this.item.addEventListener('change', function () { return _this.fireEvent({ type: 'change' }); });
+        _this.item.addEventListener('layoutChange', function () { return _this.fireEvent({ type: 'layoutChange' }); });
         return _this;
     }
+    Object.defineProperty(Legend.prototype, "layoutHorizontalSpacing", {
+        get: function () {
+            return this.item.paddingX;
+        },
+        /**
+         * @deprecated Please use {@link item.paddingX} instead.
+         */
+        set: function (value) {
+            this.item.paddingX = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "layoutVerticalSpacing", {
+        get: function () {
+            return this.item.paddingY;
+        },
+        /**
+         * @deprecated Please use {@link item.paddingY} instead.
+         */
+        set: function (value) {
+            this.item.paddingY = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "itemSpacing", {
+        get: function () {
+            return this.item.marker.padding;
+        },
+        /**
+         * @deprecated Please use {@link item.marker.padding} instead.
+         */
+        set: function (value) {
+            this.item.marker.padding = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "markerShape", {
+        get: function () {
+            return this.item.marker.shape;
+        },
+        /**
+         * @deprecated Please use {@link item.marker.shape} instead.
+         */
+        set: function (value) {
+            this.item.marker.shape = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "markerSize", {
+        get: function () {
+            return this.item.marker.size;
+        },
+        /**
+         * @deprecated Please use {@link item.marker.size} instead.
+         */
+        set: function (value) {
+            this.item.marker.size = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "strokeWidth", {
+        get: function () {
+            return this.item.marker.strokeWidth;
+        },
+        /**
+         * @deprecated Please use {@link item.marker.strokeWidth} instead.
+         */
+        set: function (value) {
+            this.item.marker.strokeWidth = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "color", {
+        get: function () {
+            return this.item.label.color;
+        },
+        /**
+         * @deprecated Please use {@link item.label.color} instead.
+         */
+        set: function (value) {
+            this.item.label.color = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "fontStyle", {
+        get: function () {
+            return this.item.label.fontStyle;
+        },
+        /**
+         * @deprecated Please use {@link item.label.fontStyle} instead.
+         */
+        set: function (value) {
+            this.item.label.fontStyle = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "fontWeight", {
+        get: function () {
+            return this.item.label.fontWeight;
+        },
+        /**
+         * @deprecated Please use {@link item.label.fontWeight} instead.
+         */
+        set: function (value) {
+            this.item.label.fontWeight = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "fontSize", {
+        get: function () {
+            return this.item.label.fontSize;
+        },
+        /**
+         * @deprecated Please use {@link item.label.fontSize} instead.
+         */
+        set: function (value) {
+            this.item.label.fontSize = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "fontFamily", {
+        get: function () {
+            return this.item.label.fontFamily;
+        },
+        /**
+         * @deprecated Please use {@link item.label.fontFamily} instead.
+         */
+        set: function (value) {
+            this.item.label.fontFamily = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Legend.prototype, "size", {
         get: function () {
             return this._size;
@@ -294,39 +508,6 @@ var Legend = /** @class */ (function (_super) {
     __decorate([
         reactive('layoutChange')
     ], Legend.prototype, "spacing", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "layoutHorizontalSpacing", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "layoutVerticalSpacing", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "itemSpacing", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "markerShape", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "markerSize", void 0);
-    __decorate([
-        reactive('change')
-    ], Legend.prototype, "strokeWidth", void 0);
-    __decorate([
-        reactive('change')
-    ], Legend.prototype, "color", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "fontStyle", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "fontWeight", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "fontSize", void 0);
-    __decorate([
-        reactive('layoutChange')
-    ], Legend.prototype, "fontFamily", void 0);
     return Legend;
 }(Observable));
 export { Legend };

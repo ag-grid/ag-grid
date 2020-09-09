@@ -4,7 +4,7 @@ import { MoveColumnController } from "./moveColumnController";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 
@@ -30,7 +30,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private eContainer: HTMLElement;
     // public because it's part of the DropTarget interface
     private eSecondaryContainers: HTMLElement[];
-    private dropListeners: {[type: number]: DropListener} = {};
+    private dropListeners: { [type: number]: DropListener; } = {};
     private currentDropListener: DropListener;
     private moveColumnController: MoveColumnController;
 

@@ -59,7 +59,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     ) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
 
-        const groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         const hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
         // these two are mutually exclusive, so if first set, we don't set the second
         const groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
@@ -69,7 +68,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             const rowNode = rowsToFlatten[i];
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();
-            const isGroupSuppressedNode = groupSuppressRow && isParent;
+
             const isSkippedLeafNode = skipLeafNodes && !isParent;
 
             const isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
@@ -87,11 +86,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             const isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
 
-            const thisRowShouldBeRendered = !isSkippedLeafNode &&
-                !isGroupSuppressedNode &&
-                !isHiddenOpenParent &&
-                !isRemovedSingleChildrenGroup &&
-                !isRemovedLowestSingleChildrenGroup;
+            const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
@@ -166,8 +162,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
         detailNode.detail = true;
         detailNode.selectable = false;
-        // flower was renamed to 'detail', but keeping for backwards compatibility
-        detailNode.flower = detailNode.detail;
         detailNode.parent = masterNode;
 
         if (_.exists(masterNode.id)) {
@@ -177,7 +171,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         detailNode.data = masterNode.data;
         detailNode.level = masterNode.level + 1;
         masterNode.detailNode = detailNode;
-        masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
 
         return detailNode;
     }

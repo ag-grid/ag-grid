@@ -19,7 +19,8 @@ import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { missingOrEmpty } from "../utils/generic";
+import { doOnce } from "../utils/function";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -82,8 +83,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private onSortChanged(): void {
-        const sortModel = this.sortController.getSortModel();
-        this.isGridSorted = !_.missingOrEmpty(sortModel);
+        this.isGridSorted = this.sortController.isSortActive();
     }
 
     private onFilterChanged(): void {
@@ -92,7 +92,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private onRowGroupChanged(): void {
         const rowGroups = this.columnController.getRowGroupColumns();
-        this.isRowGroupActive = !_.missingOrEmpty(rowGroups);
+        this.isRowGroupActive = !missingOrEmpty(rowGroups);
     }
 
     public getContainer(): HTMLElement {
@@ -141,9 +141,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
-        this.getRowNodes(draggingEvent).forEach(rowNode => {
-            rowNode.setDragging(true);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(rowNode => {
+                rowNode.setDragging(true);
+            });
+        }
 
         this.onEnterOrDragging(draggingEvent);
     }
@@ -329,7 +331,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams): void {
         if (!params.getContainer()) {
-            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
+            doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
             return;
         }
 
@@ -468,7 +470,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     public onDragLeave(draggingEvent: DraggingEvent): void {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        this.clearRowHighlight();
+
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.clearRowHighlight();
+        }
 
         if (this.isFromThisGrid(draggingEvent)) {
             this.isMultiRowDrag = false;
@@ -491,8 +496,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
 
-        this.getRowNodes(draggingEvent).forEach(rowNode => {
-            rowNode.setDragging(false);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(rowNode => {
+                rowNode.setDragging(false);
+            });
+        }
     }
 }

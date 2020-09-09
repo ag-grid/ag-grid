@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,9 +26,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var constants_1 = require("../constants");
 var beanStub_1 = require("../context/beanStub");
-var utils_1 = require("../utils");
+var generic_1 = require("../utils/generic");
+var array_1 = require("../utils/array");
+var keyCode_1 = require("../constants/keyCode");
 var NavigationService = /** @class */ (function (_super) {
     __extends(NavigationService, _super);
     function NavigationService() {
@@ -52,38 +53,38 @@ var NavigationService = /** @class */ (function (_super) {
         }
         var processed = false;
         switch (key) {
-            case constants_1.Constants.KEY_PAGE_HOME:
-            case constants_1.Constants.KEY_PAGE_END:
+            case keyCode_1.KeyCode.PAGE_HOME:
+            case keyCode_1.KeyCode.PAGE_END:
                 // handle home and end when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onHomeOrEndKey(key);
                     processed = true;
                 }
                 break;
-            case constants_1.Constants.KEY_LEFT:
-            case constants_1.Constants.KEY_RIGHT:
+            case keyCode_1.KeyCode.LEFT:
+            case keyCode_1.KeyCode.RIGHT:
                 // handle left and right when ctrl is pressed only
                 if (ctrl && !alt) {
                     this.onCtrlLeftOrRight(key, currentCell);
                     processed = true;
                 }
                 break;
-            case constants_1.Constants.KEY_UP:
-            case constants_1.Constants.KEY_DOWN:
+            case keyCode_1.KeyCode.UP:
+            case keyCode_1.KeyCode.DOWN:
                 // handle up and down when ctrl is pressed only
                 if (ctrl && !alt) {
                     this.onCtrlUpOrDown(key, currentCell);
                     processed = true;
                 }
                 break;
-            case constants_1.Constants.KEY_PAGE_DOWN:
+            case keyCode_1.KeyCode.PAGE_DOWN:
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageDown(currentCell);
                     processed = true;
                 }
                 break;
-            case constants_1.Constants.KEY_PAGE_UP:
+            case keyCode_1.KeyCode.PAGE_UP:
                 // handle page up and page down when ctrl & alt are NOT pressed
                 if (!ctrl && !alt) {
                     this.onPageUp(currentCell);
@@ -169,10 +170,10 @@ var NavigationService = /** @class */ (function (_super) {
     // scrollColumn - what column to horizontally scroll to
     // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
     NavigationService.prototype.navigateTo = function (scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn) {
-        if (utils_1._.exists(scrollColumn)) {
+        if (generic_1.exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }
-        if (utils_1._.exists(scrollIndex)) {
+        if (generic_1.exists(scrollIndex)) {
             this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
         }
         // make sure the cell is rendered, needed if we are to focus
@@ -187,24 +188,24 @@ var NavigationService = /** @class */ (function (_super) {
     };
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     NavigationService.prototype.onCtrlUpOrDown = function (key, gridCell) {
-        var upKey = key === constants_1.Constants.KEY_UP;
+        var upKey = key === keyCode_1.KeyCode.UP;
         var rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
         this.navigateTo(rowIndexToScrollTo, null, gridCell.column, rowIndexToScrollTo, gridCell.column);
     };
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     NavigationService.prototype.onCtrlLeftOrRight = function (key, gridCell) {
-        var leftKey = key === constants_1.Constants.KEY_LEFT;
+        var leftKey = key === keyCode_1.KeyCode.LEFT;
         var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = leftKey ? allColumns[0] : utils_1._.last(allColumns);
+        var columnToSelect = leftKey ? allColumns[0] : array_1.last(allColumns);
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     };
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
     // same cell into view (which means either scroll all the way up, or all the way down).
     NavigationService.prototype.onHomeOrEndKey = function (key) {
-        var homeKey = key === constants_1.Constants.KEY_PAGE_HOME;
+        var homeKey = key === keyCode_1.KeyCode.PAGE_HOME;
         var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = homeKey ? allColumns[0] : utils_1._.last(allColumns);
-        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        var columnToSelect = homeKey ? allColumns[0] : array_1.last(allColumns);
+        var rowIndexToScrollTo = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     };
     __decorate([

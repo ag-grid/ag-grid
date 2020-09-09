@@ -63,19 +63,27 @@ SNIPPET
     It uses the <code>getRowHeight()</code> callback to achieve this.
 </p>
 
-<?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
-<h2>Row Height More Complex Example</h2>
+<h2>Text Wrapping</h2>
 
 <p>
-    Below shows a more complex example, where the row height is changed based on the contents of
-    the 'Latin Text' column. The column definition has CSS style so that the cell does not have
-    its contents clipped. The algorithm used to work out how tall the row should be is far
-    from perfect, however it demonstrates that you can change your row height based on
-    the contents of the cell.
+    If you want text to wrap inside cells rather than truncating, add the flag <code>wrapText=true</code> to
+    the Column Definition.
+</p>
+<p>
+    The example below has <code>wrapText=true</code> set on the <strong>Latin Text</strong> column.
+    Behind the scenes, this results in the CSS property <code>white-space: normal</code>
+    being applied to the cell, which causes the text to wrap.
 </p>
 
-<?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true]) ?>
+<?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+
+<note>
+    If you are providing a custom <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>,
+    you can implement text wrapping in the custom component in your own way. The property <code>wrapText</code>
+    is intended to be used when you are not using a custom Cell Renderer.
+</note>
 
 <h2>Auto Row Height</h2>
 
@@ -85,6 +93,14 @@ SNIPPET
     height should be calculated from. For example, if one column is showing
     description text over multiple lines, then you may choose to select only
     that column to determine the line height.
+</p>
+
+<p>
+    <code>autoHeight</code> is typically used with <code>wrapText</code>.
+    If <code>wrapText</code> is not set, and no custom
+    <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>
+    is used, then the cell will display all it's contents on one line. This is probably not
+    the intention if using Auto Row Height.
 </p>
 
 <p>
@@ -103,19 +119,23 @@ SNIPPET
 </p>
 <ul>
     <li>
-        Columns <strong>Auto A</strong>, <strong>Auto B</strong> and <strong>Auto C</strong> have <code>autoHeight=true</code>,
-        so the height of each row is such that it fits all contents from these
-        three columns.
+        All columns have <code>wrapText=true</code> and <code>autoHeight=true</code>,
+        so the height of each row is such that it fits all contents from all columns.
     </li>
-    <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
     <li>
+        The example listens for the grid event <code>onColumnResized</code>.
         When a column is resized, the grid re-calculates the row heights after
+        the resize is finished.
+    </li>
+    <li>
+        The example listens for the grid event <code>onColumnVisible</code>.
+        When a column is shown or hidden, the grid re-calculates the row heights after
         the resize is finished.
     </li>
 </ul>
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['modules' => true]) ?>
+<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h3>Lazy Height Calculation</h3>
 
@@ -129,6 +149,31 @@ SNIPPET
     have their heights calculated, similarly child rows of groups where the group
     is not open do not have their heights calculated until the group is opened and
     the child rows are visible.
+</p>
+
+<p>
+    Because the heights of rows are changing as you scroll rows into view, the vertical scrollbar
+    and the row positions change as the grid is scrolling vertically. This leads to the following
+    behaviours:
+</p>
+<ul>
+    <li>
+        The vertical scroll range (how much you can scroll over) will change dynamically to
+        fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb
+        will not follow the mouse. It will either lag behind or jump ahead, depending on whether
+        the row height calculations are increasing or decreasing the vertical scroll range.
+    </li>
+    <li>
+        If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll
+        position and then starts slowly scrolling up), then the row positions will jump as the
+        rows coming into view at the top will get resized and the new height will impact the position
+        of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows
+        below it will get pushed down by 10 rows. If scrolling down this isn't observed as rows below
+        are not in view.
+    </li>
+</ul>
+<p>
+    The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
 </p>
 
 <h3>Auto Height Performance Consideration</h3>
@@ -195,7 +240,7 @@ SNIPPET
 height is an ag-Grid free feature, we just demonstrate it against groups and normal
 rows below.</p>
 
-<?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2>Height for Pinned Rows</h2>
 

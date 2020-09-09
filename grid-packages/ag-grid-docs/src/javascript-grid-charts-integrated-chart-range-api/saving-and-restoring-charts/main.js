@@ -1,11 +1,10 @@
-var columnDefs = [
-    { field: "country", chartDataType: 'category' },
-    { field: "sugar", chartDataType: 'series' },
-    { field: "fat", chartDataType: 'series' },
-    { field: "weight", chartDataType: 'series' },
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", chartDataType: 'category' },
+        { field: "sugar", chartDataType: 'series' },
+        { field: "fat", chartDataType: 'series' },
+        { field: "weight", chartDataType: 'series' },
+    ],
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -14,13 +13,11 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
-    popupParent: document.body,
-    columnDefs: columnDefs,
     rowData: createRowData(),
     enableRangeSelection: true,
+    popupParent: document.body,
     enableCharts: true,
     createChartContainer: createChartContainer,
-    popupParent: document.body
 };
 
 var chartModel;
@@ -82,7 +79,7 @@ function restoreChart() {
         chartContainer: document.querySelector('#myChart'),
         cellRange: chartModel.cellRange,
         chartType: chartModel.chartType,
-        chartPalette: chartModel.chartPalette,
+        chartThemeName: chartModel.chartThemeName,
         processChartOptions: function() { return options; }
     };
 
@@ -103,14 +100,6 @@ function openImage(type) {
         w.document.write(image.outerHTML);
         w.document.close();
     }
-}
-
-function openPng() {
-    openImage('image/png');
-}
-
-function openJpg() {
-    openImage('image/jpeg');
 }
 
 // setup the grid after the page has finished loading

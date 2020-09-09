@@ -29,13 +29,16 @@ export declare class LineSeries extends CartesianSeries {
     private nodeData;
     readonly marker: CartesianSeriesMarker;
     title?: string;
-    stroke: string;
+    stroke?: string;
+    lineDash?: number[];
+    lineDashOffset: number;
     strokeWidth: number;
     strokeOpacity: number;
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
     constructor();
     onMarkerShapeChange(): void;
     protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>): void;
+    setColors(fills: string[], strokes: string[]): void;
     protected _xKey: string;
     xKey: string;
     xName: string;

@@ -1,12 +1,16 @@
+function filterValueGetter() {
+    return function (params) {
+        return params.data ? params.data.country : null;
+    };
+}
+
 var columnDefs = [
     {
         headerName: "Country",
         showRowGroup: 'country',
         minWidth: 200,
         cellRenderer: 'agGroupCellRenderer',
-        filterValueGetter: function(params) {
-            return params.data ? params.data.country : null;
-        }
+        filterValueGetter: filterValueGetter
     },
     { field: 'country', rowGroup: true, hide: true },
     {
@@ -35,10 +39,6 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
-        minWidth: 250,
-    },
-    groupMultiAutoColumn: true,
     enableRangeSelection: true,
     groupSuppressAutoColumn: true,
     animateRows: true,

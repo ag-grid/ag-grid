@@ -3,8 +3,8 @@ import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
 import { ColumnApi } from '../columnController/columnApi';
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from '../utils';
+import { iterateObject } from '../utils/object';
+import { values } from '../utils/generic';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
@@ -30,7 +30,6 @@ export class ComponentUtil {
     }
 
     public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
-        checkForDeprecated(component);
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -60,14 +59,6 @@ export class ComponentUtil {
             .filter(keyExists)
             .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(component[key]));
 
-        // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
-        if (!skipEventDeprecationCheck) {
-            ComponentUtil.EVENTS
-                // React uses onXXX, not sure why this is different to the other frameworks
-                .filter(event => keyExists(event) || keyExists(ComponentUtil.getCallbackForEvent(event)))
-                .forEach(event => GridOptionsWrapper.checkEventDeprecation(event));
-        }
-
         return gridOptions;
     }
 
@@ -83,8 +74,6 @@ export class ComponentUtil {
         if (!changes) {
             return;
         }
-
-        checkForDeprecated(changes);
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
@@ -110,10 +99,6 @@ export class ComponentUtil {
 
         if (changes.enableCellTextSelection) {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
-        }
-
-        if (changes.showToolPanel) {
-            api.showToolPanel(ComponentUtil.toBoolean(changes.showToolPanel.currentValue));
         }
 
         if (changes.quickFilterText) {
@@ -172,10 +157,6 @@ export class ComponentUtil {
             api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
         }
 
-        if (changes.gridAutoHeight) {
-            api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
-        }
-
         if (changes.suppressClipboardPaste) {
             api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }
@@ -191,7 +172,7 @@ export class ComponentUtil {
             columnApi: gridOptions.columnApi
         };
 
-        _.iterateObject(changes, (key: string, value: any) => {
+        iterateObject(changes, (key: string, value: any) => {
             (event as any)[key] = value;
         });
 
@@ -221,10 +202,4 @@ export class ComponentUtil {
     }
 }
 
-ComponentUtil.EVENTS = _.values<any>(Events);
-
-function checkForDeprecated(changes: any): void {
-    if (changes.rowDeselected || changes.onRowDeselected) {
-        console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
-    }
-}
+ComponentUtil.EVENTS = values<any>(Events);

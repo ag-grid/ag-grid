@@ -20,43 +20,46 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Component, PostConstruct, RefSelector, TooltipFeature, _ } from '@ag-grid-community/core';
 var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
-    function SetFilterListItem(value, params, translate) {
+    function SetFilterListItem(value, params, translate, isSelected) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.value = value;
         _this.params = params;
         _this.translate = translate;
-        _this.selected = true;
+        _this.isSelected = isSelected;
         return _this;
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
         this.render();
+        this.eCheckbox.setValue(this.isSelected, true);
         this.eCheckbox.onValueChange(function (value) {
-            _this.selected = value;
+            _this.isSelected = value;
             var event = {
-                type: SetFilterListItem.EVENT_SELECTED
+                type: SetFilterListItem.EVENT_SELECTION_CHANGED,
+                isSelected: value,
             };
-            return _this.dispatchEvent(event);
+            _this.dispatchEvent(event);
         });
     };
-    SetFilterListItem.prototype.isSelected = function () {
-        return this.selected;
-    };
-    SetFilterListItem.prototype.setSelected = function (selected, forceEvent) {
-        this.selected = selected;
-        this.updateCheckboxIcon(forceEvent);
-    };
-    SetFilterListItem.prototype.updateCheckboxIcon = function (forceEvent) {
-        this.eCheckbox.setValue(this.isSelected(), !forceEvent);
+    SetFilterListItem.prototype.toggleSelected = function () {
+        this.isSelected = !this.isSelected;
+        this.eCheckbox.setValue(this.isSelected);
     };
     SetFilterListItem.prototype.render = function () {
-        var _a = this, value = _a.value, _b = _a.params, column = _b.column, colDef = _b.colDef;
-        var formattedValue = this.getFormattedValue(colDef, column, value);
+        var _a = this.params, column = _a.column, colDef = _a.colDef;
+        var value = this.value;
+        var formattedValue = null;
+        if (typeof value === 'function') {
+            value = value();
+        }
+        else {
+            formattedValue = this.getFormattedValue(colDef, column, value);
+        }
         if (this.params.showTooltips) {
-            this.tooltipText = _.escape(formattedValue != null ? formattedValue : value);
+            this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
             if (_.exists(this.tooltipText)) {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                    this.eFilterItemValue.title = this.tooltipText;
+                    this.getGui().setAttribute('title', this.tooltipText);
                 }
                 else {
                     this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
@@ -66,26 +69,29 @@ var SetFilterListItem = /** @class */ (function (_super) {
         var params = {
             value: value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            context: this.gridOptionsWrapper.getContext()
         };
-        this.renderCell(colDef, this.eFilterItemValue, params);
+        this.renderCell(colDef, params);
     };
     SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
         var filterParams = colDef.filterParams;
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
-    SetFilterListItem.prototype.renderCell = function (target, eTarget, params) {
+    SetFilterListItem.prototype.renderCell = function (target, params) {
         var _this = this;
         var filterParams = target.filterParams;
         var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
         if (cellRendererPromise == null) {
             var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
-            eTarget.innerText = valueToRender == null ? "(" + this.translate('blanks') + ")" : valueToRender;
+            this.eCheckbox.setLabel(valueToRender == null ? this.translate('blanks') : valueToRender);
             return;
         }
-        _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        cellRendererPromise.then(function (component) { return _this.addDestroyFunc(function () { return _this.getContext().destroyBean(component); }); });
+        cellRendererPromise.then(function (component) {
+            _this.eCheckbox.setLabel(component.getGui());
+            _this.addDestroyFunc(function () { return _this.destroyBean(component); });
+        });
     };
     SetFilterListItem.prototype.getComponentHolder = function () {
         return this.params.column.getColDef();
@@ -93,8 +99,8 @@ var SetFilterListItem = /** @class */ (function (_super) {
     SetFilterListItem.prototype.getTooltipText = function () {
         return this.tooltipText;
     };
-    SetFilterListItem.EVENT_SELECTED = 'selected';
-    SetFilterListItem.TEMPLATE = "\n        <label class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n            <span ref=\"eFilterItemValue\" class=\"ag-set-filter-item-value\"></span>\n        </label>";
+    SetFilterListItem.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    SetFilterListItem.TEMPLATE = "\n        <div class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
@@ -104,9 +110,6 @@ var SetFilterListItem = /** @class */ (function (_super) {
     __decorate([
         Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
-    __decorate([
-        RefSelector('eFilterItemValue')
-    ], SetFilterListItem.prototype, "eFilterItemValue", void 0);
     __decorate([
         RefSelector('eCheckbox')
     ], SetFilterListItem.prototype, "eCheckbox", void 0);

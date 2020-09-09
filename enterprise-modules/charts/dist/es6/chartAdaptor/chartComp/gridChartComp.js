@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgDialog, Autowired, ChartType, Component, PostConstruct, RefSelector, Events } from "@ag-grid-community/core";
+import { _, AgDialog, Autowired, ChartType, Component, Events, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./titleEdit";
 import { ChartController } from "./chartController";
@@ -37,9 +37,18 @@ var GridChartComp = /** @class */ (function (_super) {
         return _this;
     }
     GridChartComp.prototype.init = function () {
+        var availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+        if (availableChartThemes.length < 1) {
+            throw new Error('Cannot create chart: no chart themes are available to be used.');
+        }
+        var chartThemeName = this.params.chartThemeName;
+        if (!_.includes(availableChartThemes, chartThemeName)) {
+            chartThemeName = availableChartThemes[0];
+        }
         var modelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
+            chartThemeName: chartThemeName,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -47,7 +56,8 @@ var GridChartComp = /** @class */ (function (_super) {
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.chartController = this.createManagedBean(new ChartController(this.model));
+        this.validateCustomThemes();
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
         if (this.params.insideDialog) {
@@ -60,6 +70,18 @@ var GridChartComp = /** @class */ (function (_super) {
         this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
         this.refresh();
         this.raiseChartCreatedEvent();
+    };
+    GridChartComp.prototype.validateCustomThemes = function () {
+        var suppliedThemes = this.gridOptionsWrapper.getChartThemes();
+        var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+        if (customChartThemes) {
+            _.getAllKeysInObjects([customChartThemes]).forEach(function (customThemeName) {
+                if (!_.includes(suppliedThemes, customThemeName)) {
+                    console.warn("ag-Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                        "supplied but not added to the 'chartThemes' list");
+                }
+            });
+        }
     };
     GridChartComp.prototype.createChart = function () {
         var width, height;
@@ -74,14 +96,20 @@ var GridChartComp = /** @class */ (function (_super) {
             this.chartProxy.destroy();
         }
         var processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
+        var customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
         var chartType = this.model.getChartType();
         var isGrouping = this.model.isGrouping();
         var chartProxyParams = {
             chartId: this.model.getChartId(),
             chartType: chartType,
+            chartThemeName: this.model.getChartThemeName(),
             processChartOptions: processChartOptionsFunc,
-            getChartPaletteName: this.getChartPaletteName.bind(this),
-            allowPaletteOverride: !this.params.chartPaletteName,
+            getChartThemeName: this.getChartThemeName.bind(this),
+            getChartThemes: this.getChartThemes.bind(this),
+            customChartThemes: customChartThemes,
+            getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
+            apiChartThemeOverrides: this.params.chartThemeOverrides,
+            allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width: width,
@@ -92,15 +120,22 @@ var GridChartComp = /** @class */ (function (_super) {
             gridApi: this.gridApi,
             columnApi: this.columnApi,
         };
-        // set local state used to detect when chart type changes
+        // set local state used to detect when chart changes
         this.chartType = chartType;
+        this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = this.createChartProxy(chartProxyParams);
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     };
-    GridChartComp.prototype.getChartPaletteName = function () {
-        return this.chartController.getPaletteName();
+    GridChartComp.prototype.getChartThemeName = function () {
+        return this.chartController.getThemeName();
+    };
+    GridChartComp.prototype.getChartThemes = function () {
+        return this.chartController.getThemes();
+    };
+    GridChartComp.prototype.getGridOptionsChartThemeOverrides = function () {
+        return this.gridOptionsWrapper.getChartThemeOverrides();
     };
     GridChartComp.prototype.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
@@ -188,7 +223,7 @@ var GridChartComp = /** @class */ (function (_super) {
         this.updateChart();
     };
     GridChartComp.prototype.shouldRecreateChart = function () {
-        return this.chartType !== this.model.getChartType();
+        return this.chartType !== this.model.getChartType() || this.chartThemeName !== this.model.getChartThemeName();
     };
     GridChartComp.prototype.getCurrentChartType = function () {
         return this.chartType;
@@ -242,6 +277,9 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.prototype.downloadChart = function () {
         this.chartProxy.downloadChart();
+    };
+    GridChartComp.prototype.getUnderlyingChart = function () {
+        return this.chartProxy.getChart();
     };
     GridChartComp.prototype.refreshCanvasSize = function () {
         if (!this.params.insideDialog) {

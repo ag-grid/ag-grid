@@ -1,4 +1,4 @@
-import { ChangedPath, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction, IClientSideRowModel, BeanStub } from "@ag-grid-community/core";
+import { BeanStub, ChangedPath, IClientSideRowModel, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction } from "@ag-grid-community/core";
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
     callback: ((res: RowNodeTransaction) => void) | undefined;
@@ -27,6 +27,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private nodeManager;
     private rowDataTransactionBatch;
     private lastHighlightedRow;
+    private applyAsyncTransactionsTimeout;
     init(): void;
     start(): void;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
@@ -79,6 +80,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     getRowNode(id: string): RowNode;
     setRowData(rowData: any[]): void;
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    flushAsyncTransactions(): void;
     private executeBatchUpdateRowData;
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;

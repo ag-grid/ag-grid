@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Simple Filters</h1>
 
 <p class="lead">
-    The grid provides three simple filters for filtering strings, numbers and dates.
+    The grid provides three Simple Filters for filtering strings, numbers and dates.
 </p>
 
 <style>
@@ -26,46 +26,47 @@ include '../documentation-main/documentation_header.php';
 <div style="display: flex; margin-bottom: 20px;">
     <span class="filter-image">
         <span class="filter-image__title">Text Filter</span><br/>
-        <img src="./textFilter.png"/>
+        <img src="./text-filter.png"/>
     </span>
     <span class="filter-image">
         <span class="filter-image__title">Number Filter</span><br/>
-        <img src="./numberFilter.png"/>
+        <img src="./number-filter.png"/>
     </span>
     <span class="filter-image">
         <span class="filter-image__title">Date Filter</span><br/>
-        <img src="./dateFilter.png"/>
+        <img src="./date-filter.png"/>
     </span>
 </div>
 
 <p>
-    Each of the filters works in a similar way.
-    This page describes the common parts of the simple provided filters.
+    Each of the filters works in a similar way. This page describes the common parts of the Simple Filters.
 </p>
 
 <h3>Example: Simple Filters</h3>
 
 <p>
-    The example below demonstrates all three simple filters working. Note the following:
+    The example below demonstrates all three Simple Filters working. Note the following:
 </p>
 
 <ul class="content">
-    <li>Three filter types: 1) text filter, 2) number filter and 3) date filter.</li>
-    <li><code>filter=false</code> is set on Total to hide the filter on this column.</li>
+    <li>The <strong>Athlete</strong> column has a Text Filter.</li>
+    <li>The <strong>Age</strong> column has a Number Filter.</li>
+    <li>The <strong>Date</strong> column has a Date Filter.</li>
+    <li><code>filter=false</code> is set on the <strong>Total</strong> column to disable the filter.</li>
 </ul>
 
 <p>
     Remember Filtering works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Simple Filter Parts</h2>
 
 <p>
-    Each simple filter follows the same layout. The only layout difference is the type of input field
-    presented to the user: for text and number filters a text field is displayed, whereas for date filters
-    a date selector is displayed.
+    Each Simple Filter follows the same layout. The only layout difference is the type of input field
+    presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters
+    a date picker field is displayed.
 </p>
 
 <div style="text-align: center;">
@@ -119,12 +120,36 @@ include '../documentation-main/documentation_header.php';
 
 <?= createDocumentationFromFile('simpleFilters.json', 'filterParams'); ?>
 
+<h3>Example: Simple Filter Options</h3>
+
+<p>
+    The following example demonstrates those configuration options that can be applied to any Simple Filter.
+</p>
+
+<ul class="content">
+    <li>The <strong>Athlete</strong> column shows a Text Filter with default behavior for all options.</li>
+    <li>
+        The <strong>Country</strong> column shows a Text Filter with <code>filterOptions</code> set to show a different
+        list of available options, and <code>defaultOption</code> set to change the default option selected.
+    </li>
+    <li>
+        The <strong>Age</strong> column has a Number Filter with <code>alwaysShowBothConditions</code> set to
+        <code>true</code> so that both condition are always shown. The <code>defaultJoinOperator</code> is also set to
+        <code>'OR'</code> rather than the default (<code>'AND'</code>).
+    </li>
+    <li>
+        The <strong>Date</strong> column has a Date Filter with <code>suppressAndOrCondition</code> set to
+        <code>true</code>, so that only the first condition is shown.
+    </li>
+</ul>
+
+<?= grid_example('Simple Filter Options', 'simple-filter-options', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
+
 <h2 id="filterOptions">Filter Options</h2>
 
 <p>
     Each filter presents a list of options to the user. The list of options for each filter are as follows:
 </p>
-
 
 <table class="reference">
     <tr>
@@ -188,14 +213,16 @@ include '../documentation-main/documentation_header.php';
         <td class="supported-filters">Number, Date</td>
     </tr>
     <tr>
-        <td class="reference__name">Empty*</td>
+        <td class="reference__name">Choose One</td>
         <td><code>empty</code></td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>
 </table>
 
 <p>
-    <i>* 'Empty' is a special filter option. When Empty is displayed, it means the filter is not active.</i>
+    Note that the <code>empty</code> filter option is primarily used when creating
+    <a href="../javascript-grid-filter-provided-simple/#customFilterOptions">Custom Filter Options</a>. When 'Choose One' is
+    displayed, the filter is not active.</i>
 </p>
 
 <h3>Default Filter Options</h3>
@@ -236,8 +263,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Simple Filter Models</h2>
 
 <p>
-    When saving or restoring state on a filter, the filter model is used. The filter model represents the
-    state of the filter. For example, the code below first gets and then sets the filter model for the Athlete column:
+    When saving or restoring state on a filter, the Filter Model is used. The Filter Model represents the
+    state of the filter. For example, the code below first gets and then sets the Filter Model for the Athlete column:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -262,13 +289,13 @@ SNIPPET
 ) ?>
 
 <p>
-    This section explains what the filter model looks like for each of the simple
+    This section explains what the Filter Model looks like for each of the simple
     filters. The interface used by each filter type is as follows:
 </p>
 
 <note>
-    The best way to understand what the filter models look like is to set a filter via the
-    UI and call <code>api.getFilterModel()</code> in your console. You can then see what the filter model looks like
+    The best way to understand what the Filter Models look like is to set a filter via the
+    UI and call <code>api.getFilterModel()</code> in your console. You can then see what the model looks like
     for different variations of the filters.
 </note>
 
@@ -287,7 +314,7 @@ interface TextFilterModel {
     filter?: string;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <?= createSnippet(<<<SNIPPET
 // number filter uses this filter model
@@ -305,7 +332,7 @@ interface NumberFilterModel {
     filterTo?: number;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <?= createSnippet(<<<SNIPPET
 // date filter uses this filter model
@@ -320,11 +347,11 @@ interface DateFilterModel {
     // the type is string and format is always YYYY-MM-DD e.g. 2019-05-24
     // custom filters can have no values (hence both are optional).
     // range filter has two values (from and to).
-    dateFrom: string;
-    dateTo: string;
+    dateFrom?: string;
+    dateTo?: string;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     Examples of filter model instances are as follows:
@@ -370,15 +397,16 @@ interface ICombinedSimpleModel<M> {
     // the filter type: date, number or text
     filterType: string;
 
-    // one of 'AND' or 'OR'
-    operator: string;
+    operator: JoinOperator;
 
     // two instances of the filter model
     condition1: M;
     condition2: M;
 }
+
+type JoinOperator = 'AND' | 'OR';
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     An example of a filter model with two conditions is as follows:
@@ -429,7 +457,7 @@ SNIPPET
 <p>
     The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.
     A default <code>displayName</code> should also be provided but can be replaced by a locale-specific value using a
-    <a href="../javascript-grid-localisation/#using-localetextfunc">localeTextFunc</a>.
+    <a href="../javascript-grid-localisation/#locale-callback">localeTextFunc</a>.
 </p>
 
 <p>
@@ -479,25 +507,25 @@ SNIPPET
 </p>
 
 <ul class="content">
-    <li>The 'Athlete' column contains two custom filter options: <code>Starts with "A"</code> and
+    <li>The <strong>Athlete</strong> column contains two custom filter options: <code>Starts with "A"</code> and
         <code>Starts with "N"</code>. Both these options take no text filter input.
     </li>
-    <li>The 'Age' column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
+    <li>The <strong>Age</strong> column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also uses the built-in <code>'empty'</code> filter along with <code>suppressAndOrCondition=true</code>.
     </li>
-    <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
+    <li>The <strong>Date</strong> column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
-    <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
-    <li>The 'Country' columns also demonstrates how localisation can be achieved via the
+    <li>The <strong>Country</strong> column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
+    <li>The <strong>Country</strong> columns also demonstrates how localisation can be achieved via the
         <code>gridOptions.localeTextFunc()</code> callback function, where the default value is replaced for the filter
         option <code>'notEqualNoNulls'</code>.
     </li>
-    <li>Saving and Restoring custom filter options via <code>api.getFilterModel()</code> and <code>api.setFilterModel()</code>
-        can also be tested using the provided buttons.
+    <li>Saving and restoring custom filter options via <code>api.getFilterModel()</code> and <code>api.setFilterModel()</code>
+        can be tested using the provided buttons.
     </li>
 </ul>
 
-<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true]) ?>
+<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Blank Cells (Date and Number Filters)</h2>
 
@@ -529,8 +557,8 @@ SNIPPET
 
 <ul>
     <li>
-        Columns Age and Date have both <code>null</code> and <code>undefined</code> values
-        resulting in blank cells.
+        Columns <strong>Age</strong> and <strong>Date</strong> have both <code>null</code> and <code>undefined</code>
+        values resulting in blank cells.
     </li>
     <li>
         Toggle the controls on the top to see how <code>includeBlanksInEquals</code>,
@@ -539,7 +567,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true]) ?>
+<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2>Style Header on Filter</h2>
 
@@ -553,6 +581,6 @@ SNIPPET
     when you filter a column you will notice the column header change.
 </p>
 
-<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520]) ?>
+<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

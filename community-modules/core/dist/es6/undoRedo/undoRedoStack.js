@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,6 +56,9 @@ var UndoRedoStack = /** @class */ (function () {
     };
     UndoRedoStack.prototype.clear = function () {
         this.actionStack = [];
+    };
+    UndoRedoStack.prototype.getCurrentStackSize = function () {
+        return this.actionStack.length;
     };
     UndoRedoStack.DEFAULT_STACK_SIZE = 10;
     return UndoRedoStack;

@@ -11,8 +11,8 @@ export declare class ClipRect extends Node {
     protected isContainerNode: boolean;
     protected path: Path2D;
     containsPoint(x: number, y: number): boolean;
-    private _active;
-    active: boolean;
+    private _enabled;
+    enabled: boolean;
     private _dirtyPath;
     dirtyPath: boolean;
     private _x;

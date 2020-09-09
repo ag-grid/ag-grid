@@ -6,7 +6,7 @@ import { ExpressionService } from "../valueService/expressionService";
 import { AnimateSlideCellRenderer } from "./cellRenderers/animateSlideCellRenderer";
 import { AnimateShowChangeCellRenderer } from "./cellRenderers/animateShowChangeCellRenderer";
 import { GroupCellRenderer } from "./cellRenderers/groupCellRenderer";
-import { _ } from '../utils';
+import { missing } from "../utils/generic";
 
 @Bean('cellRendererFactory')
 export class CellRendererFactory {
@@ -32,7 +32,7 @@ export class CellRendererFactory {
 
     // private registerRenderersFromGridOptions(): void {
     //     let userProvidedCellRenderers = this.gridOptionsWrapper.getCellRenderers();
-    //     _.iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
+    //     iterateObject(userProvidedCellRenderers, (key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc)=> {
     //         this.addCellRenderer(key, cellRenderer);
     //     });
     // }
@@ -44,7 +44,7 @@ export class CellRendererFactory {
     public getCellRenderer(key: string): {new(): ICellRenderer} | ICellRendererFunc {
 
         const result = this.cellRendererMap[key];
-        if (_.missing(result)) {
+        if (missing(result)) {
             console.warn('ag-Grid: unable to find cellRenderer for key ' + key);
             return null;
         }

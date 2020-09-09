@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
+        this.groupColumns = [];
         var columnController = config.columnController, valueService = config.valueService, gridOptionsWrapper = config.gridOptionsWrapper, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, processRowGroupCallback = config.processRowGroupCallback;
         this.columnController = columnController;
         this.valueService = valueService;
@@ -32,7 +33,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
         this.processRowGroupCallback = processRowGroupCallback;
     }
     BaseGridSerializingSession.prototype.prepare = function (columnsToExport) {
-        this.firstGroupColumn = core_1._.find(columnsToExport, function (col) { return !!col.getColDef().showRowGroup; });
+        this.groupColumns = core_1._.filter(columnsToExport, function (col) { return !!col.getColDef().showRowGroup; });
     };
     BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
         var value = this.getHeaderName(this.processHeaderCallback, column);
@@ -40,12 +41,13 @@ var BaseGridSerializingSession = /** @class */ (function () {
     };
     BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, type, node) {
         // we render the group summary text e.g. "-> Parent -> Child"...
+        var groupIndex = this.gridOptionsWrapper.isGroupMultiAutoColumn() ? node.rowGroupIndex : 0;
         var renderGroupSummaryCell = 
         // on group rows
         node && node.group
             && (
-            // in the first group column if groups appear in regular grid cells
-            column === this.firstGroupColumn
+            // in the group column if groups appear in regular grid cells
+            index === groupIndex && this.groupColumns.indexOf(column) !== -1
                 // or the first cell in the row, if we're doing full width rows
                 || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode())));
         var valueForCell;
@@ -67,9 +69,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
                 context: this.gridOptionsWrapper.getContext()
             });
         }
-        else {
-            return this.columnController.getDisplayNameForColumn(column, 'csv', true);
-        }
+        return this.columnController.getDisplayNameForColumn(column, 'csv', true);
     };
     BaseGridSerializingSession.prototype.createValueForGroupNode = function (node) {
         if (this.processRowGroupCallback) {
@@ -81,9 +81,11 @@ var BaseGridSerializingSession = /** @class */ (function () {
             });
         }
         var keys = [node.key];
-        while (node.parent) {
-            node = node.parent;
-            keys.push(node.key);
+        if (!this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            while (node.parent) {
+                node = node.parent;
+                keys.push(node.key);
+            }
         }
         return keys.reverse().join(' -> ');
     };
@@ -99,9 +101,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
                 type: type
             });
         }
-        else {
-            return value;
-        }
+        return value;
     };
     return BaseGridSerializingSession;
 }());

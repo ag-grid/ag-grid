@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,15 +23,11 @@ var agColorPanel_1 = require("./agColorPanel");
 var agDialog_1 = require("./agDialog");
 var agPickerField_1 = require("./agPickerField");
 var agAbstractField_1 = require("./agAbstractField");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this) || this;
-        _this.displayTag = 'div';
-        _this.className = 'ag-color-picker';
-        _this.pickerIcon = 'colorPicker';
-        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
+        var _this = _super.call(this, config, 'ag-color-picker', 'colorPicker') || this;
         if (config && config.color) {
             _this.value = config.color;
         }
@@ -46,7 +42,7 @@ var AgColorPicker = /** @class */ (function (_super) {
     AgColorPicker.prototype.showPicker = function () {
         var _this = this;
         var eGuiRect = this.getGui().getBoundingClientRect();
-        var colorDialog = new agDialog_1.AgDialog({
+        var colorDialog = this.createBean(new agDialog_1.AgDialog({
             closable: false,
             modal: true,
             hideTitleBar: true,
@@ -55,13 +51,10 @@ var AgColorPicker = /** @class */ (function (_super) {
             height: 250,
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
-        });
-        this.createBean(colorDialog);
-        utils_1._.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
-        var colorPanel = new agColorPanel_1.AgColorPanel({
-            picker: this
-        });
-        this.createBean(colorPanel);
+        }));
+        this.isPickerDisplayed = true;
+        dom_1.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
+        var colorPanel = this.createBean(new agColorPanel_1.AgColorPanel({ picker: this }));
         colorPanel.addDestroyFunc(function () {
             if (colorDialog.isAlive()) {
                 _this.destroyBean(colorDialog);
@@ -71,10 +64,9 @@ var AgColorPicker = /** @class */ (function (_super) {
         colorDialog.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
         colorDialog.addDestroyFunc(function () {
-            var wasDestroying = _this.isDestroyingPicker;
             // here we check if the picker was already being
-            // destroyed to avoid a stackoverflow
-            if (!wasDestroying) {
+            // destroyed to avoid a stack overflow
+            if (!_this.isDestroyingPicker) {
                 _this.isDestroyingPicker = true;
                 if (colorPanel.isAlive()) {
                     _this.destroyBean(colorPanel);
@@ -86,6 +78,7 @@ var AgColorPicker = /** @class */ (function (_super) {
             if (_this.isAlive()) {
                 _this.getFocusableElement().focus();
             }
+            _this.isPickerDisplayed = false;
         });
         return colorDialog;
     };

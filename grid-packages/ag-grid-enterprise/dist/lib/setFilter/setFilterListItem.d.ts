@@ -1,25 +1,23 @@
 import { AgEvent, ColDef, Component, ISetFilterParams } from 'ag-grid-community';
 import { ISetFilterLocaleText } from './localeText';
-export interface SelectedEvent extends AgEvent {
+export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
+    isSelected: boolean;
 }
 export declare class SetFilterListItem extends Component {
     private readonly value;
     private readonly params;
     private readonly translate;
-    static EVENT_SELECTED: string;
-    private gridOptionsWrapper;
-    private valueFormatterService;
-    private userComponentFactory;
-    private eFilterItemValue;
+    private isSelected?;
+    static EVENT_SELECTION_CHANGED: string;
+    private readonly gridOptionsWrapper;
+    private readonly valueFormatterService;
+    private readonly userComponentFactory;
     private static TEMPLATE;
-    private eCheckbox;
-    private selected;
+    private readonly eCheckbox;
     private tooltipText;
-    constructor(value: any, params: ISetFilterParams, translate: (key: keyof ISetFilterLocaleText) => string);
+    constructor(value: string | (() => string), params: ISetFilterParams, translate: (key: keyof ISetFilterLocaleText) => string, isSelected?: boolean);
     private init;
-    isSelected(): boolean;
-    setSelected(selected: boolean, forceEvent?: boolean): void;
-    private updateCheckboxIcon;
+    toggleSelected(): void;
     render(): void;
     private getFormattedValue;
     private renderCell;

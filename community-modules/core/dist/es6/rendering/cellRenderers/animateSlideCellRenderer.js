@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { _ } from "../../utils";
+import { loadTemplate, addCssClass, clearElement } from "../../utils/dom";
+import { missing, exists } from "../../utils/generic";
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
@@ -49,7 +50,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         if (this.ePrevious) {
             this.getGui().removeChild(this.ePrevious);
         }
-        this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
+        this.ePrevious = loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
@@ -59,7 +60,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
             if (refreshCountCopy !== _this.refreshCount) {
                 return;
             }
-            _.addCssClass(_this.ePrevious, 'ag-value-slide-out-end');
+            addCssClass(_this.ePrevious, 'ag-value-slide-out-end');
         }, 50);
         window.setTimeout(function () {
             if (refreshCountCopy !== _this.refreshCount) {
@@ -71,7 +72,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     };
     AnimateSlideCellRenderer.prototype.refresh = function (params) {
         var value = params.value;
-        if (_.missing(value)) {
+        if (missing(value)) {
             value = '';
         }
         if (value === this.lastValue) {
@@ -84,14 +85,14 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
         }
         this.addSlideAnimation();
         this.lastValue = value;
-        if (_.exists(params.valueFormatted)) {
+        if (exists(params.valueFormatted)) {
             this.eCurrent.innerHTML = params.valueFormatted;
         }
-        else if (_.exists(params.value)) {
+        else if (exists(params.value)) {
             this.eCurrent.innerHTML = value;
         }
         else {
-            _.clearElement(this.eCurrent);
+            clearElement(this.eCurrent);
         }
         return true;
     };

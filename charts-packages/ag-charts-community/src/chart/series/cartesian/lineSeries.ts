@@ -2,7 +2,6 @@ import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import palette from "../../palettes";
 import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
@@ -52,7 +51,9 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') stroke: string = palette.fills[0];
+    @reactive('update') stroke?: string = undefined;
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
@@ -70,8 +71,8 @@ export class LineSeries extends CartesianSeries {
         this.addEventListener('update', this.update);
 
         const { marker } = this;
-        marker.fill = palette.fills[0];
-        marker.stroke = palette.strokes[0];
+        marker.fill = undefined;
+        marker.stroke = undefined;
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
         marker.addEventListener('change', this.update, this);
@@ -90,6 +91,12 @@ export class LineSeries extends CartesianSeries {
             this.nodeSelection = this.nodeSelection.setData([]);
             this.nodeSelection.exit.remove();
         }
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.stroke = fills[0];
+        this.marker.stroke = strokes[0];
+        this.marker.fill = fills[0];
     }
 
     protected _xKey: string = '';
@@ -177,6 +184,10 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLinePath() {
+        if (!this.data) {
+            return;
+        }
+
         const { xAxis, yAxis, data, xData, yData, lineNode } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
@@ -189,7 +200,8 @@ export class LineSeries extends CartesianSeries {
 
         linePath.clear();
         let moveTo = true;
-        xData.forEach((xDatum, i) => {
+        for (let i = 0; i < xData.length; i++) {
+            const xDatum = xData[i];
             const yDatum = yData[i];
             const isGap =
                 yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
@@ -199,6 +211,9 @@ export class LineSeries extends CartesianSeries {
                 moveTo = true;
             } else {
                 const x = xScale.convert(xDatum) + xOffset;
+                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                    continue;
+                }
                 const y = yScale.convert(yDatum) + yOffset;
 
                 if (moveTo) {
@@ -214,10 +229,12 @@ export class LineSeries extends CartesianSeries {
                     point: { x, y }
                 });
             }
-        });
+        }
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
         lineNode.strokeOpacity = this.strokeOpacity;
 
         // Used by marker nodes and for hit-testing even when not using markers
@@ -237,6 +254,10 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        if (!this.chart) {
+            return;
+        }
+
         const { marker, xKey, yKey, stroke, strokeWidth } = this;
         const MarkerShape = getMarker(marker.shape);
         const { highlightedDatum } = this.chart;
@@ -344,8 +365,8 @@ export class LineSeries extends CartesianSeries {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: 1,
                     strokeOpacity
                 }

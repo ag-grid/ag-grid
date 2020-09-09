@@ -11,6 +11,7 @@ var filter_tool_panel_1 = require("@ag-grid-enterprise/filter-tool-panel");
 var charts_1 = require("@ag-grid-enterprise/charts");
 var master_detail_1 = require("@ag-grid-enterprise/master-detail");
 var menu_1 = require("@ag-grid-enterprise/menu");
+var multi_filter_1 = require("@ag-grid-enterprise/multi-filter");
 var range_selection_1 = require("@ag-grid-enterprise/range-selection");
 var rich_select_1 = require("@ag-grid-enterprise/rich-select");
 var row_grouping_1 = require("@ag-grid-enterprise/row-grouping");
@@ -28,6 +29,7 @@ __export(require("@ag-grid-enterprise/filter-tool-panel"));
 __export(require("@ag-grid-enterprise/charts"));
 __export(require("@ag-grid-enterprise/master-detail"));
 __export(require("@ag-grid-enterprise/menu"));
+__export(require("@ag-grid-enterprise/multi-filter"));
 __export(require("@ag-grid-enterprise/range-selection"));
 __export(require("@ag-grid-enterprise/rich-select"));
 __export(require("@ag-grid-enterprise/row-grouping"));
@@ -46,6 +48,7 @@ exports.AllEnterpriseModules = [
     charts_1.GridChartsModule,
     master_detail_1.MasterDetailModule,
     menu_1.MenuModule,
+    multi_filter_1.MultiFilterModule,
     range_selection_1.RangeSelectionModule,
     rich_select_1.RichSelectModule,
     row_grouping_1.RowGroupingModule,

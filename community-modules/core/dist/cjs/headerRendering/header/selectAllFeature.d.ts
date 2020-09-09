@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgCheckbox } from "../../widgets/agCheckbox";
@@ -22,6 +22,7 @@ export declare class SelectAllFeature extends BeanStub {
     private onSelectionChanged;
     private getNextCheckboxState;
     private updateStateOfCheckbox;
+    private refreshSelectAllLabel;
     private getSelectionCount;
     private checkRightRowModelType;
     private onCbSelectAll;

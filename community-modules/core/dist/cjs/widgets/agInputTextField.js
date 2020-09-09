@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,26 +20,42 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var agAbstractInputField_1 = require("./agAbstractInputField");
-var utils_1 = require("../utils");
+var array_1 = require("../utils/array");
+var generic_1 = require("../utils/generic");
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
-    function AgInputTextField(config) {
-        var _this = _super.call(this) || this;
-        _this.className = 'ag-text-field';
-        _this.displayTag = 'input';
-        _this.inputType = 'text';
-        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
-        if (config) {
-            _this.config = config;
-        }
-        return _this;
+    function AgInputTextField(config, className, inputType) {
+        if (className === void 0) { className = 'ag-text-field'; }
+        if (inputType === void 0) { inputType = 'text'; }
+        return _super.call(this, config, className, inputType) || this;
     }
+    AgInputTextField.prototype.postConstruct = function () {
+        _super.prototype.postConstruct.call(this);
+        if (this.config.allowedCharPattern) {
+            this.preventDisallowedCharacters();
+        }
+    };
     AgInputTextField.prototype.setValue = function (value, silent) {
         var ret = _super.prototype.setValue.call(this, value, silent);
         if (this.eInput.value !== value) {
-            this.eInput.value = utils_1._.exists(value) ? value : '';
+            this.eInput.value = generic_1.exists(value) ? value : '';
         }
         return ret;
+    };
+    AgInputTextField.prototype.preventDisallowedCharacters = function () {
+        var pattern = new RegExp("[" + this.config.allowedCharPattern + "]");
+        var preventDisallowedCharacters = function (event) {
+            if (event.key && !pattern.test(event.key)) {
+                event.preventDefault();
+            }
+        };
+        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+        this.addManagedListener(this.eInput, 'paste', function (e) {
+            var text = (e.clipboardData || e.clipboardData).getData('text');
+            if (array_1.some(text, function (c) { return !pattern.test(c); })) {
+                e.preventDefault();
+            }
+        });
     };
     return AgInputTextField;
 }(agAbstractInputField_1.AgAbstractInputField));

@@ -1,9 +1,16 @@
-import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, ChartBuilder, ScatterSeries, SeriesOptions } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
-import { ChartDataModel } from "../../chartDataModel";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { isDate } from "../../typeChecker";
+import {
+    _,
+    AgScatterSeriesOptions,
+    CartesianChartOptions,
+    ChartType,
+    HighlightOptions,
+    ScatterSeriesOptions
+} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries} from "ag-charts-community";
+import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
+import {ChartDataModel} from "../../chartDataModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -20,8 +27,52 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
+        options.seriesDefaults = {
+            paired: seriesDefaults.paired,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity,
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+        } as ScatterSeriesOptions;
+
+        return options;
+    }
+
     protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        const agChartOptions = options as AgCartesianChartOptions;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [{
+            type: 'number',
+            position: 'bottom',
+            ...options.xAxis,
+        }, {
+            type: 'number',
+            position: 'left',
+            ...options.yAxis,
+        }];
+
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -31,17 +82,17 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         }
 
         const { fields } = params;
-        const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         const testDatum = params.data[0];
-        const xValuesAreDates = seriesDefinitions.map(d => d.xField.colId).map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
+        const xValuesAreDates = seriesDefinitions
+            .map(d => d.xField.colId)
+            .map(xKey => testDatum && testDatum[xKey])
+            .every(test => isDate(test));
 
         this.updateAxes(xValuesAreDates ? 'time' : 'number');
 
         const { chart } = this;
-        const { fills, strokes } = this.getPalette();
-        const seriesOptions: SeriesOptions = { type: "scatter", ...seriesDefaults };
-        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
             const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
@@ -58,17 +109,36 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return map;
         }, new Map<string, ScatterSeries>());
 
+        const { fills, strokes } = this.getPalette();
+        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined = undefined;
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
-            const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+            const marker = { ...seriesDefaults.marker } as any;
+            if (marker.type) { // deprecated
+                marker.shape = marker.type;
+                delete marker.type;
+            }
+            const series = existingSeries || AgChart.createComponent({
+                ...seriesDefaults,
+                type: 'scatter',
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
+                marker,
+                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            }, 'scatter.series');
 
             if (!series) {
                 return;
             }
 
-            const { xField: xFieldDefinition, yField: yFieldDefinition, sizeField: sizeFieldDefinition } = seriesDefinition;
+            const {
+                xField: xFieldDefinition,
+                yField: yFieldDefinition,
+                sizeField: sizeFieldDefinition
+            } = seriesDefinition;
 
             series.title = `${yFieldDefinition.displayName} vs ${xFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;
@@ -124,8 +194,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             marker: {
                 shape: 'circle',
                 enabled: true,
-                size: isBubble ? 30 : 6,
-                minSize: isBubble ? 6 : undefined,
+                size: 6,
+                maxSize: 30,
                 strokeWidth: 1,
             },
             tooltip: {

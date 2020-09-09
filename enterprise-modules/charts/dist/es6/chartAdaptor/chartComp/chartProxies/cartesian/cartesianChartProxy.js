@@ -24,13 +24,34 @@ var __assign = (this && this.__assign) || function () {
 };
 import { ChartProxy } from "../chartProxy";
 import { _ } from "@ag-grid-community/core";
-import { ChartAxisPosition, ChartBuilder, find, GroupedCategoryAxis } from "ag-charts-community";
+import { CategoryAxis, ChartAxisPosition, find, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.axisTypeToClassMap = {
+            number: NumberAxis,
+            category: CategoryAxis,
+            groupedCategory: GroupedCategoryAxis,
+            time: TimeAxis
+        };
+        return _this;
     }
+    CartesianChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var _a;
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var standaloneChartType = this.getStandaloneChartType();
+        var flipXY = standaloneChartType === 'bar';
+        var xAxisType = 'category';
+        var yAxisType = 'number';
+        if (flipXY) {
+            _a = [yAxisType, xAxisType], xAxisType = _a[0], yAxisType = _a[1];
+        }
+        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
+        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+        return options;
+    };
     CartesianChartProxy.prototype.getAxisProperty = function (expression) {
         return _.get(this.chartOptions.xAxis, expression, undefined);
     };
@@ -46,10 +67,30 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (isHorizontalChart === void 0) { isHorizontalChart = false; }
         var labelRotation = 0;
         var axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
+        var themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        var chartType = this.getStandaloneChartType();
+        var userThemeOverrideRotation = undefined;
+        var commonRotation = _.get(themeOverrides, 'common.axes.category.label.rotation', undefined);
+        var cartesianRotation = _.get(themeOverrides, 'cartesian.axes.category.label.rotation', undefined);
+        var chartTypeRotation = _.get(themeOverrides, chartType + ".axes.category.label.rotation", undefined);
+        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+            userThemeOverrideRotation = chartTypeRotation;
+        }
+        else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
+            userThemeOverrideRotation = cartesianRotation;
+        }
+        else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
+            userThemeOverrideRotation = commonRotation;
+        }
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             var label = this.chartOptions[axisKey].label;
-            if (label && label.rotation) {
-                labelRotation = label.rotation;
+            if (label) {
+                if (userThemeOverrideRotation !== undefined) {
+                    labelRotation = userThemeOverrideRotation;
+                }
+                else {
+                    labelRotation = label.rotation || 335;
+                }
             }
         }
         var axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
@@ -86,6 +127,9 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         options.yAxis = this.getDefaultAxisOptions();
         return options;
     };
+    CartesianChartProxy.prototype.getAxisClass = function (axisType) {
+        return this.axisTypeToClassMap[axisType];
+    };
     CartesianChartProxy.prototype.updateAxes = function (baseAxisType, isHorizontalChart) {
         if (baseAxisType === void 0) { baseAxisType = 'category'; }
         if (isHorizontalChart === void 0) { isHorizontalChart = false; }
@@ -99,16 +143,16 @@ var CartesianChartProxy = /** @class */ (function (_super) {
             }
             return;
         }
-        var axisClass = ChartBuilder.toAxisClass(baseAxisType);
+        var axisClass = this.axisTypeToClassMap[baseAxisType];
         if (baseAxis instanceof axisClass) {
             return;
         }
         var options = this.chartOptions;
         if (isHorizontalChart && !options.yAxis.type) {
-            options = __assign(__assign({}, options), { yAxis: __assign(__assign({}, options.yAxis), { type: baseAxisType }) });
+            options = __assign(__assign({}, options), { yAxis: __assign({ type: baseAxisType }, options.yAxis) });
         }
         else if (!isHorizontalChart && !options.xAxis.type) {
-            options = __assign(__assign({}, options), { xAxis: __assign(__assign({}, options.xAxis), { type: baseAxisType }) });
+            options = __assign(__assign({}, options), { xAxis: __assign({ type: baseAxisType }, options.xAxis) });
         }
         this.recreateChart(options);
     };

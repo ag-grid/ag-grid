@@ -1,6 +1,6 @@
-import {ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor} from './parser-utils';
-import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './angular-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor } from './parser-utils';
+import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }): string {
     const additionalLines = [];
@@ -14,7 +14,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }
 
     if (data) {
-        const {url, callback} = data;
+        const { url, callback } = data;
 
         if (callback.indexOf('api.setRowData') !== -1) {
             const setRowDataBlock = callback.replace('params.api.setRowData(data);', 'this.rowData = data');
@@ -33,8 +33,8 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
 
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
+    const { modules } = gridSettings;
 
     const imports = ["import { Component } from '@angular/core';"];
 
@@ -44,7 +44,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
     if (modules) {
         let exampleModules = modules;
-        if(modules === true) {
+        if (modules === true) {
             exampleModules = ['clientside'];
         }
         const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
@@ -81,7 +81,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
@@ -114,7 +114,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-angular
@@ -130,65 +130,68 @@ function getTemplate(bindings: any, attributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, componentFileNames: string[], importType: ImportType): string {
-    const {data, properties} = bindings;
-    const imports = getImports(bindings, componentFileNames, importType);
+export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    const { data, properties } = bindings;
     const diParams = [];
-    const additional = [];
+    const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data)];
 
     if (data) {
         diParams.push('private http: HttpClient');
     }
 
-    const propertyAttributes = [];
-    const propertyVars = [];
-    if (importType === 'modules') {
-        propertyAttributes.push('[modules]="modules"');
-        propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
-    }
-
-    const propertyAssignments = [];
-    properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-        if (componentFileNames.length > 0 && property.name === 'components') {
-            property.name = 'frameworkComponents';
-        }
-
-        if (property.value === 'true' || property.value === 'false') {
-            propertyAttributes.push(toConst(property));
-        } else if (property.value === null || property.value === 'null') {
-            propertyAttributes.push(toInput(property));
-        } else {
-            // for when binding a method
-            // see javascript-grid-keyboard-navigation for an example
-            // tabToNextCell needs to be bound to the angular component
-            if (!isInstanceMethod(bindings.instanceMethods, property)) {
-                propertyAttributes.push(toInput(property));
-                propertyVars.push(toMember(property));
-            }
-
-            propertyAssignments.push(toAssignment(property));
-        }
-    });
-
-    if (propertyAttributes.filter(item => item.indexOf('[rowData]') >= 0).length === 0) {
-        propertyAttributes.push('[rowData]="rowData"');
-    }
-
-    if (propertyVars.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-        propertyVars.push('private rowData: []');
-    }
-
     const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
+    const eventAttributes = bindings.eventHandlers
+        .filter(event => event.name !== 'onGridReady')
+        .map(toOutput)
+        .concat('(gridReady)="onGridReady($event)"');
+
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
-
-    eventAttributes.push('(gridReady)="onGridReady($event)"');
-    additional.push(getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data));
-
-    const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
 
-    return `
+    return importType => {
+        const imports = getImports(bindings, componentFileNames, importType);
+        const propertyAttributes = [];
+        const propertyVars = [];
+        const propertyAssignments = [];
+
+        if (importType === 'modules') {
+            propertyAttributes.push('[modules]="modules"');
+            propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
+        }
+
+        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+            if (componentFileNames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
+            }
+
+            if (property.value === 'true' || property.value === 'false') {
+                propertyAttributes.push(toConst(property));
+            } else if (property.value === null || property.value === 'null') {
+                propertyAttributes.push(toInput(property));
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the angular component
+                if (!isInstanceMethod(bindings.instanceMethods, property)) {
+                    propertyAttributes.push(toInput(property));
+                    propertyVars.push(toMember(property));
+                }
+
+                propertyAssignments.push(toAssignment(property));
+            }
+        });
+
+        if (propertyAttributes.filter(item => item.indexOf('[rowData]') >= 0).length === 0) {
+            propertyAttributes.push('[rowData]="rowData"');
+        }
+
+        if (propertyVars.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+            propertyVars.push('private rowData: []');
+        }
+
+        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
+
+        return `
 ${imports.join('\n')}
 
 @Component({
@@ -198,7 +201,7 @@ ${imports.join('\n')}
 
 export class AppComponent {
     private gridApi;
-    private gridColumnApi;    
+    private gridColumnApi;
 
     ${propertyVars.join('\n')}
 
@@ -207,15 +210,16 @@ export class AppComponent {
     }
 
     ${eventHandlers
-        .concat(externalEventHandlers)
-        .concat(additional)
-        .concat(instanceMethods)
-        .map(snippet => snippet.trim())
-        .join('\n\n')}
+                .concat(externalEventHandlers)
+                .concat(additional)
+                .concat(instanceMethods)
+                .map(snippet => snippet.trim())
+                .join('\n\n')}
 }
 
 ${bindings.utils.join('\n')}
 `;
+    };
 }
 
 if (typeof window !== 'undefined') {

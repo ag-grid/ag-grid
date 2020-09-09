@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -10,7 +10,7 @@ import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ColDef } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
-import { RowComp } from "./rowComp";
+import { RowComp } from "./row/rowComp";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
 export declare class CellComp extends Component implements TooltipParentComp {
@@ -19,7 +19,6 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private static CELL_RENDERER_TYPE_PINNED;
     private eCellWrapper;
     private eCellValue;
-    private eParentOfValue;
     private beans;
     private column;
     private rowNode;
@@ -53,6 +52,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private colsSpanning;
     private rowSpan;
     private suppressRefreshCell;
+    private tooltipFeatureEnabled;
     private tooltip;
     private scope;
     private readonly printLayout;
@@ -62,6 +62,7 @@ export declare class CellComp extends Component implements TooltipParentComp {
     getCreateTemplate(): string;
     private getStylesForRowSpanning;
     afterAttached(): void;
+    private createTooltipFeatureIfNeeded;
     onColumnHover(): void;
     onCellChanged(event: CellChangedEvent): void;
     private getCellLeft;
@@ -70,7 +71,6 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private setupColSpan;
     getColSpanningList(): Column[];
     private onDisplayColumnsChanged;
-    private getAriaColumnIndex;
     private refreshAriaIndex;
     private getInitialCssClasses;
     getInitialValueToRender(): string;

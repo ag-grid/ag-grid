@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.2.1
+// @ag-grid-community/react v24.0.0
 import * as React from "react";
 import { Component, ReactPortal } from "react";
 import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/core";
@@ -10,6 +10,7 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
+    containerStyle?: any;
 }
 export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;

@@ -22,7 +22,7 @@ export declare class Selection<G extends Node | EnterNode, P extends Node | Ente
     groups: (G | undefined)[][];
     parents: (P | undefined)[];
     static select<G extends Node, P extends Node | EnterNode>(node: G | (() => G)): Selection<G, P, any, any>;
-    static selectAll<G extends Node>(nodes?: G[] | null): Selection<G, any, any, any>;
+    static selectAll<G extends Node>(nodes?: G[] | null): Selection<G, Node | EnterNode, any, any>;
     /**
      * Creates new nodes, appends them to the nodes of this selection and returns them
      * as a new selection. The created nodes inherit the datums and the parents of the nodes

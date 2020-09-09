@@ -1,17 +1,22 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
-import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
+    fullWidth: boolean;
     suppressPadding: boolean;
     suppressDoubleClickExpand: boolean;
     suppressEnterExpand: boolean;
     footerValueGetter: any;
     suppressCount: boolean;
-    fullWidth: boolean;
     checkbox: any;
+    innerRenderer?: {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string;
+    innerRendererFramework?: any;
+    innerRendererParams?: any;
     scope: any;
     /** @deprecated */
     padding: number;

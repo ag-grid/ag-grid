@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -9,9 +9,10 @@ export interface RowPosition {
 }
 export declare class RowPositionUtils extends BeanStub {
     private rowModel;
-    private rowRenderer;
     private pinnedRowModel;
+    private paginationProxy;
     getFirstRow(): RowPosition;
+    getLastRow(): RowPosition;
     getRowNode(gridRow: RowPosition): RowNode | null;
     sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean;
     before(rowA: RowPosition, rowB: RowPosition): boolean;

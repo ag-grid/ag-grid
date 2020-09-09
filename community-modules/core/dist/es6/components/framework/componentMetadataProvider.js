@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -42,7 +42,7 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
             },
             headerComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             headerGroupComponent: {
                 mandatoryMethodList: [],
@@ -90,11 +90,6 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
             pinnedRowCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
-            },
-            groupRowInnerRenderer: {
-                mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowRenderer: {

@@ -14,10 +14,6 @@
 	path = examples-grid/ag-grid-polymer-example
 	url = https://github.com/ag-grid/ag-grid-polymer-example.git
     branch = latest
-[submodule "charts-packages/ag-grid-charts-example"]
-	path = examples-grid/ag-grid-charts-example
-	url = https://github.com/ag-grid/ag-grid-charts-example.git
-    branch = latest
 [submodule "charts-packages/ag-charts-react-example"]
 	path = examples-charts/ag-charts-react-example
 	url = https://github.com/ag-grid/ag-charts-react-example.git

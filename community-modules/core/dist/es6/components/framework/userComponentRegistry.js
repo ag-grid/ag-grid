@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,13 +40,14 @@ import { NumberFilter } from "../../filter/provided/number/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
-import { _ } from "../../utils";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
 import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { BeanStub } from "../../context/beanStub";
+import { iterateObject } from '../../utils/object';
+import { doOnce } from "../../utils/function";
 export var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -150,14 +151,10 @@ var UserComponentRegistry = /** @class */ (function (_super) {
     UserComponentRegistry.prototype.init = function () {
         var _this = this;
         if (this.gridOptions.components != null) {
-            Object.keys(this.gridOptions.components).forEach(function (it) {
-                _this.registerComponent(it, _this.gridOptions.components[it]);
-            });
+            iterateObject(this.gridOptions.components, function (key, component) { return _this.registerComponent(key, component); });
         }
         if (this.gridOptions.frameworkComponents != null) {
-            Object.keys(this.gridOptions.frameworkComponents).forEach(function (it) {
-                _this.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
-            });
+            iterateObject(this.gridOptions.frameworkComponents, function (key, component) { return _this.registerFwComponent(key, component); });
         }
     };
     UserComponentRegistry.prototype.registerDefaultComponent = function (rawName, component) {
@@ -194,28 +191,29 @@ var UserComponentRegistry = /** @class */ (function (_super) {
      */
     UserComponentRegistry.prototype.retrieve = function (rawName) {
         var name = this.translateIfDeprecated(rawName);
-        if (this.frameworkComponents[name]) {
+        var frameworkComponent = this.frameworkComponents[name];
+        if (frameworkComponent) {
             return {
                 componentFromFramework: true,
-                component: this.frameworkComponents[name],
+                component: frameworkComponent,
                 source: RegisteredComponentSource.REGISTERED
             };
         }
-        if (this.jsComponents[name]) {
+        var jsComponent = this.jsComponents[name];
+        if (jsComponent) {
             return {
                 componentFromFramework: false,
-                component: this.jsComponents[name],
+                component: jsComponent,
                 source: RegisteredComponentSource.REGISTERED
             };
         }
-        if (this.agGridDefaults[name]) {
-            return this.agGridDefaults[name] ?
-                {
-                    componentFromFramework: false,
-                    component: this.agGridDefaults[name],
-                    source: RegisteredComponentSource.DEFAULT
-                } :
-                null;
+        var defaultComponent = this.agGridDefaults[name];
+        if (defaultComponent) {
+            return {
+                componentFromFramework: false,
+                component: defaultComponent,
+                source: RegisteredComponentSource.DEFAULT
+            };
         }
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
             console.warn("ag-Grid: Looking for component [" + name + "] but it wasn't found.");
@@ -225,7 +223,7 @@ var UserComponentRegistry = /** @class */ (function (_super) {
     UserComponentRegistry.prototype.translateIfDeprecated = function (raw) {
         var deprecatedInfo = this.agDeprecatedNames[raw];
         if (deprecatedInfo != null) {
-            _.doOnce(function () {
+            doOnce(function () {
                 console.warn("ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename " + deprecatedInfo.propertyHolder + ":" + raw + " to " + deprecatedInfo.propertyHolder + ":" + deprecatedInfo.newComponentName);
             }, 'DEPRECATE_COMPONENT_' + raw);
             return deprecatedInfo.newComponentName;

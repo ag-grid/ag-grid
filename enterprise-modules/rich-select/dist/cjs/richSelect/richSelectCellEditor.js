@@ -66,11 +66,11 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
         switch (key) {
-            case core_1.Constants.KEY_ENTER:
+            case core_1.KeyCode.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case core_1.Constants.KEY_DOWN:
-            case core_1.Constants.KEY_UP:
+            case core_1.KeyCode.DOWN:
+            case core_1.KeyCode.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -85,7 +85,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key === core_1.Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        var newIndex = key === core_1.KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             var valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);

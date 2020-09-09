@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Constants, PopupComponent, RefSelector, _, VirtualList } from "@ag-grid-community/core";
+import { Autowired, PopupComponent, RefSelector, _, VirtualList, KeyCode } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
 var RichSelectCellEditor = /** @class */ (function (_super) {
     __extends(RichSelectCellEditor, _super);
@@ -64,11 +64,11 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
         switch (key) {
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case Constants.KEY_DOWN:
-            case Constants.KEY_UP:
+            case KeyCode.DOWN:
+            case KeyCode.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -83,7 +83,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        var newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             var valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);

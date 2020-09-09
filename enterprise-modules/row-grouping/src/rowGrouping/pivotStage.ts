@@ -4,7 +4,6 @@ import {
     BeanStub,
     ChangedPath,
     ColDef,
-    ColGroupDef,
     Column,
     ColumnController,
     IRowNodeStage,
@@ -25,7 +24,6 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     private uniqueValues: any = {};
 
-    private pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     private pivotColumnDefs: ColDef[];
 
     private aggregationColumnsHashLastTime: string | null;
@@ -67,10 +65,9 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
         if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
-            const result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
-            this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
-            this.pivotColumnDefs = result.pivotColumnDefs;
-            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
+            const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
+            this.pivotColumnDefs = pivotColumnDefs;
+            this.columnController.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {

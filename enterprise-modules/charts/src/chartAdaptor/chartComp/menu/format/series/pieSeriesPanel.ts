@@ -1,6 +1,7 @@
 import {
     _,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     AgToggleButton,
     Autowired,
@@ -8,16 +9,15 @@ import {
     FontStyle,
     FontWeight,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ShadowPanel } from "./shadowPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { CalloutPanel } from "./calloutPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {CalloutPanel} from "./calloutPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 

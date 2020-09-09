@@ -24,10 +24,10 @@ var MiniHistogram = /** @class */ (function (_super) {
         var size = _this.size;
         // approx normal curve
         var data = [2, 5, 11, 13, 10, 6, 1];
-        var xScale = ag_charts_community_1.linearScale();
+        var xScale = new ag_charts_community_1.LinearScale();
         xScale.domain = [0, data.length];
         xScale.range = [padding, size - padding];
-        var yScale = ag_charts_community_1.linearScale();
+        var yScale = new ag_charts_community_1.LinearScale();
         yScale.domain = [0, data.reduce(function (a, b) { return Math.max(a, b); }, 0)];
         yScale.range = [size - padding, padding];
         var bottom = yScale.convert(0);

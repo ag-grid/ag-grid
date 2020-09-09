@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -157,6 +157,14 @@ export function forEach(list, action) {
         return;
     }
     for (var i = 0; i < list.length; i++) {
+        action(list[i], i);
+    }
+}
+export function forEachReverse(list, action) {
+    if (list == null) {
+        return;
+    }
+    for (var i = list.length - 1; i >= 0; i--) {
         action(list[i], i);
     }
 }

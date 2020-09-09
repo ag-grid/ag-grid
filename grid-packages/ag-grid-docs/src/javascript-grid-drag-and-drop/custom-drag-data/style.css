@@ -6,7 +6,7 @@
 .drop-col {
     padding-left: 10px;
     box-sizing: border-box;
-    flex: 1;
+    flex: 1 1 auto;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@
 .json-display {
     padding-top: 10px;
     box-sizing: border-box;
-    flex: 1;
+    flex: 1 1 auto;
     border: 1px solid #888;
     background-color: #f8f8f8;
     overflow: auto;

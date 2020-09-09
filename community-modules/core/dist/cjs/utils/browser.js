@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,7 +76,7 @@ function getTabIndex(el) {
     }
     var numberTabIndex = el.tabIndex;
     var tabIndex = el.getAttribute('tabIndex');
-    if (isBrowserIE() && numberTabIndex === 0 && el.getAttribute('tabIndex') === null) {
+    if (isBrowserIE() && numberTabIndex === 0 && tabIndex === null) {
         var map = {
             a: true,
             body: true,

@@ -4,8 +4,9 @@ import { Component } from '../../widgets/component';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ILoadingOverlayComp } from './loadingOverlayComponent';
-import { _, Promise } from '../../utils';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
+import { Promise } from '../../utils';
+import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
 
 enum LoadingType { Loading, NoRows }
 
@@ -40,8 +41,8 @@ export class OverlayWrapperComponent extends Component {
     }
 
     private setWrapperTypeClass(loadingType: LoadingType): void {
-        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
-        _.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
+        addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
+        addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
     }
 
     public showLoadingOverlay(): void {
@@ -97,7 +98,7 @@ export class OverlayWrapperComponent extends Component {
 
         this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
 
-        _.clearElement(this.eOverlayWrapper);
+        clearElement(this.eOverlayWrapper);
     }
 
     public hideOverlay(): void {

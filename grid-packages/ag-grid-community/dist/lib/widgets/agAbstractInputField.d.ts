@@ -4,22 +4,22 @@ export interface IInputField extends IAgLabel {
     value?: any;
     width?: number;
 }
-export declare abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
-    protected abstract inputType: string;
-    protected config: IInputField;
-    protected TEMPLATE: string;
-    protected eLabel: HTMLLabelElement;
-    protected eWrapper: HTMLElement;
-    protected eInput: T;
+export declare abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField> extends AgAbstractField<TValue, TConfig> {
+    private readonly inputType;
+    protected readonly eLabel: HTMLElement;
+    protected readonly eWrapper: HTMLElement;
+    protected readonly eInput: TElement;
+    constructor(config?: TConfig, className?: string, inputType?: string, displayFieldTag?: string);
     protected postConstruct(): void;
+    protected refreshLabel(): void;
     protected addInputListeners(): void;
     private setInputType;
-    getInputElement(): T;
+    getInputElement(): TElement;
     setInputWidth(width: number | 'flex'): this;
     setInputName(name: string): this;
     getFocusableElement(): HTMLElement;
     setMaxLength(length: number): this;
     setInputPlaceholder(placeholder: string): this;
-    setDisabled(disabled: boolean): this;
     setInputAriaLabel(label: string): this;
+    setDisabled(disabled: boolean): this;
 }

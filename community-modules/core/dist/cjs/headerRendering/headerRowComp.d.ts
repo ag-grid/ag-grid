@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from '../widgets/component';
@@ -13,15 +13,14 @@ export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
     private columnController;
     private focusController;
-    private readonly dept;
     private readonly pinned;
     private readonly dropTarget;
     private readonly type;
-    private rowIndex;
+    private dept;
     private headerComps;
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget);
     forEachHeaderElement(callback: (comp: Component) => void): void;
-    setRowIndex(idx: number): void;
+    private setRowIndex;
     getRowIndex(): number;
     getType(): HeaderRowType;
     private destroyAllChildComponents;
@@ -31,8 +30,6 @@ export declare class HeaderRowComp extends Component {
     private onColumnResized;
     private setWidth;
     private getWidthForRow;
-    private onGridColumnsChanged;
-    private removeAndDestroyAllChildComponents;
     private onDisplayedColumnsChanged;
     private getItemsAtDepth;
     private onVirtualColumnsChanged;

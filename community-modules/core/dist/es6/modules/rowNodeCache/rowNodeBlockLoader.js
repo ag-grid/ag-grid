@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Qualifier } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { _ } from "../../utils";
+import { debounce } from "../../utils/function";
+import { exists } from "../../utils/generic";
+import { removeFromArray } from "../../utils/array";
 var RowNodeBlockLoader = /** @class */ (function (_super) {
     __extends(RowNodeBlockLoader, _super);
     function RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis) {
@@ -39,7 +41,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
         _this.active = true;
         _this.maxConcurrentRequests = maxConcurrentRequests;
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            _this.checkBlockToLoadDebounce = _.debounce(_this.performCheckBlocksToLoad.bind(_this), blockLoadDebounceMillis);
+            _this.checkBlockToLoadDebounce = debounce(_this.performCheckBlocksToLoad.bind(_this), blockLoadDebounceMillis);
         }
         return _this;
     }
@@ -50,7 +52,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
         this.blocks.push(block);
     };
     RowNodeBlockLoader.prototype.removeBlock = function (block) {
-        _.removeFromArray(this.blocks, block);
+        removeFromArray(this.blocks, block);
     };
     RowNodeBlockLoader.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -102,7 +104,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
                 endRow: block.getEndRow(),
                 pageStatus: block.getState()
             };
-            if (_.exists(nodeIdPrefix)) {
+            if (exists(nodeIdPrefix)) {
                 result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
             }
             else {

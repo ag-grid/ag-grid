@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,16 +27,16 @@ import { RefSelector } from "./componentAnnotations";
 import { AgAbstractLabel } from "./agAbstractLabel";
 import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { addCssClass } from "../utils/dom";
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
-    function AgSlider() {
-        var _this = _super.call(this, AgSlider.TEMPLATE) || this;
+    function AgSlider(config) {
+        var _this = _super.call(this, config, AgSlider.TEMPLATE) || this;
         _this.labelAlignment = 'top';
         return _this;
     }
     AgSlider.prototype.init = function () {
-        _.addCssClass(this.eSlider.getGui(), 'ag-slider-field');
+        addCssClass(this.eSlider.getGui(), 'ag-slider-field');
     };
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;

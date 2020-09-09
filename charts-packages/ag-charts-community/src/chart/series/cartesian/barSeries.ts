@@ -4,7 +4,6 @@ import { Rect } from "../../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
-import palette from "../../palettes";
 import {
     HighlightStyle,
     SeriesNodeDatum,
@@ -20,6 +19,16 @@ import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
+
+export interface BarSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: BarSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+}
+
+export { BarTooltipRendererParams };
 
 interface BarNodeDatum extends SeriesNodeDatum {
     yKey: string;
@@ -43,29 +52,13 @@ interface BarNodeDatum extends SeriesNodeDatum {
     };
 }
 
-export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-}
-
-export { BarTooltipRendererParams };
-
-export interface BarLabelFormatterParams {
-    value: number;
-}
-
-export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
-
 enum BarSeriesNodeTag {
     Bar,
     Label
 }
 
 class BarSeriesLabel extends Label {
-    @reactive('change') formatter?: BarLabelFormatter;
+    @reactive('change') formatter?: (params: { value: number }) => string;
 }
 
 export class BarSeries extends CartesianSeries {
@@ -99,8 +92,8 @@ export class BarSeries extends CartesianSeries {
 
     @reactive('layoutChange') flipXY = false;
 
-    @reactive('dataChange') fills: string[] = palette.fills;
-    @reactive('dataChange') strokes: string[] = palette.strokes;
+    @reactive('dataChange') fills: string[] = [];
+    @reactive('dataChange') strokes: string[] = [];
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
@@ -202,6 +195,11 @@ export class BarSeries extends CartesianSeries {
     }
     get yNames(): string[] {
         return this._yNames;
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
     }
 
     @reactive('dataChange') grouped = false;
@@ -359,9 +357,15 @@ export class BarSeries extends CartesianSeries {
     }
 
     private generateNodeData(): BarNodeDatum[] {
-        const { xAxis, yAxis, flipXY } = this;
-        const xScale = (flipXY ? yAxis : xAxis).scale;
-        const yScale = (flipXY ? xAxis : yAxis).scale;
+        if (!this.data) {
+            return [];
+        }
+
+        const { flipXY } = this;
+        const xAxis = flipXY ? this.yAxis : this.xAxis;
+        const yAxis = flipXY ? this.xAxis : this.yAxis;
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
 
         const {
             groupScale,
@@ -397,9 +401,15 @@ export class BarSeries extends CartesianSeries {
             let prevMin = 0;
             let prevMax = 0;
 
-            yDatum.forEach((curr, j) => {
+            for (let j = 0; j < yDatum.length; j++) {
+                const curr = yDatum[j];
                 const yKey = yKeys[j];
                 const barX = grouped ? x + groupScale.convert(yKey) : x;
+
+                if (!xAxis.inRange(barX, barWidth)) {
+                    continue;
+                }
+
                 const prev = curr < 0 ? prevMin : prevMax;
                 const y = yScale.convert(grouped ? curr : prev + curr);
                 const bottomY = yScale.convert(grouped ? 0 : prev);
@@ -445,7 +455,7 @@ export class BarSeries extends CartesianSeries {
                         prevMax += curr;
                     }
                 }
-            });
+            }
         });
 
         return nodeData;
@@ -481,6 +491,10 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateRectNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { fillOpacity, strokeOpacity, shadow, highlightStyle: { fill, stroke } } = this;
         const { highlightedDatum } = this.chart;
 

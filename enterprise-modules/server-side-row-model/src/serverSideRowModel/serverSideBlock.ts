@@ -184,7 +184,6 @@ export class ServerSideBlock extends RowNodeBlock {
             const idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
 
             if (this.usingTreeData) {
                 const getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
@@ -225,6 +224,12 @@ export class ServerSideBlock extends RowNodeBlock {
         if (this.usingTreeData || this.groupLevel) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
+        }
+
+        // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
+        // getting set, if it's a group node and colDef.autoHeight=true
+        if (_.exists(data)) {
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
         }
     }
 

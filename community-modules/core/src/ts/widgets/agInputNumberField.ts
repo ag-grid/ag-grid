@@ -1,19 +1,21 @@
-import { AgInputTextField } from "./agInputTextField";
+import { AgInputTextField, ITextInputField } from "./agInputTextField";
+import { addOrRemoveAttribute } from '../utils/dom';
 
 export class AgInputNumberField extends AgInputTextField {
+    private precision?: number;
+    private step?: number;
+    private min?: number;
+    private max?: number;
 
-    protected className = 'ag-number-field';
-    protected inputType = 'number';
-    private precision: number | undefined;
-    private step: number | undefined;
-    private min: number | undefined;
-    private max: number | undefined;
+    constructor(config?: ITextInputField) {
+        super(config, 'ag-number-field', 'number');
+    }
 
     postConstruct() {
         super.postConstruct();
         this.addManagedListener(this.eInput, 'blur', () => {
             const floatedValue = parseFloat(this.eInput.value);
-            const value = isNaN(floatedValue) ?  '' : this.normalizeValue(floatedValue.toString());
+            const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
 
             if (this.value !== value) {
                 this.setValue(value);
@@ -22,7 +24,7 @@ export class AgInputNumberField extends AgInputTextField {
     }
 
     public normalizeValue(value: string): string {
-        if (value === '') { return  ''; }
+        if (value === '') { return ''; }
 
         if (this.precision) {
             value = this.adjustPrecision(value);
@@ -52,13 +54,11 @@ export class AgInputNumberField extends AgInputTextField {
         if (this.min === min) {
             return this;
         }
+
         this.min = min;
 
-        if (this.min != null) {
-            this.eInput.setAttribute('min', min.toString());
-        } else {
-            this.eInput.removeAttribute('min');
-        }
+        addOrRemoveAttribute(this.eInput, 'min', min);
+
         return this;
     }
 
@@ -66,13 +66,11 @@ export class AgInputNumberField extends AgInputTextField {
         if (this.max === max) {
             return this;
         }
+
         this.max = max;
 
-        if (this.max != null) {
-            this.eInput.setAttribute('max', max.toString());
-        } else {
-            this.eInput.removeAttribute('max');
-        }
+        addOrRemoveAttribute(this.eInput, 'max', max);
+
         return this;
     }
 
@@ -88,11 +86,8 @@ export class AgInputNumberField extends AgInputTextField {
         }
 
         this.step = step;
-        if (step != null) {
-            this.eInput.setAttribute('step', step.toString());
-        } else {
-            this.eInput.removeAttribute('step');
-        }
+
+        addOrRemoveAttribute(this.eInput, 'step', step);
 
         return this;
     }

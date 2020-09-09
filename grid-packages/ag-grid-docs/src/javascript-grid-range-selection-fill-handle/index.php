@@ -20,6 +20,11 @@ include '../documentation-main/documentation_header.php';
         To enable the Fill Handle, simply set <code>enableFillHandle</code> to <code>true</code> in the <code>gridOptions</code>.
     </p>
 
+    <p>
+        The <code>fillHandleDirection</code> property can be set to <code>x</code>, <code>y</code> and <code>xy</code> in the <code>gridOptions</code>
+        to force the preferred axis for the <code>Fill Handle</code>. This value is <code>xy</code> by default.
+    </p>
+
     <note>
         It's important to note that if you enable both <code>enableFillHandle</code> and <code>enableRangeHandle</code>,
         the Fill Handle will take precedence.
@@ -58,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Fill Handle', 'fill-handle', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Fill Handle', 'fill-handle', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
     <h3>Example: Reducing the Range Size</h3>
 
@@ -66,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         If the behaviour for decreasing selection needs to be prevented, the flag <code>suppressClearOnFillReduction</code> should be set to <code>true</code>.
     </p>
 
-    <?= grid_example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
     <h2>Custom User Function</h2>
 
@@ -88,6 +93,7 @@ include '../documentation-main/documentation_header.php';
             values: any[], // the values that have been processed by the fill operation
             initialValues: any[], // the values that were present before processing started
             currentIndex: number, // index of the current processed value
+            currentCellValue: any, // the current value of the cell being `filled`
             api: GridApi, // the grid API
             columnApi: ColumnApi, // the grid Column API
             context: any,  // the context
@@ -114,7 +120,7 @@ include '../documentation-main/documentation_header.php';
     use the default operation for any other column.
     </p>
 
-    <?= grid_example('Custom Fill Operation', 'custom-fill-operation', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Custom Fill Operation', 'custom-fill-operation', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
 
 </div>
 

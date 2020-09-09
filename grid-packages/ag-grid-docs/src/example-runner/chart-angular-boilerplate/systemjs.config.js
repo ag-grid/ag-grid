@@ -5,6 +5,18 @@
  * Adjust as necessary for your application needs.
  */
 (function(global) {
+    // simplified version of Object.assign for es3
+    function assign() {
+        var result = {};
+        for (var i = 0, len = arguments.length; i < len; i++) {
+            var arg = arguments[i];
+            for (var prop in arg) {
+                result[prop] = arg[prop];
+            }
+        }
+        return result;
+    }
+
     var ANGULAR_VERSION = "5.1.3";
     var ANGULAR_CDK_VERSION = "5.2.5";
     var ANGULAR_MATERIAL_VERSION = "5.2.5";
@@ -51,7 +63,7 @@
             ]
         },
         // map tells the System loader where to look for things
-        map: Object.assign(
+        map: assign(
             {
                 // css plugin
                 'css': 'npm:systemjs-plugin-css/css.js',

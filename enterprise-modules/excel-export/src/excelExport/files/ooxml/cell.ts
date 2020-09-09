@@ -35,7 +35,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                 name: 'is',
                 children: [{
                     name: 't',
-                    textNode: _.escape(_.utf8_encode(value as string))
+                    textNode: _.escapeString(_.utf8_encode(value as string))
                 }]
             }];
         } else {

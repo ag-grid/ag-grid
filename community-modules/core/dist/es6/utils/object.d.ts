@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function iterateObject<T>(object: {
@@ -6,6 +6,7 @@ export declare function iterateObject<T>(object: {
 } | T[] | undefined, callback: (key: string, value: T) => void): void;
 export declare function cloneObject<T>(object: T): T;
 export declare function deepCloneObject<T>(object: T): T;
+export declare function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T;
 export declare function getProperty<T, K extends keyof T>(object: T, key: K): any;
 export declare function setProperty<T, K extends keyof T>(object: T, key: K, value: any): void;
 /**
@@ -19,7 +20,7 @@ export declare function copyPropertiesIfPresent<S, T extends S, K extends keyof 
  */
 export declare function copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any): void;
 export declare function getAllKeysInObjects(objects: any[]): string[];
-export declare function mergeDeep(dest: any, source: any, copyUndefined?: boolean): void;
+export declare function mergeDeep(dest: any, source: any, copyUndefined?: boolean, objectsThatNeedCopy?: string[], iteration?: number): void;
 export declare function assign<T, U>(target: T, source: U): T & U;
 export declare function assign<T, U, V>(target: T, source1: U, source2: V): T & U & V;
 export declare function assign<T, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W;

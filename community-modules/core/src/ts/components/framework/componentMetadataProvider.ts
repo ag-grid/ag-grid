@@ -23,7 +23,7 @@ export class ComponentMetadataProvider extends BeanStub {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -31,7 +31,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             headerComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             headerGroupComponent: {
                 mandatoryMethodList: [],
@@ -79,11 +79,6 @@ export class ComponentMetadataProvider extends BeanStub {
             pinnedRowCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
-            },
-            groupRowInnerRenderer: {
-                mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowRenderer: {

@@ -1,10 +1,10 @@
 var columnDefs = [
-  {field: 'id', hide: true},
-  {field: 'athlete'},
-  {field: 'country', rowGroup: true, hide: true},
-  {field: "gold"},
-  {field: "silver"},
-  {field: "bronze"}
+  { field: 'id', hide: true },
+  { field: 'athlete' },
+  { field: 'country', rowGroup: true, hide: true },
+  { field: "gold" },
+  { field: "silver" },
+  { field: "bronze" }
 ];
 
 var gridOptions = {
@@ -28,11 +28,11 @@ function updateSelectedRows() {
   var idsToUpdate = gridOptions.api.getSelectedNodes().map(function(node) { return node.data.id; });
   var updatedRows = [];
 
-  gridOptions.api.forEachNode( function(rowNode) {
+  gridOptions.api.forEachNode(function(rowNode) {
     if (idsToUpdate.indexOf(rowNode.data.id) >= 0) {
 
       // cloning underlying data otherwise the mock server data will also be updated
-      var updated = Object.assign({}, rowNode.data);
+      var updated = JSON.parse(JSON.stringify(rowNode.data));
 
       // arbitrarily update medal count
       updated.gold += 1;
@@ -61,20 +61,20 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
 
     allData = data;
 
     // add id to data
-    allData.forEach( function(item) {
+    allData.forEach(function(item) {
       item.id = idSequence++;
     });
 
     var dataSource = {
-      getRows: function (params) {
+      getRows: function(params) {
 
         // To make the demo look real, wait for 500ms before returning
-        setTimeout( function() {
+        setTimeout(function() {
 
           var response = getMockServerResponse(params.request);
 
@@ -131,7 +131,7 @@ function group(data, rowGroupColIds, groupKeys, parentId) {
 
 function updateServerRows(rowsToUpdate) {
   var updatedDataIds = rowsToUpdate.map(function(data) { return data.id; });
-  for (var i=0; i<allData.length; i++) {
+  for (var i = 0; i < allData.length; i++) {
     var updatedDataIndex = updatedDataIds.indexOf(allData[i].id);
     if (updatedDataIndex >= 0) {
       allData[i] = rowsToUpdate[updatedDataIndex];

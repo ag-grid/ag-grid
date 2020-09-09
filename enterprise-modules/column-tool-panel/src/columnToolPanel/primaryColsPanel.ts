@@ -5,7 +5,7 @@ import {
     RefSelector,
     IPrimaryColsPanel,
     ManagedFocusComponent,
-    _
+    ColumnEventType,
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
@@ -27,20 +27,22 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @RefSelector('primaryColsHeaderPanel')
-    private primaryColsHeaderPanel: PrimaryColsHeaderPanel;
-
-    @RefSelector('primaryColsListPanel')
-    private primaryColsListPanel: PrimaryColsListPanel;
+    @RefSelector('primaryColsHeaderPanel') private readonly primaryColsHeaderPanel: PrimaryColsHeaderPanel;
+    @RefSelector('primaryColsListPanel') private readonly primaryColsListPanel: PrimaryColsListPanel;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
+    private eventType: ColumnEventType;
+
+    constructor() {
+        super(PrimaryColsPanel.TEMPLATE, true);
+    }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    public init(allowDragging: boolean, params: ToolPanelColumnCompParams): void {
-        this.setTemplate(PrimaryColsPanel.TEMPLATE);
+    public init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void {
         this.allowDragging = allowDragging;
         this.params = params;
+        this.eventType = eventType;
 
         this.primaryColsHeaderPanel.init(this.params);
 
@@ -55,27 +57,13 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
         this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
 
-        this.primaryColsListPanel.init(this.params, this.allowDragging);
+        this.primaryColsListPanel.init(this.params, this.allowDragging, this.eventType);
 
         this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
-        this.wireFocusManagement();
-    }
-
-    protected isFocusableContainer(): boolean {
-        return true;
-    }
-
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
-
-        if (nextEl) {
-            e.preventDefault();
-            nextEl.focus();
-        }
     }
 
     public onExpandAll(): void {

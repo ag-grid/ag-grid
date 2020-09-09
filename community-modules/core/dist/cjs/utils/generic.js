@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,49 @@ function toStringOrNull(value) {
     return exists(value) && value.toString ? value.toString() : null;
 }
 exports.toStringOrNull = toStringOrNull;
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+function attrToNumber(value) {
+    if (value === undefined) {
+        // undefined or empty means ignore the value
+        return;
+    }
+    if (value === null || value === '') {
+        // null or blank means clear
+        return null;
+    }
+    if (typeof value === 'number') {
+        return isNaN(value) ? undefined : value;
+    }
+    var valueParsed = parseInt(value, 10);
+    return isNaN(valueParsed) ? undefined : valueParsed;
+}
+exports.attrToNumber = attrToNumber;
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+function attrToBoolean(value) {
+    if (value === undefined) {
+        // undefined or empty means ignore the value
+        return;
+    }
+    if (value === null || value === '') {
+        // null means clear
+        return false;
+    }
+    if (value === true || value === false) {
+        // if simple boolean, return the boolean
+        return value;
+    }
+    // if equal to the string 'true' (ignoring case) then return true
+    return (/true/i).test(value);
+}
+exports.attrToBoolean = attrToBoolean;
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+function attrToString(value) {
+    if (value == null || value === '') {
+        return;
+    }
+    return value;
+}
+exports.attrToString = attrToString;
 /** @deprecated */
 function referenceCompare(left, right) {
     if (left == null && right == null) {
@@ -77,21 +120,21 @@ function defaultComparator(valueA, valueB, accentedCompare) {
     function doQuickCompare(a, b) {
         return (a > b ? 1 : (a < b ? -1 : 0));
     }
-    if (typeof valueA === 'string') {
-        if (!accentedCompare) {
-            return doQuickCompare(valueA, valueB);
-        }
-        try {
-            // using local compare also allows chinese comparisons
-            return valueA.localeCompare(valueB);
-        }
-        catch (e) {
-            // if something wrong with localeCompare, eg not supported
-            // by browser, then just continue with the quick one
-            return doQuickCompare(valueA, valueB);
-        }
+    if (typeof valueA !== 'string') {
+        return doQuickCompare(valueA, valueB);
     }
-    return doQuickCompare(valueA, valueB);
+    if (!accentedCompare) {
+        return doQuickCompare(valueA, valueB);
+    }
+    try {
+        // using local compare also allows chinese comparisons
+        return valueA.localeCompare(valueB);
+    }
+    catch (e) {
+        // if something wrong with localeCompare, eg not supported
+        // by browser, then just continue with the quick one
+        return doQuickCompare(valueA, valueB);
+    }
 }
 exports.defaultComparator = defaultComparator;
 function find(collection, predicate, value) {

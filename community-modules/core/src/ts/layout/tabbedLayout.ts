@@ -1,15 +1,20 @@
-import { Promise, _ } from '../utils';
+import { Promise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { Constants } from '../constants';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
+import { setAriaLabel } from '../utils/aria';
+import { find } from '../utils/generic';
+import { callIfPresent } from '../utils/function';
+import { KeyCode } from '../constants/keyCode';
 
 export class TabbedLayout extends ManagedFocusComponent {
 
-    @RefSelector('eHeader') private eHeader: HTMLElement;
-    @RefSelector('eBody') private eBody: HTMLElement;
+    @RefSelector('eHeader') private readonly eHeader: HTMLElement;
+    @RefSelector('eBody') private readonly eBody: HTMLElement;
 
     private params: TabbedLayoutParams;
-    private afterAttachedParams: any;
+    private afterAttachedParams: IAfterGuiAttachedParams;
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
 
@@ -24,69 +29,71 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private static getTemplate(cssClass?: string) {
         return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
-            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+            <div ref="eHeader" role="menu" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" role="presentation" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
         </div>`;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_LEFT:
+            case KeyCode.RIGHT:
+            case KeyCode.LEFT:
                 if (!this.eHeader.contains(document.activeElement)) { return; }
+
                 const currentPosition = this.items.indexOf(this.activeItem);
-                const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                const nextPosition = e.keyCode === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
                 if (currentPosition === nextPosition) { return; }
+
                 e.preventDefault();
+
                 const nextItem = this.items[nextPosition];
 
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();
                 break;
-            case Constants.KEY_UP:
-            case Constants.KEY_DOWN:
+            case KeyCode.UP:
+            case KeyCode.DOWN:
                 e.stopPropagation();
                 break;
         }
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        const { focusController, eHeader, eBody, activeItem } = this;
+        if (e.defaultPrevented) { return; }
 
+        const { focusController, eHeader, eBody, activeItem } = this;
         const activeElement = document.activeElement as HTMLElement;
-        const focusInHeader = eHeader.contains(activeElement);
 
         e.preventDefault();
 
-        if (focusInHeader) {
-            if (e.shiftKey) {
-                focusController.focusLastFocusableElement(eBody);
-            } else {
-                focusController.focusFirstFocusableElement(eBody);
-            }
+        if (eHeader.contains(activeElement)) {
+            // focus is in header, move into body of popup
+            focusController.focusInto(eBody, e.shiftKey);
         } else {
-            const isFocusManaged = focusController.isFocusUnderManagedComponent(eBody);
-
-            if (isFocusManaged) {
+            // focus is in body, establish if it should return to header
+            if (focusController.isFocusUnderManagedComponent(eBody)) {
+                // focus was in a managed focus component and has now left, so we can return to the header
                 activeItem.eHeaderButton.focus();
             } else {
                 const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
 
                 if (nextEl) {
+                    // if another element exists in the body that can be focussed, go to that
                     nextEl.focus();
                 } else {
+                    // otherwise return to the header
                     activeItem.eHeaderButton.focus();
                 }
             }
         }
     }
 
-    public setAfterAttachedParams(params: any): void {
+    public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
         this.afterAttachedParams = params;
     }
 
-    public getMinDimensions(): {width: number, height: number} {
+    public getMinDimensions(): { width: number, height: number; } {
         const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
         const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
 
@@ -101,7 +108,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         let minHeight = 0;
 
         this.items.forEach((itemWrapper: TabbedItemWrapper) => {
-            _.clearElement(eDummyBody);
+            clearElement(eDummyBody);
 
             const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body.cloneNode(true)) as HTMLElement;
             if (eClone == null) { return; }
@@ -111,6 +118,7 @@ export class TabbedLayout extends ManagedFocusComponent {
             if (minWidth < eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;
             }
+
             if (minHeight < eDummyContainer.offsetHeight) {
                 minHeight = eDummyContainer.offsetHeight;
             }
@@ -129,11 +137,12 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private addItem(item: TabbedItem): void {
         const eHeaderButton = document.createElement('span');
-        eHeaderButton.tabIndex = -1;
+        eHeaderButton.setAttribute('tabIndex', '-1');
+        eHeaderButton.setAttribute('role', 'menuitem');
         eHeaderButton.appendChild(item.title);
-        _.addCssClass(eHeaderButton, 'ag-tab');
+        addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
-        eHeaderButton.setAttribute('aria-label', item.titleLabel);
+        setAriaLabel(eHeaderButton, item.titleLabel);
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
@@ -145,7 +154,7 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        const itemWrapper = _.find(this.items, wrapper => {
+        const itemWrapper = find(this.items, wrapper => {
             return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
@@ -155,26 +164,28 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     private showItemWrapper(wrapper: TabbedItemWrapper): void {
         if (this.params.onItemClicked) {
-            this.params.onItemClicked({item: wrapper.tabbedItem});
+            this.params.onItemClicked({ item: wrapper.tabbedItem });
         }
 
         if (this.activeItem === wrapper) {
-            _.callIfPresent(this.params.onActiveItemClicked);
+            callIfPresent(this.params.onActiveItemClicked);
             return;
         }
 
-        _.clearElement(this.eBody);
+        clearElement(this.eBody);
+
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusController.isKeyboardFocus();
 
-            this.focusController.focusFirstFocusableElement(this.eBody, onlyUnmanaged);
+            this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
         });
 
         if (this.activeItem) {
-            _.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
+            removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }
-        _.addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+
+        addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
 
         this.activeItem = wrapper;
 
@@ -196,7 +207,7 @@ export interface TabbedItem {
     titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
-    afterAttachedCallback?: Function;
+    afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }
 
 interface TabbedItemWrapper {

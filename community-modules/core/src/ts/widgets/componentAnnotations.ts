@@ -1,18 +1,21 @@
+import { getFunctionName } from '../utils/function';
+
 export function QuerySelector(selector?: string): Function {
     return querySelectorFunc.bind(this, selector);
 }
 
-export function RefSelector(ref?: string): Function {
-    return querySelectorFunc.bind(this, "[ref=" + ref + "]");
+export function RefSelector(ref: string): Function {
+    return querySelectorFunc.bind(this, `[ref=${ref}]`);
 }
 
 function querySelectorFunc(selector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
     if (selector === null) {
-        console.error("ag-Grid: QuerySelector selector should not be null");
+        console.error('ag-Grid: QuerySelector selector should not be null');
         return;
     }
-    if (typeof index === "number") {
-        console.error("ag-Grid: QuerySelector should be on an attribute");
+
+    if (typeof index === 'number') {
+        console.error('ag-Grid: QuerySelector should be on an attribute');
         return;
     }
 
@@ -29,7 +32,7 @@ export function GridListener(eventName: string): Function {
 
 function gridListenerFunc(eventName: string, target: Object, methodName: string) {
     if (eventName == null) {
-        console.error("ag-Grid: GridListener eventName is missing");
+        console.error('ag-Grid: GridListener eventName is missing');
         return;
     }
 
@@ -46,7 +49,7 @@ export function GuiListener(ref: string, eventName: string): Function {
 
 function guiListenerFunc(ref: string, eventName: string, target: Object, methodName: string) {
     if (eventName == null) {
-        console.error("ag-Grid: GuiListener eventName is missing");
+        console.error('ag-Grid: GuiListener eventName is missing');
         return;
     }
 
@@ -76,10 +79,12 @@ function guiListenerFunc(ref: string, eventName: string, target: Object, methodN
 
 function addToObjectProps(target: Object, key: string, value: any): void {
     // it's an attribute on the class
-    const props = getOrCreateProps(target, (target.constructor as any).name);
+    const props = getOrCreateProps(target, getFunctionName(target.constructor));
+
     if (!props[key]) {
         props[key] = [];
     }
+
     props[key].push(value);
 }
 

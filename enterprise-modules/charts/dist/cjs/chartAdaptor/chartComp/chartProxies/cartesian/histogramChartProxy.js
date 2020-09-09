@@ -34,14 +34,38 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    HistogramChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('histogram.series.histogram');
+        options.seriesDefaults = {
+            shadow: this.getDefaultDropShadowOptions(),
+            label: seriesDefaults.label,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle
+        };
+        return options;
+    };
     HistogramChartProxy.prototype.createChart = function (options) {
         var parentElement = this.chartProxyParams.parentElement;
-        var chart = ag_charts_community_1.ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
-        var histogramSeries = ag_charts_community_1.ChartBuilder.createSeries(this.getSeriesDefaults());
-        if (histogramSeries) {
-            chart.addSeries(histogramSeries);
-        }
-        return chart;
+        var seriesDefaults = this.getSeriesDefaults();
+        options = options || this.chartOptions;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [__assign({ type: 'number', position: 'bottom' }, options.xAxis), __assign({ type: 'number', position: 'left' }, options.yAxis)];
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fill: seriesDefaults.fill.colors[0], fillOpacity: seriesDefaults.fill.opacity, stroke: seriesDefaults.stroke.colors[0], strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer, type: 'histogram' })];
+        return ag_charts_community_1.AgChart.create(agChartOptions, parentElement);
     };
     HistogramChartProxy.prototype.update = function (params) {
         var xField = params.fields[0];
@@ -67,7 +91,7 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         return options;
     };
     HistogramChartProxy.prototype.getSeriesDefaults = function () {
-        return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: 'histogram' });
+        return __assign({}, this.chartOptions.seriesDefaults);
     };
     return HistogramChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var context_1 = require("../context/context");
 var moveColumnController_1 = require("./moveColumnController");
 var bodyDropPivotTarget_1 = require("./bodyDropPivotTarget");
-var constants_1 = require("../constants");
+var constants_1 = require("../constants/constants");
 var beanStub_1 = require("../context/beanStub");
 var DropType;
 (function (DropType) {

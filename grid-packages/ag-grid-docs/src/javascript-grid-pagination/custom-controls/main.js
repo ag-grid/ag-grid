@@ -1,11 +1,12 @@
+var cellRenderer = function(params) {
+    return parseInt(params.node.id) + 1;
+};
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {
         headerName: '#',
         width: 50,
-        cellRenderer: function(params) {
-            return parseInt(params.node.id) + 1;
-        }
+        cellRenderer: cellRenderer
     },
     { headerName: 'Athlete', field: 'athlete', width: 150 },
     { headerName: 'Age', field: 'age', width: 90 },

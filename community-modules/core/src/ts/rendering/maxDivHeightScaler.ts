@@ -3,7 +3,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
-import { _ } from "../utils";
+import { getMaxDivHeight } from "../utils/browser";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -46,7 +46,7 @@ export class MaxDivHeightScaler extends BeanStub {
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.maxDivHeight = _.getMaxDivHeight();
+        this.maxDivHeight = getMaxDivHeight();
     }
 
     public registerGridComp(gridPanel: GridPanel): void {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,13 +28,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var agAbstractField_1 = require("./agAbstractField");
 var component_1 = require("./component");
 var context_1 = require("../context/context");
-var constants_1 = require("../constants");
-var utils_1 = require("../utils");
+var string_1 = require("../utils/string");
+var dom_1 = require("../utils/dom");
+var array_1 = require("../utils/array");
+var keyCode_1 = require("../constants/keyCode");
+var aria_1 = require("../utils/aria");
 var AgList = /** @class */ (function (_super) {
     __extends(AgList, _super);
     function AgList(cssIdentifier) {
         if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
-        var _this = _super.call(this, AgList.getTemplate(cssIdentifier)) || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-list ag-" + cssIdentifier + "-list\" role=\"listbox\"></div>") || this;
         _this.cssIdentifier = cssIdentifier;
         _this.options = [];
         _this.itemEls = [];
@@ -43,13 +46,10 @@ var AgList = /** @class */ (function (_super) {
     AgList.prototype.init = function () {
         this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     };
-    AgList.getTemplate = function (cssIdentifier) {
-        return "<div class=\"ag-list ag-" + cssIdentifier + "-list\"></div>";
-    };
     AgList.prototype.handleKeyDown = function (e) {
         var key = e.keyCode;
         switch (key) {
-            case constants_1.Constants.KEY_ENTER:
+            case keyCode_1.KeyCode.ENTER:
                 if (!this.highlightedEl) {
                     this.setValue(this.getValue());
                 }
@@ -58,9 +58,9 @@ var AgList = /** @class */ (function (_super) {
                     this.setValueByIndex(pos);
                 }
                 break;
-            case constants_1.Constants.KEY_DOWN:
-            case constants_1.Constants.KEY_UP:
-                var isDown = key === constants_1.Constants.KEY_DOWN;
+            case keyCode_1.KeyCode.DOWN:
+            case keyCode_1.KeyCode.UP:
+                var isDown = key === keyCode_1.KeyCode.DOWN;
                 var itemToHighlight = void 0;
                 e.preventDefault();
                 if (!this.highlightedEl) {
@@ -83,27 +83,23 @@ var AgList = /** @class */ (function (_super) {
     };
     AgList.prototype.addOption = function (listOption) {
         var value = listOption.value, text = listOption.text;
-        var sanitisedText = utils_1._.escape(text === undefined ? value : text);
+        var sanitisedText = string_1.escapeString(text || value);
         this.options.push({ value: value, text: sanitisedText });
-        this.renderOption(sanitisedText);
+        this.renderOption(value, sanitisedText);
         return this;
     };
-    AgList.prototype.renderOption = function (innerText) {
+    AgList.prototype.renderOption = function (value, text) {
         var _this = this;
         var itemEl = document.createElement('div');
-        var itemContentEl = document.createElement('span');
-        utils_1._.addCssClass(itemEl, 'ag-list-item');
-        utils_1._.addCssClass(itemEl, "ag-" + this.cssIdentifier + "-list-item");
+        itemEl.setAttribute('role', 'option');
+        dom_1.addCssClass(itemEl, 'ag-list-item');
+        dom_1.addCssClass(itemEl, "ag-" + this.cssIdentifier + "-list-item");
+        itemEl.innerHTML = text;
         itemEl.tabIndex = -1;
-        itemContentEl.innerHTML = innerText;
         this.itemEls.push(itemEl);
-        this.addManagedListener(itemEl, 'mouseover', function (e) { return _this.highlightItem(itemEl); });
+        this.addManagedListener(itemEl, 'mouseover', function () { return _this.highlightItem(itemEl); });
         this.addManagedListener(itemEl, 'mouseleave', function () { return _this.clearHighlighted(); });
-        this.addManagedListener(itemEl, 'click', function () {
-            var idx = _this.itemEls.indexOf(itemEl);
-            _this.setValueByIndex(idx);
-        });
-        itemEl.appendChild(itemContentEl);
+        this.addManagedListener(itemEl, 'click', function () { return _this.setValue(value); });
         this.getGui().appendChild(itemEl);
     };
     AgList.prototype.setValue = function (value, silent) {
@@ -115,7 +111,7 @@ var AgList = /** @class */ (function (_super) {
             this.reset();
             return this;
         }
-        var idx = utils_1._.findIndex(this.options, function (option) { return option.value === value; });
+        var idx = array_1.findIndex(this.options, function (option) { return option.value === value; });
         if (idx !== -1) {
             var option = this.options[idx];
             this.value = option.value;
@@ -139,7 +135,7 @@ var AgList = /** @class */ (function (_super) {
     AgList.prototype.refreshHighlighted = function () {
         var _this = this;
         this.clearHighlighted();
-        var idx = utils_1._.findIndex(this.options, function (option) { return option.value === _this.value; });
+        var idx = array_1.findIndex(this.options, function (option) { return option.value === _this.value; });
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
         }
@@ -154,15 +150,18 @@ var AgList = /** @class */ (function (_super) {
         if (!el.offsetParent) {
             return;
         }
-        utils_1._.radioCssClass(el, 'ag-active-item');
+        this.clearHighlighted();
         this.highlightedEl = el;
+        dom_1.addCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        aria_1.setAriaSelected(this.highlightedEl, true);
         this.highlightedEl.focus();
     };
     AgList.prototype.clearHighlighted = function () {
         if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
             return;
         }
-        utils_1._.removeCssClass(this.highlightedEl, 'ag-active-item');
+        dom_1.removeCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        aria_1.setAriaSelected(this.highlightedEl, false);
         this.highlightedEl = null;
     };
     AgList.prototype.fireChangeEvent = function () {
@@ -173,6 +172,7 @@ var AgList = /** @class */ (function (_super) {
         this.dispatchEvent({ type: AgList.EVENT_ITEM_SELECTED });
     };
     AgList.EVENT_ITEM_SELECTED = 'selectedItem';
+    AgList.ACTIVE_CLASS = 'ag-active-item';
     __decorate([
         context_1.PostConstruct
     ], AgList.prototype, "init", null);

@@ -2,33 +2,30 @@ import { Autowired } from '../context/context';
 import { Events, CheckboxChangedEvent } from "../events";
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
-import { AgAbstractInputField } from './agAbstractInputField';
+import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
-import { _ } from '../utils';
+import { addOrRemoveCssClass } from '../utils/dom';
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
-    protected className = 'ag-checkbox';
-    protected displayTag = 'input';
-    protected inputType = 'checkbox';
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+
     protected labelAlignment: LabelAlignment = 'right';
 
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-
-    private selected: boolean | undefined = false;
+    private selected?: boolean = false;
     private readOnly = false;
     private passive = false;
 
-    constructor() {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+    constructor(config?: IInputField, className = 'ag-checkbox', inputType = 'checkbox') {
+        super(config, className, inputType);
     }
 
     protected addInputListeners() {
         this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
     }
 
     public getNextValue(): boolean {
@@ -44,13 +41,13 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setReadOnly(readOnly: boolean): void {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
+        addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
     }
 
     public setDisabled(disabled: boolean): this {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
 
         return super.setDisabled(disabled);
     }
@@ -69,7 +66,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         return this.isSelected();
     }
 
-    public setValue(value: boolean | undefined, silent?: boolean): this {
+    public setValue(value?: boolean, silent?: boolean): this {
         this.refreshSelectedClass(value);
         this.setSelected(value, silent);
 
@@ -122,7 +119,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     private refreshSelectedClass(value?: boolean | null) {
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
-        _.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
+        addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     }
 }

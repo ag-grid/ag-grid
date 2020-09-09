@@ -28,11 +28,6 @@ var AggregationStage = /** @class */ (function (_super) {
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     AggregationStage.prototype.execute = function (params) {
-        // we don't do aggregation if doing legacy tree good
-        var doingLegacyTreeData = core_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) {
-            return null;
-        }
         // if changed path is active, it means we came from a) change detection or b) transaction update.
         // for both of these, if no value columns are present, it means there is nothing to aggregate now
         // and there is no cleanup to be done (as value columns don't change between transactions or change
@@ -210,23 +205,45 @@ var AggregationStage = /** @class */ (function (_super) {
         return values;
     };
     AggregationStage.prototype.aggregateValues = function (values, aggFuncOrString, column, rowNode) {
-        var aggFunction = typeof aggFuncOrString === 'string' ?
+        var aggFunc = typeof aggFuncOrString === 'string' ?
             this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
-        if (typeof aggFunction !== 'function') {
+        if (typeof aggFunc !== 'function') {
             console.error("ag-Grid: unrecognised aggregation function " + aggFuncOrString);
             return null;
         }
-        var aggFuncAny = aggFunction;
-        return aggFuncAny(values, {
+        var deprecationWarning = function () {
+            core_1._.doOnce(function () {
+                console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values');
+            }, 'aggregationStage.aggregateValues Deprecation');
+        };
+        var aggFuncAny = aggFunc;
+        var params = {
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
             rowNode: rowNode,
             data: rowNode ? rowNode.data : undefined,
             api: this.gridApi,
-            columnApi: this.columnApi
-        });
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext(),
+            // the three things below are for logging warning messages in case anyone is treating
+            // the params object as an array. in previous grid versions, we didn't pass params object,
+            // but passed values array instead.
+            forEach: function (callback, thisArg) {
+                deprecationWarning();
+                return values.forEach(callback, thisArg);
+            },
+            get length() {
+                deprecationWarning();
+                return values.length;
+            },
+            set length(val) {
+                deprecationWarning();
+                values.length = val;
+            }
+        }; // the "as any" is needed to allow the deprecation warning messages
+        return aggFuncAny(params);
     };
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
@@ -244,10 +261,10 @@ var AggregationStage = /** @class */ (function (_super) {
         core_1.Autowired('aggFuncService')
     ], AggregationStage.prototype, "aggFuncService", void 0);
     __decorate([
-        core_1.Autowired('aggFuncService')
+        core_1.Autowired('gridApi')
     ], AggregationStage.prototype, "gridApi", void 0);
     __decorate([
-        core_1.Autowired('aggFuncService')
+        core_1.Autowired('columnApi')
     ], AggregationStage.prototype, "columnApi", void 0);
     AggregationStage = __decorate([
         core_1.Bean('aggregationStage')

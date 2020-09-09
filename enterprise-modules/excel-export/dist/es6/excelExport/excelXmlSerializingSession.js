@@ -178,7 +178,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var typeTransformed = getType();
         var massageText = function (val) {
             if (_this.config.suppressTextAsCDATA) {
-                return _.escape(val);
+                return _.escapeString(val);
             }
             var cdataStart = '<![CDATA[';
             var cdataEnd = ']]>';

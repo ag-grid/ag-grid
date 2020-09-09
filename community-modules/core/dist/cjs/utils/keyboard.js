@@ -1,14 +1,14 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = require("../constants");
 var generic_1 = require("./generic");
 var browser_1 = require("./browser");
+var keyCode_1 = require("../constants/keyCode");
 var PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 var NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 var NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
@@ -33,7 +33,7 @@ function isEventFromPrintableCharacter(event) {
     // starts editing again with a blank value (two 'key down' events are fired). to
     // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
     // https://ag-grid.atlassian.net/browse/AG-605
-    if (isKeyPressed(event, constants_1.Constants.KEY_NEW_LINE)) {
+    if (isKeyPressed(event, keyCode_1.KeyCode.NEW_LINE)) {
         return false;
     }
     // no allowed printable chars have alt or ctrl key combinations

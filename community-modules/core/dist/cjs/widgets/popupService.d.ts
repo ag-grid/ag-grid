@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCore } from "../gridCore";
@@ -10,6 +10,16 @@ export interface PopupEventParams {
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
+}
+interface AddPopupParams {
+    modal?: boolean;
+    eChild: any;
+    closeOnEsc?: boolean;
+    closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
+    click?: MouseEvent | Touch | null;
+    alwaysOnTop?: boolean;
+    positionCallback?: () => void;
+    anchorToElement?: HTMLElement;
 }
 export declare class PopupService extends BeanStub {
     private gridOptionsWrapper;
@@ -72,8 +82,8 @@ export declare class PopupService extends BeanStub {
     private getParentRect;
     private keepYWithinBounds;
     private keepXWithinBounds;
-    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void, click?: MouseEvent | Touch | null): (event?: any) => void;
-    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (params?: PopupEventParams) => void;
+    private keepPopupPositionedRelativeTo;
+    addPopup(params: AddPopupParams): (params?: PopupEventParams) => void;
     private isEventFromCurrentPopup;
     isElementWithinCustomPopup(el: HTMLElement): boolean;
     private isEventSameChainAsOriginalEvent;
@@ -81,3 +91,4 @@ export declare class PopupService extends BeanStub {
     setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;
     bringPopupToFront(ePopup: HTMLElement): void;
 }
+export {};

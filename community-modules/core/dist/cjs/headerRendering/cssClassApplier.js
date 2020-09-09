@@ -1,29 +1,30 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
+var generic_1 = require("../utils/generic");
+var dom_1 = require("../utils/dom");
 var CssClassApplier = /** @class */ (function () {
     function CssClassApplier() {
     }
     CssClassApplier.addHeaderClassesFromColDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (utils_1._.missing(abstractColDef)) {
+        if (generic_1.missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     };
     CssClassApplier.addToolPanelClassesFromColDef = function (abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (utils_1._.missing(abstractColDef)) {
+        if (generic_1.missing(abstractColDef)) {
             return;
         }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     };
     CssClassApplier.addColumnClassesFromCollDef = function (classesOrFunc, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup) {
-        if (utils_1._.missing(classesOrFunc)) {
+        if (generic_1.missing(classesOrFunc)) {
             return;
         }
         var classToUse;
@@ -45,11 +46,11 @@ var CssClassApplier = /** @class */ (function () {
             classToUse = classesOrFunc;
         }
         if (typeof classToUse === 'string') {
-            utils_1._.addCssClass(eHeaderCell, classToUse);
+            dom_1.addCssClass(eHeaderCell, classToUse);
         }
         else if (Array.isArray(classToUse)) {
             classToUse.forEach(function (cssClassItem) {
-                utils_1._.addCssClass(eHeaderCell, cssClassItem);
+                dom_1.addCssClass(eHeaderCell, cssClassItem);
             });
         }
     };

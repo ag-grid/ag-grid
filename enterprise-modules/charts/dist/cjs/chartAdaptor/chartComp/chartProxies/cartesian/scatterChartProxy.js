@@ -38,8 +38,40 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    ScatterChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('scatter.series.scatter');
+        options.seriesDefaults = {
+            paired: seriesDefaults.paired,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity,
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle,
+        };
+        return options;
+    };
     ScatterChartProxy.prototype.createChart = function (options) {
-        return ag_charts_community_1.ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [__assign({ type: 'number', position: 'bottom' }, options.xAxis), __assign({ type: 'number', position: 'left' }, options.yAxis)];
+        return ag_charts_community_1.AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     ScatterChartProxy.prototype.update = function (params) {
         if (params.fields.length < 2) {
@@ -50,12 +82,12 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         var testDatum = params.data[0];
-        var xValuesAreDates = seriesDefinitions.map(function (d) { return d.xField.colId; }).map(function (xKey) { return testDatum && testDatum[xKey]; }).every(function (test) { return typeChecker_1.isDate(test); });
+        var xValuesAreDates = seriesDefinitions
+            .map(function (d) { return d.xField.colId; })
+            .map(function (xKey) { return testDatum && testDatum[xKey]; })
+            .every(function (test) { return typeChecker_1.isDate(test); });
         this.updateAxes(xValuesAreDates ? 'time' : 'number');
         var chart = this.chart;
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var seriesOptions = __assign({ type: "scatter" }, seriesDefaults);
-        var labelFieldDefinition = params.category.id === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = core_1._.findIndex(seriesDefinitions, function (s) {
                 return s.xField.colId === series.xKey &&
@@ -70,10 +102,17 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var labelFieldDefinition = params.category.id === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var previousSeries = undefined;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
             var existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
-            var series = existingSeries || ag_charts_community_1.ChartBuilder.createSeries(seriesOptions);
+            var marker = __assign({}, seriesDefaults.marker);
+            if (marker.type) { // deprecated
+                marker.shape = marker.type;
+                delete marker.type;
+            }
+            var series = existingSeries || ag_charts_community_1.AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'scatter', fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'scatter.series');
             if (!series) {
                 return;
             }
@@ -115,8 +154,8 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: isBubble ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 shape: 'circle',
                 enabled: true,
-                size: isBubble ? 30 : 6,
-                minSize: isBubble ? 6 : undefined,
+                size: 6,
+                maxSize: 30,
                 strokeWidth: 1,
             }, tooltip: {
                 enabled: true,

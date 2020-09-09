@@ -2,8 +2,10 @@ import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
 
+let rtlNegativeScroll: boolean;
+
 export function addCssClass(element: HTMLElement, className: string) {
-    if (!className || className.length === 0) { return; }
+    if (!element || !className || className.length === 0) { return; }
 
     if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(value => addCssClass(element, value));
@@ -29,6 +31,13 @@ export function addCssClass(element: HTMLElement, className: string) {
 }
 
 export function removeCssClass(element: HTMLElement, className: string) {
+    if (!element || !className || className.length === 0) { return; }
+
+    if (className.indexOf(' ') >= 0) {
+        className.split(' ').forEach(value => removeCssClass(element, value));
+        return;
+    }
+
     if (element.classList) {
         element.classList.remove(className);
     } else if (element.className && element.className.length > 0) {
@@ -102,12 +111,13 @@ export function setVisible(element: HTMLElement, visible: boolean) {
 
 export function setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
+    const addOrRemoveDisabledAttribute = disabled ?
+        (e: HTMLElement) => e.setAttribute(attributeName, '') :
+        (e: HTMLElement) => e.removeAttribute(attributeName);
 
-    if (disabled) {
-        element.setAttribute(attributeName, '');
-    } else {
-        element.removeAttribute(attributeName);
-    }
+    addOrRemoveDisabledAttribute(element);
+
+    nodeListForEach(element.querySelectorAll('input'), input => addOrRemoveDisabledAttribute(input));
 }
 
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
@@ -117,7 +127,9 @@ export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest
         if (containsClass(element, cls)) {
             return true;
         }
+
         element = element.parentElement;
+
         if (maxNest && ++counter > maxNest) { break; }
     }
 
@@ -200,6 +212,34 @@ export function getAbsoluteWidth(el: HTMLElement): number {
     return Math.ceil(el.offsetWidth + marginWidth);
 }
 
+export function isRtlNegativeScroll(): boolean {
+    if (typeof rtlNegativeScroll === "boolean") {
+        return rtlNegativeScroll;
+    }
+
+    const template = document.createElement('div');
+    template.style.direction = 'rtl';
+    template.style.width = '1px';
+    template.style.height = '1px';
+    template.style.position = 'fixed';
+    template.style.top = '0px';
+    template.style.overflow = 'hidden';
+    template.dir = 'rtl';
+    template.innerHTML = /* html */
+        `<div style="width: 2px">
+            <span style="display: inline-block; width: 1px"></span>
+            <span style="display: inline-block; width: 1px"></span>
+        </div>`;
+
+    document.body.appendChild(template);
+
+    template.scrollLeft = 1;
+    rtlNegativeScroll = template.scrollLeft === 0;
+    document.body.removeChild(template);
+
+    return rtlNegativeScroll;
+}
+
 export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
     let scrollLeft = element.scrollLeft;
 
@@ -207,8 +247,7 @@ export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
 
-        // Get Chrome to return the same value as well
-        if (isBrowserChrome()) {
+        if (isBrowserChrome() && !isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
         }
     }
@@ -219,15 +258,12 @@ export function getScrollLeft(element: HTMLElement, rtl: boolean): number {
 export function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
         // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-        if (isBrowserSafari() || isBrowserChrome()) {
+        if (isRtlNegativeScroll()) {
+            value *= -1;
+        } else if (isBrowserSafari() || isBrowserChrome()) {
             value = element.scrollWidth - element.clientWidth - value;
         }
-        // Firefox uses negative numbers when doing RTL scrolling
-        if (isBrowserFirefox()) {
-            value *= -1;
-        }
     }
-
     element.scrollLeft = value;
 }
 
@@ -464,14 +500,13 @@ export function isNodeOrElement(o: any) {
  * @returns {Node[]}
  */
 export function copyNodeList(nodeList: NodeList): Node[] {
-    const childCount = nodeList ? nodeList.length : 0;
-    const res: Node[] = [];
+    if (nodeList == null) { return []; }
 
-    for (let i = 0; i < childCount; i++) {
-        res.push(nodeList[i]);
-    }
+    const result: Node[] = [];
 
-    return res;
+    nodeListForEach(nodeList, node => result.push(node));
+
+    return result;
 }
 
 export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
@@ -492,5 +527,21 @@ export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
         // isNodeSelected returns back undefined if it's a group and the children
         // are a mix of selected and unselected
         eCheckbox.indeterminate = true;
+    }
+}
+
+export function addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
+    if (value == null) {
+        element.removeAttribute(name);
+    } else {
+        element.setAttribute(name, value.toString());
+    }
+}
+
+export function nodeListForEach<T extends Node>(nodeList: NodeListOf<T>, action: (value: T) => void): void {
+    if (nodeList == null) { return; }
+
+    for (let i = 0; i < nodeList.length; i++) {
+        action(nodeList[i]);
     }
 }

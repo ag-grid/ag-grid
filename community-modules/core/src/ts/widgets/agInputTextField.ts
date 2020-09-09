@@ -1,19 +1,21 @@
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
-import { _ } from '../utils';
+import { some } from '../utils/array';
+import { exists } from '../utils/generic';
 
-export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
-    protected className = 'ag-text-field';
-    protected displayTag = 'input';
-    protected inputType = 'text';
+export interface ITextInputField extends IInputField {
+    allowedCharPattern?: string;
+}
 
-    protected config: IInputField;
+export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string, ITextInputField> {
+    constructor(config?: ITextInputField, className = 'ag-text-field', inputType = 'text') {
+        super(config, className, inputType);
+    }
 
-    constructor(config?: IInputField) {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+    protected postConstruct() {
+        super.postConstruct();
 
-        if (config) {
-            this.config = config;
+        if (this.config.allowedCharPattern) {
+            this.preventDisallowedCharacters();
         }
     }
 
@@ -21,9 +23,29 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         const ret = super.setValue(value, silent);
 
         if (this.eInput.value !== value) {
-            this.eInput.value = _.exists(value) ? value : '';
+            this.eInput.value = exists(value) ? value : '';
         }
 
         return ret;
+    }
+
+    private preventDisallowedCharacters(): void {
+        const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
+
+        const preventDisallowedCharacters = (event: KeyboardEvent) => {
+            if (event.key && !pattern.test(event.key)) {
+                event.preventDefault();
+            }
+        };
+
+        this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
+
+        this.addManagedListener(this.eInput, 'paste', e => {
+            const text = (e.clipboardData || e.clipboardData).getData('text');
+
+            if (some(text, (c: string) => !pattern.test(c))) {
+                e.preventDefault();
+            }
+        });
     }
 }

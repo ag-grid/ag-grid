@@ -14,6 +14,6 @@ include '../documentation-main/documentation_header.php';
     real-time how different options affect charts using the <a href="../javascript-charts-api-explorer">API Explorer</a>.
 </p>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', null, [], ['showSnippets' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

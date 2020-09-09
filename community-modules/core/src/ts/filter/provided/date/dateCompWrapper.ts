@@ -59,4 +59,10 @@ export class DateCompWrapper {
             this.dateComp.setInputPlaceholder(placeholder);
         }
     }
+
+    public setInputAriaLabel(label: string): void {
+        if (this.dateComp && this.dateComp.setInputAriaLabel) {
+            this.dateComp.setInputAriaLabel(label);
+        }
+    }
 }

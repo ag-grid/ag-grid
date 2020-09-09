@@ -160,6 +160,7 @@ export class Events {
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     public static EVENT_FLASH_CELLS = 'flashCells';
+    public static EVENT_PAGINATION_PIXEL_OFFSET_CHANGED = 'paginationPixelOffsetChanged';
 
     public static EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
     public static EVENT_ROW_DRAG_MOVE = 'rowDragMove';

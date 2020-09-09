@@ -27,6 +27,43 @@ export declare enum LegendPosition {
     Bottom = "bottom",
     Left = "left"
 }
+export declare class LegendLabel extends Observable {
+    color: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize: number;
+    fontFamily: string;
+}
+export declare class LegendMarker extends Observable {
+    size: number;
+    /**
+     * If the marker type is set, the legend will always use that marker type for all its items,
+     * regardless of the type that comes from the `data`.
+     */
+    shape?: string | (new () => Marker);
+    /**
+     * Padding between the marker and the label within each legend item.
+     */
+    padding: number;
+    strokeWidth: number;
+}
+export declare class LegendItem extends Observable {
+    readonly marker: LegendMarker;
+    readonly label: LegendLabel;
+    /**
+     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
+     * padding between legend items.
+     */
+    paddingX: number;
+    /**
+     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
+     * padding between legend items.
+     */
+    paddingY: number;
+    constructor();
+}
 export declare class Legend extends Observable {
     static className: string;
     readonly id: string;
@@ -34,6 +71,7 @@ export declare class Legend extends Observable {
     readonly group: Group;
     private itemSelection;
     private oldSize;
+    readonly item: LegendItem;
     data: LegendDatum[];
     enabled: boolean;
     orientation: LegendOrientation;
@@ -43,28 +81,48 @@ export declare class Legend extends Observable {
      */
     spacing: number;
     /**
-     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
-     * spacing between legend items.
+     * @deprecated Please use {@link item.paddingX} instead.
      */
     layoutHorizontalSpacing: number;
     /**
-     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
-     * spacing between legend items.
+     * @deprecated Please use {@link item.paddingY} instead.
      */
     layoutVerticalSpacing: number;
     /**
-     * Spacing between the marker and the label within each legend item.
+     * @deprecated Please use {@link item.marker.padding} instead.
      */
     itemSpacing: number;
-    markerShape?: string | (new () => Marker);
+    /**
+     * @deprecated Please use {@link item.marker.shape} instead.
+     */
+    markerShape: string | (new () => Marker) | undefined;
+    /**
+     * @deprecated Please use {@link item.marker.size} instead.
+     */
     markerSize: number;
+    /**
+     * @deprecated Please use {@link item.marker.strokeWidth} instead.
+     */
     strokeWidth: number;
+    /**
+     * @deprecated Please use {@link item.label.color} instead.
+     */
     color: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
+    /**
+     * @deprecated Please use {@link item.label.fontStyle} instead.
+     */
+    fontStyle: FontStyle | undefined;
+    /**
+     * @deprecated Please use {@link item.label.fontWeight} instead.
+     */
+    fontWeight: FontWeight | undefined;
+    /**
+     * @deprecated Please use {@link item.label.fontSize} instead.
+     */
     fontSize: number;
+    /**
+     * @deprecated Please use {@link item.label.fontFamily} instead.
+     */
     fontFamily: string;
     constructor();
     private _size;

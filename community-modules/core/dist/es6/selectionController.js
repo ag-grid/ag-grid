@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,9 +32,10 @@ import { Qualifier } from "./context/context";
 import { Events } from "./events";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ChangedPath } from "./utils/changedPath";
-import { _ } from './utils';
+import { iterateObject } from "./utils/object";
+import { exists } from "./utils/generic";
 var SelectionController = /** @class */ (function (_super) {
     __extends(SelectionController, _super);
     function SelectionController() {
@@ -59,7 +60,7 @@ var SelectionController = /** @class */ (function (_super) {
     };
     SelectionController.prototype.getSelectedNodes = function () {
         var selectedNodes = [];
-        _.iterateObject(this.selectedNodes, function (key, rowNode) {
+        iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode) {
                 selectedNodes.push(rowNode);
             }
@@ -68,7 +69,7 @@ var SelectionController = /** @class */ (function (_super) {
     };
     SelectionController.prototype.getSelectedRows = function () {
         var selectedRows = [];
-        _.iterateObject(this.selectedNodes, function (key, rowNode) {
+        iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
@@ -77,7 +78,7 @@ var SelectionController = /** @class */ (function (_super) {
     };
     SelectionController.prototype.removeGroupsFromSelection = function () {
         var _this = this;
-        _.iterateObject(this.selectedNodes, function (key, rowNode) {
+        iterateObject(this.selectedNodes, function (key, rowNode) {
             if (rowNode && rowNode.group) {
                 _this.selectedNodes[rowNode.id] = undefined;
             }
@@ -118,7 +119,7 @@ var SelectionController = /** @class */ (function (_super) {
         var _this = this;
         var groupsToRefresh = {};
         var updatedCount = 0;
-        _.iterateObject(this.selectedNodes, function (key, otherRowNode) {
+        iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 var rowNode = _this.selectedNodes[otherRowNode.id];
                 updatedCount += rowNode.setSelectedParams({
@@ -131,7 +132,7 @@ var SelectionController = /** @class */ (function (_super) {
                 }
             }
         });
-        _.iterateObject(groupsToRefresh, function (key, group) {
+        iterateObject(groupsToRefresh, function (key, group) {
             group.calculateSelectedFromChildren();
         });
         return updatedCount;
@@ -165,16 +166,16 @@ var SelectionController = /** @class */ (function (_super) {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     SelectionController.prototype.syncInOldRowNode = function (rowNode, oldNode) {
-        var oldNodeHasDifferentId = _.exists(oldNode) && (rowNode.id !== oldNode.id);
+        var oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId) {
-            var oldNodeSelected = _.exists(this.selectedNodes[oldNode.id]);
+            var oldNodeSelected = exists(this.selectedNodes[oldNode.id]);
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id] = oldNode;
             }
         }
     };
     SelectionController.prototype.syncInNewRowNode = function (rowNode) {
-        if (_.exists(this.selectedNodes[rowNode.id])) {
+        if (exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         }
@@ -228,7 +229,7 @@ var SelectionController = /** @class */ (function (_super) {
     };
     SelectionController.prototype.isEmpty = function () {
         var count = 0;
-        _.iterateObject(this.selectedNodes, function (nodeId, rowNode) {
+        iterateObject(this.selectedNodes, function (nodeId, rowNode) {
             if (rowNode) {
                 count++;
             }
@@ -248,7 +249,7 @@ var SelectionController = /** @class */ (function (_super) {
             clientSideRowModel.forEachNodeAfterFilter(callback);
         }
         else {
-            _.iterateObject(this.selectedNodes, function (id, rowNode) {
+            iterateObject(this.selectedNodes, function (id, rowNode) {
                 // remember the reference can be to null, as we never 'delete' from the map
                 if (rowNode) {
                     callback(rowNode);

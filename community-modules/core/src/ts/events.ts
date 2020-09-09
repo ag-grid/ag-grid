@@ -179,7 +179,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
 export interface ChartOptionsChanged extends AgGridEvent {
     chartId: string;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName: string;
     chartOptions: ChartOptions<any>;
 }
 
@@ -211,6 +211,9 @@ export interface PaginationChangedEvent extends AgGridEvent {
     keepRenderedRows?: boolean;
     newData?: boolean;
     newPage: boolean;
+}
+
+export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 }
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
@@ -265,6 +268,7 @@ export interface ColumnEvent extends AgGridEvent {
 
 export interface ColumnResizedEvent extends ColumnEvent {
     finished: boolean;
+    flexColumns: Column[];
 }
 
 export interface ColumnPivotChangedEvent extends ColumnEvent { }
@@ -344,7 +348,10 @@ export interface CellContextMenuEvent extends CellEvent { }
 
 export interface CellEditingStartedEvent extends CellEvent { }
 
-export interface CellEditingStoppedEvent extends CellEvent { }
+export interface CellEditingStoppedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+}
 
 export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Column, Component, Events, RefSelector, PostConstruct, Constants, _ } from "@ag-grid-community/core";
+import { Autowired, Column, Component, Events, RefSelector, PostConstruct, _, KeyCode } from "@ag-grid-community/core";
 var ToolPanelFilterComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterComp, _super);
     function ToolPanelFilterComp(hideHeader) {
@@ -39,7 +39,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
-            if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.keyCode === KeyCode.ENTER) {
                 _this.toggleExpanded();
             }
         });
@@ -87,7 +87,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         if (this.expanded)
             return;
         this.expanded = true;
-        var container = _.loadTemplate(/* html */ "<div class=\"ag-filter-toolpanel-instance-filter\" />");
+        var container = _.loadTemplate(/* html */ "<div class=\"ag-filter-toolpanel-instance-filter\"></div>");
         var filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {
             filterPromise.then(function (filter) {
@@ -95,7 +95,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
                 container.appendChild(filter.getGui());
                 _this.agFilterToolPanelBody.appendChild(container);
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({});
+                    filter.afterGuiAttached({ container: 'toolPanel' });
                 }
             });
         }
@@ -120,8 +120,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
         // scroll position in the filter list panel
-        var isSetFilter = filter.refreshVirtualList;
-        if (isSetFilter) {
+        if (typeof filter.refreshVirtualList === 'function') {
             filter.refreshVirtualList();
         }
     };
@@ -137,7 +136,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         }
         this.collapse();
     };
-    ToolPanelFilterComp.TEMPLATE = "\n        <div class=\"ag-filter-toolpanel-instance\">\n            <div class=\"ag-filter-toolpanel-header ag-filter-toolpanel-instance-header\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-instance-body ag-filter\" ref=\"agFilterToolPanelBody\" />\n        </div>";
+    ToolPanelFilterComp.TEMPLATE = "\n        <div class=\"ag-filter-toolpanel-instance\">\n            <div class=\"ag-filter-toolpanel-header ag-filter-toolpanel-instance-header\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-instance-body ag-filter\" ref=\"agFilterToolPanelBody\"></div>\n        </div>";
     __decorate([
         RefSelector('eFilterToolPanelHeader')
     ], ToolPanelFilterComp.prototype, "eFilterToolPanelHeader", void 0);

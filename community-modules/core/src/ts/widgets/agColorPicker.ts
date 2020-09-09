@@ -3,21 +3,15 @@ import { AgDialog } from "./agDialog";
 import { IAgLabel } from "./agAbstractLabel";
 import { AgPickerField } from "./agPickerField";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { addCssClass } from "../utils/dom";
 
 interface ColorPickerConfig extends IAgLabel {
     color: string;
 }
 
 export class AgColorPicker extends AgPickerField<HTMLElement, string> {
-
-    protected displayTag = 'div';
-    protected className = 'ag-color-picker';
-    protected pickerIcon = 'colorPicker';
-
     constructor(config?: ColorPickerConfig) {
-        super();
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+        super(config, 'ag-color-picker', 'colorPicker');
 
         if (config && config.color) {
             this.value = config.color;
@@ -32,9 +26,9 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         }
     }
 
-    protected showPicker() {
+    public showPicker() {
         const eGuiRect = this.getGui().getBoundingClientRect();
-        const colorDialog = new AgDialog({
+        const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
             hideTitleBar: true,
@@ -43,15 +37,13 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             height: 250,
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
-        });
-        this.createBean(colorDialog);
+        }));
 
-        _.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
+        this.isPickerDisplayed = true;
 
-        const colorPanel = new AgColorPanel({
-            picker: this
-        });
-        this.createBean(colorPanel);
+        addCssClass(colorDialog.getGui(), 'ag-color-dialog');
+
+        const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
         colorPanel.addDestroyFunc(() => {
             if (colorDialog.isAlive()) {
@@ -64,12 +56,11 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         colorPanel.setValue(this.getValue());
 
         colorDialog.addDestroyFunc(() => {
-            const wasDestroying = this.isDestroyingPicker;
-
             // here we check if the picker was already being
-            // destroyed to avoid a stackoverflow
-            if (!wasDestroying) {
+            // destroyed to avoid a stack overflow
+            if (!this.isDestroyingPicker) {
                 this.isDestroyingPicker = true;
+
                 if (colorPanel.isAlive()) {
                     this.destroyBean(colorPanel);
                 }
@@ -80,6 +71,8 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             if (this.isAlive()) {
                 this.getFocusableElement().focus();
             }
+
+            this.isPickerDisplayed = false;
         });
 
         return colorDialog;

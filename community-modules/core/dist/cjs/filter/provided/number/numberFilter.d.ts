@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Promise } from '../../../utils';
@@ -10,14 +10,17 @@ export interface NumberFilterModel extends ISimpleFilterModel {
     filterTo?: number;
 }
 export interface INumberFilterParams extends IScalarFilterParams {
+    allowedCharPattern?: string;
+    numberParser?: (text: string) => number;
 }
 export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
-    private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
-    private eValueFrom1;
-    private eValueFrom2;
-    private eValueTo1;
-    private eValueTo2;
+    private readonly eValueFrom1;
+    private readonly eValueTo1;
+    private readonly eValueFrom2;
+    private readonly eValueTo2;
+    private numberFilterParams;
+    constructor();
     protected mapRangeFromModel(filterModel: NumberFilterModel): {
         from: number;
         to: number;
@@ -30,7 +33,7 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     protected setParams(params: INumberFilterParams): void;
     private addValueChangedListeners;
     private resetPlaceholder;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;
     protected isConditionUiComplete(position: ConditionPosition): boolean;

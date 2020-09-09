@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var eventKeys_1 = require("../eventKeys");
-var utils_1 = require("../utils");
+var browser_1 = require("../utils/browser");
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
  * the max div height actually allows.
@@ -46,7 +46,7 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
     MaxDivHeightScaler.prototype.postConstruct = function () {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.maxDivHeight = utils_1._.getMaxDivHeight();
+        this.maxDivHeight = browser_1.getMaxDivHeight();
     };
     MaxDivHeightScaler.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;

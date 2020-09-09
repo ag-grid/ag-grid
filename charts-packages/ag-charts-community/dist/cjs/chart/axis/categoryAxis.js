@@ -25,6 +25,26 @@ var CategoryAxis = /** @class */ (function (_super) {
         _this = _super.call(this, scale) || this;
         return _this;
     }
+    Object.defineProperty(CategoryAxis.prototype, "paddingInner", {
+        get: function () {
+            return this.scale.paddingInner;
+        },
+        set: function (value) {
+            this.scale.paddingInner = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(CategoryAxis.prototype, "paddingOuter", {
+        get: function () {
+            return this.scale.paddingOuter;
+        },
+        set: function (value) {
+            this.scale.paddingOuter = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     CategoryAxis.className = 'CategoryAxis';
     CategoryAxis.type = 'category';
     return CategoryAxis;

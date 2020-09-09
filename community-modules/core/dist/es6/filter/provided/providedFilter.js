@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,11 +23,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from '../../widgets/component';
 import { Autowired, PostConstruct } from '../../context/context';
-import { Constants } from '../../constants';
+import { Constants } from '../../constants/constants';
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
+import { DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { convertToSet } from '../../utils/set';
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -35,8 +37,9 @@ import { debounce } from '../../utils/function';
  */
 var ProvidedFilter = /** @class */ (function (_super) {
     __extends(ProvidedFilter, _super);
-    function ProvidedFilter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function ProvidedFilter(filterNameKey) {
+        var _this = _super.call(this) || this;
+        _this.filterNameKey = filterNameKey;
         _this.applyActive = false;
         _this.hidePopup = null;
         // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
@@ -48,6 +51,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
         _this.appliedModel = null;
         return _this;
     }
+    ProvidedFilter.prototype.getFilterTitle = function () {
+        return this.translate(this.filterNameKey);
+    };
     /** @deprecated */
     ProvidedFilter.prototype.onFilterChanged = function () {
         console.warn("ag-Grid: you should not call onFilterChanged() directly on the filter, please call\n        gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was\n        a method that existed on an old version of the filters that was not intended for public use.");
@@ -58,8 +64,12 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return !!this.appliedModel;
     };
     ProvidedFilter.prototype.postConstruct = function () {
-        var templateString = /* html */ "\n            <div>\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </div>";
-        this.setTemplate(templateString);
+        this.resetTemplate(); // do this first to create the DOM
+        _super.prototype.postConstruct.call(this);
+    };
+    ProvidedFilter.prototype.resetTemplate = function (paramsMap) {
+        var templateString = /* html */ "\n            <div class=\"ag-filter-wrapper\">\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </div>";
+        this.setTemplate(templateString, paramsMap);
     };
     ProvidedFilter.prototype.init = function (params) {
         var _this = this;
@@ -92,7 +102,6 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (!buttons || buttons.length < 1) {
             return;
         }
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var eButtonsPanel = document.createElement('div');
         addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
         var addButton = function (type) {
@@ -100,19 +109,19 @@ var ProvidedFilter = /** @class */ (function (_super) {
             var clickListener;
             switch (type) {
                 case 'apply':
-                    text = translate('applyFilter', 'Apply Filter');
+                    text = _this.translate('applyFilter');
                     clickListener = function (e) { return _this.onBtApply(false, false, e); };
                     break;
                 case 'clear':
-                    text = translate('clearFilter', 'Clear Filter');
+                    text = _this.translate('clearFilter');
                     clickListener = function () { return _this.onBtClear(); };
                     break;
                 case 'reset':
-                    text = translate('resetFilter', 'Reset Filter');
+                    text = _this.translate('resetFilter');
                     clickListener = function () { return _this.onBtReset(); };
                     break;
                 case 'cancel':
-                    text = translate('cancelFilter', 'Cancel Filter');
+                    text = _this.translate('cancelFilter');
                     clickListener = function (e) { _this.onBtCancel(e); };
                     break;
                 default:
@@ -123,7 +132,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
-        new Set(buttons).forEach(function (type) { return addButton(type); });
+        convertToSet(buttons).forEach(function (type) { return addButton(type); });
         this.getGui().appendChild(eButtonsPanel);
     };
     ProvidedFilter.checkForDeprecatedParams = function (params) {
@@ -216,7 +225,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         }
         var closeOnApply = this.providedFilterParams.closeOnApply;
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
-        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+        if (closeOnApply && this.applyActive && !afterFloatingFilter && !afterDataChange) {
             this.close(e);
         }
     };
@@ -264,6 +273,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
         }
     };
     ProvidedFilter.prototype.afterGuiAttached = function (params) {
+        if (params == null) {
+            return;
+        }
         this.hidePopup = params.hidePopup;
     };
     // static, as used by floating filter also
@@ -285,6 +297,10 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.hidePopup = null;
         _super.prototype.destroy.call(this);
     };
+    ProvidedFilter.prototype.translate = function (key) {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+    };
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ProvidedFilter.prototype, "gridOptionsWrapper", void 0);
@@ -295,5 +311,5 @@ var ProvidedFilter = /** @class */ (function (_super) {
         PostConstruct
     ], ProvidedFilter.prototype, "postConstruct", null);
     return ProvidedFilter;
-}(Component));
+}(ManagedFocusComponent));
 export { ProvidedFilter };

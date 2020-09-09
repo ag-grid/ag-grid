@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var agCheckbox_1 = require("../../widgets/agCheckbox");
 var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
 var events_1 = require("../../events");
-var constants_1 = require("../../constants");
+var constants_1 = require("../../constants/constants");
 var SelectAllFeature = /** @class */ (function (_super) {
     __extends(SelectAllFeature, _super);
     function SelectAllFeature(cbSelectAll, column) {
@@ -44,10 +44,13 @@ var SelectAllFeature = /** @class */ (function (_super) {
     }
     SelectAllFeature.prototype.postConstruct = function () {
         this.showOrHideSelectAll();
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, agCheckbox_1.AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
+        this.refreshSelectAllLabel();
     };
     SelectAllFeature.prototype.showOrHideSelectAll = function () {
         this.cbSelectAllVisible = this.isCheckboxSelection();
@@ -95,7 +98,12 @@ var SelectAllFeature = /** @class */ (function (_super) {
         var selectionCount = this.getSelectionCount();
         var allSelected = this.getNextCheckboxState(selectionCount);
         this.cbSelectAll.setValue(allSelected);
+        this.refreshSelectAllLabel();
         this.processingEventFromCheckbox = false;
+    };
+    SelectAllFeature.prototype.refreshSelectAllLabel = function () {
+        var checked = this.cbSelectAll.getValue();
+        this.cbSelectAll.setInputAriaLabel("Press Space to toggle all rows selection (" + (checked ? 'checked' : 'unchecked') + ")");
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
         var _this = this;

@@ -23,9 +23,11 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function setYNames() {
-    chart.series[0].yNames = ['Sweaters Made', 'Hats Made'];
+    options.series[0].yNames = ['Sweaters Made', 'Hats Made'];
+    agCharts.AgChart.update(chart, options);
 }
 
 function resetYNames() {
-    chart.series[0].yNames = [];
+    options.series[0].yNames = [];
+    agCharts.AgChart.update(chart, options);
 }

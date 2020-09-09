@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '@ag-grid-community/react';
+import React, { Component } from 'react';
+import { AgGridReact } from '@ag-grid-community/react';
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
@@ -30,9 +30,7 @@ export default class extends Component {
         httpRequest.onreadystatechange = function() {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
-                this.setState(function(previous) {
-                    return Object.assign(previous, {rowData: httpResult});
-                });
+                this.setState({ rowData: httpResult });
             }
         }.bind(this);
     }
@@ -69,13 +67,11 @@ export default class extends Component {
     }
 
     setWidthAndHeight(width, height) {
-        this.setState(function(oldState) {
-            return Object.assign(oldState, {
-                style: {
-                    width: width,
-                    height: height
-                }
-            });
+        this.setState({
+            style: {
+                width: width,
+                height: height
+            }
         });
     }
 
@@ -87,7 +83,7 @@ export default class extends Component {
                     <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
                     <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
                 </div>
-                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-alpine">
+                <div style={{ height: 'calc(100% - 25px)' }} className="ag-theme-alpine">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}

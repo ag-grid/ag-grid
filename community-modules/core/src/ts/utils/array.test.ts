@@ -1,4 +1,4 @@
-import { areEqual, every, some, forEach, map, filter, reduce } from './array';
+import { areEqual, every, some, forEach, map, filter, reduce, forEachReverse } from './array';
 
 describe('areEqual', () => {
     it.each([
@@ -101,13 +101,26 @@ describe('forEach', () => {
         expect(() => forEach(value, () => { })).not.toThrow();
     });
 
-    it('executes for each value', () => {
-        let total = 0;
-        const add = (value: number) => { total = total + value; };
+    it('executes for each value in order', () => {
+        const result: number[] = [];
 
-        forEach([1, 4, 7], add);
+        forEach([1, 4, 7], value => result.push(value));
 
-        expect(total).toBe(12);
+        expect(result).toStrictEqual([1, 4, 7]);
+    });
+});
+
+describe('forEachReverse', () => {
+    it.each([undefined, null])('returns successfully if list is %s', value => {
+        expect(() => forEachReverse(value, () => { })).not.toThrow();
+    });
+
+    it('executes for each value in reverse order', () => {
+        const result: number[] = [];
+
+        forEachReverse([1, 4, 7], value => result.push(value));
+
+        expect(result).toStrictEqual([7, 4, 1]);
     });
 });
 

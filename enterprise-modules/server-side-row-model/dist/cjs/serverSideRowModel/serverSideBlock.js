@@ -135,7 +135,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
             // rowNodes by id
             var idToUse = this.createIdForIndex(index);
             rowNode.setDataAndId(data, idToUse);
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
             if (this.usingTreeData) {
                 var getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
                 if (core_1._.exists(getServerSideGroupKey) && getServerSideGroupKey) {
@@ -175,6 +174,11 @@ var ServerSideBlock = /** @class */ (function (_super) {
         if (this.usingTreeData || this.groupLevel) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
+        }
+        // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
+        // getting set, if it's a group node and colDef.autoHeight=true
+        if (core_1._.exists(data)) {
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
         }
     };
     ServerSideBlock.prototype.setChildCountIntoRowNode = function (rowNode) {

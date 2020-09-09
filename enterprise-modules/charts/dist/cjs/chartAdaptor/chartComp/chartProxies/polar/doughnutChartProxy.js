@@ -35,8 +35,38 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    DoughnutChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: __assign(__assign({}, seriesDefaults.label), { minRequiredAngle: seriesDefaults.label.minAngle }),
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle,
+        };
+        return options;
+    };
     DoughnutChartProxy.prototype.createChart = function (options) {
-        return ag_charts_community_1.ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        var agChartOptions = options;
+        agChartOptions.type = 'pie';
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [];
+        return ag_charts_community_1.AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     DoughnutChartProxy.prototype.update = function (params) {
         if (params.fields.length === 0) {
@@ -58,11 +88,9 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var offset = 0;
         params.fields.forEach(function (f, index) {
             var existingSeries = seriesMap[f.colId];
-            var seriesOptions = __assign(__assign({}, seriesDefaults), { type: "pie", field: {
-                    angleKey: f.colId,
-                }, showInLegend: index === 0, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }) });
+            var seriesOptions = __assign(__assign({}, seriesDefaults), { type: 'pie', angleKey: f.colId, showInLegend: index === 0, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer });
             var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            var pieSeries = existingSeries || ag_charts_community_1.ChartBuilder.createSeries(seriesOptions);
+            var pieSeries = existingSeries || ag_charts_community_1.AgChart.createComponent(seriesOptions, 'pie.series');
             pieSeries.angleName = f.displayName;
             pieSeries.labelKey = params.category.id;
             pieSeries.labelName = params.category.name;
@@ -89,7 +117,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
             if (calloutColors) {
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = strokes;
             }
             if (!existingSeries) {
                 seriesMap[f.colId] = pieSeries;

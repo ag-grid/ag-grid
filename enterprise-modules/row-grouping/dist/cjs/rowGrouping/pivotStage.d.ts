@@ -4,7 +4,6 @@ export declare class PivotStage extends BeanStub implements IRowNodeStage {
     private columnController;
     private pivotColDefService;
     private uniqueValues;
-    private pivotColumnGroupDefs;
     private pivotColumnDefs;
     private aggregationColumnsHashLastTime;
     private aggregationFuncsHashLastTime;

@@ -28,4 +28,5 @@ export declare class UndoRedoStack {
     pop(): UndoRedoAction;
     push(item: UndoRedoAction): void;
     clear(): void;
+    getCurrentStackSize(): number;
 }

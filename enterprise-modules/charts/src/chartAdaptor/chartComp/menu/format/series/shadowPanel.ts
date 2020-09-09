@@ -1,16 +1,16 @@
 import {
     AgColorPicker,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     Autowired,
     Component,
     DropShadowOptions,
     PostConstruct,
     RefSelector,
-    AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartController } from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
 
 export class ShadowPanel extends Component {
 

@@ -19,9 +19,7 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const { updateBetweenStrings, getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const generateGridPackageExamples = require('./example-generator').generateGridPackageExamples;
-const generateGridModuleExamples = require('./example-generator').generateGridModuleExamples;
-const generateChartExamples = require('./example-generator').generateChartExamples;
+const { generateGridExamples, generateChartExamples } = require('./example-generator');
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
@@ -46,7 +44,7 @@ const populateDevFolder = () => {
     const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], { cwd: '../../community-modules/vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
     const chartReact = gulp.src(['../../charts-packages/ag-charts-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-react/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
-    const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
+    const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/dist/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
     const chartVue = gulp.src(['../../charts-packages/ag-charts-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-vue`));
 
     const packageCommunity = gulp.src(['../../grid-packages/ag-grid-community/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-community/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
@@ -70,6 +68,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/grid-angular-boilerplate/',
         './dist/example-runner/grid-vue-boilerplate/',
         './dist/example-runner/grid-react-boilerplate/',
+        './dist/example-runner/grid-reactFunctional-boilerplate/',
         './dist/example-runner/chart-angular-boilerplate/',
         './dist/example-runner/chart-vue-boilerplate/',
         './dist/example-runner/chart-react-boilerplate/',
@@ -221,12 +220,8 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest('./dist'));
 };
 
-gulp.task('generate-grid-package-examples', (done) => {
-    generateGridPackageExamples.bind(null, '*', null, done)();
-});
-
-gulp.task('generate-grid-module-examples', (done) => {
-    generateGridModuleExamples.bind(null, '*', null, done)();
+gulp.task('generate-grid-examples', (done) => {
+    generateGridExamples.bind(null, '*', null, done)();
 });
 
 gulp.task('generate-chart-examples', (done) => {
@@ -240,10 +235,12 @@ gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('generate-examples', parallel('generate-grid-package-examples', 'generate-grid-module-examples', 'generate-chart-examples'));
+gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('generate-examples', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
 gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-gulp.task('serve',        require('./dev-server'));
+gulp.task('serve', require('./dev-server').bind(null, false, true));
+gulp.task('serve-core-only', require('./dev-server').bind(null, true, true));
+gulp.task('serve-with-formatting', require('./dev-server').bind(null, false, false));

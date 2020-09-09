@@ -1,10 +1,9 @@
-function CustomTooltip () {}
+function CustomTooltip() { }
 
 CustomTooltip.prototype.init = function(params) {
     var eGui = this.eGui = document.createElement('div');
     var color = params.color || 'white';
     var data = params.api.getDisplayedRowAtIndex(params.rowIndex).data;
-
 
     eGui.classList.add('custom-tooltip');
     eGui.style['background-color'] = color;

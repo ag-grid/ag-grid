@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data,
     title: {
         text: 'Most Populous Cities (2019)',
@@ -21,8 +22,8 @@ var options = {
             labelKey: 'city',
             labelName: 'City',
             marker: {
-                size: 100,
-                minSize: 5,
+                size: 5,
+                maxSize: 100,
             },
             fillOpacity: 0.5,
         }

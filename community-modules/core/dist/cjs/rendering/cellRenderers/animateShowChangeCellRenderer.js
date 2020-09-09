@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
-var utils_1 = require("../../utils");
+var generic_1 = require("../../utils/generic");
+var dom_1 = require("../../utils/dom");
 var ARROW_UP = '\u2191';
 var ARROW_DOWN = '\u2193';
 var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
@@ -46,7 +47,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
     AnimateShowChangeCellRenderer.prototype.showDelta = function (params, delta) {
         var absDelta = Math.abs(delta);
         var valueFormatted = params.formatValue(absDelta);
-        var valueToUse = utils_1._.exists(valueFormatted) ? valueFormatted : absDelta;
+        var valueToUse = generic_1.exists(valueFormatted) ? valueFormatted : absDelta;
         var deltaUp = (delta >= 0);
         if (deltaUp) {
             this.eDelta.innerHTML = ARROW_UP + valueToUse;
@@ -55,8 +56,8 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
             // because negative, use ABS to remove sign
             this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
         }
-        utils_1._.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
-        utils_1._.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
+        dom_1.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
+        dom_1.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
     };
     AnimateShowChangeCellRenderer.prototype.setTimerToRemoveDelta = function () {
         var _this = this;
@@ -72,22 +73,22 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         }, 2000);
     };
     AnimateShowChangeCellRenderer.prototype.hideDeltaValue = function () {
-        utils_1._.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
-        utils_1._.clearElement(this.eDelta);
+        dom_1.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
+        dom_1.clearElement(this.eDelta);
     };
     AnimateShowChangeCellRenderer.prototype.refresh = function (params) {
         var value = params.value;
         if (value === this.lastValue) {
             return;
         }
-        if (utils_1._.exists(params.valueFormatted)) {
+        if (generic_1.exists(params.valueFormatted)) {
             this.eValue.innerHTML = params.valueFormatted;
         }
-        else if (utils_1._.exists(params.value)) {
+        else if (generic_1.exists(params.value)) {
             this.eValue.innerHTML = value;
         }
         else {
-            utils_1._.clearElement(this.eValue);
+            dom_1.clearElement(this.eValue);
         }
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
@@ -101,7 +102,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
         // highlight the current value, but only if it's not new, otherwise it
         // would get highlighted first time the value is shown
         if (this.lastValue) {
-            utils_1._.addCssClass(this.eValue, 'ag-value-change-value-highlight');
+            dom_1.addCssClass(this.eValue, 'ag-value-change-value-highlight');
         }
         this.setTimerToRemoveDelta();
         this.lastValue = value;

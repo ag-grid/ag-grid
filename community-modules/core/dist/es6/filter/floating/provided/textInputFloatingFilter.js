@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,11 +25,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { debounce } from '../../../utils/function';
-import { Constants } from '../../../constants';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { isKeyPressed } from '../../../utils/keyboard';
+import { KeyCode } from '../../../constants/keyCode';
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
@@ -77,7 +77,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
         var value = this.eFloatingFilterInput.getValue();
-        var enterKeyPressed = isKeyPressed(e, Constants.KEY_ENTER);
+        var enterKeyPressed = isKeyPressed(e, KeyCode.ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
         }

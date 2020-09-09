@@ -1,5 +1,7 @@
 {
-  "extends": ["plugin:compat/recommended"],
+  "extends": [
+    "plugin:compat/recommended"
+  ],
   "env": {
     "browser": true,
     "es6": false
@@ -24,8 +26,7 @@
   "settings": {
     "polyfills": [
       "Reflect",
-      "Object.assign", // not really, but ts transpiles ... into a method that checks for Object.assign
-      "document.registerElement" //  we do an existance check for this in our webcomponent - mute this accordingly
+      "document.registerElement" //  we do an existence check for this in our web component - mute this accordingly
     ]
   }
 }

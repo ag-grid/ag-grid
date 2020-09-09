@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -184,6 +184,15 @@ function forEach(list, action) {
     }
 }
 exports.forEach = forEach;
+function forEachReverse(list, action) {
+    if (list == null) {
+        return;
+    }
+    for (var i = list.length - 1; i >= 0; i--) {
+        action(list[i], i);
+    }
+}
+exports.forEachReverse = forEachReverse;
 /**
  * The implementation of Array.prototype.map in browsers is generally the same as just using a simple for loop. However,
  * Firefox does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved

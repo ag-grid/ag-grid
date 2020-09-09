@@ -4,10 +4,11 @@ import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
-import { NumberSequence,  _ } from "../../utils";
+import { NumberSequence } from "../../utils";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { RowRenderer } from "../../rendering/rowRenderer";
+import { exists, missing } from "../../utils/generic";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -100,6 +101,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
+            this.onCacheUpdated();
         }
     }
 
@@ -161,7 +163,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         const lastRowIndex = block.getDisplayIndexEnd() - 1;
 
         // parent closed means the parent node is not expanded, thus these blocks are not visible
-        const parentClosed = firstRowIndex==null || lastRowIndex==null;
+        const parentClosed = firstRowIndex == null || lastRowIndex == null;
         if (parentClosed) { return false; }
 
         const blockBeforeViewport = firstRowIndex > lastViewportRow;
@@ -201,7 +203,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
             this.maxRowFound = true;
-            this.onCacheUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
@@ -209,12 +210,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
-                this.onCacheUpdated();
-            } else if (this.cacheParams.dynamicRowHeight) {
-                // the only other time is if dynamic row height, as loading rows
-                // will change the height of the block, given the height of the rows
-                // is only known after the row is loaded.
-                this.onCacheUpdated();
             }
         }
     }
@@ -223,7 +218,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.virtualRowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(maxRowFound)) {
+        if (exists(maxRowFound)) {
             this.maxRowFound = maxRowFound;
         }
 
@@ -307,14 +302,14 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: T[] = [];
-        this.forEachBlockInOrder( (block: T, id: number) => {
+        this.forEachBlockInOrder((block: T, id: number) => {
             const startRow = id * this.cacheParams.blockSize;
             if (startRow >= this.virtualRowCount) {
                 blocksToDestroy.push(block);
             }
         });
         if (blocksToDestroy.length > 0) {
-            blocksToDestroy.forEach( block => this.destroyBlock(block) );
+            blocksToDestroy.forEach(block => this.destroyBlock(block));
         }
     }
 
@@ -339,7 +334,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         const numberSequence: NumberSequence = new NumberSequence();
 
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (missing(firstInRange)) {
             inActiveRange = true;
         }
 

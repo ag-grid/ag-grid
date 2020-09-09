@@ -1,5 +1,5 @@
-import {Component, ContentChildren, Input, QueryList} from "@angular/core";
-import {ColDef} from "@ag-grid-community/core";
+import { Component, ContentChildren, Input, QueryList } from "@angular/core";
+import { ColDef } from "@ag-grid-community/core";
 
 @Component({
     selector: 'ag-grid-column',
@@ -35,9 +35,7 @@ export class AgGridColumn {
     };
 
     private createColDefFromGridColumn(from: AgGridColumn): ColDef {
-        let colDef: ColDef = {};
-        Object.assign(colDef, from);
-        delete (<any>colDef).childColumns;
+        let { childColumns, ...colDef } = from;
         return colDef;
     };
 
@@ -70,6 +68,7 @@ export class AgGridColumn {
     @Input() public tooltipComponentParams: any;
     @Input() public tooltipComponentFramework: any;
     @Input() public refData: any;
+    @Input() public columnsMenuParams: any;
     @Input() public headerName: any;
     @Input() public columnGroupShow: any;
     @Input() public headerClass: any;
@@ -78,6 +77,7 @@ export class AgGridColumn {
     @Input() public groupId: any;
     @Input() public colId: any;
     @Input() public sort: any;
+    @Input() public initialSort: any;
     @Input() public field: any;
     @Input() public type: any;
     @Input() public tooltipField: any;
@@ -85,18 +85,26 @@ export class AgGridColumn {
     @Input() public cellClass: any;
     @Input() public showRowGroup: any;
     @Input() public filter: any;
+    @Input() public initialAggFunc: any;
     @Input() public aggFunc: any;
     @Input() public cellRenderer: any;
     @Input() public cellEditor: any;
     @Input() public pinned: any;
+    @Input() public initialPinned: any;
     @Input() public chartDataType: any;
     @Input() public sortedAt: any;
+    @Input() public sortIndex: any;
+    @Input() public initialSortIndex: any;
     @Input() public flex: any;
+    @Input() public initialFlex: any;
     @Input() public width: any;
+    @Input() public initialWidth: any;
     @Input() public minWidth: any;
     @Input() public maxWidth: any;
     @Input() public rowGroupIndex: any;
+    @Input() public initialRowGroupIndex: any;
     @Input() public pivotIndex: any;
+    @Input() public initialPivotIndex: any;
     @Input() public dndSourceOnRowDrag: any;
     @Input() public valueGetter: any;
     @Input() public valueSetter: any;
@@ -120,7 +128,6 @@ export class AgGridColumn {
     @Input() public onCellDoubleClicked: any;
     @Input() public onCellContextMenu: any;
     @Input() public rowDragText: any;
-    @Input() public tooltip: any;
     @Input() public tooltipValueGetter: any;
     @Input() public cellRendererSelector: any;
     @Input() public cellEditorSelector: any;
@@ -130,21 +137,21 @@ export class AgGridColumn {
     @Input() public openByDefault: any;
     @Input() public marryChildren: any;
     @Input() public hide: any;
+    @Input() public initialHide: any;
     @Input() public rowGroup: any;
+    @Input() public initialRowGroup: any;
     @Input() public pivot: any;
+    @Input() public initialPivot: any;
     @Input() public checkboxSelection: any;
     @Input() public headerCheckboxSelection: any;
     @Input() public headerCheckboxSelectionFilteredOnly: any;
     @Input() public suppressMenu: any;
-    @Input() public suppressSorting: any;
     @Input() public suppressMovable: any;
-    @Input() public suppressFilter: any;
     @Input() public lockPosition: any;
     @Input() public lockVisible: any;
     @Input() public lockPinned: any;
     @Input() public unSortIcon: any;
     @Input() public suppressSizeToFit: any;
-    @Input() public suppressResize: any;
     @Input() public suppressAutoSize: any;
     @Input() public enableRowGroup: any;
     @Input() public enablePivot: any;
@@ -156,6 +163,7 @@ export class AgGridColumn {
     @Input() public rowDrag: any;
     @Input() public dndSource: any;
     @Input() public autoHeight: any;
+    @Input() public wrapText: any;
     @Input() public sortable: any;
     @Input() public resizable: any;
     @Input() public singleClickEdit: any;

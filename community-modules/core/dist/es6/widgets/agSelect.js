@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,21 +27,15 @@ import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField } from "./agPickerField";
 import { AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
     function AgSelect(config) {
-        var _this = _super.call(this) || this;
-        _this.displayTag = 'div';
-        _this.className = 'ag-select';
-        _this.pickerIcon = 'smallDown';
-        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
-        return _this;
+        return _super.call(this, config, 'ag-select', 'smallDown', 'listbox') || this;
     }
     AgSelect.prototype.init = function () {
         var _this = this;
-        this.listComponent = new AgList('select');
-        this.getContext().createBean(this.listComponent);
+        this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
         this.eWrapper.tabIndex = 0;
         this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, function () { if (_this.hideList) {
@@ -57,26 +51,33 @@ var AgSelect = /** @class */ (function (_super) {
     AgSelect.prototype.showPicker = function () {
         var _this = this;
         var listGui = this.listComponent.getGui();
-        var mouseWheelFunc = this.addManagedListener(document.body, 'wheel', function (e) {
+        var destroyMouseWheelFunc = this.addManagedListener(document.body, 'wheel', function (e) {
             if (!listGui.contains(e.target) && _this.hideList) {
                 _this.hideList();
             }
         });
-        var focusOutFunc = this.addManagedListener(listGui, 'focusout', function (e) {
+        var destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', function (e) {
             if (!listGui.contains(e.relatedTarget) && _this.hideList) {
                 _this.hideList();
             }
         });
-        this.hideList = this.popupService.addPopup(true, listGui, true, function () {
-            _this.hideList = null;
-            focusOutFunc();
-            mouseWheelFunc();
-            if (_this.isAlive()) {
-                _this.getFocusableElement().focus();
+        this.hideList = this.popupService.addPopup({
+            modal: true,
+            eChild: listGui,
+            closeOnEsc: true,
+            closedCallback: function () {
+                _this.hideList = null;
+                _this.isPickerDisplayed = false;
+                destroyFocusOutFunc();
+                destroyMouseWheelFunc();
+                if (_this.isAlive()) {
+                    _this.getFocusableElement().focus();
+                }
             }
         });
-        _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
-        listGui.style.maxHeight = _.getInnerHeight(this.popupService.getPopupParent()) + 'px';
+        this.isPickerDisplayed = true;
+        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';
         this.popupService.positionPopupUnderComponent({
             type: 'ag-list',
@@ -98,14 +99,14 @@ var AgSelect = /** @class */ (function (_super) {
     };
     AgSelect.prototype.setValue = function (value, silent, fromPicker) {
         if (this.value === value) {
-            return;
+            return this;
         }
         if (!fromPicker) {
             this.listComponent.setValue(value, true);
         }
         var newValue = this.listComponent.getValue();
         if (newValue === this.getValue()) {
-            return;
+            return this;
         }
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue();
         return _super.prototype.setValue.call(this, value, silent);
@@ -114,7 +115,7 @@ var AgSelect = /** @class */ (function (_super) {
         if (this.hideList) {
             this.hideList();
         }
-        this.getContext().destroyBean(this.listComponent);
+        this.destroyBean(this.listComponent);
         _super.prototype.destroy.call(this);
     };
     __decorate([

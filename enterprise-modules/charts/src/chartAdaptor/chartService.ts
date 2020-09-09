@@ -1,14 +1,15 @@
 import {
     _,
+    AgChartThemeOverrides,
     Autowired,
     Bean,
+    BeanStub,
     CellRange,
     ChartModel,
     ChartOptions,
     ChartRef,
     ChartType,
     ColumnController,
-    Context,
     CreatePivotChartParams,
     CreateRangeChartParams,
     Environment,
@@ -19,11 +20,9 @@ import {
     Optional,
     PreDestroy,
     ProcessChartOptionsParams,
-    SeriesOptions,
-    BeanStub
+    SeriesOptions
 } from "@ag-grid-community/core";
-import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
-import { ChartPaletteName } from "ag-charts-community";
+import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
@@ -64,11 +63,12 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartPalette as ChartPaletteName,
+            params.chartThemeName,
             false,
             params.suppressChartRanges,
             params.chartContainer,
             params.aggFunc,
+            params.chartThemeOverrides,
             params.processChartOptions);
     }
 
@@ -95,22 +95,24 @@ export class ChartService extends BeanStub implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.chartPalette as ChartPaletteName,
+            params.chartThemeName,
             true,
             true,
             params.chartContainer,
             undefined,
+            params.chartThemeOverrides,
             params.processChartOptions);
     }
 
     private createChart(cellRange: CellRange,
-                        chartType: ChartType,
-                        chartPaletteName?: ChartPaletteName,
-                        pivotChart = false,
-                        suppressChartRanges = false,
-                        container?: HTMLElement,
-                        aggFunc?: string | IAggFunc,
-                        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
+        chartType: ChartType,
+        chartThemeName?: string,
+        pivotChart = false,
+        suppressChartRanges = false,
+        container?: HTMLElement,
+        aggFunc?: string | IAggFunc,
+        chartThemeOverrides?: AgChartThemeOverrides,
+        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -118,10 +120,11 @@ export class ChartService extends BeanStub implements IChartService {
             pivotChart,
             cellRange,
             chartType,
-            chartPaletteName,
+            chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,
+            chartThemeOverrides,
             processChartOptions,
         };
 
@@ -168,7 +171,8 @@ export class ChartService extends BeanStub implements IChartService {
                     this.activeCharts.delete(chartRef);
                 }
             },
-            chartElement: chartComp.getGui()
+            chartElement: chartComp.getGui(),
+            chart: chartComp.getUnderlyingChart()
         };
 
         this.activeCharts.add(chartRef);

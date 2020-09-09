@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,20 +25,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
 var AgAbstractLabel = /** @class */ (function (_super) {
     __extends(AgAbstractLabel, _super);
-    function AgAbstractLabel() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function AgAbstractLabel(config, template) {
+        var _this = _super.call(this, template) || this;
         _this.labelSeparator = '';
         _this.labelAlignment = 'left';
-        _this.config = {};
         _this.label = '';
+        _this.config = config || {};
         return _this;
     }
     AgAbstractLabel.prototype.postConstruct = function () {
-        _.addCssClass(this.getGui(), 'ag-labeled');
-        _.addCssClass(this.eLabel, 'ag-label');
+        addCssClass(this.getGui(), 'ag-labeled');
+        addCssClass(this.eLabel, 'ag-label');
         var _a = this.config, labelSeparator = _a.labelSeparator, label = _a.label, labelWidth = _a.labelWidth, labelAlignment = _a.labelAlignment;
         if (labelSeparator != null) {
             this.setLabelSeparator(labelSeparator);
@@ -53,8 +53,14 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         this.refreshLabel();
     };
     AgAbstractLabel.prototype.refreshLabel = function () {
-        this.eLabel.innerText = this.label + this.labelSeparator;
-        _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+        clearElement(this.eLabel);
+        if (typeof this.label === 'string') {
+            this.eLabel.innerText = this.label + this.labelSeparator;
+        }
+        else {
+            this.eLabel.appendChild(this.label);
+        }
+        addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     };
     AgAbstractLabel.prototype.setLabelSeparator = function (labelSeparator) {
         if (this.labelSeparator === labelSeparator) {
@@ -66,6 +72,13 @@ var AgAbstractLabel = /** @class */ (function (_super) {
         }
         return this;
     };
+    AgAbstractLabel.prototype.getLabelId = function () {
+        this.eLabel.id = this.eLabel.id || "ag-" + this.getCompId() + "-label";
+        return this.eLabel.id;
+    };
+    AgAbstractLabel.prototype.getLabel = function () {
+        return this.label;
+    };
     AgAbstractLabel.prototype.setLabel = function (label) {
         if (this.label === label) {
             return this;
@@ -76,16 +89,16 @@ var AgAbstractLabel = /** @class */ (function (_super) {
     };
     AgAbstractLabel.prototype.setLabelAlignment = function (alignment) {
         var eGui = this.getGui();
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
+        addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
+        addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
+        addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
         return this;
     };
     AgAbstractLabel.prototype.setLabelWidth = function (width) {
         if (this.label == null) {
             return this;
         }
-        _.setElementWidth(this.eLabel, width);
+        setElementWidth(this.eLabel, width);
         return this;
     };
     __decorate([

@@ -37,9 +37,9 @@ export declare class ScatterSeries extends CartesianSeries {
     private nodeData;
     readonly marker: CartesianSeriesMarker;
     private _fill;
-    fill: string;
+    fill: string | undefined;
     private _stroke;
-    stroke: string;
+    stroke: string | undefined;
     private _strokeWidth;
     strokeWidth: number;
     private _fillOpacity;
@@ -60,6 +60,7 @@ export declare class ScatterSeries extends CartesianSeries {
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
     constructor();
     onMarkerShapeChange(): void;
+    setColors(fills: string[], strokes: string[]): void;
     processData(): boolean;
     getDomain(direction: ChartAxisDirection): any[];
     getNodeData(): ScatterNodeDatum[];

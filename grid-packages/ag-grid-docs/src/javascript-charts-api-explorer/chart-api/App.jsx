@@ -90,7 +90,7 @@ const createOptionsJson = (chartType, options) => {
             }];
             break;
         default:
-            throw new Error(`unrecognised chart type ${chartType}`);
+            throw new Error(`Unrecognised chart type: ${chartType}`);
     }
 
     return json;

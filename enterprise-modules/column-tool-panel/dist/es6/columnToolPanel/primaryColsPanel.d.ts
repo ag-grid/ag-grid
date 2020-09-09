@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, ToolPanelColumnCompParams, IPrimaryColsPanel, ManagedFocusComponent } from "@ag-grid-community/core";
+import { ColDef, ColGroupDef, ToolPanelColumnCompParams, IPrimaryColsPanel, ManagedFocusComponent, ColumnEventType } from "@ag-grid-community/core";
 export interface BaseColumnItem {
     getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;
@@ -9,13 +9,13 @@ export interface BaseColumnItem {
 }
 export declare class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
     private static TEMPLATE;
-    private primaryColsHeaderPanel;
-    private primaryColsListPanel;
+    private readonly primaryColsHeaderPanel;
+    private readonly primaryColsListPanel;
     private allowDragging;
     private params;
-    init(allowDragging: boolean, params: ToolPanelColumnCompParams): void;
-    protected isFocusableContainer(): boolean;
-    protected onTabKeyDown(e: KeyboardEvent): void;
+    private eventType;
+    constructor();
+    init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void;
     onExpandAll(): void;
     onCollapseAll(): void;
     expandGroups(groupIds?: string[]): void;

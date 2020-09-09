@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ChartType, ChartOptions } from "./iChartOptions";
@@ -12,8 +12,9 @@ export interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName?: string;
     chartOptions: ChartOptions<any>;
+    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 export interface IChartService {

@@ -2,7 +2,6 @@ import { Component } from "../widgets/component";
 export declare class PaginationComp extends Component {
     private gridOptionsWrapper;
     private paginationProxy;
-    private rowRenderer;
     private rowModel;
     private btFirst;
     private btPrevious;
@@ -11,7 +10,6 @@ export declare class PaginationComp extends Component {
     private lbRecordCount;
     private lbFirstRowOnPage;
     private lbLastRowOnPage;
-    private eSummaryPanel;
     private lbCurrent;
     private lbTotal;
     private serverSideRowModel;
@@ -19,7 +17,7 @@ export declare class PaginationComp extends Component {
     private nextButtonDisabled;
     private lastButtonDisabled;
     constructor();
-    private postConstruct;
+    protected postConstruct(): void;
     private onPaginationChanged;
     private onBtFirst;
     private setCurrentPageLabel;

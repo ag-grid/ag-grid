@@ -35,9 +35,11 @@ var ChartDataModel = /** @class */ (function (_super) {
         _this.dimensionColState = [];
         _this.valueColState = [];
         _this.detached = false;
+        _this.grouping = false;
         _this.columnNames = {};
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
+        _this.chartThemeName = params.chartThemeName;
         _this.aggFunc = params.aggFunc;
         _this.referenceCellRange = params.cellRange;
         _this.suppressChartRanges = params.suppressChartRanges;
@@ -67,9 +69,6 @@ var ChartDataModel = /** @class */ (function (_super) {
     };
     ChartDataModel.prototype.getData = function () {
         return this.chartData;
-    };
-    ChartDataModel.prototype.setChartType = function (chartType) {
-        this.chartType = chartType;
     };
     ChartDataModel.prototype.isGrouping = function () {
         var usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -122,10 +121,19 @@ var ChartDataModel = /** @class */ (function (_super) {
             columns: cellRanges.reduce(function (columns, value) { return columns.concat(value.columns.map(function (c) { return c.getId(); })); }, [])
         };
     };
+    ChartDataModel.prototype.setChartType = function (chartType) {
+        this.chartType = chartType;
+    };
     ChartDataModel.prototype.getChartType = function () {
         return this.chartType;
     };
     ;
+    ChartDataModel.prototype.setChartThemeName = function (chartThemeName) {
+        this.chartThemeName = chartThemeName;
+    };
+    ChartDataModel.prototype.getChartThemeName = function () {
+        return this.chartThemeName;
+    };
     ChartDataModel.prototype.isSuppressChartRanges = function () {
         return this.suppressChartRanges;
     };

@@ -1,11 +1,24 @@
 import { _ } from '@ag-grid-community/core';
-var buildSharedString = function (textNode) { return ({
-    name: 'si',
-    children: [{
-            name: 't',
-            textNode: _.utf8_encode(_.escape(textNode.toString()))
-        }]
-}); };
+var buildSharedString = function (textNode) {
+    textNode = textNode.toString();
+    var child = {
+        name: 't',
+        textNode: _.utf8_encode(_.escapeString(textNode))
+    };
+    // if we have leading or trailing spaces, instruct Excel not to trim them
+    var preserveSpaces = textNode.replace(/^\s*|\s*$/g, '').length !== textNode.length;
+    if (preserveSpaces) {
+        child.properties = {
+            rawMap: {
+                "xml:space": "preserve"
+            }
+        };
+    }
+    return {
+        name: 'si',
+        children: [child]
+    };
+};
 var sharedStrings = {
     getTemplate: function (strings) {
         return {

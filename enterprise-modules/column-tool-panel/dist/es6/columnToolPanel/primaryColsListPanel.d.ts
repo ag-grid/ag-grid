@@ -1,4 +1,4 @@
-import { AbstractColDef, Component, ToolPanelColumnCompParams, ManagedFocusComponent } from "@ag-grid-community/core";
+import { AbstractColDef, Component, ToolPanelColumnCompParams, ManagedFocusComponent, ColumnEventType } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
 export declare type ColumnFilterResults = {
@@ -17,10 +17,11 @@ export declare class PrimaryColsListPanel extends ManagedFocusComponent {
     private expandGroupsByDefault;
     private params;
     private columnComps;
+    private eventType;
     constructor();
-    init(params: ToolPanelColumnCompParams, allowDragging: boolean): void;
+    init(params: ToolPanelColumnCompParams, allowDragging: boolean, eventType: ColumnEventType): void;
     protected handleKeyDown(e: KeyboardEvent): void;
-    private nagivateToNextItem;
+    private navigateToNextItem;
     onColumnsChanged(): void;
     syncColumnLayout(): void;
     setColumnLayout(colDefs: AbstractColDef[]): void;

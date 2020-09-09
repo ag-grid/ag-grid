@@ -1,13 +1,13 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowBounds } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
 import { RowNode } from "../entities/rowNode";
+import { RowPosition } from "../entities/rowPosition";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
     private gridOptionsWrapper;
-    private selectionController;
     private columnApi;
     private gridApi;
     private active;
@@ -24,6 +24,7 @@ export declare class PaginationProxy extends BeanStub {
     private postConstruct;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private onModelUpdated;
+    private onPaginationPageSizeChanged;
     goToPage(page: number): void;
     getPixelOffset(): number;
     getRow(index: number): RowNode | null;
@@ -40,7 +41,9 @@ export declare class PaginationProxy extends BeanStub {
     getPageFirstRow(): number;
     getPageLastRow(): number;
     getRowCount(): number;
+    getPageForIndex(index: number): number;
     goToPageWithIndex(index: any): void;
+    isRowInPage(row: RowPosition): boolean;
     isLastPageFound(): boolean;
     getCurrentPage(): number;
     goToNextPage(): void;
@@ -51,6 +54,7 @@ export declare class PaginationProxy extends BeanStub {
     getTotalPages(): number;
     private setPageSize;
     private calculatePages;
+    private setPixelOffset;
     private setZeroRows;
     private calculatePagesMasterRowsOnly;
     getMasterRowCount(): number;

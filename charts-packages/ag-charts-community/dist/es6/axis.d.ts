@@ -32,6 +32,12 @@ export declare class AxisTick {
      */
     count: any;
 }
+export interface AxisLabelFormatterParams {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}
 export declare class AxisLabel {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
@@ -80,12 +86,7 @@ export declare class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: {
-        value: any;
-        index: number;
-        fractionDigits?: number;
-        formatter?: (x: any) => string;
-    }) => string;
+    formatter?: (params: AxisLabelFormatterParams) => string;
     onFormatChange?: (format?: string) => void;
     private _format?;
     format: string | undefined;
@@ -124,6 +125,13 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
     rotation: number;
     constructor(scale: S);
     protected updateRange(): void;
+    /**
+     * Checks if a point or an object is in range.
+     * @param x A point (or object's starting point).
+     * @param width Object's width.
+     * @param tolerance Expands the range on both ends by this amount.
+     */
+    inRange(x: number, width?: number, tolerance?: number): boolean;
     protected requestedRange: number[];
     range: number[];
     protected _visibleRange: number[];

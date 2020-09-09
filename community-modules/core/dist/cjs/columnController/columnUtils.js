@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,8 +29,9 @@ var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var number_1 = require("../utils/number");
+var generic_1 = require("../utils/generic");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var ColumnUtils = /** @class */ (function (_super) {
     __extends(ColumnUtils, _super);
@@ -40,8 +41,19 @@ var ColumnUtils = /** @class */ (function (_super) {
     ColumnUtils.prototype.calculateColInitialWidth = function (colDef) {
         var optionsWrapper = this.gridOptionsWrapper;
         var minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
-        var maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || utils_1._.getMaxSafeInteger());
-        var width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+        var maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || number_1.getMaxSafeInteger());
+        var width;
+        var colDefWidth = generic_1.attrToNumber(colDef.width);
+        var colDefInitialWidth = generic_1.attrToNumber(colDef.initialWidth);
+        if (colDefWidth != null) {
+            width = colDefWidth;
+        }
+        else if (colDefInitialWidth != null) {
+            width = colDefInitialWidth;
+        }
+        else {
+            width = optionsWrapper.getColWidth();
+        }
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     };
     ColumnUtils.prototype.getOriginalPathForColumn = function (column, originalBalancedTree) {
@@ -69,40 +81,6 @@ var ColumnUtils = /** @class */ (function (_super) {
         // will make it fail rather than provide a 'hard to track down' bug
         return found ? result : null;
     };
-    /*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
-            let result: ColumnGroup[] = [];
-            let found = false;
-    
-            recursePath(allDisplayedColumnGroups, 0);
-    
-            // we should always find the path, but in case there is a bug somewhere, returning null
-            // will make it fail rather than provide a 'hard to track down' bug
-            if (found) {
-                return result;
-            } else {
-                return null;
-            }
-    
-            function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
-    
-                for (let i = 0; i<balancedColumnTree.length; i++) {
-                    if (found) {
-                        // quit the search, so 'result' is kept with the found result
-                        return;
-                    }
-                    let node = balancedColumnTree[i];
-                    if (node instanceof ColumnGroup) {
-                        let nextNode = <ColumnGroup> node;
-                        recursePath(nextNode.getChildren(), dept+1);
-                        result[dept] = node;
-                    } else {
-                        if (node === column) {
-                            found = true;
-                        }
-                    }
-                }
-            }
-        }*/
     ColumnUtils.prototype.depthFirstOriginalTreeSearch = function (parent, tree, callback) {
         var _this = this;
         if (!tree) {

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, PreDestroy, Constants, _ } from "@ag-grid-community/core";
+import { Autowired, Component, PostConstruct, RefSelector, PreDestroy, _, KeyCode } from "@ag-grid-community/core";
 var SideBarButtonsComp = /** @class */ (function (_super) {
     __extends(SideBarButtonsComp, _super);
     function SideBarButtonsComp() {
@@ -29,7 +29,7 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     };
     SideBarButtonsComp.prototype.handleKeyDown = function (e) {
-        if (e.keyCode !== Constants.KEY_TAB || !e.shiftKey) {
+        if (e.keyCode !== KeyCode.TAB || !e.shiftKey) {
             return;
         }
         var prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);

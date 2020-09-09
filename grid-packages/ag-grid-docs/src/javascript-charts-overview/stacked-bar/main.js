@@ -4,6 +4,7 @@ function getTotal(datum) {
 
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data.sort(function(a, b) { return getTotal(b) - getTotal(a); }),
     title: {
         text: 'UK Housing Stock (2016)',

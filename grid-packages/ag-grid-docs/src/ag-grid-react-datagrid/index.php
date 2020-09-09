@@ -247,7 +247,7 @@ class SimpleGridExample extends Component {
     createColumnDefs() {
         return [
             {headerName: "Company", field: "name"},
-            {headerName: "Price", field: "price", cellFormatter: (params) =&gt; params.value.toFixed(2)}
+            {headerName: "Price", field: "price", valueFormatter: (params) =&gt; params.value.toFixed(2)}
         ];
     }
 

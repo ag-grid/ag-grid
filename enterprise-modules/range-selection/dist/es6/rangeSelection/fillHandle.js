@@ -57,7 +57,14 @@ var FillHandle = /** @class */ (function (_super) {
         var _b = this.mouseEventService.getNormalisedPosition(e), newX = _b.x, newY = _b.y;
         var diffX = Math.abs(x - newX);
         var diffY = Math.abs(y - newY);
-        var direction = diffX > diffY ? 'x' : 'y';
+        var allowedDirection = this.gridOptionsWrapper.getFillHandleDirection();
+        var direction;
+        if (allowedDirection === 'xy') {
+            direction = diffX > diffY ? 'x' : 'y';
+        }
+        else {
+            direction = allowedDirection;
+        }
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
         }
@@ -202,7 +209,7 @@ var FillHandle = /** @class */ (function (_super) {
             else {
                 currentValue = _this.processValues(e, values, initialValues, col, rowNode, idx++);
                 if (col.isCellEditable(rowNode)) {
-                    _this.valueService.setValue(rowNode, col, currentValue);
+                    rowNode.setDataValue(col, currentValue);
                 }
             }
             values.push(currentValue);
@@ -258,6 +265,7 @@ var FillHandle = /** @class */ (function (_super) {
                 values: values,
                 initialValues: initialValues,
                 currentIndex: idx,
+                currentCellValue: this.valueService.getValue(col, rowNode),
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),

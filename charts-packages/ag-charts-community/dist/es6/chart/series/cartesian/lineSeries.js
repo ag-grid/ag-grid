@@ -21,7 +21,6 @@ import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import palette from "../../palettes";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { PointerEvents } from "../../../scene/node";
@@ -44,7 +43,9 @@ var LineSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this.stroke = palette.fills[0];
+        _this.stroke = undefined;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         _this.strokeWidth = 2;
         _this.strokeOpacity = 1;
         _this._xKey = '';
@@ -59,8 +60,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.group.append(lineNode);
         _this.addEventListener('update', _this.update);
         var marker = _this.marker;
-        marker.fill = palette.fills[0];
-        marker.stroke = palette.strokes[0];
+        marker.fill = undefined;
+        marker.stroke = undefined;
         marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
         marker.addEventListener('change', _this.update, _this);
@@ -77,6 +78,11 @@ var LineSeries = /** @class */ (function (_super) {
             this.nodeSelection = this.nodeSelection.setData([]);
             this.nodeSelection.exit.remove();
         }
+    };
+    LineSeries.prototype.setColors = function (fills, strokes) {
+        this.stroke = fills[0];
+        this.marker.stroke = strokes[0];
+        this.marker.fill = fills[0];
     };
     Object.defineProperty(LineSeries.prototype, "xKey", {
         get: function () {
@@ -147,7 +153,9 @@ var LineSeries = /** @class */ (function (_super) {
         this.updateNodes();
     };
     LineSeries.prototype.updateLinePath = function () {
-        var _this = this;
+        if (!this.data) {
+            return;
+        }
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, data = _a.data, xData = _a.xData, yData = _a.yData, lineNode = _a.lineNode;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
@@ -159,7 +167,8 @@ var LineSeries = /** @class */ (function (_super) {
         var nodeData = [];
         linePath.clear();
         var moveTo = true;
-        xData.forEach(function (xDatum, i) {
+        for (var i = 0; i < xData.length; i++) {
+            var xDatum = xData[i];
             var yDatum = yData[i];
             var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
                 xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
@@ -168,6 +177,9 @@ var LineSeries = /** @class */ (function (_super) {
             }
             else {
                 var x = xScale.convert(xDatum) + xOffset;
+                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                    continue;
+                }
                 var y = yScale.convert(yDatum) + yOffset;
                 if (moveTo) {
                     linePath.moveTo(x, y);
@@ -177,14 +189,16 @@ var LineSeries = /** @class */ (function (_super) {
                     linePath.lineTo(x, y);
                 }
                 nodeData.push({
-                    series: _this,
+                    series: this,
                     seriesDatum: data[i],
                     point: { x: x, y: y }
                 });
             }
-        });
+        }
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
         lineNode.strokeOpacity = this.strokeOpacity;
         // Used by marker nodes and for hit-testing even when not using markers
         // when `chart.tooltipTracking` is true.
@@ -201,6 +215,9 @@ var LineSeries = /** @class */ (function (_super) {
         this.nodeSelection = updateSelection.merge(enterSelection);
     };
     LineSeries.prototype.updateNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var MarkerShape = getMarker(marker.shape);
         var highlightedDatum = this.chart.highlightedDatum;
@@ -292,8 +309,8 @@ var LineSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: 1,
                     strokeOpacity: strokeOpacity
                 }
@@ -308,6 +325,12 @@ var LineSeries = /** @class */ (function (_super) {
     __decorate([
         reactive('update')
     ], LineSeries.prototype, "stroke", void 0);
+    __decorate([
+        reactive('update')
+    ], LineSeries.prototype, "lineDash", void 0);
+    __decorate([
+        reactive('update')
+    ], LineSeries.prototype, "lineDashOffset", void 0);
     __decorate([
         reactive('update')
     ], LineSeries.prototype, "strokeWidth", void 0);

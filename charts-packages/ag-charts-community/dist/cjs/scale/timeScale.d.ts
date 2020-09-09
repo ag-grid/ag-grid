@@ -39,7 +39,7 @@ export declare class TimeScale extends ContinuousScale {
      * @param stop The end time (timestamp).
      * @param step Number of intervals between ticks.
      */
-    tickInterval(interval: number | CountableTimeInterval, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined;
+    tickInterval(interval: number | CountableTimeInterval | undefined, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined;
     protected _domain: Date[];
     domain: Date[];
     invert(y: number): Date;

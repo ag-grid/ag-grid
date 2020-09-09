@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,7 +76,6 @@ var originalColumnGroup_1 = require("./entities/originalColumnGroup");
 exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
 var rowNode_1 = require("./entities/rowNode");
 exports.RowNode = rowNode_1.RowNode;
-// filter
 var filterManager_1 = require("./filter/filterManager");
 exports.FilterManager = filterManager_1.FilterManager;
 var providedFilter_1 = require("./filter/provided/providedFilter");
@@ -91,6 +90,12 @@ var textFilter_1 = require("./filter/provided/text/textFilter");
 exports.TextFilter = textFilter_1.TextFilter;
 var dateFilter_1 = require("./filter/provided/date/dateFilter");
 exports.DateFilter = dateFilter_1.DateFilter;
+var textFloatingFilter_1 = require("./filter/provided/text/textFloatingFilter");
+exports.TextFloatingFilter = textFloatingFilter_1.TextFloatingFilter;
+var floatingFilterWrapper_1 = require("./filter/floating/floatingFilterWrapper");
+exports.FloatingFilterWrapper = floatingFilterWrapper_1.FloatingFilterWrapper;
+var floatingFilterMapper_1 = require("./filter/floating/floatingFilterMapper");
+exports.FloatingFilterMapper = floatingFilterMapper_1.FloatingFilterMapper;
 // gridPanel
 var gridPanel_1 = require("./gridPanel/gridPanel");
 exports.GridPanel = gridPanel_1.GridPanel;
@@ -155,7 +160,7 @@ var checkboxSelectionComponent_1 = require("./rendering/checkboxSelectionCompone
 exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
 var cellComp_1 = require("./rendering/cellComp");
 exports.CellComp = cellComp_1.CellComp;
-var rowComp_1 = require("./rendering/rowComp");
+var rowComp_1 = require("./rendering/row/rowComp");
 exports.RowComp = rowComp_1.RowComp;
 var rowRenderer_1 = require("./rendering/rowRenderer");
 exports.RowRenderer = rowRenderer_1.RowRenderer;
@@ -231,8 +236,10 @@ var cellNavigationService_1 = require("./cellNavigationService");
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
 var alignedGridsService_1 = require("./alignedGridsService");
 exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
-var constants_1 = require("./constants");
+var constants_1 = require("./constants/constants");
 exports.Constants = constants_1.Constants;
+var keyCode_1 = require("./constants/keyCode");
+exports.KeyCode = keyCode_1.KeyCode;
 var grid_1 = require("./grid");
 exports.Grid = grid_1.Grid;
 var gridApi_1 = require("./gridApi");

@@ -75,25 +75,27 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
     };
     EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback, defaultTab, restrictToTabs, eventSource) {
         var _this = this;
-        var menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.createBean(menu);
+        var menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function (e) {
-            _this.destroyBean(menu);
-            column.setMenuVisible(false, "contextMenu");
-            var isKeyboardEvent = e instanceof KeyboardEvent;
-            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                var focusableEl = _this.focusController.findTabbableParent(eventSource);
-                if (focusableEl) {
-                    focusableEl.focus();
+        var hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenuGui,
+            closeOnEsc: true,
+            closedCallback: function (e) {
+                _this.destroyBean(menu);
+                column.setMenuVisible(false, 'contextMenu');
+                var isKeyboardEvent = e instanceof KeyboardEvent;
+                if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                    var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                    if (focusableEl) {
+                        focusableEl.focus();
+                    }
                 }
             }
         });
-        menu.afterGuiAttached({
-            hidePopup: hidePopup
-        });
+        menu.afterGuiAttached({ hidePopup: hidePopup });
         positionCallback(menu);
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -150,8 +152,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.init = function () {
         var _this = this;
-        var tabs = this.getTabsToCreate()
-            .map(function (menuTabName) { return _this.createTab(menuTabName); });
+        var tabs = this.getTabsToCreate().map(function (name) { return _this.createTab(name); });
         this.tabbedLayout = new TabbedLayout({
             items: tabs,
             cssClass: 'ag-menu',
@@ -246,14 +247,13 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         var result;
         var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
-            var userOptions = userFunc({
+            result = userFunc({
                 column: this.column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            result = userOptions;
         }
         else {
             result = defaultMenuOptions;
@@ -306,15 +306,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        var allowExpandAndContract = false;
-        if (isInMemoryRowModel) {
-            if (usingTreeData) {
-                allowExpandAndContract = true;
-            }
-            else {
-                allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
-            }
-        }
+        var allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
@@ -322,12 +314,11 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         return result;
     };
     EnterpriseMenu.prototype.createMainPanel = function () {
-        this.mainMenuList = new MenuList();
-        this.createManagedBean(this.mainMenuList);
+        this.mainMenuList = this.createManagedBean(new MenuList());
         var menuItems = this.getMenuItems();
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
@@ -373,20 +364,23 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         var eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
+        var columnsMenuParams = this.column.getColDef().columnsMenuParams;
+        if (!columnsMenuParams)
+            columnsMenuParams = {};
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,
             suppressPivotMode: false,
-            contractColumnSelection: false,
-            suppressColumnExpandAll: false,
-            suppressColumnFilter: false,
-            suppressColumnSelectAll: false,
+            contractColumnSelection: !!columnsMenuParams.contractColumnSelection,
+            suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
+            suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
+            suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
             suppressSideButtons: false,
-            suppressSyncLayoutWithGrid: false,
+            suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
-        });
+        }, 'columnMenu');
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
@@ -399,7 +393,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
         var _this = this;
-        this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
         var initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore

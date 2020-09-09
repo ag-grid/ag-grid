@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var events_1 = require("../events");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var generic_1 = require("../utils/generic");
+var array_1 = require("../utils/array");
+var dom_1 = require("../utils/dom");
+var mouse_1 = require("../utils/mouse");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function (_super) {
@@ -57,21 +60,24 @@ var DragService = /** @class */ (function (_super) {
         }
     };
     DragService.prototype.removeDragSource = function (params) {
-        var dragSourceAndListener = utils_1._.find(this.dragSources, function (item) { return item.dragSource === params; });
+        var dragSourceAndListener = generic_1.find(this.dragSources, function (item) { return item.dragSource === params; });
         if (!dragSourceAndListener) {
             return;
         }
         this.removeListener(dragSourceAndListener);
-        utils_1._.removeFromArray(this.dragSources, dragSourceAndListener);
+        array_1.removeFromArray(this.dragSources, dragSourceAndListener);
     };
     DragService.prototype.setNoSelectToBody = function (noSelect) {
         var eDocument = this.gridOptionsWrapper.getDocument();
         var eBody = eDocument.querySelector('body');
-        if (utils_1._.exists(eBody)) {
+        if (generic_1.exists(eBody)) {
             // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
-            utils_1._.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
+            dom_1.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
+    };
+    DragService.prototype.isDragging = function () {
+        return this.dragging;
     };
     DragService.prototype.addDragSource = function (params, includeTouch) {
         if (includeTouch === void 0) { includeTouch = false; }
@@ -81,7 +87,7 @@ var DragService = /** @class */ (function (_super) {
         var suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
         if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
+            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
         }
         this.dragSources.push({
             dragSource: params,
@@ -98,13 +104,17 @@ var DragService = /** @class */ (function (_super) {
         var touch = touchEvent.touches[0];
         this.touchLastTime = touch;
         this.touchStart = touch;
-        if (touchEvent.cancelable) {
-            touchEvent.preventDefault();
-        }
         var touchMoveEvent = function (e) { return _this.onTouchMove(e, params.eElement); };
         var touchEndEvent = function (e) { return _this.onTouchUp(e, params.eElement); };
+        var documentTouchMove = function (e) { if (e.cancelable) {
+            e.preventDefault();
+        } };
         var target = params.eElement;
         var events = [
+            // Prevents the page document from moving while we are dragging items around.
+            // preventDefault needs to be called in the touchmove listener and never inside the
+            // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
+            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
             { target: target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
             { target: target, type: 'touchend', listener: touchEndEvent, options: { passive: true } },
             { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
@@ -172,8 +182,8 @@ var DragService = /** @class */ (function (_super) {
     DragService.prototype.isEventNearStartEvent = function (currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
         var dragStartPixels = this.currentDragParams.dragStartPixels;
-        var requiredPixelDiff = utils_1._.exists(dragStartPixels) ? dragStartPixels : 4;
-        return utils_1._.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        var requiredPixelDiff = generic_1.exists(dragStartPixels) ? dragStartPixels : 4;
+        return mouse_1.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     };
     DragService.prototype.getFirstActiveTouch = function (touchList) {
         for (var i = 0; i < touchList.length; i++) {
@@ -207,10 +217,6 @@ var DragService = /** @class */ (function (_super) {
             return;
         }
         // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-        // if we don't preview default, then the browser will try and do it's own touch stuff,
-        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
-        // with scroll page in the app)
-        // touchEvent.preventDefault();
         this.onCommonMove(touch, this.touchStart, el);
     };
     // only gets called after a mouse down - as this is only added after mouseDown

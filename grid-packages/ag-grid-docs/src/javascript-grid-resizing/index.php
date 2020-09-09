@@ -75,38 +75,64 @@ SNIPPET
     to fit the contents of the cells in the column.
 </p>
 
-<note>
-    The grid works out the best width by considering the virtually rendered rows only.
-    For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation
-    of rows, then only these 50 will be considered for working out the width
-    to display. The rendered rows are all the rows you can see on the screen through the
-    horizontal scroll plus a small buffer (default buffer size is 20).
-</note>
+<p>
+    Note the following with regards autosizing columns:
+</p>
 
-<note>
-    <p>
-        <code>autoSizeColumns()</code> looks at the rendered cells on the screen, and works out the width based on what it sees.
-        It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to autosize
-        a column that is not visible on the screen.
-    </p>
+<ul>
+    <li>
+        <p>
+            The grid works out the best width by considering the virtually rendered rows only.
+            For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation
+            of rows, then only these 50 will be considered for working out the width
+            to display. The rendered rows are all the rows you can see on the screen through the
+            horizontal scroll plus a small buffer (default buffer size is 20).
+        </p>
+    </li>
+    <li>
+        <p>
+            Autosizing columns looks at the rendered cells on the screen, and works out the width based on what it sees.
+            It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to autosize
+            a column that is not visible on the screen.
+        </p>
 
-    <p>
-        Column Virtualisation is the technique the grid uses to render large amounts of columns with degrading performance by only
-        rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns
-        with only 10 rendered if the horizontal scroll is only showing 10 columns.
-    </p>
+        <p>
+            Column Virtualisation is the technique the grid uses to render large amounts of columns with degrading performance by only
+            rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns
+            with only 10 rendered if the horizontal scroll is only showing 10 columns.
+        </p>
 
-    <p>
-        To get around this, you can turn off column virtualisation by setting grid property <code>suppressColumnVirtualisation=true</code>.
-        The choice is yours, whether you want column virtualisation working OR auto-size working using off-screen columns.
-    </p>
-</note>
+        <p>
+            To get around this, you can turn off column virtualisation by setting grid property <code>suppressColumnVirtualisation=true</code>.
+            The choice is yours, whether you want column virtualisation working OR auto-size working using off-screen columns.
+        </p>
+    </li>
+</ul>
 
-<note>
-    It's important to point out that <code>autoSizeColumns(skipHeaders)</code> can receive <code>true</code> as parameter to indicate that
-    the header content (<code>headerName</code>) should not be considered when calculating the width of the column. You can also set this behavior to be
-    the default by setting <code>skipHeaderOnAutoSize: true</code> in the <code>gridOptions</code>.
-</note>
+<p>
+    By default the grid will also resize the column to fit the header.
+    If you do not want the headers to be included in the autosize calculation, set the grid property
+    <code>skipHeaderOnAutoSize=true</code>.
+</p>
+
+<h3>Autosize Column API</h3>
+<p>
+    Autosizing columns can also be done using the following grid API methods:
+</p>
+<ul>
+    <li><code>autoSizeColumn(colKey, skipHeader)</code>: Autosize one column.</li>
+    <li><code>autoSizeColumns(colKeys, skipHeader)</code>: Autosize many columns.</li>
+    <li><code>autoSizeAllColumns(colKey, skipHeader)</code>: Autosize all columns.</li>
+</ul>
+<p>
+    If skipHeader=true, the header won't be included when calculating the
+    column widths.
+</p>
+
+<p>
+    <a href="../javascript-grid-grouping-headers/">Column Groups</a> are never considered
+    when calculating the column widths.
+</p>
 
 <h2>Resizing Example</h2>
 
@@ -132,7 +158,7 @@ SNIPPET
     after you press the button.
 </p>
 
-<?= grid_example('Column Resizing', 'column-resizing', 'generated') ?>
+<?= grid_example('Column Resizing', 'column-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Sizing Columns By Default</h2>
 
@@ -149,7 +175,7 @@ SNIPPET
     for some frameworks (e.g. Angular) as DOM objects are used before getting attached.
 </p>
 
-<?= grid_example('Default Resizing', 'default-resizing', 'generated') ?>
+<?= grid_example('Default Resizing', 'default-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Column Flex</h2>
 
@@ -192,7 +218,7 @@ SNIPPET
         by its <code>minWidth</code>/<code>maxWidth</code> rules, in which case it should take up the remaining available space.</li>
 </ul>
 
-<?= grid_example('Column Flex', 'flex-columns', 'generated') ?>
+<?= grid_example('Column Flex', 'flex-columns', 'generated', ['reactFunctional' => true]) ?>
 
 <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -221,7 +247,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Shift Resizing', 'shift-resizing', 'generated') ?>
+<?= grid_example('Shift Resizing', 'shift-resizing', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2>Resizing Groups</h2>
 
@@ -238,7 +264,7 @@ SNIPPET
         in the groups have <code>resizable=false</code>.</li>
 </ul>
 
-<?= grid_example('Resizing Groups', 'resizing-groups', 'generated') ?>
+<?= grid_example('Resizing Groups', 'resizing-groups', 'generated', ['reactFunctional' =>  true]) ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Rendered</h2>
 

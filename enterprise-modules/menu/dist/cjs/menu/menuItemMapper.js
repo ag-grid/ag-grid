@@ -43,8 +43,9 @@ var MenuItemMapper = /** @class */ (function (_super) {
             if (!result) {
                 return;
             }
-            if (result.subMenu) {
-                var resultDef = result;
+            var resultDef = result;
+            var subMenu = resultDef.subMenu;
+            if (subMenu && subMenu instanceof Array) {
                 resultDef.subMenu = _this.mapWithStockItems(resultDef.subMenu, column);
             }
             if (result != null) {
@@ -105,13 +106,13 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + core_1._.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.addRowGroupColumn(column, "contextMenu"); },
                     icon: core_1._.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + core_1._.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                     icon: core_1._.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };

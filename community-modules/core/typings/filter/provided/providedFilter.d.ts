@@ -1,9 +1,10 @@
-import { Component } from '../../widgets/component';
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { Promise } from '../../utils/promise';
+import { IFilterLocaleText, IFilterTitleLocaleText } from '../filterLocaleText';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 declare type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 export interface IProvidedFilterParams extends IFilterParams {
     /** @deprecated */ clearButton?: boolean;
@@ -19,13 +20,17 @@ export interface IProvidedFilterParams extends IFilterParams {
  * All the filters that come with ag-Grid extend this class. User filters do not
  * extend this class.
  */
-export declare abstract class ProvidedFilter extends Component implements IFilterComp {
+export declare abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
+    private readonly filterNameKey;
     private newRowsActionKeep;
     private providedFilterParams;
     private applyActive;
     private hidePopup;
-    protected gridOptionsWrapper: GridOptionsWrapper;
-    protected rowModel: IRowModel;
+    private onBtApplyDebounce;
+    private appliedModel;
+    protected readonly gridOptionsWrapper: GridOptionsWrapper;
+    protected readonly rowModel: IRowModel;
+    constructor(filterNameKey: keyof IFilterTitleLocaleText);
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
     protected abstract createBodyTemplate(): string;
@@ -33,14 +38,16 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
     protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    /** Used to get the filter type for filter models. */
+    protected abstract getFilterType(): string;
     abstract getModelFromUi(): ProvidedFilterModel | null;
-    private appliedModel;
-    private onBtApplyDebounce;
+    getFilterTitle(): string;
     /** @deprecated */
     onFilterChanged(): void;
     isFilterActive(): boolean;
     protected postConstruct(): void;
-    init(params: IFilterParams): void;
+    protected resetTemplate(paramsMap?: any): void;
+    init(params: IProvidedFilterParams): void;
     protected setParams(params: IProvidedFilterParams): void;
     private createButtonPanel;
     private static checkForDeprecatedParams;
@@ -66,9 +73,10 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
      * be adjusted by using the apply parameter.
      */
     protected onUiChanged(fromFloatingFilter?: boolean, apply?: 'immediately' | 'debounce' | 'prevent'): void;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number;
     static isUseApplyButton(params: IProvidedFilterParams): boolean;
     destroy(): void;
+    protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string;
 }
 export {};

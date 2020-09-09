@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Chart Legend";
+$pageTitle = "Chart Navigator";
 $pageDescription = "ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.";
 $pageKeywords = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -91,7 +91,7 @@ SNIPPET
 <h3>Example: Navigator Styling</h3>
 
 <p>
-    The example below uses various nagivator configs (in a deliberately exaggerated way) to change
+    The example below uses various navigator configs (in a deliberately exaggerated way) to change
     the following visual attributes of the navigator:
     <ul>
         <li>range mask's fill, fill opacity and stroke width</li>
@@ -105,7 +105,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.navigator') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'chart.navigator', [], ['showSnippets' => true]) ?>
 
 <h2>Next Up</h2>
 

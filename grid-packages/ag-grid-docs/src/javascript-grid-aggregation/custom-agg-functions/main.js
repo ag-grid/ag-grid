@@ -65,9 +65,9 @@ function xyzFunc(nodes) {
 // it's shown here as it's the simplest form of aggregation and
 // showing it can be good as a starting point for understanding
 // hwo the aggregation functions work.
-function sumFunction(values) {
+function sumFunction(params) {
     var result = 0;
-    values.forEach(function(value) {
+    params.values.forEach(function(value) {
         if (typeof value === 'number') {
             result += value;
         }
@@ -78,13 +78,13 @@ function sumFunction(values) {
 // min and max agg function. the leaf nodes are just numbers, like any other
 // value. however the function returns an object with min and max, thus the group
 // nodes all have these objects.
-function minAndMaxAggFunction(values) {
+function minAndMaxAggFunction(params) {
     // this is what we will return
     var result = {
         min: null,
         max: null,
         // because we are returning back an object, this would get rendered as [Object,Object]
-        // in the browser. we could get around this by providing a cellFormatter, OR we could
+        // in the browser. we could get around this by providing a valueFormatter, OR we could
         // get around it in a customer cellRenderer, however this is a trick that will also work
         // with clipboard.
         toString: function() {
@@ -92,7 +92,7 @@ function minAndMaxAggFunction(values) {
         }
     };
     // update the result based on each value
-    values.forEach(function(value) {
+    params.values.forEach(function(value) {
 
         var groupNode = value !== null && value !== undefined && typeof value === 'object';
 
@@ -110,13 +110,13 @@ function minAndMaxAggFunction(values) {
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function avgAggFunction(values) {
+function avgAggFunction(params) {
 
     // the average will be the sum / count
     var sum = 0;
     var count = 0;
 
-    values.forEach(function(value) {
+    params.values.forEach(function(value) {
         var groupNode = value !== null && value !== undefined && typeof value === 'object';
         if (groupNode) {
             // we are aggregating groups, so we take the

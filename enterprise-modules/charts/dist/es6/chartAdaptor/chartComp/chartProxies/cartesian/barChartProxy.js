@@ -23,7 +23,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { _, ChartType } from "@ag-grid-community/core";
-import { ChartBuilder } from "ag-charts-community";
+import { AgChart } from "ag-charts-community";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
@@ -33,44 +33,64 @@ var BarChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    BarChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var integratedChartType = this.chartType;
+        var standaloneChartType = this.getStandaloneChartType();
+        var seriesType = integratedChartType === ChartType.GroupedBar
+            || integratedChartType === ChartType.StackedBar
+            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+        var seriesDefaults = theme.getConfig(standaloneChartType + '.series.' + seriesType);
+        options.seriesDefaults = {
+            shadow: seriesDefaults.shadow,
+            label: seriesDefaults.label,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle
+        };
+        return options;
+    };
     BarChartProxy.prototype.createChart = function (options) {
         var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
-        var builderFunction;
-        if (this.isColumnChart()) {
-            builderFunction = grouping ? 'createGroupedColumnChart' : 'createColumnChart';
-        }
-        else {
-            builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
-        }
-        var chart = ChartBuilder[builderFunction](parentElement, options || this.chartOptions);
-        var barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
-        if (barSeries) {
-            barSeries.flipXY = !this.isColumnChart();
-            chart.addSeries(barSeries);
-        }
-        return chart;
+        var isColumn = this.isColumnChart();
+        options = options || this.chartOptions;
+        var seriesDefaults = options.seriesDefaults;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [__assign(__assign({}, (isColumn ? options.xAxis : options.yAxis)), { position: isColumn ? 'bottom' : 'left', type: grouping ? 'groupedCategory' : 'category' }), __assign(__assign({}, (isColumn ? options.yAxis : options.xAxis)), { position: isColumn ? 'left' : 'bottom', type: 'number' })];
+        agChartOptions.series = [__assign(__assign({}, this.getSeriesDefaults()), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer })];
+        agChartOptions.container = parentElement;
+        return AgChart.create(agChartOptions);
     };
     BarChartProxy.prototype.update = function (params) {
         this.chartProxyParams.grouping = params.grouping;
         this.updateAxes('category', !this.isColumnChart());
         var chart = this.chart;
         var barSeries = chart.series[0];
-        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var palette = this.getPalette();
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });
         barSeries.yNames = params.fields.map(function (f) { return f.displayName; });
-        barSeries.fills = fills;
-        barSeries.strokes = strokes;
+        barSeries.fills = palette.fills;
+        barSeries.strokes = palette.strokes;
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     };
     BarChartProxy.prototype.getDefaultOptions = function () {
-        var isColumnChart = this.isColumnChart();
         var fontOptions = this.getDefaultFontOptions();
         var options = this.getDefaultCartesianChartOptions();
-        options.xAxis.label.rotation = isColumnChart ? 335 : 0;
-        options.yAxis.label.rotation = isColumnChart ? 0 : 335;
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { tooltip: {
                 enabled: true,
             }, label: __assign(__assign({}, fontOptions), { enabled: false }), shadow: this.getDefaultDropShadowOptions() });
@@ -81,9 +101,10 @@ var BarChartProxy = /** @class */ (function (_super) {
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
+        var isColumn = this.isColumnChart();
         var isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         var isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
-        return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
+        return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: isColumn ? 'column' : 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
 }(CartesianChartProxy));

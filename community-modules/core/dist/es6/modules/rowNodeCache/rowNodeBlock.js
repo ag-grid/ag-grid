@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _ } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { PreDestroy } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
+import { cleanNumber } from "../../utils/number";
 var RowNodeBlock = /** @class */ (function (_super) {
     __extends(RowNodeBlock, _super);
     function RowNodeBlock(blockNumber, rowNodeCacheParams) {
@@ -196,7 +196,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
-        lastRow = _.cleanNumber(lastRow);
+        lastRow = cleanNumber(lastRow);
         // check here if lastRow should be set
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,

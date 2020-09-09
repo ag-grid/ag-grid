@@ -13,4 +13,5 @@ export declare class DateCompWrapper {
     getDate(): Date;
     setDate(value: Date): void;
     setInputPlaceholder(placeholder: string): void;
+    setInputAriaLabel(label: string): void;
 }

@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from '../../entities/column';
+import { IFilterDef } from '../../interfaces/iFilter';
 import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHeaderWrapper';
 import { Beans } from '../../rendering/beans';
 export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
-    private static filterToFloatingFilterNames;
     private static TEMPLATE;
     private columnHoverService;
     private gridOptionsWrapper;
@@ -38,10 +38,10 @@ export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private setupWithFloatingFilter;
     private parentFilterInstance;
     private getFilterComponent;
+    static getDefaultFloatingFilterType(def: IFilterDef): string;
     private getFloatingFilterInstance;
     private createDynamicParams;
     private getFilterComponentPrototype;
-    private setupEmpty;
     private currentParentModel;
     private onParentModelChanged;
     private onFloatingFilterChanged;

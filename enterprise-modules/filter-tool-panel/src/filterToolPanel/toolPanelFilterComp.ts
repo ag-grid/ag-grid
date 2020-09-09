@@ -10,8 +10,8 @@ import {
     IFilterComp,
     RefSelector,
     PostConstruct,
-    Constants,
-    _
+    _,
+    KeyCode
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
@@ -22,7 +22,7 @@ export class ToolPanelFilterComp extends Component {
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody" />
+            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"></div>
         </div>`;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
@@ -60,7 +60,7 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.keyCode === KeyCode.ENTER) {
                 this.toggleExpanded();
             }
         });
@@ -118,7 +118,7 @@ export class ToolPanelFilterComp extends Component {
 
         this.expanded = true;
 
-        const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter" />`);
+        const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
 
         if (filterPromise) {
@@ -130,7 +130,7 @@ export class ToolPanelFilterComp extends Component {
                 this.agFilterToolPanelBody.appendChild(container);
 
                 if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({});
+                    filter.afterGuiAttached({ container: 'toolPanel' });
                 }
             });
         }
@@ -159,9 +159,7 @@ export class ToolPanelFilterComp extends Component {
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
         // scroll position in the filter list panel
-        const isSetFilter = filter.refreshVirtualList as any;
-
-        if (isSetFilter) {
+        if (typeof filter.refreshVirtualList === 'function') {
             filter.refreshVirtualList();
         }
     }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
-var utils_1 = require("../../utils");
+var dom_1 = require("../../utils/dom");
 var LoadingType;
 (function (LoadingType) {
     LoadingType[LoadingType["Loading"] = 0] = "Loading";
@@ -47,8 +47,8 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.setDisplayed(false);
     };
     OverlayWrapperComponent.prototype.setWrapperTypeClass = function (loadingType) {
-        utils_1._.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
-        utils_1._.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
+        dom_1.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
+        dom_1.addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
     };
     OverlayWrapperComponent.prototype.showLoadingOverlay = function () {
         var workItem = this.userComponentFactory.newLoadingOverlayComponent({
@@ -90,7 +90,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
             return;
         }
         this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
-        utils_1._.clearElement(this.eOverlayWrapper);
+        dom_1.clearElement(this.eOverlayWrapper);
     };
     OverlayWrapperComponent.prototype.hideOverlay = function () {
         this.destroyActiveOverlay();

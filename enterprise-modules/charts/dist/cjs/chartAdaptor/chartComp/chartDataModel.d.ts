@@ -1,4 +1,4 @@
-import { BeanStub, CellRange, ChartType, Column, IAggFunc, IRangeController, CellRangeParams } from "@ag-grid-community/core";
+import { BeanStub, CellRange, CellRangeParams, ChartType, Column, IAggFunc } from "@ag-grid-community/core";
 export interface ColState {
     column?: Column;
     colId: string;
@@ -9,30 +9,32 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
+    chartThemeName: string;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
 }
 export declare class ChartDataModel extends BeanStub {
     static DEFAULT_CATEGORY: string;
-    private columnController;
-    private gridOptionsWrapper;
-    private valueService;
-    rangeController: IRangeController;
-    private rowRenderer;
-    private chartTranslator;
+    private readonly columnController;
+    private readonly gridOptionsWrapper;
+    private readonly valueService;
+    private readonly rangeController;
+    private readonly rowRenderer;
+    private readonly chartTranslator;
+    private readonly chartId;
+    private readonly pivotChart;
+    private readonly aggFunc?;
+    private readonly suppressChartRanges;
     private referenceCellRange;
     private dimensionCellRange?;
     private valueCellRange?;
     private dimensionColState;
     private valueColState;
     private chartData;
-    private readonly pivotChart;
     private chartType;
-    private readonly suppressChartRanges;
-    private readonly aggFunc?;
+    private chartThemeName;
     private datasource;
-    private readonly chartId;
     private detached;
     private grouping;
     private columnNames;
@@ -40,7 +42,6 @@ export declare class ChartDataModel extends BeanStub {
     private init;
     updateCellRanges(updatedColState?: ColState): void;
     getData(): any[];
-    setChartType(chartType: ChartType): void;
     isGrouping(): boolean;
     isPivotActive(): boolean;
     isPivotMode(): boolean;
@@ -50,7 +51,10 @@ export declare class ChartDataModel extends BeanStub {
     getDimensionColState(): ColState[];
     getCellRanges(): CellRange[];
     getCellRangeParams(): CellRangeParams;
+    setChartType(chartType: ChartType): void;
     getChartType(): ChartType;
+    setChartThemeName(chartThemeName: string): void;
+    getChartThemeName(): string;
     isSuppressChartRanges(): boolean;
     isDetached(): boolean;
     toggleDetached(): void;

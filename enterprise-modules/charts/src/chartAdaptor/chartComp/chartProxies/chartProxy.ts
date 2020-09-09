@@ -1,44 +1,57 @@
 import {
     _,
+    AgChartCaptionOptions,
+    AgChartLegendOptions,
+    AgNavigatorOptions,
     CaptionOptions,
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    ColumnApi,
     DropShadowOptions,
     Events,
     EventService,
     FontOptions,
-    LegendPosition,
+    GridApi,
+    LegendOptions,
+    NavigatorOptions,
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
-    GridApi,
-    ColumnApi,
+    AgChartThemeOverrides
 } from "@ag-grid-community/core";
 import {
+    AgChartTheme,
+    AgChartThemePalette,
     AreaSeries,
+    BarSeries,
     Caption,
     CategoryAxis,
     Chart,
-    ChartPalette,
-    ChartPaletteName,
-    BarSeries,
+    ChartTheme,
     DropShadow,
+    getChartTheme,
     Padding,
-    palettes,
-    PieSeries
+    PieSeries,
+    themes,
 } from "ag-charts-community";
+import { deepMerge } from "../object";
 
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
+    chartThemeName?: string;
+    customChartThemes?: { [name: string]: AgChartTheme; };
     width?: number;
     height?: number;
     parentElement: HTMLElement;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartPaletteName: () => ChartPaletteName;
+    getChartThemeName: () => string;
+    getChartThemes: () => string[];
+    getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
+    apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -62,7 +75,6 @@ export interface UpdateChartParams {
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
-
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly eventService: EventService;
@@ -70,8 +82,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customPalette: ChartPalette;
+    protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
+    protected chartTheme: ChartTheme;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
@@ -115,48 +128,169 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        const { processChartOptions } = this.chartProxyParams;
+        this.initChartTheme();
+
+        this.chartOptions = this.getDefaultOptionsFromTheme(this.chartTheme);
 
         // allow users to override options before they are applied
+        const { processChartOptions } = this.chartProxyParams;
+
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
+            const originalOptions = deepMerge({}, this.chartOptions);
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
-            const safeOptions = this.getDefaultOptions();
 
             // ensure we have everything we need, in case the processing removed necessary options
+            const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
-
-            this.overridePalette(safeOptions);
+            this.overridePalette(originalOptions, safeOptions);
             this.chartOptions = safeOptions;
-        } else {
-            this.chartOptions = this.getDefaultOptions();
         }
     }
 
-    private overridePalette(chartOptions: TOptions): void {
+    private paletteOverridden(originalOptions: any, overriddenOptions: TOptions) {
+        return !_.areEqual(originalOptions.seriesDefaults.fill.colors, overriddenOptions.seriesDefaults.fill.colors) ||
+            !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
+    }
+
+    private initChartTheme() {
+        const themeName = this.getSelectedTheme();
+        const stockTheme = this.isStockTheme(themeName);
+
+        let gridOptionsThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        let apiThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
+
+        if (gridOptionsThemeOverrides || apiThemeOverrides) {
+            const themeOverrides = {
+                overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
+            };
+
+            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
+            const theme = stockTheme ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
+
+            this.chartTheme = getChartTheme(theme);
+        } else {
+            this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+        }
+    }
+
+    public lookupCustomChartTheme(name: string) {
+        const { customChartThemes } = this.chartProxyParams;
+        const customChartTheme = customChartThemes && customChartThemes[name];
+
+        if (!customChartTheme) {
+            console.warn(`ag-Grid: no stock theme exists with the name '${name}' and no ` +
+                "custom chart theme with that name was supplied to 'customChartThemes'");
+        }
+
+        return customChartTheme;
+    }
+
+    public isStockTheme(themeName: string): boolean {
+        return _.includes(Object.keys(themes), themeName);
+    }
+
+    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartThemeOverrides, apiThemeOverrides: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) return apiThemeOverrides;
+        if (!apiThemeOverrides) return gridOptionsThemeOverrides;
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
+    }
+
+    private integratedToStandaloneChartType(integratedChartType: string): string {
+        switch (integratedChartType) {
+            case ChartType.GroupedBar:
+            case ChartType.StackedBar:
+            case ChartType.NormalizedBar:
+                return 'bar';
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
+                return 'column';
+            case ChartType.Line:
+                return 'line';
+            case ChartType.Area:
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
+                return 'area';
+            case ChartType.Scatter:
+            case ChartType.Bubble:
+                return 'scatter';
+            case ChartType.Histogram:
+                return 'histogram';
+            case ChartType.Pie:
+            case ChartType.Doughnut:
+                return 'pie';
+            default:
+                return 'cartesian';
+        }
+    }
+
+    private overridePalette(originalOptions: TOptions, chartOptions: TOptions): void {
         if (!this.chartProxyParams.allowPaletteOverride) {
             return;
         }
 
-        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
+        if (!this.paletteOverridden(originalOptions, chartOptions)) {
+            return;
+        }
+
         const { seriesDefaults } = chartOptions;
-        const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
-        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
-        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
+        const fillsOverridden = seriesDefaults.fill.colors;
+        const strokesOverridden = seriesDefaults.stroke.colors;
 
         if (fillsOverridden || strokesOverridden) {
+            // due to series default refactoring it's possible for fills and strokes to have undefined values
+            const invalidFills = _.includes(fillsOverridden, undefined);
+            const invalidStrokes = _.includes(strokesOverridden, undefined);
+            if (invalidFills || invalidStrokes) return;
+
+            // both fills and strokes will need to be overridden
             this.customPalette = {
-                fills: fillsOverridden ? fills : defaultFills,
-                strokes: strokesOverridden ? strokes : defaultStrokes
+                fills: fillsOverridden,
+                strokes: strokesOverridden
             };
         }
+    }
+
+    protected getStandaloneChartType(): string {
+        return this.integratedToStandaloneChartType(this.chartType);
+    }
+
+    // Merges theme defaults into default options. To be overridden in subclasses.
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): TOptions {
+        const options = {} as TOptions;
+
+        const standaloneChartType = this.getStandaloneChartType();
+
+        options.title = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title') as CaptionOptions;
+        options.subtitle = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle') as CaptionOptions;
+        options.background = theme.getConfig(standaloneChartType + '.background');
+        options.legend = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
+        options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
+        options.tooltipClass = theme.getConfig(standaloneChartType + '.tooltipClass');
+        options.tooltipTracking = theme.getConfig(standaloneChartType + '.tooltipTracking');
+        options.listeners = theme.getConfig(standaloneChartType + '.listeners');
+        options.padding = theme.getConfig(standaloneChartType + '.padding');
+
+        return options;
+    }
+
+    private getSelectedTheme(): string {
+        let chartThemeName = this.chartProxyParams.getChartThemeName();
+        const availableThemes = this.chartProxyParams.getChartThemes();
+
+        if (!_.includes(availableThemes, chartThemeName)) {
+            chartThemeName = availableThemes[0];
+        }
+
+        return chartThemeName;
     }
 
     public getChartOptions(): TOptions {
         return this.chartOptions;
     }
 
-    public getCustomPalette(): ChartPalette | undefined {
+    public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
     }
 
@@ -316,7 +450,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId: this.chartId,
             chartType: this.chartType,
-            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartThemeName: this.chartProxyParams.getChartThemeName(),
             chartOptions: this.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -345,104 +479,26 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getPredefinedPalette(): ChartPalette {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
+    protected getPredefinedPalette(): AgChartThemePalette {
+        return this.chartTheme.palette;
     }
 
-    protected getPalette(): ChartPalette {
-        return this.customPalette || this.getPredefinedPalette();
+    protected getPalette(): AgChartThemePalette {
+        return this.customPalette || this.chartTheme.palette;
     }
 
+    //TODO remove all 'integrated' default chart options
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.getPredefinedPalette();
-        const fontOptions = this.getDefaultFontOptions();
-
         return {
-            background: {
-                fill: this.getBackgroundColor(),
-                visible: true,
-            },
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20,
-            },
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontWeight: 'bold',
-                fontSize: 16,
-            },
-            subtitle: {
-                ...fontOptions,
-                enabled: false,
-            },
-            legend: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                item: {
-                    label: {
-                        ...fontOptions,
-                    },
-                    marker: {
-                        shape: 'square',
-                        size: 15,
-                        padding: 8,
-                        strokeWidth: 1,
-                    },
-                    paddingX: 16,
-                    paddingY: 8,
-                },
-            },
-            navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            },
-            seriesDefaults: {
-                fill: {
-                    colors: fills,
-                    opacity: 1,
-                },
-                stroke: {
-                    colors: strokes,
-                    opacity: 1,
-                    width: 1,
-                },
-                highlightStyle: {
-                    fill: 'yellow',
-                },
-                listeners: {}
-            },
+            background: {},
+            padding: {},
+            title: {},
+            subtitle: {},
+            legend: {},
+            navigator: {},
+            seriesDefaults: {},
             listeners: {}
-        };
+        } as any;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {

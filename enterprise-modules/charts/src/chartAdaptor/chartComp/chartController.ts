@@ -1,5 +1,6 @@
 import {
     _,
+    AgChartThemePalette,
     AgEvent,
     Autowired,
     BeanStub,
@@ -8,14 +9,15 @@ import {
     ChartType,
     ColumnApi,
     Events,
+    GetChartImageDataUrlParams,
     GridApi,
+    GridOptionsWrapper,
     IRangeController,
     PostConstruct,
-    GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName, palettes } from "ag-charts-community";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {ChartDataModel, ColState} from "./chartDataModel";
+import {ChartProxy} from "./chartProxies/chartProxy";
+import {getChartTheme} from "ag-charts-community";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -24,17 +26,15 @@ export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
-    @Autowired('rangeController') rangeController: IRangeController;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('rangeController') private readonly rangeController: IRangeController;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
-    private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
+    public constructor(private readonly model: ChartDataModel) {
         super();
-
-        this.chartPaletteName = paletteName;
     }
 
     @PostConstruct
@@ -84,9 +84,10 @@ export class ChartController extends BeanStub {
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
-            chartPalette: this.getPaletteName(),
+            chartThemeName: this.getThemeName(),
             chartOptions: this.chartProxy.getChartOptions(),
             cellRange: this.model.getCellRangeParams(),
+            chart: this.chartProxy.getChart(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
                 return this.chartProxy.getChartImageDataURL(params.type);
             }
@@ -105,22 +106,29 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    public getPaletteName(): ChartPaletteName {
-        return this.chartPaletteName;
+    public getThemeName(): string {
+        return this.model.getChartThemeName();
     }
 
-    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
+    public getThemes(): string[] {
+        return this.gridOptionsWrapper.getChartThemes();
+    }
+
+    public getPalettes(): AgChartThemePalette[] {
         const customPalette = this.chartProxy.getCustomPalette();
 
         if (customPalette) {
-            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
-
-            map.set(undefined, customPalette);
-
-            return map;
+            return [customPalette];
         }
 
-        return palettes;
+        const themeNames = this.gridOptionsWrapper.getChartThemes();
+
+        return themeNames.map(themeName => {
+            const theme = this.chartProxy.isStockTheme(themeName) ?
+                themeName : this.chartProxy.lookupCustomChartTheme(themeName);
+
+            return getChartTheme(theme).palette;
+        });
     }
 
     public setChartType(chartType: ChartType): void {
@@ -129,8 +137,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartPaletteName(palette: ChartPaletteName): void {
-        this.chartPaletteName = palette;
+    public setChartThemeName(chartThemeName: string): void {
+        this.model.setChartThemeName(chartThemeName);
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }

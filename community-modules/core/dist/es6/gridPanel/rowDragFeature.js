@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,7 +46,8 @@ import { Autowired, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { last } from '../utils/array';
 import { BeanStub } from "../context/beanStub";
-import { _ } from "../utils";
+import { missingOrEmpty } from "../utils/generic";
+import { doOnce } from "../utils/function";
 var RowDragFeature = /** @class */ (function (_super) {
     __extends(RowDragFeature, _super);
     function RowDragFeature(eContainer, gridPanel) {
@@ -71,15 +72,14 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.onRowGroupChanged();
     };
     RowDragFeature.prototype.onSortChanged = function () {
-        var sortModel = this.sortController.getSortModel();
-        this.isGridSorted = !_.missingOrEmpty(sortModel);
+        this.isGridSorted = this.sortController.isSortActive();
     };
     RowDragFeature.prototype.onFilterChanged = function () {
         this.isGridFiltered = this.filterManager.isAnyFilterPresent();
     };
     RowDragFeature.prototype.onRowGroupChanged = function () {
         var rowGroups = this.columnController.getRowGroupColumns();
-        this.isRowGroupActive = !_.missingOrEmpty(rowGroups);
+        this.isRowGroupActive = !missingOrEmpty(rowGroups);
     };
     RowDragFeature.prototype.getContainer = function () {
         return this.eContainer;
@@ -115,9 +115,11 @@ var RowDragFeature = /** @class */ (function (_super) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
-        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-            rowNode.setDragging(true);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+                rowNode.setDragging(true);
+            });
+        }
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.onDragging = function (draggingEvent) {
@@ -267,7 +269,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            _.doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
@@ -386,7 +388,9 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        this.clearRowHighlight();
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.clearRowHighlight();
+        }
         if (this.isFromThisGrid(draggingEvent)) {
             this.isMultiRowDrag = false;
         }
@@ -402,9 +406,11 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.stopDragging = function (draggingEvent) {
         this.ensureIntervalCleared();
-        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-            rowNode.setDragging(false);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+                rowNode.setDragging(false);
+            });
+        }
     };
     __decorate([
         Autowired('dragAndDropService')

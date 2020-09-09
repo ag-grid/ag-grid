@@ -19,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Component, RefSelector, _ } from '@ag-grid-community/core';
 import { SetValueModel } from './setValueModel';
+import { DEFAULT_LOCALE_TEXT } from './localeText';
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
@@ -35,7 +36,8 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " Filter Input");
+            .setInputAriaLabel(displayName + " Filter Input")
+            .addGuiEventListener('click', function () { return params.showParentFilter(); });
         this.params = params;
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
@@ -78,7 +80,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             var formattedValues = _.map(availableValues, function (value) {
                 var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
                 var valueToRender = formattedValue != null ? formattedValue : value;
-                return valueToRender == null ? "(" + localeTextFunc('blanks', 'Blanks') + ")" : valueToRender;
+                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
             });
             var arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(',');

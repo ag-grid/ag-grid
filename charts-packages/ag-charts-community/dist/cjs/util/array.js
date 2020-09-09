@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Custom `Array.find` implementation for legacy browsers.
 function find(arr, predicate) {
-    for (var i = 0, ln = arr.length; i < ln; i++) {
+    for (var i = 0; i < arr.length; i++) {
         var value = arr[i];
         if (predicate(value, i, arr)) {
             return value;
@@ -10,6 +10,15 @@ function find(arr, predicate) {
     }
 }
 exports.find = find;
+function findIndex(arr, predicate) {
+    for (var i = 0; i < arr.length; i++) {
+        if (predicate(arr[i], i, arr)) {
+            return i;
+        }
+    }
+    return -1;
+}
+exports.findIndex = findIndex;
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
  * If the iterable contains no comparable values, returns `undefined`.
@@ -115,4 +124,17 @@ function findLargestMinMax(totals) {
     return { min: min, max: max };
 }
 exports.findLargestMinMax = findLargestMinMax;
+function copy(array, start, count) {
+    if (start === void 0) { start = 0; }
+    if (count === void 0) { count = array.length; }
+    var result = [];
+    var n = array.length;
+    if (n) {
+        for (var i = 0; i < count; i++) {
+            result.push(array[(start + i) % n]);
+        }
+    }
+    return result;
+}
+exports.copy = copy;
 //# sourceMappingURL=array.js.map

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,8 +28,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var context_2 = require("../context/context");
 var utils_1 = require("../utils");
-var constants_1 = require("../constants");
+var constants_1 = require("../constants/constants");
 var beanStub_1 = require("../context/beanStub");
+var event_1 = require("../utils/event");
+var generic_1 = require("../utils/generic");
 var MouseEventService = /** @class */ (function (_super) {
     __extends(MouseEventService, _super);
     function MouseEventService() {
@@ -51,17 +53,17 @@ var MouseEventService = /** @class */ (function (_super) {
         this.eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
     };
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        return utils_1._.getCellCompForEvent(this.gridOptionsWrapper, event);
+        return event_1.getCellCompForEvent(this.gridOptionsWrapper, event);
     };
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
     // getting executed on many grids at the same time.
     MouseEventService.prototype.isEventFromThisGrid = function (event) {
-        var path = utils_1._.getEventPath(event);
+        var path = event_1.getEventPath(event);
         for (var i = 0; i < path.length; i++) {
             var element = path[i];
             var instanceId = element[MouseEventService_1.GRID_DOM_KEY];
-            if (utils_1._.exists(instanceId)) {
+            if (generic_1.exists(instanceId)) {
                 var eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }

@@ -1,4 +1,5 @@
-export declare function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined;
+export declare function find<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): T | undefined;
+export declare function findIndex<T>(arr: T[], predicate: (item: T, index: number, arr: T[]) => boolean): number;
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
  * If the iterable contains no comparable values, returns `undefined`.
@@ -27,3 +28,4 @@ export declare function findLargestMinMax(totals: {
     min: number;
     max: number;
 };
+export declare function copy(array: any[], start?: number, count?: number): any[];

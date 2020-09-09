@@ -1,13 +1,8 @@
-import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import {
-    CartesianChart,
-    ChartBuilder,
-    LineSeries,
-    LineSeriesOptions as InternalLineSeriesOptions
-} from "ag-charts-community";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { isDate } from '../../typeChecker';
+import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions} from "@ag-grid-community/core";
+import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
@@ -18,10 +13,53 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
+        options.seriesDefaults = {
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [],
+                opacity: 1
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as LineSeriesOptions;
+
+        return options;
+    }
+
     protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        const agChartOptions = options as AgCartesianChartOptions;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [{
+            type: 'category',
+            position: 'bottom',
+            ...options.xAxis
+        }, {
+            type: 'number',
+            position: 'left',
+            ...options.yAxis
+        }];
+
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -73,32 +111,34 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
                 const { seriesDefaults } = this.chartOptions;
-                const options: InternalLineSeriesOptions = {
+                const marker = {
+                    ...seriesDefaults.marker,
+                    fill,
+                    stroke
+                } as any;
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
+                const options: any /*InternalLineSeriesOptions*/ = {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
                     data,
-                    field: {
-                        xKey: params.category.id,
-                        xName: params.category.name,
-                        yKey: f.colId,
-                        yName: f.displayName,
-                    },
-                    fill: {
-                        ...seriesDefaults.fill,
-                        color: fill,
-                    },
-                    stroke: {
-                        ...seriesDefaults.stroke,
-                        color: fill, // this is deliberate, so that the line colours match the fills of other series
-                    },
-                    marker: {
-                        ...seriesDefaults.marker,
-                        stroke
-                    }
+                    xKey: params.category.id,
+                    xName: params.category.name,
+                    yKey: f.colId,
+                    yName: f.displayName,
+                    fill,
+                    stroke: fill, // this is deliberate, so that the line colours match the fills of other series
+                    fillOpacity: seriesDefaults.fill.opacity,
+                    strokeOpacity: seriesDefaults.stroke.opacity,
+                    strokeWidth: seriesDefaults.stroke.width,
+                    tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                    marker
                 };
 
-                lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+                lineSeries = AgChart.createComponent(options, 'line.series');
 
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }

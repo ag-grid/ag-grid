@@ -1,9 +1,9 @@
 import { AgInputTextArea } from "../../widgets/agInputTextArea";
-import { Constants } from "../../constants";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from "../../utils";
+import { exists } from "../../utils/generic";
+import { KeyCode } from '../../constants/keyCode';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
@@ -25,7 +25,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
         super(LargeTextCellEditor.TEMPLATE);
     }
 
-    public init(params:ILargeTextEditorParams): void {
+    public init(params: ILargeTextEditorParams): void {
         this.params = params;
 
         this.focusAfterAttached = params.cellStartedEdit;
@@ -35,25 +35,28 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
 
-        if (_.exists(params.value)) {
+        if (exists(params.value)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     }
 
-    private onKeyDown(event:KeyboardEvent): void {
+    private onKeyDown(event: KeyboardEvent): void {
         const key = event.which || event.keyCode;
-        if (key == Constants.KEY_LEFT ||
-            key == Constants.KEY_UP ||
-            key == Constants.KEY_RIGHT ||
-            key == Constants.KEY_DOWN ||
-            (event.shiftKey && key == Constants.KEY_ENTER)) { // shift+enter allows for newlines
+
+        if (key === KeyCode.LEFT ||
+            key === KeyCode.UP ||
+            key === KeyCode.RIGHT ||
+            key === KeyCode.DOWN ||
+            (event.shiftKey && key === KeyCode.ENTER)) { // shift+enter allows for newlines
             event.stopPropagation();
         }
     }
 
     public afterGuiAttached(): void {
+        this.eTextArea.setInputAriaLabel('Input Editor');
+
         if (this.focusAfterAttached) {
             this.eTextArea.getFocusableElement().focus();
         }

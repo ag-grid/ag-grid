@@ -15,7 +15,8 @@ import {
     RefSelector,
     TouchListener,
     ManagedFocusComponent,
-    Constants
+    KeyCode,
+    ColumnEventType
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
@@ -23,13 +24,13 @@ import { ColumnFilterResults } from "./primaryColsListPanel";
 export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group" tabindex="-1">
+        `<div class="ag-column-select-column-group" tabindex="-1" role="treeitem">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
         </div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -54,9 +55,17 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     private displayName: string | null;
     private processingColumnStateChange = false;
     private getFilterResultsCallback: () => ColumnFilterResults;
+    private eventType: ColumnEventType;
 
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
-        expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
+    constructor(
+        columnGroup: OriginalColumnGroup,
+        columnDept: number,
+        allowDragging: boolean,
+        expandByDefault: boolean,
+        expandedCallback: () => void,
+        getFilterResults: () => ColumnFilterResults,
+        eventType: ColumnEventType
+    ) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
@@ -64,6 +73,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.expanded = expandByDefault;
         this.expandedCallback = expandedCallback;
         this.getFilterResultsCallback = getFilterResults;
+        this.eventType = eventType;
     }
 
     @PostConstruct
@@ -75,13 +85,11 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
 
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
         }
-
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
@@ -94,25 +102,25 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
-
         this.setupDragging();
-
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
+        this.refreshAriaExpanded();
+        this.refreshAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
-            case Constants.KEY_LEFT:
-            case Constants.KEY_RIGHT:
+            case KeyCode.LEFT:
+            case KeyCode.RIGHT:
                 e.preventDefault();
-                if (this.isExpandable()){
-                    this.toggleExpandOrContract(e.keyCode === Constants.KEY_RIGHT);
+                if (this.isExpandable()) {
+                    this.toggleExpandOrContract(e.keyCode === KeyCode.RIGHT);
                 }
                 break;
-            case Constants.KEY_SPACE:
+            case KeyCode.SPACE:
                 e.preventDefault();
                 if (this.isSelectable()) {
                     this.onSelectAllChanged(!this.isSelected());
@@ -147,7 +155,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private createDragItem() {
-        const visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean; } = {};
         this.columnGroup.getLeafColumns().forEach(col => {
             visibleState[col.getId()] = col.isVisible();
         });
@@ -180,6 +188,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private onChangeCommon(nextState: boolean): void {
+        this.refreshAriaLabel();
+
         if (this.processingColumnStateChange) {
             return;
         }
@@ -201,8 +211,13 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             const visibleColumns = allowedColumns.filter(passesFilter);
 
             // only columns that are 'allowed' and pass filter should be visible
-            this.columnController.setColumnsVisible(visibleColumns, nextState, "toolPanelUi");
+            this.columnController.setColumnsVisible(visibleColumns, nextState, this.eventType);
         }
+    }
+
+    private refreshAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
+        _.setAriaLabel(this.getGui(), `${this.displayName} column group toggle visibility (${state})`);
     }
 
     private actionUnCheckedReduce(columns: Column[]): void {
@@ -224,13 +239,13 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         });
 
         if (columnsToUnPivot.length > 0) {
-            this.columnController.removePivotColumns(columnsToUnPivot, "toolPanelUi");
+            this.columnController.removePivotColumns(columnsToUnPivot, this.eventType);
         }
         if (columnsToUnGroup.length > 0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup, "toolPanelUi");
+            this.columnController.removeRowGroupColumns(columnsToUnGroup, this.eventType);
         }
         if (columnsToUnValue.length > 0) {
-            this.columnController.removeValueColumns(columnsToUnValue, "toolPanelUi");
+            this.columnController.removeValueColumns(columnsToUnValue, this.eventType);
         }
     }
 
@@ -259,13 +274,13 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         });
 
         if (columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(columnsToAggregate, "toolPanelUi");
+            this.columnController.addValueColumns(columnsToAggregate, this.eventType);
         }
         if (columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(columnsToGroup, "toolPanelUi");
+            this.columnController.addRowGroupColumns(columnsToGroup, this.eventType);
         }
         if (columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(columnsToPivot, "toolPanelUi");
+            this.columnController.addPivotColumns(columnsToPivot, this.eventType);
         }
     }
 
@@ -363,18 +378,22 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private toggleExpandOrContract(expanded?: boolean) {
-        if (expanded === undefined) {
-            expanded = !this.expanded;
-        }
+        if (expanded === undefined) { expanded = !this.expanded; }
+
         this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
+        this.refreshAriaExpanded();
     }
 
     private setOpenClosedIcons(): void {
         const folderOpen = this.expanded;
         _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
         _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    }
+
+    private refreshAriaExpanded(): void {
+        _.setAriaExpanded(this.getGui(), this.expanded);
     }
 
     public isExpanded(): boolean {
@@ -386,13 +405,11 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     public onSelectAllChanged(value: boolean): void {
-        if (
-            (value && !this.cbSelect.getValue()) ||
-            (!value && this.cbSelect.getValue())
-        ) {
-            if (!this.cbSelect.isReadOnly()) {
-                this.cbSelect.toggle();
-            }
+        const cbValue = this.cbSelect.getValue();
+        const readOnly = this.cbSelect.isReadOnly();
+
+        if (!readOnly && ((value && !cbValue) || (!value && cbValue))) {
+            this.cbSelect.toggle();
         }
     }
 

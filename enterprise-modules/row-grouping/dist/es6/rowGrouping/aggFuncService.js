@@ -96,29 +96,29 @@ var AggFuncService = /** @class */ (function (_super) {
     return AggFuncService;
 }(BeanStub));
 export { AggFuncService };
-function aggSum(input) {
-    return input
+function aggSum(params) {
+    return params.values
         .filter(function (value) { return typeof value === 'number'; })
         .reduce(function (sum, value) { return sum === null ? value : sum + value; }, null);
 }
-function aggFirst(input) {
-    return input.length > 0 ? input[0] : null;
+function aggFirst(params) {
+    return params.values.length > 0 ? params.values[0] : null;
 }
-function aggLast(input) {
-    return input.length > 0 ? _.last(input) : null;
+function aggLast(params) {
+    return params.values.length > 0 ? _.last(params.values) : null;
 }
-function aggMin(input) {
-    return input
+function aggMin(params) {
+    return params.values
         .filter(function (value) { return typeof value === 'number'; })
         .reduce(function (min, value) { return min === null || value < min ? value : min; }, null);
 }
-function aggMax(input) {
-    return input
+function aggMax(params) {
+    return params.values
         .filter(function (value) { return typeof value === 'number'; })
         .reduce(function (max, value) { return max === null || value > max ? value : max; }, null);
 }
-function aggCount(input) {
-    var value = input.reduce(function (count, item) {
+function aggCount(params) {
+    var value = params.values.reduce(function (count, item) {
         var isGroupAgg = _.exists(item) && typeof item.value === 'number';
         return count + (isGroupAgg ? item.value : 1);
     }, 0);
@@ -135,9 +135,9 @@ function aggCount(input) {
 }
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(input) {
+function aggAvg(params) {
     // the average will be the sum / count
-    var _a = input.reduce(function (_a, item) {
+    var _a = params.values.reduce(function (_a, item) {
         var sum = _a.sum, count = _a.count;
         var itemIsGroupResult = _.exists(item) &&
             typeof item.value === 'number' &&

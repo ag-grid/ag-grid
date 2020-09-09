@@ -82,10 +82,7 @@ var ContextMenuFactory = /** @class */ (function (_super) {
         var menu = new ContextMenu(menuItems);
         this.createBean(menu);
         var eMenuGui = menu.getGui();
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return _this.destroyBean(menu); }, mouseEvent);
-        this.popupService.positionPopupUnderMouseEvent({
+        var positionParams = {
             column: column,
             rowNode: node,
             type: 'contextMenu',
@@ -95,10 +92,28 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             // won't show the browser's contextmenu
             nudgeX: 1,
             nudgeY: 1
+        };
+        var positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
+        var hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenuGui,
+            closeOnEsc: true,
+            closedCallback: function () {
+                _this.destroyBean(menu);
+            },
+            click: mouseEvent,
+            positionCallback: positionCallback,
+            anchorToElement: mouseEvent.target
         });
-        menu.afterGuiAttached({
-            hidePopup: hidePopup
-        });
+        menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
+        // there should never be an active menu at this point, however it was found
+        // that you could right click a second time just 1 or 2 pixels from the first
+        // click, and another menu would pop up. so somehow the logic for closing the
+        // first menu (clicking outside should close it) was glitchy somehow. an easy
+        // way to avoid this is just remove the old context menu here if it exists.
+        if (this.activeMenu) {
+            this.hideActiveMenu();
+        }
         this.activeMenu = menu;
         menu.addEventListener(BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
@@ -128,20 +143,19 @@ export { ContextMenuFactory };
 var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
     function ContextMenu(menuItems) {
-        var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
+        var _this = _super.call(this, '<div class="ag-menu" role="presentation"></div>') || this;
         _this.menuList = null;
         _this.focusedCell = null;
         _this.menuItems = menuItems;
         return _this;
     }
     ContextMenu.prototype.addMenuItems = function () {
-        var menuList = new MenuList();
-        this.getContext().createBean(menuList);
+        var menuList = this.createBean(new MenuList());
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
         this.menuList = menuList;
-        menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
+        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {
@@ -149,7 +163,7 @@ var ContextMenu = /** @class */ (function (_super) {
         }
         this.focusedCell = this.focusController.getFocusedCell();
         if (this.menuList) {
-            this.focusController.focusFirstFocusableElement(this.menuList.getGui());
+            this.focusController.focusInto(this.menuList.getGui());
         }
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));

@@ -1,11 +1,19 @@
 // Custom `Array.find` implementation for legacy browsers.
 export function find(arr, predicate) {
-    for (var i = 0, ln = arr.length; i < ln; i++) {
+    for (var i = 0; i < arr.length; i++) {
         var value = arr[i];
         if (predicate(value, i, arr)) {
             return value;
         }
     }
+}
+export function findIndex(arr, predicate) {
+    for (var i = 0; i < arr.length; i++) {
+        if (predicate(arr[i], i, arr)) {
+            return i;
+        }
+    }
+    return -1;
 }
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
@@ -106,4 +114,16 @@ export function findLargestMinMax(totals) {
         }
     }
     return { min: min, max: max };
+}
+export function copy(array, start, count) {
+    if (start === void 0) { start = 0; }
+    if (count === void 0) { count = array.length; }
+    var result = [];
+    var n = array.length;
+    if (n) {
+        for (var i = 0; i < count; i++) {
+            result.push(array[(start + i) % n]);
+        }
+    }
+    return result;
 }

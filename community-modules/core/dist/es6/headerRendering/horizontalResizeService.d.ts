@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -15,7 +15,7 @@ export declare class HorizontalResizeService extends BeanStub {
     private dragStartX;
     private resizeAmount;
     private oldBodyCursor;
-    private oldMsUserSelect;
+    private oldUserSelect;
     private oldWebkitUserSelect;
     addResizeBar(params: HorizontalResizeParams): () => void;
     private onDragStart;

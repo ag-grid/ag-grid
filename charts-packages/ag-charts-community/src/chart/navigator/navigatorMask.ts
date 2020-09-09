@@ -3,17 +3,17 @@ import { RangeMask } from "../shapes/rangeMask";
 export class NavigatorMask {
     private readonly rm: RangeMask;
 
-    set fill(value: string) {
+    set fill(value: string | undefined) {
         this.rm.fill = value;
     }
-    get fill(): string {
+    get fill(): string | undefined {
         return this.rm.fill;
     }
 
-    set stroke(value: string) {
+    set stroke(value: string | undefined) {
         this.rm.stroke = value;
     }
-    get stroke(): string {
+    get stroke(): string | undefined {
         return this.rm.stroke;
     }
 

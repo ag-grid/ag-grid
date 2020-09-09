@@ -1,12 +1,13 @@
-import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ChartTranslator } from "../../chartTranslator";
+import {_, AgGroupComponent, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
+import {ChartController} from "../../chartController";
+import {ChartTranslator} from "../../chartTranslator";
 import {
     MiniArea,
     MiniBar,
     MiniBubble,
     MiniColumn,
     MiniDoughnut,
+    MiniHistogram,
     MiniLine,
     MiniNormalizedArea,
     MiniNormalizedBar,
@@ -15,8 +16,7 @@ import {
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
-    MiniStackedColumn,
-    MiniHistogram
+    MiniStackedColumn
 } from "./miniCharts";
 
 type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup' | 'histogramGroup';

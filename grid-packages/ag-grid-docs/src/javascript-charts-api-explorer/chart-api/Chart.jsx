@@ -12,6 +12,7 @@ export class Chart extends React.Component {
     }
 
     chartInstance = undefined;
+    animationFrameId = 0;
 
     componentDidMount() {
         this.createChart();
@@ -23,7 +24,10 @@ export class Chart extends React.Component {
         const hasChangedType = newSeriesType !== oldSeriesType;
 
         if (this.chartInstance && this.useDynamicUpdates && !hasChangedType) {
-            AgChart.update(this.chartInstance, this.createOptionsJson());
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = requestAnimationFrame(() => {
+                AgChart.update(this.chartInstance, this.createOptionsJson());
+            });
         } else {
             this.chartInstance && this.chartInstance.destroy();
             this.createChart();

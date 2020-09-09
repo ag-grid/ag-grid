@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderRowType } from "../headerRowComp";
-import { _ } from "../../utils";
+import { last } from "../../utils/array";
 export var HeaderNavigationDirection;
 (function (HeaderNavigationDirection) {
     HeaderNavigationDirection[HeaderNavigationDirection["UP"] = 0] = "UP";
@@ -165,7 +165,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         var columnToScrollTo;
         if (column instanceof ColumnGroup) {
             var columns = column.getDisplayedLeafColumns();
-            columnToScrollTo = direction === 'Before' ? _.last(columns) : columns[0];
+            columnToScrollTo = direction === 'Before' ? last(columns) : columns[0];
         }
         else {
             columnToScrollTo = column;

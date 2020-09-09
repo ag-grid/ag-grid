@@ -3,14 +3,15 @@
 
 @mixin ag-theme-balham($params: ()) {
     @include ag-allow-color-param-access-with-ag-param(false);
-    
+
     $params: ag-process-theme-variables($params, $ag-theme-balham-default-params);
     @include ag-theme-base($params);
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
-    .ag-header-row {
+    .ag-header-row,
+    .ag-multi-filter-group-title-bar {
         font-weight: 600;
         @include ag-color-property(color, header-foreground-color);
     }
@@ -63,11 +64,11 @@
     .ag-column-drop-vertical-cell-text {
         margin-left: ag-param(grid-size) * 2;
     }
-    
+
     .ag-column-drop-vertical-icon {
         @include ag-color-property(color, secondary-foreground-color);
     }
-    
+
     .ag-column-drop-vertical-empty-message {
         @include ag-theme-rtl((
             padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
@@ -111,12 +112,12 @@
     .ag-panel-title-bar-button-icon {
         font-size: ag-param(icon-size) + ag-param(grid-size);
     }
-    
+
     .ag-chart-data-section,
     .ag-chart-format-section {
         padding-bottom: ag-param(grid-size) * 0.5;
     }
-    
+
     .ag-group-toolbar {
         @include ag-color-property(background-color, subheader-toolbar-background-color);
     }

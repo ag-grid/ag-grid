@@ -1,5 +1,7 @@
 {
-  "extends": ["plugin:compat/recommended"],
+  "extends": [
+    "plugin:compat/recommended"
+  ],
   "env": {
     "browser": true,
     "es6": false
@@ -23,8 +25,8 @@
   },
   "settings": {
     "polyfills": [
+      "ResizeObserver", // classic Vitaly
       "Reflect",
-      "Object.assign",
       "Math.sign" // we do a check for it..so allow this
     ]
   }

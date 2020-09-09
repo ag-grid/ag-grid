@@ -1,11 +1,11 @@
-import {Component, ViewEncapsulation} from '@angular/core';
-import {ITooltipAngularComp} from "@ag-grid-community/angular";
+import { Component, ViewEncapsulation } from '@angular/core';
+import { ITooltipAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'tooltip-component',
     template: `
         <div class="custom-tooltip">
-            <p><span>Athlete Name:</span></p>
+            <p><span>Athlete's Name:</span></p>
             <p>{{valueToDisplay}}</p>
         </div>`,
     styles: [

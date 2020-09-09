@@ -1,6 +1,6 @@
 import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
-import { Constants } from '../../constants';
+import { Constants } from '../../constants/constants';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';
@@ -11,18 +11,18 @@ class TestFilter extends ProvidedFilter {
     private modelHasChanged = false;
 
     constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-        super();
+        super('textFilter');
 
         const eGui = mock<HTMLElement>('appendChild');
         this.setGui(eGui);
 
         const gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
         gridOptionsWrapper.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
-        this.gridOptionsWrapper = gridOptionsWrapper;
+        (this as any).gridOptionsWrapper = gridOptionsWrapper;
 
         const rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(rowModelType);
-        this.rowModel = rowModel;
+        (this as any).rowModel = rowModel;
 
         this.setParams(params);
     }
@@ -55,20 +55,20 @@ class TestFilter extends ProvidedFilter {
         return !this.modelHasChanged;
     }
 
-    public getModelFromUi(): ProvidedFilterModel {
-        return this.uiModel;
+    protected getFilterType(): string {
+        return 'test';
     }
 
-    public setUiModel(model: ProvidedFilterModel): void {
-        this.uiModel = model;
+    public getModelFromUi(): ProvidedFilterModel {
+        return this.uiModel;
     }
 
     public setModelHasChanged(hasChanged: boolean): void {
         this.modelHasChanged = hasChanged;
     }
 
-    public apply(afterFloatingFilter = false): void {
-        this.onBtApply(afterFloatingFilter);
+    public apply(afterFloatingFilter = false, afterDataChange = false): void {
+        this.onBtApply(afterFloatingFilter, afterDataChange);
     }
 }
 
@@ -101,7 +101,7 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 
@@ -116,7 +116,7 @@ describe('closeOnApply', () => {
 
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.apply();
 
         expect(hidePopup).toHaveBeenCalledTimes(1);
@@ -128,7 +128,7 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 
@@ -142,9 +142,23 @@ describe('closeOnApply', () => {
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply(true);
+
+        expect(hidePopup).toHaveBeenCalledTimes(0);
+    });
+
+    it('does not close popup if from change came from data', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.buttons = ['apply'];
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply(false, true);
 
         expect(hidePopup).toHaveBeenCalledTimes(0);
     });
@@ -158,7 +172,7 @@ describe('closeOnApply', () => {
 
         const filter = new TestFilter(params);
 
-        filter.afterGuiAttached({ hidePopup });
+        filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
         filter.setModelHasChanged(true);
         filter.apply();
 

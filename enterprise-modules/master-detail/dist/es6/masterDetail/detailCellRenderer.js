@@ -112,13 +112,15 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         if (!this.params.autoHeight) {
             return;
         }
-        var gridApi = this.params.api;
-        var onRowHeightChangedDebounced = _.debounce(gridApi.onRowHeightChanged.bind(gridApi), 20);
         var checkRowSizeFunc = function () {
             var clientHeight = _this.getGui().clientHeight;
-            if (clientHeight != null) {
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight != null && clientHeight > 0) {
                 _this.params.node.setRowHeight(clientHeight);
-                onRowHeightChangedDebounced();
+                _this.params.api.onRowHeightChanged();
             }
         };
         var resizeObserverDestroyFunc = this.resizeObserverService.observeResize(this.getGui(), checkRowSizeFunc);
@@ -235,7 +237,8 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             // we take data from node, rather than params.data
             // as the data could have been updated with new instance
             data: this.params.node.data,
-            successCallback: successCallback
+            successCallback: successCallback,
+            context: this.gridOptionsWrapper.getContext()
         };
         userFunc(funcParams);
     };
@@ -255,6 +258,9 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     __decorate([
         Autowired('resizeObserverService')
     ], DetailCellRenderer.prototype, "resizeObserverService", void 0);
+    __decorate([
+        Autowired('gridOptionsWrapper')
+    ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
     return DetailCellRenderer;
 }(Component));
 export { DetailCellRenderer };

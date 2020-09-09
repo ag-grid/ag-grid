@@ -1,3 +1,12 @@
+var myIcons = {
+    sortAscending: function() {
+        return 'ASC';
+    },
+    sortDescending: function() {
+        return 'DESC';
+    }
+}
+
 var columnDefs = [
     {
         field: 'athlete', rowGroup: true, hide: true
@@ -26,14 +35,7 @@ var columnDefs = [
     {
         field: 'sport',
         width: 110,
-        icons: {
-            sortAscending: function() {
-                return 'ASC';
-            },
-            sortDescending: function() {
-                return 'DESC';
-            }
-        }
+        icons: myIcons
     },
     { field: 'gold', width: 100 },
     { field: 'silver', width: 100 },

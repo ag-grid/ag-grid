@@ -4,17 +4,17 @@ export declare class Line extends Shape {
     static className: string;
     protected static defaultStyles: {
         fill: string;
-        stroke: any;
+        stroke: undefined;
         strokeWidth: number;
-        lineDash: any;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        fillShadow: any;
-        strokeShadow: any;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
-        fill: any;
+        fill: undefined;
         strokeWidth: number;
     };
     constructor();

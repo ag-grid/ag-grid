@@ -5,13 +5,18 @@ import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { forEach } from '../../utils/array';
-import { setDisplayed } from '../../utils/dom';
+import { forEach, every, some, includes } from '../../utils/array';
+import { setDisplayed, setDisabled } from '../../utils/dom';
+import { IFilterLocaleText } from '../filterLocaleText';
+
+export type JoinOperator = 'AND' | 'OR';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
+    defaultJoinOperator?: JoinOperator;
     suppressAndOrCondition?: boolean;
+    alwaysShowBothConditions?: boolean;
 }
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
@@ -19,52 +24,12 @@ export interface ISimpleFilterModel extends ProvidedFilterModel {
 }
 
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
-    operator: string;
+    operator: JoinOperator;
     condition1: M;
     condition2: M;
 }
 
 export enum ConditionPosition { One, Two }
-
-interface ISimpleFilterTranslations {
-    filterOoo: string;
-    empty: string;
-    equals: string;
-    notEqual: string;
-    lessThan: string;
-    greaterThan: string;
-    inRange: string;
-    inRangeStart: string;
-    inRangeEnd: string;
-    lessThanOrEqual: string;
-    greaterThanOrEqual: string;
-    contains: string;
-    notContains: string;
-    startsWith: string;
-    endsWith: string;
-    andCondition: string;
-    orCondition: string;
-}
-
-const DEFAULT_TRANSLATIONS: ISimpleFilterTranslations = {
-    filterOoo: 'Filter...',
-    empty: 'Choose One',
-    equals: 'Equals',
-    notEqual: 'Not equal',
-    lessThan: 'Less than',
-    greaterThan: 'Greater than',
-    inRange: 'In range',
-    inRangeStart: 'From',
-    inRangeEnd: 'To',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
-    contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
-    endsWith: 'Ends with',
-    andCondition: 'AND',
-    orCondition: 'OR',
-};
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -79,20 +44,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public static GREATER_THAN = 'greaterThan';
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
     public static IN_RANGE = 'inRange';
-
     public static CONTAINS = 'contains';
     public static NOT_CONTAINS = 'notContains';
     public static STARTS_WITH = 'startsWith';
     public static ENDS_WITH = 'endsWith';
 
-    @RefSelector('eOptions1') private eType1: AgSelect;
-    @RefSelector('eOptions2') private eType2: AgSelect;
-    @RefSelector('eJoinOperatorAnd') private eJoinOperatorAnd: AgRadioButton;
-    @RefSelector('eJoinOperatorOr') private eJoinOperatorOr: AgRadioButton;
-    @RefSelector('eCondition2Body') private eCondition2Body: HTMLElement;
-    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
+    @RefSelector('eOptions1') protected readonly eType1: AgSelect;
+    @RefSelector('eOptions2') protected readonly eType2: AgSelect;
+    @RefSelector('eJoinOperatorPanel') protected readonly eJoinOperatorPanel: HTMLElement;
+    @RefSelector('eJoinOperatorAnd') protected readonly eJoinOperatorAnd: AgRadioButton;
+    @RefSelector('eJoinOperatorOr') protected readonly eJoinOperatorOr: AgRadioButton;
+    @RefSelector('eCondition1Body') protected readonly eCondition1Body: HTMLElement;
+    @RefSelector('eCondition2Body') protected readonly eCondition2Body: HTMLElement;
 
     private allowTwoConditions: boolean;
+    private alwaysShowBothConditions: boolean;
+    private defaultJoinOperator: JoinOperator;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -109,9 +76,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
-
-    // returns the type selected from the drop down. base classes use this.
-    protected abstract getFilterType(): string;
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
@@ -145,11 +109,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected setTypeFromFloatingFilter(type: string): void {
         this.eType1.setValue(type);
         this.eType2.setValue(this.optionsFactory.getDefaultOption());
-        this.eJoinOperatorAnd.setValue(true);
+        (this.isDefaultOperator('AND') ? this.eJoinOperatorAnd : this.eJoinOperatorOr).setValue(true);
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> {
-        if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
+        if (!this.isConditionUiComplete(ConditionPosition.One)) {
+            return null;
+        }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
             return {
@@ -171,7 +137,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return this.eType2.getValue();
     }
 
-    protected getJoinOperator(): string {
+    protected getJoinOperator(): JoinOperator {
         return this.eJoinOperatorOr.getValue() === true ? 'OR' : 'AND';
     }
 
@@ -226,8 +192,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         } else {
             const simpleModel = model as ISimpleFilterModel;
 
-            this.eJoinOperatorAnd.setValue(true);
-            this.eJoinOperatorOr.setValue(false);
+            this.eJoinOperatorAnd.setValue(this.isDefaultOperator('AND'));
+            this.eJoinOperatorOr.setValue(this.isDefaultOperator('OR'));
 
             this.eType1.setValue(simpleModel.type);
             this.eType2.setValue(this.optionsFactory.getDefaultOption());
@@ -241,25 +207,23 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
-        const isCombined = (model as any).operator;
 
-        if (isCombined) {
+        if (model == null) { return true; }
+
+        const { operator } = model as ICombinedSimpleModel<M>;
+        const models: ISimpleFilterModel[] = [];
+
+        if (operator) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            const firstResult = this.individualConditionPasses(params, combinedModel.condition1);
-            const secondResult = this.individualConditionPasses(params, combinedModel.condition2);
-
-            if (combinedModel.operator === 'AND') {
-                return firstResult && secondResult;
-            }
-
-            return firstResult || secondResult;
+            models.push(combinedModel.condition1, combinedModel.condition2);
+        } else {
+            models.push(model as ISimpleFilterModel);
         }
 
-        const simpleModel = model as ISimpleFilterModel;
-        const result = this.individualConditionPasses(params, simpleModel);
+        const combineFunction = operator && operator === 'OR' ? some : every;
 
-        return result;
+        return combineFunction(models, m => this.individualConditionPasses(params, m));
     }
 
     protected setParams(params: ISimpleFilterParams): void {
@@ -269,9 +233,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
+        this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    }
+
+    private getDefaultJoinOperator(defaultJoinOperator: JoinOperator): JoinOperator {
+        return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     }
 
     private putOptionsIntoDropdown(): void {
@@ -283,13 +253,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
             if (typeof option === 'string') {
                 value = option;
-                text = this.translate(value as keyof ISimpleFilterTranslations);
+                text = this.translate(value as keyof IFilterLocaleText);
             } else {
                 value = option.displayKey;
 
                 const customOption = this.optionsFactory.getCustomOption(value);
 
-                text = customOption ? customOption.displayName : this.translate(value as keyof ISimpleFilterTranslations);
+                text = customOption ? customOption.displayName : this.translate(value as keyof IFilterLocaleText);
             }
 
             const createOption = () => ({ value, text });
@@ -325,40 +295,49 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
-        const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
+        const isCondition2Enabled = this.isCondition2Enabled();
 
-        setDisplayed(this.eCondition2Body, showSecondFilter);
-        setDisplayed(this.eType2.getGui(), showSecondFilter);
-        setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+        if (this.alwaysShowBothConditions) {
+            this.eJoinOperatorAnd.setDisabled(!isCondition2Enabled);
+            this.eJoinOperatorOr.setDisabled(!isCondition2Enabled);
+            this.eType2.setDisabled(!isCondition2Enabled);
+            setDisabled(this.eCondition2Body, !isCondition2Enabled);
+        } else {
+            setDisplayed(this.eJoinOperatorPanel, isCondition2Enabled);
+            setDisplayed(this.eType2.getGui(), isCondition2Enabled);
+            setDisplayed(this.eCondition2Body, isCondition2Enabled);
+        }
+    }
+
+    protected isCondition2Enabled(): boolean {
+        return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const defaultOption = this.optionsFactory.getDefaultOption();
 
-        this.eType1.setValue(defaultOption, silent);
-        this.eType2.setValue(defaultOption, silent);
+        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+
         this.eJoinOperatorAnd
-            .setValue(true, silent)
+            .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('andCondition'));
 
         this.eJoinOperatorOr
-            .setValue(false, silent)
+            .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
 
         return Promise.resolve();
     }
 
-    public translate(toTranslate: keyof ISimpleFilterTranslations): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
+    private isDefaultOperator(operator: JoinOperator): boolean {
+        return operator === this.defaultJoinOperator;
     }
 
-    public addChangedListeners() {
+    private addChangedListeners() {
         const listener = () => this.onUiChanged();
         this.eType1.onValueChange(listener);
         this.eType2.onValueChange(listener);
@@ -368,6 +347,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     protected doesFilterHaveHiddenInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
+
         return customFilterOption && customFilterOption.hideFilterInput;
     }
 }

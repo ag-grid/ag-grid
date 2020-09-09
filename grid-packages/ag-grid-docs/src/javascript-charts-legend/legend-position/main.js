@@ -22,9 +22,11 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function updateLegendPosition(value) {
-    chart.legend.position = value;
+    options.legend.position = value;
+    agCharts.AgChart.update(chart, options);
 }
 
 function setLegendEnabled(enabled) {
-    chart.legend.enabled = enabled;
+    options.legend.enabled = enabled;
+    agCharts.AgChart.update(chart, options);
 }

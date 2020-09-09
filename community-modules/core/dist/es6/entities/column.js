@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,11 +11,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { EventService } from "../eventService";
-import { _ } from "../utils";
 import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
+import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
+import { doOnce } from "../utils/function";
+import { mergeDeep } from "../utils/object";
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -33,12 +35,61 @@ var Column = /** @class */ (function () {
         this.aggregationActive = false;
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
-        this.visible = !colDef.hide;
-        this.sort = colDef.sort;
-        this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+        this.setState(colDef);
     }
+    Column.prototype.setState = function (colDef) {
+        // sort
+        if (colDef.sort !== undefined) {
+            if (colDef.sort === Constants.SORT_ASC || colDef.sort === Constants.SORT_DESC) {
+                this.sort = colDef.sort;
+            }
+        }
+        else {
+            if (colDef.initialSort === Constants.SORT_ASC || colDef.initialSort === Constants.SORT_DESC) {
+                this.sort = colDef.initialSort;
+            }
+        }
+        // sortIndex
+        var sortIndex = attrToNumber(colDef.sortIndex);
+        var initialSortIndex = attrToNumber(colDef.initialSortIndex);
+        if (sortIndex !== undefined) {
+            if (sortIndex !== null) {
+                this.sortIndex = sortIndex;
+            }
+        }
+        else {
+            if (initialSortIndex !== null) {
+                this.sortIndex = initialSortIndex;
+            }
+        }
+        // hide
+        var hide = attrToBoolean(colDef.hide);
+        var initialHide = attrToBoolean(colDef.initialHide);
+        if (hide !== undefined) {
+            this.visible = !hide;
+        }
+        else {
+            this.visible = !initialHide;
+        }
+        // pinned
+        if (colDef.pinned !== undefined) {
+            this.setPinned(colDef.pinned);
+        }
+        else {
+            this.setPinned(colDef.initialPinned);
+        }
+        // flex
+        var flex = attrToNumber(colDef.flex);
+        var initialFlex = attrToNumber(colDef.initialFlex);
+        if (flex !== undefined) {
+            this.flex = flex;
+        }
+        else if (initialFlex !== undefined) {
+            this.flex = initialFlex;
+        }
+    };
     // gets called when user provides an alternative colDef, eg
     Column.prototype.setColDef = function (colDef, userProvidedColDef) {
         this.colDef = colDef;
@@ -61,7 +112,6 @@ var Column = /** @class */ (function () {
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
-        this.setPinned(this.colDef.pinned);
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
         if (this.colDef.minWidth) {
@@ -76,13 +126,10 @@ var Column = /** @class */ (function () {
         else {
             this.maxWidth = maxColWidth;
         }
-        if (this.colDef.flex) {
-            this.flex = this.colDef.flex;
-        }
         this.resetActualWidth();
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
-        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
     };
     Column.prototype.resetActualWidth = function () {
@@ -92,7 +139,7 @@ var Column = /** @class */ (function () {
         return false;
     };
     Column.prototype.isRowGroupDisplayed = function (colId) {
-        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) {
+        if (missing(this.colDef) || missing(this.colDef.showRowGroup)) {
             return false;
         }
         var showingAllGroups = this.colDef.showRowGroup === true;
@@ -120,19 +167,19 @@ var Column = /** @class */ (function () {
     Column.prototype.validate = function () {
         var colDefAny = this.colDef;
         function warnOnce(msg, key, obj) {
-            _.doOnce(function () {
+            doOnce(function () {
                 if (obj) {
                     console.warn(msg, obj);
                 }
                 else {
-                    _.doOnce(function () { return console.warn(msg); }, key);
+                    doOnce(function () { return console.warn(msg); }, key);
                 }
             }, key);
         }
         if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(function (item) {
-                if (_.exists(colDefAny[item])) {
+                if (exists(colDefAny[item])) {
                     if (ModuleRegistry.isPackageBased()) {
                         warnOnce("ag-Grid: " + item + " is only valid in ag-grid-enterprise, your column definition should not have " + item, 'ColumnRowGroupingMissing' + item);
                     }
@@ -165,73 +212,13 @@ var Column = /** @class */ (function () {
         if (this.gridOptionsWrapper.isTreeData()) {
             var itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(function (item) {
-                if (_.exists(colDefAny[item])) {
+                if (exists(colDefAny[item])) {
                     warnOnce("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item, 'TreeDataCannotRowGroup');
                 }
             });
         }
-        if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
+        if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
-        }
-        if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
-            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup', 'ColumnCheck_sksldjf');
-        }
-        if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
-            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator', 'ColumnCheck_ieiruhgdf');
-        }
-        if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
-            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator', 'ColumnCheck_uitolghj');
-        }
-        if (colDefAny.floatingCellRenderer) {
-            warnOnce('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer', 'ColumnCheck_soihwewe');
-            this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
-        }
-        if (colDefAny.floatingRendererFramework) {
-            warnOnce('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework', 'ColumnCheck_zdkiouhwer');
-            this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
-        }
-        if (colDefAny.floatingRendererParams) {
-            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams', 'ColumnCheck_retiuhjs');
-            this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
-        }
-        if (colDefAny.floatingValueFormatter) {
-            warnOnce('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter', 'ColumnCheck_qwroeihjdf');
-            this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
-        }
-        if (colDefAny.cellFormatter) {
-            warnOnce('ag-Grid: since v12, cellFormatter is now valueFormatter', 'ColumnCheck_eoireknml');
-            if (_.missing(this.colDef.valueFormatter)) {
-                this.colDef.valueFormatter = colDefAny.cellFormatter;
-            }
-        }
-        if (colDefAny.headerCellTemplate) {
-            warnOnce('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.', 'ColumnCheck_eroihxcm');
-        }
-        if (colDefAny.headerCellRenderer) {
-            warnOnce('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.', 'ColumnCheck_terteuh');
-        }
-        if (colDefAny.volatile) {
-            warnOnce('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.', 'ColumnCheck_weoihjxcv');
-        }
-        if (colDefAny.suppressSorting) {
-            warnOnce("ag-Grid: since v20, colDef.suppressSorting is gone, instead use colDef.sortable=false.", 'ColumnCheck_43ljrer', this.colDef);
-            this.colDef.sortable = false;
-        }
-        if (colDefAny.suppressFilter) {
-            warnOnce("ag-Grid: since v20, colDef.suppressFilter is gone, instead use colDef.filter=false.", 'ColumnCheck_erlkhfdm', this.colDef);
-            this.colDef.filter = false;
-        }
-        if (colDefAny.suppressResize) {
-            warnOnce("ag-Grid: since v20, colDef.suppressResize is gone, instead use colDef.resizable=false.", 'ColumnCheck_weoihjxcv', this.colDef);
-            this.colDef.resizable = false;
-        }
-        if (colDefAny.tooltip) {
-            warnOnce("ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.", 'ColumnCheck_adslknjwef', this.colDef);
-            this.colDef.tooltipValueGetter = colDefAny.tooltip;
-        }
-        if (colDefAny.suppressToolPanel) {
-            warnOnce("ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.", 'ColumnCheck_weihjlsjkdf', this.colDef);
-            this.colDef.suppressColumnsToolPanel = true;
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -344,16 +331,16 @@ var Column = /** @class */ (function () {
         return this.sort === Constants.SORT_DESC;
     };
     Column.prototype.isSortNone = function () {
-        return _.missing(this.sort);
+        return missing(this.sort);
     };
     Column.prototype.isSorting = function () {
-        return _.exists(this.sort);
+        return exists(this.sort);
     };
-    Column.prototype.getSortedAt = function () {
-        return this.sortedAt;
+    Column.prototype.getSortIndex = function () {
+        return this.sortIndex;
     };
-    Column.prototype.setSortedAt = function (sortedAt) {
-        this.sortedAt = sortedAt;
+    Column.prototype.setSortIndex = function (sortOrder) {
+        this.sortIndex = sortOrder;
     };
     Column.prototype.setAggFunc = function (aggFunc) {
         this.aggFunc = aggFunc;
@@ -390,7 +377,7 @@ var Column = /** @class */ (function () {
         }
         var filterChangedEvent = this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source);
         if (additionalEventAttributes) {
-            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
+            mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
     };
@@ -479,7 +466,7 @@ var Column = /** @class */ (function () {
         return params;
     };
     Column.prototype.getColSpan = function (rowNode) {
-        if (_.missing(this.colDef.colSpan)) {
+        if (missing(this.colDef.colSpan)) {
             return 1;
         }
         var params = this.createBaseColDefParams(rowNode);
@@ -488,7 +475,7 @@ var Column = /** @class */ (function () {
         return Math.max(colSpan, 1);
     };
     Column.prototype.getRowSpan = function (rowNode) {
-        if (_.missing(this.colDef.rowSpan)) {
+        if (missing(this.colDef.rowSpan)) {
             return 1;
         }
         var params = this.createBaseColDefParams(rowNode);
@@ -506,10 +493,10 @@ var Column = /** @class */ (function () {
         }
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
-            if (this.flex && source !== 'flex') {
-                this.flex = 0;
-            }
             this.actualWidth = actualWidth;
+            if (this.flex && source !== 'flex') {
+                this.flex = null;
+            }
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
     };

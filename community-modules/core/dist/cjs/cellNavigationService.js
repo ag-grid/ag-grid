@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var beanStub_1 = require("./context/beanStub");
-var constants_1 = require("./constants");
-var utils_1 = require("./utils");
+var constants_1 = require("./constants/constants");
+var generic_1 = require("./utils/generic");
+var array_1 = require("./utils/array");
+var keyCode_1 = require("./constants/keyCode");
 var CellNavigationService = /** @class */ (function (_super) {
     __extends(CellNavigationService, _super);
     function CellNavigationService() {
@@ -45,13 +47,13 @@ var CellNavigationService = /** @class */ (function (_super) {
         // b) run out of cells (ie the method returns null)
         while (!finished) {
             switch (key) {
-                case constants_1.Constants.KEY_UP:
+                case keyCode_1.KeyCode.UP:
                     pointer = this.getCellAbove(pointer);
                     break;
-                case constants_1.Constants.KEY_DOWN:
+                case keyCode_1.KeyCode.DOWN:
                     pointer = this.getCellBelow(pointer);
                     break;
-                case constants_1.Constants.KEY_RIGHT:
+                case keyCode_1.KeyCode.RIGHT:
                     if (this.gridOptionsWrapper.isEnableRtl()) {
                         pointer = this.getCellToLeft(pointer);
                     }
@@ -59,7 +61,7 @@ var CellNavigationService = /** @class */ (function (_super) {
                         pointer = this.getCellToRight(pointer);
                     }
                     break;
-                case constants_1.Constants.KEY_LEFT:
+                case keyCode_1.KeyCode.LEFT:
                     if (this.gridOptionsWrapper.isEnableRtl()) {
                         pointer = this.getCellToRight(pointer);
                     }
@@ -140,9 +142,9 @@ var CellNavigationService = /** @class */ (function (_super) {
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
-                        return { rowIndex: 0, rowPinned: null };
+                        return { rowIndex: this.paginationProxy.getPageFirstRow(), rowPinned: null };
                     }
-                    else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
+                    if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
                         return { rowIndex: 0, rowPinned: constants_1.Constants.PINNED_BOTTOM };
                     }
                     return null;
@@ -177,38 +179,37 @@ var CellNavigationService = /** @class */ (function (_super) {
             var lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex <= index;
         }
-        else if (pinned === constants_1.Constants.PINNED_BOTTOM) {
+        if (pinned === constants_1.Constants.PINNED_BOTTOM) {
             var lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
         }
-        var lastBodyIndex = this.rowModel.getRowCount() - 1;
+        var lastBodyIndex = this.paginationProxy.getPageLastRow();
         return lastBodyIndex <= index;
     };
     CellNavigationService.prototype.getRowAbove = function (rowPosition) {
         // if already on top row, do nothing
         var index = rowPosition.rowIndex;
         var pinned = rowPosition.rowPinned;
+        var isFirstRow = pinned ? index === 0 : index === this.paginationProxy.getPageFirstRow();
         // if already on top row, do nothing
-        if (index === 0) {
+        if (isFirstRow) {
             if (pinned === constants_1.Constants.PINNED_TOP) {
                 return null;
             }
-            else if (!pinned) {
+            if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
                 return null;
             }
-            else {
-                // last floating bottom
-                if (this.rowModel.isRowsToRender()) {
-                    return this.getLastBodyCell();
-                }
-                else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
-                    return this.getLastFloatingTopRow();
-                }
-                return null;
+            // last floating bottom
+            if (this.rowModel.isRowsToRender()) {
+                return this.getLastBodyCell();
             }
+            if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
+                return this.getLastFloatingTopRow();
+            }
+            return null;
         }
         return { rowIndex: index - 1, rowPinned: pinned };
     };
@@ -227,7 +228,7 @@ var CellNavigationService = /** @class */ (function (_super) {
         return null;
     };
     CellNavigationService.prototype.getLastBodyCell = function () {
-        var lastBodyRow = this.rowModel.getRowCount() - 1;
+        var lastBodyRow = this.paginationProxy.getPageLastRow();
         return { rowIndex: lastBodyRow, rowPinned: null };
     };
     CellNavigationService.prototype.getLastFloatingTopRow = function () {
@@ -250,7 +251,12 @@ var CellNavigationService = /** @class */ (function (_super) {
         if (!newColumn) {
             newColumn = displayedColumns[0];
             var rowBelow = this.getRowBelow(gridCell);
-            if (utils_1._.missing(rowBelow)) {
+            if (generic_1.missing(rowBelow)) {
+                return null;
+            }
+            // If we are tabbing and there is a paging panel present, tabbing should go
+            // to the paging panel instead of loading the next page.
+            if (!rowBelow.rowPinned && !this.paginationProxy.isRowInPage(rowBelow)) {
                 return null;
             }
             newRowIndex = rowBelow ? rowBelow.rowIndex : null;
@@ -266,9 +272,14 @@ var CellNavigationService = /** @class */ (function (_super) {
         var newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = utils_1._.last(displayedColumns);
+            newColumn = array_1.last(displayedColumns);
             var rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
-            if (utils_1._.missing(rowAbove)) {
+            if (generic_1.missing(rowAbove)) {
+                return null;
+            }
+            // If we are tabbing and there is a paging panel present, tabbing should go
+            // to the paging panel instead of loading the next page.
+            if (!rowAbove.rowPinned && !this.paginationProxy.isRowInPage(rowAbove)) {
                 return null;
             }
             newRowIndex = rowAbove ? rowAbove.rowIndex : null;
@@ -288,6 +299,9 @@ var CellNavigationService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('paginationProxy')
+    ], CellNavigationService.prototype, "paginationProxy", void 0);
     CellNavigationService = __decorate([
         context_1.Bean('cellNavigationService')
     ], CellNavigationService);

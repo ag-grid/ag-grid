@@ -199,6 +199,9 @@ var Rect = /** @class */ (function (_super) {
         return false;
     };
     Rect.prototype.fillStroke = function (ctx) {
+        if (!this.scene) {
+            return;
+        }
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;

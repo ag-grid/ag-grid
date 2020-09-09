@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
@@ -26,11 +26,15 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private resizeTakeFromCols;
     private resizeTakeFromStartWidth;
     private resizeTakeFromRatios;
+    private expandable;
     private removeChildListenersFuncs;
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
     protected postConstruct(): void;
     protected onFocusIn(e: FocusEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
+    protected onTabKeyDown(): void;
+    private setupExpandable;
+    private refreshExpanded;
     private setupMovingCss;
     getComponentHolder(): ColGroupDef;
     getTooltipText(): string | undefined;

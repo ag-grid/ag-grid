@@ -27,10 +27,10 @@ var MiniScatter = /** @class */ (function (_super) {
             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
         ];
-        var xScale = ag_charts_community_1.linearScale();
+        var xScale = new ag_charts_community_1.LinearScale();
         xScale.domain = [-0.5, 4];
         xScale.range = [padding * 2, size - padding];
-        var yScale = ag_charts_community_1.linearScale();
+        var yScale = new ag_charts_community_1.LinearScale();
         yScale.domain = [-0.5, 3.5];
         yScale.range = [size - padding, padding];
         var points = [];

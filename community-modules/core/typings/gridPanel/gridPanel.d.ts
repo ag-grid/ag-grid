@@ -1,4 +1,4 @@
-import { RowContainerComponent } from '../rendering/rowContainerComponent';
+import { RowContainerComponent } from '../rendering/row/rowContainerComponent';
 import { RowDragFeature } from './rowDragFeature';
 import { Component } from '../widgets/component';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
@@ -99,6 +99,7 @@ export declare class GridPanel extends Component {
     private addEventListeners;
     private addDragListeners;
     private addMouseListeners;
+    private addPreventScrollWhileDragging;
     private addKeyboardEvents;
     private addBodyViewportListener;
     getBodyClientRect(): ClientRect;

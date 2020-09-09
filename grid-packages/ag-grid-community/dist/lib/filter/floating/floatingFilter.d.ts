@@ -8,6 +8,7 @@ export interface IFloatingFilterParams {
     filterParams: IFilterParams;
     currentParentModel: () => any;
     parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => void;
+    showParentFilter: () => void;
     suppressFilterButton: boolean;
     api: GridApi;
     /** @deprecated in v21, use parentFilterInstance() callback instead and tell filter directly */

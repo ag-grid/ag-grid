@@ -1,6 +1,6 @@
-import { __decorate, __metadata, __extends } from 'tslib';
+import { __rest, __decorate, __metadata, __extends } from 'tslib';
 import { ContentChildren, QueryList, Input, Component, NgZone, Injectable, EventEmitter, ElementRef, ViewContainerRef, ComponentFactoryResolver, Output, ViewEncapsulation, ANALYZE_FOR_ENTRY_COMPONENTS, NgModule } from '@angular/core';
-import { VanillaFrameworkOverrides, BaseComponentWrapper, Promise, ComponentUtil, Grid, _, Events, GridOptionsWrapper } from '@ag-grid-community/core';
+import { VanillaFrameworkOverrides, BaseComponentWrapper, Promise, ComponentUtil, Grid } from '@ag-grid-community/core';
 
 var AgGridColumn = /** @class */ (function () {
     function AgGridColumn() {
@@ -30,9 +30,7 @@ var AgGridColumn = /** @class */ (function () {
     };
     ;
     AgGridColumn.prototype.createColDefFromGridColumn = function (from) {
-        var colDef = {};
-        Object.assign(colDef, from);
-        delete colDef.childColumns;
+        var childColumns = from.childColumns, colDef = __rest(from, ["childColumns"]);
         return colDef;
     };
     ;
@@ -152,6 +150,10 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "columnsMenuParams", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerName", void 0);
     __decorate([
         Input(),
@@ -184,6 +186,10 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialSort", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "field", void 0);
     __decorate([
         Input(),
@@ -212,6 +218,10 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialAggFunc", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "aggFunc", void 0);
     __decorate([
         Input(),
@@ -228,6 +238,10 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialPinned", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "chartDataType", void 0);
     __decorate([
         Input(),
@@ -236,11 +250,27 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "sortIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialSortIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "flex", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialFlex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "width", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialWidth", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -256,7 +286,15 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialRowGroupIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pivotIndex", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialPivotIndex", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -352,10 +390,6 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridColumn.prototype, "tooltip", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipValueGetter", void 0);
     __decorate([
         Input(),
@@ -392,11 +426,23 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialHide", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowGroup", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialRowGroup", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pivot", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "initialPivot", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -416,15 +462,7 @@ var AgGridColumn = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridColumn.prototype, "suppressSorting", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressMovable", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridColumn.prototype, "suppressFilter", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -445,10 +483,6 @@ var AgGridColumn = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressSizeToFit", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridColumn.prototype, "suppressResize", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -493,6 +527,10 @@ var AgGridColumn = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridColumn.prototype, "autoHeight", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "wrapText", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -636,19 +674,18 @@ var AgGridAngular = /** @class */ (function () {
         // in order to ensure firing of gridReady is deterministic
         this._fullyReady = Promise.resolve(true);
         // @START@
-        this.slaveGrids = undefined;
         this.alignedGrids = undefined;
         this.rowData = undefined;
         this.columnDefs = undefined;
         this.excelStyles = undefined;
         this.pinnedTopRowData = undefined;
         this.pinnedBottomRowData = undefined;
+        this.chartThemes = undefined;
         this.components = undefined;
         this.frameworkComponents = undefined;
         this.rowStyle = undefined;
         this.context = undefined;
         this.autoGroupColumnDef = undefined;
-        this.groupColumnDef = undefined;
         this.localeText = undefined;
         this.icons = undefined;
         this.datasource = undefined;
@@ -672,6 +709,8 @@ var AgGridAngular = /** @class */ (function () {
         this.reduxStore = undefined;
         this.statusBar = undefined;
         this.sideBar = undefined;
+        this.chartThemeOverrides = undefined;
+        this.customChartThemes = undefined;
         this.sortingOrder = undefined;
         this.rowClass = undefined;
         this.rowSelection = undefined;
@@ -687,6 +726,7 @@ var AgGridAngular = /** @class */ (function () {
         this.pivotColumnGroupTotals = undefined;
         this.pivotRowTotals = undefined;
         this.pivotPanelShow = undefined;
+        this.fillHandleDirection = undefined;
         this.rowHeight = undefined;
         this.detailRowHeight = undefined;
         this.rowBuffer = undefined;
@@ -710,8 +750,6 @@ var AgGridAngular = /** @class */ (function () {
         this.cacheBlockSize = undefined;
         this.infiniteInitialRowCount = undefined;
         this.scrollbarWidth = undefined;
-        this.paginationStartPage = undefined;
-        this.infiniteBlockSize = undefined;
         this.batchUpdateWaitMillis = undefined;
         this.asyncTransactionWaitMillis = undefined;
         this.blockLoadDebounceMillis = undefined;
@@ -737,13 +775,11 @@ var AgGridAngular = /** @class */ (function () {
         this.getMainMenuItems = undefined;
         this.processRowPostCreate = undefined;
         this.processCellForClipboard = undefined;
-        this.getNodeChildDetails = undefined;
         this.groupRowAggNodes = undefined;
         this.getRowNodeId = undefined;
         this.isFullWidthCell = undefined;
         this.fullWidthCellRenderer = undefined;
         this.fullWidthCellRendererFramework = undefined;
-        this.doesDataFlower = undefined;
         this.processSecondaryColDef = undefined;
         this.processSecondaryColGroupDef = undefined;
         this.getBusinessKeyForNode = undefined;
@@ -778,14 +814,6 @@ var AgGridAngular = /** @class */ (function () {
         this.processChartOptions = undefined;
         this.getChartToolbarItems = undefined;
         this.fillOperation = undefined;
-        this.toolPanelSuppressRowGroups = undefined;
-        this.toolPanelSuppressValues = undefined;
-        this.toolPanelSuppressPivots = undefined;
-        this.toolPanelSuppressPivotMode = undefined;
-        this.toolPanelSuppressSideButtons = undefined;
-        this.toolPanelSuppressColumnFilter = undefined;
-        this.toolPanelSuppressColumnSelectAll = undefined;
-        this.toolPanelSuppressColumnExpandAll = undefined;
         this.suppressMakeColumnVisibleAfterUnGroup = undefined;
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
@@ -793,25 +821,17 @@ var AgGridAngular = /** @class */ (function () {
         this.alwaysShowVerticalScroll = undefined;
         this.debug = undefined;
         this.enableBrowserTooltips = undefined;
-        this.enableColResize = undefined;
         this.enableCellExpressions = undefined;
-        this.enableSorting = undefined;
-        this.enableServerSideSorting = undefined;
-        this.enableFilter = undefined;
-        this.enableServerSideFilter = undefined;
         this.angularCompileRows = undefined;
         this.angularCompileFilters = undefined;
-        this.angularCompileHeaders = undefined;
         this.groupSuppressAutoColumn = undefined;
         this.groupSelectsChildren = undefined;
         this.groupIncludeFooter = undefined;
         this.groupIncludeTotalFooter = undefined;
         this.groupUseEntireRow = undefined;
-        this.groupSuppressRow = undefined;
         this.groupSuppressBlankHeader = undefined;
-        this.forPrint = undefined;
         this.suppressMenuHide = undefined;
-        this.rowDeselection = undefined;
+        this.suppressRowDeselection = undefined;
         this.unSortIcon = undefined;
         this.suppressMultiSort = undefined;
         this.singleClickEdit = undefined;
@@ -820,7 +840,6 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressAutoSize = undefined;
         this.skipHeaderOnAutoSize = undefined;
         this.suppressParentsInRowNodes = undefined;
-        this.showToolPanel = undefined;
         this.suppressColumnMoveAnimation = undefined;
         this.suppressMovableColumns = undefined;
         this.suppressFieldDotNotation = undefined;
@@ -833,15 +852,11 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressAsyncEvents = undefined;
         this.allowContextMenuWithControlKey = undefined;
         this.suppressContextMenu = undefined;
-        this.suppressMenuFilterPanel = undefined;
-        this.suppressMenuMainPanel = undefined;
-        this.suppressMenuColumnPanel = undefined;
         this.rememberGroupStateWhenNewData = undefined;
         this.enableCellChangeFlash = undefined;
         this.suppressDragLeaveHidesColumns = undefined;
         this.suppressMiddleClickScrolls = undefined;
         this.suppressPreventDefaultOnMouseWheel = undefined;
-        this.suppressUseColIdForGroups = undefined;
         this.suppressCopyRowsToClipboard = undefined;
         this.copyHeadersToClipboard = undefined;
         this.pivotMode = undefined;
@@ -864,7 +879,6 @@ var AgGridAngular = /** @class */ (function () {
         this.enableGroupEdit = undefined;
         this.embedFullWidthRows = undefined;
         this.deprecatedEmbedFullWidthRows = undefined;
-        this.suppressTabbing = undefined;
         this.suppressPaginationPanel = undefined;
         this.floatingFilter = undefined;
         this.groupHideOpenParents = undefined;
@@ -878,7 +892,6 @@ var AgGridAngular = /** @class */ (function () {
         this.deltaRowDataMode = undefined;
         this.ensureDomOrder = undefined;
         this.accentedSort = undefined;
-        this.pivotTotals = undefined;
         this.suppressChangeDetection = undefined;
         this.valueCache = undefined;
         this.valueCacheNeverExpires = undefined;
@@ -893,17 +906,16 @@ var AgGridAngular = /** @class */ (function () {
         this.enterMovesDown = undefined;
         this.suppressPropertyNamesCheck = undefined;
         this.rowMultiSelectWithClick = undefined;
-        this.contractColumnSelection = undefined;
         this.suppressEnterpriseResetOnNewColumns = undefined;
         this.enableOldSetFilterModel = undefined;
         this.suppressRowHoverHighlight = undefined;
-        this.gridAutoHeight = undefined;
         this.suppressRowTransform = undefined;
         this.suppressClipboardPaste = undefined;
         this.suppressLastEmptyLineOnPaste = undefined;
         this.serverSideSortingAlwaysResets = undefined;
         this.reactNext = undefined;
         this.suppressSetColumnStateEvents = undefined;
+        this.suppressColumnStateEvents = undefined;
         this.enableCharts = undefined;
         this.deltaColumnMode = undefined;
         this.suppressMaintainUnsortedOrder = undefined;
@@ -920,6 +932,9 @@ var AgGridAngular = /** @class */ (function () {
         this.immutableData = undefined;
         this.immutableColumns = undefined;
         this.pivotSuppressAutoColumn = undefined;
+        this.suppressExpandablePivotGroups = undefined;
+        this.applyColumnDefOrder = undefined;
+        this.debounceVerticalScrollbar = undefined;
         this.columnEverythingChanged = new EventEmitter();
         this.newColumnsLoaded = new EventEmitter();
         this.columnPivotModeChanged = new EventEmitter();
@@ -991,6 +1006,7 @@ var AgGridAngular = /** @class */ (function () {
         this.scrollVisibilityChanged = new EventEmitter();
         this.columnHoverChanged = new EventEmitter();
         this.flashCells = new EventEmitter();
+        this.paginationPixelOffsetChanged = new EventEmitter();
         this.rowDragEnter = new EventEmitter();
         this.rowDragMove = new EventEmitter();
         this.rowDragLeave = new EventEmitter();
@@ -1007,7 +1023,6 @@ var AgGridAngular = /** @class */ (function () {
         this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
     AgGridAngular.prototype.ngAfterViewInit = function () {
-        this.checkForDeprecatedEvents();
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -1050,14 +1065,6 @@ var AgGridAngular = /** @class */ (function () {
                 this.api.destroy();
             }
         }
-    };
-    AgGridAngular.prototype.checkForDeprecatedEvents = function () {
-        var _this = this;
-        _.iterateObject(Events, function (key, eventName) {
-            if (_this[eventName] && _this[eventName].observers.length > 0) {
-                GridOptionsWrapper.checkEventDeprecation(eventName);
-            }
-        });
     };
     AgGridAngular.prototype.globalEventListener = function (eventType, event) {
         // if we are tearing down, don't emit angular events, as this causes
@@ -1105,10 +1112,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "slaveGrids", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "alignedGrids", void 0);
     __decorate([
         Input(),
@@ -1133,6 +1136,10 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "chartThemes", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "components", void 0);
     __decorate([
         Input(),
@@ -1150,10 +1157,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "autoGroupColumnDef", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "groupColumnDef", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1249,6 +1252,14 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "chartThemeOverrides", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "customChartThemes", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "sortingOrder", void 0);
     __decorate([
         Input(),
@@ -1306,6 +1317,10 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "pivotPanelShow", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "fillHandleDirection", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1398,14 +1413,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "scrollbarWidth", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "paginationStartPage", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "infiniteBlockSize", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1509,10 +1516,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "getNodeChildDetails", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "groupRowAggNodes", void 0);
     __decorate([
         Input(),
@@ -1530,10 +1533,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "fullWidthCellRendererFramework", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "doesDataFlower", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1673,38 +1672,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressRowGroups", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressValues", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressPivots", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressPivotMode", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressSideButtons", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressColumnFilter", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressColumnSelectAll", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "toolPanelSuppressColumnExpandAll", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressMakeColumnVisibleAfterUnGroup", void 0);
     __decorate([
         Input(),
@@ -1733,27 +1700,7 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "enableColResize", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "enableCellExpressions", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "enableSorting", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "enableServerSideSorting", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "enableFilter", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "enableServerSideFilter", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1762,10 +1709,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "angularCompileFilters", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "angularCompileHeaders", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1789,15 +1732,7 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "groupSuppressRow", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "groupSuppressBlankHeader", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "forPrint", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1805,7 +1740,7 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "rowDeselection", void 0);
+    ], AgGridAngular.prototype, "suppressRowDeselection", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1838,10 +1773,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressParentsInRowNodes", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "showToolPanel", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -1893,18 +1824,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "suppressMenuFilterPanel", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "suppressMenuMainPanel", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "suppressMenuColumnPanel", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "rememberGroupStateWhenNewData", void 0);
     __decorate([
         Input(),
@@ -1922,10 +1841,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressPreventDefaultOnMouseWheel", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "suppressUseColIdForGroups", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -2017,10 +1932,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "suppressTabbing", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressPaginationPanel", void 0);
     __decorate([
         Input(),
@@ -2070,10 +1981,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "accentedSort", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "pivotTotals", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -2133,10 +2040,6 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Input(),
         __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "contractColumnSelection", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressEnterpriseResetOnNewColumns", void 0);
     __decorate([
         Input(),
@@ -2146,10 +2049,6 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressRowHoverHighlight", void 0);
-    __decorate([
-        Input(),
-        __metadata("design:type", Object)
-    ], AgGridAngular.prototype, "gridAutoHeight", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -2174,6 +2073,10 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "suppressSetColumnStateEvents", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "suppressColumnStateEvents", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)
@@ -2238,6 +2141,18 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "pivotSuppressAutoColumn", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "suppressExpandablePivotGroups", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "applyColumnDefOrder", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "debounceVerticalScrollbar", void 0);
     __decorate([
         Output(),
         __metadata("design:type", EventEmitter)
@@ -2525,6 +2440,10 @@ var AgGridAngular = /** @class */ (function () {
     __decorate([
         Output(),
         __metadata("design:type", EventEmitter)
+    ], AgGridAngular.prototype, "paginationPixelOffsetChanged", void 0);
+    __decorate([
+        Output(),
+        __metadata("design:type", EventEmitter)
     ], AgGridAngular.prototype, "rowDragEnter", void 0);
     __decorate([
         Output(),
@@ -2621,5 +2540,5 @@ var AgGridModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-export { AgGridAngular, AgGridColumn, AgGridModule, AngularFrameworkOverrides as ɵa, AngularFrameworkComponentWrapper as ɵb };
+export { AgGridAngular, AgGridColumn, AgGridModule, AngularFrameworkComponentWrapper, AngularFrameworkOverrides };
 //# sourceMappingURL=ag-grid-community-angular.js.map

@@ -9,7 +9,7 @@ export declare class FiltersToolPanelHeaderPanel extends Component {
     private gridOptionsWrapper;
     private columnController;
     private eExpand;
-    private eSearchTextField;
+    private eFilterTextField;
     private eExpandChecked;
     private eExpandUnchecked;
     private eExpandIndeterminate;

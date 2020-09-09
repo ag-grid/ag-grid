@@ -8,7 +8,6 @@ import { LinearScale } from "../../../scale/linearScale";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
@@ -55,25 +54,25 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string = palette.fills[0];
-    set fill(value: string) {
+    private _fill: string | undefined = undefined;
+    set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
             this.scheduleData();
         }
     }
-    get fill(): string {
+    get fill(): string | undefined {
         return this._fill;
     }
 
-    private _stroke: string = palette.strokes[0];
-    set stroke(value: string) {
+    private _stroke: string | undefined = undefined;
+    set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
             this.scheduleData();
         }
     }
-    get stroke(): string {
+    get stroke(): string | undefined {
         return this._stroke;
     }
 
@@ -149,6 +148,13 @@ export class ScatterSeries extends CartesianSeries {
         this.fireEvent({ type: 'legendChange' });
     }
 
+    setColors(fills: string[], strokes: string[]) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
+        this.marker.fill = fills[0];
+        this.marker.stroke = strokes[0];
+    }
+
     processData(): boolean {
         const { xKey, yKey, sizeKey, xAxis, yAxis } = this;
 
@@ -202,24 +208,39 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private generateNodeData(): ScatterNodeDatum[] {
-        const xScale = this.xAxis.scale;
-        const yScale = this.yAxis.scale;
+        if (!this.data) {
+            return [];
+        }
+
+        const { xAxis, yAxis } = this;
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
         const { data, xData, yData, sizeData, sizeScale, marker } = this;
 
-        sizeScale.range = [marker.minSize, marker.size];
+        sizeScale.range = [marker.size, marker.maxSize];
 
-        return xData.map((xDatum, i) => ({
-            series: this,
-            seriesDatum: data[i],
-            point: {
-                x: xScale.convert(xDatum) + xOffset,
-                y: yScale.convert(yData[i]) + yOffset
-            },
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }));
+        const nodeData: ScatterNodeDatum[] = [];
+        for (let i = 0; i < xData.length; i++) {
+            const xDatum = xData[i];
+            const x = xScale.convert(xDatum) + xOffset;
+            if (!xAxis.inRange(x)) {
+                continue;
+            }
+            nodeData.push({
+                series: this,
+                seriesDatum: data[i],
+                point: {
+                    x,
+                    y: yScale.convert(yData[i]) + yOffset
+                },
+                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+            });
+        }
+
+        return nodeData;
     }
 
     update(): void {
@@ -250,6 +271,10 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { highlightedDatum } = this.chart;
         const { marker, xKey, yKey, fill, stroke, strokeWidth, fillOpacity, strokeOpacity } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
@@ -365,8 +390,8 @@ export class ScatterSeries extends CartesianSeries {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity,
                     strokeOpacity
                 }

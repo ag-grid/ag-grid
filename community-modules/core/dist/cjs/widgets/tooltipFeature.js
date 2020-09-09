@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
 var TooltipStates;
 (function (TooltipStates) {
     TooltipStates[TooltipStates["NOTHING"] = 0] = "NOTHING";
@@ -67,6 +67,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     TooltipFeature.prototype.onMouseEnter = function (e) {
+        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
+        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
+        // state is !=nothing, then we know mouseenter was already received.
+        if (this.state != TooltipStates.NOTHING) {
+            return;
+        }
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         var delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
@@ -109,7 +116,7 @@ var TooltipFeature = /** @class */ (function (_super) {
     TooltipFeature.prototype.destroyTooltipComp = function () {
         var _this = this;
         // add class to fade out the tooltip
-        utils_1._.addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
+        dom_1.addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
         var tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
@@ -135,12 +142,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         }
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
+        var hasColumn = !!this.parentComp.getColumn;
         var params = {
             location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn,
+            column: hasColumn ? this.parentComp.getColumn() : undefined,
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText
@@ -159,10 +167,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         }
         var eGui = tooltipComp.getGui();
         this.tooltipComp = tooltipComp;
-        if (!utils_1._.containsClass(eGui, 'ag-tooltip')) {
-            utils_1._.addCssClass(eGui, 'ag-tooltip-custom');
+        if (!dom_1.containsClass(eGui, 'ag-tooltip')) {
+            dom_1.addCssClass(eGui, 'ag-tooltip-custom');
         }
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
+        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
+            eChild: eGui
+        });
+        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
         this.positionTooltipUnderLastMouseEvent();
         this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     };

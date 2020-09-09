@@ -6,13 +6,11 @@ var gridOptions = {
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
-    defaultColDef: {
-        flex: 1
-    },
     masterDetail: true,
     defaultColDef: {
         sortable: true,
-        filter: true
+        filter: true,
+        flex: 1
     },
     keepDetailRows: true,
     keepDetailRowsCount: 2,

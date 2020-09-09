@@ -1,30 +1,56 @@
 
 var gridOptions = {
     columnDefs: [
-        { headerName: 'Row #', field: 'rowNumber', maxWidth: 100 },
+        { headerName: 'Row #', field: 'rowNumber', maxWidth: 80 },
         { field: 'autoA' },
-        { field: 'autoB' },
-        { field: 'autoC' }
+        { field: 'autoB' }
     ],
     defaultColDef: {
         flex: 1,
-        cellClass: 'cell-wrap-text',
+        wrapText: true,
         autoHeight: true,
         sortable: true,
         resizable: true,
     },
-    rowHeight: 275,
+    rowHeight: 150,
     onColumnResized: onColumnResized,
+    onColumnVisible: onColumnVisible,
     onGridReady: function(params) {
         // in this example, the CSS styles are loaded AFTER the grid is created,
         // so we put this in a timeout, so height is calculated after styles are applied.
         setTimeout(function () {
             params.api.setRowData(createRowData());
         }, 500);
+    },
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    suppressRowGroups: true,
+                    suppressValues: true,
+                    suppressPivots: true,
+                    suppressPivotMode: true,
+                    suppressSideButtons: true,
+                    suppressColumnFilter: true,
+                    suppressColumnSelectAll: true,
+                    suppressColumnExpandAll: true
+                }
+            }
+        ],
+        defaultToolPanel: 'columns'
     }
 };
 
 function onColumnResized(params) {
+    params.api.resetRowHeights();
+}
+
+function onColumnVisible(params) {
     params.api.resetRowHeights();
 }
 
@@ -35,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function createRowData() {
-    var latinSentence = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
+    var latinSentence = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu.';
     var latinWords = latinSentence.split(' ');
 
     var rowData = [];

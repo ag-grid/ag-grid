@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,12 @@ import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { Constants } from "../constants/constants";
+import { createIconNoSpan } from "../utils/icon";
+import { formatNumberCommas } from "../utils/number";
+import { addOrRemoveCssClass } from "../utils/dom";
+import { setAriaDisabled } from "../utils/aria";
+import { KeyCode } from '../constants/keyCode';
 var PaginationComp = /** @class */ (function (_super) {
     __extends(PaginationComp, _super);
     function PaginationComp() {
@@ -39,12 +43,13 @@ var PaginationComp = /** @class */ (function (_super) {
         return _this;
     }
     PaginationComp.prototype.postConstruct = function () {
+        var _this = this;
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel;
         }
@@ -55,10 +60,21 @@ var PaginationComp = /** @class */ (function (_super) {
             return;
         }
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addManagedListener(this.btFirst, 'click', this.onBtFirst.bind(this));
-        this.addManagedListener(this.btLast, 'click', this.onBtLast.bind(this));
-        this.addManagedListener(this.btNext, 'click', this.onBtNext.bind(this));
-        this.addManagedListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
+        [
+            { el: this.btFirst, fn: this.onBtFirst.bind(this) },
+            { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
+            { el: this.btNext, fn: this.onBtNext.bind(this) },
+            { el: this.btLast, fn: this.onBtLast.bind(this) }
+        ].forEach(function (item) {
+            var el = item.el, fn = item.fn;
+            _this.addManagedListener(el, 'click', fn);
+            _this.addManagedListener(el, 'keydown', function (e) {
+                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                    e.preventDefault();
+                    fn();
+                }
+            });
+        });
         this.onPaginationChanged();
     };
     PaginationComp.prototype.onPaginationChanged = function () {
@@ -83,20 +99,21 @@ var PaginationComp = /** @class */ (function (_super) {
         if (userFunc) {
             return userFunc({ value: value });
         }
-        else {
-            return _.formatNumberCommas(value);
-        }
+        return formatNumberCommas(value);
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var strPage = localeTextFunc('page', 'Page');
         var strTo = localeTextFunc('to', 'to');
         var strOf = localeTextFunc('of', 'of');
-        var strFirst = localeTextFunc('first', 'First');
-        var strPrevious = localeTextFunc('previous', 'Previous');
-        var strNext = localeTextFunc('next', 'Next');
-        var strLast = localeTextFunc('last', 'Last');
-        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    " + strTo + "\n                    <span ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    " + strOf + "\n                    <span ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <div ref=\"btFirst\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strFirst + "</button>\n                    </div>\n                    <div ref=\"btPrevious\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strPrevious + "</button>\n                    </div>\n                    <span class=\"ag-paging-description\">\n                        " + strPage + "\n                        <span ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        " + strOf + "\n                        <span ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <span ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    <div ref=\"btNext\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strNext + "</button>\n                    </div>\n                    <div ref=\"btLast\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strLast + "</button>\n                    </div>\n                </span>\n            </div>";
+        var strFirst = localeTextFunc('firstPage', 'First Page');
+        var strPrevious = localeTextFunc('previousPage', 'Previous Page');
+        var strNext = localeTextFunc('nextPage', 'Next Page');
+        var strLast = localeTextFunc('lastPage', 'Last Page');
+        var compId = this.getCompId();
+        var summaryDescribedBy = "ag-" + compId + "-first-row ag-" + compId + "-to ag-" + compId + "-last-row ag-" + compId + "-of ag-" + compId + "-row-count";
+        var descriptionDescribedBy = "ag-" + compId + "-start-page ag-" + compId + "-start-page-number ag-" + compId + "-of-page ag-" + compId + "-of-page-number";
+        return /* html */ "<div class=\"ag-paging-panel ag-unselectable\" id=\"ag-" + compId + "\" aria-live=\"polite\" aria-describedby=\"" + descriptionDescribedBy + " " + summaryDescribedBy + "\">\n                <span class=\"ag-paging-row-summary-panel\" aria-hidden=\"true\">\n                    <span id=\"ag-" + compId + "-first-row\" ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-to\">" + strTo + "</span>\n                    <span id=\"ag-" + compId + "-last-row\" ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    <span id=\"ag-" + compId + "-of\">" + strOf + "</span>\n                    <span id=\"ag-" + compId + "-row-count\" ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\" role=\"presentation\">\n                    <div ref=\"btFirst\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strFirst + "\" tabindex=\"0\"></div>\n                    <div ref=\"btPrevious\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strPrevious + "\" tabindex=\"0\"></div>\n                    <span class=\"ag-paging-description\" aria-hidden=\"true\">\n                        <span id=\"ag-" + compId + "-start-page\">" + strPage + "</span>\n                        <span id=\"ag-" + compId + "-start-page-number\" ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        <span id=\"ag-" + compId + "-of-page\">" + strOf + "</span>\n                        <span id=\"ag-" + compId + "-of-page-number\" ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <div ref=\"btNext\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strNext + "\" tabindex=\"0\"></div>\n                    <div ref=\"btLast\" class=\"ag-paging-button\" role=\"button\" aria-label=\"" + strLast + "\" tabindex=\"0\"></div>\n                </span>\n            </div>";
     };
     PaginationComp.prototype.onBtNext = function () {
         if (!this.nextButtonDisabled) {
@@ -118,14 +135,18 @@ var PaginationComp = /** @class */ (function (_super) {
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
-        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        setAriaDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
+        addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        setAriaDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
         var onLastPage = maxRowFound && currentPage === (totalPages - 1);
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
+        addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
+        setAriaDisabled(this.btNext, this.nextButtonDisabled);
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
+        addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
+        setAriaDisabled(this.btLast, this.lastButtonDisabled);
     };
     PaginationComp.prototype.updateRowLabels = function () {
         var currentPage = this.paginationProxy.getCurrentPage();
@@ -136,8 +157,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var startRow;
         var endRow;
         if (this.isZeroPagesToDisplay()) {
-            startRow = 0;
-            endRow = 0;
+            startRow = endRow = 0;
         }
         else {
             startRow = (pageSize * currentPage) + 1;
@@ -162,7 +182,7 @@ var PaginationComp = /** @class */ (function (_super) {
     PaginationComp.prototype.setTotalLabels = function () {
         var lastPageFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
-        var rowCount = this.paginationProxy.isLastPageFound() ?
+        var rowCount = lastPageFound ?
             this.paginationProxy.getMasterRowCount() : null;
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
@@ -180,9 +200,6 @@ var PaginationComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('paginationProxy')
     ], PaginationComp.prototype, "paginationProxy", void 0);
-    __decorate([
-        Autowired('rowRenderer')
-    ], PaginationComp.prototype, "rowRenderer", void 0);
     __decorate([
         Autowired('rowModel')
     ], PaginationComp.prototype, "rowModel", void 0);
@@ -207,9 +224,6 @@ var PaginationComp = /** @class */ (function (_super) {
     __decorate([
         RefSelector('lbLastRowOnPage')
     ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
-    __decorate([
-        RefSelector('eSummaryPanel')
-    ], PaginationComp.prototype, "eSummaryPanel", void 0);
     __decorate([
         RefSelector('lbCurrent')
     ], PaginationComp.prototype, "lbCurrent", void 0);

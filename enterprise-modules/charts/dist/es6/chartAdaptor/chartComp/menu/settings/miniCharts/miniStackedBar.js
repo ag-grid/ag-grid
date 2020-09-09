@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, BandScale, Rect } from "ag-charts-community";
+import { BandScale, LinearScale, Rect } from "ag-charts-community";
 var MiniStackedBar = /** @class */ (function (_super) {
     __extends(MiniStackedBar, _super);
     function MiniStackedBar(container, fills, strokes, data, xScaleDomain, tooltipName) {
@@ -28,7 +28,7 @@ var MiniStackedBar = /** @class */ (function (_super) {
         yScale.range = [padding, size - padding];
         yScale.paddingInner = 0.3;
         yScale.paddingOuter = 0.3;
-        var xScale = linearScale();
+        var xScale = new LinearScale();
         xScale.domain = xScaleDomain;
         xScale.range = [size - padding, padding];
         var bottom = xScale.convert(0);

@@ -65,8 +65,8 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 marker: {
-    minSize: 8, // defaults to 8
-    size: 30    // defaults to 8
+    size: 6,       // defaults to 6
+    maxSize: 30    // defaults to 30
 }
 SNIPPET
 ) ?>
@@ -95,7 +95,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatterSeriesConfig') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatter', [], ['showSnippets' => true]) ?>
 
 <h2>Next Up</h2>
 

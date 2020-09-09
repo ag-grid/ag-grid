@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -23,7 +23,7 @@ export declare function camelCaseToHyphen(str: string): string | null;
  */
 export declare function hyphenToCamelCase(str: string): string | null;
 export declare function capitalise(str: string): string;
-export declare function escape(toEscape: string | null): string | null;
+export declare function escapeString(toEscape: string | null): string | null;
 /**
  * Converts a camelCase string into regular text
  * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
@@ -31,3 +31,4 @@ export declare function escape(toEscape: string | null): string | null;
  * @return {string}
  */
 export declare function camelCaseToHumanText(camelCase: string | undefined): string | null;
+export declare function startsWith(str: string, matchStart: string): boolean;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,6 +22,16 @@ function doOnce(func, key) {
     doOnceFlags[key] = true;
 }
 exports.doOnce = doOnce;
+function getFunctionName(funcConstructor) {
+    // for every other browser in the world
+    if (funcConstructor.name) {
+        return funcConstructor.name;
+    }
+    // for the pestilence that is ie11
+    var matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
+    return matches && matches.length === 2 ? matches[1].trim() : null;
+}
+exports.getFunctionName = getFunctionName;
 /** @deprecated */
 function getFunctionParameters(func) {
     var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');

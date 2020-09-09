@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.2.1
+// @ag-grid-community/react v24.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChangeDetectionStrategyType;
@@ -13,7 +13,7 @@ var ChangeDetectionService = /** @class */ (function () {
         this.strategyMap = (_a = {},
             _a[ChangeDetectionStrategyType.DeepValueCheck] = new DeepValueStrategy(),
             _a[ChangeDetectionStrategyType.IdentityCheck] = new SimpleFunctionalStrategy(function (a, b) { return a === b; }),
-            _a[ChangeDetectionStrategyType.NoCheck] = new SimpleFunctionalStrategy(function (a, b) { return true; }),
+            _a[ChangeDetectionStrategyType.NoCheck] = new SimpleFunctionalStrategy(function (a, b) { return false; }),
             _a);
     }
     ChangeDetectionService.prototype.getStrategy = function (changeDetectionStrategy) {

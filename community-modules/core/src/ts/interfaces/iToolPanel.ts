@@ -2,6 +2,7 @@ import { IComponent } from "./iComponent";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
+import {ColumnEventType} from "../events";
 
 export interface IToolPanelParams {
     api: GridApi;
@@ -29,7 +30,7 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 
 export interface IPrimaryColsPanel {
     getGui(): HTMLElement;
-    init(allowDragging: boolean, params: ToolPanelColumnCompParams): void;
+    init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void;
     onExpandAll(): void;
     onCollapseAll(): void;
     expandGroups(groupIds?: string[]): void;

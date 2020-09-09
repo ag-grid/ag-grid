@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,19 +18,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { AgAbstractInputField } from "./agAbstractInputField";
-import { _ } from "../utils";
+import { isBrowserIE } from "../utils/browser";
 var AgInputRange = /** @class */ (function (_super) {
     __extends(AgInputRange, _super);
     function AgInputRange(config) {
-        var _this = _super.call(this) || this;
-        _this.className = 'ag-range-field';
-        _this.displayTag = 'input';
-        _this.inputType = 'range';
-        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
-        if (config) {
-            _this.config = config;
-        }
-        return _this;
+        return _super.call(this, config, 'ag-range-field', 'range') || this;
     }
     AgInputRange.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
@@ -45,7 +37,7 @@ var AgInputRange = /** @class */ (function (_super) {
     };
     AgInputRange.prototype.addInputListeners = function () {
         var _this = this;
-        var isIE = _.isBrowserIE();
+        var isIE = isBrowserIE();
         var eventName = isIE ? 'change' : 'input';
         this.addManagedListener(this.eInput, eventName, function (e) {
             var value = e.target.value;
@@ -63,7 +55,6 @@ var AgInputRange = /** @class */ (function (_super) {
         return this;
     };
     AgInputRange.prototype.setStep = function (value) {
-        this.step = value;
         this.eInput.setAttribute('step', value.toString());
         return this;
     };

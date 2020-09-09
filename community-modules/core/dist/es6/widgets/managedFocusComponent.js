@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { PostConstruct, Autowired } from "../context/context";
-import { Component } from "./component";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { PostConstruct, Autowired } from '../context/context';
+import { Component } from './component';
+import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
+import { KeyCode } from '../constants/keyCode';
 /**
  * This provides logic to override the default browser focus logic.
  *
@@ -39,81 +39,101 @@ import { _ } from "../utils";
  */
 var ManagedFocusComponent = /** @class */ (function (_super) {
     __extends(ManagedFocusComponent, _super);
-    function ManagedFocusComponent() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    /*
+     * Set isFocusableContainer to true if this component will contain multiple focus-managed
+     * elements within. When set to true, this component will add tabGuards that will be responsible
+     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
+     */
+    function ManagedFocusComponent(template, isFocusableContainer) {
+        if (isFocusableContainer === void 0) { isFocusableContainer = false; }
+        var _this = _super.call(this, template) || this;
+        _this.isFocusableContainer = isFocusableContainer;
         _this.skipTabGuardFocus = false;
         return _this;
     }
     ManagedFocusComponent.prototype.postConstruct = function () {
+        var _this = this;
         var focusableElement = this.getFocusableElement();
         if (!focusableElement) {
             return;
         }
-        this.wireFocusManagement();
-    };
-    ManagedFocusComponent.prototype.wireFocusManagement = function () {
-        var _this = this;
-        var focusableElement = this.getFocusableElement();
-        _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
-        if (this.isFocusableContainer()) {
+        addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
+        if (this.isFocusableContainer) {
             this.topTabGuard = this.createTabGuard('top');
             this.bottomTabGuard = this.createTabGuard('bottom');
             this.addTabGuards();
             this.activateTabGuards();
-            this.forEachTabGuard(function (tabGuards) {
-                _this.addManagedListener(tabGuards, 'focus', _this.onFocus.bind(_this));
-            });
+            this.forEachTabGuard(function (guard) { return _this.addManagedListener(guard, 'focus', _this.onFocus.bind(_this)); });
         }
-        if (this.onTabKeyDown || this.handleKeyDown) {
-            this.addKeyDownListeners(focusableElement);
-        }
+        this.addKeyDownListeners(focusableElement);
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
-    };
-    /*
-     * Override this method to return true if this component will contain multiple focus-managed
-     * elements within. When set to true, this component will add tabGuards that will be responsible
-     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
-     */
-    ManagedFocusComponent.prototype.isFocusableContainer = function () {
-        return false;
     };
     /*
      * Override this method if focusing the default element requires special logic.
      */
     ManagedFocusComponent.prototype.focusInnerElement = function (fromBottom) {
-        var focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard, :not([tabindex="-1"])');
+        if (fromBottom === void 0) { fromBottom = false; }
+        var focusable = this.focusController.findFocusableElements(this.getFocusableElement());
+        if (this.isFocusableContainer && this.tabGuardsAreActive()) {
+            // remove tab guards from this component from list of focusable elements
+            focusable.splice(0, 1);
+            focusable.splice(focusable.length - 1, 1);
+        }
         if (!focusable.length) {
             return;
         }
         focusable[fromBottom ? focusable.length - 1 : 0].focus();
     };
-    ManagedFocusComponent.prototype.onFocusIn = function (e) {
-        if (!this.isFocusableContainer()) {
+    /**
+     * By default this will tab though the elements in the default order. Override if you require special logic.
+     */
+    ManagedFocusComponent.prototype.onTabKeyDown = function (e) {
+        var _this = this;
+        if (e.defaultPrevented) {
             return;
         }
-        this.deactivateTabGuards();
+        var tabGuardsAreActive = this.tabGuardsAreActive();
+        if (this.isFocusableContainer && tabGuardsAreActive) {
+            this.deactivateTabGuards();
+        }
+        var nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+        if (this.isFocusableContainer && tabGuardsAreActive) {
+            // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
+            // tabbing to the tab guard from inside the component
+            setTimeout(function () { return _this.activateTabGuards(); }, 0);
+        }
+        if (!nextRoot) {
+            return;
+        }
+        nextRoot.focus();
+        e.preventDefault();
+    };
+    ManagedFocusComponent.prototype.onFocusIn = function (e) {
+        if (this.isFocusableContainer) {
+            this.deactivateTabGuards();
+        }
     };
     ManagedFocusComponent.prototype.onFocusOut = function (e) {
-        if (!this.isFocusableContainer()) {
-            return;
-        }
-        var focusEl = this.getFocusableElement();
-        if (!focusEl.contains(e.relatedTarget)) {
+        if (this.isFocusableContainer && !this.getFocusableElement().contains(e.relatedTarget)) {
             this.activateTabGuards();
         }
     };
-    ManagedFocusComponent.prototype.forceFocusOutOfContainer = function () {
+    ManagedFocusComponent.prototype.forceFocusOutOfContainer = function (up) {
+        if (up === void 0) { up = false; }
+        if (!this.isFocusableContainer) {
+            return;
+        }
         this.activateTabGuards();
         this.skipTabGuardFocus = true;
-        this.bottomTabGuard.focus();
+        var tabGuardToFocus = up ? this.topTabGuard : this.bottomTabGuard;
+        if (tabGuardToFocus) {
+            tabGuardToFocus.focus();
+        }
     };
     ManagedFocusComponent.prototype.appendChild = function (newChild, container) {
-        if (!this.isFocusableContainer()) {
-            _super.prototype.appendChild.call(this, newChild, container);
-        }
-        else {
-            if (!_.isNodeOrElement(newChild)) {
+        if (this.isFocusableContainer) {
+            if (!isNodeOrElement(newChild)) {
                 newChild = newChild.getGui();
             }
             var bottomTabGuard = this.bottomTabGuard;
@@ -124,11 +144,15 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
                 _super.prototype.appendChild.call(this, newChild, container);
             }
         }
+        else {
+            _super.prototype.appendChild.call(this, newChild, container);
+        }
     };
     ManagedFocusComponent.prototype.createTabGuard = function (side) {
         var tabGuard = document.createElement('div');
         tabGuard.classList.add('ag-tab-guard');
         tabGuard.classList.add("ag-tab-guard-" + side);
+        tabGuard.setAttribute('role', 'presentation');
         return tabGuard;
     };
     ManagedFocusComponent.prototype.addTabGuards = function () {
@@ -137,7 +161,12 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
         focusableEl.insertAdjacentElement('beforeend', this.bottomTabGuard);
     };
     ManagedFocusComponent.prototype.forEachTabGuard = function (callback) {
-        [this.topTabGuard, this.bottomTabGuard].forEach(callback);
+        if (this.topTabGuard) {
+            callback(this.topTabGuard);
+        }
+        if (this.bottomTabGuard) {
+            callback(this.bottomTabGuard);
+        }
     };
     ManagedFocusComponent.prototype.addKeyDownListeners = function (eGui) {
         var _this = this;
@@ -145,7 +174,7 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
             if (e.defaultPrevented) {
                 return;
             }
-            if (e.keyCode === Constants.KEY_TAB && _this.onTabKeyDown) {
+            if (e.keyCode === KeyCode.TAB) {
                 _this.onTabKeyDown(e);
             }
             else if (_this.handleKeyDown) {
@@ -154,9 +183,6 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
         });
     };
     ManagedFocusComponent.prototype.onFocus = function (e) {
-        if (!this.isFocusableContainer()) {
-            return;
-        }
         if (this.skipTabGuardFocus) {
             this.skipTabGuardFocus = false;
             return;
@@ -164,10 +190,23 @@ var ManagedFocusComponent = /** @class */ (function (_super) {
         this.focusInnerElement(e.target === this.bottomTabGuard);
     };
     ManagedFocusComponent.prototype.activateTabGuards = function () {
-        this.forEachTabGuard(function (tabGuard) { return tabGuard.setAttribute('tabIndex', '0'); });
+        this.forEachTabGuard(function (guard) { return guard.setAttribute('tabIndex', '0'); });
     };
     ManagedFocusComponent.prototype.deactivateTabGuards = function () {
-        this.forEachTabGuard(function (tabGuards) { return tabGuards.removeAttribute('tabindex'); });
+        this.forEachTabGuard(function (guard) { return guard.removeAttribute('tabIndex'); });
+    };
+    ManagedFocusComponent.prototype.tabGuardsAreActive = function () {
+        return !!this.topTabGuard && this.topTabGuard.hasAttribute('tabIndex');
+    };
+    ManagedFocusComponent.prototype.clearGui = function () {
+        var tabGuardsAreActive = this.tabGuardsAreActive();
+        clearElement(this.getFocusableElement());
+        if (this.isFocusableContainer) {
+            this.addTabGuards();
+            if (tabGuardsAreActive) {
+                this.activateTabGuards();
+            }
+        }
     };
     ManagedFocusComponent.FOCUS_MANAGED_CLASS = 'ag-focus-managed';
     __decorate([

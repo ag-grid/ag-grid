@@ -19,6 +19,7 @@ export declare class SelectAllFeature extends BeanStub {
     private onSelectionChanged;
     private getNextCheckboxState;
     private updateStateOfCheckbox;
+    private refreshSelectAllLabel;
     private getSelectionCount;
     private checkRightRowModelType;
     private onCbSelectAll;

@@ -11,7 +11,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { _ } from "../utils";
+import { addCssClass, containsClass } from "../utils/dom";
 
 export interface TooltipParentComp extends Component {
     getTooltipText(): string;
@@ -87,6 +87,12 @@ export class TooltipFeature extends BeanStub {
     }
 
     public onMouseEnter(e: MouseEvent): void {
+        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
+        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
+        // state is !=nothing, then we know mouseenter was already received.
+        if (this.state != TooltipStates.NOTHING) { return; }
+
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         const delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
 
@@ -141,7 +147,7 @@ export class TooltipFeature extends BeanStub {
 
     private destroyTooltipComp(): void {
         // add class to fade out the tooltip
-        _.addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
+        addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
 
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
@@ -176,12 +182,14 @@ export class TooltipFeature extends BeanStub {
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
 
+        const hasColumn = !!this.parentComp.getColumn;
+
         const params: ITooltipParams = {
             location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
-            column: this.parentComp.getColumn,
+            column: hasColumn ? this.parentComp.getColumn() : undefined,
             context: this.gridOptionsWrapper.getContext(),
             rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
             value: tooltipText
@@ -207,11 +215,15 @@ export class TooltipFeature extends BeanStub {
 
         this.tooltipComp = tooltipComp;
 
-        if (!_.containsClass(eGui, 'ag-tooltip')) {
-            _.addCssClass(eGui, 'ag-tooltip-custom');
+        if (!containsClass(eGui, 'ag-tooltip')) {
+            addCssClass(eGui, 'ag-tooltip-custom');
         }
 
-        this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
+        this.tooltipPopupDestroyFunc = this.popupService.addPopup({
+            eChild: eGui
+        });
+        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
+
         this.positionTooltipUnderLastMouseEvent();
         this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     }

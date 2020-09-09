@@ -1,15 +1,15 @@
 import {
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     Autowired,
     Component,
     PaddingOptions,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class PaddingPanel extends Component {
 
@@ -45,7 +45,7 @@ export class PaddingPanel extends Component {
             direction: 'vertical',
             suppressOpenCloseIcons: true
         };
-        this.setTemplate(PaddingPanel.TEMPLATE, {chartPaddingGroup: groupParams});
+        this.setTemplate(PaddingPanel.TEMPLATE, { chartPaddingGroup: groupParams });
 
         this.initGroup();
         this.initChartPaddingItems();

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,23 +28,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var events_1 = require("../events");
 var agAbstractInputField_1 = require("./agAbstractInputField");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
-    function AgCheckbox() {
-        var _this = _super.call(this) || this;
-        _this.className = 'ag-checkbox';
-        _this.displayTag = 'input';
-        _this.inputType = 'checkbox';
+    function AgCheckbox(config, className, inputType) {
+        if (className === void 0) { className = 'ag-checkbox'; }
+        if (inputType === void 0) { inputType = 'checkbox'; }
+        var _this = _super.call(this, config, className, inputType) || this;
         _this.labelAlignment = 'right';
         _this.selected = false;
         _this.readOnly = false;
         _this.passive = false;
-        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
         return _this;
     }
     AgCheckbox.prototype.addInputListeners = function () {
         this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
     };
     AgCheckbox.prototype.getNextValue = function () {
         return this.selected === undefined ? true : !this.selected;
@@ -56,12 +55,12 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.readOnly;
     };
     AgCheckbox.prototype.setReadOnly = function (readOnly) {
-        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
+        dom_1.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
     };
     AgCheckbox.prototype.setDisabled = function (disabled) {
-        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        dom_1.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
         return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
@@ -117,8 +116,8 @@ var AgCheckbox = /** @class */ (function (_super) {
         this.dispatchChange(this.selected, e);
     };
     AgCheckbox.prototype.refreshSelectedClass = function (value) {
-        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
-        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
+        dom_1.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        dom_1.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper')

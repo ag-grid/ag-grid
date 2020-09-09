@@ -17,14 +17,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, Promise, _ } from '@ag-grid-community/core';
+import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, Promise, _, KeyCode, } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 var SetFilter = /** @class */ (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this, 'setFilter') || this;
         // To make the filtering super fast, we store the values in an object, and check for the boolean value.
         // Although Set would be a more natural choice of data structure, its performance across browsers is
         // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
@@ -34,50 +34,20 @@ var SetFilter = /** @class */ (function (_super) {
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     SetFilter.prototype.updateUiVisibility = function () { };
-    SetFilter.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        var focusableEl = this.getFocusableElement();
-        if (focusableEl) {
-            this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
-        }
-    };
     SetFilter.prototype.createBodyTemplate = function () {
-        return /* html */ "\n            <div>\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translate('loadingOoo') + "</div>\n                <div class=\"ag-filter-header-container\" role=\"presentation\">\n                    <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                    <label ref=\"eSelectAllContainer\" class=\"ag-set-filter-item ag-set-filter-select-all\">\n                        <ag-checkbox ref=\"eSelectAll\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n                        <span ref=\"eSelectAllLabel\" class=\"ag-set-filter-item-value\"></span>\n                    </label>\n                </div>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translate('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
+        return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translateForSetFilter('loadingOoo') + "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translateForSetFilter('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.handleKeyDown = function (e) {
         if (e.defaultPrevented) {
             return;
         }
         switch (e.which || e.keyCode) {
-            case Constants.KEY_TAB:
-                this.handleKeyTab(e);
-                break;
-            case Constants.KEY_SPACE:
+            case KeyCode.SPACE:
                 this.handleKeySpace(e);
                 break;
-            case Constants.KEY_ENTER:
+            case KeyCode.ENTER:
                 this.handleKeyEnter(e);
                 break;
-        }
-    };
-    SetFilter.prototype.handleKeyTab = function (e) {
-        if (!this.eSetFilterList.contains(document.activeElement)) {
-            return;
-        }
-        var focusableElement = this.getFocusableElement();
-        var method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
-        var currentRoot = this.eSetFilterList;
-        var nextRoot;
-        while (currentRoot !== focusableElement && !nextRoot) {
-            nextRoot = currentRoot[method];
-            currentRoot = currentRoot.parentElement;
-        }
-        if (!nextRoot) {
-            return;
-        }
-        if ((e.shiftKey && this.focusController.focusLastFocusableElement(nextRoot)) ||
-            (!e.shiftKey && this.focusController.focusFirstFocusableElement(nextRoot))) {
-            e.preventDefault();
         }
     };
     SetFilter.prototype.handleKeySpace = function (e) {
@@ -85,11 +55,11 @@ var SetFilter = /** @class */ (function (_super) {
             return;
         }
         var currentItem = this.virtualList.getLastFocusedRow();
-        if (_.exists(currentItem)) {
+        if (currentItem != null) {
             var component = this.virtualList.getComponentAt(currentItem);
             if (component) {
                 e.preventDefault();
-                component.setSelected(!component.isSelected(), true);
+                component.toggleSelected();
             }
         }
     };
@@ -134,7 +104,13 @@ var SetFilter = /** @class */ (function (_super) {
             // this is a hack, it breaks casting rules, to apply with old model
             return values;
         }
-        return { values: values, filterType: 'set' };
+        return { values: values, filterType: this.getFilterType() };
+    };
+    SetFilter.prototype.getModel = function () {
+        return _super.prototype.getModel.call(this);
+    };
+    SetFilter.prototype.getFilterType = function () {
+        return 'set';
     };
     SetFilter.prototype.getValueModel = function () {
         return this.valueModel;
@@ -152,12 +128,11 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
-        this.valueModel = new SetValueModel(params.rowModel, params.colDef, params.column, params.valueGetter, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.setLoading(loading); }, this.valueFormatterService, function (key) { return _this.translate(key); });
+        this.valueModel = new SetValueModel(params.rowModel, params.valueGetter, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
         this.initialiseFilterBodyUi();
-        var syncValuesAfterDataChange = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
             !params.values &&
-            !params.suppressSyncValuesAfterDataChange;
-        if (syncValuesAfterDataChange) {
+            !params.suppressSyncValuesAfterDataChange) {
             this.addEventListenersForDataChanges();
         }
     };
@@ -220,7 +195,7 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         if (refreshValues === void 0) { refreshValues = true; }
         if (keepSelection === void 0) { keepSelection = true; }
-        var promise = Promise.resolve(null);
+        var promise = Promise.resolve();
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
         }
@@ -236,12 +211,14 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.setLoading = function (loading) {
         var message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         _.doOnce(function () { return console.warn(message); }, 'setFilter.setLoading');
-        _.setDisplayed(this.eFilterLoading, loading);
+        this.showOrHideLoadingScreen(loading);
+    };
+    SetFilter.prototype.showOrHideLoadingScreen = function (isLoading) {
+        _.setDisplayed(this.eFilterLoading, isLoading);
     };
     SetFilter.prototype.initialiseFilterBodyUi = function () {
         this.initVirtualList();
         this.initMiniFilter();
-        this.initSelectAll();
     };
     SetFilter.prototype.initVirtualList = function () {
         var _this = this;
@@ -255,14 +232,29 @@ var SetFilter = /** @class */ (function (_super) {
             virtualList.setRowHeight(cellHeight);
         }
         virtualList.setComponentCreator(function (value) { return _this.createSetListItem(value); });
-        virtualList.setModel(new ModelWrapper(this.valueModel));
+        var model;
+        if (this.setFilterParams.suppressSelectAll) {
+            model = new ModelWrapper(this.valueModel);
+        }
+        else {
+            model = new ModelWrapperWithSelectAll(this.valueModel, function () { return _this.isSelectAllSelected(); });
+        }
+        virtualList.setModel(model);
+    };
+    SetFilter.prototype.getSelectAllLabel = function () {
+        var key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
+            'selectAll' : 'selectAllSearchResults';
+        return this.translateForSetFilter(key);
     };
     SetFilter.prototype.createSetListItem = function (value) {
         var _this = this;
-        var listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, function (key) { return _this.translate(key); }));
-        var selected = this.valueModel.isValueSelected(value);
-        listItem.setSelected(selected);
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, function () { return _this.onItemSelected(value, listItem.isSelected()); });
+        if (value === SetFilter.SELECT_ALL_VALUE) {
+            var listItem_1 = this.createBean(new SetFilterListItem(function () { return _this.getSelectAllLabel(); }, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.isSelectAllSelected()));
+            listItem_1.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, function (e) { return _this.onSelectAll(e.isSelected); });
+            return listItem_1;
+        }
+        var listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, function (key) { return _this.translateForSetFilter(key); }, this.valueModel.isValueSelected(value)));
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, function (e) { return _this.onItemSelected(value, e.isSelected); });
         return listItem;
     };
     SetFilter.prototype.initMiniFilter = function () {
@@ -271,16 +263,8 @@ var SetFilter = /** @class */ (function (_super) {
         _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
+        eMiniFilter.setInputAriaLabel('Search filter values');
         this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
-    };
-    SetFilter.prototype.initSelectAll = function () {
-        var _this = this;
-        if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, false);
-        }
-        else {
-            this.eSelectAll.onValueChange(function () { return _this.onSelectAll(); });
-        }
     };
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
@@ -291,8 +275,10 @@ var SetFilter = /** @class */ (function (_super) {
             this.resetUiToActiveModel();
         }
         var eMiniFilter = this.eMiniFilter;
-        eMiniFilter.setInputPlaceholder(this.translate('searchOoo'));
-        eMiniFilter.getFocusableElement().focus();
+        eMiniFilter.setInputPlaceholder(this.translateForSetFilter('searchOoo'));
+        if (!params || !params.suppressFocus) {
+            eMiniFilter.getFocusableElement().focus();
+        }
     };
     SetFilter.prototype.applyModel = function () {
         var _this = this;
@@ -370,20 +356,9 @@ var SetFilter = /** @class */ (function (_super) {
         });
     };
     SetFilter.prototype.onAnyFilterChanged = function () {
-        this.valueModel.refreshAfterAnyFilterChanged();
-        this.virtualList.refresh();
-    };
-    SetFilter.prototype.updateSelectAllCheckbox = function () {
-        if (this.valueModel.isEverythingVisibleSelected()) {
-            this.selectAllState = true;
-        }
-        else if (this.valueModel.isNothingVisibleSelected()) {
-            this.selectAllState = false;
-        }
-        else {
-            this.selectAllState = undefined;
-        }
-        this.eSelectAll.setValue(this.selectAllState, true);
+        var _this = this;
+        // don't block the current action when updating the values for this filter
+        setTimeout(function () { return _this.valueModel.refreshAfterAnyFilterChanged().then(function () { return _this.refresh(); }); }, 0);
     };
     SetFilter.prototype.onMiniFilterInput = function () {
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
@@ -409,11 +384,12 @@ var SetFilter = /** @class */ (function (_super) {
         else {
             this.refresh();
         }
+        this.showOrHideResults();
+    };
+    SetFilter.prototype.showOrHideResults = function () {
         var hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
         _.setDisplayed(this.eNoMatches, hideResults);
-        if (!this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, !hideResults);
-        }
+        _.setDisplayed(this.eSetFilterList, !hideResults);
     };
     SetFilter.prototype.resetUiToActiveModel = function () {
         var _this = this;
@@ -421,14 +397,8 @@ var SetFilter = /** @class */ (function (_super) {
         this.valueModel.setMiniFilter(null);
         this.setModelIntoUi(this.getModel()).then(function () { return _this.onUiChanged(false, 'prevent'); });
     };
-    SetFilter.prototype.updateSelectAllLabel = function () {
-        var label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            this.translate('selectAll') :
-            this.translate('selectAllSearchResults');
-        this.eSelectAllLabel.innerText = "(" + label + ")";
-    };
     SetFilter.prototype.onMiniFilterKeyPress = function (e) {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER) && !this.setFilterParams.excelMode) {
+        if (_.isKeyPressed(e, KeyCode.ENTER) && !this.setFilterParams.excelMode) {
             this.filterOnAllVisibleValues();
         }
     };
@@ -437,36 +407,39 @@ var SetFilter = /** @class */ (function (_super) {
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
+        this.showOrHideResults();
     };
-    SetFilter.prototype.onSelectAll = function () {
-        this.selectAllState = !this.selectAllState;
-        if (this.selectAllState) {
+    SetFilter.prototype.focusRowIfAlive = function (rowIndex) {
+        var _this = this;
+        window.setTimeout(function () {
+            if (_this.isAlive()) {
+                _this.virtualList.focusRow(rowIndex);
+            }
+        }, 0);
+    };
+    SetFilter.prototype.onSelectAll = function (isSelected) {
+        if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
         }
         else {
             this.valueModel.deselectAllMatchingMiniFilter();
         }
+        var focusedRow = this.virtualList.getLastFocusedRow();
         this.refresh();
         this.onUiChanged();
+        this.focusRowIfAlive(focusedRow);
     };
-    SetFilter.prototype.onItemSelected = function (value, selected) {
-        var _this = this;
-        if (selected) {
+    SetFilter.prototype.onItemSelected = function (value, isSelected) {
+        if (isSelected) {
             this.valueModel.selectValue(value);
         }
         else {
             this.valueModel.deselectValue(value);
         }
         var focusedRow = this.virtualList.getLastFocusedRow();
-        this.updateSelectAllCheckbox();
+        this.refresh();
         this.onUiChanged();
-        if (_.exists(focusedRow)) {
-            window.setTimeout(function () {
-                if (_this.isAlive()) {
-                    _this.virtualList.focusRow(focusedRow);
-                }
-            }, 10);
-        }
+        this.focusRowIfAlive(focusedRow);
     };
     SetFilter.prototype.setMiniFilter = function (newMiniFilter) {
         this.eMiniFilter.setValue(newMiniFilter);
@@ -505,8 +478,6 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.refresh = function () {
         this.virtualList.refresh();
-        this.updateSelectAllCheckbox();
-        this.updateSelectAllLabel();
     };
     /** @deprecated since version 23.2. Please use getModel instead. */
     SetFilter.prototype.isValueSelected = function (value) {
@@ -546,19 +517,30 @@ var SetFilter = /** @class */ (function (_super) {
             this.refreshFilterValues();
         }
         else {
-            this.virtualList.refresh();
+            this.refresh();
         }
     };
-    SetFilter.prototype.translate = function (key) {
+    SetFilter.prototype.translateForSetFilter = function (key) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     };
-    __decorate([
-        RefSelector('eSelectAll')
-    ], SetFilter.prototype, "eSelectAll", void 0);
-    __decorate([
-        RefSelector('eSelectAllLabel')
-    ], SetFilter.prototype, "eSelectAllLabel", void 0);
+    SetFilter.prototype.isSelectAllSelected = function () {
+        if (this.valueModel.isEverythingVisibleSelected()) {
+            return true;
+        }
+        if (this.valueModel.isNothingVisibleSelected()) {
+            return false;
+        }
+        return undefined;
+    };
+    SetFilter.prototype.destroy = function () {
+        if (this.virtualList != null) {
+            this.virtualList.destroy();
+            this.virtualList = null;
+        }
+        _super.prototype.destroy.call(this);
+    };
+    SetFilter.SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
     __decorate([
         RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
@@ -572,14 +554,8 @@ var SetFilter = /** @class */ (function (_super) {
         RefSelector('eFilterNoMatches')
     ], SetFilter.prototype, "eNoMatches", void 0);
     __decorate([
-        RefSelector('eSelectAllContainer')
-    ], SetFilter.prototype, "eSelectAllContainer", void 0);
-    __decorate([
         Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
-    __decorate([
-        Autowired('focusController')
-    ], SetFilter.prototype, "focusController", void 0);
     return SetFilter;
 }(ProvidedFilter));
 export { SetFilter };
@@ -593,5 +569,24 @@ var ModelWrapper = /** @class */ (function () {
     ModelWrapper.prototype.getRow = function (index) {
         return this.model.getDisplayedValue(index);
     };
+    ModelWrapper.prototype.isRowSelected = function (index) {
+        return this.model.isValueSelected(this.getRow(index));
+    };
     return ModelWrapper;
+}());
+var ModelWrapperWithSelectAll = /** @class */ (function () {
+    function ModelWrapperWithSelectAll(model, isSelectAllSelected) {
+        this.model = model;
+        this.isSelectAllSelected = isSelectAllSelected;
+    }
+    ModelWrapperWithSelectAll.prototype.getRowCount = function () {
+        return this.model.getDisplayedValueCount() + 1;
+    };
+    ModelWrapperWithSelectAll.prototype.getRow = function (index) {
+        return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedValue(index - 1);
+    };
+    ModelWrapperWithSelectAll.prototype.isRowSelected = function (index) {
+        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
+    };
+    return ModelWrapperWithSelectAll;
 }());

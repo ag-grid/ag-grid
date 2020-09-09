@@ -58,7 +58,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             this.appendChild(this.pivotModePanel);
         }
         this.primaryColsPanel = this.createManagedBean(new PrimaryColsPanel());
-        this.primaryColsPanel.init(true, this.params);
+        this.primaryColsPanel.init(true, this.params, "toolPanelUi");
         _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
         this.appendChild(this.primaryColsPanel);
         if (this.isRowGroupingModuleLoaded()) {

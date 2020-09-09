@@ -162,6 +162,18 @@ var Axis = /** @class */ (function () {
         var start = rr[0] - shift;
         scale.range = [start, start + span];
     };
+    /**
+     * Checks if a point or an object is in range.
+     * @param x A point (or object's starting point).
+     * @param width Object's width.
+     * @param tolerance Expands the range on both ends by this amount.
+     */
+    Axis.prototype.inRange = function (x, width, tolerance) {
+        if (width === void 0) { width = 0; }
+        if (tolerance === void 0) { tolerance = 0; }
+        var range = this.range;
+        return (x + width) >= (range[0] - tolerance) && x <= (range[1] + tolerance);
+    };
     Object.defineProperty(Axis.prototype, "range", {
         get: function () {
             return this.requestedRange.slice();

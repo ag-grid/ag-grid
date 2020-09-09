@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,27 +26,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired } from "../../context/context";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from '../../utils';
+import { missing } from "../../utils/generic";
+import { KeyCode } from '../../constants/keyCode';
 var SelectCellEditor = /** @class */ (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
-        return _super.call(this, '<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>') || this;
+        var _this = _super.call(this, '<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>') || this;
+        _this.startedByEnter = false;
+        return _this;
     }
     SelectCellEditor.prototype.init = function (params) {
         var _this = this;
         this.focusAfterAttached = params.cellStartedEdit;
-        if (_.missing(params.values)) {
+        if (missing(params.values)) {
             console.warn('ag-Grid: no values found for select cellEditor');
             return;
         }
+        this.startedByEnter = params.keyPress === KeyCode.ENTER;
+        var hasValue = false;
         params.values.forEach(function (value) {
             var option = { value: value };
             var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
             _this.eSelect.addOption(option);
+            hasValue = hasValue || params.value === value;
         });
-        this.eSelect.setValue(params.value, true);
+        if (hasValue) {
+            this.eSelect.setValue(params.value, true);
+        }
+        else if (params.values.length) {
+            this.eSelect.setValue(params.values[0], true);
+        }
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (!this.gridOptionsWrapper.isFullRowEdit()) {
@@ -56,6 +67,9 @@ var SelectCellEditor = /** @class */ (function (_super) {
     SelectCellEditor.prototype.afterGuiAttached = function () {
         if (this.focusAfterAttached) {
             this.eSelect.getFocusableElement().focus();
+        }
+        if (this.startedByEnter) {
+            this.eSelect.showPicker();
         }
     };
     SelectCellEditor.prototype.focusIn = function () {

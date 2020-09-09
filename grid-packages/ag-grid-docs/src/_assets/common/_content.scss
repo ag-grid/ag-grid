@@ -3,6 +3,7 @@
     overflow: auto;
     height: calc(100% - 4rem);
     width: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 .content-list {

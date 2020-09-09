@@ -18,8 +18,9 @@
     width: 100%;
 
     #grid-wrapper {
-        flex: 1;
+        flex: 1 1 auto;
         overflow: hidden;
+        display: flex;
     }
 }
 
@@ -149,7 +150,7 @@ button[disabled] {
     user-select: none;
     display: flex;
     > span {
-        flex: 1;
+        flex: 1 1 auto;
         padding-left: 10px;
     }
     > div span:before {

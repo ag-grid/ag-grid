@@ -1,16 +1,16 @@
 import {
     AgColorPicker,
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ChartTranslator } from "../../../chartTranslator";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisTicksPanel extends Component {
 

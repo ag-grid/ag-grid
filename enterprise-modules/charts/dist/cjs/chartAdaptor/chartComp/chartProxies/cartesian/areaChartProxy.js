@@ -35,16 +35,48 @@ var AreaChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    AreaChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('area.series.area');
+        options.seriesDefaults = {
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle
+        };
+        return options;
+    };
     AreaChartProxy.prototype.createChart = function (options) {
         var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
-        var chart = ag_charts_community_1.ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options || this.chartOptions);
-        chart.axes
-            .filter(function (axis) { return axis.position === ag_charts_community_1.ChartAxisPosition.Bottom && axis instanceof ag_charts_community_1.CategoryAxis; })
-            .forEach(function (axis) {
-            axis.scale.paddingInner = 1;
-            axis.scale.paddingOuter = 0;
-        });
-        return chart;
+        var seriesDefaults = this.getSeriesDefaults();
+        var marker = __assign({}, seriesDefaults.marker);
+        if (marker.type) { // deprecated
+            marker.shape = marker.type;
+            delete marker.type;
+        }
+        options = options || this.chartOptions;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.axes = [__assign({ type: grouping ? 'groupedCategory' : 'category', position: 'bottom', paddingInner: 1, paddingOuter: 0 }, options.xAxis), __assign({ type: 'number', position: 'left' }, options.yAxis)];
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
+        return ag_charts_community_1.AgChart.create(agChartOptions, parentElement);
     };
     AreaChartProxy.prototype.update = function (params) {
         this.chartProxyParams.grouping = params.grouping;
@@ -57,7 +89,13 @@ var AreaChartProxy = /** @class */ (function (_super) {
             // stacked and normalized has a single series
             var areaSeries = this.chart.series[0];
             if (!areaSeries) {
-                areaSeries = ag_charts_community_1.ChartBuilder.createSeries(this.getSeriesDefaults());
+                var seriesDefaults = this.getSeriesDefaults();
+                var marker = __assign({}, seriesDefaults.marker);
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
+                areaSeries = ag_charts_community_1.AgChart.createComponent(__assign(__assign({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker }), 'area.series');
                 if (areaSeries) {
                     this.chart.addSeries(areaSeries);
                 }
@@ -112,13 +150,13 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.getSeriesDefaults();
-                var options = __assign(__assign({}, seriesDefaults), { data: data, field: {
-                        xKey: params.category.id,
-                        xName: params.category.name,
-                        yKeys: [f.colId],
-                        yNames: [f.displayName],
-                    }, fill: __assign(__assign({}, seriesDefaults.fill), { colors: [fill] }), stroke: __assign(__assign({}, seriesDefaults.stroke), { colors: [stroke] }) });
-                areaSeries = ag_charts_community_1.ChartBuilder.createSeries(options);
+                var marker = __assign({}, seriesDefaults.marker);
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
+                var options = __assign(__assign({}, seriesDefaults), { data: data, xKey: params.category.id, xName: params.category.name, yKeys: [f.colId], yNames: [f.displayName], fills: [fill], strokes: [stroke], fillOpacity: seriesDefaults.fill.opacity, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, marker: marker });
+                areaSeries = ag_charts_community_1.AgChart.createComponent(options, 'area.series');
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
             previousSeries = areaSeries;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,32 +27,13 @@ import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
-import { forEach } from '../../utils/array';
-import { setDisplayed } from '../../utils/dom';
+import { forEach, every, some, includes } from '../../utils/array';
+import { setDisplayed, setDisabled } from '../../utils/dom';
 export var ConditionPosition;
 (function (ConditionPosition) {
     ConditionPosition[ConditionPosition["One"] = 0] = "One";
     ConditionPosition[ConditionPosition["Two"] = 1] = "Two";
 })(ConditionPosition || (ConditionPosition = {}));
-var DEFAULT_TRANSLATIONS = {
-    filterOoo: 'Filter...',
-    empty: 'Choose One',
-    equals: 'Equals',
-    notEqual: 'Not equal',
-    lessThan: 'Less than',
-    greaterThan: 'Greater than',
-    inRange: 'In range',
-    inRangeStart: 'From',
-    inRangeEnd: 'To',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
-    contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
-    endsWith: 'Ends with',
-    andCondition: 'AND',
-    orCondition: 'OR',
-};
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
@@ -78,7 +59,7 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.setTypeFromFloatingFilter = function (type) {
         this.eType1.setValue(type);
         this.eType2.setValue(this.optionsFactory.getDefaultOption());
-        this.eJoinOperatorAnd.setValue(true);
+        (this.isDefaultOperator('AND') ? this.eJoinOperatorAnd : this.eJoinOperatorOr).setValue(true);
     };
     SimpleFilter.prototype.getModelFromUi = function () {
         if (!this.isConditionUiComplete(ConditionPosition.One)) {
@@ -149,8 +130,8 @@ var SimpleFilter = /** @class */ (function (_super) {
         }
         else {
             var simpleModel = model;
-            this.eJoinOperatorAnd.setValue(true);
-            this.eJoinOperatorOr.setValue(false);
+            this.eJoinOperatorAnd.setValue(this.isDefaultOperator('AND'));
+            this.eJoinOperatorOr.setValue(this.isDefaultOperator('OR'));
             this.eType1.setValue(simpleModel.type);
             this.eType2.setValue(this.optionsFactory.getDefaultOption());
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
@@ -159,28 +140,35 @@ var SimpleFilter = /** @class */ (function (_super) {
         return Promise.resolve();
     };
     SimpleFilter.prototype.doesFilterPass = function (params) {
+        var _this = this;
         var model = this.getModel();
-        var isCombined = model.operator;
-        if (isCombined) {
-            var combinedModel = model;
-            var firstResult = this.individualConditionPasses(params, combinedModel.condition1);
-            var secondResult = this.individualConditionPasses(params, combinedModel.condition2);
-            if (combinedModel.operator === 'AND') {
-                return firstResult && secondResult;
-            }
-            return firstResult || secondResult;
+        if (model == null) {
+            return true;
         }
-        var simpleModel = model;
-        var result = this.individualConditionPasses(params, simpleModel);
-        return result;
+        var operator = model.operator;
+        var models = [];
+        if (operator) {
+            var combinedModel = model;
+            models.push(combinedModel.condition1, combinedModel.condition2);
+        }
+        else {
+            models.push(model);
+        }
+        var combineFunction = operator && operator === 'OR' ? some : every;
+        return combineFunction(models, function (m) { return _this.individualConditionPasses(params, m); });
     };
     SimpleFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
         this.allowTwoConditions = !params.suppressAndOrCondition;
+        this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
+        this.defaultJoinOperator = this.getDefaultJoinOperator(params.defaultJoinOperator);
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
+    };
+    SimpleFilter.prototype.getDefaultJoinOperator = function (defaultJoinOperator) {
+        return includes(['AND', 'OR'], defaultJoinOperator) ? defaultJoinOperator : 'AND';
     };
     SimpleFilter.prototype.putOptionsIntoDropdown = function () {
         var _this = this;
@@ -215,30 +203,39 @@ var SimpleFilter = /** @class */ (function (_super) {
         return 'simple-filter';
     };
     SimpleFilter.prototype.updateUiVisibility = function () {
-        var firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
-        var showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        setDisplayed(this.eCondition2Body, showSecondFilter);
-        setDisplayed(this.eType2.getGui(), showSecondFilter);
-        setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+        var isCondition2Enabled = this.isCondition2Enabled();
+        if (this.alwaysShowBothConditions) {
+            this.eJoinOperatorAnd.setDisabled(!isCondition2Enabled);
+            this.eJoinOperatorOr.setDisabled(!isCondition2Enabled);
+            this.eType2.setDisabled(!isCondition2Enabled);
+            setDisabled(this.eCondition2Body, !isCondition2Enabled);
+        }
+        else {
+            setDisplayed(this.eJoinOperatorPanel, isCondition2Enabled);
+            setDisplayed(this.eType2.getGui(), isCondition2Enabled);
+            setDisplayed(this.eCondition2Body, isCondition2Enabled);
+        }
+    };
+    SimpleFilter.prototype.isCondition2Enabled = function () {
+        return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
     };
     SimpleFilter.prototype.resetUiToDefaults = function (silent) {
         var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         var defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.setValue(defaultOption, silent);
-        this.eType2.setValue(defaultOption, silent);
+        this.eType1.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
+        this.eType2.setValue(defaultOption, silent).setAriaLabel('Filtering operator');
         this.eJoinOperatorAnd
-            .setValue(true, silent)
+            .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('andCondition'));
         this.eJoinOperatorOr
-            .setValue(false, silent)
+            .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
             .setLabel(this.translate('orCondition'));
         return Promise.resolve();
     };
-    SimpleFilter.prototype.translate = function (toTranslate) {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
+    SimpleFilter.prototype.isDefaultOperator = function (operator) {
+        return operator === this.defaultJoinOperator;
     };
     SimpleFilter.prototype.addChangedListeners = function () {
         var _this = this;
@@ -271,17 +268,20 @@ var SimpleFilter = /** @class */ (function (_super) {
         RefSelector('eOptions2')
     ], SimpleFilter.prototype, "eType2", void 0);
     __decorate([
+        RefSelector('eJoinOperatorPanel')
+    ], SimpleFilter.prototype, "eJoinOperatorPanel", void 0);
+    __decorate([
         RefSelector('eJoinOperatorAnd')
     ], SimpleFilter.prototype, "eJoinOperatorAnd", void 0);
     __decorate([
         RefSelector('eJoinOperatorOr')
     ], SimpleFilter.prototype, "eJoinOperatorOr", void 0);
     __decorate([
+        RefSelector('eCondition1Body')
+    ], SimpleFilter.prototype, "eCondition1Body", void 0);
+    __decorate([
         RefSelector('eCondition2Body')
     ], SimpleFilter.prototype, "eCondition2Body", void 0);
-    __decorate([
-        RefSelector('eJoinOperatorPanel')
-    ], SimpleFilter.prototype, "eJoinOperatorPanel", void 0);
     return SimpleFilter;
 }(ProvidedFilter));
 export { SimpleFilter };

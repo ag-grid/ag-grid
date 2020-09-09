@@ -1,4 +1,4 @@
-// ag-grid-react v23.2.1
+// ag-grid-react v24.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -128,19 +128,24 @@ var AgGridReact = /** @class */ (function (_super) {
         this.batchUpdate();
     };
     AgGridReact.prototype.getStrategyTypeForProp = function (propKey) {
-        if (propKey === 'rowData') {
-            // for row data we either return the supplied strategy, or:
-            // if deltaRowDataMode/immutableData we default to IdentityChecks,
-            // if not we default to DeepValueChecks (with the rest of the properties)
-            if (!!this.props.rowDataChangeDetectionStrategy) {
-                return this.props.rowDataChangeDetectionStrategy;
+        switch (propKey) {
+            case 'rowData': {
+                // for row data we either return the supplied strategy, or:
+                // if deltaRowDataMode/immutableData we default to IdentityChecks,
+                // if not we default to DeepValueChecks (with the rest of the properties)
+                if (!!this.props.rowDataChangeDetectionStrategy) {
+                    return this.props.rowDataChangeDetectionStrategy;
+                }
+                else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
+                    return changeDetectionService_1.ChangeDetectionStrategyType.IdentityCheck;
+                }
+                return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
             }
-            else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
-                return changeDetectionService_1.ChangeDetectionStrategyType.IdentityCheck;
+            default: {
+                // all other data properties will default to DeepValueCheck
+                return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
             }
         }
-        // all non row data properties will default to DeepValueCheck
-        return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
     AgGridReact.prototype.shouldComponentUpdate = function (nextProps) {
         this.processPropsChanges(this.props, nextProps);
@@ -161,9 +166,14 @@ var AgGridReact = /** @class */ (function (_super) {
         }
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
+        // if columnDefs are provided on gridOptions we use those - you can't combine both
+        // we also skip if columnDefs are provided as a prop directly on AgGridReact
+        if ((this.props.gridOptions && this.props.gridOptions.columnDefs) || this.props.columnDefs) {
+            return;
+        }
         var debugLogging = !!nextProps.debug;
         if (agGridColumn_1.AgGridColumn.hasChildColumns(nextProps)) {
-            var detectionStrategy = this.changeDetectionService.getStrategy(changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck);
+            var detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
             var currentColDefs = this.gridOptions.columnDefs;
             var newColDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps);
             if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
@@ -176,6 +186,13 @@ var AgGridReact = /** @class */ (function (_super) {
                         currentValue: agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps)
                     };
             }
+        }
+        else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
+            changes['columnDefs'] =
+                {
+                    previousValue: this.gridOptions.columnDefs,
+                    currentValue: []
+                };
         }
     };
     AgGridReact.prototype.extractGridPropertyChanges = function (prevProps, nextProps, changes) {

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -9,6 +9,7 @@ export declare class CellNavigationService extends BeanStub {
     private rowModel;
     private pinnedRowModel;
     private gridOptionsWrapper;
+    private paginationProxy;
     getNextCellToFocus(key: any, lastCellToFocus: CellPosition): CellPosition | null;
     private isCellGoodToFocusOn;
     private getCellToLeft;

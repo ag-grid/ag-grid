@@ -45,15 +45,27 @@ function onColumnPinned(event) {
 
     var pinFixed = pinnedCount > 0;
 
-    event.columnApi.setColumnsPinned(allFixedCols, pinFixed);
+    var columnStates = [];
+    allFixedCols.forEach(function (col) {
+        if (pinFixed !== col.isPinned()) {
+            columnStates.push({
+                colId: col.getId(),
+                pinned: pinFixed ? 'left' : null
+            })
+        }
+    });
+
+    if (columnStates.length>0) {
+        event.columnApi.applyColumnState({state: columnStates});
+    }
 }
 
 function onPinAthlete() {
-    gridOptions.columnApi.setColumnPinned('athlete', 'left');
+    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: 'left'}]});
 }
 
 function onUnpinAthlete() {
-    gridOptions.columnApi.setColumnPinned('athlete', null);
+    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: null}]});
 }
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably

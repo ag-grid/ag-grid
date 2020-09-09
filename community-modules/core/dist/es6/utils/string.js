@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -118,7 +118,7 @@ export function hyphenToCamelCase(str) {
 export function capitalise(str) {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
-export function escape(toEscape) {
+export function escapeString(toEscape) {
     return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
 }
 /**
@@ -134,4 +134,10 @@ export function camelCaseToHumanText(camelCase) {
     var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
     var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
+}
+export function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
 }

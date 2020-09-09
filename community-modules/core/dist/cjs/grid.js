@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var columnAnimationService_1 = require("./rendering/columnAnimationService");
 var autoGroupColService_1 = require("./columnController/autoGroupColService");
 var paginationProxy_1 = require("./pagination/paginationProxy");
 var paginationAutoPageSizeService_1 = require("./pagination/paginationAutoPageSizeService");
-var constants_1 = require("./constants");
+var constants_1 = require("./constants/constants");
 var valueCache_1 = require("./valueService/valueCache");
 var changeDetectionService_1 = require("./valueService/changeDetectionService");
 var alignedGridsService_1 = require("./alignedGridsService");
@@ -62,7 +62,7 @@ var animationFrameService_1 = require("./misc/animationFrameService");
 var navigationService_1 = require("./gridPanel/navigationService");
 var maxDivHeightScaler_1 = require("./rendering/maxDivHeightScaler");
 var selectableService_1 = require("./rowNodes/selectableService");
-var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
+var autoHeightCalculator_1 = require("./rendering/row/autoHeightCalculator");
 var paginationComp_1 = require("./pagination/paginationComp");
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 var overlayWrapperComponent_1 = require("./rendering/overlays/overlayWrapperComponent");
@@ -78,7 +78,7 @@ var agInputRange_1 = require("./widgets/agInputRange");
 var agSelect_1 = require("./widgets/agSelect");
 var agAngleSelect_1 = require("./widgets/agAngleSelect");
 var agToggleButton_1 = require("./widgets/agToggleButton");
-var detailRowCompCache_1 = require("./rendering/detailRowCompCache");
+var detailRowCompCache_1 = require("./rendering/row/detailRowCompCache");
 var rowPosition_1 = require("./entities/rowPosition");
 var cellPosition_1 = require("./entities/cellPosition");
 var pinnedRowModel_1 = require("./pinnedRowModel/pinnedRowModel");
@@ -88,7 +88,10 @@ var undoRedoService_1 = require("./undoRedo/undoRedoService");
 var agStackComponentsRegistry_1 = require("./components/agStackComponentsRegistry");
 var headerPosition_1 = require("./headerRendering/header/headerPosition");
 var headerNavigationService_1 = require("./headerRendering/header/headerNavigationService");
-var utils_1 = require("./utils");
+var generic_1 = require("./utils/generic");
+var object_1 = require("./utils/object");
+var columnDefFactory_1 = require("./columnController/columnDefFactory");
+var rowCssClassCalculator_1 = require("./rendering/row/rowCssClassCalculator");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -166,7 +169,7 @@ var Grid = /** @class */ (function () {
     };
     Grid.prototype.createProvidedBeans = function (eGridDiv, params) {
         var frameworkOverrides = params ? params.frameworkOverrides : null;
-        if (utils_1._.missing(frameworkOverrides)) {
+        if (generic_1.missing(frameworkOverrides)) {
             frameworkOverrides = new vanillaFrameworkOverrides_1.VanillaFrameworkOverrides();
         }
         var seed = {
@@ -179,7 +182,7 @@ var Grid = /** @class */ (function () {
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {
-            utils_1._.assign(seed, params.providedBeanInstances);
+            object_1.assign(seed, params.providedBeanInstances);
         }
         return seed;
     };
@@ -211,7 +214,7 @@ var Grid = /** @class */ (function () {
     Grid.prototype.createBeansList = function (registeredModules) {
         var rowModelClass = this.getRowModelClass(registeredModules);
         if (!rowModelClass) {
-            return undefined;
+            return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         var beans = [
@@ -227,7 +230,8 @@ var Grid = /** @class */ (function () {
             focusController_1.FocusController, mouseEventService_1.MouseEventService, environment_1.Environment, cellNavigationService_1.CellNavigationService, valueFormatterService_1.ValueFormatterService,
             stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController, columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService,
             selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService,
-            detailRowCompCache_1.DetailRowCompCache, undoRedoService_1.UndoRedoService, agStackComponentsRegistry_1.AgStackComponentsRegistry
+            detailRowCompCache_1.DetailRowCompCache, undoRedoService_1.UndoRedoService, agStackComponentsRegistry_1.AgStackComponentsRegistry, columnDefFactory_1.ColumnDefFactory,
+            rowCssClassCalculator_1.RowCssClassCalculator
         ];
         var moduleBeans = this.extractModuleEntity(registeredModules, function (module) { return module.beans ? module.beans : []; });
         beans.push.apply(beans, moduleBeans);
@@ -248,9 +252,7 @@ var Grid = /** @class */ (function () {
         var gridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
         var columnController = this.context.getBean('columnController');
         var columnDefs = gridOptionsWrapper.getColumnDefs();
-        if (utils_1._.exists(columnDefs)) {
-            columnController.setColumnDefs(columnDefs, "gridInitializing");
-        }
+        columnController.setColumnDefs(columnDefs || [], "gridInitializing");
         var rowModel = this.context.getBean('rowModel');
         rowModel.start();
     };
@@ -265,44 +267,32 @@ var Grid = /** @class */ (function () {
     };
     Grid.prototype.getRowModelClass = function (registeredModules) {
         var rowModelType = this.gridOptions.rowModelType;
-        //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
-        if (rowModelType === 'enterprise') {
-            console.warn("ag-Grid: enterprise rowModel deprecated. Should now be called server side row model instead.");
-            rowModelType = constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
-        }
-        if (rowModelType === 'normal') {
-            console.warn("ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.");
-            rowModelType = constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-        }
         // default to client side
         if (!rowModelType) {
             rowModelType = constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         }
         var rowModelClasses = {};
         registeredModules.forEach(function (module) {
-            utils_1._.iterateObject(module.rowModels, function (key, value) {
+            object_1.iterateObject(module.rowModels, function (key, value) {
                 rowModelClasses[key] = value;
             });
         });
         var rowModelClass = rowModelClasses[rowModelType];
-        if (utils_1._.exists(rowModelClass)) {
+        if (generic_1.exists(rowModelClass)) {
             return rowModelClass;
         }
-        else {
-            if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE) {
-                console.error("ag-Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
-            }
-            console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
-            if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                console.error("ag-Grid: Row Model \"Viewport\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
-            }
-            if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                console.error("ag-Grid: Row Model \"Server Side\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
-            }
-            if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                console.error("ag-Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
-            }
-            return undefined;
+        if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE) {
+            console.error("ag-Grid: Row Model \"Infinite\" not found. Please ensure the " + moduleNames_1.ModuleNames.InfiniteRowModelModule + " is registered.';");
+        }
+        console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
+        if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
+            console.error("ag-Grid: Row Model \"Viewport\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ViewportRowModelModule + " is registered.';");
+        }
+        if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+            console.error("ag-Grid: Row Model \"Server Side\" not found. Please ensure the ag-Grid Enterprise Module " + moduleNames_1.ModuleNames.ServerSideRowModelModule + " is registered.';");
+        }
+        if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            console.error("ag-Grid: Row Model \"Client Side\" not found. Please ensure the " + moduleNames_1.ModuleNames.ClientSideRowModelModule + " is registered.';");
         }
     };
     Grid.prototype.destroy = function () {

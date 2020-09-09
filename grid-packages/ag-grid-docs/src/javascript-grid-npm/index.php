@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Install ag-Grid with NPM</h1>
 
     <p class="lead">
-        Both ag-Grid is available through NPM packages. Below is a code example of using ag-Grid with NPM
+        ag-Grid is available through NPM packages. Below is a code example of using ag-Grid with NPM
         and ECMA 6 imports.
     </p>
 
@@ -43,14 +43,11 @@ var AgGrid = require('ag-grid-community');
 import {Grid} from 'ag-grid-community';
 </snippet>
 
-<p>for ag-Grid Enterprise features you need to import the ag-Grid Enterprise package instead:</p>
+<p>For ag-Grid Enterprise features, import the <code>ag-grid-enterprise</code> package for it to be included in your
+    application:</p>
 
 <snippet>
-// ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid-enterprise');
-
-// ECMA 6 - using the system import method
-import {Grid} from 'ag-grid-enterprise';
+import 'ag-grid-enterprise';
 </snippet>
 
 <p>After you have loaded the scripts, you should include the styles in your project. There are several ways to do it, depending on your module bundler and the specifics of your project. The stylesheet files reside in <code>dist/styles/</code> directory of the ag-grid package - you should include <code>ag-grid.css</code> and the theme of your choice. </p> 

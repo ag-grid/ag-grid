@@ -16,11 +16,9 @@ import {
     ColDef,
     ColumnApi,
     ComponentUtil,
-    Events,
     Grid,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     GridParams,
     Module,
     Promise,
@@ -71,8 +69,6 @@ export class AgGridAngular implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.checkForDeprecatedEvents();
-
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.gridParams = {
@@ -126,14 +122,6 @@ export class AgGridAngular implements AfterViewInit {
         }
     }
 
-    private checkForDeprecatedEvents() {
-        _.iterateObject<any>(Events, (key, eventName) => {
-            if (this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
-                GridOptionsWrapper.checkEventDeprecation(eventName);
-            }
-        });
-    }
-
     private globalEventListener(eventType: string, event: any): void {
         // if we are tearing down, don't emit angular events, as this causes
         // problems with the angular router
@@ -162,19 +150,18 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public modules: Module[];
 
     // @START@
-    @Input() public slaveGrids : any = undefined;
     @Input() public alignedGrids : any = undefined;
     @Input() public rowData : any = undefined;
     @Input() public columnDefs : any = undefined;
     @Input() public excelStyles : any = undefined;
     @Input() public pinnedTopRowData : any = undefined;
     @Input() public pinnedBottomRowData : any = undefined;
+    @Input() public chartThemes : any = undefined;
     @Input() public components : any = undefined;
     @Input() public frameworkComponents : any = undefined;
     @Input() public rowStyle : any = undefined;
     @Input() public context : any = undefined;
     @Input() public autoGroupColumnDef : any = undefined;
-    @Input() public groupColumnDef : any = undefined;
     @Input() public localeText : any = undefined;
     @Input() public icons : any = undefined;
     @Input() public datasource : any = undefined;
@@ -198,6 +185,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public reduxStore : any = undefined;
     @Input() public statusBar : any = undefined;
     @Input() public sideBar : any = undefined;
+    @Input() public chartThemeOverrides : any = undefined;
+    @Input() public customChartThemes : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;
     @Input() public rowSelection : any = undefined;
@@ -213,6 +202,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotColumnGroupTotals : any = undefined;
     @Input() public pivotRowTotals : any = undefined;
     @Input() public pivotPanelShow : any = undefined;
+    @Input() public fillHandleDirection : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
@@ -236,8 +226,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cacheBlockSize : any = undefined;
     @Input() public infiniteInitialRowCount : any = undefined;
     @Input() public scrollbarWidth : any = undefined;
-    @Input() public paginationStartPage : any = undefined;
-    @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
     @Input() public asyncTransactionWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
@@ -263,13 +251,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getMainMenuItems : any = undefined;
     @Input() public processRowPostCreate : any = undefined;
     @Input() public processCellForClipboard : any = undefined;
-    @Input() public getNodeChildDetails : any = undefined;
     @Input() public groupRowAggNodes : any = undefined;
     @Input() public getRowNodeId : any = undefined;
     @Input() public isFullWidthCell : any = undefined;
     @Input() public fullWidthCellRenderer : any = undefined;
     @Input() public fullWidthCellRendererFramework : any = undefined;
-    @Input() public doesDataFlower : any = undefined;
     @Input() public processSecondaryColDef : any = undefined;
     @Input() public processSecondaryColGroupDef : any = undefined;
     @Input() public getBusinessKeyForNode : any = undefined;
@@ -304,14 +290,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
     @Input() public fillOperation : any = undefined;
-    @Input() public toolPanelSuppressRowGroups : any = undefined;
-    @Input() public toolPanelSuppressValues : any = undefined;
-    @Input() public toolPanelSuppressPivots : any = undefined;
-    @Input() public toolPanelSuppressPivotMode : any = undefined;
-    @Input() public toolPanelSuppressSideButtons : any = undefined;
-    @Input() public toolPanelSuppressColumnFilter : any = undefined;
-    @Input() public toolPanelSuppressColumnSelectAll : any = undefined;
-    @Input() public toolPanelSuppressColumnExpandAll : any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
@@ -319,25 +297,17 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public alwaysShowVerticalScroll : any = undefined;
     @Input() public debug : any = undefined;
     @Input() public enableBrowserTooltips : any = undefined;
-    @Input() public enableColResize : any = undefined;
     @Input() public enableCellExpressions : any = undefined;
-    @Input() public enableSorting : any = undefined;
-    @Input() public enableServerSideSorting : any = undefined;
-    @Input() public enableFilter : any = undefined;
-    @Input() public enableServerSideFilter : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
-    @Input() public angularCompileHeaders : any = undefined;
     @Input() public groupSuppressAutoColumn : any = undefined;
     @Input() public groupSelectsChildren : any = undefined;
     @Input() public groupIncludeFooter : any = undefined;
     @Input() public groupIncludeTotalFooter : any = undefined;
     @Input() public groupUseEntireRow : any = undefined;
-    @Input() public groupSuppressRow : any = undefined;
     @Input() public groupSuppressBlankHeader : any = undefined;
-    @Input() public forPrint : any = undefined;
     @Input() public suppressMenuHide : any = undefined;
-    @Input() public rowDeselection : any = undefined;
+    @Input() public suppressRowDeselection : any = undefined;
     @Input() public unSortIcon : any = undefined;
     @Input() public suppressMultiSort : any = undefined;
     @Input() public singleClickEdit : any = undefined;
@@ -346,7 +316,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAutoSize : any = undefined;
     @Input() public skipHeaderOnAutoSize : any = undefined;
     @Input() public suppressParentsInRowNodes : any = undefined;
-    @Input() public showToolPanel : any = undefined;
     @Input() public suppressColumnMoveAnimation : any = undefined;
     @Input() public suppressMovableColumns : any = undefined;
     @Input() public suppressFieldDotNotation : any = undefined;
@@ -359,15 +328,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAsyncEvents : any = undefined;
     @Input() public allowContextMenuWithControlKey : any = undefined;
     @Input() public suppressContextMenu : any = undefined;
-    @Input() public suppressMenuFilterPanel : any = undefined;
-    @Input() public suppressMenuMainPanel : any = undefined;
-    @Input() public suppressMenuColumnPanel : any = undefined;
     @Input() public rememberGroupStateWhenNewData : any = undefined;
     @Input() public enableCellChangeFlash : any = undefined;
     @Input() public suppressDragLeaveHidesColumns : any = undefined;
     @Input() public suppressMiddleClickScrolls : any = undefined;
     @Input() public suppressPreventDefaultOnMouseWheel : any = undefined;
-    @Input() public suppressUseColIdForGroups : any = undefined;
     @Input() public suppressCopyRowsToClipboard : any = undefined;
     @Input() public copyHeadersToClipboard : any = undefined;
     @Input() public pivotMode : any = undefined;
@@ -390,7 +355,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableGroupEdit : any = undefined;
     @Input() public embedFullWidthRows : any = undefined;
     @Input() public deprecatedEmbedFullWidthRows : any = undefined;
-    @Input() public suppressTabbing : any = undefined;
     @Input() public suppressPaginationPanel : any = undefined;
     @Input() public floatingFilter : any = undefined;
     @Input() public groupHideOpenParents : any = undefined;
@@ -404,7 +368,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public deltaRowDataMode : any = undefined;
     @Input() public ensureDomOrder : any = undefined;
     @Input() public accentedSort : any = undefined;
-    @Input() public pivotTotals : any = undefined;
     @Input() public suppressChangeDetection : any = undefined;
     @Input() public valueCache : any = undefined;
     @Input() public valueCacheNeverExpires : any = undefined;
@@ -419,17 +382,16 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enterMovesDown : any = undefined;
     @Input() public suppressPropertyNamesCheck : any = undefined;
     @Input() public rowMultiSelectWithClick : any = undefined;
-    @Input() public contractColumnSelection : any = undefined;
     @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
     @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public suppressRowHoverHighlight : any = undefined;
-    @Input() public gridAutoHeight : any = undefined;
     @Input() public suppressRowTransform : any = undefined;
     @Input() public suppressClipboardPaste : any = undefined;
     @Input() public suppressLastEmptyLineOnPaste : any = undefined;
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
+    @Input() public suppressColumnStateEvents : any = undefined;
     @Input() public enableCharts : any = undefined;
     @Input() public deltaColumnMode : any = undefined;
     @Input() public suppressMaintainUnsortedOrder : any = undefined;
@@ -446,6 +408,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public immutableData : any = undefined;
     @Input() public immutableColumns : any = undefined;
     @Input() public pivotSuppressAutoColumn : any = undefined;
+    @Input() public suppressExpandablePivotGroups : any = undefined;
+    @Input() public applyColumnDefOrder : any = undefined;
+    @Input() public debounceVerticalScrollbar : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -518,6 +483,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public scrollVisibilityChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnHoverChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public flashCells: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public paginationPixelOffsetChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnter: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();

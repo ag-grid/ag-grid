@@ -50,10 +50,6 @@ SNIPPET
     same, so put them directly onto your React Component.
 </p>
 
-<h3>React Hooks</h3>
-
-<p>Please see <a href="../react-hooks/#hooks-with-methods">here</a> for information on using Hooks with Filter Components.</p>
-
 <h3 id="accessing-the-react-component-instance">Accessing the React Component Instance</h3>
 
 <p>
@@ -95,4 +91,11 @@ SNIPPET
     Using React Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
 </p>
 
-<?= grid_example('React Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'react', 'extras' => ['bootstrap']]) ?>
+<?= grid_example('React Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'react', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>
+
+<h3>React Hook Filter Components</h3>
+
+<p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
+            href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
+
+<?= grid_example('React Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'reactFunctional', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>

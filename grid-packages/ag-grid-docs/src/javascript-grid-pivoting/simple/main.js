@@ -1,9 +1,9 @@
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, enableRowGroup: true },
-        { field: "year", pivot: true, enablePivot: true },
+        { field: "sport", pivot: true },
+        { field: "year", enablePivot: true, enablePivot: true },
         { field: "date" },
-        { field: "sport" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }

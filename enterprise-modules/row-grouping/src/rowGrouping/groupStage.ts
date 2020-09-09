@@ -97,8 +97,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
             includeParents: !this.gridOptionsWrapper.isSuppressParentsInRowNodes(),
-            expandByDefault: this.gridOptionsWrapper.isGroupSuppressRow() ?
-                -1 : this.gridOptionsWrapper.getGroupDefaultExpanded(),
+            expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded(),
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivotMode: this.columnController.isPivotMode(),
@@ -281,6 +280,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 newGroupNode.allLeafChildren = nodeToRemove.allLeafChildren;
                 newGroupNode.childrenAfterGroup = nodeToRemove.childrenAfterGroup;
                 newGroupNode.childrenMapped = nodeToRemove.childrenMapped;
+                newGroupNode.updateHasChildren();
 
                 newGroupNode.childrenAfterGroup.forEach(rowNode => rowNode.parent = newGroupNode);
             }
@@ -341,6 +341,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
                 _.removeFromArray(child.parent.childrenAfterGroup, child);
+                child.parent.updateHasChildren();
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
@@ -359,6 +360,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 parent.childrenMapped[mapKey] = child;
             }
             parent.childrenAfterGroup.push(child);
+            parent.updateHasChildren();
         }
     }
 
@@ -385,6 +387,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         details.rootNode.childrenAfterGroup = [];
         details.rootNode.childrenMapped = {};
+        details.rootNode.updateHasChildren();
 
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
     }
@@ -414,6 +417,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             childNode.parent = parentGroup;
             childNode.level = path.length;
             parentGroup.childrenAfterGroup.push(childNode);
+            parentGroup.updateHasChildren();
         }
     }
 
@@ -452,6 +456,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         userGroup.allLeafChildren = fillerGroup.allLeafChildren;
         userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
         userGroup.childrenMapped = fillerGroup.childrenMapped;
+        userGroup.updateHasChildren();
 
         this.removeFromParent(fillerGroup);
         userGroup.childrenAfterGroup.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
@@ -461,8 +466,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
         details: GroupingDetails): RowNode {
 
-        const mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] as RowNode : undefined;
+        const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
+
+        const map = parentGroup.childrenMapped;
+        // we use hasOwnProperty as otherwise things like 'constructor' would fail as a key,
+        // as javascript map already has an inherited property 'constructor
+        const nodeExists = map && map.hasOwnProperty(key);
+        let nextNode = nodeExists ? map[key] as RowNode : undefined;
+
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -509,15 +520,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         groupNode.allLeafChildren = [];
-        // why is this done here? we are not updating the children could as we go,
-        // i suspect this is updated in the filter stage
 
+        // why is this done here? we are not updating the children count as we go,
+        // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
 
         groupNode.rowGroupIndex = this.usingTreeData ? null : level;
 
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
+        groupNode.updateHasChildren();
 
         groupNode.parent = details.includeParents ? parent : null;
 
@@ -638,6 +650,7 @@ class BatchRemover {
                 return res;
             });
             parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id]);
+            parent.updateHasChildren();
         });
         this.allSets = {};
         this.allParents.length = 0;

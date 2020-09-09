@@ -303,6 +303,9 @@ var Shape = /** @class */ (function (_super) {
         configurable: true
     });
     Shape.prototype.fillStroke = function (ctx) {
+        if (!this.scene) {
+            return;
+        }
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;

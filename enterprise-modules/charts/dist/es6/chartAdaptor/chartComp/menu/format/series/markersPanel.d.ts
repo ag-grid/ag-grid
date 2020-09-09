@@ -3,6 +3,7 @@ import { ChartController } from "../../../chartController";
 export declare class MarkersPanel extends Component {
     static TEMPLATE: string;
     private seriesMarkersGroup;
+    private seriesMarkerShapeSelect;
     private seriesMarkerSizeSlider;
     private seriesMarkerMinSizeSlider;
     private seriesMarkerStrokeWidthSlider;

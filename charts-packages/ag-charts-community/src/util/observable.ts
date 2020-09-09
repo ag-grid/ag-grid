@@ -38,7 +38,10 @@ export class Observable {
             const scopes = new Set<Object>();
             propertyListeners.set(listener, scopes);
         }
-        propertyListeners.get(listener).add(scope);
+        const scopes = propertyListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     }
 
     removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>, scope: Object = this): void {
@@ -48,9 +51,11 @@ export class Observable {
         if (propertyListeners) {
             if (listener) {
                 const scopes = propertyListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    propertyListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        propertyListeners.delete(listener);
+                    }
                 }
             } else {
                 propertyListeners.clear();
@@ -82,7 +87,10 @@ export class Observable {
             const scopes = new Set<Object>();
             eventListeners.set(listener, scopes);
         }
-        eventListeners.get(listener).add(scope);
+        const scopes = eventListeners.get(listener);
+        if (scopes) {
+            scopes.add(scope);
+        }
     }
 
     removeEventListener(type: string, listener?: SourceEventListener<this>, scope: Object = this): void {
@@ -92,9 +100,11 @@ export class Observable {
         if (eventListeners) {
             if (listener) {
                 const scopes = eventListeners.get(listener);
-                scopes.delete(scope);
-                if (!scopes.size) {
-                    eventListeners.delete(listener);
+                if (scopes) {
+                    scopes.delete(scope);
+                    if (!scopes.size) {
+                        eventListeners.delete(listener);
+                    }
                 }
             } else {
                 eventListeners.clear();
@@ -127,6 +137,7 @@ export class Observable {
 }
 
 export function reactive(...events: string[]) {
+    // let debug = events.indexOf('debugger') >= 0;
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = Observable.privateKeyPrefix + key;
@@ -138,11 +149,14 @@ export function reactive(...events: string[]) {
             }
             Object.defineProperty(target, key, {
                 set: function (value: any) {
-                    let oldValue: any;
-
-                    oldValue = this[privateKey];
-
-                    if (oldValue !== value || (typeof value === 'object' && value !== null)) {
+                    const oldValue = this[privateKey];
+                    // This is a way to stop inside the setter by adding the special
+                    // 'debugger' event to a reactive property, for example:
+                    //  @reactive('layoutChange', 'debugger') title?: Caption;
+                    // if (debug) { // DO NOT REMOVE
+                    //     debugger;
+                    // }
+                    if (value !== oldValue || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
                         const events = this[privateKeyEvents];
@@ -152,9 +166,7 @@ export function reactive(...events: string[]) {
                     }
                 },
                 get: function (): any {
-                    let value: any;
-                    value = this[privateKey];
-                    return value;
+                    return this[privateKey];
                 },
                 enumerable: true,
                 configurable: true

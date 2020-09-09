@@ -6,7 +6,7 @@ import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
 import { Events } from "../../events";
 import { IRowModel } from "../../interfaces/iRowModel";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { SelectionController } from "../../selectionController";
@@ -40,10 +40,13 @@ export class SelectAllFeature extends BeanStub {
     private postConstruct(): void {
         this.showOrHideSelectAll();
 
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addManagedListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
+        this.refreshSelectAllLabel();
     }
 
     private showOrHideSelectAll(): void {
@@ -97,8 +100,14 @@ export class SelectAllFeature extends BeanStub {
         const allSelected = this.getNextCheckboxState(selectionCount);
 
         this.cbSelectAll.setValue(allSelected);
+        this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;
+    }
+
+    private refreshSelectAllLabel(): void {
+        const checked = this.cbSelectAll.getValue();
+        this.cbSelectAll.setInputAriaLabel(`Press Space to toggle all rows selection (${checked ? 'checked' : 'unchecked'})`);
     }
 
     private getSelectionCount(): SelectionCount {

@@ -4,8 +4,11 @@ import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { find, exists } from "../utils/generic";
+import { removeFromArray } from "../utils/array";
+import { addOrRemoveCssClass } from "../utils/dom";
+import { areEventsNear } from "../utils/mouse";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -53,22 +56,26 @@ export class DragService extends BeanStub {
     }
 
     public removeDragSource(params: DragListenerParams): void {
-        const dragSourceAndListener = _.find(this.dragSources, item => item.dragSource === params);
+        const dragSourceAndListener = find(this.dragSources, item => item.dragSource === params);
 
         if (!dragSourceAndListener) { return; }
 
         this.removeListener(dragSourceAndListener);
-        _.removeFromArray(this.dragSources, dragSourceAndListener);
+        removeFromArray(this.dragSources, dragSourceAndListener);
     }
 
     private setNoSelectToBody(noSelect: boolean): void {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const eBody = eDocument.querySelector('body') as HTMLElement;
-        if (_.exists(eBody)) {
+        if (exists(eBody)) {
             // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
-            _.addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
+            addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
         }
+    }
+
+    public isDragging(): boolean {
+        return this.dragging;
     }
 
     public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
@@ -81,7 +88,7 @@ export class DragService extends BeanStub {
 
         if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive:false } as any);
+            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
         }
 
         this.dragSources.push({
@@ -102,18 +109,19 @@ export class DragService extends BeanStub {
         this.touchLastTime = touch;
         this.touchStart = touch;
 
-        if (touchEvent.cancelable) {
-            touchEvent.preventDefault();
-        }
-
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e, params.eElement);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e, params.eElement);
+        const documentTouchMove = (e: TouchEvent) => { if (e.cancelable) { e.preventDefault(); } };
         const target = params.eElement;
 
         const events = [
-            {target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true} },
-            {target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
-            {target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
+            // Prevents the page document from moving while we are dragging items around.
+            // preventDefault needs to be called in the touchmove listener and never inside the
+            // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
+            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
+            { target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
+            { target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
         ];
         // temporally add these listeners, for the duration of the drag
         this.addTemporaryEvents(events);
@@ -194,8 +202,8 @@ export class DragService extends BeanStub {
     private isEventNearStartEvent(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
         const {dragStartPixels} = this.currentDragParams;
-        const requiredPixelDiff = _.exists(dragStartPixels) ? dragStartPixels : 4;
-        return _.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
+        const requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
+        return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
     private getFirstActiveTouch(touchList: TouchList): Touch {
@@ -231,12 +239,6 @@ export class DragService extends BeanStub {
         if (!touch) { return; }
 
         // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-
-        // if we don't preview default, then the browser will try and do it's own touch stuff,
-        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
-        // with scroll page in the app)
-        // touchEvent.preventDefault();
-
         this.onCommonMove(touch, this.touchStart, el);
     }
 

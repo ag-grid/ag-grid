@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,8 +24,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { find, exists } from "../utils/generic";
 var SelectableService = /** @class */ (function (_super) {
     __extends(SelectableService, _super);
     function SelectableService() {
@@ -59,8 +59,8 @@ var SelectableService = /** @class */ (function (_super) {
             var rowSelectable;
             if (_this.groupSelectsChildren) {
                 // have this group selectable if at least one direct child is selectable
-                var firstSelectable = _.find(nextChildrenFunc(child), 'selectable', true);
-                rowSelectable = _.exists(firstSelectable);
+                var firstSelectable = find(nextChildrenFunc(child), 'selectable', true);
+                rowSelectable = exists(firstSelectable);
             }
             else {
                 // directly retrieve selectable value from user callback

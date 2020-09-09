@@ -113,6 +113,7 @@ export declare class Events {
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
     static EVENT_COLUMN_HOVER_CHANGED: string;
     static EVENT_FLASH_CELLS: string;
+    static EVENT_PAGINATION_PIXEL_OFFSET_CHANGED: string;
     static EVENT_ROW_DRAG_ENTER: string;
     static EVENT_ROW_DRAG_MOVE: string;
     static EVENT_ROW_DRAG_LEAVE: string;

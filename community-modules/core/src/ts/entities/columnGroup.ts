@@ -7,7 +7,7 @@ import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
-import { _ } from "../utils";
+import { last } from "../utils/array";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -91,7 +91,7 @@ export class ColumnGroup implements ColumnGroupChild {
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                const lastChild = _.last(this.displayedChildren);
+                const lastChild = last(this.displayedChildren);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             } else {

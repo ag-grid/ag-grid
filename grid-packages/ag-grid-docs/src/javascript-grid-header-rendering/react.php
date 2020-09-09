@@ -40,4 +40,11 @@
     <a href="https://github.com/ag-grid/ag-grid-react-example">React Example</a>.
 </p>
 
-<?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'react']) ?>
+<?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'react', 'reactFunctional' => true]) ?>
+
+<h3>React Hook Header Components</h3>
+
+<p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
+            href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
+
+<?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'reactFunctional', 'reactFunctional' => true]) ?>

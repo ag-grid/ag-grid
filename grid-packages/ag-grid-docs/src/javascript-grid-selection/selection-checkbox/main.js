@@ -1,3 +1,12 @@
+function checkboxSelection(params) {
+    return params.node.group === true;
+}
+
+function checkbox(params) {
+    return params.node.group === true;
+}
+
+
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
@@ -8,9 +17,7 @@ var gridOptions = {
         {
             field: "age",
             minWidth: 120,
-            checkboxSelection: function(params) {
-                return params.node.group === true;
-            },
+            checkboxSelection: checkboxSelection,
             aggFunc: 'sum',
         },
         { field: "year", maxWidth: 120 },
@@ -26,9 +33,7 @@ var gridOptions = {
         minWidth: 250,
         cellRenderer: 'agGroupCellRenderer',
         cellRendererParams: {
-            checkbox: function(params) {
-                return params.node.group === true;
-            }
+            checkbox: checkbox
         }
     },
     rowSelection: 'multiple',

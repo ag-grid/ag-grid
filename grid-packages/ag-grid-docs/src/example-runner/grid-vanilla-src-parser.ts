@@ -4,17 +4,17 @@ import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
 import {
-    NodeType,
-    recognizedDomEvents,
     collect,
-    nodeIsVarWithName,
-    nodeIsFunctionWithName,
-    nodeIsPropertyWithName,
-    nodeIsInScope,
-    nodeIsUnusedFunction,
-    nodeIsFunctionCall,
     extractEventHandlers,
     extractUnboundInstanceMethods,
+    nodeIsFunctionCall,
+    nodeIsFunctionWithName,
+    nodeIsInScope,
+    nodeIsPropertyWithName,
+    nodeIsUnusedFunction,
+    nodeIsVarWithName,
+    NodeType,
+    recognizedDomEvents,
 } from './parser-utils';
 
 export const templatePlaceholder = '$$GRID$$';
@@ -58,7 +58,14 @@ function generateWithReplacedGridOptions(node, options?) {
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
 
-export function parser(js, html, exampleSettings) {
+function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
+    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
+    }
+    return false;
+}
+
+export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -68,7 +75,7 @@ export function parser(js, html, exampleSettings) {
     const collectors = [];
     const gridOptionsCollectors = [];
     const onReadyCollectors = [];
-    const indentOne = { format: { indent: { base: 1 } } };
+    const indentOne = { format: { indent: { base: 1 }, quotes: 'double' } };
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -97,7 +104,7 @@ export function parser(js, html, exampleSettings) {
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
         matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(generate(node, indentOne))
+        apply: (bindings, node) => bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne))
     });
 
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
@@ -140,7 +147,9 @@ export function parser(js, html, exampleSettings) {
             node.expression.callee &&
             node.expression.callee.property &&
             node.expression.callee.property.name == 'sizeColumnsToFit',
-        apply: bindings => { bindings.resizeToFit = true; }
+        apply: bindings => {
+            bindings.resizeToFit = true;
+        }
     });
 
     // extract onready
@@ -181,6 +190,34 @@ export function parser(js, html, exampleSettings) {
         });
     });
 
+
+    const extractColDefs = (node) => {
+        const copyOfColDefs = JSON.parse(JSON.stringify(node));
+        // for each column def
+        for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
+            const columnDef = copyOfColDefs.elements[columnDefIndex];
+
+            // for each col def property
+            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
+                const columnDefProperty = columnDef.properties[colDefPropertyIndex];
+
+                if(columnDefProperty.key.name === 'children') {
+                    const children = extractColDefs(columnDefProperty.value);
+                    columnDefProperty.value = children;
+                } else if (columnDefProperty.value.type === 'Identifier') {
+                    columnDefProperty.value.type = 'Literal';
+                    columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
+                }
+            }
+        }
+
+        return copyOfColDefs;
+    };
+
+    const extractAndParseColDefs = (node) => {
+        return generate(extractColDefs(node), indentOne);
+    };
+
     PROPERTIES.forEach(propertyName => {
         registered.push(propertyName);
 
@@ -189,6 +226,10 @@ export function parser(js, html, exampleSettings) {
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
+                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                        bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
+                    }
+
                     const code = generate(node.declarations[0].init, indentOne);
                     bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
@@ -199,10 +240,16 @@ export function parser(js, html, exampleSettings) {
 
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
-            apply: (bindings, node) => bindings.properties.push({
-                name: propertyName,
-                value: generate(node.value, indentOne)
-            })
+            apply: (bindings, node) => {
+                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                    bindings.parsedColDefs = extractAndParseColDefs(node.value);
+                }
+
+                bindings.properties.push({
+                    name: propertyName,
+                    value: generate(node.value, indentOne)
+                });
+            }
         });
     });
 
@@ -223,6 +270,7 @@ export function parser(js, html, exampleSettings) {
      * externalEventHandlers -> onclick, onchange etc in index.html
      * eventHandlers -> grid related events
      * properties -> grid related properties
+     * parsedColDefs -> col defs with function values replaced with tokenised strings - for the functional react example generator
      * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
      * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
      * onGridReady -> any matching onGridReady method
@@ -234,6 +282,7 @@ export function parser(js, html, exampleSettings) {
         {
             eventHandlers: [],
             properties: [],
+            parsedColDefs: {},
             instanceMethods: [],
             externalEventHandlers: [],
             utils: []
@@ -261,11 +310,12 @@ export function parser(js, html, exampleSettings) {
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
-    bindings.gridSettings = Object.assign({
+    bindings.gridSettings = {
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-alpine'
-    }, exampleSettings);
+        theme: 'ag-theme-alpine',
+        ...exampleSettings
+    };
 
     return bindings;
 }

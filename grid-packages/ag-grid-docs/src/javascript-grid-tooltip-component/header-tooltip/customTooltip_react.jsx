@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 export default class CustomTooltip extends Component {
     getReactContainerClasses() {
@@ -11,15 +11,15 @@ export default class CustomTooltip extends Component {
             isGroupedHeader = isHeader && !!props.colDef.children,
             valueToDisplay = props.value.value ? props.value.value : '- Missing -';
 
-        return isHeader ? 
+        return isHeader ?
             (
                 <div className="custom-tooltip">
                     <p>Group Name: {props.value}</p>
                     {isGroupedHeader ? <hr /> : null}
-                    { isGroupedHeader ?
+                    {isGroupedHeader ?
                         props.colDef.children.map(function(header, idx) {
                             return (
-                                <p>Child {idx + 1} - { header.headerName }</p>
+                                <p>Child {idx + 1} - { header.headerName}</p>
                             );
                         })
                         : null
@@ -28,7 +28,7 @@ export default class CustomTooltip extends Component {
             :
             (
                 <div className="custom-tooltip">
-                    <p><span>Athletes Name:</span></p>
+                    <p><span>Athlete's Name:</span></p>
                     <p><span>{valueToDisplay}</span></p>
                 </div>
             );

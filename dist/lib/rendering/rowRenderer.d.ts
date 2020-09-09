@@ -86,7 +86,7 @@ export declare class RowRenderer extends BeanStub {
     private flushContainers;
     private onDisplayedColumnsChanged;
     private redrawFullWidthEmbeddedRows;
-    refreshFullWidthRows(): void;
+    refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void;
     private createOrUpdateRowComp;
     private destroyRowComps;
     private checkAngularCompile;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this.columnController.getDisplayNameForColumn(column, location) || ''; };
     ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; };
     ColumnApi.prototype.getColumn = function (key) { return this.columnController.getPrimaryColumn(key); };
-    ColumnApi.prototype.setColumnState = function (columnState) { return this.columnController.setColumnState(columnState, false, 'api'); };
+    ColumnApi.prototype.applyColumnState = function (params) { return this.columnController.applyColumnState(params, 'api'); };
     ColumnApi.prototype.getColumnState = function () { return this.columnController.getColumnState(); };
     ColumnApi.prototype.resetColumnState = function () { this.columnController.resetColumnState(false, 'api'); };
     ColumnApi.prototype.getColumnGroupState = function () { return this.columnController.getColumnGroupState(); };
@@ -104,6 +104,10 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.getSecondaryColumns = function () { return this.columnController.getSecondaryColumns(); };
     ColumnApi.prototype.getPrimaryColumns = function () { return this.columnController.getAllPrimaryColumns(); };
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
+    // public getColumnDefs(): (ColDef | ColGroupDef)[] {
+    //     this.setColumnGroupOpened(group, newValue);
+    //     return null;
+    // }
     ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
@@ -155,6 +159,9 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.getDisplayNameForCol = function (column) {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
+    };
+    ColumnApi.prototype.setColumnState = function (columnState) {
+        return this.columnController.applyColumnState({ state: columnState, applyOrder: true }, 'api');
     };
     __decorate([
         Autowired('columnController')

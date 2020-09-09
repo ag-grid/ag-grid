@@ -87,10 +87,12 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp } from "./interfaces/iFilter";
+export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 
 export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
-export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel } from "./filter/provided/simpleFilter";
+export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
 export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
@@ -98,6 +100,9 @@ export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from ".
 export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
+export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
+export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";
@@ -159,7 +164,7 @@ export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
-export { RowComp } from "./rendering/rowComp";
+export { RowComp } from "./rendering/row/rowComp";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
@@ -231,7 +236,8 @@ export { ICsvCreator } from "./interfaces/iCsvCreator";
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
-export { Constants } from "./constants";
+export { Constants } from "./constants/constants";
+export { KeyCode } from "./constants/keyCode";
 export { Grid, GridParams } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
@@ -261,6 +267,7 @@ export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/he
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
 export {
     IAggFunc,
+    IAggFuncParams,
     ColGroupDef,
     ColDef,
     AbstractColDef,
@@ -286,8 +293,6 @@ export {
     IsRowMaster,
     IsRowSelectable,
     MenuItemDef,
-    GetNodeChildDetails,
-    NodeChildDetails,
     GetMainMenuItemsParams,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -297,7 +302,8 @@ export {
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ChartRef,
-    ProcessChartOptionsParams
+    ProcessChartOptionsParams,
+    ProcessChartParams
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";
@@ -306,10 +312,8 @@ export { ColumnGroupChild } from "./entities/columnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp } from "./interfaces/iFilter";
-export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
-export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
+export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeader } from "./headerRendering/header/headerComp";
@@ -325,6 +329,7 @@ export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts
 export * from "./interfaces/iChartOptions";
+export * from "./interfaces/iAgChartOptions";
 
 // modules
 export { Module } from "./interfaces/iModule";

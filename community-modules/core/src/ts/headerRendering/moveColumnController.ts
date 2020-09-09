@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
@@ -8,7 +8,8 @@ import { GridPanel } from "../gridPanel/gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
-import { _ } from "../utils";
+import { missing, exists } from "../utils/generic";
+import { sortNumerically, last, includes } from "../utils/array";
 
 export class MoveColumnController implements DropListener {
 
@@ -40,7 +41,7 @@ export class MoveColumnController implements DropListener {
     constructor(pinned: string, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
-        this.centerContainer = !_.exists(pinned);
+        this.centerContainer = !exists(pinned);
     }
 
     public registerGridComp(gridPanel: GridPanel): void {
@@ -152,7 +153,7 @@ export class MoveColumnController implements DropListener {
         this.lastDraggingEvent = draggingEvent;
 
         // if moving up or down (ie not left or right) then do nothing
-        if (_.missing(draggingEvent.hDirection)) {
+        if (missing(draggingEvent.hDirection)) {
             return;
         }
 
@@ -200,9 +201,9 @@ export class MoveColumnController implements DropListener {
     // each other. if the cols are not beside each other, then returns null
     private calculateOldIndex(movingCols: Column[]): number {
         const gridCols: Column[] = this.columnController.getAllGridColumns();
-        const indexes = _.sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
+        const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
-        const lastIndex = _.last(indexes);
+        const lastIndex = last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
@@ -211,11 +212,18 @@ export class MoveColumnController implements DropListener {
     private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection, mouseX: number, fromEnter: boolean): void {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
-        const validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, mouseX);
+
+        // it is important to sort the moving columns as they are in grid columns, as the list of moving columns
+        // could themselves be part of 'married children' groups, which means we need to maintain the order within
+        // the moving list.
+        const allMovingColumnsOrdered = allMovingColumns.slice();
+        this.columnController.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+
+        const validMoves = this.calculateValidMoves(allMovingColumnsOrdered, draggingRight, mouseX);
 
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
-        const oldIndex = this.calculateOldIndex(allMovingColumns);
+        const oldIndex = this.calculateOldIndex(allMovingColumnsOrdered);
 
         if (validMoves.length === 0) { return; }
 
@@ -249,11 +257,11 @@ export class MoveColumnController implements DropListener {
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            if (!this.columnController.doesMovePassRules(allMovingColumns, move)) {
+            if (!this.columnController.doesMovePassRules(allMovingColumnsOrdered, move)) {
                 continue;
             }
 
-            this.columnController.moveColumns(allMovingColumns, move, "uiColumnDragged");
+            this.columnController.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
 
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
@@ -270,9 +278,9 @@ export class MoveColumnController implements DropListener {
         // so the result we return has to be and index location for this list
         const allGridCols = this.columnController.getAllGridColumns();
 
-        const movingDisplayedCols = allDisplayedCols.filter(col => _.includes(movingCols, col));
-        const otherDisplayedCols = allDisplayedCols.filter(col => !_.includes(movingCols, col));
-        const otherGridCols = allGridCols.filter(col => !_.includes(movingCols, col));
+        const movingDisplayedCols = allDisplayedCols.filter(col => includes(movingCols, col));
+        const otherDisplayedCols = allDisplayedCols.filter(col => !includes(movingCols, col));
+        const otherGridCols = allGridCols.filter(col => !includes(movingCols, col));
 
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving

@@ -1,6 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AgChartsAngular} from './ag-charts-angular.component';
+import { AgChartOptions } from 'ag-charts-community';
 import {Component} from "@angular/core";
 
 describe('AgChartsAngularComponent', () => {
@@ -30,6 +31,6 @@ describe('AgChartsAngularComponent', () => {
             <ag-charts-angular options="options"></ag-charts-angular>`
     })
     class TestHostComponent {
-        options = {}
+        options = {} as AgChartOptions
     }
 });

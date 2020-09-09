@@ -3,7 +3,7 @@ import { Component } from "../../widgets/component";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from "../../utils";
+import { createIconNoSpan } from "../../utils/icon";
 
 export interface ILoadingCellRendererParams extends ICellRendererParams {}
 export interface ILoadingCellRenderer extends ICellRenderer {}
@@ -26,7 +26,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
-        const eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
+        const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

@@ -1,9 +1,10 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+import { getFunctionName } from '../utils/function';
 export function QuerySelector(selector) {
     return querySelectorFunc.bind(this, selector);
 }
@@ -12,11 +13,11 @@ export function RefSelector(ref) {
 }
 function querySelectorFunc(selector, classPrototype, methodOrAttributeName, index) {
     if (selector === null) {
-        console.error("ag-Grid: QuerySelector selector should not be null");
+        console.error('ag-Grid: QuerySelector selector should not be null');
         return;
     }
-    if (typeof index === "number") {
-        console.error("ag-Grid: QuerySelector should be on an attribute");
+    if (typeof index === 'number') {
+        console.error('ag-Grid: QuerySelector should be on an attribute');
         return;
     }
     addToObjectProps(classPrototype, 'querySelectors', {
@@ -30,7 +31,7 @@ export function GridListener(eventName) {
 }
 function gridListenerFunc(eventName, target, methodName) {
     if (eventName == null) {
-        console.error("ag-Grid: GridListener eventName is missing");
+        console.error('ag-Grid: GridListener eventName is missing');
         return;
     }
     addToObjectProps(target, 'gridListenerMethods', {
@@ -44,7 +45,7 @@ export function GuiListener(ref, eventName) {
 }
 function guiListenerFunc(ref, eventName, target, methodName) {
     if (eventName == null) {
-        console.error("ag-Grid: GuiListener eventName is missing");
+        console.error('ag-Grid: GuiListener eventName is missing');
         return;
     }
     addToObjectProps(target, 'guiListenerMethods', {
@@ -71,7 +72,7 @@ function guiListenerFunc(ref, eventName, target, methodName) {
 // }
 function addToObjectProps(target, key, value) {
     // it's an attribute on the class
-    var props = getOrCreateProps(target, target.constructor.name);
+    var props = getOrCreateProps(target, getFunctionName(target.constructor));
     if (!props[key]) {
         props[key] = [];
     }

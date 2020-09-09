@@ -96,10 +96,14 @@ function getTypes($dir)
 function get_common_properties($type, $dir, $title, $options)
 {
     $multi = $type === 'multi';
-    $generated = $type === 'generated';
+    $generated = $type === 'generated' || $type === 'mixed';
 
     if ($generated) {
-        $types = array('vanilla', 'angular', 'react', 'vue');
+        $types = array('vanilla', 'angular', 'react');
+        if($options['reactFunctional']) {
+            array_push($types, 'reactFunctional');
+        }
+        array_push($types, 'vue');
     } else if ($multi) {
         $types = getTypes($dir);
     } else {
@@ -134,7 +138,7 @@ function get_common_properties($type, $dir, $title, $options)
 
     return array(
         "multi" => $type === 'multi',
-        "generated" => $type === 'generated',
+        "generated" => $type === 'generated' || $type === 'mixed',
         "types" => $types,
         "query" => $query,
         "config" => $config
@@ -329,7 +333,7 @@ function getExampleInfo($exampleType, $boilerplatePrefix)
 
     if ($plunkerView) {
         $boilerplatePath = "";
-        $appLocation = "";
+        $appLocation = "./";
     } else {
         $boilerplatePath = "$exampleType-$boilerplatePrefix-boilerplate/";
         $appLocation = "$appRoot/";

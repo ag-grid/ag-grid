@@ -57,4 +57,4 @@ export default {
         Defining VueJS Components</a> for all the options), but in this example we're going to define our editor as a
     Single File Component:</p>
 
-<?= grid_example('Vue Editor Components', 'component-editor', 'generated', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'vue', 'extras' => ['bootstrap']]) ?>
+<?= grid_example('Vue Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'vue', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>

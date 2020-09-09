@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -155,7 +155,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
 export interface ChartOptionsChanged extends AgGridEvent {
     chartId: string;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName: string;
     chartOptions: ChartOptions<any>;
 }
 export interface ChartDestroyed extends AgGridEvent {
@@ -181,6 +181,8 @@ export interface PaginationChangedEvent extends AgGridEvent {
     newData?: boolean;
     newPage: boolean;
 }
+export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
+}
 export interface CellFocusedEvent extends AgGridEvent {
     rowIndex: number;
     column: Column;
@@ -202,6 +204,7 @@ export interface ColumnEvent extends AgGridEvent {
 }
 export interface ColumnResizedEvent extends ColumnEvent {
     finished: boolean;
+    flexColumns: Column[];
 }
 export interface ColumnPivotChangedEvent extends ColumnEvent {
 }
@@ -273,6 +276,8 @@ export interface CellContextMenuEvent extends CellEvent {
 export interface CellEditingStartedEvent extends CellEvent {
 }
 export interface CellEditingStoppedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
 }
 export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;

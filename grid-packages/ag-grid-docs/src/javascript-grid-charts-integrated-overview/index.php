@@ -169,7 +169,7 @@ SNIPPET
                 <p>
                 <ul class="content">
                     <li style="padding-bottom: 5px">Change the chart type</li>
-                    <li style="padding-bottom: 5px">Change the colour palette</li>
+                    <li style="padding-bottom: 5px">Change the theme</li>
                     <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
                     <li style="padding-bottom: 5px">Format different aspects of the chart</li>
                     <li style="padding-bottom: 5px">Unlink the chart from the grid</li>

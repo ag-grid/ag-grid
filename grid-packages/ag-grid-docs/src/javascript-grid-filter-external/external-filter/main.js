@@ -1,3 +1,21 @@
+var dateFilterParams = {
+    comparator: function(filterLocalDateAtMidnight, cellValue) {
+        var cellDate = asDate(cellValue);
+
+        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+            return 0;
+        }
+
+        if (cellDate < filterLocalDateAtMidnight) {
+            return -1;
+        }
+
+        if (cellDate > filterLocalDateAtMidnight) {
+            return 1;
+        }
+    }
+};
+
 var columnDefs = [
     { field: 'athlete', minWidth: 180 },
     { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
@@ -6,23 +24,7 @@ var columnDefs = [
     {
         field: 'date',
         filter: 'agDateColumnFilter',
-        filterParams: {
-            comparator: function(filterLocalDateAtMidnight, cellValue) {
-                var cellDate = asDate(cellValue);
-
-                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                    return 0;
-                }
-
-                if (cellDate < filterLocalDateAtMidnight) {
-                    return -1;
-                }
-
-                if (cellDate > filterLocalDateAtMidnight) {
-                    return 1;
-                }
-            }
-        }
+        filterParams: dateFilterParams
     },
     { field: 'gold', filter: 'agNumberColumnFilter' },
     { field: 'silver', filter: 'agNumberColumnFilter' },
@@ -45,7 +47,7 @@ var ageType = 'everyone';
 
 function isExternalFilterPresent() {
     // if ageType is not everyone, then we are filtering
-    return ageType != 'everyone';
+    return ageType !== 'everyone';
 }
 
 function doesExternalFilterPass(node) {
@@ -75,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
+            document.querySelector('#everyone').checked = true;
             gridOptions.api.setRowData(data);
         });
 });

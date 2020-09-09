@@ -30,15 +30,15 @@ export declare abstract class Shape extends Node {
      */
     protected static defaultStyles: {
         fill: string;
-        stroke: any;
+        stroke: undefined;
         strokeWidth: number;
-        lineDash: any;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: ShapeLineCap;
         lineJoin: ShapeLineJoin;
         opacity: number;
-        fillShadow: any;
-        strokeShadow: any;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     };
     /**
      * Restores the default styles introduced by this subclass.

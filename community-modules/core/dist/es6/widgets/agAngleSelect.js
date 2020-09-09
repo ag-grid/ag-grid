@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,11 +27,12 @@ import { AgAbstractLabel } from "./agAbstractLabel";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { exists } from "../utils/generic";
+import { setFixedWidth } from "../utils/dom";
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
-    function AgAngleSelect() {
-        var _this = _super.call(this, AgAngleSelect.TEMPLATE) || this;
+    function AgAngleSelect(config) {
+        var _this = _super.call(this, config, AgAngleSelect.TEMPLATE) || this;
         _this.radius = 0;
         _this.offsetX = 0;
         _this.offsetY = 0;
@@ -69,7 +70,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             _this.setValue(floatValue);
         });
         this.updateNumberInput();
-        if (_.exists(this.getValue())) {
+        if (exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
         this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () {
@@ -189,14 +190,14 @@ var AgAngleSelect = /** @class */ (function (_super) {
         return this;
     };
     AgAngleSelect.prototype.setWidth = function (width) {
-        _.setFixedWidth(this.getGui(), width);
+        setFixedWidth(this.getGui(), width);
         return this;
     };
     AgAngleSelect.prototype.destroy = function () {
         this.dragService.removeDragSource(this.dragListener);
         _super.prototype.destroy.call(this);
     };
-    AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-angle-select-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-angle-select-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-angle-select-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
+    AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <div ref=\"eLabel\"></div>\n            <div class=\"ag-wrapper ag-angle-select-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-angle-select-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-angle-select-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
         RefSelector('eLabel')
     ], AgAngleSelect.prototype, "eLabel", void 0);
@@ -210,7 +211,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         RefSelector('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
     __decorate([
-        Autowired("dragService")
+        Autowired('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
 }(AgAbstractLabel));

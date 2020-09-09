@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,13 +25,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { Events } from "./events";
 var SortController = /** @class */ (function (_super) {
     __extends(SortController, _super);
     function SortController() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        // used by the public api, for saving the sort model
+        // used by server side row models, to send sorting to server
         _this.getSortModel = function () {
             return _this.getColumnsWithSortingOrdered().map(function (column) { return ({
                 colId: column.getColId(),
@@ -54,25 +54,43 @@ var SortController = /** @class */ (function (_super) {
         }
         // update sort on current col
         column.setSort(sort, source);
-        // sortedAt used for knowing order of cols when multi-col sort
-        if (column.getSort()) {
-            var sortedAt = Number(new Date().valueOf());
-            column.setSortedAt(sortedAt);
-        }
-        else {
-            column.setSortedAt(null);
-        }
         var doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
         // clear sort on all columns except this one, and update the icons
         if (!doingMultiSort) {
             this.clearSortBarThisColumn(column, source);
         }
+        // sortIndex used for knowing order of cols when multi-col sort
+        this.updateSortIndex(column);
         this.dispatchSortChangedEvents();
+    };
+    SortController.prototype.updateSortIndex = function (lastColToChange) {
+        // update sortIndex on all sorting cols
+        var allSortedCols = this.getColumnsWithSortingOrdered();
+        var sortIndex = 0;
+        allSortedCols.forEach(function (col) {
+            if (col !== lastColToChange) {
+                col.setSortIndex(sortIndex);
+                sortIndex++;
+            }
+        });
+        // last col to change always gets the last sort index, it's added to the end
+        if (lastColToChange.getSort()) {
+            lastColToChange.setSortIndex(sortIndex);
+        }
+        // clear sort index on all cols not sorting
+        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        allCols.filter(function (col) { return col.getSort() == null; }).forEach(function (col) { return col.setSortIndex(undefined); });
     };
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
     SortController.prototype.onSortChanged = function () {
         this.dispatchSortChangedEvents();
+    };
+    SortController.prototype.isSortActive = function () {
+        // pull out all the columns that have sorting set
+        var allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        var sortedCols = allCols.filter(function (column) { return !!column.getSort(); });
+        return sortedCols && sortedCols.length > 0;
     };
     SortController.prototype.dispatchSortChangedEvents = function () {
         var event = {
@@ -124,46 +142,12 @@ var SortController = /** @class */ (function (_super) {
         }
         return result;
     };
-    SortController.prototype.setSortModel = function (sortModel, source) {
-        var _this = this;
-        if (source === void 0) { source = "api"; }
-        // first up, clear any previous sort
-        var sortModelProvided = sortModel && sortModel.length > 0;
-        var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allColumnsIncludingAuto.forEach(function (column) {
-            var sortForCol = null;
-            var sortedAt = -1;
-            if (sortModelProvided && column.getColDef().sortable) {
-                for (var j = 0; j < sortModel.length; j++) {
-                    var sortModelEntry = sortModel[j];
-                    if (typeof sortModelEntry.colId === 'string'
-                        && typeof column.getColId() === 'string'
-                        && _this.compareColIds(sortModelEntry, column)) {
-                        sortForCol = sortModelEntry.sort;
-                        sortedAt = j;
-                    }
-                }
-            }
-            if (sortForCol) {
-                column.setSort(sortForCol, source);
-                column.setSortedAt(sortedAt);
-            }
-            else {
-                column.setSort(null, source);
-                column.setSortedAt(null);
-            }
-        });
-        this.dispatchSortChangedEvents();
-    };
-    SortController.prototype.compareColIds = function (sortModelEntry, column) {
-        return sortModelEntry.colId === column.getColId();
-    };
     SortController.prototype.getColumnsWithSortingOrdered = function () {
         // pull out all the columns that have sorting set
         var allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         var columnsWithSorting = allColumnsIncludingAuto.filter(function (column) { return !!column.getSort(); });
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort(function (a, b) { return a.sortedAt - b.sortedAt; });
+        columnsWithSorting.sort(function (a, b) { return a.getSortIndex() - b.getSortIndex(); });
         return columnsWithSorting;
     };
     // used by row controller, when doing the sorting

@@ -21,14 +21,14 @@ function createSetValueModel(
 
     return new SetValueModel(
         rowModel,
+        node => node.data.value,
         colDef,
         null,
-        node => node.data.value,
         doesRowPassOtherFilters,
         suppressSorting,
         _ => { },
         valueFormatterService,
-        key => key === 'blanks' ? 'Blanks' : null);
+        key => key === 'blanks' ? '(Blanks)' : null);
 }
 
 function getDisplayedValues(model: SetValueModel) {

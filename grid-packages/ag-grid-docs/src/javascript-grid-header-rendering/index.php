@@ -134,6 +134,9 @@ interface IHeaderComp {
     // can get called more than once, you should return the HTML element
     getGui(): HTMLElement;
 
+    // gets called when a new Column Definition has been set for this header
+    refresh(params: IHeaderCompParams): HTMLElement;
+
     // optional method, gets called once, when component is destroyed
     destroy?(): void;
 
@@ -275,6 +278,22 @@ myMenuButton.addEventListener('click', function() {
     params.showColumnMenu(myMenuButton);
 });</snippet>
 
+    <h3 id="refresh">Refresh</h3>
+
+    <p>
+        The <code>refresh(params)</code> method gets called when the application updates the Column Definitions.
+        For example the application could set a <code>headerName</code> attribute and then set the Column
+        Definitions again. In this instance, the Header Component should update the displayed header name.
+    </p>
+
+    <p>
+        It is the responsibility of the Header Component to inspect the Column Definition for relevant
+        changes and updated if needed. If the refresh was successful then <code>true</code> should
+        be returned. If the refresh was no successful then <code>false</code> should be returned.
+        If <code>false</code> is returned, then the grid will destroy and recreate the component.
+        This pattern is consistent with the <code>refresh</code> method of Cell Renderers.
+    </p>
+
     <h3 id="complementing-params">Complementing Params</h3>
 
     <p>
@@ -306,7 +325,7 @@ colDef = {
         <li>The header component uses additional parameters to allowing configuring the menu icon.</li>
     </ul>
 
-    <?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'vanilla']) ?>
+    <?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'vanilla', 'reactFunctional' => true]) ?>
 
     <?php include './angular.php'; ?>
 
@@ -429,6 +448,6 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
     <h3 id="example-header-group-cells">Example: Header Group Cells</h3>
 
-    <?= grid_example('Header Group', 'header-group-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true]) ?>
+    <?= grid_example('Header Group', 'header-group-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -27,7 +27,7 @@ var ClipRect = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
         _this.path = new path2D_1.Path2D();
-        _this._active = true;
+        _this._enabled = true;
         _this._dirtyPath = true;
         _this._x = 0;
         _this._y = 0;
@@ -40,13 +40,13 @@ var ClipRect = /** @class */ (function (_super) {
         return point.x >= this.x && point.x <= this.x + this.width
             && point.y >= this.y && point.y <= this.y + this.height;
     };
-    Object.defineProperty(ClipRect.prototype, "active", {
+    Object.defineProperty(ClipRect.prototype, "enabled", {
         get: function () {
-            return this._active;
+            return this._enabled;
         },
         set: function (value) {
-            if (this._active !== value) {
-                this._active = value;
+            if (this._enabled !== value) {
+                this._enabled = value;
                 this.dirty = true;
             }
         },
@@ -131,7 +131,7 @@ var ClipRect = /** @class */ (function (_super) {
         return new bbox_1.BBox(x, y, width, height);
     };
     ClipRect.prototype.render = function (ctx) {
-        if (this.active) {
+        if (this.enabled) {
             if (this.dirtyPath) {
                 this.updatePath();
             }

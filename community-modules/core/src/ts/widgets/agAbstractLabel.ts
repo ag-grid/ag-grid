@@ -1,28 +1,34 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth } from "../utils/dom";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
 export interface IAgLabel {
-    label?: string;
+    label?: HTMLElement | string;
     labelWidth?: number | 'flex';
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
 }
 
-export abstract class AgAbstractLabel extends Component {
+export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> extends Component {
     protected abstract eLabel: HTMLElement;
 
+    protected readonly config: TConfig;
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
-    protected config: IAgLabel = {};
-    private label: string = '';
+    private label: HTMLElement | string = '';
+
+    constructor(config?: TConfig, template?: string) {
+        super(template);
+
+        this.config = config || {} as any;
+    }
 
     @PostConstruct
     protected postConstruct() {
-        _.addCssClass(this.getGui(), 'ag-labeled');
-        _.addCssClass(this.eLabel, 'ag-label');
+        addCssClass(this.getGui(), 'ag-labeled');
+        addCssClass(this.eLabel, 'ag-label');
 
         const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
 
@@ -42,9 +48,16 @@ export abstract class AgAbstractLabel extends Component {
         this.refreshLabel();
     }
 
-    private refreshLabel() {
-        this.eLabel.innerText = this.label + this.labelSeparator;
-        _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
+    protected refreshLabel() {
+        clearElement(this.eLabel);
+
+        if (typeof this.label === 'string') {
+            this.eLabel.innerText = this.label + this.labelSeparator;
+        } else {
+            this.eLabel.appendChild(this.label);
+        }
+
+        addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     }
 
     public setLabelSeparator(labelSeparator: string): this {
@@ -61,7 +74,17 @@ export abstract class AgAbstractLabel extends Component {
         return this;
     }
 
-    public setLabel(label: string): this {
+    public getLabelId(): string {
+        this.eLabel.id = this.eLabel.id || `ag-${this.getCompId()}-label`;
+
+        return this.eLabel.id;
+    }
+
+    public getLabel(): HTMLElement | string {
+        return this.label;
+    }
+
+    public setLabel(label: HTMLElement | string): this {
         if (this.label === label) {
             return this;
         }
@@ -76,9 +99,9 @@ export abstract class AgAbstractLabel extends Component {
     public setLabelAlignment(alignment: LabelAlignment): this {
         const eGui = this.getGui();
 
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
-        _.addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
+        addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
+        addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
+        addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
 
         return this;
     }
@@ -88,7 +111,7 @@ export abstract class AgAbstractLabel extends Component {
             return this;
         }
 
-        _.setElementWidth(this.eLabel, width);
+        setElementWidth(this.eLabel, width);
 
         return this;
     }

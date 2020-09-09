@@ -31,7 +31,7 @@ export default class MoodEditor extends Component {
             this.toggleMood();
             event.stopPropagation();
         }
-    }
+    };
 
     componentDidUpdate() {
         this.focus();
@@ -43,7 +43,7 @@ export default class MoodEditor extends Component {
             if (container) {
                 container.focus();
             }
-        })
+        }, 10)
     }
 
     getValue() {

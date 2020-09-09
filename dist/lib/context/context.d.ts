@@ -27,11 +27,11 @@ export declare class Context {
     private getBeansForParameters;
     private lookupBeanInstance;
     private callLifeCycleMethods;
-    private callLifeCycleMethodsOneBean;
+    private callLifeCycleMethodsOnBean;
     getBean(name: string): any;
     destroy(): void;
-    destroyBean<T extends any>(bean: T): T;
-    destroyBeans<T extends any>(beans: T[]): T[];
+    destroyBean<T>(bean: T): undefined;
+    destroyBeans<T>(beans: T[]): T[];
 }
 export declare function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;

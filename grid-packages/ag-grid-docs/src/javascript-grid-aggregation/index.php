@@ -67,7 +67,7 @@ function myCustomAggFunc(values) {
 
 <note>
 Using a function directly will not work with column state, like
-<a href="../javascript-grid-column-definitions/#saving-and-restoring-column-state">Saving and Restoring Column State</a>.
+<a href="../javascript-grid-column-state/#save-and-apply">Saving and Applying Column State</a>.
 If you require state management with custom aggregation, use <code>addAggFunc</code> to register it.
 </note>
 
@@ -131,14 +131,14 @@ colDef = {
     </p>
 
     <p>
-        A custom aggregation function takes a list of values and should return the result of the aggregation.
+        A custom aggregation function takes values to aggregate and aggregates them.
     </p>
 
     <snippet>
 // custom simple aggregation, complete 'sum' of values
-function mySum(values) {
+function mySum(params) {
     var result = 0;
-    values.forEach( function(value) {
+    params.values.forEach( function(value) {
         if (typeof value === 'number') {
             result += value;
         }
@@ -161,6 +161,27 @@ var columnB = {
     field: 'a',
     aggFunc: 'mySumFunc'
 };
+</snippet>
+
+<p>
+    The interface for the aggregation function is as follows:
+</p>
+<snippet>
+// custom agg functions are a function that gets params
+interface IAggFunc {
+    (params: IAggFuncParams): any;
+}
+
+// the params are as follows
+interface IAggFuncParams {
+    values: any[]; // values to aggregate
+    column: Column; // column the aggregation function is working on
+    colDef: ColDef; // colDef of the columns
+    rowNode: RowNode; // the parent RowNode, where the aggregation result will be shown
+    data: any; // data (if any) of the parent Row Node.
+    api: GridApi; // the grid's API
+    columnApi: ColumnApi; // the grid's Column API
+}
 </snippet>
 
     <h2>Example 2 - Custom Aggregation Functions</h2>

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,13 +23,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
-import { _ } from "../utils";
-var defaultItemAlign = 'center';
-var defaultDirection = 'vertical';
+import { Component } from './component';
+import { RefSelector } from './componentAnnotations';
+import { Autowired, PostConstruct } from '../context/context';
+import { createIcon } from '../utils/icon';
+import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
+import { KeyCode } from '../constants/keyCode';
 var AgGroupComponent = /** @class */ (function (_super) {
     __extends(AgGroupComponent, _super);
     function AgGroupComponent(params) {
@@ -78,20 +77,28 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.prototype.setupExpandContract = function () {
         var _this = this;
-        this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
-        this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
+        this.eGroupClosedIcon.appendChild(createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addManagedListener(this.eTitleBar, 'click', function () { return _this.toggleGroupExpand(); });
         this.addManagedListener(this.eTitleBar, 'keydown', function (e) {
-            if (e.keyCode === Constants.KEY_ENTER) {
-                _this.toggleGroupExpand();
+            switch (e.keyCode) {
+                case KeyCode.ENTER:
+                    _this.toggleGroupExpand();
+                    break;
+                case KeyCode.RIGHT:
+                    _this.toggleGroupExpand(true);
+                    break;
+                case KeyCode.LEFT:
+                    _this.toggleGroupExpand(false);
+                    break;
             }
         });
     };
     AgGroupComponent.prototype.refreshChildDisplay = function () {
         var showIcon = !this.suppressOpenCloseIcons;
-        _.setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
-        _.setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
-        _.setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+        setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
+        setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
+        setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
     };
     AgGroupComponent.prototype.isExpanded = function () {
         return this.expanded;
@@ -99,18 +106,18 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.prototype.setAlignItems = function (alignment) {
         var eGui = this.getGui();
         if (this.alignItems !== alignment) {
-            _.removeCssClass(eGui, "ag-group-item-alignment-" + this.alignItems);
+            removeCssClass(eGui, "ag-group-item-alignment-" + this.alignItems);
         }
         this.alignItems = alignment;
         var newCls = "ag-group-item-alignment-" + this.alignItems;
-        _.addCssClass(eGui, newCls);
+        addCssClass(eGui, newCls);
         return this;
     };
     AgGroupComponent.prototype.toggleGroupExpand = function (expanded) {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
             this.refreshChildDisplay();
-            _.setDisplayed(this.eContainer, true);
+            setDisplayed(this.eContainer, true);
             return this;
         }
         expanded = expanded != null ? expanded : !this.expanded;
@@ -119,13 +126,8 @@ var AgGroupComponent = /** @class */ (function (_super) {
         }
         this.expanded = expanded;
         this.refreshChildDisplay();
-        _.setDisplayed(this.eContainer, expanded);
-        if (this.expanded) {
-            this.dispatchEvent({ type: AgGroupComponent.EVENT_EXPANDED });
-        }
-        else {
-            this.dispatchEvent({ type: AgGroupComponent.EVENT_COLLAPSED });
-        }
+        setDisplayed(this.eContainer, expanded);
+        this.dispatchEvent({ type: this.expanded ? AgGroupComponent.EVENT_EXPANDED : AgGroupComponent.EVENT_COLLAPSED });
         return this;
     };
     AgGroupComponent.prototype.addItems = function (items) {
@@ -135,21 +137,21 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.prototype.addItem = function (item) {
         var container = this.eContainer;
         var el = item instanceof Component ? item.getGui() : item;
-        _.addCssClass(el, 'ag-group-item');
-        _.addCssClass(el, "ag-" + this.cssIdentifier + "-group-item");
+        addCssClass(el, 'ag-group-item');
+        addCssClass(el, "ag-" + this.cssIdentifier + "-group-item");
         container.appendChild(el);
         this.items.push(el);
     };
     AgGroupComponent.prototype.hideItem = function (hide, index) {
         var itemToHide = this.items[index];
-        _.addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
+        addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
     };
     AgGroupComponent.prototype.setTitle = function (title) {
         this.eTitle.innerText = title;
         return this;
     };
     AgGroupComponent.prototype.addCssClassToTitleBar = function (cssClass) {
-        _.addCssClass(this.eTitleBar, cssClass);
+        addCssClass(this.eTitleBar, cssClass);
     };
     AgGroupComponent.prototype.setEnabled = function (enabled, skipToggle) {
         this.enabled = enabled;
@@ -185,16 +187,16 @@ var AgGroupComponent = /** @class */ (function (_super) {
         return this;
     };
     AgGroupComponent.prototype.refreshDisabledStyles = function () {
-        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+        addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
         if (this.suppressEnabledCheckbox && !this.enabled) {
-            _.addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
             this.eTitleBar.removeAttribute('tabindex');
         }
         else {
-            _.removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
             this.eTitleBar.setAttribute('tabindex', '0');
         }
-        _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
+        addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     };
     AgGroupComponent.EVENT_EXPANDED = 'expanded';
     AgGroupComponent.EVENT_COLLAPSED = 'collapsed';

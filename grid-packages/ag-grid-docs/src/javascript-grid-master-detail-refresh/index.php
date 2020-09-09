@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Rows', 'refresh-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Rows', 'refresh-rows', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2 id="refresh-everything">Refresh Everything</h2>
 
@@ -140,8 +140,7 @@ include '../documentation-main/documentation_header.php';
     <li>
         The callback <code>getDetailRowData()</code> is called.
         The Detail Grid is recreated and contains the most recent data.
-        The grid's context (column position, vertical scroll) is kept. Try interacting with the detail grid
-        for the first row (move columns, vertical scroll) and observe the grid is kept intact.
+        The grid's context (column position, vertical scroll) is lost.
     </li>
     <li>
         The Detail Grid setting <a href="../javascript-grid-immutable-data/">Immutable Data</a>
@@ -153,7 +152,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Everything', 'refresh-everything', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Everything', 'refresh-everything', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <h2 id="refresh-nothing">Refresh Nothing</h2>
 
@@ -176,6 +175,6 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Refresh Nothing', 'refresh-nothing', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refresh Nothing', 'refresh-nothing', 'mixed', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -4,10 +4,9 @@ import { IMenuFactory } from '../interfaces/iMenuFactory';
 import { FilterManager } from '../filter/filterManager';
 import { Column } from '../entities/column';
 import { PopupService } from '../widgets/popupService';
-import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { Constants } from '../constants';
 import { FocusController } from '../focusController';
-import { _ } from '../utils';
+import { addCssClass, isVisible } from '../utils/dom';
+import { KeyCode } from '../constants/keyCode';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -52,7 +51,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         const eMenu = document.createElement('div');
 
-        _.addCssClass(eMenu, 'ag-menu');
+        eMenu.setAttribute('role', 'presentation');
+        addCssClass(eMenu, 'ag-menu');
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));
 
@@ -78,7 +78,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 this.tabListener = this.tabListener();
             }
 
-            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
                 const focusableEl = this.focusController.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }
@@ -87,16 +87,19 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        // hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenu,
+            closeOnEsc: true,
+            closedCallback: closedCallback
+        });
+
         positionCallback(eMenu);
 
         filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
-                const params: IAfterGuiAttachedParams = {
-                    hidePopup
-                };
-
-                filter.afterGuiAttached(params);
+                filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
 
@@ -106,17 +109,15 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (e.keyCode !== Constants.KEY_TAB) { return; }
-
-        if (this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) { return; }
+        if (e.keyCode !== KeyCode.TAB ||
+            e.defaultPrevented ||
+            this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
+            return;
+        }
 
         e.preventDefault();
 
-        if (e.shiftKey) {
-            this.focusController.focusLastFocusableElement(menu);
-        } else {
-            this.focusController.focusFirstFocusableElement(menu);
-        }
+        this.focusController.focusInto(menu, e.shiftKey);
     }
 
     public isMenuEnabled(column: Column): boolean {

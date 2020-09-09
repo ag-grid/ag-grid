@@ -22,6 +22,7 @@ export declare class ToolPanelColumnComp extends ManagedFocusComponent implement
     private onLabelClicked;
     private onCheckboxChanged;
     private onChangeCommon;
+    private refreshAriaLabel;
     private actionUnCheckedPivotMode;
     private actionCheckedPivotMode;
     private setupDragging;

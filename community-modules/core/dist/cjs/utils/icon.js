@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -166,12 +166,10 @@ function createIconNoSpan(iconName, gridOptionsWrapper, column, forceCreate) {
         if (typeof rendererResult === 'string') {
             return dom_1.loadTemplate(rendererResult);
         }
-        else if (dom_1.isNodeOrElement(rendererResult)) {
+        if (dom_1.isNodeOrElement(rendererResult)) {
             return rendererResult;
         }
-        else {
-            console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
-        }
+        console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
     }
     else {
         var span = document.createElement('span');
@@ -186,7 +184,8 @@ function createIconNoSpan(iconName, gridOptionsWrapper, column, forceCreate) {
             }
         }
         span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
-        span.setAttribute("unselectable", "on");
+        span.setAttribute('unselectable', 'on');
+        span.setAttribute('role', 'presentation');
         return span;
     }
 }

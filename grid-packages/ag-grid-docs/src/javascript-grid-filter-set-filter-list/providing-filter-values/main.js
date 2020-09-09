@@ -8,29 +8,33 @@ var listOfDays = [
     'Sunday'
 ];
 
+var daysValuesNotProvidedFilterParams = {
+    comparator: function(a, b) {
+        var aIndex = listOfDays.indexOf(a);
+        var bIndex = listOfDays.indexOf(b);
+        if (aIndex === bIndex) return 0;
+        return aIndex > bIndex ? 1 : -1;
+    }
+};
+
+var daysValuesProvidedFilterParams = {
+    values: listOfDays,
+        suppressSorting: true // use provided order
+};
+
 var gridOptions = {
     columnDefs: [
         {
             headerName: 'Days (Values Not Provided)',
             field: 'days',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                comparator: function(a, b) {
-                    var aIndex = listOfDays.indexOf(a);
-                    var bIndex = listOfDays.indexOf(b);
-                    if (aIndex === bIndex) return 0;
-                    return aIndex > bIndex ? 1 : -1;
-                }
-            }
+            filterParams: daysValuesNotProvidedFilterParams
         },
         {
             headerName: 'Days (Values Provided)',
             field: 'days',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                values: listOfDays,
-                suppressSorting: true // use provided order
-            }
+            filterParams: daysValuesProvidedFilterParams
         },
     ],
     defaultColDef: {

@@ -74,4 +74,8 @@ export class CustomDateComponent {
     setInputPlaceholder(placeholder: string): void {
         this.eInput.nativeElement.setAttribute('placeholder', placeholder);
     }
+
+    setInputAriaLabel(label: string): void {
+        this.eInput.nativeElement.setAttribute('aria-label', label);
+    }
 }

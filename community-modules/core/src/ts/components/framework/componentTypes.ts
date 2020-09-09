@@ -18,11 +18,6 @@ export const HeaderGroupComponent: ComponentType = {
     isCellRenderer: () => false,
 };
 
-export const GroupRowInnerRendererComponent: ComponentType = {
-    propertyName: 'groupRowInnerRenderer',
-    isCellRenderer: () => true,
-};
-
 export const CellRendererComponent: ComponentType = {
     propertyName: 'cellRenderer',
     isCellRenderer: () => true,

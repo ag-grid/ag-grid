@@ -7,14 +7,17 @@ export interface NumberFilterModel extends ISimpleFilterModel {
     filterTo?: number;
 }
 export interface INumberFilterParams extends IScalarFilterParams {
+    allowedCharPattern?: string;
+    numberParser?: (text: string) => number;
 }
 export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
-    private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
-    private eValueFrom1;
-    private eValueFrom2;
-    private eValueTo1;
-    private eValueTo2;
+    private readonly eValueFrom1;
+    private readonly eValueTo1;
+    private readonly eValueFrom2;
+    private readonly eValueTo2;
+    private numberFilterParams;
+    constructor();
     protected mapRangeFromModel(filterModel: NumberFilterModel): {
         from: number;
         to: number;
@@ -27,7 +30,7 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     protected setParams(params: INumberFilterParams): void;
     private addValueChangedListeners;
     private resetPlaceholder;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;
     protected isConditionUiComplete(position: ConditionPosition): boolean;

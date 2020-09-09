@@ -2,7 +2,6 @@ import { TextFilter, TextFilterModel } from './textFilter';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 
 export class TextFloatingFilter extends TextInputFloatingFilter {
-
     protected conditionToString(condition: TextFilterModel): string {
         // it's not possible to have 'in range' for string, so no need to check for it.
         // also cater for when the type doesn't need a value

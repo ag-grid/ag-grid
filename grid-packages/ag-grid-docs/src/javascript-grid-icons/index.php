@@ -290,7 +290,7 @@ sortUnSort
     and the header icons use a mix of Font Awesome and strings.
 </p>
 
-<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome']]) ?>
+<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
 
 <h2>SVG Icons</h2>
 

@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
+import { ColumnEventType } from "../events";
 export interface IToolPanelParams {
     api: GridApi;
     columnApi: ColumnApi;
@@ -28,7 +29,7 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 }
 export interface IPrimaryColsPanel {
     getGui(): HTMLElement;
-    init(allowDragging: boolean, params: ToolPanelColumnCompParams): void;
+    init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void;
     onExpandAll(): void;
     onCollapseAll(): void;
     expandGroups(groupIds?: string[]): void;

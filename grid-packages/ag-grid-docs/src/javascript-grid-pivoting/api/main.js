@@ -29,16 +29,28 @@ function turnOnPivotMode() {
     gridOptions.columnApi.setPivotMode(true);
 }
 function addPivotColumn() {
-    gridOptions.columnApi.addPivotColumn('country');
+    gridOptions.columnApi.applyColumnState({
+        state: [{colId: 'country', pivot: true}],
+        defaultState: {pivot: false}
+    });
 }
 function addPivotColumns() {
-    gridOptions.columnApi.addPivotColumns(['year', 'country']);
+    gridOptions.columnApi.applyColumnState({
+        state: [
+            {colId: 'year', pivot: true},
+            {colId: 'country', pivot: true}],
+        defaultState: {pivot: false}
+    });
 }
 function removePivotColumn() {
-    gridOptions.columnApi.removePivotColumn('country');
+    gridOptions.columnApi.applyColumnState({
+        state: [{colId: 'country', pivot: false}]
+    });
 }
 function emptyPivotColumns() {
-    gridOptions.columnApi.setPivotColumns([]);
+    gridOptions.columnApi.applyColumnState({
+        defaultState: {pivot: false}
+    });
 }
 function exportToCsv() {
     gridOptions.api.exportDataAsCsv({

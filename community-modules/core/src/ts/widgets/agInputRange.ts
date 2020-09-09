@@ -1,5 +1,5 @@
 import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
-import { _ } from "../utils";
+import { isBrowserIE } from "../utils/browser";
 
 interface IInputRange extends IInputField {
     min?: number;
@@ -7,25 +7,12 @@ interface IInputRange extends IInputField {
     step?: number;
 }
 
-export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
-
-    protected className = 'ag-range-field';
-    protected displayTag = 'input';
-    protected inputType = 'range';
-    protected config: IInputRange;
-
+export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
     private min: number;
     private max: number;
-    private step: number;
 
     constructor(config?: IInputRange) {
-        super();
-
-        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
-
-        if (config) {
-            this.config = config;
-        }
+        super(config, 'ag-range-field', 'range');
     }
 
     protected postConstruct() {
@@ -45,7 +32,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string>
     }
 
     protected addInputListeners() {
-        const isIE = _.isBrowserIE();
+        const isIE = isBrowserIE();
         const eventName = isIE ? 'change' : 'input';
 
         this.addManagedListener(this.eInput, eventName, (e) => {
@@ -72,8 +59,6 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string>
     }
 
     public setStep(value: number): this {
-        this.step = value;
-
         this.eInput.setAttribute('step', value.toString());
 
         return this;

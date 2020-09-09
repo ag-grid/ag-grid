@@ -3,7 +3,8 @@ import { PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Beans } from "./beans";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
+import { createIconNoSpan } from "../utils/icon";
+import { isBrowserIE } from "../utils/browser";
 
 export class DndSourceComp extends Component {
 
@@ -26,7 +27,7 @@ export class DndSourceComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
         this.checkVisibility();
     }
@@ -38,7 +39,7 @@ export class DndSourceComp extends Component {
     private onDragStart(dragEvent: DragEvent): void {
 
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
-        const isIE = _.isBrowserIE();
+        const isIE = isBrowserIE();
 
         if (!isIE) {
             dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);

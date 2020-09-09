@@ -37,7 +37,6 @@ var gridOptions = {
     rowBuffer: 0,
     // debug: true,
     rowSelection: 'multiple',
-    rowDeselection: true,
     isRowSelectable: function(rowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     },

@@ -195,8 +195,12 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.addColumns = function (columnsToAdd) {
+        if (!columnsToAdd) {
+            return;
+        }
         var newColumnList = this.getExistingColumns().slice();
-        core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        var colsToAddNoDuplicates = columnsToAdd.filter(function (col) { return newColumnList.indexOf(col) < 0; });
+        core_1._.insertArrayIntoArray(newColumnList, colsToAddNoDuplicates, this.insertIndex);
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {

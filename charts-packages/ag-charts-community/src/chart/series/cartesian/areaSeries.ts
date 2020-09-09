@@ -5,7 +5,6 @@ import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererP
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Path } from "../../../scene/shape/path";
-import palette from "../../palettes";
 import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -75,8 +74,8 @@ export class AreaSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive('dataChange') fills: string[] = palette.fills;
-    @reactive('dataChange') strokes: string[] = palette.strokes;
+    @reactive('dataChange') fills: string[] = [];
+    @reactive('dataChange') strokes: string[] = [];
 
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
@@ -128,6 +127,11 @@ export class AreaSeries extends CartesianSeries {
     }
     get yKeys(): string[] {
         return this._yKeys;
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
     }
 
     @reactive('update') yNames: string[] = [];
@@ -256,8 +260,12 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { areaSelectionData, markerSelectionData } = this.generateSelectionData();
+        const selectionData = this.generateSelectionData();
+        if (!selectionData) {
+            return;
+        }
 
+        const { areaSelectionData, markerSelectionData } = selectionData;
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
@@ -265,15 +273,15 @@ export class AreaSeries extends CartesianSeries {
         this.markerSelectionData = markerSelectionData;
     }
 
-    private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
+    private generateSelectionData(): {
+        areaSelectionData: AreaSelectionDatum[],
+        markerSelectionData: MarkerSelectionDatum[]
+    } | undefined {
+        if (!this.data) {
+            return;
+        }
         const {
-            yKeys,
-            data,
-            xData,
-            yData,
-            marker,
-            fills,
-            strokes,
+            yKeys, data, xData, yData, marker, fills, strokes,
             xAxis: { scale: xScale }, yAxis: { scale: yScale }
         } = this;
 
@@ -327,13 +335,17 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { fills, fillOpacity, seriesItemEnabled, shadow } = this;
+        const {
+            fills, fillOpacity, strokes, strokeOpacity, strokeWidth,
+            seriesItemEnabled, shadow
+        } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
 
         updateAreas.exit.remove();
 
         const enterAreas = updateAreas.enter.append(Path)
             .each(path => {
+                path.lineJoin = 'round';
                 path.stroke = undefined;
                 path.pointerEvents = PointerEvents.None;
             });
@@ -345,6 +357,9 @@ export class AreaSeries extends CartesianSeries {
 
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
+            shape.stroke = strokes[index % strokes.length];
+            shape.strokeOpacity = strokeOpacity;
+            shape.strokeWidth = strokeWidth;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
 
@@ -367,6 +382,10 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateStrokeSelection(areaSelectionData: AreaSelectionDatum[]): void {
+        if (!this.data) {
+            return;
+        }
+
         const { strokes, strokeWidth, strokeOpacity, data, seriesItemEnabled } = this;
         const updateStrokes = this.strokeSelection.setData(areaSelectionData);
 
@@ -420,6 +439,10 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
         const { marker } = this;
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;

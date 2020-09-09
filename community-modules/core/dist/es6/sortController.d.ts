@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -12,16 +12,16 @@ export declare class SortController extends BeanStub {
     private gridApi;
     progressSort(column: Column, multiSort: boolean, source?: ColumnEventType): void;
     setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source?: ColumnEventType): void;
+    private updateSortIndex;
     onSortChanged(): void;
-    private dispatchSortChangedEvents;
-    private clearSortBarThisColumn;
-    private getNextSortDirection;
     getSortModel: () => {
         colId: string;
         sort: string;
     }[];
-    setSortModel(sortModel: any, source?: ColumnEventType): void;
-    private compareColIds;
+    isSortActive(): boolean;
+    dispatchSortChangedEvents(): void;
+    private clearSortBarThisColumn;
+    private getNextSortDirection;
     getColumnsWithSortingOrdered(): Column[];
     getSortForRowController(): any[];
 }

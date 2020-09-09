@@ -4,14 +4,9 @@ interface IInputRange extends IInputField {
     max?: number;
     step?: number;
 }
-export declare class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
-    protected className: string;
-    protected displayTag: string;
-    protected inputType: string;
-    protected config: IInputRange;
+export declare class AgInputRange extends AgAbstractInputField<HTMLInputElement, string, IInputRange> {
     private min;
     private max;
-    private step;
     constructor(config?: IInputRange);
     protected postConstruct(): void;
     protected addInputListeners(): void;

@@ -77,11 +77,25 @@ colDef.cellEditorParams = {
 </snippet>
 
 <note>
-    We have found the standard HTML <code>select</code> to behave oddly in the grid. This is because the browser
-    doesn't have a great API for opening and closing the select's popup. We advise that you don't use
-    it unless you have to - that is we advise against <code>agSelectCellEditor</code> and <code>agPopupSelectCellEditor</code> as
-    they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise,
-    you should use the provided <code>agRichSelectCellEditor</code>.
+    <p>
+        We have found the standard HTML Select doesn't have an API that's rich enough to play 
+        properly with the grid. When a cell is double clicked to start editing, it is desired that 
+        the Select is a) shown and b) opened ready for selection. There is no API to open a browsers 
+        Select. For this reason to edit there are two interactions needed 1) double click to start 
+        editing and 2) single click to open the Select.
+    </p>
+    <p>
+        We also observed different results while using keyboard navigation to control editing, e.g.
+        while using Enter to start editing. Some browsers would open the Select, others would not.
+        This is down to the browser implementation and given there is no API for opening the
+        Select, there is nothing the grid can do.
+    </p>
+    <p>
+        If you are unhappy with the additional click required, we advise you don't depend on the 
+        browsers standard Select (ie avoid <code>agSelectCellEditor</code> and 
+        <code>agPopupSelectCellEditor</code>) and instead use <code>agRichSelectCellEditor</code> or 
+        create your own using a <a href="../javascript-grid-cell-editor/">Cell Editor Component</a>.
+    </p>
 </note>
 
 <h3><code>agRichSelectCellEditor</code></h3>

@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, Arc, ClipRect } from "ag-charts-community";
+import { Arc, ClipRect, LinearScale } from "ag-charts-community";
 var MiniScatter = /** @class */ (function (_super) {
     __extends(MiniScatter, _super);
     function MiniScatter(container, fills, strokes) {
@@ -25,10 +25,10 @@ var MiniScatter = /** @class */ (function (_super) {
             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
         ];
-        var xScale = linearScale();
+        var xScale = new LinearScale();
         xScale.domain = [-0.5, 4];
         xScale.range = [padding * 2, size - padding];
-        var yScale = linearScale();
+        var yScale = new LinearScale();
         yScale.domain = [-0.5, 3.5];
         yScale.range = [size - padding, padding];
         var points = [];

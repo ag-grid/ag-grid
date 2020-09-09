@@ -28,7 +28,7 @@ var cellFactory = {
                     name: 'is',
                     children: [{
                             name: 't',
-                            textNode: _.escape(_.utf8_encode(value))
+                            textNode: _.escapeString(_.utf8_encode(value))
                         }]
                 }];
         }

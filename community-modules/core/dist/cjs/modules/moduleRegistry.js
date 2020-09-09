@@ -1,12 +1,13 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
+var function_1 = require("../utils/function");
+var generic_1 = require("../utils/generic");
 var ModuleRegistry = /** @class */ (function () {
     function ModuleRegistry() {
     }
@@ -18,7 +19,7 @@ var ModuleRegistry = /** @class */ (function () {
         }
         else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
-                utils_1._.doOnce(function () {
+                function_1.doOnce(function () {
                     console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
                     console.warn('Please see https://www.ag-grid.com/javascript-grid-packages-modules/ for more information.');
                 }, 'ModulePackageCheck');
@@ -39,7 +40,7 @@ var ModuleRegistry = /** @class */ (function () {
         }
         var warningKey = reason + moduleName;
         var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/";
-        utils_1._.doOnce(function () {
+        function_1.doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);
         return false;
@@ -48,7 +49,7 @@ var ModuleRegistry = /** @class */ (function () {
         return !!ModuleRegistry.modulesMap[moduleName];
     };
     ModuleRegistry.getRegisteredModules = function () {
-        return utils_1._.values(ModuleRegistry.modulesMap);
+        return generic_1.values(ModuleRegistry.modulesMap);
     };
     ModuleRegistry.isPackageBased = function () {
         return !ModuleRegistry.moduleBased;

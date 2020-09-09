@@ -33,25 +33,28 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function updateLegendLayoutHorizontalSpacing(event) {
-    var value = event.target.value;
+    var value = +event.target.value;
 
-    chart.legend.layoutHorizontalSpacing = +event.target.value;
+    options.legend.layoutHorizontalSpacing = value;
+    agCharts.AgChart.update(chart, options);
 
-    document.getElementById('hSpacingValue').innerHTML = value;
+    document.getElementById('hSpacingValue').innerHTML = String(value);
 }
 
 function updateLegendLayoutVerticalSpacing(event) {
     var value = event.target.value;
 
-    chart.legend.layoutVerticalSpacing = +event.target.value;
+    options.legend.layoutVerticalSpacing = +event.target.value;
+    agCharts.AgChart.update(chart, options);
 
-    document.getElementById('vSpacingValue').innerHTML = value;
+    document.getElementById('vSpacingValue').innerHTML = String(value);
 }
 
 function updateLegendItemSpacing(event) {
-    var value = event.target.value;
+    var value = +event.target.value;
 
-    chart.legend.itemSpacing = +event.target.value;
+    options.legend.itemSpacing = value;
+    agCharts.AgChart.update(chart, options);
 
-    document.getElementById('itemSpacingValue').innerHTML = value;
+    document.getElementById('itemSpacingValue').innerHTML = String(value);
 }

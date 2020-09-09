@@ -1,4 +1,4 @@
-import { OriginalColumnGroup, ManagedFocusComponent } from "@ag-grid-community/core";
+import { OriginalColumnGroup, ManagedFocusComponent, ColumnEventType } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
 export declare class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
@@ -20,7 +20,8 @@ export declare class ToolPanelColumnGroupComp extends ManagedFocusComponent impl
     private displayName;
     private processingColumnStateChange;
     private getFilterResultsCallback;
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean, expandedCallback: () => void, getFilterResults: () => ColumnFilterResults);
+    private eventType;
+    constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean, expandedCallback: () => void, getFilterResults: () => ColumnFilterResults, eventType: ColumnEventType);
     init(): void;
     protected handleKeyDown(e: KeyboardEvent): void;
     private addVisibilityListenersToAllChildren;
@@ -30,6 +31,7 @@ export declare class ToolPanelColumnGroupComp extends ManagedFocusComponent impl
     private onLabelClicked;
     private onCheckboxChanged;
     private onChangeCommon;
+    private refreshAriaLabel;
     private actionUnCheckedReduce;
     private actionCheckedReduce;
     onColumnStateChanged(): void;
@@ -39,6 +41,7 @@ export declare class ToolPanelColumnGroupComp extends ManagedFocusComponent impl
     private onExpandOrContractClicked;
     private toggleExpandOrContract;
     private setOpenClosedIcons;
+    private refreshAriaExpanded;
     isExpanded(): boolean;
     getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;

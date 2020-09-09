@@ -4,7 +4,6 @@ import { Text } from "../../../scene/shape/text";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
-import palette from "../../palettes";
 import { Sector } from "../../../scene/shape/sector";
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
 import { Label } from "../../label";
@@ -17,7 +16,7 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { Chart, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     type: 'nodeClick';
@@ -64,9 +63,9 @@ class PieSeriesLabel extends Label {
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors = palette.strokes;
-    @reactive('change') length = 10;
-    @reactive('change') strokeWidth = 1;
+    @reactive('change') colors: string[] = [];
+    @reactive('change') length: number = 10;
+    @reactive('change') strokeWidth: number = 1;
 }
 
 export class PieSeries extends PolarSeries {
@@ -130,7 +129,9 @@ export class PieSeries extends PolarSeries {
         this.callout.addEventListener('change', this.scheduleLayout, this);
 
         this.addPropertyListener('data', event => {
-            event.source.seriesItemEnabled = event.value.map(() => true);
+            if (event.value) {
+                event.source.seriesItemEnabled = event.value.map(() => true);
+            }
         });
     }
 
@@ -153,7 +154,7 @@ export class PieSeries extends PolarSeries {
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
 
-    private _fills: string[] = palette.fills;
+    private _fills: string[] = [];
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -163,7 +164,7 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = palette.strokes;
+    private _strokes: string[] = [];
     set strokes(values: string[]) {
         this._strokes = values;
         this.callout.colors = values;
@@ -193,6 +194,12 @@ export class PieSeries extends PolarSeries {
 
     onHighlightChange() {
         this.updateNodes();
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
+        this.callout.colors = strokes;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -338,6 +345,10 @@ export class PieSeries extends PolarSeries {
     }
 
     private updateNodes() {
+        if (!this.chart) {
+            return;
+        }
+
         const {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
             outerRadiusOffset, innerRadiusOffset,
@@ -439,7 +450,6 @@ export class PieSeries extends PolarSeries {
         }
 
         const {
-            title,
             fills,
             tooltipRenderer,
             angleName,
@@ -449,7 +459,7 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const text = title ? title.text : undefined;
+        const title = this.title ? this.title.text : undefined;
         const color = fills[nodeDatum.index % fills.length];
 
         if (tooltipRenderer) {
@@ -461,17 +471,14 @@ export class PieSeries extends PolarSeries {
                 radiusName,
                 labelKey,
                 labelName,
-                title: text,
+                title,
                 color,
             });
         } else {
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${text}</div>` : '';
             const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
             const value = nodeDatum.seriesDatum[angleKey];
             const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${label}${formattedValue}</div>`;
+            return toTooltipHtml(label + formattedValue, title, color);
         }
     }
 

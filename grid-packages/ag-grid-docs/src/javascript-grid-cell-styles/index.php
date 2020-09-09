@@ -7,31 +7,31 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 
-    <h1>Cell Styles</h1>
+<h1>Cell Styles</h1>
 
-    <p>
-        Cell customisation is done a the column level via the column definition. You can mix and match any
-        of the following mechanisms:
-    </p>
-        <ul class="content">
-            <li><b>Cell Style:</b> Providing a CSS style for the cells.</li>
-            <li><b>Cell Class:</b> Providing a CSS class for the cells.</li>
-            <li><b>Cell Class Rules:</b> Providing rules for applying CSS classes.</li>
-        </ul>
+<p>
+    Cell customisation is done a the column level via the column definition. You can mix and match any
+    of the following mechanisms:
+</p>
+<ul class="content">
+    <li><b>Cell Style:</b> Providing a CSS style for the cells.</li>
+    <li><b>Cell Class:</b> Providing a CSS class for the cells.</li>
+    <li><b>Cell Class Rules:</b> Providing rules for applying CSS classes.</li>
+</ul>
 
-    <p>
-        Each of these approaches are presented in the following sections.
-    </p>
+<p>
+    Each of these approaches are presented in the following sections.
+</p>
 
-    <h2>Cell Style</h2>
+<h2>Cell Style</h2>
 
-    <p>
-        Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
-        of CSS styles, or a function returning an object of CSS styles.
-    </p>
+<p>
+    Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
+    of CSS styles, or a function returning an object of CSS styles.
+</p>
 
 
-    <snippet>
+<snippet>
 // return same style for each row
 var colDef = {
     name: 'Static Styles',
@@ -53,14 +53,14 @@ var colDef = {
 }</snippet>
 
 
-    <h2>Cell Class</h2>
+<h2>Cell Class</h2>
 
-    <p>
-        Provides a class for the cells in this column. Can be a string (a class), array of strings
-        (array of classes), or a function (that returns a string or an array of strings).
-    </p>
+<p>
+    Provides a class for the cells in this column. Can be a string (a class), array of strings
+    (array of classes), or a function (that returns a string or an array of strings).
+</p>
 
-    <snippet>
+<snippet>
 // return same class for each row
 var colDef1 = {
     name: 'Static Class',
@@ -90,20 +90,20 @@ var colDef4 = {
 }</snippet>
 
 
-    <h2>Cell Class Rules</h2>
+<h2>Cell Class Rules</h2>
 
-    <p>
-        You can define rules which can be applied to include certain CSS classes via via <code>colDef.cellClassRules</code>.
-        These rules are provided as a JavaScript map where the keys are the class names and the values are expressions
-        that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
-        or a string which is treated as a shorthand for a function by the grid.
-    </p>
+<p>
+    You can define rules which can be applied to include certain CSS classes via via <code>colDef.cellClassRules</code>.
+    These rules are provided as a JavaScript map where the keys are the class names and the values are expressions
+    that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
+    or a string which is treated as a shorthand for a function by the grid.
+</p>
 
-    <p>
-        The following snippet is cellClassRules using functions on a year column:
-    </p>
+<p>
+    The following snippet is cellClassRules using functions on a year column:
+</p>
 
-        <snippet>
+<snippet>
 cellClassRules: {
     // apply green to 2008
     'rag-green-outer': function(params) { return params.value === 2008},
@@ -113,11 +113,11 @@ cellClassRules: {
     'rag-red-outer': function(params) { return params.value === 2000}
 }</snippet>
 
-    <h2>Cell Style, Cell Class & Cell Class Rules Params</h2>
+<h2>Cell Style, Cell Class & Cell Class Rules Params</h2>
 
-    <p>
-        All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
-    </p>
+<p>
+    All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
+</p>
 
 <?= createSnippet(<<<SNIPPET
 interface CellClassParams {
@@ -139,97 +139,102 @@ interface CellClassParams {
     context: any,
 }
 SNIPPET
-, 'ts') ?>
-
-    <p>
-        As an alternative, you can also provide shorthands of the functions using an expression.
-        The column Age in the example uses expressions. An expression is evaluated by the grid
-        by executing the string as if it were a Javascript expression. The expression
-        has the following attributes available to it (mapping the the attributes of the equivalent
-        params object):
-</p>
-
-        <ul class="content">
-            <li><code>x</code>: maps value</li>
-            <li><code>ctx</code>: maps context</li>
-            <li><code>node</code>: maps node</li>
-            <li><code>data</code>: maps data</li>
-            <li><code>colDef</code>: maps colDef</li>
-            <li><code>rowIndex</code>: maps rowIndex</li>
-            <li><code>api</code>: maps api</li>
-        </ul>
+    , 'ts') ?>
 
 <p>
-        In other words, x and ctx map value and context, all other attributes map the parameters of the same name.
-    </p>
+    As an alternative, you can also provide shorthands of the functions using an expression.
+    The column Age in the example uses expressions. An expression is evaluated by the grid
+    by executing the string as if it were a Javascript expression. The expression
+    has the following attributes available to it (mapping the the attributes of the equivalent
+    params object):
+</p>
 
-    <p>
-        The following snippet is cellClassRules using expressions on an age column:
-    </p>
+<ul class="content">
+    <li><code>x</code>: maps value</li>
+    <li><code>ctx</code>: maps context</li>
+    <li><code>node</code>: maps node</li>
+    <li><code>data</code>: maps data</li>
+    <li><code>colDef</code>: maps colDef</li>
+    <li><code>rowIndex</code>: maps rowIndex</li>
+    <li><code>api</code>: maps api</li>
+</ul>
 
-    <snippet>
+<p>
+    In other words, x and ctx map value and context, all other attributes map the parameters of the same name.
+</p>
+
+<p>
+    The following snippet is cellClassRules using expressions on an age column:
+</p>
+
+<snippet>
 cellClassRules: {
     'rag-green': 'x &lt; 20',
     'rag-amber': 'x &gt;= 20 && x &lt; 25',
     'rag-red': 'x &gt;= 25'
 }</snippet>
 
-    <h2>Refresh of Styles</h2>
+<h2>Refresh of Styles</h2>
 
+<p>
+    If you refresh a cell, or a cell is updated due to editing, the cellStyle,
+    cellClass and cellClassRules are all applied again. This has the following
+    effect:
+</p>
+<ul class="content">
+    <li><code>cellStyle</code>: All new styles are applied. If a new style is the
+        same as an old style, the new style overwrites the old style. If a new style is not
+        present, the old style is left (the grid will NOT remove styles).
+    </li>
+    <li><code>cellClass</code>: All new classes are applied. Old classes are not
+        removed so be aware that classes will accumulate. If you want to remove
+        old classes, then use cellClassRules.
+    </li>
+    <li><code>cellClassRules</code>: Rules that return true will have the class
+        applied the second time. Rules that return false will have the class removed
+        second time.
+    </li>
+</ul>
+
+<note>
     <p>
-        If you refresh a cell, or a cell is updated due to editing, the cellStyle,
-        cellClass and cellClassRules are all applied again. This has the following
-        effect:
+        If you are using cellStyle to highlight changing data, then please take note
+        that grid will not remove styles. For example if you are
+        setting text color to 'red' for a condition, then you should explicitly set it
+        back to default eg 'black' when the condition is not met. Otherwise the highlight
+        will remain once it's first applied.
     </p>
-        <ul class="content">
-            <li><code>cellStyle</code>: All new styles are applied. If a new style is the
-            same as an old style, the new style overwrites the old style. If a new style is not
-                present, the old style is left (the grid will NOT remove styles).
-            </li>
-            <li><code>cellClass</code>: All new classes are applied. Old classes are not
-            removed so be aware that classes will accumulate. If you want to remove
-            old classes, then use cellClassRules.</li>
-            <li><code>cellClassRules</code>: Rules that return true will have the class
-            applied the second time. Rules that return false will have the class removed
-            second time.</li>
-        </ul>
+    <snippet>
+        // unsafe, the red will stay after initially applied
+        cellStyle: params => params.value > 80 ? {color: 'red'} : null
+    </snippet>
+    <snippet>
+        // safe, to black will override the red when the condition is not true
+        cellStyle: params => params.value > 80 ? {color: 'red'} : {color: 'black'}
+    </snippet>
+</note>
 
-    <note>
-        <p>
-            If you are using cellStyle to highlight changing data, then please take note
-            that grid will not remove styles. For example if you are
-            setting text color to 'red' for a condition, then you should explicitly set it
-            back to default eg 'black' when the condition is not met. Otherwise the highlight
-            will remain once it's first applied.
-        </p>
-        <snippet>
-            // unsafe, the red will stay after initially applied
-            cellStyle: params => params.value > 80 ? {color: 'red'} : null
-        </snippet>
-        <snippet>
-            // safe, to black will override the red when the condition is not true
-            cellStyle: params => params.value > 80 ? {color: 'red'} : {color: 'black'}
-        </snippet>
-    </note>
+<h2>Example Cell Styling</h2>
 
-    <h2>Example Cell Styling</h2>
-
-    <p>Below shows both cssClassRules snippets above in a full working example. The example
+<p>Below shows both cssClassRules snippets above in a full working example. The example
     demonstrates the following:
-    </p>
-        <ul class="content">
-            <li>Age uses <code>cellClassRules</code> with expressions (strings instead of functions).
-            Editing the cell will update the style.</li>
-            <li>Year uses <code>cellClassRules</code> with functions. Editing the cell will update the style.</li>
-            <li>Date and Sport use <code>cellClass</code>, Date sets explicitly, Sport sets
-            using a function. Because a function is used for Sport, it can select class based
-            on data value. Editing Sport will have undetermined results as the class values will accumulate.</li>
-            <li>Gold sets <code>cellStyle</code> implicitly. It is not dependent on the cell value.</li>
-            <li>Silver and Bronze set <code>cellStyle</code> using a function and depends on the value.
-            Editing will update the cellStyle.</li>
-        </ul>
+</p>
+<ul class="content">
+    <li>Age uses <code>cellClassRules</code> with expressions (strings instead of functions).
+        Editing the cell will update the style.
+    </li>
+    <li>Year uses <code>cellClassRules</code> with functions. Editing the cell will update the style.</li>
+    <li>Date and Sport use <code>cellClass</code>, Date sets explicitly, Sport sets
+        using a function. Because a function is used for Sport, it can select class based
+        on data value. Editing Sport will have undetermined results as the class values will accumulate.
+    </li>
+    <li>Gold sets <code>cellStyle</code> implicitly. It is not dependent on the cell value.</li>
+    <li>Silver and Bronze set <code>cellStyle</code> using a function and depends on the value.
+        Editing will update the cellStyle.
+    </li>
+</ul>
 
-    <?= grid_example('Cell Styling', 'cell-styling', 'generated', ['enterprise' => false]) ?>
+<?= grid_example('Cell Styling', 'cell-styling', 'generated', ['enterprise' => false, 'modules' => true, 'reactFunctional' => true]) ?>
 
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

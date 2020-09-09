@@ -11,6 +11,7 @@ import { MatRadioComponent } from "./mat-radio.component";
 import { MatSelectComponent } from "./mat-select.component";
 
 @Component({
+    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-one.component.html"
 })

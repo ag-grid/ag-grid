@@ -20,7 +20,8 @@ export declare class ColumnFactory extends BeanStub {
     private createColumnGroup;
     private createMergedColGroupDef;
     private createColumn;
-    private findExistingColumn;
+    private applyColumnState;
+    findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column;
     mergeColDefs(colDef: ColDef): ColDef;
     private assignColumnTypes;
     private checkForDeprecatedItems;

@@ -19,6 +19,7 @@ export declare class DragService extends BeanStub {
     private removeListener;
     removeDragSource(params: DragListenerParams): void;
     private setNoSelectToBody;
+    isDragging(): boolean;
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart;
     private onMouseDown;

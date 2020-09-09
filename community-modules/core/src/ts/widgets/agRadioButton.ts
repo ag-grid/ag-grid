@@ -1,18 +1,22 @@
 import { AgCheckbox } from './agCheckbox';
 import { Events } from '../eventKeys';
 import { CheckboxChangedEvent } from '../events';
+import { IInputField } from './agAbstractInputField';
 
 export class AgRadioButton extends AgCheckbox {
-    protected className = 'ag-radio-button';
-    protected inputType = 'radio';
+    constructor(config?: IInputField) {
+        super(config, 'ag-radio-button', 'radio');
+    }
 
     protected isSelected(): boolean {
         return this.eInput.checked;
     }
 
     public toggle(): void {
-        const nextValue = this.getNextValue();
-        this.setValue(nextValue);
+        // do not allow an active radio button to be deselected
+        if (!this.isSelected()) {
+            this.setValue(true);
+        }
     }
 
     protected addInputListeners() {

@@ -1,22 +1,24 @@
 import {
     AgGroupComponent,
+    AgGroupComponentParams,
+    AgSelect,
     AgSlider,
     Autowired,
     ChartType,
     Component,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
-import { ChartController } from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
+import {ChartController} from "../../../chartController";
 
 export class MarkersPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesMarkersGroup">
+                <ag-select ref="seriesMarkerShapeSelect"></ag-select>
                 <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
@@ -24,6 +26,7 @@ export class MarkersPanel extends Component {
         </div>`;
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
+    @RefSelector('seriesMarkerShapeSelect') private seriesMarkerShapeSelect: AgSelect;
     @RefSelector('seriesMarkerSizeSlider') private seriesMarkerSizeSlider: AgSlider;
     @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
     @RefSelector('seriesMarkerStrokeWidthSlider') private seriesMarkerStrokeWidthSlider: AgSlider;
@@ -51,6 +54,42 @@ export class MarkersPanel extends Component {
         // scatter charts should always show markers
         const shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof ScatterChartProxy;
 
+        const seriesMarkerShapeOptions = [
+            {
+                value: 'square',
+                text: 'Square'
+            },
+            {
+                value: 'circle',
+                text: 'Circle'
+            },
+            {
+                value: 'cross',
+                text: 'Cross'
+            },
+            {
+                value: 'diamond',
+                text: 'Diamond'
+            },
+            {
+                value: 'plus',
+                text: 'Plus'
+            },
+            {
+                value: 'triangle',
+                text: 'Triangle'
+            },
+            {
+                value: 'heart',
+                text: 'Heart'
+            }
+        ];
+        this.seriesMarkerShapeSelect
+            .addOptions(seriesMarkerShapeOptions)
+            .setLabel(this.chartTranslator.translate('shape'))
+            .setValue(this.chartController.getChartProxy().getSeriesOption("marker.shape"))
+            .onValueChange(value => this.chartController.getChartProxy().setSeriesOption("marker.shape", value));
+
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
@@ -67,8 +106,8 @@ export class MarkersPanel extends Component {
         };
 
         if (this.chartController.getChartType() === ChartType.Bubble) {
-            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 60);
+            initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         } else {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
             initInput("marker.size", this.seriesMarkerSizeSlider, "size", 60);

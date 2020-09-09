@@ -31,7 +31,7 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
     };
     SideBarButtonsComp.prototype.handleKeyDown = function (e) {
-        if (e.keyCode !== core_1.Constants.KEY_TAB || !e.shiftKey) {
+        if (e.keyCode !== core_1.KeyCode.TAB || !e.shiftKey) {
             return;
         }
         var prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);

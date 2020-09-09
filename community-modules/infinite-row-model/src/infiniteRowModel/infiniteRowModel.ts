@@ -132,28 +132,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
         // only reset if we have a valid datasource to working with
         if (datasource) {
-            this.checkForDeprecated();
             this.reset();
-        }
-    }
-
-    private checkForDeprecated(): void {
-        const ds = this.datasource as any;
-        // the number of concurrent loads we are allowed to the server
-        if (_.exists(ds.maxConcurrentRequests)) {
-            console.error('ag-Grid: since version 5.1.x, maxConcurrentRequests is replaced with grid property maxConcurrentDatasourceRequests');
-        }
-
-        if (_.exists(ds.maxPagesInCache)) {
-            console.error('ag-Grid: since version 5.1.x, maxPagesInCache is replaced with grid property maxPagesInPaginationCache');
-        }
-
-        if (_.exists(ds.overflowSize)) {
-            console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
-        }
-
-        if (_.exists(ds.blockSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize/blockSize is replaced with grid property infinitePageSize');
         }
     }
 

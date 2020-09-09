@@ -10,7 +10,12 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
 import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
-import { _ } from "../../utils";
+import { escapeString } from "../../utils/string";
+import { createIconNoSpan } from "../../utils/icon";
+import { exists } from "../../utils/generic";
+import { isIOSUserAgent } from "../../utils/browser";
+import { removeFromParent, addOrRemoveCssClass, setDisplayed, clearElement } from "../../utils/dom";
+import { firstExistingValue } from "../../utils/array";
 
 export interface IHeaderParams {
     column: Column;
@@ -26,11 +31,12 @@ export interface IHeaderParams {
     template: string;
 }
 
-export interface IHeader { }
-
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-    setActiveParent?(activeParent: boolean): void;
+export interface IHeader {
+    /** Get the header to refresh. Gets called whenever Column Defs are updated. */
+    refresh(params: IHeaderParams): boolean;
 }
+
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> { }
 
 export class HeaderComp extends Component implements IHeaderComp {
 
@@ -38,7 +44,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         `<div class="ag-cell-label-container">
             <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
             <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">
-                <span ref="eText" class="ag-header-cell-text" role="columnheader" unselectable="on"></span>
+                <span ref="eText" class="ag-header-cell-text" unselectable="on"></span>
                 <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
                 <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
                 <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
@@ -65,36 +71,63 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private lastMovingChanged = 0;
 
+    private currentDisplayName: string;
+    private currentTemplate: string;
+    private currentShowMenu: boolean;
+    private currentSort: boolean;
+
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
         super.destroy();
     }
 
-    public init(params: IHeaderParams): void {
-        let template:string = _.firstExistingValue(
-            params.template,
+    public refresh(params: IHeaderParams): boolean {
+
+        this.params = params;
+
+        // if template changed, then recreate the whole comp, the code required to manage
+        // a changing template is to difficult for what it's worth.
+        if (this.workOutTemplate() != this.currentTemplate) { return false; }
+        if (this.workOutShowMenu() != this.currentShowMenu) { return false; }
+        if (this.workOutSort() != this.currentSort) { return false; }
+
+        this.setDisplayName(params);
+
+        return true;
+    }
+
+    private workOutTemplate(): string {
+        let template:string = firstExistingValue(
+            this.params.template,
             HeaderComp.TEMPLATE
         );
 
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
-
-        this.setTemplate(template);
-        this.params = params;
-
-        this.setupTap();
-        this.setupIcons(params.column);
-        this.setupMenu();
-        this.setupSort();
-        this.setupFilterIcon();
-        this.setupText(params.displayName);
+        return template;
     }
 
-    private setupText(displayName: string): void {
-        const displayNameSanitised = _.escape(displayName);
-        if (this.eText) {
-            this.eText.innerHTML = displayNameSanitised;
+    public init(params: IHeaderParams): void {
+        this.params = params;
+
+        this.currentTemplate = this.workOutTemplate();
+        this.setTemplate(this.currentTemplate);
+        this.setupTap();
+        this.setupIcons(params.column);
+        this.setMenu();
+        this.setupSort();
+        this.setupFilterIcon();
+        this.setDisplayName(params);
+    }
+
+    private setDisplayName(params: IHeaderParams): void {
+        if (this.currentDisplayName != params.displayName) {
+            this.currentDisplayName = params.displayName;
+            const displayNameSanitised = escapeString(this.currentDisplayName);
+            if (this.eText) {
+                this.eText.innerHTML = displayNameSanitised;
+            }
         }
     }
 
@@ -109,7 +142,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 
@@ -120,7 +153,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = options.isSuppressMenuHide();
-        const tapMenuButton = suppressMenuHide && _.exists(this.eMenu);
+        const tapMenuButton = suppressMenuHide && exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
@@ -153,35 +186,34 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
     }
 
-    private setupMenu(): void {
-        // if no menu provided in template, do nothing
-        if (!this.eMenu) { return; }
-
-        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device
-        // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+    private workOutShowMenu(): boolean {
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
+        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
+        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
-        const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        const hideShowMenu = !this.params.enableMenu || (_.isIOSUserAgent() && !suppressMenuHide);
+        const menuHides = !this.gridOptionsWrapper.isSuppressMenuHide();
 
-        if (hideShowMenu) {
-            _.removeFromParent(this.eMenu);
+        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
+        const showMenu = this.params.enableMenu && !onIpadAndMenuHides;
+
+        return showMenu;
+    }
+
+    private setMenu(): void {
+        // if no menu provided in template, do nothing
+        if (!this.eMenu) {
             return;
         }
 
+        this.currentShowMenu = this.workOutShowMenu();
+        if (!this.currentShowMenu) {
+            removeFromParent(this.eMenu);
+            return;
+        }
+
+        const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
-
-        if (!suppressMenuHide) {
-            this.eMenu.style.opacity = '0';
-        }
-        const style = this.eMenu.style as any;
-        style.transition = 'opacity 0.2s, border 0.2s';
-        style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
-    }
-
-    public setActiveParent(activeParent: boolean): void {
-        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            this.eMenu.style.opacity = activeParent ? '1' : '0';
-        }
+        addOrRemoveCssClass(this.eMenu, 'ag-header-menu-always-show', suppressMenuHide);
     }
 
     public showMenu(eventSource?: HTMLElement) {
@@ -192,16 +224,20 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private removeSortIcons(): void {
-        _.removeFromParent(this.eSortAsc);
-        _.removeFromParent(this.eSortDesc);
-        _.removeFromParent(this.eSortNone);
-        _.removeFromParent(this.eSortOrder);
+        removeFromParent(this.eSortAsc);
+        removeFromParent(this.eSortDesc);
+        removeFromParent(this.eSortNone);
+        removeFromParent(this.eSortOrder);
+    }
+
+    private workOutSort(): boolean {
+        return this.params.enableSorting;
     }
 
     public setupSort(): void {
-        const enableSorting = this.params.enableSorting;
+        this.currentSort = this.params.enableSorting;
 
-        if (!enableSorting) {
+        if (!this.currentSort) {
             this.removeSortIcons();
             return;
         }
@@ -242,21 +278,21 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
 
         if (this.eSortAsc) {
-            _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
+            addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
         }
 
         if (this.eSortDesc) {
-            _.addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
+            addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-            _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
+            addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     }
 
@@ -273,12 +309,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         const moreThanOneColSorting = allColumnsWithSorting.length > 1;
         const showIndex = col.isSorting() && moreThanOneColSorting;
 
-        _.setDisplayed(this.eSortOrder, showIndex);
+        setDisplayed(this.eSortOrder, showIndex);
 
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         } else {
-            _.clearElement(this.eSortOrder);
+            clearElement(this.eSortOrder);
         }
     }
 
@@ -292,6 +328,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         const filterPresent = this.params.column.isFilterActive();
-        _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
+        addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
 }

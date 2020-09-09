@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,11 +28,12 @@ import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { Constants } from '../constants';
+import { Constants } from '../constants/constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationDirection } from './header/headerNavigationService';
-import { _ } from '../utils';
+import { exists } from '../utils/generic';
+import { KeyCode } from '../constants/keyCode';
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
@@ -52,7 +53,6 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.headerContainers.forEach(function (container) { return _this.createManagedBean(container); });
         this.headerNavigationService.registerHeaderRoot(this);
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
@@ -82,18 +82,18 @@ var HeaderRootComp = /** @class */ (function (_super) {
     HeaderRootComp.prototype.handleKeyDown = function (e) {
         var direction;
         switch (e.keyCode) {
-            case Constants.KEY_LEFT:
+            case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case Constants.KEY_RIGHT:
-                if (!_.exists(direction)) {
+            case KeyCode.RIGHT:
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction);
                 break;
-            case Constants.KEY_UP:
+            case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case Constants.KEY_DOWN:
-                if (!_.exists(direction)) {
+            case KeyCode.DOWN:
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction)) {

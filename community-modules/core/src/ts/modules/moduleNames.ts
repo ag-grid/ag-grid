@@ -19,9 +19,10 @@ export enum ModuleNames {
     // enterprise modules
     RowGroupingModule = "@ag-grid-enterprise/row-grouping",
     ColumnToolPanelModule = "@ag-grid-enterprise/column-tool-panel",
-    FiltersToolPanelModule = "@ag-grid-enterprise/filters-tool-panel",
+    FiltersToolPanelModule = "@ag-grid-enterprise/filter-tool-panel",
     MenuModule = "@ag-grid-enterprise/menu",
     SetFilterModule = "@ag-grid-enterprise/set-filter",
+    MultiFilterModule = "@ag-grid-enterprise/multi-filter",
     StatusBarModule = "@ag-grid-enterprise/status-bar",
     SideBarModule = "@ag-grid-enterprise/side-bar",
     RangeSelectionModule = "@ag-grid-enterprise/range-selection",

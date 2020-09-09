@@ -1,14 +1,9 @@
-import {
-    _,
-    Autowired,
-    Component,
-    PostConstruct
-} from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
+import {_, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
+import {ChartMenu} from "./menu/chartMenu";
 
-import { Chart } from "ag-charts-community";
-import { ChartTranslator } from "./chartTranslator";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {Chart} from "ag-charts-community";
+import {ChartTranslator} from "./chartTranslator";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 type BBox = { x: number; y: number; width: number; height: number };
 

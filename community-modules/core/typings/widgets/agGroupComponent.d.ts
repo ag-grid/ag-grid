@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component } from './component';
 declare type GroupItem = Component | HTMLElement;
 declare type Align = 'start' | 'end' | 'center' | 'stretch';
 declare type Direction = 'horizontal' | 'vertical';

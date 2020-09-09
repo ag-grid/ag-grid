@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
                 Themes for professional data-heavy applications.
             </p>
             <p>
-                <span class="recommendation">Recommendation:</span> Balham was the recommended theme before 
+                <span class="recommendation">Recommendation:</span> Balham was the recommended theme before
                 Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page.
             </p>
         </td>
@@ -73,27 +73,24 @@ include '../documentation-main/documentation_header.php';
                 A theme designed according to the Google Material Language Specs.
             </p>
             <p>
-                <span class="recommendation">Recommendation:</span> This theme looks great for simple applications with lots of 
-                white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. 
-                However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If 
-                your application uses these features, consider using <code>ag-theme-alpine</code> instead.
+                <span class="recommendation">Recommendation:</span> This theme looks great for simple applications with lots of
+                white space, and is the obvious choice if the rest of your application follows the Google Material Design spec.
+                However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If
+                your application uses these features, consider using <?= inlineCode('ag-theme-alpine') ?> instead.
 
             </p>
         </td>
     </tr>
 </table>
 
-
 <h2>Applying a Theme to an App</h2>
 
 <p>
-    To use a theme, add the theme class name to the <code>div</code> element that contains your grid. The following is an 
+    To use a theme, add the theme class name to the <code>div</code> element that contains your grid. The following is an
     example of using the Alpine theme:
 </p>
 
-<snippet language="html">
-    &lt;div id="myGrid" class="ag-theme-alpine"&gt;&lt;/div&gt;
-</snippet>
+<?= createSnippet('<div id="myGrid" class="ag-theme-alpine"></div>', 'html') ?>
 
 <p>
     In order for the above code to work, the correct stylesheets must be loaded:
@@ -140,17 +137,20 @@ include '../documentation-main/documentation_header.php';
 <h3>CDN</h3>
 <p>You can load the structural styles and theme from a free CDN by adding this code to your page.</p>
 
-<snippet language="html">
-&lt;link rel="stylesheet"
-      href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-grid.css"&gt;</code>
+<?= createSnippet(<<<SNIPPET
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-grid.css" />
 
-&lt;link rel="stylesheet"
-      href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-alpine.css"&gt;</code>
-</snippet>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-alpine.css" />
+SNIPPET
+, 'html') ?>
 
 <p>
-    Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches 
-    the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app 
+    Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches
+    the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app
     will be unavailable if the unpkg servers are down.
 </p>
 
@@ -161,9 +161,10 @@ include '../documentation-main/documentation_header.php';
     to load Roboto is through Google's CDN:
 </p>
 
-<snippet language="html">
-&lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;
-&lt;div id="myGrid" class="ag-theme-material"&gt;&lt;/div&gt;
-</snippet>
+<?= createSnippet(<<<SNIPPET
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+<div id="myGrid" class="ag-theme-material"></div>
+SNIPPET
+, 'html') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /**
@@ -11,6 +11,9 @@ export declare function exists<T>(value: T, allowEmptyString?: boolean): boolean
 export declare function missing<T>(value: T): boolean;
 export declare function missingOrEmpty<T>(value?: T[] | string): boolean;
 export declare function toStringOrNull(value: any): string | null;
+export declare function attrToNumber(value: number | string): number | undefined;
+export declare function attrToBoolean(value: boolean | string): boolean | undefined;
+export declare function attrToString(value: string): string | undefined;
 /** @deprecated */
 export declare function referenceCompare<T>(left: T, right: T): boolean;
 export declare function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;

@@ -9,6 +9,7 @@ export class ColDefUtil {
         'groupId',
         'colId',
         'sort',
+        'initialSort',
         'field',
         'type',
         'tooltipComponent',
@@ -19,10 +20,12 @@ export class ColDefUtil {
         'template',
         'templateUrl',
         'filter',
+        'initialAggFunc',
         'aggFunc',
         'cellRenderer',
         'cellEditor',
         'pinned',
+        'initialPinned',
         'chartDataType'
     ];
 
@@ -48,7 +51,9 @@ export class ColDefUtil {
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
-        'refData'];
+        'refData',
+        'columnsMenuParams'
+    ];
 
     public static ARRAY_PROPERTIES = [
         'children',
@@ -61,12 +66,18 @@ export class ColDefUtil {
 
     public static NUMBER_PROPERTIES = [
         'sortedAt',
+        'sortIndex',
+        'initialSortIndex',
         'flex',
+        'initialFlex',
         'width',
+        'initialWidth',
         'minWidth',
         'maxWidth',
         'rowGroupIndex',
-        'pivotIndex'];
+        'initialRowGroupIndex',
+        'pivotIndex',
+        'initialPivotIndex'];
 
     public static BOOLEAN_PROPERTIES = [
         'suppressCellFlash',
@@ -75,21 +86,21 @@ export class ColDefUtil {
         'openByDefault',
         'marryChildren',
         'hide',
+        'initialHide',
         'rowGroup',
+        'initialRowGroup',
         'pivot',
+        'initialPivot',
         'checkboxSelection',
         'headerCheckboxSelection',
         'headerCheckboxSelectionFilteredOnly',
         'suppressMenu',
-        'suppressSorting',
         'suppressMovable',
-        'suppressFilter',
         'lockPosition',
         'lockVisible',
         'lockPinned',
         'unSortIcon',
         'suppressSizeToFit',
-        'suppressResize',
         'suppressAutoSize',
         'enableRowGroup',
         'enablePivot',
@@ -101,6 +112,7 @@ export class ColDefUtil {
         'rowDrag',
         'dndSource',
         'autoHeight',
+        'wrapText',
         'sortable',
         'resizable',
         'singleClickEdit',
@@ -132,7 +144,6 @@ export class ColDefUtil {
         'onCellDoubleClicked',
         'onCellContextMenu',
         'rowDragText',
-        'tooltip',
         'tooltipValueGetter',
         'tooltipComponent',
         'tooltipComponentFramework',

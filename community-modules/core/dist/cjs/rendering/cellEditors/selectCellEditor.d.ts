@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
@@ -11,6 +11,7 @@ export declare class SelectCellEditor extends PopupComponent implements ICellEdi
     private gridOptionsWrapper;
     private valueFormatterService;
     private eSelect;
+    private startedByEnter;
     constructor();
     init(params: ISelectCellEditorParams): void;
     afterGuiAttached(): void;

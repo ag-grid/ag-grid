@@ -9,279 +9,119 @@ include '../documentation-main/documentation_header.php';
 <h1>Localisation</h1>
 
 <p class="lead">
-    You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
-    a <code>localeTextFunc</code> to the <code>gridOptions</code>.</p>
+    All the displayed text in the grid is customisable for the purposes of localisation.
+    This is done by providing locale information to the grid for the required language. 
+    Either provide an object of key->value pairs via the <code>localeText</code>
+    property, or provide a <code>localeTextFunc</code> callback to hook the grid up to your
+    applications localisation.
+</p>
 
-<h2>Using <code>localeText</code></h2>
+<p>
+    The default language of the grid is American English. The grid does not come with other
+    locales. If you want to provide the grid in another language, you must provide to the
+    grid the relevant locale information.
+</p>
 
-<p> The example below shows all the locale keys with default values:</p>
 
-<?= createSnippet(<<<SNIPPET
-localeText: {     
-    // Set Filter
-    selectAll: 'Select All',
-    selectAllSearchResults: 'Select All Search Results',
-    searchOoo: 'Search...',
-    blanks: 'Blanks',
-    noMatches: 'No matches.',
 
-    // Number Filter & Text Filter
-    filterOoo: 'Filter...',
-    equals: 'Equals',
-    notEqual: 'Not equal',
+<h2>Creating a Locale</h2>
 
-    // Number Filter
-    lessThan: 'Less than',
-    greaterThan: 'Greater than',
-    lessThanOrEqual: 'Less than or equal',
-    greaterThanOrEqual: 'Greater than or equal',
-    inRange: 'In range',
-    inRangeStart: 'To',
-    inRangeEnd: 'From',
+<p>
+    The grid by default does not need a locale. If no locale is provide, the grid will
+    default to English. If a locale is provided but is missing values, the default English
+    will be used for the missing values.
+</p>
 
-    // Text Filter
-    contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
-    endsWith: 'Ends with',
+<p>
+    An example full locale file is provided below. To support other languages, the first step
+    is to copy this file and translate the values into the required language.
+</p>
 
-    // Date Filter
-    dateFormatOoo: 'Yyyy-mm-dd',
+<div style="height: 400px; overflow: auto;">
+    <?php
+    ob_start();
+    include './localisation/locale.en.js';
+    $buffer = ob_get_clean();
+    echo createSnippet($buffer);
+    ?>
+</div>
 
-    // Filter Conditions
-    andCondition: 'AND',
-    orCondition: 'OR',
+<p>
+    You can download the full file from <a href="./localisation/locale.en.js" download>here</a>.
+</p>
 
-    // Filter Buttons
-    applyFilter: 'Apply',
-    resetFilter: 'Reset',
-    clearFilter: 'Clear',
-    cancelFilter: 'Cancel',    
-   
-    // Side Bar
-    columns: 'Columns',
-    filters: 'Filters',
-    
-    // columns tool panel
-    pivotMode: 'Pivot Mode',    
-    groups: 'Row Groups',
-    rowGroupColumnsEmptyMessage: 'Drag here to set row groups',    
-    values: 'Values',    
-    valueColumnsEmptyMessage: 'Drag here to aggregate',   
-    pivots: 'Column Labels',
-    pivotColumnsEmptyMessage: 'Drag here to set column labels',    
+<p>
+    There is one locale file for all of the grid. The file covers all modules across all of
+    ag-Grid Enterprise and ag-Grid Free. This was done on purpose as having multiple files
+    for each module would provide to much confusion. The decision was made to keep it simple
+    in one file.
+</p>
 
-    // Header of the Default Group Column
-    group: 'Group',
-    
-    // Other
-    loadingOoo: 'Loading...',
-    noRowsToShow: 'No Rows To Show',
-    enabled: 'Enabled',
+<h2>Installing a Locale</h2>
 
-    // Menu
-    pinColumn: 'Pin Column',
-    pinLeft: 'Pin Left',
-    pinRight: 'Pin Right',
-    noPin: 'No Pin',
-    valueAggregation: 'Value Aggregation',
-    autosizeThiscolumn: 'Autosize This Column',
-    autosizeAllColumns: 'Autosize All Columns',
-    groupBy: 'Group by',
-    ungroupBy: 'Un-Group by',
-    resetColumns: 'Reset Columns',
-    expandAll: 'Expand All',
-    collapseAll: 'Close All',
-    copy: 'Copy',
-    ctrlC: 'Ctrl+C',
-    copyWithHeaders: 'Copy With Headers',    
-    paste: 'Paste',
-    ctrlV: 'Ctrl+V',
-    export: 'Export',
-    csvExport: 'CSV Export',
-    excelExport: 'Excel Export (.xlsx)',
-    excelXmlExport: 'Excel Export (.xml)',
+<p>
+    To install a locale into the grid, set the locale object to the grid's <code>localeText</code>
+    property. The example below shows this in action:
+</p>
 
-    // Enterprise Menu Aggregation and Status Bar
-    sum: 'Sum',
-    min: 'Min',
-    max: 'Max',
-    none: 'None',
-    count: 'Count',
-    avg: 'Average',
-    filteredRows: 'Filtered',
-    selectedRows: 'Selected',
-    totalRows: 'Total Rows',
-    totalAndFilteredRows: 'Rows',
-    page: 'Page',
-    more: 'More',
-    to: 'To',
-    of: 'Of',
-    next: 'Next',
-    last: 'Last',
-    first: 'First',
-    previous: 'Previous', 
-
-    // Enterprise Menu (Charts)
-    pivotChartAndPivotMode: 'Pivot Chart & Pivot Mode',
-    pivotChart: 'Pivot Chart',
-    chartRange: 'Chart Range',     
-
-    columnChart: 'Column',
-    groupedColumn: 'Grouped',
-    stackedColumn: 'Stacked',
-    normalizedColumn: '100% Stacked',
-
-    barChart: 'Bar',
-    groupedBar: 'Grouped',
-    stackedBar: 'Stacked',
-    normalizedBar: '100% Stacked',
-
-    pieChart: 'Pie',
-    pie: 'Pie',
-    doughnut: 'Doughnut',
-
-    line: 'Line',
-
-    xyChart: 'X Y (Scatter)',
-    scatter: 'Scatter',
-    bubble: 'Bubble',
-
-    areaChart: 'Area',
-    area: 'Area',
-    stackedArea: 'Stacked',
-    normalizedArea: '100% Stacked',
-
-    histogramChart: 'Histogram',
-
-    // Charts
-    pivotChartTitle: 'Pivot Chart',
-    rangeChartTitle: 'Range Chart',
-    settings: 'Settings',
-    data: 'Data',
-    format: 'Format',
-    categories: 'Categories',
-    defaultCategory: '(None)',
-    series: 'Series',
-    xyValues: 'X Y Values',
-    paired: 'Paired Mode',
-    axis: 'Axis',
-    navigator: 'Navigator',
-    color: 'Color',
-    thickness: 'Thickness',
-    xType: 'X Type',
-    automatic: 'Automatic',
-    category: 'Category',
-    number: 'Number',
-    time: 'Time',
-    xRotation: 'X Rotation',
-    yRotation: 'Y Rotation',
-    ticks: 'Ticks',
-    width: 'Width',
-    height: 'Height',
-    length: 'Length',
-    padding: 'Padding',
-    spacing: 'Spacing',
-    chart: 'Chart',
-    title: 'Title',
-    titlePlaceholder: 'Chart title - double click to edit',
-    background: 'Background',
-    font: 'Font',
-    top: 'Top',
-    right: 'Right',
-    bottom: 'Bottom',
-    left: 'Left',
-    labels: 'Labels',
-    size: 'Size',
-    minSize: 'Minimum Size',
-    maxSize: 'Maximum Size',
-    legend: 'Legend',
-    position: 'Position',
-    markerSize: 'Marker Size',
-    markerStroke: 'Marker Stroke',
-    markerPadding: 'Marker Padding',
-    itemSpacing: 'Item Spacing',
-    itemPaddingX: 'Item Padding X',
-    itemPaddingY: 'Item Padding Y',
-    layoutHorizontalSpacing: 'Horizontal Spacing',
-    layoutVerticalSpacing: 'Vertical Spacing',
-    strokeWidth: 'Stroke Width',
-    offset: 'Offset',
-    offsets: 'Offsets',
-    tooltips: 'Tooltips',
-    callout: 'Callout',
-    markers: 'Markers',
-    shadow: 'Shadow',
-    blur: 'Blur',
-    xOffset: 'X Offset',
-    yOffset: 'Y Offset',
-    lineWidth: 'Line Width',
-    normal: 'Normal',
-    bold: 'Bold',
-    italic: 'Italic',
-    boldItalic: 'Bold Italic',
-    predefined: 'Predefined',
-    fillOpacity: 'Fill Opacity',
-    strokeOpacity: 'Line Opacity',
-    histogramBinCount: 'Bin count',
-    columnGroup: 'Column',
-    barGroup: 'Bar',
-    pieGroup: 'Pie',
-    lineGroup: 'Line',
-    scatterGroup: 'X Y (Scatter)',
-    areaGroup: 'Area',
-    histogramGroup: 'Histogram',
-    groupedColumnTooltip: 'Grouped',
-    stackedColumnTooltip: 'Stacked',
-    normalizedColumnTooltip: '100% Stacked',
-    groupedBarTooltip: 'Grouped',
-    stackedBarTooltip: 'Stacked',
-    normalizedBarTooltip: '100% Stacked',
-    pieTooltip: 'Pie',
-    doughnutTooltip: 'Doughnut',
-    lineTooltip: 'Line',
-    groupedAreaTooltip: 'Area',
-    stackedAreaTooltip: 'Stacked',
-    normalizedAreaTooltip: '100% Stacked',
-    scatterTooltip: 'Scatter',
-    bubbleTooltip: 'Bubble',
-    histogramTooltip: 'Histogram',
-    noDataToChart: 'No data available to be charted.',
-    pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
-}
-SNIPPET
-) ?>
+<p>
+    The example below shows installing a locale file. The example has two local files
+    <code>locale.en.js</code> and <code>locale.zzz.js</code>. The second one is a dummy
+    locale, it just adds "zzz" to the start of each value. This is done so that the example
+    looks different - otherwise is would just display English as normal and there would be
+    no way of knowing if the locale was working or not as English is the default.
+</p>
+<p>
+    This to try in the example are as follows:
+</p>
+<ol>
+    <li>Open up in Plunker.</li>
+    <li>
+        Change the locale to English by changing <code>localeText = AG_GRID_LOCALE_ZZZ</code>
+        to <code>localeText = AG_GRID_LOCALE_EN</code>.
+    </li>
+    <li>Edit values in <code>locale.en.js</code> and observe the changes in the grid.</li>
+</ol>
 
 <?= grid_example('Localisation', 'localisation', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
 
-<h2>Using <code>localeTextFunc</code></h2>
+<h2>Changing Locale</h2>
 
 <p>
-    The example above works great if all you are translating is ag-Grid. However what if you want
-    to bind localisation into your wider applications? That can be done by providing your
-    own <code>localeTextFunc</code>, which is an alternative to the above.
+    The grid uses the locale as it is needed. It does not refresh as the locale changes.
+    If your application allows changing the locale for the application, you must destroy
+    and recreate the grid for it to use the new locale.
+</p>
+
+<h2>Locale Callback</h2>
+
+<p>
+    Providing a locale for the grid does not fit in with localisation libraries or localisation
+    for a broader application. If you want the grid to take from an application wide locale,
+    then implement the <code>localeTextFunc</code> to act as a bridge between the grid
+    and the applications localisation.
 </p>
 
 <p>
-    The sample code below shows how such a function can used. The function takes the key from the grid
-    and uses a translate function outside of the grid for doing the translation. If no match is found,
-    the default value should be returned (which is the English value for the grid, the grid's
-    default language).
+    The example below shows providing a callback for the grid's localisation. The example
+    for simplicity just returns back the default value in upper case. In a real world application,
+    the callback would use the applications localisation.
+</p>
+
+<?= grid_example('Callback', 'callback', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
+
+<p>
+    In a real world application, the callback would look something like this:
 </p>
 
 <?= createSnippet(<<<SNIPPET
-var gridOptions = {
-    localeTextFunc: function(key, defaultValue) {
-        // to avoid key clash with external keys, we add 'grid' to the start of each key.
-        var gridKey = 'grid.' + key;
+function localeTextFunc(key, defaultValue) {
+    // to avoid key clash with external keys, we add 'grid' to the start of each key.
+    var gridKey = 'grid.' + key;
 
-        // look the value up. here we use the AngularJS 1.x \$filter service, however you
-        // can use whatever service you want, AngularJS 1.x or otherwise.
-        var value = \$filter('translate')(gridKey);
-        return value === gridKey ? defaultValue : value;
-    }
-    ...
-};
+    // look the value up using an application wide service
+    return applicationLocaleService(gridKey);
+}
 SNIPPET
 ) ?>
 

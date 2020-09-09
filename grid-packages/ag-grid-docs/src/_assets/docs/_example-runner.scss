@@ -27,7 +27,7 @@
         }
 
         & > li:first-child {
-            flex: 1;
+            flex: 1 1 auto;
             padding-left: 1rem;
         }
 
@@ -83,7 +83,7 @@
         }
 
         & > li:first-child {
-            flex: 1;
+            flex: 1 1 auto;
             padding-left: 1rem;
         }
 
@@ -133,6 +133,7 @@
     .loading-placeholder,
     .iframe-placeholder {
         height: 450px;
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -228,6 +229,11 @@
         }
     }
 
+    .framework-chooser-wrapper {
+        display: flex;
+        justify-content: flex-end;
+    }
+
     .framework-chooser {
         display: flex;
         justify-content: flex-end;
@@ -260,7 +266,7 @@
 
     .runner-item {
         height: 25px;
-        display: inline-block;
+        display: inline-table;
         line-height: 25px;
         width: 150px;
         text-align: left;
@@ -287,6 +293,11 @@
     }
 
     .runner-item-react {
+        background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .runner-item-reactFunctional {
         background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
         background-size: 25px 25px;
     }

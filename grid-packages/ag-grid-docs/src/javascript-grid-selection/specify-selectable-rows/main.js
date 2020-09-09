@@ -23,7 +23,6 @@ var gridOptions = {
         filter: true,
     },
     rowSelection: 'multiple',
-    rowDeselection: true,
     suppressMenuHide: true,
     isRowSelectable: function(rowNode) {
         return rowNode.data ? rowNode.data.year < 2007 : false;

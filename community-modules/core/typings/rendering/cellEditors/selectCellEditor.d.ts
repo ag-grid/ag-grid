@@ -8,6 +8,7 @@ export declare class SelectCellEditor extends PopupComponent implements ICellEdi
     private gridOptionsWrapper;
     private valueFormatterService;
     private eSelect;
+    private startedByEnter;
     constructor();
     init(params: ISelectCellEditorParams): void;
     afterGuiAttached(): void;

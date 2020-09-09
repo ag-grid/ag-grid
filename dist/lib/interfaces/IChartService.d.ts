@@ -9,8 +9,9 @@ export interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartThemeName?: string;
     chartOptions: ChartOptions<any>;
+    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 export interface IChartService {

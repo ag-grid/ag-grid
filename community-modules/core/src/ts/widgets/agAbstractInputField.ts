@@ -1,29 +1,30 @@
 import { IAgLabel } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
-import { setDisabled, setElementWidth, addCssClass } from '../utils/dom';
+import { setDisabled, setElementWidth, addCssClass, addOrRemoveAttribute } from '../utils/dom';
+import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
+import { exists } from '../utils/generic';
 
 export interface IInputField extends IAgLabel {
     value?: any;
     width?: number;
 }
 
-export abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
-    protected abstract inputType: string;
+export abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField>
+    extends AgAbstractField<TValue, TConfig> {
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
+    @RefSelector('eInput') protected readonly eInput: TElement;
 
-    protected config: IInputField = {};
-
-    protected TEMPLATE = /* html */`
-        <div role="presentation">
-            <label ref="eLabel" class="ag-input-field-label"></label>
-            <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>
-            </div>
-        </div>`;
-
-    @RefSelector('eLabel') protected eLabel: HTMLLabelElement;
-    @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eInput') protected eInput: T;
+    constructor(config?: TConfig, className?: string, private readonly inputType = 'text', displayFieldTag = 'input') {
+        super(config, /* html */`
+            <div role="presentation">
+                <div ref="eLabel" class="ag-input-field-label"></div>
+                <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
+                    <${displayFieldTag} ref="eInput" class="ag-input-field-input"></${displayFieldTag}>
+                </div>
+            </div>`, className);
+    }
 
     protected postConstruct() {
         super.postConstruct();
@@ -34,9 +35,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         addCssClass(this.eInput, `${this.className}-input`);
         addCssClass(this.getGui(), 'ag-input-field');
 
-        const inputId = this.eInput.id ? this.eInput.id : `ag-input-id-${this.getCompId()}`;
-        this.eLabel.htmlFor = inputId;
-        this.eInput.id = inputId;
+        this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 
         const { width, value } = this.config;
 
@@ -51,12 +50,18 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         this.addInputListeners();
     }
 
-    protected addInputListeners() {
-        this.addManagedListener(this.eInput, 'input', (e) => {
-            const value = e.target.value;
+    protected refreshLabel() {
+        if (exists(this.getLabel())) {
+            setAriaLabelledBy(this.eInput, this.getLabelId());
+        } else {
+            this.eInput.removeAttribute('aria-labelledby');
+        }
 
-            this.setValue(value);
-        });
+        super.refreshLabel();
+    }
+
+    protected addInputListeners() {
+        this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
     }
 
     private setInputType() {
@@ -65,7 +70,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         }
     }
 
-    public getInputElement(): T {
+    public getInputElement(): TElement {
         return this.eInput;
     }
 
@@ -93,14 +98,13 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     public setInputPlaceholder(placeholder: string): this {
-        const eInput = this.eInput;
-        const attributeName = 'placeholder';
+        addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
 
-        if (placeholder) {
-            eInput.setAttribute(attributeName, placeholder);
-        } else {
-            eInput.removeAttribute(attributeName);
-        }
+        return this;
+    }
+
+    public setInputAriaLabel(label: string): this {
+        setAriaLabel(this.eInput, label);
 
         return this;
     }
@@ -109,11 +113,5 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         setDisabled(this.eInput, disabled);
 
         return super.setDisabled(disabled);
-    }
-
-    public setInputAriaLabel(label: string): this {
-        this.eInput.setAttribute('aria-label', label);
-
-        return this;
     }
 }

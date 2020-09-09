@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean } from '../context/context';
 import { BeanStub } from "../context/beanStub";
-import { Constants } from '../constants';
-import { _ } from '../utils';
+import { addCssClass, isVisible } from '../utils/dom';
+import { KeyCode } from '../constants/keyCode';
 var StandardMenuFactory = /** @class */ (function (_super) {
     __extends(StandardMenuFactory, _super);
     function StandardMenuFactory() {
@@ -64,7 +64,8 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         var _this = this;
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         var eMenu = document.createElement('div');
-        _.addCssClass(eMenu, 'ag-menu');
+        eMenu.setAttribute('role', 'presentation');
+        addCssClass(eMenu, 'ag-menu');
         this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
         filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
@@ -82,7 +83,7 @@ var StandardMenuFactory = /** @class */ (function (_super) {
             if (_this.tabListener) {
                 _this.tabListener = _this.tabListener();
             }
-            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+            if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
                 var focusableEl = _this.focusController.findTabbableParent(eventSource);
                 if (focusableEl) {
                     focusableEl.focus();
@@ -91,33 +92,30 @@ var StandardMenuFactory = /** @class */ (function (_super) {
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        // hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
+        hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenu,
+            closeOnEsc: true,
+            closedCallback: closedCallback
+        });
         positionCallback(eMenu);
         filterWrapper.filterPromise.then(function (filter) {
             if (filter.afterGuiAttached) {
-                var params = {
-                    hidePopup: hidePopup
-                };
-                filter.afterGuiAttached(params);
+                filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
             }
         });
         this.hidePopup = hidePopup;
         column.setMenuVisible(true, 'contextMenu');
     };
     StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
-        if (e.keyCode !== Constants.KEY_TAB) {
-            return;
-        }
-        if (this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
+        if (e.keyCode !== KeyCode.TAB ||
+            e.defaultPrevented ||
+            this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
             return;
         }
         e.preventDefault();
-        if (e.shiftKey) {
-            this.focusController.focusLastFocusableElement(menu);
-        }
-        else {
-            this.focusController.focusFirstFocusableElement(menu);
-        }
+        this.focusController.focusInto(menu, e.shiftKey);
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed

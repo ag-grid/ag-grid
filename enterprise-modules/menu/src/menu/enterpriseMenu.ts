@@ -24,7 +24,8 @@ import {
     Promise,
     TabbedItem,
     TabbedLayout,
-    FocusController
+    FocusController,
+    IAfterGuiAttachedParams
 } from "@ag-grid-community/core";
 
 import { MenuList } from "./menuList";
@@ -51,7 +52,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
-
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const ePopup = menu.getGui();
 
@@ -65,7 +65,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 menu.showTab(defaultTab);
             }
         }, defaultTab, undefined, mouseEvent.target as HTMLElement);
-
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
@@ -109,19 +108,19 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: string[],
         eventSource?: HTMLElement
     ): void {
-        const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.createBean(menu);
-
+        const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        const hidePopup = this.popupService.addAsModalPopup(
-            eMenuGui,
-            true,
-            (e: Event) => { // menu closed callback
+        const hidePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: eMenuGui,
+            closeOnEsc: true,
+            closedCallback: (e: Event) => { // menu closed callback
                 this.destroyBean(menu);
-                column.setMenuVisible(false, "contextMenu");
+                column.setMenuVisible(false, 'contextMenu');
+
                 const isKeyboardEvent = e instanceof KeyboardEvent;
 
                 if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
@@ -130,11 +129,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                     if (focusableEl) { focusableEl.focus(); }
                 }
             }
-        );
-
-        menu.afterGuiAttached({
-            hidePopup: hidePopup
         });
+
+        menu.afterGuiAttached({ hidePopup });
 
         positionCallback(menu);
 
@@ -218,8 +215,7 @@ export class EnterpriseMenu extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        const tabs = this.getTabsToCreate()
-            .map(menuTabName => this.createTab(menuTabName));
+        const tabs = this.getTabsToCreate().map(name => this.createTab(name));
 
         this.tabbedLayout = new TabbedLayout({
             items: tabs,
@@ -320,15 +316,15 @@ export class EnterpriseMenu extends BeanStub {
         let result: (string | MenuItemDef)[];
 
         const userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+
         if (userFunc) {
-            const userOptions = userFunc({
+            result = userFunc({
                 column: this.column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });
-            result = userOptions;
         } else {
             result = defaultMenuOptions;
         }
@@ -394,15 +390,7 @@ export class EnterpriseMenu extends BeanStub {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = false;
-
-        if (isInMemoryRowModel) {
-            if (usingTreeData) {
-                allowExpandAndContract = true;
-            } else {
-                allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
-            }
-        }
+        let allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
 
         if (allowExpandAndContract) {
             result.push('expandAll');
@@ -413,14 +401,13 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createMainPanel(): TabbedItem {
-        this.mainMenuList = new MenuList();
-        this.createManagedBean(this.mainMenuList);
+        this.mainMenuList = this.createManagedBean(new MenuList());
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
@@ -448,7 +435,7 @@ export class EnterpriseMenu extends BeanStub {
     private createFilterPanel(): TabbedItem {
         const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
-        let afterFilterAttachedCallback: any = null;
+        let afterFilterAttachedCallback: (params: IAfterGuiAttachedParams) => void = null;
 
         // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
         // async (_unless_ in react or similar, but if so why not encountered before now?).
@@ -479,20 +466,23 @@ export class EnterpriseMenu extends BeanStub {
 
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
+        let columnsMenuParams = this.column.getColDef().columnsMenuParams;
+        if (!columnsMenuParams) columnsMenuParams = {};
+
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,
             suppressPivotMode: false,
-            contractColumnSelection: false,
-            suppressColumnExpandAll: false,
-            suppressColumnFilter: false,
-            suppressColumnSelectAll: false,
+            contractColumnSelection: !!columnsMenuParams.contractColumnSelection,
+            suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
+            suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
+            suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
             suppressSideButtons: false,
-            suppressSyncLayoutWithGrid: false,
+            suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
-        });
+        }, 'columnMenu');
 
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
@@ -508,8 +498,9 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
+        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
+
         const initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
         const onBodyScroll = (event: any) => {

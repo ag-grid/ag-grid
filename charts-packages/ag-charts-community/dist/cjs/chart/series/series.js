@@ -52,6 +52,7 @@ var Series = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Series.prototype.setColors = function (fills, strokes) { };
     /**
      * Returns the actual keys used (to fetch the values from `data` items) for the given direction.
      */

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,10 +25,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../../utils");
 var rowNode_1 = require("../../entities/rowNode");
 var context_1 = require("../../context/context");
 var beanStub_1 = require("../../context/beanStub");
+var number_1 = require("../../utils/number");
 var RowNodeBlock = /** @class */ (function (_super) {
     __extends(RowNodeBlock, _super);
     function RowNodeBlock(blockNumber, rowNodeCacheParams) {
@@ -198,7 +198,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
-        lastRow = utils_1._.cleanNumber(lastRow);
+        lastRow = number_1.cleanNumber(lastRow);
         // check here if lastRow should be set
         var event = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,

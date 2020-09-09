@@ -12,18 +12,18 @@ export declare class Arc extends Path {
     static className: string;
     protected static defaultStyles: {
         fill: string;
-        stroke: any;
+        stroke: undefined;
         strokeWidth: number;
-        lineDash: any;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        fillShadow: any;
-        strokeShadow: any;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         lineWidth: number;
-        fillStyle: any;
+        fillStyle: null;
     };
     constructor();
     private _centerX;

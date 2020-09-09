@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ChartBuilder } from "ag-charts-community";
+import { AgChart } from "ag-charts-community";
 import { PolarChartProxy } from "./polarChartProxy";
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
@@ -32,8 +32,38 @@ var PieChartProxy = /** @class */ (function (_super) {
         _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.getDefaultOptionsFromTheme = function (theme) {
+        var options = _super.prototype.getDefaultOptionsFromTheme.call(this, theme);
+        var seriesDefaults = theme.getConfig('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: __assign(__assign({}, seriesDefaults.label), { minRequiredAngle: seriesDefaults.label.minAngle }),
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle,
+        };
+        return options;
+    };
     PieChartProxy.prototype.createChart = function (options) {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        var seriesDefaults = options.seriesDefaults;
+        var agChartOptions = options;
+        agChartOptions.autoSize = true;
+        agChartOptions.series = [__assign(__assign({}, seriesDefaults), { fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, type: 'pie' })];
+        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -50,10 +80,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         var calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
-            var seriesOptions = __assign(__assign({}, seriesDefaults), { type: "pie", field: {
-                    angleKey: pieSeriesField.colId,
-                }, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }) });
-            pieSeries = ChartBuilder.createSeries(seriesOptions);
+            pieSeries = AgChart.createComponent(__assign(__assign({}, seriesDefaults), { type: 'pie', angleKey: pieSeriesField.colId, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }), fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer }), 'pie.series');
         }
         pieSeries.angleName = pieSeriesField.displayName;
         pieSeries.labelKey = params.category.id;
@@ -62,7 +89,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;
         if (calloutColors) {
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = strokes;
         }
         chart.addSeries(pieSeries);
     };

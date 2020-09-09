@@ -1,5 +1,5 @@
-import { Component } from "./component";
-import { FocusController } from "../focusController";
+import { Component } from './component';
+import { FocusController } from '../focusController';
 /**
  * This provides logic to override the default browser focus logic.
  *
@@ -11,20 +11,23 @@ import { FocusController } from "../focusController";
  * that focus goes to the first cell of the first header row.
  */
 export declare class ManagedFocusComponent extends Component {
-    protected onTabKeyDown?(e: KeyboardEvent): void;
+    private readonly isFocusableContainer;
     protected handleKeyDown?(e: KeyboardEvent): void;
     static FOCUS_MANAGED_CLASS: string;
     private topTabGuard;
     private bottomTabGuard;
     private skipTabGuardFocus;
-    protected focusController: FocusController;
+    protected readonly focusController: FocusController;
+    constructor(template?: string, isFocusableContainer?: boolean);
     protected postConstruct(): void;
-    protected wireFocusManagement(): void;
-    protected isFocusableContainer(): boolean;
     protected focusInnerElement(fromBottom?: boolean): void;
+    /**
+     * By default this will tab though the elements in the default order. Override if you require special logic.
+     */
+    protected onTabKeyDown(e: KeyboardEvent): void;
     protected onFocusIn(e: FocusEvent): void;
     protected onFocusOut(e: FocusEvent): void;
-    forceFocusOutOfContainer(): void;
+    forceFocusOutOfContainer(up?: boolean): void;
     appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void;
     private createTabGuard;
     private addTabGuards;
@@ -33,4 +36,6 @@ export declare class ManagedFocusComponent extends Component {
     private onFocus;
     private activateTabGuards;
     private deactivateTabGuards;
+    private tabGuardsAreActive;
+    protected clearGui(): void;
 }

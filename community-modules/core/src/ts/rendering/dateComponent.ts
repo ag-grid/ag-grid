@@ -9,6 +9,9 @@ export interface IDate {
 
     /* [optional method] sets the current input placeholder */
     setInputPlaceholder?(placeholder: string): void;
+
+    /* [optional method] sets the current input aria label */
+    setInputAriaLabel?(placeholder: string): void;
 }
 
 export interface IDateParams {

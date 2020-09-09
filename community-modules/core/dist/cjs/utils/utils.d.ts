@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare const _: {
@@ -6,8 +6,9 @@ export declare const _: {
     camelCaseToHyphen(str: string): string;
     hyphenToCamelCase(str: string): string;
     capitalise(str: string): string;
-    escape(toEscape: string): string;
+    escapeString(toEscape: string): string;
     camelCaseToHumanText(camelCase: string): string;
+    startsWith(str: string, matchStart: string): boolean;
     convertToSet<T>(list: T[]): Set<T>;
     sortRowNodesByOrder(rowNodes: import("../main").RowNode[], rowNodeOrder: {
         [id: string]: number;
@@ -18,15 +19,16 @@ export declare const _: {
     } | T_1[], callback: (key: string, value: T_1) => void): void;
     cloneObject<T_2>(object: T_2): T_2;
     deepCloneObject<T_3>(object: T_3): T_3;
-    getProperty<T_4, K extends keyof T_4>(object: T_4, key: K): any;
-    setProperty<T_5, K_1 extends keyof T_5>(object: T_5, key: K_1, value: any): void;
-    copyPropertiesIfPresent<S, T_6 extends S, K_2 extends keyof S>(source: S, target: T_6, ...properties: K_2[]): void;
-    copyPropertyIfPresent<S_1, T_7 extends S_1, K_3 extends keyof S_1>(source: S_1, target: T_7, property: K_3, transform?: (value: S_1[K_3]) => any): void;
+    deepCloneDefinition<T_4>(object: T_4, keysToSkip?: string[]): T_4;
+    getProperty<T_5, K extends keyof T_5>(object: T_5, key: K): any;
+    setProperty<T_6, K_1 extends keyof T_6>(object: T_6, key: K_1, value: any): void;
+    copyPropertiesIfPresent<S, T_7 extends S, K_2 extends keyof S>(source: S, target: T_7, ...properties: K_2[]): void;
+    copyPropertyIfPresent<S_1, T_8 extends S_1, K_3 extends keyof S_1>(source: S_1, target: T_8, property: K_3, transform?: (value: S_1[K_3]) => any): void;
     getAllKeysInObjects(objects: any[]): string[];
-    mergeDeep(dest: any, source: any, copyUndefined?: boolean): void;
-    assign<T_8, U>(target: T_8, source: U): T_8 & U;
-    assign<T_9, U_1, V>(target: T_9, source1: U_1, source2: V): T_9 & U_1 & V;
-    assign<T_10, U_2, V_1, W>(target: T_10, source1: U_2, source2: V_1, source3: W): T_10 & U_2 & V_1 & W;
+    mergeDeep(dest: any, source: any, copyUndefined?: boolean, objectsThatNeedCopy?: string[], iteration?: number): void;
+    assign<T_9, U>(target: T_9, source: U): T_9 & U;
+    assign<T_10, U_1, V>(target: T_10, source1: U_1, source2: V): T_10 & U_1 & V;
+    assign<T_11, U_2, V_1, W>(target: T_11, source1: U_2, source2: V_1, source3: W): T_11 & U_2 & V_1 & W;
     missingOrEmptyObject(value: any): boolean;
     get(source: any, expression: string, defaultValue: any): any;
     set(target: any, expression: string, value: any): void;
@@ -44,7 +46,7 @@ export declare const _: {
     normalizeWheel(event: any): any;
     isLeftClick(mouseEvent: MouseEvent): boolean;
     areEventsNear(e1: Touch | MouseEvent, e2: Touch | MouseEvent, pixelCount: number): boolean;
-    keys<T_11>(map: Map<T_11, any>): T_11[];
+    keys<T_12>(map: Map<T_12, any>): T_12[];
     isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     isCharacterKey(event: KeyboardEvent): boolean;
     isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
@@ -54,20 +56,23 @@ export declare const _: {
     iconNameClassMap: {
         [key: string]: string;
     };
-    makeNull<T_12>(value?: T_12): T_12;
-    exists<T_13>(value: T_13, allowEmptyString?: boolean): boolean;
-    missing<T_14>(value: T_14): boolean;
-    missingOrEmpty<T_15>(value?: string | T_15[]): boolean;
+    makeNull<T_13>(value?: T_13): T_13;
+    exists<T_14>(value: T_14, allowEmptyString?: boolean): boolean;
+    missing<T_15>(value: T_15): boolean;
+    missingOrEmpty<T_16>(value?: string | T_16[]): boolean;
     toStringOrNull(value: any): string;
-    referenceCompare<T_16>(left: T_16, right: T_16): boolean;
+    attrToNumber(value: string | number): number;
+    attrToBoolean(value: string | boolean): boolean;
+    attrToString(value: string): string;
+    referenceCompare<T_17>(left: T_17, right: T_17): boolean;
     jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;
     defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
-    find<T_17>(collection: {
-        [id: string]: T_17;
-    } | T_17[], predicate: string | boolean | ((item: T_17) => boolean), value?: any): T_17;
-    values<T_18>(object: {
-        [key: string]: T_18;
-    } | Set<T_18> | Map<any, T_18>): T_18[];
+    find<T_18>(collection: {
+        [id: string]: T_18;
+    } | T_18[], predicate: string | boolean | ((item: T_18) => boolean), value?: any): T_18;
+    values<T_19>(object: {
+        [key: string]: T_19;
+    } | Set<T_19> | Map<any, T_19>): T_19[];
     fuzzyCheckStrings(inputValues: string[], validValues: string[], allSuggestions: string[]): {
         [p: string]: string[];
     };
@@ -76,6 +81,7 @@ export declare const _: {
     string_distances(str1: string, str2: string): number;
     string_weighted_distances(str1: string, str2: string): number;
     doOnce(func: () => void, key: string): void;
+    getFunctionName(funcConstructor: any): any;
     getFunctionParameters(func: any): any;
     isFunction(val: any): boolean;
     executeInAWhile(funcs: Function[]): void;
@@ -121,6 +127,7 @@ export declare const _: {
     getInnerWidth(el: HTMLElement): number;
     getAbsoluteHeight(el: HTMLElement): number;
     getAbsoluteWidth(el: HTMLElement): number;
+    isRtlNegativeScroll(): boolean;
     getScrollLeft(element: HTMLElement, rtl: boolean): number;
     setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     clearElement(el: HTMLElement): void;
@@ -150,6 +157,8 @@ export declare const _: {
     copyNodeList(nodeList: NodeList): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
+    addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
+    nodeListForEach<T_20 extends Node>(nodeList: NodeListOf<T_20>, action: (value: T_20) => void): void;
     serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
     parseDateTimeFromString(value: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
@@ -167,30 +176,53 @@ export declare const _: {
     getBodyHeight(): number;
     firstExistingValue<A>(...values: A[]): A;
     anyExists(values: any[]): boolean;
-    existsAndNotEmpty<T_19>(value?: T_19[]): boolean;
-    last<T_20>(arr: T_20[]): T_20;
-    areEqual<T_21>(a: T_21[], b: T_21[], comparator?: (a: T_21, b: T_21) => boolean): boolean;
+    existsAndNotEmpty<T_21>(value?: T_21[]): boolean;
+    last<T_22>(arr: T_22[]): T_22;
+    areEqual<T_23>(a: T_23[], b: T_23[], comparator?: (a: T_23, b: T_23) => boolean): boolean;
     compareArrays(array1?: any[], array2?: any[]): boolean;
     shallowCompare(arr1: any[], arr2: any[]): boolean;
     sortNumerically(array: number[]): number[];
-    removeRepeatsFromArray<T_22>(array: T_22[], object: T_22): void;
-    removeFromArray<T_23>(array: T_23[], object: T_23): void;
-    removeAllFromArray<T_24>(array: T_24[], toRemove: T_24[]): void;
-    insertIntoArray<T_25>(array: T_25[], object: T_25, toIndex: number): void;
-    insertArrayIntoArray<T_26>(dest: T_26[], src: T_26[], toIndex: number): void;
-    moveInArray<T_27>(array: T_27[], objectsToMove: T_27[], toIndex: number): void;
-    includes<T_28>(array: T_28[], value: T_28): boolean;
+    removeRepeatsFromArray<T_24>(array: T_24[], object: T_24): void;
+    removeFromArray<T_25>(array: T_25[], object: T_25): void;
+    removeAllFromArray<T_26>(array: T_26[], toRemove: T_26[]): void;
+    insertIntoArray<T_27>(array: T_27[], object: T_27, toIndex: number): void;
+    insertArrayIntoArray<T_28>(dest: T_28[], src: T_28[], toIndex: number): void;
+    moveInArray<T_29>(array: T_29[], objectsToMove: T_29[], toIndex: number): void;
+    includes<T_30>(array: T_30[], value: T_30): boolean;
     flatten(arrayOfArrays: any[]): any[];
-    pushAll<T_29>(target: T_29[], source: T_29[]): void;
-    toStrings<T_30>(array: T_30[]): string[];
-    findIndex<T_31>(collection: T_31[], predicate: (item: T_31, idx: number, collection: T_31[]) => boolean): number;
-    every<T_32>(list: T_32[], predicate: (value: T_32, index: number) => boolean): boolean;
-    some<T_33>(list: T_33[], predicate: (value: T_33, index: number) => boolean): boolean;
-    forEach<T_34>(list: T_34[], action: (value: T_34, index: number) => void): void;
-    map<T_35, V_2>(list: T_35[], process: (value: T_35, index: number) => V_2): V_2[];
-    filter<T_36>(list: T_36[], predicate: (value: T_36, index: number) => boolean): T_36[];
-    reduce<T_37, V_3>(list: T_37[], step: (acc: V_3, value: T_37, index: number) => V_3, initial: V_3): V_3;
-    forEachSnapshotFirst<T_38>(list: T_38[], callback: (item: T_38) => void): void;
+    pushAll<T_31>(target: T_31[], source: T_31[]): void;
+    toStrings<T_32>(array: T_32[]): string[];
+    findIndex<T_33>(collection: T_33[], predicate: (item: T_33, idx: number, collection: T_33[]) => boolean): number;
+    every<T_34>(list: T_34[], predicate: (value: T_34, index: number) => boolean): boolean;
+    some<T_35>(list: T_35[], predicate: (value: T_35, index: number) => boolean): boolean;
+    forEach<T_36>(list: T_36[], action: (value: T_36, index: number) => void): void;
+    forEachReverse<T_37>(list: T_37[], action: (value: T_37, index: number) => void): void;
+    map<T_38, V_2>(list: T_38[], process: (value: T_38, index: number) => V_2): V_2[];
+    filter<T_39>(list: T_39[], predicate: (value: T_39, index: number) => boolean): T_39[];
+    reduce<T_40, V_3>(list: T_40[], step: (acc: V_3, value: T_40, index: number) => V_3, initial: V_3): V_3;
+    forEachSnapshotFirst<T_41>(list: T_41[], callback: (item: T_41) => void): void;
+    getAriaSortState(column: import("../main").Column): "none" | "ascending" | "descending";
+    getAriaLevel(element: HTMLElement): number;
+    getAriaPosInSet(element: HTMLElement): number;
+    setAriaLabel(element: HTMLElement, label: string): void;
+    setAriaLabelledBy(element: HTMLElement, labelledBy: string): void;
+    setAriaDescribedBy(element: HTMLElement, describedby: string): void;
+    setAriaLevel(element: HTMLElement, level: number): void;
+    setAriaDisabled(element: HTMLElement, disabled: boolean): void;
+    setAriaExpanded(element: HTMLElement, expanded: boolean): void;
+    removeAriaExpanded(element: HTMLElement): void;
+    setAriaSetSize(element: HTMLElement, setsize: number): void;
+    setAriaPosInSet(element: HTMLElement, position: number): void;
+    setAriaMultiSelectable(element: HTMLElement, multiSelectable: boolean): void;
+    setAriaRowCount(element: HTMLElement, rowCount: number): void;
+    setAriaRowIndex(element: HTMLElement, rowIndex: number): void;
+    setAriaColCount(element: HTMLElement, colCount: number): void;
+    setAriaColIndex(element: HTMLElement, colIndex: number): void;
+    setAriaColSpan(element: HTMLElement, colSpan: number): void;
+    setAriaSort(element: HTMLElement, sort: "none" | "ascending" | "descending"): void;
+    removeAriaSort(element: HTMLElement): void;
+    setAriaSelected(element: HTMLElement, selected: boolean): void;
+    setAriaChecked(element: HTMLElement, checked?: boolean): void;
     getNameOfClass(theClass: any): string;
     findLineByLeastSquares(values: number[]): number[];
     cssStyleObjectToMarkup(stylesToUse: any): string;

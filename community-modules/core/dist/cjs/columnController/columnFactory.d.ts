@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -23,7 +23,8 @@ export declare class ColumnFactory extends BeanStub {
     private createColumnGroup;
     private createMergedColGroupDef;
     private createColumn;
-    private findExistingColumn;
+    private applyColumnState;
+    findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column;
     mergeColDefs(colDef: ColDef): ColDef;
     private assignColumnTypes;
     private checkForDeprecatedItems;

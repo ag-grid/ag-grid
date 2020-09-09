@@ -2,14 +2,17 @@ import {
     AgEvent,
     Autowired,
     Component,
-    Constants,
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
-    RefSelector,
     TooltipFeature,
-    _
+    _,
+    PopupService,
+    IComponent,
+    KeyCode
 } from "@ag-grid-community/core";
+import { MenuList } from './menuList';
+import { MenuPanel } from './menuPanel';
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -18,99 +21,69 @@ export interface MenuItemSelectedEvent extends AgEvent {
     action?: () => void;
     checked?: boolean;
     icon?: HTMLElement | string;
-    subMenu?: (MenuItemDef | string)[];
+    subMenu?: (MenuItemDef | string)[] | IComponent<any>;
     cssClasses?: string[];
     tooltip?: string;
     event: MouseEvent | KeyboardEvent;
 }
 
+export interface MenuItemActivatedEvent extends AgEvent {
+    menuItem: MenuItemComponent;
+}
+
+export interface MenuItemComponentParams extends MenuItemDef {
+    isCompact?: boolean;
+    isAnotherSubMenuOpen: () => boolean;
+}
+
 export class MenuItemComponent extends Component {
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('popupService') private readonly popupService: PopupService;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    public static EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
+    public static EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
+    public static ACTIVATION_DELAY = 80;
 
-    // private instance = Math.random();
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-menu-option" tabindex="-1">
-            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"></span>
-            <span ref="eName" class="ag-menu-option-text ag-menu-option-part"></span>
-            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
-            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part"></span>
-        </div>`;
-
-    @RefSelector('eIcon') private eIcon: HTMLElement;
-    @RefSelector('eName') private eName: HTMLElement;
-    @RefSelector('eShortcut') private eShortcut: HTMLElement;
-    @RefSelector('ePopupPointer') private ePopupPointer: HTMLElement;
-
-    public static EVENT_ITEM_SELECTED = 'itemSelected';
-
-    private params: MenuItemDef;
+    private isActive = false;
     private tooltip: string;
+    private hideSubMenu: () => void;
+    private subMenuIsOpen = false;
+    private activateTimeoutId: number;
+    private deactivateTimeoutId: number;
 
-    constructor(params: MenuItemDef) {
-        super(MenuItemComponent.TEMPLATE);
-        this.params = params;
+    constructor(private readonly params: MenuItemComponentParams) {
+        super();
+
+        this.setTemplate(/* html */`<div class="${this.getClassName()}" tabindex="-1" role="treeitem"></div>`);
     }
 
     @PostConstruct
     private init() {
+        this.addIcon();
+        this.addName();
+        this.addShortcut();
+        this.addSubMenu();
+        this.addTooltip();
 
-        if (this.params.checked) {
-            this.eIcon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
-        } else if (this.params.icon) {
-            if (_.isNodeOrElement(this.params.icon)) {
-                this.eIcon.appendChild(this.params.icon as HTMLElement);
-            } else if (typeof this.params.icon === 'string') {
-                this.eIcon.innerHTML = this.params.icon as string;
-            } else {
-                console.warn('ag-Grid: menu item icon must be DOM node or string');
-            }
-        } else {
-            // if i didn't put space here, the alignment was messed up, probably
-            // fixable with CSS but i was spending to much time trying to figure
-            // it out.
-            this.eIcon.innerHTML = '&nbsp;';
-        }
-
-        if (this.params.tooltip) {
-            this.tooltip = this.params.tooltip;
-            if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                this.getGui().setAttribute('title', this.tooltip);
-            } else {
-                this.createManagedBean(new TooltipFeature(this, 'menu'));
-            }
-        }
-
-        if (this.params.shortcut) {
-            this.eShortcut.innerHTML = this.params.shortcut;
-        }
-        if (this.params.subMenu) {
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                // for RTL, we show arrow going left
-                this.ePopupPointer.appendChild(_.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
-            } else {
-                // for normal, we show arrow going right
-                this.ePopupPointer.appendChild(_.createIconNoSpan('smallRight', this.gridOptionsWrapper));
-            }
-        } else {
-            this.ePopupPointer.innerHTML = '&nbsp;';
-        }
-        this.eName.innerHTML = this.params.name;
+        const eGui = this.getGui();
 
         if (this.params.disabled) {
-            _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+            this.addCssClass(this.getClassName('disabled'));
+            _.setAriaDisabled(eGui, true);
         } else {
-            this.addGuiEventListener('click', this.onOptionSelected.bind(this));
+            this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-                if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
-                    this.onOptionSelected(e);
+                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                    this.onItemSelected(e);
                 }
             });
+
+            this.addGuiEventListener('mouseenter', () => this.onMouseEnter());
+            this.addGuiEventListener('mouseleave', () => this.onMouseLeave());
         }
 
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
+            this.params.cssClasses.forEach(it => _.addCssClass(eGui, it));
         }
     }
 
@@ -122,9 +95,200 @@ export class MenuItemComponent extends Component {
         return undefined;
     }
 
-    private onOptionSelected(event: MouseEvent | KeyboardEvent): void {
+    public isDisabled(): boolean {
+        return !!this.params.disabled;
+    }
+
+    public openSubMenu(activateFirstItem = false): void {
+        this.closeSubMenu();
+
+        if (!this.params.subMenu) { return; }
+
+        const ePopup = _.loadTemplate(/* html */`<div class="ag-menu" role="presentation"></div>`);
+        let destroySubMenu: () => void;
+
+        if (this.params.subMenu instanceof Array) {
+            const currentLevel = _.getAriaLevel(this.getGui());
+            const nextLevel = isNaN(currentLevel) ? 1 : (currentLevel + 1);
+            const childMenu = this.createBean(new MenuList(nextLevel));
+
+            childMenu.setParentComponent(this);
+            childMenu.addMenuItems(this.params.subMenu);
+            ePopup.appendChild(childMenu.getGui());
+
+            // bubble menu item selected events
+            this.addManagedListener(childMenu, MenuItemComponent.EVENT_MENU_ITEM_SELECTED, e => this.dispatchEvent(e));
+            childMenu.addGuiEventListener('mouseenter', () => this.cancelDeactivate());
+
+            destroySubMenu = () => this.destroyBean(childMenu);
+
+            if (activateFirstItem) {
+                setTimeout(() => childMenu.activateFirstItem(), 0);
+            }
+        } else {
+            const { subMenu } = this.params;
+
+            const menuPanel = this.createBean(new MenuPanel(subMenu));
+            menuPanel.setParentComponent(this);
+
+            const subMenuGui = menuPanel.getGui();
+            const mouseEvent = 'mouseenter';
+            const mouseEnterListener = () => this.cancelDeactivate();
+
+            subMenuGui.addEventListener(mouseEvent, mouseEnterListener);
+
+            destroySubMenu = () => subMenuGui.removeEventListener(mouseEvent, mouseEnterListener);
+
+            ePopup.appendChild(subMenuGui);
+
+            if (subMenu.afterGuiAttached) {
+                setTimeout(() => subMenu.afterGuiAttached(), 0);
+            }
+        }
+
+        const eGui = this.getGui();
+
+        const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
+            { eventSource: eGui, ePopup })
+
+        const closePopup = this.popupService.addPopup({
+            modal: true,
+            eChild: ePopup,
+            positionCallback: positionCallback,
+            anchorToElement: eGui
+        });
+
+        this.subMenuIsOpen = true;
+        _.setAriaExpanded(eGui, true);
+
+        this.hideSubMenu = () => {
+            closePopup();
+            this.subMenuIsOpen = false;
+            _.setAriaExpanded(eGui, false);
+            destroySubMenu();
+        };
+    }
+
+    public closeSubMenu(): void {
+        if (!this.hideSubMenu) { return; }
+        this.hideSubMenu();
+        this.hideSubMenu = null;
+        _.setAriaExpanded(this.getGui(), false);
+    }
+
+    public isSubMenuOpen(): boolean {
+        return this.subMenuIsOpen;
+    }
+
+    public activate(openSubMenu?: boolean): void {
+        this.cancelActivate();
+
+        if (this.params.disabled) { return; }
+
+        this.isActive = true;
+        this.addCssClass(this.getClassName('active'));
+        this.getGui().focus();
+
+        if (openSubMenu && this.params.subMenu) {
+            window.setTimeout(() => {
+                if (this.isAlive() && this.isActive) {
+                    this.openSubMenu();
+                }
+            }, 300);
+        }
+
+        this.onItemActivated();
+    }
+
+    public deactivate() {
+        this.cancelDeactivate();
+        this.removeCssClass(this.getClassName('active'));
+        this.isActive = false;
+
+        if (this.subMenuIsOpen) {
+            this.hideSubMenu();
+        }
+    }
+
+    private addIcon(): void {
+        if (!this.params.checked && !this.params.icon && this.params.isCompact) { return; }
+
+        const icon = _.loadTemplate(/* html */
+            `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`);
+
+        if (this.params.checked) {
+            icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
+        } else if (this.params.icon) {
+            if (_.isNodeOrElement(this.params.icon)) {
+                icon.appendChild(this.params.icon as HTMLElement);
+            } else if (typeof this.params.icon === 'string') {
+                icon.innerHTML = this.params.icon;
+            } else {
+                console.warn('ag-Grid: menu item icon must be DOM node or string');
+            }
+        }
+
+        this.getGui().appendChild(icon);
+    }
+
+    private addName(): void {
+        if (!this.params.name && this.params.isCompact) { return; }
+
+        const name = _.loadTemplate(/* html */
+            `<span ref="eName" class="${this.getClassName('part')} ${this.getClassName('text')}">${this.params.name || ''}</span>`);
+
+        this.getGui().appendChild(name);
+    }
+
+    private addTooltip(): void {
+        if (!this.params.tooltip) { return; }
+
+        this.tooltip = this.params.tooltip;
+
+        if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            this.getGui().setAttribute('title', this.tooltip);
+        } else {
+            this.createManagedBean(new TooltipFeature(this, 'menu'));
+        }
+    }
+
+    private addShortcut(): void {
+        if (!this.params.shortcut && this.params.isCompact) { return; }
+        const shortcut = _.loadTemplate(/* html */
+            `<span ref="eShortcut" class="${this.getClassName('part')} ${this.getClassName('shortcut')}">${this.params.shortcut || ''}</span>`);
+
+        this.getGui().appendChild(shortcut);
+    }
+
+    private addSubMenu(): void {
+        if (!this.params.subMenu && this.params.isCompact) { return; }
+
+        const pointer = _.loadTemplate(/* html */
+            `<span ref="ePopupPointer" class="${this.getClassName('part')} ${this.getClassName('popup-pointer')}"></span>`);
+
+        const eGui = this.getGui();
+
+        if (this.params.subMenu) {
+            const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
+            _.setAriaExpanded(eGui, false);
+
+            pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper));
+        }
+
+        eGui.appendChild(pointer);
+    }
+
+    private onItemSelected(event: MouseEvent | KeyboardEvent): void {
+        if (this.params.action) {
+            this.params.action();
+        } else {
+            this.openSubMenu(event && event.type === 'keydown');
+        }
+
+        if (this.params.subMenu && !this.params.action) { return; }
+
         const e: MenuItemSelectedEvent = {
-            type: MenuItemComponent.EVENT_ITEM_SELECTED,
+            type: MenuItemComponent.EVENT_MENU_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,
             cssClasses: this.params.cssClasses,
@@ -138,14 +302,58 @@ export class MenuItemComponent extends Component {
         };
 
         this.dispatchEvent(e);
+    }
 
-        if (this.params.action) {
-            this.params.action();
+    private onItemActivated(): void {
+        const event: MenuItemActivatedEvent = {
+            type: MenuItemComponent.EVENT_MENU_ITEM_ACTIVATED,
+            menuItem: this,
+        };
+
+        this.dispatchEvent(event);
+    }
+
+    private cancelActivate(): void {
+        if (this.activateTimeoutId) {
+            window.clearTimeout(this.activateTimeoutId);
+            this.activateTimeoutId = 0;
         }
     }
 
-    protected destroy(): void {
-        // console.log('MenuItemComponent->destroy() ' + this.instance);
-        super.destroy();
+    private cancelDeactivate(): void {
+        if (this.deactivateTimeoutId) {
+            window.clearTimeout(this.deactivateTimeoutId);
+            this.deactivateTimeoutId = 0;
+        }
+    }
+
+    private onMouseEnter(): void {
+        this.cancelDeactivate();
+
+        if (this.params.isAnotherSubMenuOpen()) {
+            // wait to see if the user enters the open sub-menu
+            this.activateTimeoutId = window.setTimeout(() => this.activate(true), MenuItemComponent.ACTIVATION_DELAY);
+        } else {
+            // activate immediately
+            this.activate(true);
+        }
+    }
+
+    private onMouseLeave(): void {
+        this.cancelActivate();
+
+        if (this.isSubMenuOpen()) {
+            // wait to see if the user enters the sub-menu
+            this.deactivateTimeoutId = window.setTimeout(() => this.deactivate(), MenuItemComponent.ACTIVATION_DELAY);
+        } else {
+            // de-activate immediately
+            this.deactivate();
+        }
+    }
+
+    private getClassName(suffix?: string) {
+        const prefix = this.params.isCompact ? 'ag-compact-menu-option' : 'ag-menu-option';
+
+        return suffix ? `${prefix}-${suffix}` : prefix;
     }
 }

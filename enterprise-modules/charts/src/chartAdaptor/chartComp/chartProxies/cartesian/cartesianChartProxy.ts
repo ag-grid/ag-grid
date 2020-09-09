@@ -1,20 +1,41 @@
-import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
+import {ChartProxy, ChartProxyParams} from "../chartProxy";
+import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
 import {
     CartesianChart,
+    CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
-    ChartBuilder,
+    ChartTheme,
     find,
     GroupedCategoryAxis,
-    GroupedCategoryChart
+    GroupedCategoryChart,
+    NumberAxis,
+    TimeAxis
 } from "ag-charts-community";
-import { ChartDataModel } from "../../chartDataModel";
+import {ChartDataModel} from "../../chartDataModel";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
     protected constructor(params: ChartProxyParams) {
         super(params);
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<T> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+        const standaloneChartType = this.getStandaloneChartType();
+        const flipXY = standaloneChartType === 'bar';
+
+        let xAxisType = 'category';
+        let yAxisType = 'number';
+
+        if (flipXY) {
+            [xAxisType, yAxisType] = [yAxisType, xAxisType];
+        }
+
+        options.xAxis = theme.getConfig(standaloneChartType + '.axes.' + xAxisType);
+        options.yAxis = theme.getConfig(standaloneChartType + '.axes.' + yAxisType);
+
+        return options;
     }
 
     public getAxisProperty<T = string>(expression: string): T {
@@ -37,12 +58,30 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     protected updateLabelRotation(categoryId: string, isHorizontalChart = false) {
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
+        const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+
+        const chartType = this.getStandaloneChartType();
+        let userThemeOverrideRotation = undefined;
+        const commonRotation = _.get(themeOverrides, 'common.axes.category.label.rotation', undefined);
+        const cartesianRotation = _.get(themeOverrides, 'cartesian.axes.category.label.rotation', undefined);
+        const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.category.label.rotation`, undefined);
+        if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+            userThemeOverrideRotation = chartTypeRotation;
+        } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
+            userThemeOverrideRotation = cartesianRotation;
+        } else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
+            userThemeOverrideRotation = commonRotation;
+        }
 
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             const { label } = this.chartOptions[axisKey];
 
-            if (label && label.rotation) {
-                labelRotation = label.rotation;
+            if (label) {
+                if (userThemeOverrideRotation !== undefined) {
+                    labelRotation = userThemeOverrideRotation;
+                } else {
+                    labelRotation = label.rotation || 335;
+                }
             }
         }
 
@@ -95,6 +134,17 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         return options;
     }
 
+    protected axisTypeToClassMap: { [key in string]: typeof ChartAxis } = {
+        number: NumberAxis,
+        category: CategoryAxis,
+        groupedCategory: GroupedCategoryAxis,
+        time: TimeAxis
+    };
+
+    protected getAxisClass(axisType: string) {
+        return this.axisTypeToClassMap[axisType];
+    }
+
     protected updateAxes(baseAxisType: AxisType = 'category', isHorizontalChart = false): void {
         const baseAxis = isHorizontalChart ? this.getYAxis() : this.getXAxis();
 
@@ -108,7 +158,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             return;
         }
 
-        const axisClass = ChartBuilder.toAxisClass(baseAxisType)
+        const axisClass = this.axisTypeToClassMap[baseAxisType];
 
         if (baseAxis instanceof axisClass) { return; }
 
@@ -118,16 +168,16 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             options = {
                 ...options,
                 yAxis: {
-                    ...options.yAxis,
                     type: baseAxisType,
+                    ...options.yAxis
                 }
             };
         } else if (!isHorizontalChart && !options.xAxis.type) {
             options = {
                 ...options,
                 xAxis: {
-                    ...options.xAxis,
                     type: baseAxisType,
+                    ...options.xAxis
                 }
             };
         }

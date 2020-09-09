@@ -8,7 +8,6 @@ export declare enum SetFilterModelValuesType {
 export declare class SetValueModel implements IEventEmitter {
     private readonly colDef;
     private readonly column;
-    private readonly valueGetter;
     private readonly doesRowPassOtherFilters;
     private readonly suppressSorting;
     private readonly setIsLoading;
@@ -17,8 +16,8 @@ export declare class SetValueModel implements IEventEmitter {
     static EVENT_AVAILABLE_VALUES_CHANGED: string;
     private readonly localEventService;
     private readonly filterParams;
-    private readonly clientSideRowModel;
     private readonly formatter;
+    private readonly clientSideValuesExtractor;
     private valuesType;
     private miniFilterText;
     /** Values provided to the filter for use. */
@@ -33,7 +32,7 @@ export declare class SetValueModel implements IEventEmitter {
     private displayedValues;
     /** Values that have been selected for this filter. */
     private selectedValues;
-    constructor(rowModel: IRowModel, colDef: ColDef, column: Column, valueGetter: (node: RowNode) => any, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
+    constructor(rowModel: IRowModel, valueGetter: (node: RowNode) => any, colDef: ColDef, column: Column, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     /**
@@ -48,7 +47,7 @@ export declare class SetValueModel implements IEventEmitter {
      * otherwise the current selection will be preserved.
      */
     overrideValues(valuesToUse: string[], keepSelection?: boolean): Promise<void>;
-    refreshAfterAnyFilterChanged(): void;
+    refreshAfterAnyFilterChanged(): Promise<void>;
     private updateAllValues;
     setValuesType(value: SetFilterModelValuesType): void;
     getValuesType(): SetFilterModelValuesType;

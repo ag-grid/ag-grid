@@ -102,15 +102,24 @@ var Navigator = /** @class */ (function () {
         configurable: true
     });
     Navigator.prototype.updateAxes = function (min, max) {
-        this.chart.axes.forEach(function (axis) {
+        var chart = this.chart;
+        var clipSeries = false;
+        chart.axes.forEach(function (axis) {
             if (axis.direction === ChartAxisDirection.X) {
+                if (!clipSeries && (min > 0 || max < 1)) {
+                    clipSeries = true;
+                }
                 axis.visibleRange = [min, max];
                 axis.update();
             }
         });
-        this.chart.series.forEach(function (series) { return series.update(); });
+        chart.seriesRoot.enabled = clipSeries;
+        chart.series.forEach(function (series) { return series.update(); });
     };
     Navigator.prototype.onMouseDown = function (event) {
+        if (!this.enabled) {
+            return;
+        }
         var offsetX = event.offsetX, offsetY = event.offsetY;
         var rs = this.rs;
         var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
@@ -128,6 +137,9 @@ var Navigator = /** @class */ (function () {
         }
     };
     Navigator.prototype.onMouseMove = function (event) {
+        if (!this.enabled) {
+            return;
+        }
         var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
         var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
         var style = this.chart.element.style;

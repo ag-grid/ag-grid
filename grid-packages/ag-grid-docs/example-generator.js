@@ -5,14 +5,14 @@ window.Date = Date;
 global.window = window;
 global.document = document;
 
-const jQuery = require('jquery');
 const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
+const fsExtra = require('fs-extra');
 
 function emptyDirectory(directory) {
-    if (!directory || directory.trim().indexOf('/') === 0) { return; }
+    if (!directory || directory.trim().indexOf('/') === 0 || !fs.existsSync(directory)) { return; }
 
     try {
         const files = fs.readdirSync(directory);
@@ -25,30 +25,54 @@ function emptyDirectory(directory) {
             }
             else {
                 emptyDirectory(filePath);
+                fs.rmdirSync(filePath);
             }
         });
     }
     catch (e) {
         console.error(`Failed to empty ${directory}`, e);
-        return;
     }
+}
+
+const extensionsToOverride = new Set(['html', 'js', 'jsx', 'ts']);
+const parsers = {
+    js: 'babel',
+    jsx: 'babel',
+    ts: 'typescript',
 };
 
-function copyFilesSync(files, dest, tokenToReplace, replaceValue = '') {
+const useAsyncFileOperations = false;
+const encodingOptions = { encoding: 'utf8' };
+
+function writeFile(destination, contents) {
+    // allow developers to override the example theme with an environment variable
+    const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
+
+    if (themeOverride && extensionsToOverride.has(path.extname(destination).slice(1))) {
+        contents = contents.replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
+    }
+
+    const extension = path.extname(destination).slice(1);
+    const parser = parsers[extension] || extension;
+    const formattedContent = format(contents, parser);
+
+    if (useAsyncFileOperations) {
+        fs.writeFile(destination, formattedContent, encodingOptions, () => { });
+    } else {
+        fs.writeFileSync(destination, formattedContent, encodingOptions);
+    }
+}
+
+function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
-        const extension = path.extname(sourceFile).slice(1);
-        const parsers = {
-            js: 'babel',
-            jsx: 'babel',
-            ts: 'typescript',
-        };
 
-        const parser = parsers[extension] || extension;
-        const content = format(getFileContents(sourceFile), parser);
-
-        fs.writeFileSync(destinationFile, content, 'utf8');
+        if (useAsyncFileOperations) {
+            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, contents));
+        } else {
+            writeFile(destinationFile, getFileContents(sourceFile));
+        }
     });
 }
 
@@ -83,16 +107,16 @@ function phpArrayToJSON(string) {
 }
 
 function getFileContents(path) {
-    return fs.readFileSync(path, { encoding: 'utf8' });
+    return fs.readFileSync(path, 'utf8');
 }
 
-function forEachExample(done, name, importType, regex, generateExample, scope = '*', trigger) {
+function forEachExample(done, name, regex, generateExample, scope = '*', trigger) {
     const pattern = trigger && trigger.endsWith('.php') ? trigger : `src/${scope}/*.php`;
     const specificExample = trigger && (matches = /src\/[^\/]+\/([^\/]+)\//.exec(trigger)) && matches[1];
 
     glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
-        let count = 0;
+        const examplesToProcess = [];
 
         files.forEach(file => {
             const contents = getFileContents(file);
@@ -103,41 +127,73 @@ function forEachExample(done, name, importType, regex, generateExample, scope = 
             while ((matches = regex.exec(contents))) {
                 const [example, type, options] = matches.slice(1);
 
-                if (type === 'generated' && (!specificExample || example === specificExample)) {
-                    try {
-                        const examplePath = path.join('./src', section, example);
-                        generateExample(examplePath, phpArrayToJSON(options));
-                        count++;
-                    } catch (error) {
-                        console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
-                        console.error(error);
-                    }
+                if ((type === 'generated' || type === 'mixed') && (!specificExample || example === specificExample)) {
+                    examplesToProcess.push({ file, section, example, options, type });
                 }
             }
         });
 
-        console.log(`\u2714 ${count} ${name} (${importType}) example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+        const processedExamples = new Set();
+
+        let errorInGeneration = false;
+        examplesToProcess.forEach(({ file, section, example, options, type }) => {
+            try {
+                const examplePath = path.join('./src', section, example);
+
+                if (processedExamples.has(examplePath)) { return; }
+
+                generateExample(examplePath, type, phpArrayToJSON(options));
+                processedExamples.add(examplePath);
+            } catch (error) {
+                errorInGeneration = true;
+                console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
+                console.error(error);
+            }
+        });
+
+        const count = processedExamples.size;
+
+        console.log(`\u2714 ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
 
         if (done) {
-            done();
+            done(errorInGeneration ? "Error in example generation" : undefined);
         }
     });
 }
 
 function format(source, parser) {
-    const formatted = source.replace(/\/\/\s*inScope\[.*\n/, ''); // strip out inScope comments
+    const formatted = source.replace(/\/\/\s*inScope\[.*\n/g, ''); // strip out inScope comments
+
+    if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
+        return formatted;
+    }
 
     return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
 }
 
-function createExampleGenerator(prefix, importType) {
-    const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix, importType);
+function createExampleGenerator(prefix, importTypes) {
+    const [parser, vanillaToVue, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
+    const appModuleAngular = new Map();
 
-    return (examplePath, options) => {
+    importTypes.forEach(importType => {
+        appModuleAngular.set(importType, require(`${prefix}${importType}-angular-app-module.ts`).appModuleAngular);
+    });
+
+    return (examplePath, type, options) => {
+
         //    src section                        example        glob
         // eg src/javascript-grid-accessing-data/using-for-each/*.js
         const createExamplePath = pattern => path.join(examplePath, pattern);
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
+
+        const providedExamples = {};
+        if(type === 'mixed') {
+            // note that there's an expectation that both modules & packages exist
+            const providedExamplePaths = glob.sync(`${examplePath}/provided/modules/*`);
+            for (const providedExamplePath of providedExamplePaths) {
+                providedExamples[path.basename(providedExamplePath)] = `${examplePath}/provided`
+            }
+        }
 
         const document = getMatchingPaths('index.html')[0];
 
@@ -169,142 +225,155 @@ function createExampleGenerator(prefix, importType) {
         // read the main script (js) and the associated index.html
         const mainJs = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
-        const bindings = parser(mainJs, indexHtml, options);
+        const bindings = parser(mainJs, indexHtml, options, type, providedExamples);
 
-        // this examples _gen directory
-        // const _gen = createExamplePath(`_gen`);
-        const _gen = createExamplePath(`_gen/${importType}`);
-
-        // inline styles in the examples index.html
-        // will be added to styles.css in the various generated fw examples
-        const style = jQuery(`<div>${indexHtml}</div>`).find('style');
-        let inlineStyles = style.length > 0 && format(style.text(), 'css');
-
-        const reactScripts = getMatchingPaths('*_react*');
-        let indexJSX;
-
-        try {
-            const source = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'), importType);
-
-            indexJSX = format(source, 'babel');
-        } catch (e) {
-            console.error(`Failed to process React example in ${examplePath}`, e);
-            throw e;
-        }
-
-        const angularScripts = getMatchingPaths('*_angular*');
-        const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-        let appComponentTS, appModuleTS;
-
-        try {
-            const source = vanillaToAngular(bindings, angularComponentFileNames, importType);
-
-            appComponentTS = format(source, 'typescript');
-            appModuleTS = format(appModuleAngular(angularComponentFileNames), 'typescript');
-        } catch (e) {
-            console.error(`Failed to process Angular example in ${examplePath}`, e);
-            throw e;
-        }
-
-        const vueScripts = getMatchingPaths('*_vue*');
-        let mainApp;
-
-        try {
-            const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'), importType);
-
-            mainApp = format(source, 'babel');
-        } catch (e) {
-            console.error(`Failed to process Vue example in ${examplePath}`, e);
-            throw e;
-        }
-
-        const writeExampleFiles = (framework, frameworkScripts, files, subdirectory, componentPostfix = '') => {
-            const basePath = path.join(_gen, framework);
-
-            fs.mkdirSync(basePath, { recursive: true });
-            emptyDirectory(basePath);
-
+        const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
+            const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
             fs.mkdirSync(scriptsPath, { recursive: true });
 
-            Object.keys(files).forEach(name => {
-                fs.writeFileSync(path.join(scriptsPath, name), files[name], 'utf8');
-            });
+            Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 
             if (inlineStyles) {
-                fs.writeFileSync(path.join(basePath, 'styles.css'), inlineStyles, 'utf8');
+                writeFile(path.join(basePath, 'styles.css'), inlineStyles);
             }
 
-            copyFilesSync(stylesheets, basePath);
-            copyFilesSync(scripts, basePath);
-            copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
+            copyFiles(stylesheets, basePath);
+            copyFiles(scripts, basePath);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix);
         };
 
-        writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
+        const copyProvidedExample = (importType, framework, providedRootPath) => {
+            const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
+            const sourcePath = path.join(providedRootPath, importType, framework);
 
-        writeExampleFiles('angular', angularScripts, {
-            'app.component.ts': appComponentTS,
-            'app.module.ts': appModuleTS,
-        }, 'app');
+            fsExtra.copySync(sourcePath, destPath);
+        };
 
-        // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
-        // from index.html will still including other non-component files
-        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp }, undefined, 'Vue');
+        emptyDirectory(createExamplePath(`_gen`));
+
+        // inline styles in the examples index.html
+        // will be added to styles.css in the various generated fw examples
+        const style = /<style>(.*)<\/style>/s.exec(indexHtml);
+        let inlineStyles = style && style.length > 0 && format(style[1], 'css');
+
+        if(type === 'mixed' && providedExamples['react']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']))
+        } else {
+            const reactScripts = getMatchingPaths('*_react.*');
+            const reactConfigs = new Map();
+
+            try {
+                const getSource = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'));
+                importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
+            } catch (e) {
+                console.error(`Failed to process React example in ${examplePath}`, e);
+                throw e;
+            }
+
+            importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
+        }
+
+        if(type === 'mixed' && providedExamples['reactFunctional']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']))
+        } else {
+            let reactDeclarativeScripts = null;
+            const reactDeclarativeConfigs = new Map();
+            if (vanillaToReactFunctional && options.reactFunctional) {
+                const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
+                const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react' ;
+                reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
+                try {
+                    const getSource = vanillaToReactFunctional(bindings, extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
+                    importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
+                } catch (e) {
+                    console.error(`Failed to process React example in ${examplePath}`, e);
+                    throw e;
+                }
+
+                debugger
+                importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', reactScriptPostfix, reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
+            }
+        }
+
+        if(type === 'mixed' && providedExamples['angular']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
+        } else {
+            const angularScripts = getMatchingPaths('*_angular*');
+            const angularConfigs = new Map();
+            try {
+                const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
+                const getSource = vanillaToAngular(bindings, angularComponentFileNames);
+
+                importTypes.forEach(importType => {
+                    angularConfigs.set(importType, {
+                        'app.component.ts': getSource(importType),
+                        'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames),
+                    });
+                });
+            } catch (e) {
+                console.error(`Failed to process Angular example in ${examplePath}`, e);
+                throw e;
+            }
+
+            importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
+        }
+
+        if(type === 'mixed' && providedExamples['vue']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
+        } else {
+            const vueScripts = getMatchingPaths('*_vue*');
+            const vueConfigs = new Map();
+            try {
+                const getSource = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
+
+                importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+            } catch (e) {
+                console.error(`Failed to process Vue example in ${examplePath}`, e);
+                throw e;
+            }
+
+            // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
+            // from index.html will still including other non-component files
+            importTypes.forEach(importType => writeExampleFiles(importType, 'vue', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+        }
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
-
         const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
-        writeExampleFiles('vanilla', vanillaScripts, {});
-
-        // allow developers to override the example theme with an environment variable
-        const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
-
-        if (themeOverride) {
-            const generatedFiles = glob.sync(path.join(_gen, '**/*.{html,js,jsx,ts}'));
-
-            generatedFiles.forEach(file => {
-                let content = getFileContents(file).replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
-                fs.writeFileSync(file, content, 'utf8');
-            });
-        }
+        importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {}));
     };
 }
 
-function getGeneratorCode(prefix, importType) {
+function getGeneratorCode(prefix) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
-    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
-    const { appModuleAngular } = require(`${prefix}${importType}-angular-app-module.ts`);
 
-    return [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular];
+    // spl todo - add charts support in time
+    let vanillaToReactFunctional = null;
+    if(prefix === './src/example-runner/grid-') {
+        vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
+    }
+
+    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
+
+    return [parser, vanillaToVue, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
 }
 
-function generateExamples(type, importType, scope, trigger, done) {
-    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`, importType);
+function generateExamples(type, importTypes, scope, trigger, done) {
+    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`, importTypes);
     const regex = new RegExp(`${type}_example\\('.+?'\\s*,\\s*'(.+?)'\\s*,\\s*'(.+?)'(.*?)\\);?\\s*\\?>`, 'g');
 
-    forEachExample(done, type, importType, regex, exampleGenerator, scope, trigger);
+    forEachExample(done, type, regex, exampleGenerator, scope, trigger);
 }
 
-module.exports.generateGridPackageExamples = (scope, trigger, done) => {
+module.exports.generateGridExamples = (scope, trigger, done) => {
     try {
         require('ts-node').register();
-        generateExamples('grid', 'packages', scope, trigger, done);
+        generateExamples('grid', ['packages', 'modules'], scope, trigger, done);
     } catch (e) {
-        console.error('Failed to generate grid package examples', e);
-        if (done) {
-            done(e);
-        }
-    }
-};
-module.exports.generateGridModuleExamples = (scope, trigger, done) => {
-    try {
-        require('ts-node').register();
-        generateExamples('grid', 'modules', scope, trigger, done);
-    } catch (e) {
-        console.error('Failed to generate grid module examples', e);
+        console.error('Failed to generate grid examples', e);
         if (done) {
             done(e);
         }
@@ -314,13 +383,12 @@ module.exports.generateGridModuleExamples = (scope, trigger, done) => {
 module.exports.generateChartExamples = (scope, trigger, done) => {
     try {
         require('ts-node').register();
-        generateExamples('chart', 'packages', scope, trigger, done);
+        generateExamples('chart', ['packages'], scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate chart examples', e);
         if (done) {
             done(e);
         }
-
     }
 };
 
@@ -334,7 +402,6 @@ module.exports.generateExamples = (scope, trigger) => {
         console.log(`\u27F3 Generating all examples...`);
     }
 
-    module.exports.generateGridPackageExamples(scope, trigger);
-    module.exports.generateGridModuleExamples(scope, trigger);
+    module.exports.generateGridExamples(scope, trigger);
     module.exports.generateChartExamples(scope, trigger);
 };

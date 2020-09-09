@@ -18,20 +18,22 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
-import { _ } from "./utils";
 import { GridCore } from "./gridCore";
+import { getTabIndex } from './utils/browser';
+import { findIndex, last } from './utils/array';
+import { makeNull } from './utils/generic';
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
+    @Optional('rangeController') private readonly rangeController: IRangeController;
 
     private static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
     private static FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
@@ -67,6 +69,7 @@ export class FocusController extends BeanStub {
         if (this.focusedCellPosition) {
             const col = this.focusedCellPosition.column;
             const colFromColumnController = this.columnController.getGridColumn(col.getId());
+
             if (col !== colFromColumnController) {
                 this.clearFocusedCell();
             }
@@ -101,8 +104,7 @@ export class FocusController extends BeanStub {
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        const browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
-        if (!browserFocusedCell) {
+        if (!this.getGridCellForDomElement(document.activeElement)) {
             return null;
         }
 
@@ -114,9 +116,11 @@ export class FocusController extends BeanStub {
 
         while (ePointer) {
             const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
+
             if (cellComp) {
                 return cellComp.getCellPosition();
             }
+
             ePointer = ePointer.parentNode;
         }
 
@@ -133,14 +137,25 @@ export class FocusController extends BeanStub {
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
-        const column = _.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
+        const gridColumn = this.columnController.getGridColumn(colKey);
+
+        // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
+        // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
+        // to re-focus the focused cell.
+        if (!gridColumn) {
+            this.focusedCellPosition = null;
+            return;
+        }
+
+        this.focusedCellPosition = { rowIndex, rowPinned: makeNull(floating), column: makeNull(gridColumn) };
         this.onCellFocused(forceBrowserFocus);
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
-        if (_.missing(this.focusedCellPosition)) { return false; }
-        return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        if (this.focusedCellPosition == null) { return false; }
+
+        return this.focusedCellPosition.column === cellPosition.column &&
+            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -148,7 +163,8 @@ export class FocusController extends BeanStub {
     }
 
     public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
-        if (_.missing(this.focusedHeaderPosition)) { return false; }
+        if (this.focusedHeaderPosition == null) { return false; }
+
         const column = headerWrapper.getColumn();
         const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
         const pinned = headerWrapper.getPinned();
@@ -195,12 +211,12 @@ export class FocusController extends BeanStub {
     }
 
     public isRowFocused(rowIndex: number, floating: string): boolean {
-        if (_.missing(this.focusedCellPosition)) { return false; }
-        const floatingOrNull = _.makeNull(floating);
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
+        if (this.focusedCellPosition == null) { return false; }
+
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === makeNull(floating);
     }
 
-    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[] {
+    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged = false): HTMLElement[] {
         const focusableString = FocusController.FOCUSABLE_SELECTOR;
         let excludeString = FocusController.FOCUSABLE_EXCLUDE;
 
@@ -223,21 +239,12 @@ export class FocusController extends BeanStub {
         return diff(nodes, excludeNodes);
     }
 
-    public focusFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
-        const focusable = this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+    public focusInto(rootNode: HTMLElement, up = false, onlyUnmanaged = false): boolean {
+        const focusableElements = this.findFocusableElements(rootNode, null, onlyUnmanaged);
+        const toFocus = up ? last(focusableElements) : focusableElements[0];
 
-        if (focusable) {
-            focusable.focus();
-            return true;
-        }
-        return false;
-    }
-
-    public focusLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
-        const focusable = _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
-
-        if (focusable) {
-            focusable.focus();
+        if (toFocus) {
+            toFocus.focus();
             return true;
         }
 
@@ -249,15 +256,15 @@ export class FocusController extends BeanStub {
         let currentIndex: number;
 
         if (onlyManaged) {
-            currentIndex = _.findIndex(focusable, el => el.contains(document.activeElement));
+            currentIndex = findIndex(focusable, el => el.contains(document.activeElement));
         } else {
             currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
         }
 
         const nextIndex = currentIndex + (backwards ? -1 : 1);
 
-        if (nextIndex < 0 || nextIndex > focusable.length) {
-            return;
+        if (nextIndex < 0 || nextIndex >= focusable.length) {
+            return null;
         }
 
         return focusable[nextIndex];
@@ -280,11 +287,11 @@ export class FocusController extends BeanStub {
     public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {
         let counter = 0;
 
-        while (node && _.getTabIndex(node) === null && ++counter <= limit) {
+        while (node && getTabIndex(node) === null && ++counter <= limit) {
             node = node.parentElement;
         }
 
-        if (_.getTabIndex(node) === null) { return null; }
+        if (getTabIndex(node) === null) { return null; }
 
         return node;
     }
@@ -310,23 +317,25 @@ export class FocusController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public focusGridView(column?: Column): boolean {
-        const firstRow = this.rowPositionUtils.getFirstRow();
+    public focusGridView(column?: Column, backwards?: boolean): boolean {
+        const nextRow = backwards
+            ? this.rowPositionUtils.getLastRow()
+            : this.rowPositionUtils.getFirstRow();
 
-        if (!firstRow) { return false; }
+        if (!nextRow) { return false; }
 
-        const { rowIndex, rowPinned } = firstRow;
+        const { rowIndex, rowPinned } = nextRow;
         const focusedHeader = this.getFocusedHeader();
 
         if (!column) {
             column = focusedHeader.column as Column;
         }
 
-        if (!_.exists(rowIndex)) { return false; }
+        if (rowIndex == null) { return false; }
 
         this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
 
-        this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+        this.setFocusedCell(rowIndex, column, makeNull(rowPinned), true);
 
         if (this.rangeController) {
             const cellPosition = { rowIndex, rowPinned, column };

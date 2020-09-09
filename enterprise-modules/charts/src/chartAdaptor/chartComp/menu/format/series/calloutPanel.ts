@@ -1,14 +1,14 @@
 import {
     AgGroupComponent,
+    AgGroupComponentParams,
     AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator} from "../../../chartTranslator";
-import { ChartController } from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
 
 export class CalloutPanel extends Component {
 

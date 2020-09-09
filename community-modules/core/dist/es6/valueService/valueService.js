@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../events";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { getValueUsingField } from "../utils/object";
+import { missing, exists } from "../utils/generic";
+import { doOnce } from "../utils/function";
 var ValueService = /** @class */ (function (_super) {
     __extends(ValueService, _super);
     function ValueService() {
@@ -68,7 +70,7 @@ var ValueService = /** @class */ (function (_super) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
-            result = _.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = getValueUsingField(data, field, column.isFieldContainsDots());
         }
         else if (groupDataExists) {
             result = rowNode.groupData[colId];
@@ -80,7 +82,7 @@ var ValueService = /** @class */ (function (_super) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (field && data) {
-            result = _.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = getValueUsingField(data, field, column.isFieldContainsDots());
         }
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
@@ -96,13 +98,13 @@ var ValueService = /** @class */ (function (_super) {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (_.missing(rowNode.data)) {
+        if (missing(rowNode.data)) {
             rowNode.data = {};
         }
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
         var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter;
         // need either a field or a newValueHandler for this to work
-        if (_.missing(field) && _.missing(newValueHandler) && _.missing(valueSetter)) {
+        if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
             console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
             return;
@@ -120,10 +122,10 @@ var ValueService = /** @class */ (function (_super) {
         };
         params.newValue = newValue;
         var valueWasDifferent;
-        if (newValueHandler && _.exists(newValueHandler)) {
+        if (newValueHandler && exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         }
-        else if (_.exists(valueSetter)) {
+        else if (exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
@@ -247,7 +249,7 @@ var ValueService = /** @class */ (function (_super) {
         }
         result = String(result);
         if (result === '[object Object]') {
-            _.doOnce(function () {
+            doOnce(function () {
                 console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }

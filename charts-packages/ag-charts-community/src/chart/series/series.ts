@@ -73,6 +73,8 @@ export abstract class Series extends Observable {
 
     tooltipEnabled: boolean = true;
 
+    setColors(fills: string[], strokes: string[]) {}
+
     @reactive('dataChange') data?: any[] = undefined;
     @reactive('dataChange') visible = true;
     @reactive('layoutChange') showInLegend = true;

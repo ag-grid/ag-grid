@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { ChartAxisPosition, ChartAxisDirection, ChartAxis } from "./chartAxis";
+import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
 import { Series } from "./series/series";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
@@ -17,7 +17,7 @@ export class CartesianChart extends Chart {
 
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
-        this.scene.root.visible = false;
+        this.scene.root!!.visible = false;
 
         const root = this.scene.root!;
         root.append(this.seriesRoot);
@@ -38,7 +38,7 @@ export class CartesianChart extends Chart {
             return;
         }
 
-        this.scene.root.visible = true;
+        this.scene.root!!.visible = true;
 
         const { width, height, axes, legend, navigator } = this;
 
@@ -204,6 +204,9 @@ export class CartesianChart extends Chart {
     }
 
     updateAxes() {
+        const { navigator } = this;
+        let clipSeries = false;
+
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
 
@@ -219,7 +222,17 @@ export class CartesianChart extends Chart {
                 axis.domain = numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
             }
 
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.visibleRange = [navigator.min, navigator.max];
+            }
+
+            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+                clipSeries = true;
+            }
+
             axis.update();
         });
+
+        this.seriesRoot.enabled = clipSeries;
     }
 }

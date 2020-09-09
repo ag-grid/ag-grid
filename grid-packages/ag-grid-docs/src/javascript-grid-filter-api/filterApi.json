@@ -1,0 +1,13 @@
+{
+    "api": {
+        "isFilterActive()": {
+            "description": "Returns <code>true</code> if the filter is currently active, otherwise <code>false</code>."
+        },
+        "getModel()": {
+            "description": "Returns a model representing the current state of the filter, or <code>null</code> if the filter is not active."
+        },
+        "setModel(model)": {
+            "description": "Sets the state of the filter using the supplied model. Providing <code>null</code> as the model will de-activate the filter."
+        }
+    }
+}

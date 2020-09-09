@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,13 +28,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var agPanel_1 = require("./agPanel");
 var component_1 = require("./component");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
+var icon_1 = require("../utils/icon");
 var AgDialog = /** @class */ (function (_super) {
     __extends(AgDialog, _super);
     function AgDialog(config) {
         var _this = _super.call(this, config) || this;
         _this.RESIZE_TEMPLATE = "<div class=\"ag-resizer-wrapper\">\n            <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n            <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n            <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n            <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n            <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n            <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n            <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n            <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n        </div>";
-        _this.MAXIMIZE_BTN_TEMPLATE = "<div class=\"ag-dialog-button\"></span>";
         _this.resizable = {};
         _this.movable = false;
         _this.isMoving = false;
@@ -55,7 +55,7 @@ var AgDialog = /** @class */ (function (_super) {
         var _this = this;
         var eGui = this.getGui();
         var _a = this.config, movable = _a.movable, resizable = _a.resizable, maximizable = _a.maximizable;
-        utils_1._.addCssClass(eGui, 'ag-dialog');
+        dom_1.addCssClass(eGui, 'ag-dialog');
         this.moveElement = this.eTitleBar;
         _super.prototype.postConstruct.call(this);
         this.addManagedListener(eGui, 'focusin', function (e) {
@@ -78,8 +78,13 @@ var AgDialog = /** @class */ (function (_super) {
     AgDialog.prototype.renderComponent = function () {
         var eGui = this.getGui();
         var _a = this.config, alwaysOnTop = _a.alwaysOnTop, modal = _a.modal;
-        this.close = this.popupService.addPopup(modal, eGui, true, this.destroy.bind(this), undefined, alwaysOnTop);
-        eGui.focus();
+        this.close = this.popupService.addPopup({
+            modal: modal,
+            eChild: eGui,
+            closeOnEsc: true,
+            closedCallback: this.destroy.bind(this),
+            alwaysOnTop: alwaysOnTop
+        });
     };
     AgDialog.prototype.addResizers = function () {
         var eGui = this.getGui();
@@ -211,8 +216,8 @@ var AgDialog = /** @class */ (function (_super) {
         this.refreshMaximizeIcon();
     };
     AgDialog.prototype.refreshMaximizeIcon = function () {
-        utils_1._.addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
-        utils_1._.addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
+        dom_1.setDisplayed(this.maximizeIcon, !this.isMaximized);
+        dom_1.setDisplayed(this.minimizeIcon, this.isMaximized);
     };
     AgDialog.prototype.clearMaximizebleListeners = function () {
         if (this.maximizeListeners.length) {
@@ -291,7 +296,7 @@ var AgDialog = /** @class */ (function (_super) {
     };
     AgDialog.prototype.setMaximizable = function (maximizable) {
         var _this = this;
-        if (maximizable === false) {
+        if (!maximizable) {
             this.clearMaximizebleListeners();
             if (this.maximizeButtonComp) {
                 this.destroyBean(this.maximizeButtonComp);
@@ -303,14 +308,14 @@ var AgDialog = /** @class */ (function (_super) {
         if (!eTitleBar || maximizable === this.isMaximizable) {
             return;
         }
-        var maximizeButtonComp = this.maximizeButtonComp = new component_1.Component(this.MAXIMIZE_BTN_TEMPLATE);
-        this.getContext().createBean(maximizeButtonComp);
+        var maximizeButtonComp = this.maximizeButtonComp =
+            this.createBean(new component_1.Component(/* html */ "<div class=\"ag-dialog-button\"></span>"));
         var eGui = maximizeButtonComp.getGui();
-        eGui.appendChild(this.maximizeIcon = utils_1._.createIconNoSpan('maximize', this.gridOptionsWrapper));
-        utils_1._.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
-        eGui.appendChild(this.minimizeIcon = utils_1._.createIconNoSpan('minimize', this.gridOptionsWrapper));
-        utils_1._.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
-        utils_1._.addCssClass(this.minimizeIcon, 'ag-hidden');
+        eGui.appendChild(this.maximizeIcon = icon_1.createIconNoSpan('maximize', this.gridOptionsWrapper));
+        dom_1.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
+        eGui.appendChild(this.minimizeIcon = icon_1.createIconNoSpan('minimize', this.gridOptionsWrapper));
+        dom_1.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
+        dom_1.addCssClass(this.minimizeIcon, 'ag-hidden');
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);
         this.maximizeListeners.push(this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this)));

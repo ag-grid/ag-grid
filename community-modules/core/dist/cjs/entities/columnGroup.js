@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
+var array_1 = require("../utils/array");
 var ColumnGroup = /** @class */ (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId, pinned) {
         // depends on the open/closed state of the group, only displaying columns are stored here
@@ -66,7 +66,7 @@ var ColumnGroup = /** @class */ (function () {
         // set our left based on first displayed column
         if (this.displayedChildren.length > 0) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                var lastChild = utils_1._.last(this.displayedChildren);
+                var lastChild = array_1.last(this.displayedChildren);
                 var lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             }

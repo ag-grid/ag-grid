@@ -1,10 +1,10 @@
 import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
-import { AgAbstractLabel, LabelAlignment } from "./agAbstractLabel";
+import { AgAbstractLabel, LabelAlignment, IAgLabel } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { addCssClass } from "../utils/dom";
 
 export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE = /* html */
@@ -16,19 +16,19 @@ export class AgSlider extends AgAbstractLabel {
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eSlider') private eSlider: AgInputRange;
-    @RefSelector('eText') private eText: AgInputNumberField;
+    @RefSelector('eLabel') protected readonly eLabel: HTMLElement;
+    @RefSelector('eSlider') private readonly eSlider: AgInputRange;
+    @RefSelector('eText') private readonly eText: AgInputNumberField;
 
     protected labelAlignment: LabelAlignment = 'top';
 
-    constructor() {
-        super(AgSlider.TEMPLATE);
+    constructor(config?: IAgLabel) {
+        super(config, AgSlider.TEMPLATE);
     }
 
     @PostConstruct
     private init() {
-        _.addCssClass(this.eSlider.getGui(), 'ag-slider-field');
+        addCssClass(this.eSlider.getGui(), 'ag-slider-field');
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {

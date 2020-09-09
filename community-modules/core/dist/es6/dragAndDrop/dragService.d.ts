@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -22,6 +22,7 @@ export declare class DragService extends BeanStub {
     private removeListener;
     removeDragSource(params: DragListenerParams): void;
     private setNoSelectToBody;
+    isDragging(): boolean;
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart;
     private onMouseDown;

@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, Arc, ClipRect } from "ag-charts-community";
+import { Arc, ClipRect, LinearScale } from "ag-charts-community";
 var MiniBubble = /** @class */ (function (_super) {
     __extends(MiniBubble, _super);
     function MiniBubble(container, fills, strokes) {
@@ -24,10 +24,10 @@ var MiniBubble = /** @class */ (function (_super) {
         var data = [
             [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
         ];
-        var xScale = linearScale();
+        var xScale = new LinearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
-        var yScale = linearScale();
+        var yScale = new LinearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
         var points = [];

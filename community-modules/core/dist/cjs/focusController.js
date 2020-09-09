@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,9 @@ var beanStub_1 = require("./context/beanStub");
 var events_1 = require("./events");
 var cellComp_1 = require("./rendering/cellComp");
 var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
-var utils_1 = require("./utils");
+var browser_1 = require("./utils/browser");
+var array_1 = require("./utils/array");
+var generic_1 = require("./utils/generic");
 var FocusController = /** @class */ (function (_super) {
     __extends(FocusController, _super);
     function FocusController() {
@@ -88,8 +90,7 @@ var FocusController = /** @class */ (function (_super) {
         }
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        var browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
-        if (!browserFocusedCell) {
+        if (!this.getGridCellForDomElement(document.activeElement)) {
             return null;
         }
         return this.focusedCellPosition;
@@ -114,21 +115,29 @@ var FocusController = /** @class */ (function (_super) {
     };
     FocusController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        var column = utils_1._.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCellPosition = { rowIndex: rowIndex, rowPinned: utils_1._.makeNull(floating), column: column };
+        var gridColumn = this.columnController.getGridColumn(colKey);
+        // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
+        // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries
+        // to re-focus the focused cell.
+        if (!gridColumn) {
+            this.focusedCellPosition = null;
+            return;
+        }
+        this.focusedCellPosition = { rowIndex: rowIndex, rowPinned: generic_1.makeNull(floating), column: generic_1.makeNull(gridColumn) };
         this.onCellFocused(forceBrowserFocus);
     };
     FocusController.prototype.isCellFocused = function (cellPosition) {
-        if (utils_1._.missing(this.focusedCellPosition)) {
+        if (this.focusedCellPosition == null) {
             return false;
         }
-        return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
+        return this.focusedCellPosition.column === cellPosition.column &&
+            this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     };
     FocusController.prototype.isRowNodeFocused = function (rowNode) {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     };
     FocusController.prototype.isHeaderWrapperFocused = function (headerWrapper) {
-        if (utils_1._.missing(this.focusedHeaderPosition)) {
+        if (this.focusedHeaderPosition == null) {
             return false;
         }
         var column = headerWrapper.getColumn();
@@ -166,13 +175,13 @@ var FocusController = /** @class */ (function (_super) {
         return !!this.focusedCellPosition;
     };
     FocusController.prototype.isRowFocused = function (rowIndex, floating) {
-        if (utils_1._.missing(this.focusedCellPosition)) {
+        if (this.focusedCellPosition == null) {
             return false;
         }
-        var floatingOrNull = utils_1._.makeNull(floating);
-        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === generic_1.makeNull(floating);
     };
     FocusController.prototype.findFocusableElements = function (rootNode, exclude, onlyUnmanaged) {
+        if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
         var focusableString = FocusController_1.FOCUSABLE_SELECTOR;
         var excludeString = FocusController_1.FOCUSABLE_EXCLUDE;
         if (exclude) {
@@ -189,18 +198,13 @@ var FocusController = /** @class */ (function (_super) {
         var diff = function (a, b) { return a.filter(function (element) { return b.indexOf(element) === -1; }); };
         return diff(nodes, excludeNodes);
     };
-    FocusController.prototype.focusFirstFocusableElement = function (rootNode, onlyUnmanaged) {
-        var focusable = this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
-        if (focusable) {
-            focusable.focus();
-            return true;
-        }
-        return false;
-    };
-    FocusController.prototype.focusLastFocusableElement = function (rootNode, onlyUnmanaged) {
-        var focusable = utils_1._.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
-        if (focusable) {
-            focusable.focus();
+    FocusController.prototype.focusInto = function (rootNode, up, onlyUnmanaged) {
+        if (up === void 0) { up = false; }
+        if (onlyUnmanaged === void 0) { onlyUnmanaged = false; }
+        var focusableElements = this.findFocusableElements(rootNode, null, onlyUnmanaged);
+        var toFocus = up ? array_1.last(focusableElements) : focusableElements[0];
+        if (toFocus) {
+            toFocus.focus();
             return true;
         }
         return false;
@@ -209,14 +213,14 @@ var FocusController = /** @class */ (function (_super) {
         var focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
         var currentIndex;
         if (onlyManaged) {
-            currentIndex = utils_1._.findIndex(focusable, function (el) { return el.contains(document.activeElement); });
+            currentIndex = array_1.findIndex(focusable, function (el) { return el.contains(document.activeElement); });
         }
         else {
             currentIndex = focusable.indexOf(document.activeElement);
         }
         var nextIndex = currentIndex + (backwards ? -1 : 1);
-        if (nextIndex < 0 || nextIndex > focusable.length) {
-            return;
+        if (nextIndex < 0 || nextIndex >= focusable.length) {
+            return null;
         }
         return focusable[nextIndex];
     };
@@ -235,10 +239,10 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.prototype.findTabbableParent = function (node, limit) {
         if (limit === void 0) { limit = 5; }
         var counter = 0;
-        while (node && utils_1._.getTabIndex(node) === null && ++counter <= limit) {
+        while (node && browser_1.getTabIndex(node) === null && ++counter <= limit) {
             node = node.parentElement;
         }
-        if (utils_1._.getTabIndex(node) === null) {
+        if (browser_1.getTabIndex(node) === null) {
             return null;
         }
         return node;
@@ -261,21 +265,23 @@ var FocusController = /** @class */ (function (_super) {
         }
         this.eventService.dispatchEvent(event);
     };
-    FocusController.prototype.focusGridView = function (column) {
-        var firstRow = this.rowPositionUtils.getFirstRow();
-        if (!firstRow) {
+    FocusController.prototype.focusGridView = function (column, backwards) {
+        var nextRow = backwards
+            ? this.rowPositionUtils.getLastRow()
+            : this.rowPositionUtils.getFirstRow();
+        if (!nextRow) {
             return false;
         }
-        var rowIndex = firstRow.rowIndex, rowPinned = firstRow.rowPinned;
+        var rowIndex = nextRow.rowIndex, rowPinned = nextRow.rowPinned;
         var focusedHeader = this.getFocusedHeader();
         if (!column) {
             column = focusedHeader.column;
         }
-        if (!utils_1._.exists(rowIndex)) {
+        if (rowIndex == null) {
             return false;
         }
         this.rowRenderer.ensureCellVisible({ rowIndex: rowIndex, column: column, rowPinned: rowPinned });
-        this.setFocusedCell(rowIndex, column, utils_1._.makeNull(rowPinned), true);
+        this.setFocusedCell(rowIndex, column, generic_1.makeNull(rowPinned), true);
         if (this.rangeController) {
             var cellPosition = { rowIndex: rowIndex, rowPinned: rowPinned, column: column };
             this.rangeController.setRangeToCell(cellPosition);

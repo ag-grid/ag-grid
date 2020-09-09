@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,7 @@ var component_1 = require("../widgets/component");
 var events_1 = require("../events");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var rowNode_1 = require("../entities/rowNode");
-var utils_1 = require("../utils");
+var event_1 = require("../utils/event");
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -48,6 +48,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
         this.eCheckbox.setValue(state, true);
+        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + (state ? 'checked' : 'unchecked') + ")");
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
@@ -66,9 +67,9 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', function (event) { return utils_1._.stopPropagationForAgGrid(event); });
+        this.addGuiEventListener('click', function (event) { return event_1.stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', function (event) { return utils_1._.stopPropagationForAgGrid(event); });
+        this.addGuiEventListener('dblclick', function (event) { return event_1.stopPropagationForAgGrid(event); });
         this.addManagedListener(this.eCheckbox, agCheckbox_1.AgCheckbox.EVENT_CHANGED, function (params) {
             if (params.selected) {
                 _this.onUncheckedClicked(params.event || {});
@@ -86,7 +87,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
             this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
-        this.eCheckbox.setInputAriaLabel('Toggle Row Selection');
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
     };
     CheckboxSelectionComponent.prototype.showOrHideSelect = function () {
         // if the isRowSelectable() is not provided the row node is selectable by default

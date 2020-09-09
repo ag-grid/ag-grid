@@ -12,7 +12,8 @@
     .ag-status-bar,
     .ag-header-row,
     .ag-panel-title-bar-title,
-    .ag-side-button-button {
+    .ag-side-button-button,
+    .ag-multi-filter-group-title-bar {
         font-size: ag-param(font-size) - 1;
         font-weight: 600;
         @include ag-color-property(color, header-foreground-color);
@@ -47,6 +48,13 @@
     .ag-cell-inline-editing {
         padding: ag-param(grid-size);
         height: ag-param(row-height) + ag-param(grid-size) * 3;
+        @include ag-color-property(border-color, border-color, $important: true);
+    }
+
+    .ag-has-focus {
+        .ag-cell-inline-editing {
+            @include ag-color-property(border-color, input-focus-border-color, $important: true);
+        }
     }
 
     .ag-side-button-button {
@@ -65,11 +73,6 @@
 
     .ag-column-drop-vertical-cell {
         margin-left: 0;
-    }
-
-    .ag-set-filter-select-all {
-        border-bottom: solid 1px;
-        @include ag-color-property(border-bottom-color, border-color);
     }
 
     .ag-column-drop-vertical-empty-message {
@@ -183,6 +186,10 @@
 
     .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
         padding-top: 60px;
+    }
+
+    .ag-picker-field-wrapper:focus {
+        box-shadow: 0 0 0 1px ag-param(material-primary-color);
     }
 
     @include ag-allow-color-param-access-with-ag-param(true);

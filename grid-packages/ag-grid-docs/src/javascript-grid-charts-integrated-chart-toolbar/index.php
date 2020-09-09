@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
             <p>
                 <ul class="content">
                     <li style="padding-bottom: 5px">Change the chart type</li>
-                    <li style="padding-bottom: 5px">Change the colour palette</li>
+                    <li style="padding-bottom: 5px">Change the theme</li>
                     <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
                     <li style="padding-bottom: 5px">Format different aspects of the chart</li>
                     <li style="padding-bottom: 5px">Unlink the chart from the grid</li>
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Chart Settings</h3>
 
     <p>
-        The chart settings panel allows users to change the chart type as well as the colour palette used in the
+        The chart settings panel allows users to change the chart type as well as the theme used in the
         chart as demonstrated below:
     </p>
 
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The colour palette used by the chart can also be changed via the carousel located at the bottom of the chart
+        The theme used by the chart can also be changed via the carousel located at the bottom of the chart
         setting panel.
     </p>
 

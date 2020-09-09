@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -122,6 +122,7 @@ var Events = /** @class */ (function () {
     Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     Events.EVENT_FLASH_CELLS = 'flashCells';
+    Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED = 'paginationPixelOffsetChanged';
     Events.EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
     Events.EVENT_ROW_DRAG_MOVE = 'rowDragMove';
     Events.EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';

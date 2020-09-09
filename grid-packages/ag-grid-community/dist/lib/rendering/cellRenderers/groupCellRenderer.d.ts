@@ -1,14 +1,19 @@
 import { Component } from "../../widgets/component";
-import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
+    fullWidth: boolean;
     suppressPadding: boolean;
     suppressDoubleClickExpand: boolean;
     suppressEnterExpand: boolean;
     footerValueGetter: any;
     suppressCount: boolean;
-    fullWidth: boolean;
     checkbox: any;
+    innerRenderer?: {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string;
+    innerRendererFramework?: any;
+    innerRendererParams?: any;
     scope: any;
     /** @deprecated */
     padding: number;

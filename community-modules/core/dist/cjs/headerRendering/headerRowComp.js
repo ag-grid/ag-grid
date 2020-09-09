@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,12 +31,13 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var events_1 = require("../events");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
-var constants_1 = require("../constants");
+var constants_1 = require("../constants/constants");
 var floatingFilterWrapper_1 = require("../filter/floating/floatingFilterWrapper");
 var browser_1 = require("../utils/browser");
 var generic_1 = require("../utils/generic");
 var array_1 = require("../utils/array");
 var dom_1 = require("../utils/dom");
+var aria_1 = require("../utils/aria");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -46,9 +47,9 @@ var HeaderRowType;
 var HeaderRowComp = /** @class */ (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, dropTarget) {
-        var _this = _super.call(this, /* html */ "<div class=\"ag-header-row\" role=\"row\" />") || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-header-row\" role=\"row\"></div>") || this;
         _this.headerComps = {};
-        _this.dept = dept;
+        _this.setRowIndex(dept);
         _this.type = type;
         _this.pinned = pinned;
         _this.dropTarget = dropTarget;
@@ -67,12 +68,12 @@ var HeaderRowComp = /** @class */ (function (_super) {
             callback(_this.headerComps[key]);
         });
     };
-    HeaderRowComp.prototype.setRowIndex = function (idx) {
-        this.rowIndex = idx;
-        this.getGui().setAttribute('aria-rowindex', (idx + 1).toString());
+    HeaderRowComp.prototype.setRowIndex = function (rowIndex) {
+        this.dept = rowIndex;
+        aria_1.setAriaRowIndex(this.getGui(), rowIndex + 1);
     };
     HeaderRowComp.prototype.getRowIndex = function () {
-        return this.rowIndex;
+        return this.dept;
     };
     HeaderRowComp.prototype.getType = function () {
         return this.type;
@@ -142,7 +143,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(this.eventService, events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     };
     HeaderRowComp.prototype.onColumnResized = function () {
         this.setWidth();
@@ -165,13 +166,13 @@ var HeaderRowComp = /** @class */ (function (_super) {
         // if not printing, just return the width as normal
         return this.columnController.getContainerWidth(this.pinned);
     };
-    HeaderRowComp.prototype.onGridColumnsChanged = function () {
-        this.removeAndDestroyAllChildComponents();
-    };
-    HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
-        var idsOfAllChildren = Object.keys(this.headerComps);
-        this.destroyChildComponents(idsOfAllChildren);
-    };
+    // private onGridColumnsChanged(): void {
+    //     this.removeAndDestroyAllChildComponents();
+    // }
+    // private removeAndDestroyAllChildComponents(): void {
+    //     const idsOfAllChildren = Object.keys(this.headerComps);
+    //     this.destroyChildComponents(idsOfAllChildren);
+    // }
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
         this.onVirtualColumnsChanged();
         this.setWidth();
@@ -201,8 +202,8 @@ var HeaderRowComp = /** @class */ (function (_super) {
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
-        var currentChildIds = Object.keys(this.headerComps);
-        var correctChildIds = [];
+        var compIdsToRemove = Object.keys(this.headerComps);
+        var compIdsWanted = [];
         var itemsAtDepth = this.getItemsAtDepth();
         itemsAtDepth.forEach(function (child) {
             // skip groups that have no displayed children. this can happen when the group is broken,
@@ -215,25 +216,34 @@ var HeaderRowComp = /** @class */ (function (_super) {
             var idOfChild = child.getUniqueId();
             var eParentContainer = _this.getGui();
             // if we already have this cell rendered, do nothing
-            var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            var headerComp;
-            var eHeaderCompGui;
-            if (colAlreadyInDom) {
-                array_1.removeFromArray(currentChildIds, idOfChild);
+            var previousComp = _this.headerComps[idOfChild];
+            // it's possible there is a new Column with the same ID, but it's for a different Column.
+            // this is common with pivoting, where the pivot cols change, but the id's are still pivot_0,
+            // pivot_1 etc. so if new col but same ID, need to remove the old col here first as we are
+            // about to replace it in the this.headerComps map.
+            var previousCompForOldColumn = previousComp && previousComp.getColumn() != child;
+            if (previousCompForOldColumn) {
+                _this.destroyChildComponents([idOfChild]);
+                array_1.removeFromArray(compIdsToRemove, idOfChild);
+                previousComp = undefined;
+            }
+            if (previousComp) {
+                // already have comp for this column, so do nothing
+                array_1.removeFromArray(compIdsToRemove, idOfChild);
             }
             else {
-                headerComp = _this.createHeaderComp(child);
+                // don't have comp, need to create one
+                var headerComp = _this.createHeaderComp(child);
                 _this.headerComps[idOfChild] = headerComp;
-                eHeaderCompGui = headerComp.getGui();
-                eParentContainer.appendChild(eHeaderCompGui);
+                eParentContainer.appendChild(headerComp.getGui());
             }
-            correctChildIds.push(idOfChild);
+            compIdsWanted.push(idOfChild);
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(currentChildIds, true);
+        this.destroyChildComponents(compIdsToRemove, true);
         var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
-            var correctChildOrder = correctChildIds.map(function (id) { return _this.headerComps[id].getGui(); });
+            var correctChildOrder = compIdsWanted.map(function (id) { return _this.headerComps[id].getGui(); });
             dom_1.setDomChildOrder(this.getGui(), correctChildOrder);
         }
     };

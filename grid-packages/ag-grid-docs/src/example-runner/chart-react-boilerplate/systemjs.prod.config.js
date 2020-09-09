@@ -1,5 +1,5 @@
 (function (global) {
-// simplified version of Object.assign for es3
+    // simplified version of Object.assign for es3
     function assign() {
         var result = {};
         for (var i = 0, len = arguments.length; i < len; i++) {
@@ -19,7 +19,7 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: Object.assign({
+        paths: assign({
             // paths serve as alias
             "npm:": "https://unpkg.com/",
         }, sjsPaths),

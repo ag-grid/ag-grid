@@ -1,24 +1,25 @@
 import {
     _,
+    AgChartThemeOverrides,
     AgDialog,
     Autowired,
     CellRange,
+    ChartCreated,
+    ChartDestroyed,
     ChartModel,
     ChartOptions,
     ChartType,
+    ColumnApi,
     Component,
     Environment,
+    Events,
+    GridApi,
     GridOptionsWrapper,
     IAggFunc,
+    PopupService,
     PostConstruct,
     ProcessChartOptionsParams,
-    RefSelector,
-    GridApi,
-    ColumnApi,
-    ChartCreated,
-    ChartDestroyed,
-    Events,
-    PopupService
+    RefSelector
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./titleEdit";
@@ -32,17 +33,17 @@ import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartPaletteName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
-    chartPaletteName: ChartPaletteName;
+    chartThemeName?: string;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -57,18 +58,18 @@ export class GridChartComp extends Component {
             <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
-    @RefSelector('eChart') private eChart: HTMLElement;
-    @RefSelector('eChartContainer') private eChartContainer: HTMLElement;
-    @RefSelector('eMenuContainer') private eMenuContainer: HTMLElement;
-    @RefSelector('eEmpty') private eEmpty: HTMLElement;
-    @RefSelector('eTitleEditContainer') private eTitleEditContainer: HTMLDivElement;
+    @RefSelector('eChart') private readonly eChart: HTMLElement;
+    @RefSelector('eChartContainer') private readonly eChartContainer: HTMLElement;
+    @RefSelector('eMenuContainer') private readonly eMenuContainer: HTMLElement;
+    @RefSelector('eEmpty') private readonly eEmpty: HTMLElement;
+    @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('environment') private environment: Environment;
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('environment') private readonly environment: Environment;
+    @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('popupService') private readonly popupService: PopupService;
 
     private chartMenu: ChartMenu;
     private titleEdit: TitleEdit;
@@ -79,6 +80,7 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
+    private chartThemeName?: string;
 
     constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
@@ -86,19 +88,35 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
+        const availableChartThemes = this.gridOptionsWrapper.getChartThemes();
+
+        if (availableChartThemes.length < 1) {
+            throw new Error('Cannot create chart: no chart themes are available to be used.');
+        }
+
+        let { chartThemeName } = this.params;
+
+        if (!_.includes(availableChartThemes, chartThemeName)) {
+            chartThemeName = availableChartThemes[0];
+        }
+
         const modelParams: ChartModelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
+            chartThemeName,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
+
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.chartController = this.createManagedBean(new ChartController(this.model));
+
+        this.validateCustomThemes();
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -118,6 +136,19 @@ export class GridChartComp extends Component {
         this.raiseChartCreatedEvent();
     }
 
+    private validateCustomThemes() {
+        const suppliedThemes = this.gridOptionsWrapper.getChartThemes();
+        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+        if (customChartThemes) {
+            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+                if (!_.includes(suppliedThemes, customThemeName)) {
+                    console.warn("ag-Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                        "supplied but not added to the 'chartThemes' list");
+                }
+            });
+        }
+    }
+
     private createChart(): void {
         let width, height;
 
@@ -135,15 +166,22 @@ export class GridChartComp extends Component {
         }
 
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
+        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
+
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
         const chartProxyParams: ChartProxyParams = {
             chartId: this.model.getChartId(),
             chartType,
+            chartThemeName: this.model.getChartThemeName(),
             processChartOptions: processChartOptionsFunc,
-            getChartPaletteName: this.getChartPaletteName.bind(this),
-            allowPaletteOverride: !this.params.chartPaletteName,
+            getChartThemeName: this.getChartThemeName.bind(this),
+            getChartThemes: this.getChartThemes.bind(this),
+            customChartThemes: customChartThemes,
+            getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
+            apiChartThemeOverrides: this.params.chartThemeOverrides,
+            allowPaletteOverride: !this.params.chartThemeName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -155,17 +193,27 @@ export class GridChartComp extends Component {
             columnApi: this.columnApi,
         };
 
-        // set local state used to detect when chart type changes
+        // set local state used to detect when chart changes
         this.chartType = chartType;
+        this.chartThemeName = this.model.getChartThemeName();
         this.chartProxy = this.createChartProxy(chartProxyParams);
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
+
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getChartPaletteName(): ChartPaletteName {
-        return this.chartController.getPaletteName();
+    private getChartThemeName(): string {
+        return this.chartController.getThemeName();
+    }
+
+    private getChartThemes(): string[] {
+        return this.chartController.getThemes();
+    }
+
+    private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
+        return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
@@ -217,7 +265,7 @@ export class GridChartComp extends Component {
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
 
-    private getBestDialogSize(): { width: number, height: number } {
+    private getBestDialogSize(): { width: number, height: number; } {
         const popupParent = this.popupService.getPopupParent();
         const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
         const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
@@ -256,8 +304,8 @@ export class GridChartComp extends Component {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
 
-        if( this.chartProxy ) {
-            this.titleEdit.setChartProxy(this.chartProxy)
+        if (this.chartProxy) {
+            this.titleEdit.setChartProxy(this.chartProxy);
         }
     }
 
@@ -270,7 +318,7 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        return this.chartType !== this.model.getChartType();
+        return this.chartType !== this.model.getChartType() || this.chartThemeName !== this.model.getChartThemeName();
     }
 
     public getCurrentChartType(): ChartType {
@@ -341,13 +389,16 @@ export class GridChartComp extends Component {
         this.chartProxy.downloadChart();
     }
 
+    public getUnderlyingChart(): any {
+        return this.chartProxy.getChart();
+    }
+
     public refreshCanvasSize(): void {
         if (!this.params.insideDialog) {
             return;
         }
 
         const { chartProxy, eChart } = this;
-
         if (this.chartMenu.isVisible()) {
             // we don't want the menu showing to affect the chart options
             const chart = this.chartProxy.getChart();

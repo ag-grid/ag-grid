@@ -40,6 +40,41 @@ var MarkersPanel = /** @class */ (function (_super) {
         var _this = this;
         // scatter charts should always show markers
         var shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof scatterChartProxy_1.ScatterChartProxy;
+        var seriesMarkerShapeOptions = [
+            {
+                value: 'square',
+                text: 'Square'
+            },
+            {
+                value: 'circle',
+                text: 'Circle'
+            },
+            {
+                value: 'cross',
+                text: 'Cross'
+            },
+            {
+                value: 'diamond',
+                text: 'Diamond'
+            },
+            {
+                value: 'plus',
+                text: 'Plus'
+            },
+            {
+                value: 'triangle',
+                text: 'Triangle'
+            },
+            {
+                value: 'heart',
+                text: 'Heart'
+            }
+        ];
+        this.seriesMarkerShapeSelect
+            .addOptions(seriesMarkerShapeOptions)
+            .setLabel(this.chartTranslator.translate('shape'))
+            .setValue(this.chartController.getChartProxy().getSeriesOption("marker.shape"))
+            .onValueChange(function (value) { return _this.chartController.getChartProxy().setSeriesOption("marker.shape", value); });
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
@@ -54,8 +89,8 @@ var MarkersPanel = /** @class */ (function (_super) {
                 .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         if (this.chartController.getChartType() === core_1.ChartType.Bubble) {
-            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 60);
+            initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         }
         else {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
@@ -63,10 +98,13 @@ var MarkersPanel = /** @class */ (function (_super) {
         }
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     };
-    MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-select ref=\"seriesMarkerShapeSelect\"></ag-select>\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
+    __decorate([
+        core_1.RefSelector('seriesMarkerShapeSelect')
+    ], MarkersPanel.prototype, "seriesMarkerShapeSelect", void 0);
     __decorate([
         core_1.RefSelector('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);

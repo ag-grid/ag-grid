@@ -221,6 +221,9 @@ var OHLCSeries = /** @class */ (function (_super) {
     };
     OHLCSeries.prototype.update = function () {
         var _this = this;
+        if (!this.data) {
+            return;
+        }
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -16,7 +16,7 @@ export declare class ColumnApi {
     getDisplayNameForColumn(column: Column, location: string | null): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     getColumn(key: any): Column;
-    setColumnState(columnState: ColumnState[]): boolean;
+    applyColumnState(params: ApplyColumnStateParams): boolean;
     getColumnState(): ColumnState[];
     resetColumnState(): void;
     getColumnGroupState(): {
@@ -98,4 +98,10 @@ export declare class ColumnApi {
     addAggregationColumns(colKeys: (string | Column)[]): void;
     setColumnAggFunction(column: Column, aggFunc: string): void;
     getDisplayNameForCol(column: any): string;
+    setColumnState(columnState: ColumnState[]): boolean;
+}
+export interface ApplyColumnStateParams {
+    state?: ColumnState[];
+    applyOrder?: boolean;
+    defaultState?: ColumnState;
 }

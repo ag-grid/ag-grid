@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
-import { NumberSequence, _ } from "../../utils";
+import { NumberSequence } from "../../utils";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
+import { exists, missing } from "../../utils/generic";
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -71,6 +72,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.logger.log("onPageLoaded: page = " + event.page.getBlockNumber() + ", lastRow = " + event.lastRow);
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
+            this.onCacheUpdated();
         }
     };
     RowNodeCache.prototype.purgeBlocksIfNeeded = function (blockToExclude) {
@@ -156,7 +158,6 @@ var RowNodeCache = /** @class */ (function (_super) {
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.virtualRowCount = lastRow;
             this.maxRowFound = true;
-            this.onCacheUpdated();
         }
         else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
@@ -164,13 +165,6 @@ var RowNodeCache = /** @class */ (function (_super) {
             var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
-                this.onCacheUpdated();
-            }
-            else if (this.cacheParams.dynamicRowHeight) {
-                // the only other time is if dynamic row height, as loading rows
-                // will change the height of the block, given the height of the rows
-                // is only known after the row is loaded.
-                this.onCacheUpdated();
             }
         }
     };
@@ -178,7 +172,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.virtualRowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(maxRowFound)) {
+        if (exists(maxRowFound)) {
             this.maxRowFound = maxRowFound;
         }
         // if we are still searching, then the row count must not end at the end
@@ -282,7 +276,7 @@ var RowNodeCache = /** @class */ (function (_super) {
         var inActiveRange = false;
         var numberSequence = new NumberSequence();
         // if only one node passed, we start the selection at the top
-        if (_.missing(firstInRange)) {
+        if (missing(firstInRange)) {
             inActiveRange = true;
         }
         var foundGapInSelection = false;

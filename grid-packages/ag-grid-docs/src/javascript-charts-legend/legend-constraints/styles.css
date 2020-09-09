@@ -23,7 +23,7 @@
 
 .slider input {
     height: 1.8em;
-    flex: 1;
+    flex: 1 1 auto;
     padding: 0; /* IE11 */
 }
 
@@ -32,5 +32,5 @@
 }
 
 #myChart {
-    flex: 1;
+    flex: 1 1 auto;
 }

@@ -55,10 +55,3 @@ export class LinearScale extends ContinuousScale {
         }
     }
 }
-
-/**
- * Creates a continuous scale with the default interpolator and no clamping.
- */
-export default function scaleLinear() {
-    return new LinearScale();
-}

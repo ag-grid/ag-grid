@@ -42,8 +42,8 @@ body {
             @extend .col-md;
 
             background-color: $white;
-            padding-left: 1rem;
-            padding-right: 1rem;
+            // padding-left: 1rem;
+            // padding-right: 1rem;
 
             @include media-breakpoint-up(lg) {
                 padding-left: 3rem;
@@ -62,7 +62,7 @@ body {
         #side-nav,
         & > section {
             padding-bottom: 3rem;
-            padding-top: 3rem;
+            padding-top: 0.8rem;
         }
 
         #side-nav-toggle {
@@ -416,7 +416,7 @@ body {
     h1 .anchorjs-link {
         display: none;
     }
-    
+
     #get-started-frameworks {
         margin-left: -1rem;
         margin-right: -1rem;
@@ -664,6 +664,14 @@ body {
     @include roadshow;
 }
 
+div.reference__breadcrumbs {
+    margin-bottom: 1rem;
+
+    a {
+        color: $blue-2;
+    }
+}
+
 table.reference {
     border-collapse: collapse;
     margin-bottom: 3rem;
@@ -777,4 +785,8 @@ table.supported-browsers {
     @extend .display-2, .text-center;
 
     margin-top: 4rem;
+}
+
+snippet pre {
+    max-width: 790px;
 }

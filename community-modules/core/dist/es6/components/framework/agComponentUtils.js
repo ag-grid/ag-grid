@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { _ } from "../../utils";
+import { loadTemplate } from "../../utils/dom";
 var AgComponentUtils = /** @class */ (function (_super) {
     __extends(AgComponentUtils, _super);
     function AgComponentUtils() {
@@ -62,11 +62,9 @@ var AgComponentUtils = /** @class */ (function (_super) {
                 var callbackResult = callback(this.params);
                 var type = typeof callbackResult;
                 if (type === 'string' || type === 'number' || type === 'boolean') {
-                    return _.loadTemplate('<span>' + callbackResult + '</span>');
+                    return loadTemplate('<span>' + callbackResult + '</span>');
                 }
-                else {
-                    return callbackResult;
-                }
+                return callbackResult;
             };
             Adapter.prototype.init = function (params) {
                 this.params = params;

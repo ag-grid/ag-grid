@@ -25,7 +25,6 @@ import { LinearScale } from "../../../scale/linearScale";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
@@ -42,8 +41,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this._fill = palette.fills[0];
-        _this._stroke = palette.strokes[0];
+        _this._fill = undefined;
+        _this._stroke = undefined;
         _this._strokeWidth = 2;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
@@ -136,6 +135,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.update();
         this.fireEvent({ type: 'legendChange' });
     };
+    ScatterSeries.prototype.setColors = function (fills, strokes) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
+        this.marker.fill = fills[0];
+        this.marker.stroke = strokes[0];
+    };
     ScatterSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey, sizeKey = _a.sizeKey, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var data = xKey && yKey && this.data ? this.data : [];
@@ -184,22 +189,34 @@ var ScatterSeries = /** @class */ (function (_super) {
         });
     };
     ScatterSeries.prototype.generateNodeData = function () {
-        var _this = this;
-        var xScale = this.xAxis.scale;
-        var yScale = this.yAxis.scale;
+        if (!this.data) {
+            return [];
+        }
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        var xScale = xAxis.scale;
+        var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var _a = this, data = _a.data, xData = _a.xData, yData = _a.yData, sizeData = _a.sizeData, sizeScale = _a.sizeScale, marker = _a.marker;
-        sizeScale.range = [marker.minSize, marker.size];
-        return xData.map(function (xDatum, i) { return ({
-            series: _this,
-            seriesDatum: data[i],
-            point: {
-                x: xScale.convert(xDatum) + xOffset,
-                y: yScale.convert(yData[i]) + yOffset
-            },
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }); });
+        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, sizeScale = _b.sizeScale, marker = _b.marker;
+        sizeScale.range = [marker.size, marker.maxSize];
+        var nodeData = [];
+        for (var i = 0; i < xData.length; i++) {
+            var xDatum = xData[i];
+            var x = xScale.convert(xDatum) + xOffset;
+            if (!xAxis.inRange(x)) {
+                continue;
+            }
+            nodeData.push({
+                series: this,
+                seriesDatum: data[i],
+                point: {
+                    x: x,
+                    y: yScale.convert(yData[i]) + yOffset
+                },
+                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+            });
+        }
+        return nodeData;
     };
     ScatterSeries.prototype.update = function () {
         var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
@@ -220,6 +237,9 @@ var ScatterSeries = /** @class */ (function (_super) {
         this.nodeSelection = updateSelection.merge(enterSelection);
     };
     ScatterSeries.prototype.updateNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var highlightedDatum = this.chart.highlightedDatum;
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
@@ -311,8 +331,8 @@ var ScatterSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fill,
-                    stroke: marker.stroke || stroke,
+                    fill: marker.fill || fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

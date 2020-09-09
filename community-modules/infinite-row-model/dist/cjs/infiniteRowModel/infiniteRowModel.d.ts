@@ -25,7 +25,6 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     private isSortModelDifferent;
     getType(): string;
     setDatasource(datasource: IDatasource | undefined): void;
-    private checkForDeprecated;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];

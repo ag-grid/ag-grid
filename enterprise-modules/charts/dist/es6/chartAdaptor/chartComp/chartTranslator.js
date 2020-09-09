@@ -69,6 +69,7 @@ var ChartTranslator = /** @class */ (function (_super) {
         left: 'Left',
         labels: 'Labels',
         size: 'Size',
+        shape: 'Shape',
         minSize: 'Minimum Size',
         maxSize: 'Maximum Size',
         legend: 'Legend',

@@ -65,17 +65,21 @@
         "autoGroupColumnDef": {
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included."
         },
-        "suppressSetColumnStateEvents": {
+        "suppressColumnStateEvents": {
             "default": false,
-            "description": "Set to <code>true</code> to suppress column events being raised when <code>columnApi.setColumnState(state)</code> and <code>columnApi.resetColumnState()</code> are invoked."
+            "description": "Set to <code>true</code> to suppress column events being raised when <code>columnApi.applyColumnState(state)</code> and <code>columnApi.resetColumnState()</code> are invoked, or when changing Column State by updating Column Definitions."
         },
         "allowDragFromColumnsToolPanel": {
             "default": false,
             "description": "Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid."
         },
-        "immutableColumns": {
+        "applyColumnDefOrder": {
             "default": false,
-            "description": "Puts the grid into Immutable Column mode, so that setting new columns keeps column state."
+            "description": "Sorts the grid columns in the order of Column Definitions after Column Definitions are updated.",
+            "more": {
+                "name": "Apply Column Order",
+                "url": "../javascript-grid-column-state/#applying-column-order"
+            }
         }
     },
     "sortFilter": {
@@ -147,9 +151,9 @@
                 "url": "../javascript-grid-selection/#multi-select-single-click"
             }
         },
-        "rowDeselection": {
+        "suppressRowDeselection": {
             "default": false,
-            "description": "If <code>true</code> then rows will be deselected if you hold down <code>Ctrl</code> and click the row."
+            "description": "If <code>true</code> then rows will not be deselected if you hold down <code>Ctrl</code> and click the row or press <code>Space</code>."
         },
         "suppressRowClickSelection": {
             "default": false,
@@ -162,6 +166,22 @@
         "enableRangeSelection": {
             "default": false,
             "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection/'>Range Selection</a>."
+        },
+        "enableRangeHandle": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection-handle/'>Range Handle</a>"
+        },
+        "enableFillHandle": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection-fill-handle/'>Fill Handle</a>"
+        },
+        "fillHandleDirection": {
+            "default": "xy",
+            "description": "Set to 'x' to force the fill handle direction to horizontal, or set it to 'y' to force the fill handle direction to vertical"
+        },
+        "suppressClearOnFillReduction": {
+            "default": false,
+            "description": "Set it to <code>true</code> to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle."
         }
     },
     "rowDragging": {
@@ -426,14 +446,6 @@
             ],
             "description": "When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if <code>pivotMode</code> is off."
         },
-        "rememberGroupStateWhenNewData": {
-            "default": false,
-            "description": "When <code>true</code>, if you set new data into the grid and have groups open, the grid will keep groups open if they exist in the new dataset.",
-            "more": {
-                "name": "Keeping Group State",
-                "url": "../javascript-grid-grouping/#keeping-group-state"
-            }
-        },
         "suppressAggFuncInHeader": {
             "default": false,
             "description": "When <code>true</code>, column headers won't include the <code>aggFunc</code>, e.g. <code>'sum(Bank Balance)</code>' will just be <code>'Bank Balance'</code>."
@@ -491,6 +503,14 @@
                 "url": "../javascript-grid-pivoting/#pivotRowTotals"
             }
         },
+        "suppressExpandablePivotGroups": {
+            "default": false,
+            "description": "When enabled pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.",
+            "more": {
+                "name": "Fixed Pivot Column Groups",
+                "url": "../javascript-grid-pivoting/#fixed-pivot-column-groups"
+            }
+        },
         "pivotSuppressAutoColumn": {
             "default": false,
             "description": "If <code>true</code>, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column."
@@ -545,9 +565,6 @@
         "blockLoadDebounceMillis": {
             "description": "Prevents blocks loading until scrolling has stopped for the specified number of milliseconds. When row count (i.e. lastRowIndex) is known, setting this property will enable skipping over blocks when scrolling."
         },
-        "infiniteInitialRowCount": {
-            "description": "How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes and you want the scrollbar to cover many blocks before it has to start re-adjusting for the loading of additional data."
-        },
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
         },
@@ -580,6 +597,10 @@
         "alwaysShowVerticalScroll": {
             "default": false,
             "description": "Set to <code>true</code> to always show the vertical scrollbar."
+        },
+        "debounceVerticalScrollbar": {
+            "default": false,
+            "description": "Set to <code>true</code> to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, eg IE."
         },
         "suppressHorizontalScroll": {
             "default": false,
@@ -700,10 +721,6 @@
         },
         "detailRowHeight": {
             "description": "Set fixed height for each detail row."
-        },
-        "autoHeight": {
-            "default": false,
-            "description": "Set to true to have the detail grid to dynamically change it's height to fit it's rows."
         }
     },
     "renderingStyling": {
@@ -782,7 +799,7 @@
             "displayName": "Localisation"
         },
         "localeText<br />localeTextFunc": {
-            "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
+            "description": "A map of key->value pairs for localising text within the grid.",
             "more": {
                 "name": "Localisation",
                 "url": "../javascript-grid-localisation/"
@@ -821,6 +838,16 @@
         "enableCharts": {
             "default": false,
             "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
+        },
+        "chartThemes": {
+            "default": ["ag-default", "ag-material", "ag-pastel", "ag-vivid", "ag-solar"],
+            "description": "The list of chart themes to be used, see <a href='../javascript-grid-charts-integrated-customisation/#chart-themes'>Chart Themes</a>."
+        },
+        "customChartThemes": {
+            "description": "A map containing custom chart themes, see <a href='../javascript-grid-charts-integrated-customisation/#custom-chart-themes'>Custom Chart Themes</a>."
+        },
+        "chartThemeOverrides": {
+            "description": "Chart theme overrides applied to all themes, see <a href='../javascript-grid-charts-integrated-customisation/#overriding-existing-themes'>Overriding Existing Themes</a>."
         }
     },
     "components": {

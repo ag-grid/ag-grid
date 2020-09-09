@@ -16,7 +16,6 @@ export interface DialogOptions extends PanelOptions {
 }
 export declare class AgDialog extends AgPanel {
     private RESIZE_TEMPLATE;
-    private MAXIMIZE_BTN_TEMPLATE;
     private dragService;
     private moveElement;
     private moveElementDragListener;

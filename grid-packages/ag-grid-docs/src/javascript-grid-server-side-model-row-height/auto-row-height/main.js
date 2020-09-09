@@ -3,18 +3,17 @@ var columnDefs = [
         headerName: 'Group',
         field: 'name',
         rowGroup: true,
-        cellClass: 'cell-wrap-text',
         hide: true
     },
     {
         field: 'autoA',
-        cellClass: 'cell-wrap-text',
+        wrapText: true,
         autoHeight: true,
         aggFunc: 'last'
     },
     {
         field: 'autoB',
-        cellClass: 'cell-wrap-text',
+        wrapText: true,
         autoHeight: true,
         aggFunc: 'last'
     }

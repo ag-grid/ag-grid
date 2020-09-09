@@ -1,9 +1,9 @@
 import { Component } from './component';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ManagedFocusComponent } from './managedFocusComponent';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
+    isRowSelected?(index: number): boolean;
 }
 export declare class VirtualList extends ManagedFocusComponent {
     private readonly cssIdentifier;
@@ -11,16 +11,17 @@ export declare class VirtualList extends ManagedFocusComponent {
     private renderedRows;
     private componentCreator;
     private rowHeight;
-    private lastFocusedRow;
-    gridOptionsWrapper: GridOptionsWrapper;
-    private eContainer;
+    private lastFocusedRowIndex;
+    private isDestroyed;
+    private readonly gridOptionsWrapper;
+    private readonly eContainer;
     constructor(cssIdentifier?: string);
     protected postConstruct(): void;
-    protected isFocusableContainer(): boolean;
     protected focusInnerElement(fromBottom: boolean): void;
     protected onFocusIn(e: FocusEvent): void;
     protected onFocusOut(e: FocusEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
+    protected onTabKeyDown(e: KeyboardEvent): void;
     private navigate;
     getLastFocusedRow(): number;
     focusRow(rowNumber: number): void;
@@ -40,4 +41,5 @@ export declare class VirtualList extends ManagedFocusComponent {
     private removeRow;
     private addScrollListener;
     setModel(model: VirtualListModel): void;
+    destroy(): void;
 }

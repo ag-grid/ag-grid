@@ -17,12 +17,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 import { Autowired, Bean, BeanStub, NumberSequence, _ } from "@ag-grid-community/core";
 var PivotColDefService = /** @class */ (function (_super) {
     __extends(PivotColDefService, _super);
     function PivotColDefService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    PivotColDefService_1 = PivotColDefService;
     PivotColDefService.prototype.createPivotColumnDefs = function (uniqueValues) {
         // this is passed to the columnController, to configure the columns and groups we show
         var pivotColumnGroupDefs = [];
@@ -33,7 +41,11 @@ var PivotColDefService = /** @class */ (function (_super) {
         var levelsDeep = pivotColumns.length;
         var columnIdSequence = new NumberSequence();
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
-        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
+        // additional columns that contain the aggregated total for each value column per row
+        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, columnIdSequence);
+        // additional group columns that contain child totals for each collapsed child column / group
+        this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
+        // additional group columns that contain an aggregated total across all child columns
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
@@ -51,8 +63,7 @@ var PivotColDefService = /** @class */ (function (_super) {
     PivotColDefService.prototype.recursivelyAddGroup = function (parentChildren, pivotColumnDefs, index, uniqueValues, pivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns) {
         var _this = this;
         _.iterateObject(uniqueValues, function (key, value) {
-            var newPivotKeys = pivotKeys.slice(0);
-            newPivotKeys.push(key);
+            var newPivotKeys = __spreadArrays(pivotKeys, [key]);
             var createGroup = index !== levelsDeep;
             if (createGroup) {
                 var groupDef = {
@@ -100,6 +111,49 @@ var PivotColDefService = /** @class */ (function (_super) {
         var userComparator = colDef.pivotComparator;
         var comparator = this.headerNameComparator.bind(this, userComparator);
         parentChildren.sort(comparator);
+    };
+    PivotColDefService.prototype.addExpandablePivotGroups = function (pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence) {
+        var _this = this;
+        if (this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || this.gridOptionsWrapper.getPivotColumnGroupTotals()) {
+            return;
+        }
+        var recursivelyAddSubTotals = function (groupDef, pivotColumnDefs, columnIdSequence, acc) {
+            var group = groupDef;
+            if (group.children) {
+                var childAcc_1 = new Map();
+                group.children.forEach(function (grp) {
+                    recursivelyAddSubTotals(grp, pivotColumnDefs, columnIdSequence, childAcc_1);
+                });
+                var firstGroup_1 = !group.children.some(function (child) { return child.children; });
+                _this.columnController.getValueColumns().forEach(function (valueColumn) {
+                    var columnName = _this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+                    var totalColDef = _this.createColDef(valueColumn, columnName, groupDef.pivotKeys, columnIdSequence);
+                    totalColDef.pivotTotalColumnIds = childAcc_1.get(valueColumn.getColId());
+                    totalColDef.columnGroupShow = 'closed';
+                    totalColDef.aggFunc = valueColumn.getAggFunc();
+                    if (!firstGroup_1) {
+                        // add total colDef to group and pivot colDefs array
+                        var children = groupDef.children;
+                        children.push(totalColDef);
+                        pivotColumnDefs.push(totalColDef);
+                    }
+                });
+                _this.merge(acc, childAcc_1);
+            }
+            else {
+                var def = groupDef;
+                // check that value column exists, i.e. aggFunc is supplied
+                if (!def.pivotValueColumn)
+                    return;
+                var pivotValueColId = def.pivotValueColumn.getColId();
+                var arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
+                arr.push(def.colId);
+                acc.set(pivotValueColId, arr);
+            }
+        };
+        pivotColumnGroupDefs.forEach(function (groupDef) {
+            recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
+        });
     };
     PivotColDefService.prototype.addPivotTotalsToGroups = function (pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence) {
         var _this = this;
@@ -149,7 +203,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         }
         return colIds;
     };
-    PivotColDefService.prototype.addRowGroupTotals = function (pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence) {
+    PivotColDefService.prototype.addRowGroupTotals = function (pivotColumnGroupDefs, pivotColumnDefs, valueColumns, columnIdSequence) {
         var _this = this;
         if (!this.gridOptionsWrapper.getPivotRowTotals()) {
             return;
@@ -163,8 +217,7 @@ var PivotColDefService = /** @class */ (function (_super) {
             pivotColumnGroupDefs.forEach(function (groupDef) {
                 colIds = colIds.concat(_this.extractColIdsForValueColumn(groupDef, valueCol));
             });
-            var levelsDeep = pivotColumns.length;
-            this_1.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, 1, [], columnIdSequence, levelsDeep, pivotColumns, valueCol, colIds, insertAfter);
+            this_1.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, [], columnIdSequence, valueCol, colIds, insertAfter);
         };
         var this_1 = this;
         for (var i = 0; i < valueCols.length; i++) {
@@ -187,39 +240,27 @@ var PivotColDefService = /** @class */ (function (_super) {
         });
         return colIds;
     };
-    PivotColDefService.prototype.createRowGroupTotal = function (parentChildren, pivotColumnDefs, index, pivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns, valueColumn, colIds, insertAfter) {
+    PivotColDefService.prototype.createRowGroupTotal = function (parentChildren, pivotColumnDefs, pivotKeys, columnIdSequence, valueColumn, colIds, insertAfter) {
         var newPivotKeys = pivotKeys.slice(0);
-        var createGroup = index !== levelsDeep;
-        if (createGroup) {
-            var groupDef = {
-                children: [],
-                pivotKeys: newPivotKeys,
-                groupId: 'pivot' + columnIdSequence.next()
-            };
-            insertAfter ? parentChildren.push(groupDef) : parentChildren.unshift(groupDef);
-            this.createRowGroupTotal(groupDef.children, pivotColumnDefs, index + 1, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns, valueColumn, colIds, insertAfter);
+        var measureColumns = this.columnController.getValueColumns();
+        var valueGroup = {
+            children: [],
+            pivotKeys: newPivotKeys,
+            groupId: PivotColDefService_1.PIVOT_ROW_TOTAL_PREFIX + columnIdSequence.next(),
+        };
+        if (measureColumns.length === 0) {
+            var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+            valueGroup.children.push(colDef);
+            pivotColumnDefs.push(colDef);
         }
         else {
-            var measureColumns = this.columnController.getValueColumns();
-            var valueGroup = {
-                children: [],
-                pivotKeys: newPivotKeys,
-                groupId: 'pivot' + columnIdSequence.next()
-            };
-            if (measureColumns.length === 0) {
-                var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
-                valueGroup.children.push(colDef);
-                pivotColumnDefs.push(colDef);
-            }
-            else {
-                var columnName = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
-                var colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
-                colDef.pivotTotalColumnIds = colIds;
-                valueGroup.children.push(colDef);
-                pivotColumnDefs.push(colDef);
-            }
-            insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
+            var columnName = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+            var colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
+            colDef.pivotTotalColumnIds = colIds;
+            valueGroup.children.push(colDef);
+            pivotColumnDefs.push(colDef);
         }
+        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     };
     PivotColDefService.prototype.createColDef = function (valueColumn, headerName, pivotKeys, columnIdSequence) {
         var colDef = {};
@@ -281,13 +322,22 @@ var PivotColDefService = /** @class */ (function (_super) {
             }
         }
     };
+    PivotColDefService.prototype.merge = function (m1, m2) {
+        m2.forEach(function (value, key, map) {
+            var existingList = m1.has(key) ? m1.get(key) : [];
+            var updatedList = __spreadArrays(existingList, value);
+            m1.set(key, updatedList);
+        });
+    };
+    var PivotColDefService_1;
+    PivotColDefService.PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
     __decorate([
         Autowired('columnController')
     ], PivotColDefService.prototype, "columnController", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
-    PivotColDefService = __decorate([
+    PivotColDefService = PivotColDefService_1 = __decorate([
         Bean('pivotColDefService')
     ], PivotColDefService);
     return PivotColDefService;

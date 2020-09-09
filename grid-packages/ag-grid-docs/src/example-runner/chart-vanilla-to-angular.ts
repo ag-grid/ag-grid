@@ -32,40 +32,41 @@ function getTemplate(bindings: any, attributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, componentFileNames: string[]): string {
-    const { properties } = bindings;
-    const imports = getImports(componentFileNames);
-    const propertyAttributes = [];
-    const propertyVars = [];
-    const propertyAssignments = [];
+export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
+    return () => {
+        const { properties } = bindings;
+        const imports = getImports(componentFileNames);
+        const propertyAttributes = [];
+        const propertyVars = [];
+        const propertyAssignments = [];
 
-    properties.forEach(property => {
-        if (componentFileNames.length > 0 && property.name === 'components') {
-            property.name = 'frameworkComponents';
-        }
-
-        if (property.value === 'true' || property.value === 'false') {
-            propertyAttributes.push(toConst(property));
-        } else if (property.value === null || property.value === 'null') {
-            propertyAttributes.push(toInput(property));
-        } else {
-            // for when binding a method
-            // see javascript-grid-keyboard-navigation for an example
-            // tabToNextCell needs to be bound to the angular component
-            if (!isInstanceMethod(bindings.instanceMethods, property)) {
-                propertyAttributes.push(toInput(property));
-                propertyVars.push(toMember(property));
+        properties.forEach(property => {
+            if (componentFileNames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
             }
 
-            propertyAssignments.push(toAssignment(property));
-        }
-    });
+            if (property.value === 'true' || property.value === 'false') {
+                propertyAttributes.push(toConst(property));
+            } else if (property.value === null || property.value === 'null') {
+                propertyAttributes.push(toInput(property));
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the angular component
+                if (!isInstanceMethod(bindings.instanceMethods, property)) {
+                    propertyAttributes.push(toInput(property));
+                    propertyVars.push(toMember(property));
+                }
 
-    const instanceMethods = bindings.instanceMethods.map(processFunction);
-    const template = getTemplate(bindings, propertyAttributes);
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
+                propertyAssignments.push(toAssignment(property));
+            }
+        });
 
-    return `${imports.join('\n')}
+        const instanceMethods = bindings.instanceMethods.map(processFunction);
+        const template = getTemplate(bindings, propertyAttributes);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
+
+        return `${imports.join('\n')}
 
 @Component({
     selector: 'my-app',
@@ -89,6 +90,7 @@ export class AppComponent {
 
 ${bindings.globals.join('\n')}
 `;
+    };
 }
 
 if (typeof window !== 'undefined') {

@@ -138,14 +138,14 @@ ignore style information.</p>
 <p>The CSV exporter can accept a multi-line string for <code>customHeader</code> and <code>customFooter</code>,
 see the <a href="../javascript-grid-csv/">CSV Export</a> page for more information.</p>
 
-<h2>Export on an iPad</h2>
+<h2>Export on iOS</h2>
 
 <p>
-    It is not possible to download files directly from JavaScript to an iPad. This is a restriction
-    of iOS and not something wrong with ag-Grid. For this reason, the download links in the context
-    menu are removed when running on iPad. If you do want to download on iPad, then it is recommended
-    you use the api function <code>getDataAsCsv()</code> to get the export data and then send this
-    to the server to allow building an endpoint for doing the download.
+    It is not possible to download files directly from JavaScript to an iPad / iPhone. This is a restriction of iOS and
+    not something wrong with ag-Grid. For this reason, the download links in the context menu are removed when running
+    on iPad / iPhone. If you do want to download on iPad / iPhone, then it is recommended you use the api function
+    <code>getDataAsCsv()</code> to get the export data and then send this to the server to allow building an endpoint
+    for doing the download.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

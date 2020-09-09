@@ -8,7 +8,6 @@ ts-lint-rules
 .npmignore
 gulpfile.js
 protractor.conf.js
-tsconfig.docs.json
 tsconfig.json
 tsconfig.es6.json
 tsconfig.json

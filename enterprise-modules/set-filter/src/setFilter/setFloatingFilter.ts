@@ -14,6 +14,7 @@ import {
 import { SetFilterModel } from './setFilterModel';
 import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
+import { DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
@@ -43,7 +44,8 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(`${displayName} Filter Input`);
+            .setInputAriaLabel(`${displayName} Filter Input`)
+            .addGuiEventListener('click', () => params.showParentFilter());
 
         this.params = params;
     }
@@ -96,7 +98,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
                 const formattedValue = this.valueFormatterService.formatValue(this.params.column, null, null, value);
                 const valueToRender = formattedValue != null ? formattedValue : value;
 
-                return valueToRender == null ? `(${localeTextFunc('blanks', 'Blanks')})` : valueToRender;
+                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
             });
 
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;

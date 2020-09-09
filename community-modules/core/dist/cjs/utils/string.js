@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,10 +124,10 @@ function capitalise(str) {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 exports.capitalise = capitalise;
-function escape(toEscape) {
+function escapeString(toEscape) {
     return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
 }
-exports.escape = escape;
+exports.escapeString = escapeString;
 /**
  * Converts a camelCase string into regular text
  * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
@@ -143,5 +143,12 @@ function camelCaseToHumanText(camelCase) {
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 }
 exports.camelCaseToHumanText = camelCaseToHumanText;
+function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
+}
+exports.startsWith = startsWith;
 
 //# sourceMappingURL=string.js.map

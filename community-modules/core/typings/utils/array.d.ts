@@ -38,6 +38,7 @@ export declare function some<T>(list: T[], predicate: (value: T, index: number) 
  * https://jsbench.me/apk91elt8a/
  */
 export declare function forEach<T>(list: T[], action: (value: T, index: number) => void): void;
+export declare function forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void;
 /**
  * The implementation of Array.prototype.map in browsers is generally the same as just using a simple for loop. However,
  * Firefox does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved

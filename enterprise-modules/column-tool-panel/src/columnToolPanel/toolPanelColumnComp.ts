@@ -18,16 +18,16 @@ import {
     RefSelector,
     ManagedFocusComponent,
     _,
-    Constants
+    KeyCode
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 
 export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column" tabindex="-1">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel"></span>
+        `<div class="ag-column-select-column" tabindex="-1" role="treeitem">
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -67,9 +67,8 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        const displayNameSanitised: any = _.escape(this.displayName);
+        const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
-        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         const indent = this.columnDept;
@@ -92,17 +91,17 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();
+        this.refreshAriaLabel();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case Constants.KEY_SPACE:
-                e.preventDefault();
-                if (this.isSelectable()) {
-                    this.onSelectAllChanged(!this.isSelected());
-                }
+        if (e.keyCode === KeyCode.SPACE) {
+            e.preventDefault();
+            if (this.isSelectable()) {
+                this.onSelectAllChanged(!this.isSelected());
+            }
         }
     }
 
@@ -125,7 +124,9 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
             return;
         }
 
-        // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
+        this.refreshAriaLabel();
+
+        // only want to action if the user clicked the checkbox, not if we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) {
             return;
@@ -141,8 +142,13 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
+            this.columnController.setColumnVisible(this.column, nextState, "toolPanelUi");
         }
+    }
+
+    private refreshAriaLabel(): void {
+        const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
+        _.setAriaLabel(this.getGui(), `${this.displayName} column toggle visibility (${state})`);
     }
 
     private actionUnCheckedPivotMode(): void {
@@ -163,7 +169,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removePivotColumn(column, "columnMenu");
+                columnController.removePivotColumn(column, "toolPanelUi");
             }
         }
         // remove value if column is value
@@ -179,7 +185,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeValueColumn(column, "columnMenu");
+                columnController.removeValueColumn(column, "toolPanelUi");
             }
         }
         // remove group if column is grouped
@@ -195,7 +201,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeRowGroupColumn(column, "columnMenu");
+                columnController.removeRowGroupColumn(column, "toolPanelUi");
             }
         }
     }
@@ -222,7 +228,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addValueColumn(column, "columnMenu");
+                this.columnController.addValueColumn(column, "toolPanelUi");
             }
         } else if (column.isAllowRowGroup()) {
             if (functionPassive) {
@@ -236,7 +242,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addRowGroupColumn(column, "columnMenu");
+                this.columnController.addRowGroupColumn(column, "toolPanelUi");
             }
         } else if (column.isAllowPivot()) {
             if (functionPassive) {
@@ -250,7 +256,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addPivotColumn(column, "columnMenu");
+                this.columnController.addPivotColumn(column, "toolPanelUi");
             }
         }
     }
@@ -273,7 +279,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
     }
 
     private createDragItem() {
-        const visibleState: { [key: string]: boolean } = {};
+        const visibleState: { [key: string]: boolean; } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
         return {
             columns: [this.column],

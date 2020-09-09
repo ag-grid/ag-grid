@@ -3,7 +3,9 @@ import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 import { BeanStub } from "../../context/beanStub";
-import { _ } from "../../utils";
+import { debounce } from "../../utils/function";
+import { exists } from "../../utils/generic";
+import { removeFromArray } from "../../utils/array";
 
 export class RowNodeBlockLoader extends BeanStub {
 
@@ -21,7 +23,7 @@ export class RowNodeBlockLoader extends BeanStub {
         this.maxConcurrentRequests = maxConcurrentRequests;
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
 
@@ -34,7 +36,7 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public removeBlock(block: IRowNodeBlock): void {
-        _.removeFromArray(this.blocks, block);
+        removeFromArray(this.blocks, block);
     }
 
     protected destroy(): void {
@@ -91,7 +93,7 @@ export class RowNodeBlockLoader extends BeanStub {
                 endRow: block.getEndRow(),
                 pageStatus: block.getState()
             };
-            if (_.exists(nodeIdPrefix)) {
+            if (exists(nodeIdPrefix)) {
                 result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
             } else {
                 result[block.getBlockNumber()] = stateItem;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -46,6 +46,7 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_CHILD_INDEX_CHANGED: string;
     static EVENT_ROW_INDEX_CHANGED: string;
     static EVENT_EXPANDED_CHANGED: string;
+    static EVENT_HAS_CHILDREN_CHANGED: string;
     static EVENT_SELECTABLE_CHANGED: string;
     static EVENT_UI_LEVEL_CHANGED: string;
     static EVENT_HIGHLIGHT_CHANGED: string;
@@ -90,12 +91,6 @@ export declare class RowNode implements IEventEmitter {
     detailNode: RowNode;
     /** If master detail, this contains details about the detail grid */
     detailGridInfo: DetailGridInfo | null;
-    /** Same as master, kept for legacy reasons */
-    canFlower: boolean;
-    /** Same as detail, kept for legacy reasons */
-    flower: boolean;
-    /** Same as detailNode, kept for legacy reasons */
-    childFlower: RowNode;
     /** True if this node is a group and the group is the bottom level in the tree */
     leafGroup: boolean;
     /** True if this is the first child in this group */
@@ -167,6 +162,10 @@ export declare class RowNode implements IEventEmitter {
     /** Used by sorting service - to give deterministic sort to groups. Previously we
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     __objectId: number;
+    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+     * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
+     * method, however that would be a breaking change. */
+    private __hasChildren;
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     alreadyRendered: boolean;
     highlighted: 'above' | 'below' | null;
@@ -202,6 +201,7 @@ export declare class RowNode implements IEventEmitter {
     setDataValue(colKey: string | Column, newValue: any): void;
     setGroupValue(colKey: string | Column, newValue: any): void;
     setAggData(newAggData: any): void;
+    updateHasChildren(): void;
     hasChildren(): boolean;
     isEmptyRowGroupNode(): boolean;
     private dispatchCellChangedEvent;

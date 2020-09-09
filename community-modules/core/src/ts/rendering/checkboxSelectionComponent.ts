@@ -7,7 +7,7 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
-import { _ } from '../utils';
+import { stopPropagationForAgGrid } from '../utils/event';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -41,6 +41,7 @@ export class CheckboxSelectionComponent extends Component {
         const state = this.rowNode.isSelected();
 
         this.eCheckbox.setValue(state, true);
+        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${state ? 'checked' : 'unchecked'})`);
     }
 
     private onCheckedClicked(): number {
@@ -63,9 +64,9 @@ export class CheckboxSelectionComponent extends Component {
 
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', event => _.stopPropagationForAgGrid(event));
+        this.addGuiEventListener('click', event => stopPropagationForAgGrid(event));
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', event => _.stopPropagationForAgGrid(event));
+        this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
 
         this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (params) => {
             if (params.selected) {
@@ -86,7 +87,7 @@ export class CheckboxSelectionComponent extends Component {
             this.showOrHideSelect();
         }
 
-        this.eCheckbox.setInputAriaLabel('Toggle Row Selection');
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
     }
 
     private showOrHideSelect(): void {

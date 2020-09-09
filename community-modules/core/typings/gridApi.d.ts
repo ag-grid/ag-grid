@@ -27,6 +27,7 @@ import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -56,16 +57,18 @@ export interface RedrawRowsParams {
 export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeName?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface CreatePivotChartParams {
     chartType: ChartType;
-    chartPalette?: string;
+    chartThemeName?: string;
     chartContainer?: HTMLElement;
+    chartThemeOverrides?: AgChartThemeOverrides;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface DetailGridInfo {
@@ -235,6 +238,7 @@ export declare class GridApi {
     destroyFilter(key: string | Column): void;
     getStatusPanel(key: string): IStatusPanelComp;
     getColumnDef(key: string | Column): ColDef;
+    getColumnDefs(): (ColDef | ColGroupDef)[];
     onFilterChanged(): void;
     onSortChanged(): void;
     setSortModel(sortModel: any, source?: ColumnEventType): void;
@@ -256,9 +260,9 @@ export declare class GridApi {
     removeRowDropZone(params: RowDropZoneParams): void;
     getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams;
     setHeaderHeight(headerHeight: number): void;
-    setGridAutoHeight(gridAutoHeight: boolean): void;
     setDomLayout(domLayout: string): void;
     setEnableCellTextSelection(selectable: boolean): void;
+    setFillHandleDirection(direction: 'x' | 'y' | 'xy'): void;
     setGroupHeaderHeight(headerHeight: number): void;
     setFloatingFiltersHeight(headerHeight: number): void;
     setPivotGroupHeaderHeight(headerHeight: number): void;
@@ -266,7 +270,6 @@ export declare class GridApi {
     isSideBarVisible(): boolean;
     setSideBarVisible(show: boolean): void;
     setSideBarPosition(position: 'left' | 'right'): void;
-    showToolPanel(show: boolean): void;
     openToolPanel(key: string): void;
     closeToolPanel(): void;
     getOpenedToolPanel(): string;
@@ -295,6 +298,8 @@ export declare class GridApi {
     clearRangeSelection(): void;
     undoCellEditing(): void;
     redoCellEditing(): void;
+    getCurrentUndoSize(): number;
+    getCurrentRedoSize(): number;
     getChartModels(): ChartModel[];
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
@@ -321,6 +326,7 @@ export declare class GridApi {
     /** @deprecated */
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
     applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    flushAsyncTransactions(): void;
     /** @deprecated */
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     insertItemsAtIndex(index: number, items: any[], skipRefresh?: boolean): void;

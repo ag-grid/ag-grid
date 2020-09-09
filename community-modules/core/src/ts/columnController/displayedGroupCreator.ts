@@ -7,8 +7,9 @@ import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Bean } from "../context/context";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { last } from "../utils/array";
+import { exists } from "../utils/generic";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
@@ -71,7 +72,7 @@ export class DisplayedGroupCreator extends BeanStub {
                 // path (no groups), and we just add the column to the root list.
                 result.push(currentColumn);
             } else {
-                const leafGroup = _.last(currentRealPath);
+                const leafGroup = last(currentRealPath);
                 leafGroup.addChild(currentColumn);
             }
 
@@ -104,7 +105,7 @@ export class DisplayedGroupCreator extends BeanStub {
             columnGroup = null;
         }
 
-        if (_.exists(columnGroup)) {
+        if (exists(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         } else {

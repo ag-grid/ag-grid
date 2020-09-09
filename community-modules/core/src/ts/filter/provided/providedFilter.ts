@@ -1,14 +1,16 @@
-import { Component } from '../../widgets/component';
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
-import { Constants } from '../../constants';
+import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
+import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { convertToSet } from '../../utils/set';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -27,7 +29,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * All the filters that come with ag-Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class ProvidedFilter extends Component implements IFilterComp {
+export abstract class ProvidedFilter extends ManagedFocusComponent implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -35,11 +37,24 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private applyActive = false;
     private hidePopup: (params: PopupEventParams) => void = null;
+    // a debounce of the onBtApply method
+    private onBtApplyDebounce: () => void;
 
-    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rowModel') protected rowModel: IRowModel;
+    // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
+    // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
+    // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
+    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
+    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+    // not active) then this appliedModel will be null/undefined.
+    private appliedModel: ProvidedFilterModel | null = null;
 
-    // part of IFilter interface, hence public
+    @Autowired('gridOptionsWrapper') protected readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowModel') protected readonly rowModel: IRowModel;
+
+    constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
+        super();
+    }
+
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     protected abstract updateUiVisibility(): void;
@@ -51,18 +66,14 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
+    /** Used to get the filter type for filter models. */
+    protected abstract getFilterType(): string;
+
     public abstract getModelFromUi(): ProvidedFilterModel | null;
 
-    // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
-    // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
-    // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
-    // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
-    // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
-    // not active) then this appliedModel will be null/undefined.
-    private appliedModel: ProvidedFilterModel | null = null;
-
-    // a debounce of the onBtApply method
-    private onBtApplyDebounce: () => void;
+    public getFilterTitle(): string {
+        return this.translate(this.filterNameKey);
+    }
 
     /** @deprecated */
     public onFilterChanged(): void {
@@ -79,17 +90,22 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     @PostConstruct
     protected postConstruct(): void {
+        this.resetTemplate(); // do this first to create the DOM
+        super.postConstruct();
+    }
+
+    protected resetTemplate(paramsMap?: any) {
         const templateString = /* html */`
-            <div>
+            <div class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
             </div>`;
 
-        this.setTemplate(templateString);
+        this.setTemplate(templateString, paramsMap);
     }
 
-    public init(params: IFilterParams): void {
+    public init(params: IProvidedFilterParams): void {
         this.setParams(params);
 
         this.resetUiToDefaults(true).then(() => {
@@ -123,7 +139,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         if (!buttons || buttons.length < 1) { return; }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const eButtonsPanel = document.createElement('div');
 
         addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
@@ -134,19 +149,19 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
             switch (type) {
                 case 'apply':
-                    text = translate('applyFilter', 'Apply Filter');
+                    text = this.translate('applyFilter');
                     clickListener = (e) => this.onBtApply(false, false, e);
                     break;
                 case 'clear':
-                    text = translate('clearFilter', 'Clear Filter');
+                    text = this.translate('clearFilter');
                     clickListener = () => this.onBtClear();
                     break;
                 case 'reset':
-                    text = translate('resetFilter', 'Reset Filter');
+                    text = this.translate('resetFilter');
                     clickListener = () => this.onBtReset();
                     break;
                 case 'cancel':
-                    text = translate('cancelFilter', 'Cancel Filter');
+                    text = this.translate('cancelFilter');
                     clickListener = (e) => { this.onBtCancel(e); };
                     break;
                 default:
@@ -164,7 +179,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.addManagedListener(button, 'click', clickListener);
         };
 
-        new Set(buttons).forEach(type => addButton(type));
+        convertToSet(buttons).forEach(type => addButton(type));
 
         this.getGui().appendChild(eButtonsPanel);
     }
@@ -276,7 +291,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         const { closeOnApply } = this.providedFilterParams;
 
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
-        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+        if (closeOnApply && this.applyActive && !afterFloatingFilter && !afterDataChange) {
             this.close(e);
         }
     }
@@ -329,7 +344,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (params == null) { return; }
+
         this.hidePopup = params.hidePopup;
     }
 
@@ -357,5 +374,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.hidePopup = null;
 
         super.destroy();
+    }
+
+    protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }
 }

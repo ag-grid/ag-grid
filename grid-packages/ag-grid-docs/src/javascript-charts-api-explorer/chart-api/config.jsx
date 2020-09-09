@@ -119,7 +119,7 @@ const getPaddingOption = position => ({
 
 const getChartContainer = () => document.querySelector('.container__chart') || {};
 
-export const generalConfig = Object.freeze({
+export const chart = Object.freeze({
     meta: {
         displayName: 'General Configuration',
         description: 'Configuration common to all charts.',
@@ -143,7 +143,7 @@ export const generalConfig = Object.freeze({
         description: 'The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
-        max: () => getChartContainer().offsetWidth - (getChartContainer().offsetWidth % 10),
+        max: () => getChartContainer().offsetWidth - 20 - (getChartContainer().offsetWidth % 10),
         unit: 'px',
     },
     height: {
@@ -151,19 +151,25 @@ export const generalConfig = Object.freeze({
         description: 'The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
-        max: () => getChartContainer().offsetHeight - (getChartContainer().offsetHeight % 10),
+        max: () => getChartContainer().offsetHeight - 10 - (getChartContainer().offsetHeight % 10),
         unit: 'px',
     },
-    tooltipOffset: {
-        type: '[number, number]',
-        default: [20, 20],
-        description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
-        editor: ArrayEditor,
-    },
-    tooltipClass: {
-        type: 'string',
-        description: 'A class to be added to tooltips in the chart.',
-    },
+    // tooltipTracking: {
+    //     type: 'boolean',
+    //     default: true,
+    //     description: 'If true, for series with markers the tooltip will be shown to the closest marker.',
+    //     editor: BooleanEditor
+    // },
+    // tooltipOffset: {
+    //     type: '[number, number]',
+    //     default: [20, 20],
+    //     description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
+    //     editor: ArrayEditor,
+    // },
+    // tooltipClass: {
+    //     type: 'string',
+    //     description: 'A class to be added to tooltips in the chart.',
+    // },
     padding: {
         meta: {
             description: 'Configuration for the padding shown around the chart.',
@@ -242,9 +248,9 @@ export const generalConfig = Object.freeze({
         markerShape: {
             type: 'string',
             description:
-                `If set, overrides the marker shape from the series and the Legend will show the
+                `If set, overrides the marker shape from the series and the legend will show the
                 specified marker shape instead. If not set, will use a marker shape matching the
-                shape from the series, or fall back to square if there is none.`,
+                shape from the series, or fall back to <code>'square'</code> if there is none.`,
             editor: PresetEditor,
             options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
         },
@@ -273,7 +279,7 @@ export const generalConfig = Object.freeze({
     },
     navigator: {
         meta: {
-            description: 'Configuration for the chart navigator. Not supported in pie charts.',
+            description: 'Configuration for the chart navigator. This config is only supported by cartesian charts.',
         },
         enabled: {
             default: false,
@@ -290,7 +296,7 @@ export const generalConfig = Object.freeze({
         },
         min: {
             default: 0,
-            description: 'The start of the visible range in the [0, 1] interval.',
+            description: 'The start of the visible range in the <code>[0, 1]</code> interval.',
             editor: NumberEditor,
             min: 0,
             max: 1,
@@ -298,7 +304,7 @@ export const generalConfig = Object.freeze({
         },
         max: {
             default: 1,
-            description: 'The end of the visible range in the [0, 1] interval.',
+            description: 'The end of the visible range in the <code>[0, 1]</code> interval.',
             editor: NumberEditor,
             min: 0,
             max: 1,
@@ -328,7 +334,7 @@ export const generalConfig = Object.freeze({
             },
             fillOpacity: {
                 default: 0.2,
-                description: `The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.`,
+                description: `The opacity of the mask's fill in the <code>[0, 1]</code> interval, where <code>0</code> is effectively no masking.`,
                 editor: NumberEditor,
                 min: 0,
                 max: 1,
@@ -340,7 +346,7 @@ export const generalConfig = Object.freeze({
     }
 });
 
-export const axisConfig = Object.freeze({
+export const axis = Object.freeze({
     meta: {
         displayName: 'Axis Configuration',
         description: 'Configuration for axes in cartesian charts.',
@@ -356,9 +362,13 @@ export const axisConfig = Object.freeze({
         editor: PresetEditor,
         options: ['top', 'right', 'bottom', 'left'],
     },
-    rotation: {
+    min: {
         type: 'number',
-        description: 'The rotation of the axis in degrees.',
+        description: 'User override for the automatically determinted min value (based on series data). Only applied to "number" axes.',
+    },
+    max: {
+        type: 'number',
+        description: 'User override for the automatically determinted max value (based on series data). Only applied to "number" axes.',
     },
     title: getCaptionOptions('axis title', 'Configuration for the title shown next to the axis.', 'Axis Title', 14, 'bold'),
     line: {
@@ -439,10 +449,11 @@ export const axisConfig = Object.freeze({
             min: -359,
             max: 359,
             unit: '&deg;',
+            description: 'Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.'
         },
         format: {
             type: 'string',
-            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-grid-charts-integrated-customisation-cartesian/#format-string">click here</a>.',
+            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-charts-axis/#time-label-format-string">click here</a>.',
         },
         formatter: {
             type: {
@@ -469,13 +480,14 @@ export const axisConfig = Object.freeze({
         },
         lineDash: {
             default: [4, 2],
+            type: 'number[]',
             description: 'Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
             editor: ArrayEditor,
         }
     }
 });
 
-const seriesConfig = {
+const series = {
     data: {
         type: 'object[]',
         isRequired: true,
@@ -513,7 +525,7 @@ const seriesConfig = {
     },
 };
 
-const markerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
+const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
     marker: {
         meta: {
             description: 'Configuration for the markers used in the series.',
@@ -538,9 +550,9 @@ const markerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) 
             max: 20,
             unit: 'px',
         },
-        minSize: {
-            default: 12,
-            description: 'For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.',
+        maxSize: {
+            default: 30,
+            description: 'For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels.',
             editor: NumberEditor,
             min: 1,
             max: 20,
@@ -659,6 +671,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
     if (includeFill) {
         if (hasMultipleSeries) {
             config.fills = {
+                type: 'string[]',
                 default: fills,
                 description: `The colours to cycle through for the fills of the ${name}.`,
             };
@@ -682,6 +695,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
 
     if (hasMultipleSeries) {
         config.strokes = {
+            type: 'string[]',
             default: strokes,
             description: `The colours to cycle through for the strokes of the ${name}.`,
         };
@@ -775,13 +789,13 @@ const getHighlightConfig = (name = 'markers') => ({
     },
 });
 
-export const barSeriesConfig = Object.freeze({
+export const bar = Object.freeze({
     meta: {
         displayName: 'Bar/Column Series Configuration',
         description: 'Configuration for bar/column series.',
     },
     ...getCartesianKeyConfig(true),
-    ...seriesConfig,
+    ...series,
     grouped: {
         default: false,
         description: 'Whether to show different y-values as separate bars (grouped) or not (stacked).',
@@ -836,20 +850,20 @@ export const barSeriesConfig = Object.freeze({
     },
 });
 
-export const lineSeriesConfig = Object.freeze({
+export const line = Object.freeze({
     meta: {
         displayName: 'Line Series Configuration',
         description: 'Configuration for line series.',
     },
     ...getCartesianKeyConfig(),
-    ...seriesConfig,
+    ...series,
     title: {
         type: 'string',
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
     ...getColourConfig('lines', false, false),
-    ...markerConfig(),
+    ...getMarkerConfig(),
     ...getHighlightConfig(),
     listeners: {
         meta: {
@@ -871,13 +885,13 @@ export const lineSeriesConfig = Object.freeze({
     },
 });
 
-export const areaSeriesConfig = Object.freeze({
+export const area = Object.freeze({
     meta: {
         displayName: 'Area Series Configuration',
         description: 'Configuration for area series.',
     },
     ...getCartesianKeyConfig(true),
-    ...seriesConfig,
+    ...series,
     normalizedTo: {
         type: 'number',
         description:
@@ -888,12 +902,12 @@ export const areaSeriesConfig = Object.freeze({
         max: 100,
     },
     ...getColourConfig('areas', true),
-    ...markerConfig({ enabledByDefault: false }),
+    ...getMarkerConfig({ enabledByDefault: false }),
     ...getHighlightConfig(),
     ...shadowConfig,
 });
 
-export const scatterSeriesConfig = Object.freeze({
+export const scatter = Object.freeze({
     meta: {
         displayName: 'Scatter/Bubble Series Configuration',
         description: 'Configuration for scatter/bubble series.',
@@ -915,7 +929,7 @@ export const scatterSeriesConfig = Object.freeze({
         type: 'string',
         description: 'A human-readable description of the label values.',
     },
-    ...seriesConfig,
+    ...series,
     tooltipRenderer: {
         type: {
             parameters: {
@@ -941,7 +955,7 @@ export const scatterSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig(),
-    ...markerConfig(),
+    ...getMarkerConfig(),
     ...getHighlightConfig(),
     listeners: {
         meta: {
@@ -964,7 +978,7 @@ export const scatterSeriesConfig = Object.freeze({
     },
 });
 
-export const pieSeriesConfig = Object.freeze({
+export const pie = Object.freeze({
     meta: {
         displayName: 'Pie/Doughnut Series Configuration',
         description: 'Configuration for pie/doughnut series.',
@@ -995,7 +1009,7 @@ export const pieSeriesConfig = Object.freeze({
         type: 'string',
         description: 'A human-readable description of the radius values.',
     },
-    ...seriesConfig,
+    ...series,
     tooltipRenderer: {
         type: {
             parameters: {
@@ -1081,6 +1095,7 @@ export const pieSeriesConfig = Object.freeze({
             description: 'Configuration for the callouts used with the labels for the segments.',
         },
         colors: {
+            type: 'string[]',
             default: strokes,
             description: 'The colours to cycle through for the strokes of the callouts.',
         },
@@ -1122,14 +1137,14 @@ export const pieSeriesConfig = Object.freeze({
     },
 });
 
-export const histogramSeriesConfig = Object.freeze({
-    ...seriesConfig,
+export const histogram = Object.freeze({
+    ...series,
     ...getCartesianKeyConfig(false, false),
     meta: {
         displayName: "Histogram Series Configuration",
         description: "Configuration for histogram series."
     },
-    binCount:{
+    binCount: {
         type: "number",
         description: "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
     },
@@ -1167,7 +1182,7 @@ export const histogramSeriesConfig = Object.freeze({
         },
         description: "Function used to create the content for tooltips."
     },
-    ...getHighlightConfig(),
+    ...getHighlightConfig('bars'),
     ...getColourConfig('histogram bars', false, true),
     listeners: {
         meta: {

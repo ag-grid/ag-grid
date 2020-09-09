@@ -1,3 +1,4 @@
+var tooltipValueGetter = function(params) { return { value: params.value }; };
 var columnDefs = [
     {
         headerName: "Athletes",
@@ -5,7 +6,7 @@ var columnDefs = [
         tooltipComponent: 'customTooltip',
         children: [
             { headerName: "Athlete Col 1", field: "athlete", width: 150, headerTooltip: 'Athlete 1', tooltipField: 'athlete' },
-            { headerName: "Athlete Col 2", field: "athlete", width: 150, headerTooltip: 'Athlete 2', tooltipComponent: 'customTooltip', tooltipValueGetter: function(params) { return { value: params.value }; } },
+            { headerName: "Athlete Col 2", field: "athlete", width: 150, headerTooltip: 'Athlete 2', tooltipComponent: 'customTooltip', tooltipValueGetter: tooltipValueGetter },
         ]
     },
     { field: "sport", width: 110 },

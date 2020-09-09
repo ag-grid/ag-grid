@@ -15,3 +15,15 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
 }
+
+.undo-redo-input {
+    width: 20px;
+}
+
+.undo-btn {
+    margin-left: 20px;
+}
+
+.redo-btn {
+    margin-left: 5px;
+}

@@ -28,6 +28,31 @@ export function deepCloneObject<T>(object: T): T {
     return JSON.parse(JSON.stringify(object));
 }
 
+// returns copy of an object, doing a deep clone of any objects with that object.
+// this is used for eg creating copies of Column Definitions, where we want to
+// deep copy all objects, but do not want to deep copy functions (eg when user provides
+// a function or class for colDef.cellRenderer)
+export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T {
+    if (!object) { return; }
+
+    const obj = object as any;
+    const res: any = {};
+
+    Object.keys(obj).forEach(key => {
+
+        if (keysToSkip && keysToSkip.indexOf(key) >= 0) { return; }
+
+        const value = obj[key];
+        if (typeof value === 'object') {
+            res[key] = deepCloneDefinition(value);
+        } else {
+            res[key] = value;
+        }
+    });
+
+    return res;
+}
+
 export function getProperty<T, K extends keyof T>(object: T, key: K): any {
     return object[key];
 }
@@ -66,18 +91,26 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     return Object.keys(allValues);
 }
 
-export function mergeDeep(dest: any, source: any, copyUndefined = true): void {
+export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsThatNeedCopy: string[] = [], iteration = 0): void {
     if (!exists(source)) { return; }
 
-    iterateObject(source, (key: string, newValue: any) => {
-        const oldValue: any = dest[key];
+    iterateObject(source, (key: string, sourceValue: any) => {
+        let destValue: any = dest[key];
 
-        if (oldValue === newValue) { return; }
+        if (destValue === sourceValue) { return; }
 
-        if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
-            mergeDeep(oldValue, newValue);
-        } else if (copyUndefined || newValue !== undefined) {
-            dest[key] = newValue;
+        const dontCopyOverSourceObject = iteration==0 && destValue == null && sourceValue!=null && objectsThatNeedCopy.indexOf(key)>=0;
+        if (dontCopyOverSourceObject) {
+            // by putting an empty value into destValue first, it means we end up copying over values from
+            // the source object, rather than just copying in the source object in it's entirety.
+            destValue = {};
+            dest[key] = destValue;
+        }
+
+        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
+            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+        } else if (copyUndefined || sourceValue !== undefined) {
+            dest[key] = sourceValue;
         }
     });
 }

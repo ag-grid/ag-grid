@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,8 @@ var context_1 = require("../context/context");
 var eventKeys_1 = require("../eventKeys");
 var array_1 = require("../utils/array");
 var beanStub_1 = require("../context/beanStub");
-var utils_1 = require("../utils");
+var generic_1 = require("../utils/generic");
+var function_1 = require("../utils/function");
 var RowDragFeature = /** @class */ (function (_super) {
     __extends(RowDragFeature, _super);
     function RowDragFeature(eContainer, gridPanel) {
@@ -73,15 +74,14 @@ var RowDragFeature = /** @class */ (function (_super) {
         this.onRowGroupChanged();
     };
     RowDragFeature.prototype.onSortChanged = function () {
-        var sortModel = this.sortController.getSortModel();
-        this.isGridSorted = !utils_1._.missingOrEmpty(sortModel);
+        this.isGridSorted = this.sortController.isSortActive();
     };
     RowDragFeature.prototype.onFilterChanged = function () {
         this.isGridFiltered = this.filterManager.isAnyFilterPresent();
     };
     RowDragFeature.prototype.onRowGroupChanged = function () {
         var rowGroups = this.columnController.getRowGroupColumns();
-        this.isRowGroupActive = !utils_1._.missingOrEmpty(rowGroups);
+        this.isRowGroupActive = !generic_1.missingOrEmpty(rowGroups);
     };
     RowDragFeature.prototype.getContainer = function () {
         return this.eContainer;
@@ -117,9 +117,11 @@ var RowDragFeature = /** @class */ (function (_super) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
-        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-            rowNode.setDragging(true);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+                rowNode.setDragging(true);
+            });
+        }
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.onDragging = function (draggingEvent) {
@@ -269,7 +271,7 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.addRowDropZone = function (params) {
         var _this = this;
         if (!params.getContainer()) {
-            utils_1._.doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
+            function_1.doOnce(function () { return console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'); }, 'add-drop-zone-empty-target');
             return;
         }
         if (this.dragAndDropService.findExternalZone(params)) {
@@ -388,7 +390,9 @@ var RowDragFeature = /** @class */ (function (_super) {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
-        this.clearRowHighlight();
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.clearRowHighlight();
+        }
         if (this.isFromThisGrid(draggingEvent)) {
             this.isMultiRowDrag = false;
         }
@@ -404,9 +408,11 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.stopDragging = function (draggingEvent) {
         this.ensureIntervalCleared();
-        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-            rowNode.setDragging(false);
-        });
+        if (this.gridOptionsWrapper.isRowDragManaged()) {
+            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+                rowNode.setDragging(false);
+            });
+        }
     };
     __decorate([
         context_1.Autowired('dragAndDropService')

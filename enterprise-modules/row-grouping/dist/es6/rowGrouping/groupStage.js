@@ -54,8 +54,7 @@ var GroupStage = /** @class */ (function (_super) {
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
             includeParents: !this.gridOptionsWrapper.isSuppressParentsInRowNodes(),
-            expandByDefault: this.gridOptionsWrapper.isGroupSuppressRow() ?
-                -1 : this.gridOptionsWrapper.getGroupDefaultExpanded(),
+            expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded(),
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivotMode: this.columnController.isPivotMode(),
@@ -208,6 +207,7 @@ var GroupStage = /** @class */ (function (_super) {
                 newGroupNode_1.allLeafChildren = nodeToRemove.allLeafChildren;
                 newGroupNode_1.childrenAfterGroup = nodeToRemove.childrenAfterGroup;
                 newGroupNode_1.childrenMapped = nodeToRemove.childrenMapped;
+                newGroupNode_1.updateHasChildren();
                 newGroupNode_1.childrenAfterGroup.forEach(function (rowNode) { return rowNode.parent = newGroupNode_1; });
             }
         });
@@ -266,6 +266,7 @@ var GroupStage = /** @class */ (function (_super) {
             }
             else {
                 _.removeFromArray(child.parent.childrenAfterGroup, child);
+                child.parent.updateHasChildren();
             }
         }
         var mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
@@ -283,6 +284,7 @@ var GroupStage = /** @class */ (function (_super) {
                 parent.childrenMapped[mapKey] = child;
             }
             parent.childrenAfterGroup.push(child);
+            parent.updateHasChildren();
         }
     };
     GroupStage.prototype.areGroupColsEqual = function (d1, d2) {
@@ -307,6 +309,7 @@ var GroupStage = /** @class */ (function (_super) {
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         details.rootNode.childrenAfterGroup = [];
         details.rootNode.childrenMapped = {};
+        details.rootNode.updateHasChildren();
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
     };
     GroupStage.prototype.insertNodes = function (newRowNodes, details, isMove) {
@@ -331,6 +334,7 @@ var GroupStage = /** @class */ (function (_super) {
             childNode.parent = parentGroup;
             childNode.level = path.length;
             parentGroup.childrenAfterGroup.push(childNode);
+            parentGroup.updateHasChildren();
         }
     };
     GroupStage.prototype.findParentForNode = function (childNode, path, details) {
@@ -363,13 +367,18 @@ var GroupStage = /** @class */ (function (_super) {
         userGroup.allLeafChildren = fillerGroup.allLeafChildren;
         userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
         userGroup.childrenMapped = fillerGroup.childrenMapped;
+        userGroup.updateHasChildren();
         this.removeFromParent(fillerGroup);
         userGroup.childrenAfterGroup.forEach(function (rowNode) { return rowNode.parent = userGroup; });
         this.addToParent(userGroup, fillerGroup.parent);
     };
     GroupStage.prototype.getOrCreateNextNode = function (parentGroup, groupInfo, level, details) {
-        var mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        var nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] : undefined;
+        var key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
+        var map = parentGroup.childrenMapped;
+        // we use hasOwnProperty as otherwise things like 'constructor' would fail as a key,
+        // as javascript map already has an inherited property 'constructor
+        var nodeExists = map && map.hasOwnProperty(key);
+        var nextNode = nodeExists ? map[key] : undefined;
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -409,12 +418,13 @@ var GroupStage = /** @class */ (function (_super) {
             groupNode.expanded = this.isExpanded(details.expandByDefault, level);
         }
         groupNode.allLeafChildren = [];
-        // why is this done here? we are not updating the children could as we go,
+        // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
         groupNode.rowGroupIndex = this.usingTreeData ? null : level;
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
+        groupNode.updateHasChildren();
         groupNode.parent = details.includeParents ? parent : null;
         return groupNode;
     };
@@ -538,6 +548,7 @@ var BatchRemover = /** @class */ (function () {
                 return res;
             });
             parent.allLeafChildren = parent.allLeafChildren.filter(function (child) { return !nodeDetails.removeFromAllLeafChildren[child.id]; });
+            parent.updateHasChildren();
         });
         this.allSets = {};
         this.allParents.length = 0;

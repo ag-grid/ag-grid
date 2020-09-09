@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { linearScale, Rect } from "ag-charts-community";
+import { LinearScale, Rect } from "ag-charts-community";
 var MiniHistogram = /** @class */ (function (_super) {
     __extends(MiniHistogram, _super);
     function MiniHistogram(container, fills, strokes) {
@@ -22,10 +22,10 @@ var MiniHistogram = /** @class */ (function (_super) {
         var size = _this.size;
         // approx normal curve
         var data = [2, 5, 11, 13, 10, 6, 1];
-        var xScale = linearScale();
+        var xScale = new LinearScale();
         xScale.domain = [0, data.length];
         xScale.range = [padding, size - padding];
-        var yScale = linearScale();
+        var yScale = new LinearScale();
         yScale.domain = [0, data.reduce(function (a, b) { return Math.max(a, b); }, 0)];
         yScale.range = [size - padding, padding];
         var bottom = yScale.convert(0);

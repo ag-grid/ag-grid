@@ -10,7 +10,3 @@ export declare class LinearScale extends ContinuousScale {
      */
     nice(count?: number): void;
 }
-/**
- * Creates a continuous scale with the default interpolator and no clamping.
- */
-export default function scaleLinear(): LinearScale;

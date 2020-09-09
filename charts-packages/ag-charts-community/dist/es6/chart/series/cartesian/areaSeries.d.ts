@@ -57,6 +57,7 @@ export declare class AreaSeries extends CartesianSeries {
     xName: string;
     protected _yKeys: string[];
     yKeys: string[];
+    setColors(fills: string[], strokes: string[]): void;
     yNames: string[];
     private _normalizedTo?;
     normalizedTo: number | undefined;

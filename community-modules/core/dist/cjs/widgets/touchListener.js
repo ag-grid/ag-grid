@@ -1,13 +1,13 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = require("../eventService");
-var utils_1 = require("../utils");
+var mouse_1 = require("../utils/mouse");
 var TouchListener = /** @class */ (function () {
     function TouchListener(eElement, preventMouseClick) {
         var _this = this;
@@ -76,7 +76,7 @@ var TouchListener = /** @class */ (function () {
         if (!touch) {
             return;
         }
-        var eventIsFarAway = !utils_1._.areEventsNear(touch, this.touchStart, 4);
+        var eventIsFarAway = !mouse_1.areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }

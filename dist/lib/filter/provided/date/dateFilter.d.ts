@@ -13,7 +13,6 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
-    private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
     private eCondition1PanelFrom;
     private eCondition1PanelTo;
@@ -25,6 +24,7 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     private dateCondition2ToComp;
     private userComponentFactory;
     private dateFilterParams;
+    constructor();
     protected mapRangeFromModel(filterModel: DateFilterModel): {
         from: Date;
         to: Date;

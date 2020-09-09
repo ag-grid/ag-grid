@@ -48,7 +48,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia-example/docs" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia-example/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-charts-example/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/dist_orig" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/node_modules.nosync" />

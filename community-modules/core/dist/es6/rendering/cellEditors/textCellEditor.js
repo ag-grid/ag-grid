@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { _ } from '../../utils';
+import { exists } from "../../utils/generic";
+import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
+import { KeyCode } from '../../constants/keyCode';
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
     function TextCellEditor() {
@@ -39,9 +40,7 @@ var TextCellEditor = /** @class */ (function (_super) {
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
-            var keyPressBackspaceOrDelete = params.keyPress === Constants.KEY_BACKSPACE
-                || params.keyPress === Constants.KEY_DELETE;
-            if (keyPressBackspaceOrDelete) {
+            if (params.keyPress === KeyCode.BACKSPACE || params.keyPress === KeyCode.DELETE) {
                 startValue = '';
             }
             else if (params.charPress) {
@@ -49,7 +48,7 @@ var TextCellEditor = /** @class */ (function (_super) {
             }
             else {
                 startValue = this.getStartValue(params);
-                if (params.keyPress !== Constants.KEY_F2) {
+                if (params.keyPress !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
                 }
             }
@@ -58,26 +57,26 @@ var TextCellEditor = /** @class */ (function (_super) {
             this.focusAfterAttached = false;
             startValue = this.getStartValue(params);
         }
-        if (_.exists(startValue)) {
+        if (exists(startValue)) {
             eInput.setValue(startValue, true);
         }
         this.addManagedListener(eInput.getGui(), 'keydown', function (event) {
-            var pageUp = event.keyCode === Constants.KEY_PAGE_UP;
-            var pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
-            if (pageUp || pageDown) {
+            var keyCode = event.keyCode;
+            if (keyCode === KeyCode.PAGE_UP || keyCode === KeyCode.PAGE_DOWN) {
                 event.preventDefault();
             }
         });
     };
     TextCellEditor.prototype.afterGuiAttached = function () {
+        var eInput = this.eInput;
+        eInput.setInputAriaLabel('Input Editor');
         if (!this.focusAfterAttached) {
             return;
         }
-        var eInput = this.eInput;
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
         // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
         // explicitly focusing then blurring an empty field will cause the parent container to scroll.
-        if (!_.isBrowserSafari()) {
+        if (!isBrowserSafari()) {
             eInput.getFocusableElement().focus();
         }
         var inputEl = eInput.getInputElement();
@@ -90,7 +89,7 @@ var TextCellEditor = /** @class */ (function (_super) {
             // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             var value = eInput.getValue();
-            var len = (_.exists(value) && value.length) || 0;
+            var len = (exists(value) && value.length) || 0;
             if (len) {
                 inputEl.setSelectionRange(len, len);
             }
@@ -106,7 +105,7 @@ var TextCellEditor = /** @class */ (function (_super) {
     };
     TextCellEditor.prototype.focusOut = function () {
         var inputEl = this.eInput.getInputElement();
-        if (_.isBrowserIE()) {
+        if (isBrowserIE()) {
             inputEl.setSelectionRange(0, 0);
         }
     };

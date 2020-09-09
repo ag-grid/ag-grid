@@ -1,4 +1,4 @@
-import { RowNode, Events, _ } from "@ag-grid-community/core";
+import { _, Events, RowNode } from "@ag-grid-community/core";
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;
@@ -25,20 +25,13 @@ var ClientSideNodeManager = /** @class */ (function () {
     // @PostConstruct - this is not a bean, so postConstruct called by constructor
     ClientSideNodeManager.prototype.postConstruct = function () {
         // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.doingLegacyTreeData = !this.doingTreeData && _.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
-        if (this.getNodeChildDetails) {
-            console.warn("ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing\n                                    tree data in ag-Grid was introduced in v14 (released November 2017). In the next\n                                    major release of ag-Grid we will be dropping support for the old version of\n                                    tree data. If you are reading this message, please go to the docs to see how\n                                    to implement Tree Data without using nodeChildDetailsFunc().");
-        }
     };
     ClientSideNodeManager.prototype.getCopyOfNodesMap = function () {
-        var result = _.cloneObject(this.allNodesMap);
-        return result;
+        return _.cloneObject(this.allNodesMap);
     };
     ClientSideNodeManager.prototype.getRowNode = function (id) {
         return this.allNodesMap[id];
@@ -48,6 +41,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
         this.rootNode.childrenMapped = null;
+        this.rootNode.updateHasChildren();
         this.nextId = 0;
         this.allNodesMap = {};
         if (!rowData) {
@@ -59,19 +53,9 @@ var ClientSideNodeManager = /** @class */ (function () {
         // we add rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
         // sets the parent node on each row (even if we are not grouping). so setting parent node
         // here is for benefit of ag-grid-community users
-        var result = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
-        if (this.doingLegacyTreeData) {
-            this.rootNode.childrenAfterGroup = result;
-            this.setLeafChildren(this.rootNode);
-        }
-        else {
-            this.rootNode.allLeafChildren = result;
-        }
+        this.rootNode.allLeafChildren = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
     };
     ClientSideNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
-        if (this.isLegacyTreeData()) {
-            return null;
-        }
         var rowNodeTransaction = {
             remove: [],
             update: [],
@@ -111,7 +95,7 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.executeAdd = function (rowDataTran, rowNodeTransaction) {
         var _this = this;
         var add = rowDataTran.add, addIndex = rowDataTran.addIndex;
-        if (!add) {
+        if (_.missingOrEmpty(add)) {
             return;
         }
         var useIndex = typeof addIndex === 'number' && addIndex >= 0;
@@ -132,7 +116,7 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.executeRemove = function (rowDataTran, rowNodeTransaction, nodesToUnselect) {
         var _this = this;
         var remove = rowDataTran.remove;
-        if (!remove) {
+        if (_.missingOrEmpty(remove)) {
             return;
         }
         var rowIdsRemoved = {};
@@ -160,7 +144,7 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.executeUpdate = function (rowDataTran, rowNodeTransaction, nodesToUnselect) {
         var _this = this;
         var update = rowDataTran.update;
-        if (!update) {
+        if (_.missingOrEmpty(update)) {
             return;
         }
         update.forEach(function (item) {
@@ -225,23 +209,8 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.createNode = function (dataItem, parent, level) {
         var node = new RowNode();
         this.context.createBean(node);
-        var nodeChildDetails = this.doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
-        if (nodeChildDetails && nodeChildDetails.group) {
-            node.group = true;
-            node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
-            node.expanded = nodeChildDetails.expanded === true;
-            node.field = nodeChildDetails.field;
-            node.key = nodeChildDetails.key;
-            // pull out all the leaf children and add to our node
-            this.setLeafChildren(node);
-        }
-        else {
-            node.group = false;
-            this.setMasterForRow(node, dataItem, level, true);
-        }
-        // support for backwards compatibility, canFlow is now called 'master'
-        /** @deprecated is now 'master' */
-        node.canFlower = node.master;
+        node.group = false;
+        this.setMasterForRow(node, dataItem, level, true);
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -263,10 +232,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
         else {
             // this is the default, for when doing grid data
-            if (this.doesDataFlower) {
-                rowNode.setMaster(this.doesDataFlower(data));
-            }
-            else if (this.doingMasterDetail) {
+            if (this.doingMasterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
                 if (this.isRowMasterFunc) {
@@ -311,17 +277,6 @@ var ClientSideNodeManager = /** @class */ (function () {
                     node.allLeafChildren.push(childAfterGroup);
                 }
             });
-        }
-    };
-    ClientSideNodeManager.prototype.isLegacyTreeData = function () {
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
-            console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
-            return true;
-        }
-        else {
-            return false;
         }
     };
     ClientSideNodeManager.TOP_LEVEL = 0;

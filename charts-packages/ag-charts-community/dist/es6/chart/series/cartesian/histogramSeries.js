@@ -28,7 +28,6 @@ import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
 import { Text } from "../../../scene/shape/text";
-import palette from "../../palettes";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
@@ -122,8 +121,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.yDomain = [];
         _this.label = new HistogramSeriesLabel();
         _this.seriesItemEnabled = true;
-        _this.fill = palette.fills[0];
-        _this.stroke = palette.strokes[0];
+        _this.fill = undefined;
+        _this.stroke = undefined;
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         _this.directionKeys = (_a = {},
@@ -283,11 +282,18 @@ var HistogramSeries = /** @class */ (function (_super) {
     HistogramSeries.prototype.onHighlightChange = function () {
         this.updateRectNodes();
     };
+    HistogramSeries.prototype.setColors = function (fills, strokes) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
+    };
     /*  during processData phase, used to unify different ways of the user specifying
         the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
     HistogramSeries.prototype.deriveBins = function () {
         var _this = this;
         var _a = this, bins = _a.bins, binCount = _a.binCount;
+        if (!this.data) {
+            return [];
+        }
         if (bins && binCount) {
             console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
         }
@@ -348,7 +354,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
         var yData = this.binnedData.map(function (b) { return b.getY(_this.areaPlot); });
         var yMinMax = numericExtent(yData);
-        this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
+        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
         var firstBin = this.binnedData[0];
         var lastBin = this.binnedData[this.binnedData.length - 1];
         var xMin = firstBin.domain[0];
@@ -392,15 +398,15 @@ var HistogramSeries = /** @class */ (function (_super) {
         }
         var _a = this, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var nodeData = [];
-        var defaultLabelFormatter = function (b) { return String(b.aggregatedValue); };
+        var defaultLabelFormatter = function (params) { return String(params.value); };
         var _b = this.label, _c = _b.formatter, labelFormatter = _c === void 0 ? defaultLabelFormatter : _c, labelFontStyle = _b.fontStyle, labelFontWeight = _b.fontWeight, labelFontSize = _b.fontSize, labelFontFamily = _b.fontFamily, labelColor = _b.color;
         this.binnedData.forEach(function (binOfData) {
             var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = binOfData.domain, xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
             var xMinPx = xScale.convert(xDomainMin), xMaxPx = xScale.convert(xDomainMax), 
             // note: assuming can't be negative:
             y = _this.areaPlot ? relativeHeight : (_this.yKey ? total : frequency), yZeroPx = yScale.convert(0), yMaxPx = yScale.convert(y), w = xMaxPx - xMinPx, h = Math.abs(yMaxPx - yZeroPx);
-            var selectionDatumLabel = y !== 0 && {
-                text: labelFormatter(binOfData),
+            var selectionDatumLabel = y !== 0 ? {
+                text: labelFormatter({ value: binOfData.aggregatedValue }),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
@@ -408,7 +414,7 @@ var HistogramSeries = /** @class */ (function (_super) {
                 fill: labelColor,
                 x: xMinPx + w / 2,
                 y: yMaxPx + h / 2
-            };
+            } : undefined;
             nodeData.push({
                 series: _this,
                 seriesDatum: binOfData,
@@ -435,6 +441,9 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     HistogramSeries.prototype.updateRectNodes = function () {
+        if (!this.chart) {
+            return;
+        }
         var highlightedDatum = this.chart.highlightedDatum;
         var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
         this.rectSelection.each(function (rect, datum) {
@@ -522,8 +531,8 @@ var HistogramSeries = /** @class */ (function (_super) {
                     text: yName || yKey || 'Frequency'
                 },
                 marker: {
-                    fill: fill,
-                    stroke: stroke,
+                    fill: fill || 'rgba(0, 0, 0, 0)',
+                    stroke: stroke || 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

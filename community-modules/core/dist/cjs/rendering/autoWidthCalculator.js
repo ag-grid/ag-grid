@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var headerWrapperComp_1 = require("../headerRendering/header/headerWrapperComp");
-var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var dom_1 = require("../utils/dom");
 var AutoWidthCalculator = /** @class */ (function (_super) {
     __extends(AutoWidthCalculator, _super);
     function AutoWidthCalculator() {
@@ -106,10 +106,13 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
         var eCloneParent = document.createElement('div');
-        if (utils_1._.containsClass(eCellClone, 'ag-header-cell')) {
-            utils_1._.addCssClass(eCloneParent, 'ag-header');
-            utils_1._.addCssClass(eCloneParent, 'ag-header-row');
+        if (dom_1.containsClass(eCellClone, 'ag-header-cell')) {
+            dom_1.addCssClass(eCloneParent, 'ag-header');
+            dom_1.addCssClass(eCloneParent, 'ag-header-row');
             eCloneParent.style.position = 'static';
+        }
+        else {
+            dom_1.addCssClass(eCloneParent, 'ag-row');
         }
         // table-row, so that each cell is on a row. i also tried display='block', but this
         // didn't work in IE

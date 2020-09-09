@@ -124,7 +124,7 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
-export function escape(toEscape: string | null): string | null {
+export function escapeString(toEscape: string | null): string | null {
     return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
 }
 
@@ -141,4 +141,10 @@ export function camelCaseToHumanText(camelCase: string | undefined): string | nu
     const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 
     return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
+}
+
+export function startsWith(str: string, matchStart: string): boolean {
+    if (str === matchStart) { return true; }
+
+    return str != null && str.slice(0, matchStart.length) === matchStart;
 }

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Promise } from '../utils';
@@ -19,10 +19,10 @@ export declare class FilterManager extends BeanStub {
     private gridApi;
     private userComponentFactory;
     static QUICK_FILTER_SEPARATOR: string;
-    private allFilters;
+    private allAdvancedFilters;
+    private activeAdvancedFilters;
     private quickFilter;
     private quickFilterParts;
-    private advancedFilterPresent;
     private externalFilterPresent;
     private processingFilterChange;
     private allowShowChangeAfterFilter;
@@ -36,21 +36,21 @@ export declare class FilterManager extends BeanStub {
         [key: string]: any;
     };
     isAdvancedFilterPresent(): boolean;
-    private setAdvancedFilterPresent;
+    private updateActiveFilters;
     private updateFilterFlagInColumns;
     isAnyFilterPresent(): boolean;
-    private doesFilterPass;
+    private doAdvancedFiltersPass;
     private parseQuickFilter;
     setQuickFilter(newFilter: any): void;
     private checkExternalFilter;
     onFilterChanged(filterInstance?: IFilterComp, additionalEventAttributes?: any): void;
     isSuppressFlashingCellsBecauseFiltering(): boolean;
     isQuickFilterPresent(): boolean;
-    doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
+    doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean;
     private doesRowPassQuickFilterNoCache;
     private doesRowPassQuickFilterCache;
     private doesRowPassQuickFilter;
-    doesRowPassFilter(node: any, filterToSkip?: any): boolean;
+    doesRowPassFilter(node: any, filterToSkip?: IFilterComp): boolean;
     private getQuickFilterTextForColumn;
     private aggregateRowForQuickFilter;
     private onNewRowsLoaded;

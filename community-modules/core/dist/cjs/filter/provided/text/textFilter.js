@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,7 @@ var array_1 = require("../../../utils/array");
 var TextFilter = /** @class */ (function (_super) {
     __extends(TextFilter, _super);
     function TextFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        return _super.call(this, 'textFilter') || this;
     }
     TextFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
@@ -73,7 +73,7 @@ var TextFilter = /** @class */ (function (_super) {
         var eValue = positionOne ? this.eValue1 : this.eValue2;
         var value = this.getValue(eValue);
         var model = {
-            filterType: TextFilter.FILTER_TYPE,
+            filterType: this.getFilterType(),
             type: type
         };
         if (!this.doesFilterHaveHiddenInput(type)) {
@@ -82,7 +82,7 @@ var TextFilter = /** @class */ (function (_super) {
         return model;
     };
     TextFilter.prototype.getFilterType = function () {
-        return TextFilter.FILTER_TYPE;
+        return 'text';
     };
     TextFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
@@ -96,7 +96,10 @@ var TextFilter = /** @class */ (function (_super) {
     };
     TextFilter.prototype.resetPlaceholder = function () {
         var placeholder = this.translate('filterOoo');
-        this.forEachInput(function (field) { return field.setInputPlaceholder(placeholder); });
+        this.forEachInput(function (field) {
+            field.setInputPlaceholder(placeholder);
+            field.setInputAriaLabel('Filter value');
+        });
     };
     TextFilter.prototype.forEachInput = function (action) {
         array_1.forEach([this.eValue1, this.eValue2], action);
@@ -114,15 +117,15 @@ var TextFilter = /** @class */ (function (_super) {
     };
     TextFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
-        var showValue1 = this.showValueFrom(this.getCondition1Type());
-        dom_1.setDisplayed(this.eValue1.getGui(), showValue1);
-        var showValue2 = this.showValueFrom(this.getCondition2Type());
-        dom_1.setDisplayed(this.eValue2.getGui(), showValue2);
+        dom_1.setDisplayed(this.eCondition1Body, this.showValueFrom(this.getCondition1Type()));
+        dom_1.setDisplayed(this.eCondition2Body, this.isCondition2Enabled() && this.showValueFrom(this.getCondition2Type()));
     };
     TextFilter.prototype.afterGuiAttached = function (params) {
         _super.prototype.afterGuiAttached.call(this, params);
         this.resetPlaceholder();
-        this.eValue1.getInputElement().focus();
+        if (!params || !params.suppressFocus) {
+            this.eValue1.getInputElement().focus();
+        }
     };
     TextFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -153,7 +156,6 @@ var TextFilter = /** @class */ (function (_super) {
         var filterTextFormatted = this.formatter(filterText);
         return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
     };
-    TextFilter.FILTER_TYPE = 'text';
     TextFilter.DEFAULT_FILTER_OPTIONS = [
         simpleFilter_1.SimpleFilter.CONTAINS,
         simpleFilter_1.SimpleFilter.NOT_CONTAINS,

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,7 +14,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = require("../eventService");
 var context_1 = require("./context");
-var utils_1 = require("../utils");
+var array_1 = require("../utils/array");
+var event_1 = require("../utils/event");
 var BeanStub = /** @class */ (function () {
     function BeanStub() {
         var _this = this;
@@ -77,7 +78,7 @@ var BeanStub = /** @class */ (function () {
             return;
         }
         if (object instanceof HTMLElement) {
-            utils_1._.addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+            event_1.addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
         }
         else {
             object.addEventListener(event, listener);
@@ -113,7 +114,7 @@ var BeanStub = /** @class */ (function () {
     BeanStub.prototype.destroyBeans = function (beans, context) {
         var _this = this;
         if (beans) {
-            beans.forEach(function (bean) { return _this.destroyBean(bean, context); });
+            array_1.forEach(beans, function (bean) { return _this.destroyBean(bean, context); });
         }
         return [];
     };

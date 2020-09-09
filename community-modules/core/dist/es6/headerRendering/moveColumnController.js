@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,16 +11,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
+import { Constants } from "../constants/constants";
 import { DragAndDropService, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
-import { _ } from "../utils";
+import { missing, exists } from "../utils/generic";
+import { sortNumerically, last, includes } from "../utils/array";
 var MoveColumnController = /** @class */ (function () {
     function MoveColumnController(pinned, eContainer) {
         this.needToMoveLeft = false;
         this.needToMoveRight = false;
         this.pinned = pinned;
         this.eContainer = eContainer;
-        this.centerContainer = !_.exists(pinned);
+        this.centerContainer = !exists(pinned);
     }
     MoveColumnController.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -116,7 +117,7 @@ var MoveColumnController = /** @class */ (function () {
         if (fromEnter === void 0) { fromEnter = false; }
         this.lastDraggingEvent = draggingEvent;
         // if moving up or down (ie not left or right) then do nothing
-        if (_.missing(draggingEvent.hDirection)) {
+        if (missing(draggingEvent.hDirection)) {
             return;
         }
         var mouseXNormalised = this.normaliseX(draggingEvent.x);
@@ -158,9 +159,9 @@ var MoveColumnController = /** @class */ (function () {
     // each other. if the cols are not beside each other, then returns null
     MoveColumnController.prototype.calculateOldIndex = function (movingCols) {
         var gridCols = this.columnController.getAllGridColumns();
-        var indexes = _.sortNumerically(movingCols.map(function (col) { return gridCols.indexOf(col); }));
+        var indexes = sortNumerically(movingCols.map(function (col) { return gridCols.indexOf(col); }));
         var firstIndex = indexes[0];
-        var lastIndex = _.last(indexes);
+        var lastIndex = last(indexes);
         var spread = lastIndex - firstIndex;
         var gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
@@ -168,10 +169,15 @@ var MoveColumnController = /** @class */ (function () {
     MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, mouseX, fromEnter) {
         var draggingLeft = hDirection === HorizontalDirection.Left;
         var draggingRight = hDirection === HorizontalDirection.Right;
-        var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, mouseX);
+        // it is important to sort the moving columns as they are in grid columns, as the list of moving columns
+        // could themselves be part of 'married children' groups, which means we need to maintain the order within
+        // the moving list.
+        var allMovingColumnsOrdered = allMovingColumns.slice();
+        this.columnController.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+        var validMoves = this.calculateValidMoves(allMovingColumnsOrdered, draggingRight, mouseX);
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
-        var oldIndex = this.calculateOldIndex(allMovingColumns);
+        var oldIndex = this.calculateOldIndex(allMovingColumnsOrdered);
         if (validMoves.length === 0) {
             return;
         }
@@ -201,10 +207,10 @@ var MoveColumnController = /** @class */ (function () {
         }
         for (var i = 0; i < validMoves.length; i++) {
             var move = validMoves[i];
-            if (!this.columnController.doesMovePassRules(allMovingColumns, move)) {
+            if (!this.columnController.doesMovePassRules(allMovingColumnsOrdered, move)) {
                 continue;
             }
-            this.columnController.moveColumns(allMovingColumns, move, "uiColumnDragged");
+            this.columnController.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
         }
@@ -219,9 +225,9 @@ var MoveColumnController = /** @class */ (function () {
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
         var allGridCols = this.columnController.getAllGridColumns();
-        var movingDisplayedCols = allDisplayedCols.filter(function (col) { return _.includes(movingCols, col); });
-        var otherDisplayedCols = allDisplayedCols.filter(function (col) { return !_.includes(movingCols, col); });
-        var otherGridCols = allGridCols.filter(function (col) { return !_.includes(movingCols, col); });
+        var movingDisplayedCols = allDisplayedCols.filter(function (col) { return includes(movingCols, col); });
+        var otherDisplayedCols = allDisplayedCols.filter(function (col) { return !includes(movingCols, col); });
+        var otherGridCols = allGridCols.filter(function (col) { return !includes(movingCols, col); });
         // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
         // col between b and c (so that it is under the mouse position).

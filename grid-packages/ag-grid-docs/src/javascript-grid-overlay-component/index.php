@@ -92,6 +92,6 @@ SNIPPET
     <li><b>Custom No Rows Overlay Renderer Parameters</b> are supplied using <code>gridOptions.noRowsOverlayComponentParams</code>.</li>
 </ul>
 
-<?= grid_example('Custom Overlay Components', 'custom-overlay-components', 'generated', ['enterprise' => false, 'extras' => ['fontawesome']] ) ?>
+<?= grid_example('Custom Overlay Components', 'custom-overlay-components', 'generated', ['enterprise' => false, 'extras' => ['fontawesome'], 'reactFunctional' => true] ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

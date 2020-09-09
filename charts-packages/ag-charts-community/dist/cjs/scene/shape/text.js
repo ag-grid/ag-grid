@@ -259,7 +259,7 @@ var Text = /** @class */ (function (_super) {
         return false;
     };
     Text.prototype.render = function (ctx) {
-        if (!this.lines.length) {
+        if (!this.lines.length || !this.scene) {
             return;
         }
         if (this.dirtyTransform) {

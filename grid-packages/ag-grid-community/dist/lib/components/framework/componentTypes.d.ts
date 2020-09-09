@@ -5,7 +5,6 @@ export interface ComponentType {
 export declare const DateComponent: ComponentType;
 export declare const HeaderComponent: ComponentType;
 export declare const HeaderGroupComponent: ComponentType;
-export declare const GroupRowInnerRendererComponent: ComponentType;
 export declare const CellRendererComponent: ComponentType;
 export declare const PinnedRowCellRendererComponent: ComponentType;
 export declare const CellEditorComponent: ComponentType;

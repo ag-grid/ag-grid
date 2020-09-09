@@ -77,8 +77,8 @@ export function getTabIndex(el: HTMLElement): string | null {
     const numberTabIndex = el.tabIndex;
     const tabIndex = el.getAttribute('tabIndex');
 
-    if (isBrowserIE() && numberTabIndex === 0 && el.getAttribute('tabIndex') === null) {
-        const map:{ [key: string]: boolean; } = {
+    if (isBrowserIE() && numberTabIndex === 0 && tabIndex === null) {
+        const map: { [key: string]: boolean; } = {
             a: true,
             body: true,
             button: true,
@@ -134,7 +134,7 @@ export function getScrollbarWidth() {
     div.style.width = div.style.height = '100px';
     div.style.opacity = '0';
     div.style.overflow = 'scroll';
-    div.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+    (div.style as any).msOverflowStyle = 'scrollbar'; // needed for WinJS apps
     div.style.position = 'absolute';
 
     body.appendChild(div);

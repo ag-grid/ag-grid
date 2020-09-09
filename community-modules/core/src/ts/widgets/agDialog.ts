@@ -2,7 +2,8 @@ import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
-import { _ } from "../utils";
+import { addCssClass, setDisplayed } from "../utils/dom";
+import { createIconNoSpan } from "../utils/icon";
 
 export type ResizableSides = 'topLeft' |
     'top' |
@@ -48,8 +49,6 @@ export class AgDialog extends AgPanel {
             <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
         </div>`;
 
-    private MAXIMIZE_BTN_TEMPLATE = `<div class="ag-dialog-button"></span>`;
-
     @Autowired('dragService') private dragService: DragService;
 
     private moveElement: HTMLElement;
@@ -88,7 +87,7 @@ export class AgDialog extends AgPanel {
         const eGui = this.getGui();
         const { movable, resizable, maximizable } = this.config;
 
-        _.addCssClass(eGui, 'ag-dialog');
+        addCssClass(eGui, 'ag-dialog');
         this.moveElement = this.eTitleBar;
 
         super.postConstruct();
@@ -112,16 +111,13 @@ export class AgDialog extends AgPanel {
         const eGui = this.getGui();
         const { alwaysOnTop, modal } = this.config;
 
-        this.close = this.popupService.addPopup(
+        this.close = this.popupService.addPopup({
             modal,
-            eGui,
-            true,
-            this.destroy.bind(this),
-            undefined,
+            eChild: eGui,
+            closeOnEsc: true,
+            closedCallback: this.destroy.bind(this),
             alwaysOnTop
-        );
-
-        eGui.focus();
+        });
     }
 
     private addResizers() {
@@ -279,8 +275,8 @@ export class AgDialog extends AgPanel {
     }
 
     private refreshMaximizeIcon() {
-        _.addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
-        _.addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
+        setDisplayed(this.maximizeIcon, !this.isMaximized);
+        setDisplayed(this.minimizeIcon, this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -367,31 +363,35 @@ export class AgDialog extends AgPanel {
     }
 
     public setMaximizable(maximizable: boolean) {
-        if (maximizable === false) {
+        if (!maximizable) {
             this.clearMaximizebleListeners();
 
             if (this.maximizeButtonComp) {
                 this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
             }
+
             return;
         }
 
         const eTitleBar = this.eTitleBar;
+
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
-        const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
-        this.getContext().createBean(maximizeButtonComp);
+        const maximizeButtonComp = this.maximizeButtonComp =
+            this.createBean(new Component(/* html */`<div class="ag-dialog-button"></span>`));
 
         const eGui = maximizeButtonComp.getGui();
-        eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
-        _.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
-        eGui.appendChild(this.minimizeIcon = _.createIconNoSpan('minimize', this.gridOptionsWrapper));
-        _.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
 
-        _.addCssClass(this.minimizeIcon, 'ag-hidden');
+        eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper));
+        addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
+
+        eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper));
+        addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
+        addCssClass(this.minimizeIcon, 'ag-hidden');
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
+
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(

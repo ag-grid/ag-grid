@@ -15,6 +15,8 @@ export declare class UndoRedoService extends BeanStub {
     init(): void;
     private onCellValueChanged;
     private clearStacks;
+    getCurrentUndoStackSize(): number;
+    getCurrentRedoStackSize(): number;
     undo(): void;
     redo(): void;
     private processAction;

@@ -16,5 +16,5 @@ test('nextSibling', function () {
     group.append([node1, node2, node3]);
     expect(node1.nextSibling).toBe(node2);
     expect(node2.nextSibling).toBe(node3);
-    expect(node1.nextSibling.nextSibling).toBe(node3);
+    expect(node1.nextSibling && node1.nextSibling.nextSibling).toBe(node3);
 });

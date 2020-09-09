@@ -51,6 +51,7 @@ export declare abstract class Series extends Observable {
         [key in ChartAxisDirection]?: string[];
     };
     tooltipEnabled: boolean;
+    setColors(fills: string[], strokes: string[]): void;
     data?: any[];
     visible: boolean;
     showInLegend: boolean;

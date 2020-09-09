@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,30 @@ export function cloneObject(object) {
 }
 export function deepCloneObject(object) {
     return JSON.parse(JSON.stringify(object));
+}
+// returns copy of an object, doing a deep clone of any objects with that object.
+// this is used for eg creating copies of Column Definitions, where we want to
+// deep copy all objects, but do not want to deep copy functions (eg when user provides
+// a function or class for colDef.cellRenderer)
+export function deepCloneDefinition(object, keysToSkip) {
+    if (!object) {
+        return;
+    }
+    var obj = object;
+    var res = {};
+    Object.keys(obj).forEach(function (key) {
+        if (keysToSkip && keysToSkip.indexOf(key) >= 0) {
+            return;
+        }
+        var value = obj[key];
+        if (typeof value === 'object') {
+            res[key] = deepCloneDefinition(value);
+        }
+        else {
+            res[key] = value;
+        }
+    });
+    return res;
 }
 export function getProperty(object, key) {
     return object[key];
@@ -64,21 +88,30 @@ export function getAllKeysInObjects(objects) {
     });
     return Object.keys(allValues);
 }
-export function mergeDeep(dest, source, copyUndefined) {
+export function mergeDeep(dest, source, copyUndefined, objectsThatNeedCopy, iteration) {
     if (copyUndefined === void 0) { copyUndefined = true; }
+    if (objectsThatNeedCopy === void 0) { objectsThatNeedCopy = []; }
+    if (iteration === void 0) { iteration = 0; }
     if (!exists(source)) {
         return;
     }
-    iterateObject(source, function (key, newValue) {
-        var oldValue = dest[key];
-        if (oldValue === newValue) {
+    iterateObject(source, function (key, sourceValue) {
+        var destValue = dest[key];
+        if (destValue === sourceValue) {
             return;
         }
-        if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
-            mergeDeep(oldValue, newValue);
+        var dontCopyOverSourceObject = iteration == 0 && destValue == null && sourceValue != null && objectsThatNeedCopy.indexOf(key) >= 0;
+        if (dontCopyOverSourceObject) {
+            // by putting an empty value into destValue first, it means we end up copying over values from
+            // the source object, rather than just copying in the source object in it's entirety.
+            destValue = {};
+            dest[key] = destValue;
         }
-        else if (copyUndefined || newValue !== undefined) {
-            dest[key] = newValue;
+        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
+            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+        }
+        else if (copyUndefined || sourceValue !== undefined) {
+            dest[key] = sourceValue;
         }
     });
 }

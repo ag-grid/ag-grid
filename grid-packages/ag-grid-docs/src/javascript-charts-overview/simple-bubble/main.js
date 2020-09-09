@@ -1,5 +1,6 @@
 var options = {
     container: document.querySelector('#myChart'),
+    autoSize: true,
     data: data.filter(function(d) { return d.magnitude > 4; }),
     title: {
         text: 'Worldwide Earthquakes (first week of February 2020)',
@@ -18,8 +19,8 @@ var options = {
             sizeKey: 'minDistance',
             sizeName: 'Minimum Distance',
             marker: {
+                size: 5,
                 size: 100,
-                minSize: 5,
             },
             fill: '#41874b',
             stroke: '#41874b',

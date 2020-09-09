@@ -3,6 +3,7 @@ import {
     Autowired,
     BeanStub,
     CellRange,
+    CellRangeParams,
     CellRangeType,
     ChartType,
     Column,
@@ -13,8 +14,7 @@ import {
     PostConstruct,
     RowNode,
     RowRenderer,
-    ValueService,
-    CellRangeParams
+    ValueService
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { ChartTranslator } from './chartTranslator';
@@ -30,6 +30,7 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
+    chartThemeName: string;
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
@@ -39,12 +40,17 @@ export class ChartDataModel extends BeanStub {
 
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rangeController') rangeController: IRangeController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('rangeController') private readonly rangeController: IRangeController;
+    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
+
+    private readonly chartId: string;
+    private readonly pivotChart: boolean;
+    private readonly aggFunc?: string | IAggFunc;
+    private readonly suppressChartRanges: boolean;
 
     private referenceCellRange: CellRange;
     private dimensionCellRange?: CellRange;
@@ -53,17 +59,12 @@ export class ChartDataModel extends BeanStub {
     private valueColState: ColState[] = [];
     private chartData: any[];
 
-    private readonly pivotChart: boolean;
     private chartType: ChartType;
-    private readonly suppressChartRanges: boolean;
-
-    private readonly aggFunc?: string | IAggFunc;
-
+    private chartThemeName: string;
     private datasource: ChartDatasource;
 
-    private readonly chartId: string;
-    private detached: boolean = false;
-    private grouping: boolean;
+    private detached = false;
+    private grouping = false;
     private columnNames: { [p: string]: string[]; } = {};
 
     public constructor(params: ChartModelParams) {
@@ -71,6 +72,7 @@ export class ChartDataModel extends BeanStub {
 
         this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
+        this.chartThemeName = params.chartThemeName;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
@@ -110,10 +112,6 @@ export class ChartDataModel extends BeanStub {
 
     public getData(): any[] {
         return this.chartData;
-    }
-
-    public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
     }
 
     public isGrouping(): boolean {
@@ -174,9 +172,21 @@ export class ChartDataModel extends BeanStub {
         };
     }
 
+    public setChartType(chartType: ChartType): void {
+        this.chartType = chartType;
+    }
+
     public getChartType(): ChartType {
         return this.chartType;
     };
+
+    public setChartThemeName(chartThemeName: string): void {
+        this.chartThemeName = chartThemeName;
+    }
+
+    public getChartThemeName(): string {
+        return this.chartThemeName;
+    }
 
     public isSuppressChartRanges(): boolean {
         return this.suppressChartRanges;

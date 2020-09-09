@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function addCssClass(element: HTMLElement, className: string): HTMLElement;
@@ -34,6 +34,7 @@ export declare function getInnerHeight(el: HTMLElement): number;
 export declare function getInnerWidth(el: HTMLElement): number;
 export declare function getAbsoluteHeight(el: HTMLElement): number;
 export declare function getAbsoluteWidth(el: HTMLElement): number;
+export declare function isRtlNegativeScroll(): boolean;
 export declare function getScrollLeft(element: HTMLElement, rtl: boolean): number;
 export declare function setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
 export declare function clearElement(el: HTMLElement): void;
@@ -90,3 +91,5 @@ export declare function copyNodeList(nodeList: NodeList): Node[];
 export declare function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
 /** @deprecated */
 export declare function setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
+export declare function addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
+export declare function nodeListForEach<T extends Node>(nodeList: NodeListOf<T>, action: (value: T) => void): void;

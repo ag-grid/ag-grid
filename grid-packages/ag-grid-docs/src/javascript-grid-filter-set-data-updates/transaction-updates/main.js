@@ -25,9 +25,12 @@ function getRowData() {
 }
 
 function updateFirstRow() {
-    var firstRowData = gridOptions.api.getDisplayedRowAtIndex(0).data;
-    firstRowData['col1'] += 'X';
-    gridOptions.api.applyTransaction({update: [firstRowData]});
+    var firstRow = gridOptions.api.getDisplayedRowAtIndex(0);
+    if (firstRow) {
+        var firstRowData = firstRow.data;
+        firstRowData['col1'] += 'X';
+        gridOptions.api.applyTransaction({update: [firstRowData]});
+    }
 }
 
 function addDRow() {

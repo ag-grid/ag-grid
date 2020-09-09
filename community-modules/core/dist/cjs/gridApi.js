@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,11 +13,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var constants_1 = require("./constants");
+var constants_1 = require("./constants/constants");
 var context_1 = require("./context/context");
 var moduleNames_1 = require("./modules/moduleNames");
 var moduleRegistry_1 = require("./modules/moduleRegistry");
-var utils_1 = require("./utils");
+var object_1 = require("./utils/object");
+var generic_1 = require("./utils/generic");
+var string_1 = require("./utils/string");
+var function_1 = require("./utils/function");
 var GridApi = /** @class */ (function () {
     function GridApi() {
         this.detailGridInfoMap = {};
@@ -60,9 +63,9 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.forEachDetailGridInfo = function (callback) {
         var index = 0;
-        utils_1._.iterateObject(this.detailGridInfoMap, function (id, gridInfo) {
+        object_1.iterateObject(this.detailGridInfoMap, function (id, gridInfo) {
             // check for undefined, as old references will still be lying around
-            if (utils_1._.exists(gridInfo)) {
+            if (generic_1.exists(gridInfo)) {
                 callback(gridInfo, index);
                 index++;
             }
@@ -124,15 +127,15 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setRowData = function (rowData) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
-                var res = this.immutableService.createTransactionForRowData(rowData);
-                if (!res) {
+                var transactionAndMap = this.immutableService.createTransactionForRowData(rowData);
+                if (!transactionAndMap) {
                     return;
                 }
-                var transaction = res[0], orderIdMap = res[1];
-                this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+                var transaction = transactionAndMap[0], orderIdMap = transactionAndMap[1];
+                var nodeTransaction = this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
                 // to the data change event on the row node and refreshed itself.
-                this.rowRenderer.refreshFullWidthRows();
+                this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
             }
             else {
                 this.selectionController.reset();
@@ -330,10 +333,10 @@ var GridApi = /** @class */ (function () {
         }
     };
     GridApi.prototype.onGroupExpandedOrCollapsed = function (deprecated_refreshFromIndex) {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model');
         }
-        if (utils_1._.exists(deprecated_refreshFromIndex)) {
+        if (generic_1.exists(deprecated_refreshFromIndex)) {
             console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows');
         }
         // we don't really want the user calling this if only one rowNode was expanded, instead they should be
@@ -347,7 +350,7 @@ var GridApi = /** @class */ (function () {
         this.refreshClientSideRowModel(step);
     };
     GridApi.prototype.refreshClientSideRowModel = function (step) {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('cannot call refreshClientSideRowModel unless using normal row model');
         }
         var paramsStep = constants_1.Constants.STEP_EVERYTHING;
@@ -359,10 +362,10 @@ var GridApi = /** @class */ (function () {
             sort: constants_1.Constants.STEP_SORT,
             pivot: constants_1.Constants.STEP_PIVOT
         };
-        if (utils_1._.exists(step)) {
+        if (generic_1.exists(step)) {
             paramsStep = stepsMapped[step];
         }
-        if (utils_1._.missing(paramsStep)) {
+        if (generic_1.missing(paramsStep)) {
             console.error("ag-Grid: invalid step " + step + ", available steps are " + Object.keys(stepsMapped).join(', '));
             return;
         }
@@ -387,14 +390,14 @@ var GridApi = /** @class */ (function () {
         };
     };
     GridApi.prototype.expandAll = function () {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');
             return;
         }
         this.clientSideRowModel.expandOrCollapseAll(true);
     };
     GridApi.prototype.collapseAll = function () {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
             return;
         }
@@ -463,7 +466,7 @@ var GridApi = /** @class */ (function () {
         this.selectionController.deselectAllRowNodes(true);
     };
     GridApi.prototype.recomputeAggregates = function () {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('cannot call recomputeAggregates unless using normal row model');
         }
         console.warn("recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead");
@@ -516,7 +519,7 @@ var GridApi = /** @class */ (function () {
         this.gridCore.ensureNodeVisible(comparator, position);
     };
     GridApi.prototype.forEachLeafNode = function (callback) {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('cannot call forEachNode unless using normal row model');
         }
         this.clientSideRowModel.forEachLeafNode(callback);
@@ -525,13 +528,13 @@ var GridApi = /** @class */ (function () {
         this.rowModel.forEachNode(callback);
     };
     GridApi.prototype.forEachNodeAfterFilter = function (callback) {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('cannot call forEachNodeAfterFilter unless using normal row model');
         }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     };
     GridApi.prototype.forEachNodeAfterFilterAndSort = function (callback) {
-        if (utils_1._.missing(this.clientSideRowModel)) {
+        if (generic_1.missing(this.clientSideRowModel)) {
             console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model');
         }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
@@ -578,6 +581,7 @@ var GridApi = /** @class */ (function () {
         }
         return null;
     };
+    GridApi.prototype.getColumnDefs = function () { return this.columnController.getColumnDefs(); };
     GridApi.prototype.onFilterChanged = function () {
         this.filterManager.onFilterChanged();
     };
@@ -586,10 +590,30 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.setSortModel = function (sortModel, source) {
         if (source === void 0) { source = "api"; }
-        this.sortController.setSortModel(sortModel, source);
+        console.warn('ag-Grid: as of version 24.0.0, setSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.applyColumnState() instead.');
+        var columnState = [];
+        if (sortModel) {
+            sortModel.forEach(function (item, index) {
+                columnState.push({
+                    colId: item.colId,
+                    sort: item.sort,
+                    sortIndex: index
+                });
+            });
+        }
+        this.columnController.applyColumnState({ state: columnState, defaultState: { sort: null } });
     };
     GridApi.prototype.getSortModel = function () {
-        return this.sortController.getSortModel();
+        console.warn('ag-Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
+        var columnState = this.columnController.getColumnState();
+        var filteredStates = columnState.filter(function (item) { return item.sort != null; });
+        var indexes = {};
+        filteredStates.forEach(function (state) { return indexes[state.colId] = state.sortIndex; });
+        var res = filteredStates.map(function (s) {
+            return { colId: s.colId, sort: s.sort };
+        });
+        res.sort(function (a, b) { return indexes[a.colId] - indexes[b.colId]; });
+        return res;
     };
     GridApi.prototype.setFilterModel = function (model) {
         this.filterManager.setFilterModel(model);
@@ -631,15 +655,14 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
         this.doLayout();
     };
-    GridApi.prototype.setGridAutoHeight = function (gridAutoHeight) {
-        console.warn('api.setGridAutoHeight(boolean) is deprecated, please use api.setDomLayout() instead');
-        this.setDomLayout(gridAutoHeight ? 'autoHeight' : 'normal');
-    };
     GridApi.prototype.setDomLayout = function (domLayout) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     };
     GridApi.prototype.setEnableCellTextSelection = function (selectable) {
         this.gridPanel.setCellTextSelection(selectable);
+    };
+    GridApi.prototype.setFillHandleDirection = function (direction) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_FILL_HANDLE_DIRECTION, direction);
     };
     GridApi.prototype.setGroupHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
@@ -666,10 +689,6 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setSideBarPosition = function (position) {
         this.gridCore.setSideBarPosition(position);
     };
-    GridApi.prototype.showToolPanel = function (show) {
-        console.warn("ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setSideBarVisible");
-        this.setSideBarVisible(show);
-    };
     GridApi.prototype.openToolPanel = function (key) {
         this.gridCore.openToolPanel(key);
     };
@@ -695,7 +714,7 @@ var GridApi = /** @class */ (function () {
         this.gridPanel.checkViewportAndScrolls();
     };
     GridApi.prototype.resetRowHeights = function () {
-        if (utils_1._.exists(this.clientSideRowModel)) {
+        if (generic_1.exists(this.clientSideRowModel)) {
             this.clientSideRowModel.resetRowHeights();
         }
     };
@@ -715,10 +734,10 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {
         var column = this.columnController.getPrimaryColumn(colKey);
-        if (utils_1._.missing(column)) {
+        if (generic_1.missing(column)) {
             column = this.columnController.getGridColumn(colKey);
         }
-        if (utils_1._.missing(column)) {
+        if (generic_1.missing(column)) {
             return null;
         }
         return this.valueService.getValue(column, rowNode);
@@ -769,7 +788,7 @@ var GridApi = /** @class */ (function () {
         return null;
     };
     GridApi.prototype.camelCaseToHumanReadable = function (camelCase) {
-        return utils_1._.camelCaseToHumanText(camelCase);
+        return string_1.camelCaseToHumanText(camelCase);
     };
     GridApi.prototype.addRangeSelection = function (deprecatedNoLongerUsed) {
         console.warn('ag-Grid: As of version 21.x, range selection changed slightly to allow charting integration. Please call api.addCellRange() instead of api.addRangeSelection()');
@@ -791,6 +810,12 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.redoCellEditing = function () {
         this.undoRedoService.redo();
+    };
+    GridApi.prototype.getCurrentUndoSize = function () {
+        return this.undoRedoService.getCurrentUndoStackSize();
+    };
+    GridApi.prototype.getCurrentRedoSize = function () {
+        return this.undoRedoService.getCurrentRedoStackSize();
     };
     GridApi.prototype.getChartModels = function () {
         if (moduleRegistry_1.ModuleRegistry.assertRegistered(moduleNames_1.ModuleNames.RangeSelectionModule, 'api.getChartModels') &&
@@ -888,7 +913,7 @@ var GridApi = /** @class */ (function () {
             rowPinned: params.rowPinned,
             column: column
         };
-        var notPinned = utils_1._.missing(params.rowPinned);
+        var notPinned = generic_1.missing(params.rowPinned);
         if (notPinned) {
             this.gridPanel.ensureIndexVisible(params.rowIndex);
         }
@@ -914,20 +939,21 @@ var GridApi = /** @class */ (function () {
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex != null) {
                 var message_1 = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
-                utils_1._.doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
+                function_1.doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
         else if (this.infiniteRowModel) {
             var message_2 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            utils_1._.doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
+            function_1.doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         }
         else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
+            return;
         }
         // refresh all the full width rows
-        this.rowRenderer.refreshFullWidthRows();
+        this.rowRenderer.refreshFullWidthRows(res.update);
         // do change detection for all present cells
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
             this.rowRenderer.refreshCells();
@@ -937,7 +963,7 @@ var GridApi = /** @class */ (function () {
     /** @deprecated */
     GridApi.prototype.updateRowData = function (rowDataTransaction) {
         var message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
-        utils_1._.doOnce(function () { return console.warn(message); }, 'updateRowData deprecated');
+        function_1.doOnce(function () { return console.warn(message); }, 'updateRowData deprecated');
         return this.applyTransaction(rowDataTransaction);
     };
     GridApi.prototype.applyTransactionAsync = function (rowDataTransaction, callback) {
@@ -947,10 +973,17 @@ var GridApi = /** @class */ (function () {
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
     };
+    GridApi.prototype.flushAsyncTransactions = function () {
+        if (!this.clientSideRowModel) {
+            console.error('ag-Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
+            return;
+        }
+        this.clientSideRowModel.flushAsyncTransactions();
+    };
     /** @deprecated */
     GridApi.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
         var message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
-        utils_1._.doOnce(function () { return console.warn(message); }, 'batchUpdateRowData deprecated');
+        function_1.doOnce(function () { return console.warn(message); }, 'batchUpdateRowData deprecated');
         this.applyTransactionAsync(rowDataTransaction, callback);
     };
     GridApi.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {

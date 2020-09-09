@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,9 +22,10 @@ export var ModuleNames;
     // enterprise modules
     ModuleNames["RowGroupingModule"] = "@ag-grid-enterprise/row-grouping";
     ModuleNames["ColumnToolPanelModule"] = "@ag-grid-enterprise/column-tool-panel";
-    ModuleNames["FiltersToolPanelModule"] = "@ag-grid-enterprise/filters-tool-panel";
+    ModuleNames["FiltersToolPanelModule"] = "@ag-grid-enterprise/filter-tool-panel";
     ModuleNames["MenuModule"] = "@ag-grid-enterprise/menu";
     ModuleNames["SetFilterModule"] = "@ag-grid-enterprise/set-filter";
+    ModuleNames["MultiFilterModule"] = "@ag-grid-enterprise/multi-filter";
     ModuleNames["StatusBarModule"] = "@ag-grid-enterprise/status-bar";
     ModuleNames["SideBarModule"] = "@ag-grid-enterprise/side-bar";
     ModuleNames["RangeSelectionModule"] = "@ag-grid-enterprise/range-selection";

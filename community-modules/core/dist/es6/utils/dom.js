@@ -1,14 +1,15 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
+import { isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
+var rtlNegativeScroll;
 export function addCssClass(element, className) {
-    if (!className || className.length === 0) {
+    if (!element || !className || className.length === 0) {
         return;
     }
     if (className.indexOf(' ') >= 0) {
@@ -33,6 +34,13 @@ export function addCssClass(element, className) {
     return element;
 }
 export function removeCssClass(element, className) {
+    if (!element || !className || className.length === 0) {
+        return;
+    }
+    if (className.indexOf(' ') >= 0) {
+        className.split(' ').forEach(function (value) { return removeCssClass(element, value); });
+        return;
+    }
     if (element.classList) {
         element.classList.remove(className);
     }
@@ -97,12 +105,11 @@ export function setVisible(element, visible) {
 }
 export function setDisabled(element, disabled) {
     var attributeName = 'disabled';
-    if (disabled) {
-        element.setAttribute(attributeName, '');
-    }
-    else {
-        element.removeAttribute(attributeName);
-    }
+    var addOrRemoveDisabledAttribute = disabled ?
+        function (e) { return e.setAttribute(attributeName, ''); } :
+        function (e) { return e.removeAttribute(attributeName); };
+    addOrRemoveDisabledAttribute(element);
+    nodeListForEach(element.querySelectorAll('input'), function (input) { return addOrRemoveDisabledAttribute(input); });
 }
 export function isElementChildOfClass(element, cls, maxNest) {
     var counter = 0;
@@ -157,13 +164,32 @@ export function getAbsoluteWidth(el) {
     var marginWidth = size.marginLeft + size.marginRight;
     return Math.ceil(el.offsetWidth + marginWidth);
 }
+export function isRtlNegativeScroll() {
+    if (typeof rtlNegativeScroll === "boolean") {
+        return rtlNegativeScroll;
+    }
+    var template = document.createElement('div');
+    template.style.direction = 'rtl';
+    template.style.width = '1px';
+    template.style.height = '1px';
+    template.style.position = 'fixed';
+    template.style.top = '0px';
+    template.style.overflow = 'hidden';
+    template.dir = 'rtl';
+    template.innerHTML = /* html */
+        "<div style=\"width: 2px\">\n            <span style=\"display: inline-block; width: 1px\"></span>\n            <span style=\"display: inline-block; width: 1px\"></span>\n        </div>";
+    document.body.appendChild(template);
+    template.scrollLeft = 1;
+    rtlNegativeScroll = template.scrollLeft === 0;
+    document.body.removeChild(template);
+    return rtlNegativeScroll;
+}
 export function getScrollLeft(element, rtl) {
     var scrollLeft = element.scrollLeft;
     if (rtl) {
         // Absolute value - for FF that reports RTL scrolls in negative numbers
         scrollLeft = Math.abs(scrollLeft);
-        // Get Chrome to return the same value as well
-        if (isBrowserChrome()) {
+        if (isBrowserChrome() && !isRtlNegativeScroll()) {
             scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
         }
     }
@@ -172,12 +198,11 @@ export function getScrollLeft(element, rtl) {
 export function setScrollLeft(element, value, rtl) {
     if (rtl) {
         // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-        if (isBrowserSafari() || isBrowserChrome()) {
-            value = element.scrollWidth - element.clientWidth - value;
-        }
-        // Firefox uses negative numbers when doing RTL scrolling
-        if (isBrowserFirefox()) {
+        if (isRtlNegativeScroll()) {
             value *= -1;
+        }
+        else if (isBrowserSafari() || isBrowserChrome()) {
+            value = element.scrollWidth - element.clientWidth - value;
         }
     }
     element.scrollLeft = value;
@@ -386,12 +411,12 @@ export function isNodeOrElement(o) {
  * @returns {Node[]}
  */
 export function copyNodeList(nodeList) {
-    var childCount = nodeList ? nodeList.length : 0;
-    var res = [];
-    for (var i = 0; i < childCount; i++) {
-        res.push(nodeList[i]);
+    if (nodeList == null) {
+        return [];
     }
-    return res;
+    var result = [];
+    nodeListForEach(nodeList, function (node) { return result.push(node); });
+    return result;
 }
 export function iterateNamedNodeMap(map, callback) {
     if (!map) {
@@ -412,5 +437,21 @@ export function setCheckboxState(eCheckbox, state) {
         // isNodeSelected returns back undefined if it's a group and the children
         // are a mix of selected and unselected
         eCheckbox.indeterminate = true;
+    }
+}
+export function addOrRemoveAttribute(element, name, value) {
+    if (value == null) {
+        element.removeAttribute(name);
+    }
+    else {
+        element.setAttribute(name, value.toString());
+    }
+}
+export function nodeListForEach(nodeList, action) {
+    if (nodeList == null) {
+        return;
+    }
+    for (var i = 0; i < nodeList.length; i++) {
+        action(nodeList[i]);
     }
 }

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -11,21 +11,28 @@ export declare class Component extends BeanStub {
     static EVENT_DISPLAYED_CHANGED: string;
     private eGui;
     private annotatedGuiListeners;
-    protected agStackComponentsRegistry: AgStackComponentsRegistry;
+    protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
     private displayed;
     private visible;
     protected parentComponent: Component | undefined;
     private compId;
+    private cssClassStates;
     constructor(template?: string);
     getCompId(): number;
     private createChildComponentsFromTags;
-    createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component;
+    createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: {
+        [key: string]: any;
+    }): Component;
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
     private iterateOverQuerySelectors;
-    setTemplate(template: string, paramsMap?: any): void;
-    setTemplateFromElement(element: HTMLElement, paramsMap?: any): void;
+    setTemplate(template: string, paramsMap?: {
+        [key: string]: any;
+    }): void;
+    setTemplateFromElement(element: HTMLElement, paramsMap?: {
+        [key: string]: any;
+    }): void;
     private createChildComponentsPreConstruct;
     protected wireQuerySelectors(): void;
     private addAnnotatedGuiEventListeners;

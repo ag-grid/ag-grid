@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Component } from "../widgets/component";
 import { PostConstruct } from "../context/context";
-import { _ } from "../utils";
+import { createIconNoSpan } from "../utils/icon";
+import { isBrowserIE } from "../utils/browser";
 var DndSourceComp = /** @class */ (function (_super) {
     __extends(DndSourceComp, _super);
     function DndSourceComp(rowNode, column, cellValue, beans, eCell) {
@@ -39,7 +40,7 @@ var DndSourceComp = /** @class */ (function (_super) {
     }
     DndSourceComp.prototype.postConstruct = function () {
         var eGui = this.getGui();
-        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
         this.checkVisibility();
     };
@@ -49,7 +50,7 @@ var DndSourceComp = /** @class */ (function (_super) {
     DndSourceComp.prototype.onDragStart = function (dragEvent) {
         var _this = this;
         var providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
-        var isIE = _.isBrowserIE();
+        var isIE = isBrowserIE();
         if (!isIE) {
             dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
         }

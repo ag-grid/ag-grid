@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,11 @@ var context_1 = require("../../context/context");
 var touchListener_1 = require("../../widgets/touchListener");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var originalColumnGroup_1 = require("../../entities/originalColumnGroup");
-var utils_1 = require("../../utils");
+var string_1 = require("../../utils/string");
+var event_1 = require("../../utils/event");
+var dom_1 = require("../../utils/dom");
+var icon_1 = require("../../utils/icon");
+var generic_1 = require("../../utils/generic");
 var HeaderGroupComp = /** @class */ (function (_super) {
     __extends(HeaderGroupComp, _super);
     function HeaderGroupComp() {
@@ -52,7 +56,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addInIcon("columnGroupOpened", "agOpened");
         this.addInIcon("columnGroupClosed", "agClosed");
         var expandAction = function (event) {
-            if (utils_1._.isStopPropagationForAgGrid(event)) {
+            if (event_1.isStopPropagationForAgGrid(event)) {
                 return;
             }
             var newExpandedValue = !_this.params.columnGroup.isExpanded();
@@ -61,7 +65,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
         var stopPropagationAction = function (event) {
-            utils_1._.stopPropagationForAgGrid(event);
+            event_1.stopPropagationForAgGrid(event);
         };
         // adding stopPropagation to the double click for the icons prevents double click action happening
         // when the icons are clicked. if the icons are double clicked, then the groups should open and
@@ -86,34 +90,34 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             var expanded = this.params.columnGroup.isExpanded();
-            utils_1._.setDisplayed(this.eOpenIcon, expanded);
-            utils_1._.setDisplayed(this.eCloseIcon, !expanded);
+            dom_1.setDisplayed(this.eOpenIcon, expanded);
+            dom_1.setDisplayed(this.eCloseIcon, !expanded);
         }
         else {
-            utils_1._.setDisplayed(this.eOpenIcon, false);
-            utils_1._.setDisplayed(this.eCloseIcon, false);
+            dom_1.setDisplayed(this.eOpenIcon, false);
+            dom_1.setDisplayed(this.eCloseIcon, false);
         }
     };
     HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
-        var eIcon = utils_1._.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
+        var eIcon = icon_1.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {
         if (!this.params.columnGroup.isExpandable()) {
-            utils_1._.setDisplayed(this.eOpenIcon, false);
-            utils_1._.setDisplayed(this.eCloseIcon, false);
+            dom_1.setDisplayed(this.eOpenIcon, false);
+            dom_1.setDisplayed(this.eCloseIcon, false);
             return;
         }
     };
     HeaderGroupComp.prototype.setupLabel = function () {
         // no renderer, default text render
         var displayName = this.params.displayName;
-        if (utils_1._.exists(displayName)) {
-            var displayNameSanitised = utils_1._.escape(displayName);
+        if (generic_1.exists(displayName)) {
+            var displayNameSanitised = string_1.escapeString(displayName);
             this.getRefElement("agLabel").innerHTML = displayNameSanitised;
         }
     };
-    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"columnheader\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";
+    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"presentation\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";
     __decorate([
         context_1.Autowired("columnController")
     ], HeaderGroupComp.prototype, "columnController", void 0);

@@ -1,15 +1,22 @@
-import { CaptionOptions, ChartOptions, ChartType, DropShadowOptions, EventService, FontOptions, PaddingOptions, ProcessChartOptionsParams, SeriesOptions, GridApi, ColumnApi } from "@ag-grid-community/core";
-import { Chart, ChartPalette, ChartPaletteName } from "ag-charts-community";
+import { CaptionOptions, ChartOptions, ChartType, ColumnApi, DropShadowOptions, EventService, FontOptions, GridApi, PaddingOptions, ProcessChartOptionsParams, SeriesOptions, AgChartThemeOverrides } from "@ag-grid-community/core";
+import { AgChartTheme, AgChartThemePalette, Chart, ChartTheme } from "ag-charts-community";
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
+    chartThemeName?: string;
+    customChartThemes?: {
+        [name: string]: AgChartTheme;
+    };
     width?: number;
     height?: number;
     parentElement: HTMLElement;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getChartPaletteName: () => ChartPaletteName;
+    getChartThemeName: () => string;
+    getChartThemes: () => string[];
+    getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
+    apiChartThemeOverrides?: AgChartThemeOverrides;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
     eventService: EventService;
@@ -37,8 +44,9 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     private readonly gridApi;
     private readonly columnApi;
     protected chart: TChart;
-    protected customPalette: ChartPalette;
+    protected customPalette: AgChartThemePalette;
     protected chartOptions: TOptions;
+    protected chartTheme: ChartTheme;
     protected constructor(chartProxyParams: ChartProxyParams);
     protected abstract createChart(options?: TOptions): TChart;
     recreateChart(options?: TOptions): void;
@@ -52,9 +60,18 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected getBackgroundColor: () => string;
     protected abstract getDefaultOptions(): TOptions;
     protected initChartOptions(): void;
+    private paletteOverridden;
+    private initChartTheme;
+    lookupCustomChartTheme(name: string): AgChartTheme;
+    isStockTheme(themeName: string): boolean;
+    private mergeThemeOverrides;
+    private integratedToStandaloneChartType;
     private overridePalette;
+    protected getStandaloneChartType(): string;
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): TOptions;
+    private getSelectedTheme;
     getChartOptions(): TOptions;
-    getCustomPalette(): ChartPalette | undefined;
+    getCustomPalette(): AgChartThemePalette | undefined;
     getChartOption<T = string>(expression: string): T;
     setChartOption(expression: string, value: any): void;
     getSeriesOption<T = string>(expression: string): T;
@@ -69,8 +86,8 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     raiseChartOptionsChangedEvent(): void;
     protected getDefaultFontOptions(): FontOptions;
     protected getDefaultDropShadowOptions(): DropShadowOptions;
-    protected getPredefinedPalette(): ChartPalette;
-    protected getPalette(): ChartPalette;
+    protected getPredefinedPalette(): AgChartThemePalette;
+    protected getPalette(): AgChartThemePalette;
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions>;
     protected transformData(data: any[], categoryKey: string): any[];
     destroy(): void;

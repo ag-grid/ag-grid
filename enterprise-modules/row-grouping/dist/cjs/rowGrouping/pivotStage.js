@@ -58,10 +58,9 @@ var PivotStage = /** @class */ (function (_super) {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
         if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
-            var result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
-            this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
-            this.pivotColumnDefs = result.pivotColumnDefs;
-            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
+            var _a = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues), pivotColumnGroupDefs = _a.pivotColumnGroupDefs, pivotColumnDefs = _a.pivotColumnDefs;
+            this.pivotColumnDefs = pivotColumnDefs;
+            this.columnController.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {

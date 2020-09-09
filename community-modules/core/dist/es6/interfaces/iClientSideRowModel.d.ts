@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.2.1
+// Type definitions for @ag-grid-community/core v24.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowModel } from './iRowModel';
@@ -21,6 +21,7 @@ export interface IClientSideRowModel extends IRowModel {
     resetRowHeights(): void;
     onRowHeightChanged(): void;
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    flushAsyncTransactions(): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;

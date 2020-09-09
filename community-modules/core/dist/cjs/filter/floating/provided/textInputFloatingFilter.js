@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,11 +27,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
 var function_1 = require("../../../utils/function");
-var constants_1 = require("../../../constants");
 var providedFilter_1 = require("../../provided/providedFilter");
 var context_1 = require("../../../context/context");
 var simpleFloatingFilter_1 = require("./simpleFloatingFilter");
 var keyboard_1 = require("../../../utils/keyboard");
+var keyCode_1 = require("../../../constants/keyCode");
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
@@ -79,7 +79,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
         var value = this.eFloatingFilterInput.getValue();
-        var enterKeyPressed = keyboard_1.isKeyPressed(e, constants_1.Constants.KEY_ENTER);
+        var enterKeyPressed = keyboard_1.isKeyPressed(e, keyCode_1.KeyCode.ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
         }

@@ -159,9 +159,11 @@ var ChartDatasource = /** @class */ (function (_super) {
     };
     ChartDatasource.prototype.getGroupLabels = function (rowNode, initialLabel) {
         var labels = [initialLabel];
-        while (rowNode.level !== 0) {
+        while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;
-            labels.push(rowNode.key);
+            if (rowNode) {
+                labels.push(rowNode.key);
+            }
         }
         return labels;
     };

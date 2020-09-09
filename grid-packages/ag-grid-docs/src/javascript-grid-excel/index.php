@@ -225,6 +225,21 @@ SNIPPET
     you can provide an ExcelStyle with id and name "header". If you do so, the headers
 </p>
 
+<h2>Example: Export Without Styles</h2>
+
+<ul class="content">
+    <li>The column grouping is exported.</li>
+    <li>Filtered rows are not included in the export.</li>
+    <li>The sort order is maintained in the export.</li>
+    <li>The order of the columns is maintained in the export.</li>
+    <li>Only visible columns are exported.</li>
+    <li>Value getters are used to work out the value to export (the 'Group' col in the example below uses a value getter to take the first letter of the country name).</li>
+    <li>Aggregated values are exported.</li>
+    <li>For groups, the first exported value (column) will always have the group key.</li>
+</ul>
+
+<?= grid_example('Excel Export Without Styles', 'excel-export-without-styles', 'generated', ['enterprise' => true, 'exampleHeight' => 815]) ?>
+
 <h2>Example: Export With Styles </h2>
 
 <ul class="content">
@@ -246,7 +261,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true, 'exampleHeight' => 815]) ?>
+<?= grid_example('Excel Export With Styles', 'excel-export-with-styles', 'generated', ['enterprise' => true, 'exampleHeight' => 815]) ?>
 
 <h2>Example: Styling Row Groups</h2>
 

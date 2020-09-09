@@ -191,6 +191,8 @@ var CartesianChart = /** @class */ (function (_super) {
         this.navigator.onMouseUp(event);
     };
     CartesianChart.prototype.updateAxes = function () {
+        var navigator = this.navigator;
+        var clipSeries = false;
         this.axes.forEach(function (axis) {
             var _a;
             var direction = axis.direction, boundSeries = axis.boundSeries;
@@ -205,8 +207,15 @@ var CartesianChart = /** @class */ (function (_super) {
                 var domain = (_a = new Array()).concat.apply(_a, domains_1);
                 axis.domain = array_1.numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
             }
+            if (axis.direction === chartAxis_1.ChartAxisDirection.X) {
+                axis.visibleRange = [navigator.min, navigator.max];
+            }
+            if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {
+                clipSeries = true;
+            }
             axis.update();
         });
+        this.seriesRoot.enabled = clipSeries;
     };
     CartesianChart.className = 'CartesianChart';
     CartesianChart.type = 'cartesian';

@@ -20,7 +20,7 @@ export class HorizontalResizeService extends BeanStub {
     private resizeAmount: number;
 
     private oldBodyCursor: string;
-    private oldMsUserSelect: string;
+    private oldUserSelect: string;
     private oldWebkitUserSelect: string;
 
     public addResizeBar(params: HorizontalResizeParams): () => void {
@@ -52,13 +52,13 @@ export class HorizontalResizeService extends BeanStub {
 
     private setResizeIcons(): void {
         this.oldBodyCursor = this.eGridDiv.style.cursor;
-        this.oldMsUserSelect = this.eGridDiv.style.msUserSelect;
+        this.oldUserSelect = this.eGridDiv.style.userSelect;
         this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
 
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         this.eGridDiv.style.cursor = 'ew-resize';
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
-        this.eGridDiv.style.msUserSelect = 'none';
+        this.eGridDiv.style.userSelect = 'none';
         this.eGridDiv.style.webkitUserSelect = 'none';
     }
 
@@ -70,7 +70,7 @@ export class HorizontalResizeService extends BeanStub {
     private resetIcons(): void {
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         this.eGridDiv.style.cursor = this.oldBodyCursor;
-        this.eGridDiv.style.msUserSelect = this.oldMsUserSelect;
+        this.eGridDiv.style.userSelect = this.oldUserSelect;
         this.eGridDiv.style.webkitUserSelect = this.oldWebkitUserSelect;
     }
 

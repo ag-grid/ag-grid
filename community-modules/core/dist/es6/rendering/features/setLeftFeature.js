@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.1
+ * @version v24.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,9 +25,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
-import { Constants } from "../../constants";
+import { Constants } from "../../constants/constants";
 import { PostConstruct } from "../../context/context";
-import { _ } from "../../utils";
+import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
+import { last } from "../../utils/array";
+import { exists } from "../../utils/generic";
 var SetLeftFeature = /** @class */ (function (_super) {
     __extends(SetLeftFeature, _super);
     function SetLeftFeature(columnOrGroup, eCell, beans, colsSpanning) {
@@ -46,7 +48,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
     };
     SetLeftFeature.prototype.getColumnOrGroup = function () {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            return _.last(this.colsSpanning);
+            return last(this.colsSpanning);
         }
         return this.columnOrGroup;
     };
@@ -56,7 +58,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
         var suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
-        var oldLeftExists = _.exists(this.columnOrGroup.getOldLeft());
+        var oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         var animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -109,16 +111,26 @@ var SetLeftFeature = /** @class */ (function (_super) {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (_.exists(value)) {
+        if (exists(value)) {
             this.eCell.style.left = value + "px";
         }
+        var indexColumn;
         if (this.columnOrGroup instanceof Column) {
-            var colIndex = this.beans.columnController.getAllDisplayedColumns().indexOf(this.columnOrGroup);
-            this.ariaEl.setAttribute('aria-colindex', (colIndex + 1).toString());
+            indexColumn = this.columnOrGroup;
         }
         else {
-            this.ariaEl.removeAttribute('aria-colindex');
+            var columnGroup = this.columnOrGroup;
+            var children = columnGroup.getLeafColumns();
+            if (!children.length) {
+                return;
+            }
+            if (children.length > 1) {
+                setAriaColSpan(this.ariaEl, children.length);
+            }
+            indexColumn = children[0];
         }
+        var index = this.beans.columnController.getAriaColumnIndex(indexColumn);
+        setAriaColIndex(this.ariaEl, index);
     };
     __decorate([
         PostConstruct

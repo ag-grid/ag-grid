@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { Constants } from "./constants";
+import { Constants } from "./constants/constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
@@ -33,14 +33,6 @@ export class SortController extends BeanStub {
         // update sort on current col
         column.setSort(sort, source);
 
-        // sortedAt used for knowing order of cols when multi-col sort
-        if (column.getSort()) {
-            const sortedAt = Number(new Date().valueOf());
-            column.setSortedAt(sortedAt);
-        } else {
-            column.setSortedAt(null);
-        }
-
         const doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
 
         // clear sort on all columns except this one, and update the icons
@@ -48,7 +40,30 @@ export class SortController extends BeanStub {
             this.clearSortBarThisColumn(column, source);
         }
 
+        // sortIndex used for knowing order of cols when multi-col sort
+        this.updateSortIndex(column);
+
         this.dispatchSortChangedEvents();
+    }
+
+    private updateSortIndex(lastColToChange: Column) {
+        // update sortIndex on all sorting cols
+        const allSortedCols = this.getColumnsWithSortingOrdered();
+        let sortIndex = 0;
+        allSortedCols.forEach(col => {
+            if (col !== lastColToChange) {
+                col.setSortIndex(sortIndex);
+                sortIndex++;
+            }
+        });
+        // last col to change always gets the last sort index, it's added to the end
+        if (lastColToChange.getSort()) {
+            lastColToChange.setSortIndex(sortIndex);
+        }
+
+        // clear sort index on all cols not sorting
+        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex(undefined));
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -57,7 +72,22 @@ export class SortController extends BeanStub {
         this.dispatchSortChangedEvents();
     }
 
-    private dispatchSortChangedEvents(): void {
+    // used by server side row models, to send sorting to server
+    public getSortModel = () => {
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            colId: column.getColId(),
+            sort: column.getSort()
+        }));
+    };
+
+    public isSortActive(): boolean {
+        // pull out all the columns that have sorting set
+        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const sortedCols = allCols.filter(column => !!column.getSort());
+        return sortedCols && sortedCols.length > 0;
+    }
+
+    public dispatchSortChangedEvents(): void {
         const event: SortChangedEvent = {
             type: Events.EVENT_SORT_CHANGED,
             api: this.gridApi,
@@ -112,57 +142,13 @@ export class SortController extends BeanStub {
         return result;
     }
 
-    // used by the public api, for saving the sort model
-    public getSortModel = () => {
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            colId: column.getColId(),
-            sort: column.getSort()
-        }));
-    }
-
-    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        // first up, clear any previous sort
-        const sortModelProvided = sortModel && sortModel.length > 0;
-
-        const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allColumnsIncludingAuto.forEach((column: Column) => {
-            let sortForCol: any = null;
-            let sortedAt = -1;
-            if (sortModelProvided && column.getColDef().sortable) {
-                for (let j = 0; j < sortModel.length; j++) {
-                    const sortModelEntry = sortModel[j];
-                    if (typeof sortModelEntry.colId === 'string'
-                        && typeof column.getColId() === 'string'
-                        && this.compareColIds(sortModelEntry, column)) {
-                        sortForCol = sortModelEntry.sort;
-                        sortedAt = j;
-                    }
-                }
-            }
-
-            if (sortForCol) {
-                column.setSort(sortForCol, source);
-                column.setSortedAt(sortedAt);
-            } else {
-                column.setSort(null, source);
-                column.setSortedAt(null);
-            }
-        });
-
-        this.dispatchSortChangedEvents();
-    }
-
-    private compareColIds(sortModelEntry: any, column: Column) {
-        return sortModelEntry.colId === column.getColId();
-    }
-
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
         const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: any, b: any) => a.sortedAt - b.sortedAt);
+        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex() - b.getSortIndex());
 
         return columnsWithSorting;
     }
