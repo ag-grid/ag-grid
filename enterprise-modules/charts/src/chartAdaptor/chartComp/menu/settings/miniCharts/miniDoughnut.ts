@@ -30,6 +30,7 @@ export class MiniDoughnut extends MiniChart {
             sector.startAngle = startAngle;
             sector.endAngle = endAngle;
             sector.stroke = undefined;
+            sector.strokeWidth = 1;
             return sector;
         });
 
