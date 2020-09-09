@@ -449,7 +449,7 @@ export const axis = Object.freeze({
         },
         format: {
             type: 'string',
-            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-grid-charts-integrated-axis-types/#format-string">click here</a>.',
+            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-charts-axis/#time-label-format-string">click here</a>.',
         },
         formatter: {
             type: {
