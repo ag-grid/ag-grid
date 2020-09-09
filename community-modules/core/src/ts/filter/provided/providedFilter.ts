@@ -10,6 +10,7 @@ import { Promise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { convertToSet } from '../../utils/set';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -178,7 +179,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
             this.addManagedListener(button, 'click', clickListener);
         };
 
-        new Set(buttons).forEach(type => addButton(type));
+        convertToSet(buttons).forEach(type => addButton(type));
 
         this.getGui().appendChild(eButtonsPanel);
     }
