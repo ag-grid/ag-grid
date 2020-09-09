@@ -28,10 +28,9 @@ export default class TitlePanel extends Component {
 
     private hasTitle(): boolean {
         const chartProxy = this.chartController.getChartProxy();
-        const title: any = chartProxy.getChartOption('title'); // TODO: fix this
-        const text = title && title.text ? title.text : '';
+        const title: any = chartProxy.getChartOption('title');
 
-        return _.exists(text);
+        return title && title.enabled && title.text && title.text.length > 0;
     }
 
     private initFontPanel(): void {
