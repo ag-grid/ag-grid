@@ -31148,6 +31148,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
             sector.startAngle = startAngle;
             sector.endAngle = endAngle;
             sector.stroke = undefined;
+            sector.strokeWidth = 1;
             return sector;
         });
         _this.updateColors(fills, strokes);

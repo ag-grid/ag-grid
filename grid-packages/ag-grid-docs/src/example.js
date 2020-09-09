@@ -452,6 +452,7 @@ var gridOptions = {
         var options = params.options;
 
         if (type === 'pie' || type === 'doughnut') {
+            options.seriesDefaults.label.enabled = false;
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';

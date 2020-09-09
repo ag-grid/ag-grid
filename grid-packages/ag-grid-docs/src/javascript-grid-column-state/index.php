@@ -49,8 +49,7 @@ include '../documentation-main/documentation_header.php';
 let savedState = columnApi.getColumnState();
 
 // restore the column state
-columnApi.applyColumnsState({state: savedState});
-
+columnApi.applyColumnsState({ state: savedState });
 SNIPPET
 ) ?>
 
@@ -89,18 +88,17 @@ interface ColumnState {
     pivotIndex?: number; // the order of the pivot, if pivoting by many columns
     pinned?: string | 'left' | 'right'; // set if column is pinned
     rowGroup?: boolean; // true if row group active
-    rowGroupIndex?: number | null; // ther order of the row group, if row rouping by many columns
+    rowGroupIndex?: number | null; // the order of the row group, if row grouping by many columns
 }
 
 // Applying Column State
 function applyColumnState(params: ApplyColumnStateParams): boolean
 
 interface ApplyColumnStateParams {
-    state?: ColumnState[], // the state from getColumnState
-    applyOrder?: boolean, // whether column order should be applied
-    defaultState?: ColumnState // state to apply to columns where state is missing for those columns
+    state?: ColumnState[]; // the state from getColumnState
+    applyOrder?: boolean; // whether column order should be applied
+    defaultState?: ColumnState; // state to apply to columns where state is missing for those columns
 }
-
 SNIPPET
 ) ?>
 
@@ -108,7 +106,7 @@ SNIPPET
 
 <p>
     It is possible to focus on particular columns and / or particular attributes when getting and / or
-    applying Column State. This allows fine grained control over the Column State, eg setting what Columns
+    applying Column State. This allows fine grained control over the Column State, e.g. setting what Columns
     are Pinned, without impacting any other state attribute.
 </p>
 

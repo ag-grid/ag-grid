@@ -5,14 +5,30 @@
 
     <ul>
         <li>
-            AG-1873: Allow set filter to be combined with other filters
+            AG-1873: Allow more combining multiple column filters on one column
             (see <a href="/javascript-grid-filter-multi">Multi Filter</a>)
         </li>
 
         <li>
-            AG-4291: Reactive Columns
-            (see <a href="/javascript-grid-column-updating-definitions">Updating Column Definitions</a> and
-            <a href="/javascript-grid-column-state">Column State</a>)
+            AG-4291: Reactive Columns - Enhancements to Column Definitions including the following:
+            <ul>
+                <li>
+                    Declarative Column Definitions for React resulting in application code that
+                    fits more nicely with the React paradigm.
+                </li>
+                <li>
+                    Revamped <a href="/javascript-grid-column-updating-definitions">Updating Column Definitions</a>
+                    to make it easier to make changes to columns.
+                    For example state items now have 'default' values (defaultWidth, defaultSort etc) which means
+                    there is no longer any need for 'Immutable Columns' (which are gone).
+                </li>
+                <li>
+                    Revamped <a href="/javascript-grid-column-state">Column State</a> to allow more powerful
+                    and fine grained control of Column State without touching the Column Definitions. For example
+                    partial state can be applied to impact certain Columns or to impact only certain Attributes,
+                    providing fine grained control over Column State.
+                </li>
+            </ul>
         </li>
 
         <li>Accessibility Enhancements</li>
@@ -76,6 +92,15 @@
     <ul>
         <li>rowDeselection no longer has any affect as the grid now allows row deselection by default. To block row deselection set suppressRowDeselection to true..</li>
     </ul>
+
+    <p><u>Configuring 'Full Width Group Row Inner Renderer'</u></p>
+    <p>
+        How <code>innerRenderer</code> was configured as a grid option was wrong and has been corrected to the correct way.
+        The old way was using grid properties <code>groupRowInnerRenderer</code> and
+        <code>groupRowInnerRendererParams</code>. The new correct way is to use
+        <code>groupRowRendererParams.innerRenderer</code> and
+        <code>groupRowRendererParams.innerRendererParams</code>.
+    </p>
 
     <p><b>Removed Deprecations:</b></p>
 

@@ -5715,6 +5715,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "capitalise", function() { return capitalise; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "escapeString", function() { return escapeString; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "camelCaseToHumanText", function() { return camelCaseToHumanText; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startsWith", function() { return startsWith; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v24.0.0
@@ -5851,6 +5852,12 @@ function camelCaseToHumanText(camelCase) {
     var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
     var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
     return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
+}
+function startsWith(str, matchStart) {
+    if (str === matchStart) {
+        return true;
+    }
+    return str != null && str.slice(0, matchStart.length) === matchStart;
 }
 
 
@@ -8564,13 +8571,15 @@ var ColumnController = /** @class */ (function (_super) {
                 return;
             }
             params.state.forEach(function (state) {
+                var groupAutoColumnId = _constants_constants__WEBPACK_IMPORTED_MODULE_7__["Constants"].GROUP_AUTO_COLUMN_ID;
+                var colId = state.colId;
                 // auto group columns are re-created so deferring syncing with ColumnState
-                var isAutoGroupColumn = state.colId && state.colId.startsWith(_constants_constants__WEBPACK_IMPORTED_MODULE_7__["Constants"].GROUP_AUTO_COLUMN_ID);
+                var isAutoGroupColumn = Object(_utils_string__WEBPACK_IMPORTED_MODULE_10__["startsWith"])(colId, groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
                 }
-                var column = _this.getPrimaryColumn(state.colId);
+                var column = _this.getPrimaryColumn(colId);
                 if (!column) {
                     // we don't log the failure, as it's possible the user is applying that has extra
                     // cols in it. for example they could of save while row-grouping (so state includes
