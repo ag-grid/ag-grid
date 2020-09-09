@@ -26,6 +26,7 @@ mkdir public_html_tmp
 echo "Unzipping release archive"
 mv ./$FILENAME public_html_tmp/
 cd public_html_tmp/ && unzip $FILENAME
+cd ..
 
 # copy non versionsed files & directories over
 echo "Copying non-versioned directories"
