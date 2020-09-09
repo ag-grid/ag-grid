@@ -51,7 +51,7 @@
 
     <p><b>Breaking Changes:</b></p>
 
-    <p>Reactive Columns</p>
+    <p><u>Reactive Columns</u></p>
 
     <ul>
         <li>Column stateful items (width, flex, hide, sort, aggFunc, pivot, pivotIndex, rowGroup, rowGroupIndex, initialPinned) always get re-applied when Column Definitions are updated.</li>
@@ -65,11 +65,23 @@
 
     <p>See 'More Info' on AG-4291 for full details, these changes make more sense in context of the wider changes.</p>
 
+    <p><u>Custom Aggregation</u></p>
+    <ul>
+        <li>
+            Custom aggregation functions now take a params object, previously they took a list of values. See 'More Info' on AG-4291 for details.
+        </li>
+    </ul>
+
+    <p><u>Row Deselection</u></p>
+    <ul>
+        <li>rowDeselection no longer has any affect as the grid now allows row deselection by default. To block row deselection set suppressRowDeselection to true..</li>
+    </ul>
+
     <p><b>Removed Deprecations:</b></p>
 
     <p>The following have been deprecated for over a year and have now been removed:</p>
 
-    <p><u>Grid Options:</u></p>
+    <p><u>Grid Options</u></p>
 
     <ul>
         <li>pivotTotals (use pivotColumnGroupTotals = 'before' | 'after')</li>
@@ -93,7 +105,7 @@
         <li>doesDataFlower() (use new master detail)</li>
     </ul>
 
-    <p><u>Column Definitions:</u></p>
+    <p><u>Column Definitions</u></p>
 
     <ul>
         <li>suppressSorting (use colDef.sortable=false)</li>
@@ -103,7 +115,7 @@
         <li>tooltip (use colDef.tooltipValueGetter)</li>
     </ul>
 
-    <p><u>Row Node:</u></p>
+    <p><u>Row Node</u></p>
 
     <ul>
         <li>canFlower</li>
@@ -111,16 +123,10 @@
         <li>childFlower</li>
     </ul>
 
-    <p><u>Events:</u></p>
+    <p><u>Events</u></p>
 
     <ul>
         <li>floatingRowDataChanged (use pinnedRowDataChanged)</li>
-    </ul>
-
-    <p><b>Deprecations:</b></p>
-
-    <ul>
-        <li>rowDeselection has been deprecated and now the grid allows row deselection by default. To block row deselection set suppressRowDeselection to true.</li>
     </ul>
 
 </div>
@@ -159,7 +165,6 @@
             </li>
 
             <li>
-
                 <div>
                     AG-2216 - Allow filter values to be loaded every time the user opens the set filter
                 </div>
