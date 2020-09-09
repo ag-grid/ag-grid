@@ -130,7 +130,7 @@ var rowSelection = 'checkbox';
 var groupColumn = {
     headerName: "Group",
     width: 250,
-    // field: 'name',
+    field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRenderer: 'agGroupCellRenderer',
