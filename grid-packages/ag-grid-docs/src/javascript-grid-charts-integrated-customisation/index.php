@@ -23,13 +23,13 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     There are five themes that are provided by the grid: <code>'ag-default'</code>, <code>'ag-material'</code>,
-    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. There are also dark equivalents of
-    these named with a <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
+    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. When using a dark theme for the grid
+    (e.g. <code>ag-theme-alpine-dark</code>), dark equivalents are provided by default instead, named with a
+    <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
 </p>
 
 <p>
-    By default, all of these themes are available, and when you create a chart, you can scroll through the different
-    themes in the chart settings.
+    When you create a chart, you can scroll through the different available themes in the chart settings.
 </p>
 
 <div class="animated-example">
