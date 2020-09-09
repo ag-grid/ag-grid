@@ -362,9 +362,13 @@ export const axis = Object.freeze({
         editor: PresetEditor,
         options: ['top', 'right', 'bottom', 'left'],
     },
-    rotation: {
+    min: {
         type: 'number',
-        description: 'The rotation of the axis in degrees.',
+        description: 'User override for the automatically determinted min value (based on series data). Only applied to "number" axes.',
+    },
+    max: {
+        type: 'number',
+        description: 'User override for the automatically determinted max value (based on series data). Only applied to "number" axes.',
     },
     title: getCaptionOptions('axis title', 'Configuration for the title shown next to the axis.', 'Axis Title', 14, 'bold'),
     line: {
