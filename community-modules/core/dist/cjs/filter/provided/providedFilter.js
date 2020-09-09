@@ -31,6 +31,7 @@ var dom_1 = require("../../utils/dom");
 var function_1 = require("../../utils/function");
 var filterLocaleText_1 = require("../filterLocaleText");
 var managedFocusComponent_1 = require("../../widgets/managedFocusComponent");
+var set_1 = require("../../utils/set");
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -133,7 +134,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
-        new Set(buttons).forEach(function (type) { return addButton(type); });
+        set_1.convertToSet(buttons).forEach(function (type) { return addButton(type); });
         this.getGui().appendChild(eButtonsPanel);
     };
     ProvidedFilter.checkForDeprecatedParams = function (params) {

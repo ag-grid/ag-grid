@@ -10778,7 +10778,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
-        new Set(buttons).forEach(function (type) { return addButton(type); });
+        convertToSet(buttons).forEach(function (type) { return addButton(type); });
         this.getGui().appendChild(eButtonsPanel);
     };
     ProvidedFilter.checkForDeprecatedParams = function (params) {
@@ -22264,7 +22264,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 return false;
             }
             var res = false;
-            Object.values(rowsToRecycle).forEach(function (rowComp) {
+            _.iterateObject(rowsToRecycle, function (key, rowComp) {
                 var rowNode = rowComp.getRowNode();
                 var rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 var pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;

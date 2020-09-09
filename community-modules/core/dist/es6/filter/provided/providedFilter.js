@@ -29,6 +29,7 @@ import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { convertToSet } from '../../utils/set';
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -131,7 +132,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             eButtonsPanel.appendChild(button);
             _this.addManagedListener(button, 'click', clickListener);
         };
-        new Set(buttons).forEach(function (type) { return addButton(type); });
+        convertToSet(buttons).forEach(function (type) { return addButton(type); });
         this.getGui().appendChild(eButtonsPanel);
     };
     ProvidedFilter.checkForDeprecatedParams = function (params) {

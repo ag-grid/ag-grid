@@ -42,6 +42,7 @@ var number_1 = require("../utils/number");
 var array_1 = require("../utils/array");
 var function_1 = require("../utils/function");
 var keyCode_1 = require("../constants/keyCode");
+var utils_1 = require("../utils");
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -326,7 +327,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 return false;
             }
             var res = false;
-            Object.values(rowsToRecycle).forEach(function (rowComp) {
+            utils_1._.iterateObject(rowsToRecycle, function (key, rowComp) {
                 var rowNode = rowComp.getRowNode();
                 var rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 var pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;

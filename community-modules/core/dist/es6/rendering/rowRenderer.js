@@ -40,6 +40,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import { _ } from "../utils";
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -324,7 +325,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 return false;
             }
             var res = false;
-            Object.values(rowsToRecycle).forEach(function (rowComp) {
+            _.iterateObject(rowsToRecycle, function (key, rowComp) {
                 var rowNode = rowComp.getRowNode();
                 var rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 var pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;

@@ -362,9 +362,13 @@ export const axis = Object.freeze({
         editor: PresetEditor,
         options: ['top', 'right', 'bottom', 'left'],
     },
-    rotation: {
+    min: {
         type: 'number',
-        description: 'The rotation of the axis in degrees.',
+        description: 'User override for the automatically determinted min value (based on series data). Only applied to "number" axes.',
+    },
+    max: {
+        type: 'number',
+        description: 'User override for the automatically determinted max value (based on series data). Only applied to "number" axes.',
     },
     title: getCaptionOptions('axis title', 'Configuration for the title shown next to the axis.', 'Axis Title', 14, 'bold'),
     line: {
@@ -449,7 +453,7 @@ export const axis = Object.freeze({
         },
         format: {
             type: 'string',
-            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-grid-charts-integrated-axis-types/#format-string">click here</a>.',
+            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="../javascript-charts-axis/#time-label-format-string">click here</a>.',
         },
         formatter: {
             type: {

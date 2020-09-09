@@ -15439,10 +15439,10 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
-    function AgCheckbox(className, inputType) {
+    function AgCheckbox(config, className, inputType) {
         if (className === void 0) { className = 'ag-checkbox'; }
         if (inputType === void 0) { inputType = 'checkbox'; }
-        var _this = _super.call(this, className, 'input', inputType) || this;
+        var _this = _super.call(this, config, className, inputType) || this;
         _this.labelAlignment = 'right';
         _this.selected = false;
         _this.readOnly = false;
@@ -15579,9 +15579,10 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgAbstractInputField = /** @class */ (function (_super) {
     __extends(AgAbstractInputField, _super);
-    function AgAbstractInputField(className, displayFieldTag, inputType, config) {
+    function AgAbstractInputField(config, className, inputType, displayFieldTag) {
+        if (inputType === void 0) { inputType = 'text'; }
         if (displayFieldTag === void 0) { displayFieldTag = 'input'; }
-        var _this = _super.call(this, className, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", config) || this;
+        var _this = _super.call(this, config, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", className) || this;
         _this.inputType = inputType;
         return _this;
     }
@@ -15697,8 +15698,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
-    function AgAbstractField(className, template, config) {
-        var _this = _super.call(this, template, config) || this;
+    function AgAbstractField(config, template, className) {
+        var _this = _super.call(this, config, template) || this;
         _this.className = className;
         _this.disabled = false;
         return _this;
@@ -15789,7 +15790,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgAbstractLabel = /** @class */ (function (_super) {
     __extends(AgAbstractLabel, _super);
-    function AgAbstractLabel(template, config) {
+    function AgAbstractLabel(config, template) {
         var _this = _super.call(this, template) || this;
         _this.labelSeparator = '';
         _this.labelAlignment = 'left';
@@ -18552,9 +18553,7 @@ var Grid = /** @class */ (function () {
         var gridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
         var columnController = this.context.getBean('columnController');
         var columnDefs = gridOptionsWrapper.getColumnDefs();
-        if (Object(_utils_generic__WEBPACK_IMPORTED_MODULE_82__["exists"])(columnDefs)) {
-            columnController.setColumnDefs(columnDefs, "gridInitializing");
-        }
+        columnController.setColumnDefs(columnDefs || [], "gridInitializing");
         var rowModel = this.context.getBean('rowModel');
         rowModel.start();
     };
@@ -37140,8 +37139,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 var AgRadioButton = /** @class */ (function (_super) {
     __extends(AgRadioButton, _super);
-    function AgRadioButton() {
-        return _super.call(this, 'ag-radio-button', 'radio') || this;
+    function AgRadioButton(config) {
+        return _super.call(this, config, 'ag-radio-button', 'radio') || this;
     }
     AgRadioButton.prototype.isSelected = function () {
         return this.eInput.checked;
@@ -41506,10 +41505,10 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
-    function AgInputTextField(className, inputType, config) {
+    function AgInputTextField(config, className, inputType) {
         if (className === void 0) { className = 'ag-text-field'; }
         if (inputType === void 0) { inputType = 'text'; }
-        return _super.call(this, className, 'input', inputType, config) || this;
+        return _super.call(this, config, className, inputType) || this;
     }
     AgInputTextField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
@@ -41575,7 +41574,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
 var AgInputTextArea = /** @class */ (function (_super) {
     __extends(AgInputTextArea, _super);
     function AgInputTextArea(config) {
-        return _super.call(this, 'ag-text-area', 'textarea', undefined, config) || this;
+        return _super.call(this, config, 'ag-text-area', 'textarea') || this;
     }
     AgInputTextArea.prototype.setValue = function (value, silent) {
         var ret = _super.prototype.setValue.call(this, value, silent);
@@ -41639,8 +41638,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
-    function AgSlider() {
-        var _this = _super.call(this, AgSlider.TEMPLATE) || this;
+    function AgSlider(config) {
+        var _this = _super.call(this, config, AgSlider.TEMPLATE) || this;
         _this.labelAlignment = 'top';
         return _this;
     }
@@ -41754,7 +41753,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this, 'ag-color-picker', 'colorPicker') || this;
+        var _this = _super.call(this, config, 'ag-color-picker', 'colorPicker') || this;
         if (config && config.color) {
             _this.value = config.color;
         }
@@ -42147,8 +42146,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
-    function AgPickerField(className, pickerIcon, popupRole) {
-        var _this = _super.call(this, className, /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper\"\n                    tabIndex=\"-1\"\n                    " + (popupRole ? "aria-haspopup=\"" + popupRole + "\"" : '') + ">\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>") || this;
+    function AgPickerField(config, className, pickerIcon, popupRole) {
+        var _this = _super.call(this, config, /* html */ "<div class=\"ag-picker-field\" role=\"presentation\">\n                <div ref=\"eLabel\"></div>\n                <div ref=\"eWrapper\"\n                    class=\"ag-wrapper ag-picker-field-wrapper\"\n                    tabIndex=\"-1\"\n                    " + (popupRole ? "aria-haspopup=\"" + popupRole + "\"" : '') + ">\n                    <div ref=\"eDisplayField\" class=\"ag-picker-field-display\"></div>\n                    <div ref=\"eIcon\" class=\"ag-picker-field-icon\" aria-hidden=\"true\"></div>\n                </div>\n            </div>", className) || this;
         _this.pickerIcon = pickerIcon;
         _this.isPickerDisplayed = false;
         _this.isDestroyingPicker = false;
@@ -42273,8 +42272,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 var AgInputNumberField = /** @class */ (function (_super) {
     __extends(AgInputNumberField, _super);
-    function AgInputNumberField() {
-        return _super.call(this, 'ag-number-field', 'number') || this;
+    function AgInputNumberField(config) {
+        return _super.call(this, config, 'ag-number-field', 'number') || this;
     }
     AgInputNumberField.prototype.postConstruct = function () {
         var _this = this;
@@ -42384,7 +42383,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
 var AgInputRange = /** @class */ (function (_super) {
     __extends(AgInputRange, _super);
     function AgInputRange(config) {
-        return _super.call(this, 'ag-range-field', 'input', 'range', config) || this;
+        return _super.call(this, config, 'ag-range-field', 'range') || this;
     }
     AgInputRange.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
@@ -42480,8 +42479,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
-    function AgSelect() {
-        return _super.call(this, 'ag-select', 'smallDown', 'listbox') || this;
+    function AgSelect(config) {
+        return _super.call(this, config, 'ag-select', 'smallDown', 'listbox') || this;
     }
     AgSelect.prototype.init = function () {
         var _this = this;
@@ -42821,8 +42820,8 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
-    function AgAngleSelect() {
-        var _this = _super.call(this, AgAngleSelect.TEMPLATE) || this;
+    function AgAngleSelect(config) {
+        var _this = _super.call(this, config, AgAngleSelect.TEMPLATE) || this;
         _this.radius = 0;
         _this.offsetX = 0;
         _this.offsetY = 0;
@@ -43001,7 +43000,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eAngleValue')
     ], AgAngleSelect.prototype, "eAngleValue", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__["Autowired"])("dragService")
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('dragService')
     ], AgAngleSelect.prototype, "dragService", void 0);
     return AgAngleSelect;
 }(_agAbstractLabel__WEBPACK_IMPORTED_MODULE_0__["AgAbstractLabel"]));
@@ -43040,8 +43039,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 var AgToggleButton = /** @class */ (function (_super) {
     __extends(AgToggleButton, _super);
-    function AgToggleButton() {
-        return _super.call(this, 'ag-toggle-button') || this;
+    function AgToggleButton(config) {
+        return _super.call(this, config, 'ag-toggle-button') || this;
     }
     AgToggleButton.prototype.setValue = function (value, silent) {
         _super.prototype.setValue.call(this, value, silent);

@@ -1,3 +1,130 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_24_0_0">
+    <p><b>Release 24.0.0 (9th Sep 2020)</b></p>
+
+    <p><b>Feature Highlights:</b></p>
+
+    <ul>
+        <li>
+            AG-1873: Allow set filter to be combined with other filters
+            (see <a href="/javascript-grid-filter-multi">Multi Filter</a>)
+        </li>
+
+        <li>
+            AG-4291: Reactive Columns
+            (see <a href="/javascript-grid-column-updating-definitions">Updating Column Definitions</a> and
+            <a href="/javascript-grid-column-state">Column State</a>)
+        </li>
+
+        <li>Accessibility Enhancements</li>
+        <ul>
+            <li>AG-4254 - Allow screen readers to read column names in the column tool panel</li>
+            <li>AG-4394 - Add ARIA tags in the paging panel</li>
+            <li>AG-4390 - Allow updates to sort order to be announced</li>
+            <li>AG-2629 - Allow screen readers/keyboard navigation to access the column headers sort and filtering elements</li>
+            <li>AG-4279 - Add ARIA label to row selection checkbox</li>
+            <li>AG-4250 - Add role definitions to grouped rows to allow them to be read correctly by screen readers</li>
+            <li>AG-4389 - Allow column menu tabs to be announced correctly in JAWS</li>
+            <li>AG-4322 - Update ARIA role, label, title, sort tags for column headers</li>
+            <li>AG-4314 - Allow passing the WAVE, AXE accessibility audit</li>
+            <li>AG-4363 - Add ARIA labels to cell editors</li>
+            <li>AG-1967 - Add Accessibility attributes across column header Filter/Sorting elements</li>
+            <li>AG-4391 - Add aria-label to provided filter menu inputs</li>
+            <li>AG-4393 - Allow using keyboard navigation to navigate to and access the pagination panel</li>
+            (see <a href="/javascript-grid-accessibility">Accessibility</a>)
+        </ul>
+
+        <li>
+            AG-2821 - Chart Themes (see <a href="/javascript-charts-themes">Chart Themes</a>,
+            <a href="/javascript-grid-charts-integrated-customisation">Integrated Theme Based Customisation</a>)
+        </li>
+
+        <li>
+            AG-4140 - Allow aggregation without totalling on pivot column groups (see
+            <a href="/javascript-grid-pivoting/#expandable-pivot-column-groups">Expandable Pivot Groups</a>)
+        </li>
+
+        <li>
+            AG-4266 - Add API methods indicating whether the undo/redo stack is empty (see
+            <a href="/javascript-grid-undo-redo-edits/#example-undo-redo">Undo / Redo</a>)
+        </li>
+    </ul>
+
+    <p><b>Breaking Changes:</b></p>
+
+    <p>Reactive Columns</p>
+
+    <ul>
+        <li>Column stateful items (width, flex, hide, sort, aggFunc, pivot, pivotIndex, rowGroup, rowGroupIndex, initialPinned) always get re-applied when Column Definitions are updated.</li>
+        <li>Grid Property 'immutableColumns' is now gone. Columns are immutable by default.</li>
+        <li>Grid API 'getColumnState()' now returns back more information about columns. This is only a breaking change if your application isn't able to work with the extra details.</li>
+        <li>Grid API 'setColumnsState()' is replaced with 'applyColumnState()'. The new method is similar but more powerful / flexible.</li>
+        <li>Grid Property 'suppressSetColumnStateEvents' renamed to 'suppressColumnStateEvents'.</li>
+        <li>Column Definition property sortedAt replaced with sortIndex.</li>
+        <li>Grid API's 'getSortModel()' and 'setSortModel()' are deprecated as sort information is now part of Column State. Use get/applyColumnState() for sort information instead.</li>
+    </ul>
+
+    <p>See 'More Info' on AG-4291 for full details, these changes make more sense in context of the wider changes.</p>
+
+    <p><b>Removed Deprecations:</b></p>
+
+    <p>The following have been deprecated for over a year and have now been removed:</p>
+
+    <p><u>Grid Options:</u></p>
+
+    <ul>
+        <li>pivotTotals (use pivotColumnGroupTotals = 'before' | 'after')</li>
+        <li>gridAutoHeight (use domLayout = 'autoHeight')</li>
+        <li>groupSuppressRow (remove row groups and perform custom sorting)</li>
+        <li>suppressTabbing (use the grid callback suppressKeyboardEvent(params))</li>
+        <li>showToolPanel (use gridOptions.sideBar)</li>
+        <li>toolPanelSuppressRowGroups (use toolPanelParams.suppressRowGroups)</li>
+        <li>toolPanelSuppressValues (use toolPanelParams.suppressValues)</li>
+        <li>toolPanelSuppressPivots (use toolPanelParams.suppressPivots)</li>
+        <li>toolPanelSuppressPivotMode (use toolPanelParams.suppressPivotMode)</li>
+        <li>toolPanelSuppressColumnFilter (use toolPanelParams.suppressColumnFilter)</li>
+        <li>toolPanelSuppressColumnSelectAll (use toolPanelParams.suppressColumnSelectAll)</li>
+        <li>toolPanelSuppressSideButtons (use toolPanelParams.suppressSideButtons)</li>
+        <li>toolPanelSuppressColumnExpandAll (use toolPanelParams.suppressColumnExpandAll)</li>
+        <li>contractColumnSelection (use toolPanelParams.contractColumnSelection)</li>
+        <li>enableSorting / enableServerSideSorting (use sortable=true on the column definition)</li>
+        <li>enableFilter / enableServerSideFilter (use filter=true on the column definition)</li>
+        <li>enableColResize (use resizable = true on the column definition)</li>
+        <li>getNodeChildDetails() (use new tree data)</li>
+        <li>doesDataFlower() (use new master detail)</li>
+    </ul>
+
+    <p><u>Column Definitions:</u></p>
+
+    <ul>
+        <li>suppressSorting (use colDef.sortable=false)</li>
+        <li>suppressFilter (use colDef.filter=false)</li>
+        <li>suppressResize (use colDef.resizable=false)</li>
+        <li>suppressToolPanel (use coldDef.suppressColumnsToolPanel)</li>
+        <li>tooltip (use colDef.tooltipValueGetter)</li>
+    </ul>
+
+    <p><u>Row Node:</u></p>
+
+    <ul>
+        <li>canFlower</li>
+        <li>flower</li>
+        <li>childFlower</li>
+    </ul>
+
+    <p><u>Events:</u></p>
+
+    <ul>
+        <li>floatingRowDataChanged (use pinnedRowDataChanged)</li>
+    </ul>
+
+    <p><b>Deprecations:</b></p>
+
+    <ul>
+        <li>rowDeselection has been deprecated and now the grid allows row deselection by default. To block row deselection set suppressRowDeselection to true.</li>
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_23_2_0">
     <p>Release 23.2.0 (5th Jun 2020)</p>
 

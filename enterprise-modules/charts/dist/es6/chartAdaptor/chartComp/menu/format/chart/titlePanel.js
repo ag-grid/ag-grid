@@ -32,9 +32,8 @@ var TitlePanel = /** @class */ (function (_super) {
     };
     TitlePanel.prototype.hasTitle = function () {
         var chartProxy = this.chartController.getChartProxy();
-        var title = chartProxy.getChartOption('title'); // TODO: fix this
-        var text = title && title.text ? title.text : '';
-        return _.exists(text);
+        var title = chartProxy.getChartOption('title');
+        return title && title.enabled && title.text && title.text.length > 0;
     };
     TitlePanel.prototype.initFontPanel = function () {
         var _this = this;

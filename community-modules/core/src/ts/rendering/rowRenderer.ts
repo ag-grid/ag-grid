@@ -34,6 +34,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import {_} from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -431,7 +432,7 @@ export class RowRenderer extends BeanStub {
             if (focusedCell==null) { return false; }
             if (rowsToRecycle==null) { return false; }
             let res = false;
-            Object.values(rowsToRecycle).forEach( (rowComp: RowComp) => {
+            _.iterateObject(rowsToRecycle, (key: string, rowComp: RowComp) => {
                 const rowNode = rowComp.getRowNode();
                 const rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 const pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;

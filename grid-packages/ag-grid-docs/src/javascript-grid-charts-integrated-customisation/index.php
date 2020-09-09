@@ -14,22 +14,22 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     ag-Charts support <a href="../javascript-charts-themes/">Chart Themes</a> to change how charts are styled. There are
-    a number of themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid
-    to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides
-    to tweak the provided themes in the way you want.
+    a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to
+    the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide
+    overrides to tweak the provided chart themes in the way you want.
 </p>
 
 <h2>Provided Themes</h2>
 
 <p>
-    There are five themes that are provided by the grid: <code>'ag-default'</code>, <code>'ag-material'</code>,
-    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. There are also dark equivalents of
-    these named with a <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
+    There are five chart themes that are provided by the grid: <code>'ag-default'</code>, <code>'ag-material'</code>,
+    <code>'ag-pastel'</code>, <code>'ag-vivid'</code> and <code>'ag-solar'</code>. When using a dark theme for the grid
+    (e.g. <code>ag-theme-alpine-dark</code>), dark equivalents of the chart themes are provided by default instead,
+    named with a <code>-dark</code> suffix, e.g. <code>'ag-vivid-dark'</code>.
 </p>
 
 <p>
-    By default, all of these themes are available, and when you create a chart, you can scroll through the different
-    themes in the chart settings.
+    When you create a chart, you can scroll through the different available themes in the chart settings.
 </p>
 
 <div class="animated-example">

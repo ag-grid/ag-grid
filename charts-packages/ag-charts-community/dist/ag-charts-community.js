@@ -16867,6 +16867,7 @@
     function skipThemeKey(key) {
         return ['axes', 'series'].indexOf(key) >= 0;
     }
+    var enabledKey = 'enabled';
     /**
      * If certain options were not provided by the user, use the defaults from the theme and the mapping.
      * All three objects are provided for the current path in the config tree, not necessarily top-level.
@@ -16875,6 +16876,7 @@
         var isChartConfig = path.indexOf('.') < 0;
         var themeDefaults = theme && theme.getConfig(path);
         var defaults = mapping && mapping.meta && mapping.meta.defaults;
+        var isExplicitlyDisabled = options.enabled === false; // by the user
         if (defaults || themeDefaults) {
             options = Object.create(options);
         }
@@ -16893,6 +16895,14 @@
             if ((!themeDefaults || !(key in themeDefaults) || skipThemeKey(key)) && !(key in options)) {
                 options[key] = defaults[key];
             }
+        }
+        // Special handling for the 'enabled' property. For example:
+        // title: { text: 'Quarterly Revenue' } // means title is enabled
+        // legend: {} // means legend is enabled
+        var hasEnabledKey = (themeDefaults && enabledKey in themeDefaults) ||
+            (defaults && enabledKey in defaults);
+        if (hasEnabledKey && !isExplicitlyDisabled) {
+            options[enabledKey] = true;
         }
         return options;
     }
