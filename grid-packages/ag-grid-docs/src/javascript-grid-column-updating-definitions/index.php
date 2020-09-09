@@ -185,7 +185,7 @@ SNIPPET
 <ul>
     <li>
         The <code>width</code>, <code>sort</code> and <code>pinned</code>
-        <code>stateful attributes</code> are applied whenever Column Definitions are set.
+        stateful attributes are applied whenever Column Definitions are set.
     </li>
     <li>
         If you update the width, sort or pinned of a column by interacting with the grid's UI
@@ -217,9 +217,9 @@ SNIPPET
 </p>
 
 <p>
-    If you don't want to upset any column state (eg if you don't want to undo any change the user
-    has made to the columns via the gird's UI, such as applying a sort by clicking on a header,
-    or dragging a columns width) then do not set the state attributes as by default they will
+    If you don't want to upset any column state (e.g. if you don't want to undo any change the user
+    has made to the columns via the grid's UI, such as applying a sort by clicking on a header,
+    or dragging a column's width) then do not set the state attributes as by default they will
     be <code>undefined</code>.
 </p>
 
