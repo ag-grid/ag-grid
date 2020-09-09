@@ -8,8 +8,8 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
     protected value: TValue;
     protected disabled: boolean = false;
 
-    constructor(protected readonly className: string, template?: string, config?: TConfig) {
-        super(template, config);
+    constructor(config?: TConfig, template?: string, protected readonly className?: string) {
+        super(config, template);
     }
 
     protected postConstruct(): void {

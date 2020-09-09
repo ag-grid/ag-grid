@@ -1,9 +1,10 @@
 import { addOrRemoveCssClass } from '../utils/dom';
 import { AgCheckbox } from './agCheckbox';
+import { IInputField } from './agAbstractInputField';
 
 export class AgToggleButton extends AgCheckbox {
-    constructor() {
-        super('ag-toggle-button');
+    constructor(config?: IInputField) {
+        super(config, 'ag-toggle-button');
     }
 
     public setValue(value: boolean, silent?: boolean): this {

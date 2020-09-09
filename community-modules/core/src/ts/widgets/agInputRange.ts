@@ -12,7 +12,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     private max: number;
 
     constructor(config?: IInputRange) {
-        super('ag-range-field', 'input', 'range', config);
+        super(config, 'ag-range-field', 'range');
     }
 
     protected postConstruct() {

@@ -10,9 +10,8 @@ interface ColorPickerConfig extends IAgLabel {
 }
 
 export class AgColorPicker extends AgPickerField<HTMLElement, string> {
-
     constructor(config?: ColorPickerConfig) {
-        super('ag-color-picker', 'colorPicker');
+        super(config, 'ag-color-picker', 'colorPicker');
 
         if (config && config.color) {
             this.value = config.color;

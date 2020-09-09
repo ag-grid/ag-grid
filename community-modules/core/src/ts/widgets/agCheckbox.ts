@@ -2,7 +2,7 @@ import { Autowired } from '../context/context';
 import { Events, CheckboxChangedEvent } from "../events";
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
-import { AgAbstractInputField } from './agAbstractInputField';
+import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 import { addOrRemoveCssClass } from '../utils/dom';
 
@@ -19,8 +19,8 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     private readOnly = false;
     private passive = false;
 
-    constructor(className = 'ag-checkbox', inputType = 'checkbox') {
-        super(className, 'input', inputType);
+    constructor(config?: IInputField, className = 'ag-checkbox', inputType = 'checkbox') {
+        super(config, className, inputType);
     }
 
     protected addInputListeners() {
