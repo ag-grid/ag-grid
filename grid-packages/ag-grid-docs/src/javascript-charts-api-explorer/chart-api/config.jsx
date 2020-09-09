@@ -370,10 +370,6 @@ export const axis = Object.freeze({
         type: 'number',
         description: 'User override for the automatically determinted max value (based on series data). Only applied to "number" axes.',
     },
-    rotation: {
-        type: 'number',
-        description: 'The rotation of the axis in degrees.',
-    },
     title: getCaptionOptions('axis title', 'Configuration for the title shown next to the axis.', 'Axis Title', 14, 'bold'),
     line: {
         meta: {
