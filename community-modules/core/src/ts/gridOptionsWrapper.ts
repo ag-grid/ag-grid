@@ -117,6 +117,8 @@ export class GridOptionsWrapper {
     private scrollWidth: number;
     private updateLayoutClassesListener: any;
 
+    private initialised = false;
+
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
@@ -207,6 +209,8 @@ export class GridOptionsWrapper {
         this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+
+        this.initialised = true;
     }
 
     private checkColumnDefProperties() {
@@ -1519,6 +1523,11 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
+        // prevent events from being fired _after_ the grid has been destroyed
+        if(this.initialised && !this.gridOptions.api) {
+            return;
+        }
+
         const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
             (this.gridOptions as any)[callbackMethodName](event);
