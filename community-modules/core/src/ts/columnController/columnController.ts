@@ -1701,7 +1701,7 @@ export class ColumnController extends BeanStub {
     }
 
     public getColumnState(): ColumnState[] {
-        if (missing(this.primaryColumns)) { return []; }
+        if (missing(this.primaryColumns) || !this.isAlive()) { return []; }
 
         const primaryColumnState: ColumnState[]
             = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
