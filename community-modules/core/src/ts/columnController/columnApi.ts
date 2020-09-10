@@ -65,7 +65,7 @@ export class ColumnApi {
     public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number) { this.columnController.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
-    public setColumnAggFunc(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunc(column, aggFunc); }
+    public setColumnAggFunc(key: string | Column, aggFunc: string): void { this.columnController.setColumnAggFunc(key, aggFunc); }
 
     public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true): void {
         this.columnController.setColumnWidths([{key, newWidth}], false, finished);

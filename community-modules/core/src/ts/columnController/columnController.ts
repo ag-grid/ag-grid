@@ -1172,7 +1172,10 @@ export class ColumnController extends BeanStub {
         }
     }
 
-    public setColumnAggFunc(column: Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
+    public setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
+        if (!key) { return; }
+
+        const column = this.getPrimaryColumn(key);
         if (!column) { return; }
 
         column.setAggFunc(aggFunc);
