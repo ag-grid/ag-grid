@@ -166,7 +166,6 @@ export class HeaderContainer extends BeanStub {
     }
 
     private refreshRowComps(keepColumns = false): void {
-
         const sequence = new NumberSequence();
 
         const refreshColumnGroups = () => {
@@ -213,41 +212,6 @@ export class HeaderContainer extends BeanStub {
         refreshColumnGroups();
         refreshColumns();
         refreshFilters();
-
-        // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
-        // taking it out of the last position and re-inserting relative to the other rows.
-        this.getRowComps().forEach(rowComp => this.eContainer.appendChild(rowComp.getGui()));
-    }
-
-    private createRowComps(): void {
-
-        // if we are displaying header groups, then we have many rows here.
-        // go through each row of the header, one by one.
-        const rowsWithGroupsCount = this.columnController.getHeaderRowCount() - 1;
-        let rowIndex = 0;
-
-        const createHeaderRowComp = (type: HeaderRowType, index: number): HeaderRowComp => {
-            return this.createBean(new HeaderRowComp(index, type, this.pinned, this.dropTarget));
-        };
-
-        for (let i = 0; i < rowsWithGroupsCount; i++) {
-            const rowComp = createHeaderRowComp(HeaderRowType.COLUMN_GROUP, rowIndex++);
-            this.groupsRowComps.push(rowComp);
-        }
-
-        if (this.columnsRowComp && this.columnsRowComp.getRowIndex() !== rowIndex) {
-            this.destroyRowComp(this.columnsRowComp);
-            this.columnsRowComp = undefined;
-        }
-
-        if (!this.columnsRowComp) {
-            this.columnsRowComp = createHeaderRowComp(HeaderRowType.COLUMN, rowIndex++);
-        }
-
-        const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
-        if (includeFloatingFilter) {
-            this.filtersRowComp = createHeaderRowComp(HeaderRowType.FLOATING_FILTER, rowIndex++);
-        }
 
         // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
         // taking it out of the last position and re-inserting relative to the other rows.
