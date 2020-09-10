@@ -107,7 +107,9 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsT
             dest[key] = destValue;
         }
 
-        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
+        const destIsObject = destValue!=null && typeof destValue === 'object';
+        const sourceIsObject = sourceValue!=null && typeof sourceValue === 'object';
+        if (destIsObject && sourceIsObject && !Array.isArray(destValue)) {
             mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
         } else if (copyUndefined || sourceValue !== undefined) {
             dest[key] = sourceValue;
@@ -189,11 +191,10 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     let currentObject = data;
 
     for (let i = 0; i < fields.length; i++) {
-        currentObject = currentObject[fields[i]];
-
         if (missing(currentObject)) {
             return null;
         }
+        currentObject = currentObject[fields[i]];
     }
 
     return currentObject;
