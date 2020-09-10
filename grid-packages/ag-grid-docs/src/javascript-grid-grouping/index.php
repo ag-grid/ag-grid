@@ -651,6 +651,11 @@ SNIPPET
         <li>It is not possible to select footer nodes. Footer rows appear selected when the group is selected.</li>
         <li>Footer rows are not parted of the iterated set when the api method <code>api.forEachNode()</code> is called.</li>
         <li>Footer nodes are not exported to CSV or Excel.</li>
+        <li>
+            If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the
+            group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because
+            the word "Total" is not actually part of the data, it's something the grid rendering puts in.
+        </li>
     </ul>
 </note>
 
