@@ -1091,7 +1091,7 @@ export class GridPanel extends Component {
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eCenterViewport, this.eTopViewport, this.eBottomViewport];
+        return [this.eBodyViewport, this.eTopViewport, this.eBottomViewport];
     }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
