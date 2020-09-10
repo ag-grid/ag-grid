@@ -17,9 +17,9 @@
         return result;
     }
 
-    var ANGULAR_VERSION = "5.1.3";
-    var ANGULAR_CDK_VERSION = "5.2.5";
-    var ANGULAR_MATERIAL_VERSION = "5.2.5";
+    var ANGULAR_VERSION = "10.0.0";
+    var ANGULAR_CDK_VERSION = "10.0.0";
+    var ANGULAR_MATERIAL_VERSION = "10.0.0";
 
     var sjsPaths = {};
     if(typeof systemJsPaths !== "undefined") {
@@ -54,7 +54,7 @@
         // RxJS makes a lot of requests to unpkg. This guy addressed it:
         // https://github.com/OasisDigital/rxjs-system-bundle.
         bundles: {
-            "npm:rxjs-system-bundle@5.5.5/Rx.system.js": [
+            "npm:rxjs-system-bundle@6.3.3/Rx.system.min.js": [
                 "rxjs",
                 "rxjs/*",
                 "rxjs/operator/*",
@@ -116,7 +116,7 @@
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
 
-                rxjs: "npm:rxjs@6.1.0/bundles/rxjs.umd.min.js"
+                rxjs: "npm:rxjs@6.3.3/bundles/rxjs.umd.min.js"
             },
             systemJsMap
         ),

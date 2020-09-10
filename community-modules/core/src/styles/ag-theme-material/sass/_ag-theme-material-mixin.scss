@@ -41,7 +41,7 @@
         transition: background-color 0.5s;
     }
 
-    .ag-row-last .ag-cell-inline-editing {
+    .ag-row-last:not(.ag-row-first) .ag-cell-inline-editing {
         bottom: 0;
     }
 

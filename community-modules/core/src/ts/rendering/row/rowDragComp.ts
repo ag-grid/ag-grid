@@ -14,17 +14,14 @@ export interface IRowDragItem extends DragItem {
 }
 
 export class RowDragComp extends Component {
-    private readonly beans: Beans;
-    private readonly rowNode: RowNode;
-    private readonly column: Column;
-    private readonly cellValue: string;
 
-    constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
+    constructor(
+        private readonly rowNode: RowNode,
+        private readonly column: Column,
+        private readonly cellValueFn: () => string,
+        private readonly beans: Beans
+    ) {
         super(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-        this.rowNode = rowNode;
-        this.column = column;
-        this.cellValue = cellValue;
-        this.beans = beans;
     }
 
     @PostConstruct
@@ -69,7 +66,7 @@ export class RowDragComp extends Component {
         const dragItem: IRowDragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
-            defaultTextValue: this.cellValue,
+            defaultTextValue: this.cellValueFn(),
         };
 
         const rowDragText = this.column.getColDef().rowDragText;
@@ -83,7 +80,7 @@ export class RowDragComp extends Component {
                     return rowDragText(dragItem, dragItemCount);
                 }
 
-                return dragItemCount === 1 ? this.cellValue : `${dragItemCount} rows`;
+                return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
             dragStartPixels: 0
