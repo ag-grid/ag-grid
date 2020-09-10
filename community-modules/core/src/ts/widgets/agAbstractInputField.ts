@@ -16,7 +16,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     @RefSelector('eWrapper') protected readonly eWrapper: HTMLElement;
     @RefSelector('eInput') protected readonly eInput: TElement;
 
-    constructor(config?: TConfig, className?: string, private readonly inputType = 'text', displayFieldTag = 'input') {
+    constructor(config?: TConfig, className?: string, private readonly inputType = 'text', private readonly displayFieldTag = 'input') {
         super(config, /* html */`
             <div role="presentation">
                 <div ref="eLabel" class="ag-input-field-label"></div>
@@ -65,7 +65,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
     }
 
     private setInputType() {
-        if (this.inputType) {
+        if (this.displayFieldTag === 'input') {
             this.eInput.setAttribute('type', this.inputType);
         }
     }

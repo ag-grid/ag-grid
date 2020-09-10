@@ -2,7 +2,7 @@ import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
 
 export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
     constructor(config?: IInputField) {
-        super(config, 'ag-text-area', 'textarea');
+        super(config, 'ag-text-area', null, 'textarea');
     }
 
     public setValue(value: string, silent?: boolean): this {
