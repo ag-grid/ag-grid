@@ -47,6 +47,12 @@ export class ChartController extends BeanStub {
             }
         });
 
+        if (this.model.isDetached()) {
+            if (this.rangeController) {
+                this.rangeController.setCellRanges([]);
+            }
+        }
+
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
@@ -188,6 +194,10 @@ export class ChartController extends BeanStub {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
+    public isChartLinked(): boolean {
+        return !this.model.isDetached();
+    }
+
     private raiseChartUpdatedEvent(): void {
         const event: ChartModelUpdatedEvent = Object.freeze({
             type: ChartController.EVENT_CHART_UPDATED
@@ -220,4 +230,5 @@ export class ChartController extends BeanStub {
             this.rangeController.setCellRanges([]);
         }
     }
+
 }

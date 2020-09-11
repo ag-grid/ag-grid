@@ -103,6 +103,7 @@ export interface CreateRangeChartParams {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -111,6 +112,7 @@ export interface CreatePivotChartParams {
     chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 

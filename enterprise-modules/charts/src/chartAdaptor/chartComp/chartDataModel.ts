@@ -34,6 +34,7 @@ export interface ChartModelParams {
     aggFunc?: string | IAggFunc;
     cellRange: CellRange;
     suppressChartRanges: boolean;
+    unlinkChart?: boolean;
 }
 
 export class ChartDataModel extends BeanStub {
@@ -76,6 +77,7 @@ export class ChartDataModel extends BeanStub {
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
+        this.detached = !!params.unlinkChart;
 
         // this is used to associate chart ranges with charts
         this.chartId = this.generateId();

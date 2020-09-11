@@ -44,6 +44,7 @@ export interface GridChartParams {
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -107,6 +108,7 @@ export class GridChartComp extends Component {
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
+            unlinkChart: this.params.unlinkChart,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();

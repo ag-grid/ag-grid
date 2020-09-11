@@ -69,6 +69,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartContainer,
             params.aggFunc,
             params.chartThemeOverrides,
+            params.unlinkChart,
             params.processChartOptions);
     }
 
@@ -101,6 +102,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartContainer,
             undefined,
             params.chartThemeOverrides,
+            params.unlinkChart,
             params.processChartOptions);
     }
 
@@ -112,6 +114,7 @@ export class ChartService extends BeanStub implements IChartService {
         container?: HTMLElement,
         aggFunc?: string | IAggFunc,
         chartThemeOverrides?: AgChartThemeOverrides,
+        unlinkChart = false,
         processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
@@ -126,6 +129,7 @@ export class ChartService extends BeanStub implements IChartService {
             aggFunc,
             chartThemeOverrides,
             processChartOptions,
+            unlinkChart
         };
 
         const chartComp = new GridChartComp(params);

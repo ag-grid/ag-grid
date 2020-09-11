@@ -27,7 +27,8 @@ export class ChartMenu extends Component {
         chartSettings: ['menu', () => this.showMenu("chartSettings")],
         chartData: ['menu', () => this.showMenu("chartData")],
         chartFormat: ['menu', () => this.showMenu("chartFormat")],
-        chartUnlink: ['linked', e => this.toggleDetached(e)],
+        chartLink: ['linked', e => this.toggleDetached(e)],
+        chartUnlink: ['unlinked', e => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
     };
 
@@ -61,7 +62,7 @@ export class ChartMenu extends Component {
             'chartSettings',
             'chartData',
             'chartFormat',
-            'chartUnlink',
+            this.chartController.isChartLinked() ? 'chartLink' : 'chartUnlink',
             'chartDownload'
         ];
 
@@ -89,7 +90,7 @@ export class ChartMenu extends Component {
             tabOptions = tabOptions.filter(option => option !== 'chartData');
         }
 
-        const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartDownload'];
+        const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartLink', 'chartDownload'];
         this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
         return tabOptions.filter(value =>
