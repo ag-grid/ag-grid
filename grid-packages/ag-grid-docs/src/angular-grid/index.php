@@ -17,13 +17,6 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<note>
-<p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
-<code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
-    <p>If you experience this please set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
-    <p>Version 24.0.0 of <code>@ag-grid-community/angular</code> / <code>ag-grid-angular</code> will remove the need for this flag to be set.</p>
-</note>
-
 <note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <h2>Getting Started</h2>
@@ -570,6 +563,12 @@ header background color and even the amount of spacing in the cells and columns.
 
 <h2 id="compatibility">ag-Grid & Angular Compatibility Chart</h2>
 
+<note>
+    <p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
+    <code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
+    <p>If you wish to use Angular 10 with ag-Grid versions 7-9 then you need to set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
+    <p>Please note however that this is a workaround and Angular 10 is only officially supported with ag-Grid 24+.</p>
+</note>
 <div>
     <table class="properties">
         <tr>
@@ -581,8 +580,12 @@ header background color and even the amount of spacing in the cells and columns.
             <td>18 - 22</td>
         </tr>
         <tr>
-            <td>7 - 9+</td>
-            <td>18 - 23+ (23+ recommended for Angular 9+)</td>
+            <td>7 - 9</td>
+            <td>18 - 23+ (23 recommended for Angular 9)</td>
+        </tr>
+        <tr>
+            <td>7 - 10+</td>
+            <td>24+ (24 recommended for Angular 10)</td>
         </tr>
     </table>
 </div>
