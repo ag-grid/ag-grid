@@ -102,7 +102,8 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
         if (typeof a === "function") {
             return a.toString() === b.toString();
         }
-        if (typeof a !== "object") {
+        if (typeof a !== "object" ||
+            (a.$$typeof && a.$$typeof.toString() === "Symbol(react.element)")) {
             return a == b; //for boolean, number, string, function, xml
         }
 
