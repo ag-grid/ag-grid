@@ -566,7 +566,7 @@ header background color and even the amount of spacing in the cells and columns.
 <note>
     <p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
     <code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
-    <p>If you wish to use Angular 10 with ag-Grid versions 7-9 then you need to set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
+    <p>If you wish to use Angular 10 with ag-Grid versions 18-23 then you need to set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
     <p>Please note however that this is a workaround and Angular 10 is only officially supported with ag-Grid 24+.</p>
 </note>
 <div>
@@ -585,7 +585,7 @@ header background color and even the amount of spacing in the cells and columns.
         </tr>
         <tr>
             <td>7 - 10+</td>
-            <td>24+ (24 recommended for Angular 10)</td>
+            <td>24+ (24+ for Angular 10)</td>
         </tr>
     </table>
 </div>
