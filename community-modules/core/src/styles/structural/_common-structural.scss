@@ -544,6 +544,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-column-drop-vertical-title-bar {
     display: flex;
     align-items: center;
+    flex: none;
 }
 
 .ag-column-drop-vertical-list {
