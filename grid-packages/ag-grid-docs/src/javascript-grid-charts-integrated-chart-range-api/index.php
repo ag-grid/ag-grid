@@ -94,7 +94,9 @@ interface CreatePivotChartParams {
 }
 </snippet>
 
-<p>The attributes have the same behaviour as described earlier.</p>
+<p>The pivot chart params share the same behaviour as the
+<a href="../javascript-grid-charts-integrated-chart-range-api/#reference-params">Range Chart Params</a> above.
+</p>
 
 <h3>Example: Pivot Chart</h3>
 
