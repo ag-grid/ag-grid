@@ -90,6 +90,7 @@ interface CreatePivotChartParams {
     chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartTheme;
+    unlinkChart?: boolean;
 }
 </snippet>
 
