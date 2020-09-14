@@ -33,30 +33,30 @@ const defaultBinCount = 10;
 export { HistogramTooltipRendererParams };
 
 interface HistogramNodeDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string;
-        x: number;
-        y: number;
-        fontStyle?: FontStyle;
-        fontWeight?: FontWeight;
-        fontSize: number;
-        fontFamily: string;
-        fill: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly x: number;
+        readonly y: number;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
     };
 }
 
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: HistogramSeries;
-    datum: any;
-    xKey: string;
+    readonly type: 'nodeClick';
+    readonly series: HistogramSeries;
+    readonly datum: any;
+    readonly xKey: string;
 }
 
 export type HistogramAggregation = 'count' | 'sum' | 'mean';

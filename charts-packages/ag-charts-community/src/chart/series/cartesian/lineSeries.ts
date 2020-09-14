@@ -14,18 +14,18 @@ import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observa
 import { Chart } from "../../chart";
 
 interface LineNodeDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     }
 }
 
 export interface LineSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: LineSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: LineSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 
 export { LineTooltipRendererParams };
@@ -51,7 +51,7 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') stroke?: string = undefined;
+    @reactive('update') stroke?: string = '#874349';
     @reactive('update') lineDash?: number[] = undefined;
     @reactive('update') lineDashOffset: number = 0;
     @reactive('update') strokeWidth: number = 2;
@@ -71,8 +71,8 @@ export class LineSeries extends CartesianSeries {
         this.addEventListener('update', this.update);
 
         const { marker } = this;
-        marker.fill = undefined;
-        marker.stroke = undefined;
+        marker.fill = '#c16068';
+        marker.stroke = '#874349';
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
         marker.addEventListener('change', this.update, this);

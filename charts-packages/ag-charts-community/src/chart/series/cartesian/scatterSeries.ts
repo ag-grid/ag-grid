@@ -13,28 +13,28 @@ import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    size: number;
+    readonly size: number;
 }
 
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: ScatterSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-    sizeKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: ScatterSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
+    readonly sizeKey?: string;
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    sizeKey?: string;
-    sizeName?: string;
+    readonly sizeKey?: string;
+    readonly sizeName?: string;
 
-    labelKey?: string;
-    labelName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 
 export class ScatterSeries extends CartesianSeries {
@@ -54,7 +54,7 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string | undefined = undefined;
+    private _fill: string | undefined = '#c16068';
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
@@ -65,7 +65,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._fill;
     }
 
-    private _stroke: string | undefined = undefined;
+    private _stroke: string | undefined = '#874349';
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;

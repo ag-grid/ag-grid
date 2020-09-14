@@ -21,34 +21,34 @@ import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: BarSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 
 export { BarTooltipRendererParams };
 
 interface BarNodeDatum extends SeriesNodeDatum {
-    yKey: string;
-    yValue: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string,
-        fontStyle?: FontStyle,
-        fontWeight?: FontWeight,
-        fontSize: number,
-        fontFamily: string,
-        fill: string,
-        x: number,
-        y: number
+    readonly yKey: string;
+    readonly yValue: number;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
+        readonly x: number;
+        readonly y: number;
     };
 }
 
@@ -59,6 +59,22 @@ enum BarSeriesNodeTag {
 
 class BarSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: number }) => string;
+}
+
+export interface BarSeriesFormatterParams {
+    readonly datum: BarNodeDatum;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly xKey: string;
+    readonly yKey: string;
+}
+
+export interface BarSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 
 export class BarSeries extends CartesianSeries {
@@ -73,8 +89,8 @@ export class BarSeries extends CartesianSeries {
     private rectGroup = this.group.appendChild(new Group);
     private textGroup = this.group.appendChild(new Group);
 
-    private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
+    private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
+    private textSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
 
     private xData: string[] = [];
     private yData: number[][] = [];
@@ -92,17 +108,36 @@ export class BarSeries extends CartesianSeries {
 
     @reactive('layoutChange') flipXY = false;
 
-    @reactive('dataChange') fills: string[] = [];
-    @reactive('dataChange') strokes: string[] = [];
+    @reactive('dataChange') fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
+
+    @reactive('dataChange') strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
+
     constructor() {
         super();
 
+        this.addEventListener('update', this.update);
+
         this.label.enabled = false;
-        this.label.addEventListener('change', this.update, this);
+        this.label.addEventListener('update', this.update, this);
     }
 
     /**
@@ -495,21 +530,41 @@ export class BarSeries extends CartesianSeries {
             return;
         }
 
-        const { fillOpacity, strokeOpacity, shadow, highlightStyle: { fill, stroke } } = this;
+        const {
+            fillOpacity, strokeOpacity,
+            highlightStyle: { fill, stroke },
+            shadow,
+            formatter,
+            xKey
+        } = this;
         const { highlightedDatum } = this.chart;
 
         this.rectSelection.each((rect, datum) => {
             const highlighted = datum === highlightedDatum;
+            const rectFill = highlighted && fill !== undefined ? fill : datum.fill;
+            const rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            let format: BarSeriesFormat | undefined = undefined;
 
+            if (formatter) {
+                format = formatter({
+                    datum,
+                    fill: rectFill,
+                    stroke: rectStroke,
+                    strokeWidth: datum.strokeWidth,
+                    highlighted,
+                    xKey,
+                    yKey: datum.yKey
+                });
+            }
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
-            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = format && format.fill || rectFill;
+            rect.stroke = format && format.stroke || rectStroke;
+            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.strokeWidth = datum.strokeWidth;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
         });

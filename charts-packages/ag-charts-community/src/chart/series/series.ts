@@ -15,34 +15,34 @@ export interface SeriesNodeDatum {
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `seriesDatum` - raw series datum, an element from the `series.data` array
-    series: Series;
-    seriesDatum: any;
-    point?: { // in local (series) coordinates
-        x: number;
-        y: number;
+    readonly series: Series;
+    readonly seriesDatum: any;
+    readonly point?: { // in local (series) coordinates
+        readonly x: number;
+        readonly y: number;
     }
 }
 
 export interface TooltipRendererParams {
-    datum: any;
-    title?: string;
-    color?: string;
+    readonly datum: any;
+    readonly title?: string;
+    readonly color?: string;
 }
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
-    xKey: string;
-    xName?: string;
+    readonly xKey: string;
+    readonly xName?: string;
 
-    yKey: string;
-    yName?: string;
+    readonly yKey: string;
+    readonly yName?: string;
 }
 
 export interface PolarTooltipRendererParams extends TooltipRendererParams {
-    angleKey: string;
-    angleName?: string;
+    readonly angleKey: string;
+    readonly angleName?: string;
 
-    radiusKey?: string;
-    radiusName?: string;
+    readonly radiusKey?: string;
+    readonly radiusName?: string;
 }
 
 export interface HighlightStyle {

@@ -1,14 +1,14 @@
 export interface TypedEvent {
-    type: string;
+    readonly type: string;
 }
 
 export interface SourceEvent<S> extends TypedEvent {
-    source: S;
+    readonly source: S;
 }
 
 export interface PropertyChangeEvent<S, V> extends SourceEvent<S> {
-    value: V;
-    oldValue: V;
+    readonly value: V;
+    readonly oldValue: V;
 }
 
 export type SourceEventListener<S> = (event: SourceEvent<S>) => any;
