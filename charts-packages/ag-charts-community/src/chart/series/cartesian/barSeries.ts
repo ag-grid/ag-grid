@@ -62,7 +62,7 @@ class BarSeriesLabel extends Label {
 }
 
 export interface BarSeriesFormatterParams {
-    readonly datum: BarNodeDatum;
+    readonly datum: any;
     readonly fill?: string;
     readonly stroke?: string;
     readonly strokeWidth: number;
@@ -547,7 +547,7 @@ export class BarSeries extends CartesianSeries {
 
             if (formatter) {
                 format = formatter({
-                    datum,
+                    datum: datum.seriesDatum,
                     fill: rectFill,
                     stroke: rectStroke,
                     strokeWidth: datum.strokeWidth,
