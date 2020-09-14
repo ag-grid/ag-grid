@@ -3352,6 +3352,12 @@ export class ColumnController extends BeanStub {
             this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
+        // if the user sets rowData directly into GridOptions, then the row data is set before
+        // grid is attached to the DOM. this means the columns are not flexed, and then the rows
+        // have the wrong height (as they depend on column widths). so once the columns have
+        // been flexed for the first time (only happens once grid is attached to DOM, as dependency
+        // on getting the grid width, which only happens after attached after ResizeObserver fires)
+        // we get get rows to re-calc their heights.
         if (!this.flexColsCalculatedAtLestOnce) {
             if (this.gridOptionsWrapper.isRowModelDefault()) {
                 (this.rowModel as IClientSideRowModel).resetRowHeights();
