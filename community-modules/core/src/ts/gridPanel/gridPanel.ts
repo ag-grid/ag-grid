@@ -43,7 +43,7 @@ import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaMultiSelectable, setAriaRowCount, setAriaColCount } from '../utils/aria';
 import { debounce } from '../utils/function';
-import { addCssClass, removeCssClass, isVisible, addOrRemoveCssClass, isHorizontalScrollShowing, isVerticalScrollShowing, setFixedHeight, setDisplayed, setFixedWidth, getScrollLeft, setScrollLeft } from '../utils/dom';
+import { addCssClass, removeCssClass, isVisible, addOrRemoveCssClass, isHorizontalScrollShowing, isVerticalScrollShowing, setFixedHeight, setDisplayed, setFixedWidth, getScrollLeft, setScrollLeft, isRtlNegativeScroll } from '../utils/dom';
 import { getTabIndex, isBrowserIE, isIOSUserAgent } from '../utils/browser';
 import { missing, missingOrEmpty } from '../utils/generic';
 import { getTarget, getCellCompForEvent, isStopPropagationForAgGrid } from '../utils/event';
@@ -109,6 +109,8 @@ export type RowContainerComponentNames =
     'floatingBottomFullWidth';
 
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
+
+type ScrollDirection = 'horizontal' | 'vertical';
 
 export class GridPanel extends Component {
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -1412,10 +1414,49 @@ export class GridPanel extends Component {
 
     private onVerticalScroll(): void {
         const scrollTop: number = this.eBodyViewport.scrollTop;
+
+        if (this.shouldBlockScrollUpdateForIOS('vertical', scrollTop)) { return; }
+
         this.animationFrameService.setScrollTop(scrollTop);
 
         this.scrollTop = scrollTop;
         this.redrawRowsAfterScroll();
+    }
+
+    private shouldBlockScrollUpdateForIOS(direction: ScrollDirection, currentScroll: number): boolean {
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+
+        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
+        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
+        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
+        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
+        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
+
+        if (!isIOSUserAgent) { return false; }
+
+        if (direction === 'vertical') {
+            const { clientHeight, scrollHeight } = this.eBodyViewport;
+            if (currentScroll < 0 || (currentScroll + clientHeight > scrollHeight)) {
+                return true;
+            }
+        }
+
+        if (direction === 'horizontal') {
+            const { clientWidth, scrollWidth } = this.eCenterViewport;
+
+            if (this.enableRtl && isRtlNegativeScroll()) {
+                if (currentScroll > 0) { return true; }
+            } else if (currentScroll < 0) { return true; }
+
+            if (Math.abs(currentScroll) + clientWidth > scrollWidth) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {
@@ -1438,32 +1479,13 @@ export class GridPanel extends Component {
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const { scrollWidth, clientWidth } = this.eCenterViewport;
+        const { scrollLeft } = this.eCenterViewport;
 
-        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
-        // formula. so we floor it to allow the formula to work.
-        let scrollLeft = Math.floor(getScrollLeft(eSource, this.enableRtl));
-
-        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
-        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
-        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
-        // as otherwise it was causing the rows and header to flicker.
-
-        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
-        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
-        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
-        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
-        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
-
-        const minScroll = 0;
-        const maxScroll = scrollWidth - clientWidth;
-        if (scrollLeft < minScroll) {
-            scrollLeft = minScroll;
-        } else if (scrollLeft > maxScroll) {
-            scrollLeft = maxScroll;
+        if (this.shouldBlockScrollUpdateForIOS('horizontal', scrollLeft)) {
+            return;
         }
 
-        this.doHorizontalScroll(scrollLeft);
+        this.doHorizontalScroll(Math.floor(getScrollLeft(eSource, this.enableRtl)));
         this.resetLastHorizontalScrollElementDebounced();
     }
 
@@ -1526,16 +1548,6 @@ export class GridPanel extends Component {
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const { clientWidth, scrollWidth } = this.eCenterViewport;
-        const scrollWentPastBounds = Math.abs(offset) + clientWidth > scrollWidth;
-
-        if (
-            scrollWentPastBounds ||
-            (this.enableRtl && offset < 0) ||
-            (!this.enableRtl && offset > 0)
-        ) {
-            return;
-        }
 
         this.headerRootComp.setHorizontalScroll(offset);
         this.eBottomContainer.style.transform = `translateX(${offset}px)`;
