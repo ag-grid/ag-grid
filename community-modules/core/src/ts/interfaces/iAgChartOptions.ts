@@ -393,7 +393,6 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     xName?: string;
     yName?: string;
-    paired?: boolean;
     title?: string;
     fill?: string;
     stroke?: string;
