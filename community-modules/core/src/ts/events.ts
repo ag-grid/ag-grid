@@ -195,8 +195,10 @@ export interface ItemsAddedEvent extends AgGridEvent {
     items: RowNode[];
 }
 
+export type ScrollDirection = 'horizontal' | 'vertical';
+
 export interface BodyScrollEvent extends AgGridEvent {
-    direction: string;
+    direction: ScrollDirection;
     left: number;
     top: number;
 }
