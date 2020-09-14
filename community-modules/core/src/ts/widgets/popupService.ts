@@ -45,7 +45,15 @@ interface AddPopupParams {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
+    // this gets called after the popup is created. the called could just call positionCallback themselves,
+    // however it needs to be called first before anchorToElement is called, so must provide this callback
+    // here if setting anchorToElement
     positionCallback?: ()=>void;
+    // if the underlying anchorToElement moves, the popup will follow it. for example if context menu
+    // showing, and the whole grid moves (browser is scrolled down) then we want the popup to stay above
+    // the cell it appeared on. make sure though if setting, don't anchor to a temporary or moving element,
+    // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
+    // the grid, not the cell.
     anchorToElement?: HTMLElement;
 }
 

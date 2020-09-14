@@ -25,7 +25,8 @@ import {
     TabbedItem,
     TabbedLayout,
     FocusController,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    GridPanel
 } from "@ag-grid-community/core";
 
 import { MenuList } from "./menuList";
@@ -46,6 +47,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
+
+    private gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public hideActiveMenu(): void {
         this.destroyBean(this.activeMenu);
@@ -128,12 +135,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
                     if (focusableEl) { focusableEl.focus(); }
                 }
-            }
+            },
+            positionCallback: ()=> { positionCallback(menu) },
+            anchorToElement: this.gridPanel.getGui()
         });
 
         menu.afterGuiAttached({ hidePopup });
-
-        positionCallback(menu);
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();

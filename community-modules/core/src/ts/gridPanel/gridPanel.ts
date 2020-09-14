@@ -53,6 +53,7 @@ import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
 import {_} from "../utils";
 import {PopupService} from "../widgets/popupService";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -143,6 +144,7 @@ export class GridPanel extends Component {
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Optional('menuFactory') private menuFactory: IMenuFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
@@ -301,6 +303,12 @@ export class GridPanel extends Component {
         this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+        if (this.contextMenuFactory) {
+            this.contextMenuFactory.registerGridComp(this);
+        }
+        if (this.menuFactory) {
+            this.menuFactory.registerGridComp(this);
+        }
 
         if (this.rangeController || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
