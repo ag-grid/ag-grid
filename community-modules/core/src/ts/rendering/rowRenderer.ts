@@ -1365,6 +1365,11 @@ export class RowRenderer extends BeanStub {
                     column: last(this.columnController.getAllDisplayedColumns())
                 });
             }
+        } else {
+            previousRenderedCell.focusCell(true);
+            if (this.focusController.focusNextGridCoreContainer(false)) {
+                keyboardEvent.preventDefault();
+            }
         }
     }
 
