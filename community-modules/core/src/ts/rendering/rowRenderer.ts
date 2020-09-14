@@ -1355,7 +1355,7 @@ export class RowRenderer extends BeanStub {
 
         if (success) {
             keyboardEvent.preventDefault();
-        } else if (keyboardEvent.shiftKey) {
+        } else if (backwards) {
             const { rowIndex, rowPinned } = previousRenderedCell.getCellPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
