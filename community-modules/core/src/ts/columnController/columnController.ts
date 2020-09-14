@@ -47,6 +47,8 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -84,6 +86,7 @@ export class ColumnController extends BeanStub {
     @Optional('valueCache') private valueCache: ValueCache;
     @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
@@ -3349,8 +3352,17 @@ export class ColumnController extends BeanStub {
             this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
+        if (!this.flexColsCalculatedAtLestOnce) {
+            if (this.gridOptionsWrapper.isRowModelDefault()) {
+                (this.rowModel as IClientSideRowModel).resetRowHeights();
+            }
+            this.flexColsCalculatedAtLestOnce = true;
+        }
+
         return flexingColumns;
     }
+
+    private flexColsCalculatedAtLestOnce = false;
 
     // called from api
     public sizeColumnsToFit(gridWidth: any, source: ColumnEventType = "sizeColumnsToFit", silent?: boolean): void {

@@ -52,6 +52,7 @@ import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
 import {_} from "../utils";
+import {PopupService} from "../widgets/popupService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -138,6 +139,7 @@ export class GridPanel extends Component {
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('popupService') public popupService: PopupService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -181,6 +183,8 @@ export class GridPanel extends Component {
 
     private scrollLeft = -1;
     private scrollTop = -1;
+
+    private centerWidth: number;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
 
@@ -238,7 +242,7 @@ export class GridPanel extends Component {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.beans.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
     }
@@ -338,9 +342,14 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
-            this.beans.columnController.refreshFlexedColumns(
-                { viewportWidth: this.getCenterWidth(), updateBodyWidths: true, fireResizedEvent: true }
-            );
+
+            const newWidth = this.getCenterWidth();
+            if (newWidth!==this.centerWidth) {
+                this.centerWidth = newWidth;
+                this.columnController.refreshFlexedColumns(
+                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
+                );
+            }
         } else {
             this.bodyHeight = 0;
         }
@@ -382,7 +391,7 @@ export class GridPanel extends Component {
             let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
 
             if (!clickInsideGrid) {
-                const popupService = this.beans.popupService;
+                const popupService = this.popupService;
 
                 clickInsideGrid =
                     popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
@@ -589,12 +598,12 @@ export class GridPanel extends Component {
 
         if (eventName === 'keydown') {
             const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
-            this.beans.eventService.dispatchEvent(cellKeyDownEvent);
+            this.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
         if (eventName === 'keypress') {
             const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
-            this.beans.eventService.dispatchEvent(cellKeyPressEvent);
+            this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
 
@@ -724,7 +733,7 @@ export class GridPanel extends Component {
 
     private onCtrlAndA(event: KeyboardEvent): void {
 
-        const { beans, pinnedRowModel, paginationProxy, rangeController } = this;
+        const { pinnedRowModel, paginationProxy, rangeController } = this;
         const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
         if (rangeController && paginationProxy.isRowsToRender()) {
@@ -745,7 +754,7 @@ export class GridPanel extends Component {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = beans.columnController.getAllDisplayedColumns();
+            const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeController.setCellRange({

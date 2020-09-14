@@ -890,6 +890,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public resetRowHeights(): void {
+        let atLeastOne = false;
         this.forEachNode(rowNode => {
             rowNode.setRowHeight(rowNode.rowHeight, true);
             // we keep the height each row is at, however we set estimated=true rather than clear the height.
@@ -899,8 +900,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             if (detailNode) {
                 detailNode.setRowHeight(detailNode.rowHeight, true);
             }
+            atLeastOne = true;
         });
-        this.onRowHeightChanged();
+
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
     }
 
 }
