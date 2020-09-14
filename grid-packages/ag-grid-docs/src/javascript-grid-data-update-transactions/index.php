@@ -56,6 +56,8 @@ interface RowDataTransaction {
 
     // rows to add
     add?: any[];
+    // index to add rows
+    addIndex?: number;
 
     // rows to remove
     remove?: any[];

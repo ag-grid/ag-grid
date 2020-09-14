@@ -834,9 +834,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
+        // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
+        // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
+        // stage also uses the
+        if (typeof rowDataTran.addIndex === 'number') {
+            rowNodeOrder = this.createRowNodeOrder();
+        }
+
         this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
 
         return rowNodeTran;
+    }
+
+    private createRowNodeOrder(): { [id: string]: number; } {
+        const suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        if (suppressSortOrder) { return; }
+
+        const orderMap: { [id: string]: number } = suppressSortOrder ? null : {};
+
+        if (this.rootNode && this.rootNode.allLeafChildren) {
+            for (let index = 0; index<this.rootNode.allLeafChildren.length; index++) {
+                const node = this.rootNode.allLeafChildren[index];
+                orderMap[node.id] = index;
+            }
+        }
+
+        return orderMap;
     }
 
     // common to updateRowData and batchUpdateRowData
