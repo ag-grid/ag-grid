@@ -16,27 +16,27 @@ import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 
 interface AreaSelectionDatum {
-    yKey: string;
-    points: { x: number, y: number }[];
+    readonly yKey: string;
+    readonly points: { x: number, y: number }[];
 }
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: AreaSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: AreaSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    fill?: string;
-    stroke?: string;
-    yKey: string;
-    yValue: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly yKey: string;
+    readonly yValue: number;
 }
 
 export { AreaTooltipRendererParams };
@@ -74,8 +74,23 @@ export class AreaSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive('dataChange') fills: string[] = [];
-    @reactive('dataChange') strokes: string[] = [];
+    @reactive('dataChange') fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
+    
+    @reactive('dataChange') strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
 
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;

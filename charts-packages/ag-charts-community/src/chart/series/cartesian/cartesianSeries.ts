@@ -15,6 +15,7 @@ export interface CartesianSeriesMarkerFormat {
     strokeWidth?: number;
     size?: number;
 }
+
 export class CartesianSeriesMarker extends SeriesMarker {
     formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat;
 }

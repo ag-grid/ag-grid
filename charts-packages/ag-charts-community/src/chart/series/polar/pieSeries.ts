@@ -19,32 +19,32 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { Chart, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: PieSeries;
-    datum: any;
-    angleKey: string;
-    radiusKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: PieSeries;
+    readonly datum: any;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
 }
 
 interface PieNodeDatum extends SeriesNodeDatum {
-    index: number;
-    radius: number; // in the [0, 1] range
-    startAngle: number;
-    endAngle: number;
-    midAngle: number;
-    midCos: number;
-    midSin: number;
+    readonly index: number;
+    readonly radius: number; // in the [0, 1] range
+    readonly startAngle: number;
+    readonly endAngle: number;
+    readonly midAngle: number;
+    readonly midCos: number;
+    readonly midSin: number;
 
-    label?: {
-        text: string,
-        textAlign: CanvasTextAlign,
-        textBaseline: CanvasTextBaseline
+    readonly label?: {
+        readonly text: string;
+        readonly textAlign: CanvasTextAlign;
+        readonly textBaseline: CanvasTextBaseline;
     };
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
-    labelKey?: string;
-    labelName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 
 interface PieHighlightStyle extends HighlightStyle {
