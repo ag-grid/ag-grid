@@ -15,23 +15,24 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-<snippet>
+
+<?= createSnippet(<<<SNIPPET
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-import {Grid} from '@ag-grid-community/all-modules';
+import { Grid } from 'ag-grid-community';
 
 var columnDefs = [
-  {headerName: "Make", field: "make"},
-  {headerName: "Model", field: "model"},
-  {headerName: "Price", field: "price"}
+  { headerName: 'Make', field: 'make' },
+  { headerName: 'Model', field: 'model' },
+  { headerName: 'Price', field: 'price' }
 ];
 
 // specify the data
 var rowData = [
-  {make: "Toyota", model: "Celica", price: 35000},
-  {make: "Ford", model: "Mondeo", price: 32000},
-  {make: "Porsche", model: "Boxter", price: 72000}
+  { make: 'Toyota', model: 'Celica', price: 35000 },
+  { make: 'Ford', model: 'Mondeo', price: 32000 },
+  { make: 'Porsche', model: 'Boxter', price: 72000 }
 ];
 
 // let the grid know which columns and what data to use
@@ -43,22 +44,24 @@ var gridOptions = {
 var eGridDiv = document.querySelector('#myGrid');
 
 new Grid(eGridDiv, gridOptions);
-</snippet>
+SNIPPET
+) ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-<snippet>
-&lt;html&gt;
-&lt;head&gt;
-&lt;title&gt;Ag Grid Javascript Starter Example&lt;/title>
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-alpine"&gt;&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</snippet>
+<?= createSnippet(<<<SNIPPET
+<html>
+<head>
+<title>Ag Grid Javascript Starter Example</title>
+</head>
+<body>
+<div id="myGrid" style="height: 600px; width:500px;" class="ag-theme-alpine"></div>
+</body>
+</html>
+SNIPPET
+, 'html') ?>
                 </div>
                 <div class="tab-pane" id="packages" role="tabpanel" aria-labelledby="packages-tab">
-<snippet>
+<?= createSnippet(<<<SNIPPET
 {
   "name": "ag-grid-javascript-npm-example",
   "version": "0.0.0",
@@ -67,7 +70,8 @@ new Grid(eGridDiv, gridOptions);
     "ag-grid-community": "latest"
   }
 }
-</snippet>
+SNIPPET
+) ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
