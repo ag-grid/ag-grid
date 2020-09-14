@@ -81,11 +81,15 @@ export class FocusController extends BeanStub {
     }
 
     private activateMouseMode(): void {
+        if (!this.keyboardFocusActive) { return; }
+
         this.keyboardFocusActive = false;
         this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
     }
 
     private activateKeyboardMode(): void {
+        if (this.keyboardFocusActive) { return; }
+
         this.keyboardFocusActive = true;
         this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
     }

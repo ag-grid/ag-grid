@@ -336,6 +336,8 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
+        if (_.shallowCompare(this.cellRanges, cellRanges)) { return; }
+
         this.removeAllCellRanges(true);
 
         cellRanges.forEach(newRange => {
