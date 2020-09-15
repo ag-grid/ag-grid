@@ -497,9 +497,13 @@
         "left"
       ]
     },
-    "rotation": {
+    "min": {
       "type": "number",
-      "description": "The rotation of the axis in degrees."
+      "description": "User override for the automatically determinted min value (based on series data). Only applied to \"number\" axes."
+    },
+    "max": {
+      "type": "number",
+      "description": "User override for the automatically determinted max value (based on series data). Only applied to \"number\" axes."
     },
     "title": {
       "meta": {
@@ -931,6 +935,25 @@
         ],
         "description": "The font family to use for the labels."
       }
+    },
+    "formatter": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "fill": "string",
+          "stroke": "string",
+          "strokeWidth": "number",
+          "highlighted": "boolean",
+          "xKey": "string",
+          "yKey": "string"
+        },
+        "returnType": {
+          "fill": "string",
+          "stroke": "string",
+          "strokeWidth": "number"
+        }
+      },
+      "description": "Function used to return formatting for individual bars/columns, based on the given parameters. If the current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
     },
     "listeners": {
       "meta": {

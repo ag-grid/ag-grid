@@ -72,7 +72,7 @@ SNIPPET
 <?= chart_example('Series Formatter', 'series-formatter', 'generated'); ?>
 
 <p>
-    Please use <a href="#api-reference">API reference</a> to learn more about the marker and series
+    Please use <a href="../javascript-charts-api/">API reference</a> to learn more about the marker and series
     formatters, the inputs they receive and the attributes they allow to customize.
 </p>
 
