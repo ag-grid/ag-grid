@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
-import {AbstractColDef, COL_DEF_PARAM_OBJECTS, ColDef, ColGroupDef} from "../entities/colDef";
+import {AbstractColDef, ColDef, ColGroupDef} from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
@@ -365,7 +365,7 @@ export class ColumnFactory extends BeanStub {
 
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
-        _.mergeDeep(colDefMerged, defaultColDef, true, COL_DEF_PARAM_OBJECTS);
+        _.mergeDeep(colDefMerged, defaultColDef, true, true);
 
         // merge properties from column type properties
         if (colDef.type || (defaultColDef && defaultColDef.type) ) {
@@ -375,7 +375,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge properties from column definitions
-        _.mergeDeep(colDefMerged, colDef, true, COL_DEF_PARAM_OBJECTS);
+        _.mergeDeep(colDefMerged, colDef, true, true);
 
         return colDefMerged;
     }
@@ -412,7 +412,7 @@ export class ColumnFactory extends BeanStub {
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                _.mergeDeep(colDefMerged, typeColDef, true, COL_DEF_PARAM_OBJECTS);
+                _.mergeDeep(colDefMerged, typeColDef, true, true);
             } else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }

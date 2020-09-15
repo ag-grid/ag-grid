@@ -91,7 +91,7 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     return Object.keys(allValues);
 }
 
-export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsThatNeedCopy: string[] = [], iteration = 0): void {
+export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
     if (!exists(source)) { return; }
 
     iterateObject(source, (key: string, sourceValue: any) => {
@@ -99,18 +99,22 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, objectsT
 
         if (destValue === sourceValue) { return; }
 
-        const dontCopyOverSourceObject = iteration==0 && destValue == null && sourceValue!=null && objectsThatNeedCopy.indexOf(key)>=0;
-        if (dontCopyOverSourceObject) {
-            // by putting an empty value into destValue first, it means we end up copying over values from
-            // the source object, rather than just copying in the source object in it's entirety.
-            destValue = {};
-            dest[key] = destValue;
+        // when creating params, we don't want to just copy objects over. otherwise merging ColDefs (eg DefaultColDef
+        // and Column Types) would result in params getting shared between objects.
+        // by putting an empty value into destValue first, it means we end up copying over values from
+        // the source object, rather than just copying in the source object in it's entirety.
+        if (makeCopyOfSimpleObjects) {
+            const dontCopyOverSourceObject = destValue == null && sourceValue!=null && typeof sourceValue === 'object' && sourceValue.constructor===Object;
+            if (dontCopyOverSourceObject) {
+                destValue = {};
+                dest[key] = destValue;
+            }
         }
 
         const destIsObject = destValue!=null && typeof destValue === 'object';
         const sourceIsObject = sourceValue!=null && typeof sourceValue === 'object';
         if (destIsObject && sourceIsObject && !Array.isArray(destValue)) {
-            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+            mergeDeep(destValue, sourceValue, copyUndefined, makeCopyOfSimpleObjects);
         } else if (copyUndefined || sourceValue !== undefined) {
             dest[key] = sourceValue;
         }
