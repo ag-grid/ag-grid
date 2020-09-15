@@ -502,6 +502,22 @@ interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     minAngle?: number;
 }
 
+export interface AgPieSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
+}
+
+export interface AgPieSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+}
+
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
     title?: AgChartCaptionOptions;
@@ -531,6 +547,7 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
         stroke?: string;
     };
     tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string;
+    formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
 }
 
 interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
