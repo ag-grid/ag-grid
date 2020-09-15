@@ -1,32 +1,30 @@
-var data = [
-    {
-        quarter: 'Q1',
-        petrol: 200,
-        electric: 50
-    },
-    {
-        quarter: 'Q2',
-        petrol: 300,
-        electric: 60
-    },
-    {
-        quarter: 'Q3',
-        petrol: 350,
-        electric: 70
-    },
-    {
-        quarter: 'Q4',
-        petrol: 400,
-        electric: 50
-    }
-];
-
 var options = {
     container: document.getElementById('myChart'),
     title: {
         text: 'Fuel Spending (2019)'
     },
-    data: data,
+    data: [
+        {
+            quarter: 'Q1',
+            petrol: 200,
+            electric: 50
+        },
+        {
+            quarter: 'Q2',
+            petrol: 300,
+            electric: 60
+        },
+        {
+            quarter: 'Q3',
+            petrol: 350,
+            electric: 70
+        },
+        {
+            quarter: 'Q4',
+            petrol: 400,
+            electric: 50
+        }
+    ],
     series: [{
         type: 'area',
         xKey: 'quarter',
