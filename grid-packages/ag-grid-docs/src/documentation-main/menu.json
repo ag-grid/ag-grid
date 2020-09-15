@@ -1484,6 +1484,10 @@
                 "url": "javascript-charts-markers/"
               },
               {
+                "title": "Formatters",
+                "url": "javascript-charts-formatters/"
+              },
+              {
                 "title": "Tooltips",
                 "url": "javascript-charts-tooltips/"
               },
