@@ -371,8 +371,14 @@ export class FilterManager extends BeanStub {
         return node => this.valueService.getValue(column, node, true);
     }
 
-    public getFilterComponent(column: Column, source: FilterRequestSource): Promise<IFilterComp> {
-        return this.getOrCreateFilterWrapper(column, source).filterPromise;
+    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): Promise<IFilterComp> {
+        if (createIfDoesNotExist) {
+            return this.getOrCreateFilterWrapper(column, source).filterPromise;
+        }
+
+        const filterWrapper = this.cachedFilter(column);
+
+        return filterWrapper ? filterWrapper.filterPromise : null;
     }
 
     public isFilterActive(column: Column): boolean {
