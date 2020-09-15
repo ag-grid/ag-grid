@@ -28,7 +28,7 @@ var options = {
         xKey: 'country',
         yKeys: ['gdp'],
         showInLegend: false,
-        formatter: params => {
+        formatter: function (params) {
             return {
                 fill: params.datum[params.xKey] === 'UK'
                     ? (params.highlighted ? 'lime' : 'red')

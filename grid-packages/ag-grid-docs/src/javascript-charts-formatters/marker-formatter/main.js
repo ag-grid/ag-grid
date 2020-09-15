@@ -33,7 +33,7 @@ var options = {
         yKeys: ['petrol', 'electric'],
         yNames: ['Petrol', 'Electric'],
         marker: {
-            formatter: params => {
+            formatter:  function (params) {
                 return {
                     size: params.yKey === 'electric' ? 12 : params.size
                 };
