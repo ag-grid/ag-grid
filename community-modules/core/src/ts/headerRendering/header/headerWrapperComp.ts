@@ -31,6 +31,7 @@ import { HeaderRowComp } from "../headerRowComp";
 import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -483,12 +484,22 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
-    public getTooltipText(): string | undefined {
-        return this.column.getColDef().headerTooltip;
+    public getTooltipParams(): ITooltipParams {
+        const colDef = this.getComponentHolder();
+
+        return {
+            location: 'header',
+            colDef,
+            column: this.getColumn(),
+            value: this.getTooltipText(),
+        };
+    }
+
+    private getTooltipText(): string {
+        return this.getComponentHolder().headerTooltip;
     }
 
     private setupTooltip(): void {
-
         let tooltipFeature: TooltipFeature;
         let tooltipText: string;
 
@@ -508,16 +519,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             if (usingBrowserTooltips) {
                 this.getGui().setAttribute('title', tooltipText);
             } else {
-                tooltipFeature = this.createBean(new TooltipFeature(this, 'header'));
+                tooltipFeature = this.createBean(new TooltipFeature(this));
             }
         };
 
         const refresh = () => {
-
             const newTooltipText = this.getTooltipText();
 
             if (tooltipText != newTooltipText) {
-
                 if (tooltipText) {
                     removeTooltip();
                 }

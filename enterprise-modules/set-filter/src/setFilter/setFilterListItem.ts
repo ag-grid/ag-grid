@@ -13,7 +13,7 @@ import {
     RefSelector,
     TooltipFeature,
     ISetFilterCellRendererParams,
-    _
+    _, ITooltipParams
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -86,7 +86,7 @@ export class SetFilterListItem extends Component {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                     this.getGui().setAttribute('title', this.tooltipText);
                 } else {
-                    this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
+                    this.createManagedBean(new TooltipFeature(this));
                 }
             }
         }
@@ -99,6 +99,14 @@ export class SetFilterListItem extends Component {
         };
 
         this.renderCell(colDef, params);
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'setFilterValue',
+            colDef: this.getComponentHolder(),
+            value: this.tooltipText
+        }
     }
 
     private getFormattedValue(colDef: ColDef, column: Column, value: any) {
@@ -128,9 +136,5 @@ export class SetFilterListItem extends Component {
 
     public getComponentHolder(): ColDef {
         return this.params.column.getColDef();
-    }
-
-    public getTooltipText(): string {
-        return this.tooltipText;
     }
 }

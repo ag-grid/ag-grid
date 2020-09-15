@@ -29,6 +29,7 @@ import { setAriaExpanded } from "../../utils/aria";
 import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -158,9 +159,18 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         return this.column.getColGroupDef();
     }
 
-    public getTooltipText(): string | undefined {
+    private getTooltipText(): string {
         const colGroupDef = this.getComponentHolder();
         return colGroupDef && colGroupDef.headerTooltip;
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'headerGroup',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            value: this.getTooltipText()
+        };
     }
 
     private setupTooltip(): void {
@@ -171,7 +181,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.createManagedBean(new TooltipFeature(this, 'headerGroup'));
+            this.createManagedBean(new TooltipFeature(this));
         }
     }
 

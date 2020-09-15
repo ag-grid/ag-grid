@@ -9,7 +9,7 @@ import {
     _,
     PopupService,
     IComponent,
-    KeyCode
+    KeyCode, ITooltipParams
 } from "@ag-grid-community/core";
 import { MenuList } from './menuList';
 import { MenuPanel } from './menuPanel';
@@ -85,14 +85,6 @@ export class MenuItemComponent extends Component {
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(it => _.addCssClass(eGui, it));
         }
-    }
-
-    public getTooltipText(): string {
-        return this.tooltip;
-    }
-
-    public getComponentHolder(): undefined {
-        return undefined;
     }
 
     public isDisabled(): boolean {
@@ -248,7 +240,14 @@ export class MenuItemComponent extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', this.tooltip);
         } else {
-            this.createManagedBean(new TooltipFeature(this, 'menu'));
+            this.createManagedBean(new TooltipFeature(this));
+        }
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'menu',
+            value: this.tooltip
         }
     }
 

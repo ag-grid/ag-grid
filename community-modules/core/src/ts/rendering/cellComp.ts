@@ -40,6 +40,7 @@ import { isEventFromPrintableCharacter } from "../utils/keyboard";
 import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import { ITooltipParams } from "./tooltipComponent";
 
 const CSS_CELL = 'ag-cell';
 const CSS_CELL_VALUE = 'ag-cell-value';
@@ -269,7 +270,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.tooltipFeatureEnabled
         ) { return; }
 
-        this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        this.createManagedBean(new TooltipFeature(this), this.beans.context);
         this.tooltipFeatureEnabled = true;
     }
 
@@ -768,21 +769,29 @@ export class CellComp extends Component implements TooltipParentComp {
             return valueGetter({
                 api: this.beans.gridOptionsWrapper.getApi(),
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                colDef: colDef,
-                column: this.getColumn(),
                 context: this.beans.gridOptionsWrapper.getContext(),
-                value: this.value,
-                valueFormatted: this.valueFormatted,
-                rowIndex: this.cellPosition.rowIndex,
-                node: this.rowNode,
-                data: this.rowNode.data
+                ...this.getTooltipParams(),
+                value: this.value
             });
         }
 
         return null;
     }
 
-    public getTooltipText(escape: boolean = true) {
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'cell',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            rowIndex: this.cellPosition.rowIndex,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            value: this.getTooltipText(),
+            valueFormatted: this.valueFormatted,
+        };
+    }
+
+    private getTooltipText(escape: boolean = true) {
         return escape ? escapeString(this.tooltip) : this.tooltip;
     }
 
