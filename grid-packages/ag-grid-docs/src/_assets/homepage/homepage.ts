@@ -47,7 +47,7 @@ $(() => {
     var level = 3;
     var prevLink = null;
     var list = $("<ul></ul>");
-    var breakpoints: { heading: any; link: any }[] = [];
+    var breakpoints: { heading: any; link: any; }[] = [];
 
     nav.append(list);
 
@@ -78,7 +78,7 @@ $(() => {
             link: link
         });
     });
-    var imgs = document.querySelectorAll("#stage-feature-highlights img"); 
+    var imgs = document.querySelectorAll("#stage-feature-highlights img");
     new lazyload((imgs && imgs.length) ? imgs : [], {});
 
     if (breakpoints.length) {
@@ -99,17 +99,18 @@ $(() => {
     $("pre > code").each(function() {
         $(this).text(resetIndent($(this).text()));
     });
-    Prism.highlightAll(false);
+
+    Prism.highlightAll();
 });
 
 function loadDemos() {
     $(".stage-scenarios:not(.main) .demo").each(function() {
-        $(this)	
-            .find(".loading")	
-            .load($(this).data("load"))	
-            .removeClass("loading");	
+        $(this)
+            .find(".loading")
+            .load($(this).data("load"))
+            .removeClass("loading");
     });
-}	
+}
 $(() => {
     if (window["agGrid"]) {
         loadDemos();

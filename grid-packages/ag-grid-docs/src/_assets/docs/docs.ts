@@ -63,7 +63,6 @@ $(function() {
 
     var docNav = $("#doc-nav");
     var list = $("<ul></ul>");
-    var breakpoints = [];
 
     docNav.empty().append(list);
 
@@ -89,21 +88,20 @@ $(function() {
         maxLevel--;
     }
 
-    for (var i = 0; i < headings.length; i++) {
-        (function() {
-            var heading = headings[i].heading;
-            var headingText = $(heading).text();
-            var link = $(`<li class="level-${headings[i].level}">
-                <a href="#${heading.id}">${headingText}</a>
-            </li>`);
+    if (headings.length > 1) {
+        for (var i = 0; i < headings.length; i++) {
+            (function() {
+                var heading = headings[i].heading;
+                var headingText = $(heading).text();
+                var link = $(`<li class="level-${headings[i].level}">
+                    <a href="#${heading.id}">${headingText}</a>
+                </li>`);
 
-            list.append(link);
-
-            breakpoints.push({
-                heading: $(heading),
-                link: link
-            });
-        })();
+                list.append(link);
+            })();
+        }
+    } else {
+        docNav.remove();
     }
 
     var imgs = document.querySelectorAll("#feature-roadshow img, .lazy-load");
