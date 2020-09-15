@@ -306,6 +306,12 @@ myInput.addEventListener("keydown", function (event) {
         and <code>cellKeyDown</code> (gets called when a DOM keyDown event fires on a cell).
     </p>
 
+    <note>
+        These keyboard events are monitored by the grid panel, so they will not be fired 
+        when the keydown or keypress happen inside of a popup editor, as popup elements are
+        rendered in a different DOM tree.
+    </note>
+
     <p>
         The grid events wrap the DOM events and provides additional information such as row
         and column details.

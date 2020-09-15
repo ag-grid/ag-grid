@@ -33,14 +33,18 @@ interface ITooltipParams {
     location: string; // what part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc
     api: any; // the grid API
     columnApi: any; // the column API
-    colDef: any; // the grid colDef
     context: any; // the grid context
-    column?: any; // the column bound to this tooltip
+
     value?: any; // the value to be rendered by the tooltip
-    valueFormatted?: any; // the formatted value to be rendered by the tooltip
+
+    /* Column Params (N/A within some components like the Menu Item) */
+
+    colDef?: any; // the grid colDef
+    column?: any; // the column bound to this tooltip
 
     /* Row and Cell Params (N/A with headerTooltips) */
 
+    valueFormatted?: any; // the formatted value to be rendered by the tooltip
     rowIndex?: number; // the index of the row containing the cell rendering the tooltip
     node?: any; // the row node
     data?: any; // the row node data

@@ -216,7 +216,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment + idx);
+            _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
 
         this.refreshModel({

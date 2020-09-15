@@ -154,7 +154,14 @@ export class PieSeries extends PolarSeries {
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
 
-    private _fills: string[] = [];
+    private _fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -164,7 +171,14 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = [];
+    private _strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
     set strokes(values: string[]) {
         this._strokes = values;
         this.callout.colors = values;

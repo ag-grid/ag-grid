@@ -830,6 +830,28 @@ export const bar = Object.freeze({
         },
         ...getFontOptions('labels'),
     },
+    formatter: {
+        type: {
+            parameters: {
+                datum: 'any',
+                fill: 'string',
+                stroke: 'string',
+                strokeWidth: 'number',
+                highlighted: 'boolean',
+                xKey: 'string',
+                yKey: 'string',
+            },
+            returnType: {
+                fill: 'string',
+                stroke: 'string',
+                strokeWidth: 'number',
+            },
+        },
+        description:
+            `Function used to return formatting for individual bars/columns, based on the given parameters. If the
+            current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>;
+            make sure to check this if you want to differentiate between the highlighted and un-highlighted states.`,
+    },
     listeners: {
         meta: {
             description: "A map of event names to event listeners."

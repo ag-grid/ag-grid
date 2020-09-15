@@ -113,7 +113,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-charts-tooltips/">tooltips</a>.
+    Continue to the next section to learn about <a href="../javascript-charts-formatters/">formatters</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
