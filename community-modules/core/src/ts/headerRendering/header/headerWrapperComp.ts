@@ -55,7 +55,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private readonly dragSourceDropTarget: DropTarget;
     protected readonly column: Column;
     protected readonly pinned: string;
 
@@ -78,10 +77,9 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(column: Column, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
         this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
 
@@ -389,7 +387,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
         };

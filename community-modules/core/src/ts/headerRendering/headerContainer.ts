@@ -24,7 +24,6 @@ export class HeaderContainer extends BeanStub {
 
     private pinned: string;
     private scrollWidth: number;
-    private dropTarget: DropTarget;
 
     private filtersRowComp: HeaderRowComp;
     private columnsRowComp: HeaderRowComp;
@@ -137,6 +136,7 @@ export class HeaderContainer extends BeanStub {
     }
 
     public setupDragAndDrop(gridComp: GridPanel): void {
+        // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
@@ -176,7 +176,7 @@ export class HeaderContainer extends BeanStub {
 
             for (let i = 0; i < groupRowCount; i++) {
                 const rowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned, this.dropTarget));
+                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned));
                 this.groupsRowComps.push(rowComp);
             }
         };
@@ -194,7 +194,7 @@ export class HeaderContainer extends BeanStub {
 
             if (!this.columnsRowComp) {
                 this.columnsRowComp = this.createBean(
-                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned, this.dropTarget));
+                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned));
             }
         };
 
@@ -205,7 +205,7 @@ export class HeaderContainer extends BeanStub {
             const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
             if (includeFloatingFilter) {
                 this.filtersRowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget));
+                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned));
             }
         };
 

@@ -46,7 +46,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
-    private readonly dragSourceDropTarget: DropTarget;
     protected readonly column: ColumnGroup;
     protected readonly pinned: string;
 
@@ -64,10 +63,9 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(columnGroup: ColumnGroup, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
         this.column = columnGroup;
-        this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
 
@@ -259,7 +257,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
         };

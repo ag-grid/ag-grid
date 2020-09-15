@@ -30,18 +30,16 @@ export class HeaderRowComp extends Component {
 
     private readonly pinned: string;
 
-    private readonly dropTarget: DropTarget;
     private readonly type: HeaderRowType;
     private dept: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
-    constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
+    constructor(dept: number, type: HeaderRowType, pinned: string) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
         this.setRowIndex(dept);
         this.type = type;
         this.pinned = pinned;
-        this.dropTarget = dropTarget;
 
         const niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, '-');
         this.addCssClass(`ag-header-row-${niceClassName}`);
@@ -287,10 +285,10 @@ export class HeaderRowComp extends Component {
 
         switch (this.type) {
             case HeaderRowType.COLUMN:
-                result = new HeaderWrapperComp(columnGroupChild as Column, this.dropTarget, this.pinned);
+                result = new HeaderWrapperComp(columnGroupChild as Column, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP:
-                result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
+                result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 result = new FloatingFilterWrapper(columnGroupChild as Column, this.pinned);
