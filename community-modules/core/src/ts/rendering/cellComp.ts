@@ -886,7 +886,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private createCellRendererInstance(useTaskService = false): void {
-        if (!this.usingCellRenderer) { return; }
+        if (!this.usingCellRenderer || !this.rowNode.data) { return; }
 
         // never use task service if angularCompileRows=true, as that assume the cell renderers
         // are finished when the row is created. also we never use it if animation frame service
