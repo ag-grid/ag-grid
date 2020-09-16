@@ -155,8 +155,9 @@ export abstract class Series extends Observable {
         let [min, max] = extent;
 
         if (min === max) {
-            min -= 1;
-            max += 1;
+            const padding = Math.abs(min * 0.01);
+            min -= padding;
+            max += padding;
             // if (type) {
             //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
             //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
