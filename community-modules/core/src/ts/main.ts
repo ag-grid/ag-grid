@@ -78,6 +78,7 @@ export {
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
 export { DragService } from "./dragAndDrop/dragService";
+export { IRowDragItem } from "./rendering/row/rowDragComp";
 
 // entities
 export { Column } from "./entities/column";
