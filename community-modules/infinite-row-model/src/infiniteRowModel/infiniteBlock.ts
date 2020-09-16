@@ -41,6 +41,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         rowNode.uiLevel = 0;
 
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
+
         return rowNode;
     }
 
@@ -106,6 +107,5 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         window.setTimeout(() => {
             this.cacheParams.datasource.getRows(params);
         }, 0);
-
     }
 }

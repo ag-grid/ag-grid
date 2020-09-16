@@ -872,13 +872,12 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const params = this.createCellRendererParams();
-        const cellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params);
-        const pinnedRowCellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
 
-        if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
+        if (this.rowNode.rowPinned &&
+            this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
-        } else if (cellRenderer) {
+        } else if (this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
             this.usingCellRenderer = true;
         } else {
@@ -902,8 +901,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
-        const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
+        const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
         const cellRendererTypeNormal = this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL;
 
         this.createCellRendererFunc = () => {
@@ -926,7 +925,8 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
-        const cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
+        const cellRendererNotRequired = !this.isAlive() || cellRendererVersion !== this.cellRendererVersion;
+
         if (cellRendererNotRequired) {
             this.beans.context.destroyBean(cellRenderer);
             return;

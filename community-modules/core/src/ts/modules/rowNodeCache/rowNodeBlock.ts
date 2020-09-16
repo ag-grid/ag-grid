@@ -161,9 +161,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     public setDirtyAndPurge(): void {
         this.setDirty();
-        this.rowNodes.forEach(rowNode => {
-            rowNode.setData(null);
-        });
+        this.rowNodes.forEach(rowNode => rowNode.setData(null));
     }
 
     public getState(): string {
@@ -184,14 +182,17 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     public setNewData(rowIndex: number, dataItem: any): RowNode {
         const newRowNode = this.setBlankRowNode(rowIndex);
+
         this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
+
         return newRowNode;
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = new RowNode();
-        this.beans.context.createBean(rowNode);
+        const rowNode = this.beans.context.createBean(new RowNode());
+
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
+
         return rowNode;
     }
 
@@ -223,6 +224,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     private populateWithRowData(rows: any[]): void {
         const rowNodesToRefresh: RowNode[] = [];
+
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const data = rows[index];
             if (rowNode.stub) {
@@ -230,6 +232,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             }
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
+
         if (rowNodesToRefresh.length > 0) {
             this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
@@ -270,5 +273,4 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
         this.dispatchEvent(event);
     }
-
 }

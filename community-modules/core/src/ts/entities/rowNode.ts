@@ -225,7 +225,7 @@ export class RowNode implements IEventEmitter {
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
 
-    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+    /** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence
      * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
      * method, however that would be a breaking change. */
     private __hasChildren: boolean;
@@ -589,7 +589,7 @@ export class RowNode implements IEventEmitter {
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
         const newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
-        if (newValue!==this.__hasChildren) {
+        if (newValue !== this.__hasChildren) {
             this.__hasChildren = newValue;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
@@ -598,7 +598,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public hasChildren(): boolean {
-        if (this.__hasChildren==null) {
+        if (this.__hasChildren == null) {
             this.updateHasChildren();
         }
         return this.__hasChildren;

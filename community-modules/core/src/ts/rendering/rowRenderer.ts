@@ -34,7 +34,6 @@ import { createArrayOfNumbers } from "../utils/number";
 import { pushAll, last } from "../utils/array";
 import { executeNextVMTurn, executeInAWhile, doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
-import {_} from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -426,13 +425,13 @@ export class RowRenderer extends BeanStub {
         // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
         const recycleRows = !this.printLayout && params.recycleRows;
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
-        const rowsToRecycle: { [key: string]: RowComp; } = this.binRowComps(recycleRows);
+        const rowsToRecycle = this.binRowComps(recycleRows);
 
-        const isFocusedCellGettingRecycled = ()=> {
-            if (focusedCell==null) { return false; }
-            if (rowsToRecycle==null) { return false; }
+        const isFocusedCellGettingRecycled = () => {
+            if (focusedCell == null || rowsToRecycle == null) { return false; }
             let res = false;
-            _.iterateObject(rowsToRecycle, (key: string, rowComp: RowComp) => {
+
+            iterateObject(rowsToRecycle, (key: string, rowComp: RowComp) => {
                 const rowNode = rowComp.getRowNode();
                 const rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 const pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;
@@ -440,6 +439,7 @@ export class RowRenderer extends BeanStub {
                     res = true;
                 }
             });
+
             return res;
         };
 
@@ -456,6 +456,7 @@ export class RowRenderer extends BeanStub {
         if (!focusedCellRecycled) {
             this.restoreFocusedCell(focusedCell);
         }
+
         this.releaseLockOnRefresh();
     }
 
@@ -503,8 +504,8 @@ export class RowRenderer extends BeanStub {
             throw new Error(
                 "ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
                 "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
-                "this, put the API call into a timeout, eg instead of api.refreshView(), " +
-                "call setTimeout(function(){api.refreshView(),0}). To see what part of your code " +
+                "this, put the API call into a timeout, e.g. instead of api.refreshView(), " +
+                "call setTimeout(function() { api.refreshView(); }, 0). To see what part of your code " +
                 "that caused the refresh check this stacktrace."
             );
         }
@@ -874,9 +875,9 @@ export class RowRenderer extends BeanStub {
         const rowsToRemove: string[] = [];
 
         const selectivelyRefreshing = !!rowNodesToRefresh;
-        const idsToRefresh: {[id:string]:boolean} = selectivelyRefreshing ? {} : undefined;
+        const idsToRefresh: { [id: string]: boolean; } = selectivelyRefreshing ? {} : undefined;
         if (selectivelyRefreshing) {
-            rowNodesToRefresh.forEach( r => idsToRefresh[r.id] = true);
+            rowNodesToRefresh.forEach(r => idsToRefresh[r.id] = true);
         }
 
         iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
@@ -900,8 +901,8 @@ export class RowRenderer extends BeanStub {
 
                 rowsToRemove.push(rowIndex.toString());
             }
-
         });
+
         this.removeRowComps(rowsToRemove);
         this.redrawAfterScroll();
     }
