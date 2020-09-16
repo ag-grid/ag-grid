@@ -1389,6 +1389,13 @@ export class GridPanel extends Component {
 
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
+        const minScrollLeft = 0;
+        const maxScrollLeft = this.eCenterViewport.scrollWidth - this.eCenterViewport.clientWidth;
+
+        if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
+            hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
+        }
+
         this.eCenterViewport.scrollLeft = hScrollPosition;
 
         // we need to manually do the event handling (rather than wait for the event)
@@ -1432,7 +1439,7 @@ export class GridPanel extends Component {
     private onVerticalScroll(): void {
         const scrollTop: number = this.eBodyViewport.scrollTop;
 
-        if (this.shouldBlockScrollUpdateForIOS('vertical', scrollTop)) { return; }
+        if (this.shouldBlockScrollUpdate('vertical', scrollTop, true)) { return; }
 
         this.animationFrameService.setScrollTop(scrollTop);
 
@@ -1440,7 +1447,7 @@ export class GridPanel extends Component {
         this.redrawRowsAfterScroll();
     }
 
-    private shouldBlockScrollUpdateForIOS(direction: ScrollDirection, currentScroll: number): boolean {
+    private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
@@ -1452,11 +1459,11 @@ export class GridPanel extends Component {
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
 
-        if (!isIOSUserAgent) { return false; }
+        if (touchOnly && !isIOSUserAgent) { return false; }
 
         if (direction === 'vertical') {
             const { clientHeight, scrollHeight } = this.eBodyViewport;
-            if (currentScroll < 0 || (currentScroll + clientHeight > scrollHeight)) {
+            if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
                 return true;
             }
         }
@@ -1465,10 +1472,10 @@ export class GridPanel extends Component {
             const { clientWidth, scrollWidth } = this.eCenterViewport;
 
             if (this.enableRtl && isRtlNegativeScroll()) {
-                if (currentScroll > 0) { return true; }
-            } else if (currentScroll < 0) { return true; }
+                if (scrollTo > 0) { return true; }
+            } else if (scrollTo < 0) { return true; }
 
-            if (Math.abs(currentScroll) + clientWidth > scrollWidth) {
+            if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
                 return true;
             }
         }
@@ -1498,7 +1505,7 @@ export class GridPanel extends Component {
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
         const { scrollLeft } = this.eCenterViewport;
 
-        if (this.shouldBlockScrollUpdateForIOS('horizontal', scrollLeft)) {
+        if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
             return;
         }
 
