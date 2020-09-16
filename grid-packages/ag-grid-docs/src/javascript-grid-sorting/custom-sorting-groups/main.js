@@ -18,8 +18,7 @@ var gridOptions = {
     },
     autoGroupColumnDef: {
         comparator: function(valueA, valueB, nodeA, nodeB, isInverted) {
-            console.log('valueA = ' + valueA + ', valueB = ' + valueB + ' group = ' + nodeA.group);
-            let res = valueA == valueB ? 0 : (valueA>valueB) ? 1 : -1;
+            var res = (valueA == valueB) ? 0 : (valueA>valueB) ? 1 : -1;
             return res;
         },
         field: 'athlete',
