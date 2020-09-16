@@ -189,9 +189,10 @@ export class SortService extends BeanStub {
             const valueA: any = this.getValue(nodeA, sortOption.column);
             const valueB: any = this.getValue(nodeB, sortOption.column);
             let comparatorResult: number;
-            if (sortOption.column.getColDef().comparator) {
+            const providedComparator = sortOption.column.getColDef().comparator;
+            if (providedComparator) {
                 //if comparator provided, use it
-                comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
+                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
             } else {
                 //otherwise do our own comparison
                 comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());

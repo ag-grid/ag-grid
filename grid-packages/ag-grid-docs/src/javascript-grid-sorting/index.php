@@ -56,17 +56,44 @@ SNIPPET
 
 <p>
     Custom sorting is provided at a column level by configuring a comparator on the column definition.
-    The sort methods gets the value as well as the row nodes.
 </p>
 
 <?= createSnippet(<<<SNIPPET
+// simple number comparator
 colDef.comparator = function(valueA, valueB, nodeA, nodeB, isInverted) {
     return valueA - valueB;
+}
+
+//simple string comparator
+colDef.comparator = function(valueA, valueB, nodeA, nodeB, isInverted) {
+    if (valueA == valueB) {
+        return 0;
+    } else {
+        return (valueA>valueB) ? 1 : -1;
+    }
 }
 SNIPPET
 ) ?>
 
-<h2>Example: Custom Sorting</h2>
+<p>
+    The parameters are as follows:
+</p>
+<ul>
+    <li>
+        <code>valueA, valueB</code>: The values in the cells to be compared. Typically sorts are
+        done on these values only.
+    </li>
+    <li>
+        <code>nodeA, nodeB</code>: The <a href="../javascript-grid-row-node/">Row Nodes</a> for the rows getting sorted.
+        These can be used if more information, such as data from other columns, are needed for the comparison.
+    </li>
+    <li>
+        <code>isInverted</code>: <code>true</code> for Ascending, <code>false</code> for Descending.
+    </li>
+</ul>
+
+
+<h3>Example: Custom Sorting</h3>
 
 <p> Example below shows the following:</p>
 
@@ -80,6 +107,23 @@ SNIPPET
 </ul>
 
 <?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+
+<h3>Example: Custom Sorting Groups</h3>
+
+<p>
+    When <a href="../angular-grid-grouping/">Row Grouping</a> it is possible to override the sort order
+    of the Row Group columns. If using the Auto Group Column, provide a comparator via the
+    <code>autoGroupColumnDef</code> grid property.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+autoGroupColumnDef = {
+    comparator: [yourOwnComparator]
+};
+SNIPPET
+) ?>
+
+<?= grid_example('Custom Sorting Groups', 'custom-sorting-groups', 'generated', ['enterprise'=>true, 'modules' => true, 'reactFunctional' => true]) ?>
 
 <h2 id="multi-column-sorting">Multi Column Sorting</h2>
 
@@ -152,24 +196,6 @@ SNIPPET
 </p>
 
 <?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
-
-<h2>Sorting Groups</h2>
-
-<p>
-    The grid sorts using a default comparator for grouped columns. If you want to specify your own, you can do
-    so by specifying it in the <code>colDef</code>:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-var groupColumn = {
-    headerName: 'Group',
-    comparator: [yourOwnComparator], // this is the important bit
-    cellRenderer: {
-        renderer: 'agGroupCellRenderer',
-    }
-};
-SNIPPET
-) ?>
 
 <h2>Accented Sort</h2>
 
