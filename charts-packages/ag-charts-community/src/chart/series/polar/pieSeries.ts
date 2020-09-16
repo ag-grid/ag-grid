@@ -16,7 +16,7 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart, toTooltipHtml } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -55,6 +55,22 @@ enum PieNodeTag {
     Sector,
     Callout,
     Label
+}
+
+export interface PieSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
+}
+
+export interface PieSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 
 class PieSeriesLabel extends Label {
@@ -190,6 +206,8 @@ export class PieSeries extends PolarSeries {
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
+
+    @reactive('update') formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
 
     /**
      * The series rotation in degrees.
@@ -367,7 +385,8 @@ export class PieSeries extends PolarSeries {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
             outerRadiusOffset, innerRadiusOffset,
             radiusScale, callout, shadow,
-            highlightStyle: { fill, stroke, centerOffset }
+            highlightStyle: { fill, stroke, centerOffset },
+            angleKey, radiusKey, formatter
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -378,9 +397,25 @@ export class PieSeries extends PolarSeries {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius + outerRadiusOffset);
+            const highlighted = datum === highlightedDatum;
+            const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            let format: PieSeriesFormat | undefined = undefined;
 
             if (minOuterRadius > outerRadius) {
                 minOuterRadius = outerRadius;
+            }
+
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: sectorFill,
+                    stroke: sectorStroke,
+                    strokeWidth,
+                    highlighted,
+                    angleKey,
+                    radiusKey
+                });
             }
 
             sector.outerRadius = outerRadius;
@@ -388,14 +423,13 @@ export class PieSeries extends PolarSeries {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            const highlighted = datum === highlightedDatum;
-            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            sector.fill = format && format.fill || sectorFill;
+            sector.stroke = format && format.stroke || sectorStroke;
+            sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
-            sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
 
             outerRadii.push(outerRadius);
