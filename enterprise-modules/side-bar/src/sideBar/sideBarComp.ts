@@ -69,18 +69,18 @@ export class SideBarComp extends Component implements ISideBar {
         const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
         const sideBarExists = !!sideBar && !!sideBar.toolPanels;
 
-        if (sideBarExists) {
-            const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
-            this.setDisplayed(shouldDisplaySideBar);
+        if (!sideBarExists) { return; }
 
-            const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
-            this.setSideBarPosition(sideBar.position);
+        const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
+        this.setDisplayed(shouldDisplaySideBar);
 
-            if (!sideBar.hiddenByDefault) {
-                this.openToolPanel(sideBar.defaultToolPanel);
-            }
+        const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
+        this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
+        this.setupToolPanels(toolPanelDefs);
+        this.setSideBarPosition(sideBar.position);
+
+        if (!sideBar.hiddenByDefault) {
+            this.openToolPanel(sideBar.defaultToolPanel);
         }
     }
 
