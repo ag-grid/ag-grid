@@ -13,7 +13,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -131,7 +131,7 @@ export class HistogramSeries extends CartesianSeries {
 
     private seriesItemEnabled = true;
 
-    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
+    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
 
     @reactive('dataChange') fill: string | undefined = undefined;
     @reactive('dataChange') stroke: string | undefined = undefined;
@@ -574,14 +574,14 @@ export class HistogramSeries extends CartesianSeries {
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: bin,
                 xKey,
                 xName,
                 yKey,
                 yName,
                 color: fill
-            });
+            }));
         } else {
             const titleStyle = `style="color: white; background-color: ${fill}"`;
             const titleString = `

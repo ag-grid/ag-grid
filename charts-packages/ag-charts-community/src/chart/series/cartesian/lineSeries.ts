@@ -11,7 +11,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
-import { Chart } from "../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -57,7 +57,7 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
 
     constructor() {
         super();
@@ -326,7 +326,7 @@ export class LineSeries extends CartesianSeries {
         const { xName, yName, stroke: color, tooltipRenderer } = this;
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xKey,
                 xName,
@@ -334,7 +334,7 @@ export class LineSeries extends CartesianSeries {
                 yName,
                 title: this.title,
                 color
-            });
+            }));
         } else {
             const title = this.title || yName;
             const titleStyle = `style="color: white; background-color: ${color}"`;

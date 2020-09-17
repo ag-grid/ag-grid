@@ -9,7 +9,7 @@ import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
@@ -126,7 +126,7 @@ export class ScatterSeries extends CartesianSeries {
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
 
     constructor() {
         super();
@@ -339,7 +339,7 @@ export class ScatterSeries extends CartesianSeries {
         const color = fill || 'gray';
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xKey,
                 yKey,
@@ -351,7 +351,7 @@ export class ScatterSeries extends CartesianSeries {
                 labelName,
                 title: this.title,
                 color
-            });
+            }));
         } else {
             const title = this.title || yName;
             const titleStyle = `style="color: white; background-color: ${color}"`;

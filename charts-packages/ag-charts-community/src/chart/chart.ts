@@ -105,7 +105,17 @@ export interface TooltipMeta {
     pageY: number;
 }
 
-export function toTooltipHtml(content: string, title?: string, color: string = '#888'): string {
+export interface TooltipRendererResult {
+    content: string;
+    title?: string;
+    color?: string;
+}
+
+export function toTooltipHtml(input: string | TooltipRendererResult): string {
+    if (typeof input === 'string') {
+        return input;
+    }
+    const { content, title, color = '#888' } = input;
     const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
             style="color: white; background-color: ${color}">${title}</div>` : '';
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
