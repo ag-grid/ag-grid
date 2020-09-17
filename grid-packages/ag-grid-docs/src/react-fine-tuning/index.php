@@ -168,8 +168,8 @@ somePointLater() {
     &lt;AgGridReact
     onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
         rowData=<span ng-non-bindable>{</span>this.state.rowData}
-        rowDataChangeDetectionStrategy='IdentityCheck'
-        columnDefsChangeDetectionStrategy='NoCheck'
+        rowDataChangeDetectionStrategy={ChangeDetectionService.IdentityCheck}
+        columnDefsChangeDetectionStrategy={ChangeDetectionService.NoCheck}
         ...other properties
     </snippet>
 
