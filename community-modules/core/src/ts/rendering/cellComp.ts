@@ -1543,9 +1543,6 @@ export class CellComp extends Component implements TooltipParentComp {
             const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
 
             this.focusCell(forceBrowserFocus);
-        } else {
-            // if a range is being changed, we need to make sure the focused cell does not change.
-            mouseEvent.preventDefault();
         }
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
@@ -1555,6 +1552,9 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (rangeController) {
+            // if a range is being changed, we need to make sure the focused cell does not change.
+            mouseEvent.preventDefault();
+
             const thisCell = this.cellPosition;
 
             if (shiftKey) {
