@@ -13,38 +13,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
-        options.seriesDefaults = {
-            tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
-            },
-            fill: {
-                colors: [],
-                opacity: 1
-            },
-            stroke: {
-                colors: theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
-            },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
-        } as LineSeriesOptions;
-
-        return options;
-    }
-
     protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
-        const { grouping, parentElement } = this.chartProxyParams;
+        const { parentElement } = this.chartProxyParams;
 
         options = options || this.chartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
@@ -147,6 +117,36 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         });
 
         this.updateLabelRotation(params.category.id);
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
+        options.seriesDefaults = {
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: [],
+                opacity: 1
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as LineSeriesOptions;
+
+        return options;
     }
 
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
