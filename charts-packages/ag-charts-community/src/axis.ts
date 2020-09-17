@@ -81,7 +81,7 @@ export class AxisLabel {
     /**
      * Custom label rotation in degrees.
      * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
+     * Or parallel to the axis line, if the {@link parallel} is set to `true`.
      * The value of this config is used as the angular offset/deflection
      * from the default rotation.
      */
