@@ -59,13 +59,11 @@ SNIPPET
 type: 'column',
 xKey: 'country',
 yKeys: ['gdp'],
-marker: {
-    formatter: params => ({
-        fill: params.datum[params.xKey] === 'UK' ? 'red' : params.fill
-        // we can also use `params.datum.country`, but the formatter
-        // would have to be updated whenever the `xKey` is changed
-    })
-}
+formatter: params => ({
+    fill: params.datum[params.xKey] === 'UK' ? 'red' : params.fill
+    // we can also use `params.datum.country`, but the formatter
+    // would have to be updated whenever the `xKey` is changed
+})
 SNIPPET
 ) ?>
 
