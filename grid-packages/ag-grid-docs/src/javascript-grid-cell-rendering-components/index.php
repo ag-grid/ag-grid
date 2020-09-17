@@ -285,23 +285,20 @@ colDef.cellRendererParams = {
 SNIPPET
 ) ?>
 
-<h2>Cell Renderers and Row Groups</h2>
+<h2>Data in Cell Renderers</h2>
 
 <p>
-    If you are mixing cell renderers and row grouping, then you need to understand that the value and / or data
-    may be missing in the group row. You can check if you are on a group row of not by checking
-    <code>rowNode.group</code>.
-    Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
-</p>
-
-<p>
-    This is simply fixed by checking for the existence of the data before you use it like the following:
+    Sometimes the <code>data</code> property in the parameters given to a cell renderer might not be populated. This can
+    happen for example when using row grouping (where the row node has <code>aggData</code> and <code>groupData</code>
+    instead of <code>data</code>), or when rows are being loaded in the
+    <a href="../javascript-grid-infinite-scrolling/">Infinite Row Model</a> and do not yet have data.
+    It is best to check that data does exist before accessing it in your cell renderer, for example:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 colDef.cellRenderer = function(params) {
     // check the data exists, to avoid error
-    if (!params.node.group) {
+    if (params.data) {
         // data exists, so we can access it
         return '<b>' + params.data.theBoldValue + '</b>';
     } else {
