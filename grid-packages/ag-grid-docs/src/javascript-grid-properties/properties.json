@@ -825,10 +825,16 @@
             "description": "Provide a template for 'no rows' <a href='../javascript-grid-overlays/'>overlay</a>."
         },
         "loadingOverlayComponent<br />loadingOverlayComponentFramework ": {
-            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#loading-overlay-interface'>loading overlay component</a>."
+            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#loading-rows-overlay-interface'>loading overlay component</a>."
+        },
+        "loadingOverlayComponentParams": {
+            "description": "Customise the parameters provided to the loading overlay component."
         },
         "noRowsOverlayComponent<br />noRowsOverlayComponentFramework ": {
-            "description": "Provide a custom <a href='../javascript-grid-overlays/#no-rows-overlay-interface'>no rows overlay  component</a>."
+            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#no-rows-overlay-interface'>no rows overlay component</a>."
+        },
+        "noRowsOverlayComponentParams": {
+            "description": "Customise the parameters provided to the no rows overlay component."
         }
     },
     "charts": {
@@ -840,7 +846,13 @@
             "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
         },
         "chartThemes": {
-            "default": ["ag-default", "ag-material", "ag-pastel", "ag-vivid", "ag-solar"],
+            "default": [
+                "ag-default",
+                "ag-material",
+                "ag-pastel",
+                "ag-vivid",
+                "ag-solar"
+            ],
             "description": "The list of chart themes to be used, see <a href='../javascript-grid-charts-integrated-customisation/#chart-themes'>Chart Themes</a>."
         },
         "customChartThemes": {
