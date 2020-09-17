@@ -1,11 +1,11 @@
-import {createElement, createRef, ReactPortal} from 'react';
-import {createPortal} from 'react-dom';
-import {_, ComponentType, Promise} from '@ag-grid-community/core';
-import {AgGridReact} from "./agGridReact";
-import {BaseReactComponent} from './baseReactComponent';
-import {assignProperties} from './utils';
+import { ReactPortal, createElement } from 'react';
+import { createPortal } from 'react-dom';
+import { _, ComponentType, Promise } from '@ag-grid-community/core';
+import { AgGridReact } from "./agGridReact";
+import { BaseReactComponent } from './baseReactComponent';
+import { assignProperties } from './utils';
 import generateNewKey from './keyGenerator';
-import {renderToStaticMarkup} from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -14,7 +14,6 @@ export class ReactComponent extends BaseReactComponent {
     private componentInstance: any;
 
     private reactComponent: any;
-    private myRef: any = null;
     private componentType: ComponentType;
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
@@ -55,15 +54,19 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
-        this.componentInstance = null;
-        this.parentComponent.destroyPortal(this.portal as ReactPortal);
+        return this.parentComponent.destroyPortal(this.portal as ReactPortal);
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
-        if (!this.isStatelessComponent()) {
+        if (!this.statelessComponent) {
             // grab hold of the actual instance created
-            this.myRef = createRef();
-            params.ref = this.myRef;
+            params.ref = (element: any) => {
+                this.componentInstance = element;
+                this.addParentContainerStyleAndClasses();
+
+                // regular components (ie not functional)
+                this.removeStaticMarkup();
+            };
         }
 
         const reactComponent = createElement(this.reactComponent, params);
@@ -75,29 +78,23 @@ export class ReactComponent extends BaseReactComponent {
 
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
-            if(!this.isStatelessComponent()) {
-                this.componentInstance = this.myRef.current;
-                this.myRef = null;
-            }
-
             resolve(value);
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            // if (this.isStatelessComponent()) {
-            //     // if a user supplies a time consuming renderer then it's sometimes possible both the static and
-            //     // actual react component are visible at the same time
-            //     // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
-            //     // static markup, otherwise just the next tick
-            //     if (this.staticRenderTime >= 2) {
-            //         this.eParen\\
-            //         tElement.addEventListener('DOMNodeInserted', () => {
-            //             this.removeStaticMarkup();
-            //         }, false);
-            //     } else {
-            //         setTimeout(() => this.removeStaticMarkup());
-            //     }
-            // }
+            if (this.statelessComponent) {
+                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
+                // actual react component are visible at the same time
+                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
+                // static markup, otherwise just the next tick
+                if (this.staticRenderTime >= 2) {
+                    this.eParentElement.addEventListener('DOMNodeInserted', () => {
+                        this.removeStaticMarkup();
+                    }, false);
+                } else {
+                    setTimeout(() => this.removeStaticMarkup());
+                }
+            }
         });
     }
 
@@ -215,8 +212,7 @@ export class ReactComponent extends BaseReactComponent {
     rendered(): boolean {
         return this.isNullRender() ||
             !!this.staticMarkup ||
-            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
-            (!this.isStatelessComponent() && this.myRef && !!this.myRef.current);
-            // (!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+            !!(this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 }
