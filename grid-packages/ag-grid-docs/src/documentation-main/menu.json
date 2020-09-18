@@ -1183,6 +1183,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Time Series",
+            "url": "javascript-grid-charts-integrated-time-series/",
+            "enterprise": true
+          },
+          {
             "title": "Third-Party Charting",
             "url": "javascript-grid-graphing/"
           }
