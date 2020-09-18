@@ -223,9 +223,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
         ) {
             this.createGroupCell();
-            if (rowNode.hasChildren()) {
-                this.addChildCount();
-            }
+            this.addChildCount();
         } else {
             this.createLeafCell();
         }
@@ -375,8 +373,9 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private updateChildCount(): void {
         const allChildrenCount = this.displayedGroup.allChildrenCount;
-
-        this.eChildCount.innerHTML = allChildrenCount >= 0 ? `(${allChildrenCount})` : ``;
+        const showCount = allChildrenCount != null && allChildrenCount >= 0;
+        const countString = showCount ? `(${allChildrenCount})` : ``;
+        this.eChildCount.innerHTML = countString;
     }
 
     private createLeafCell(): void {
