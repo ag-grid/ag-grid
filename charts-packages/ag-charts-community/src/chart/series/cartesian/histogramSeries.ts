@@ -577,8 +577,10 @@ export class HistogramSeries extends CartesianSeries {
             return toTooltipHtml(tooltipRenderer({
                 datum: bin,
                 xKey,
+                xValue: bin.domain,
                 xName,
                 yKey,
+                yValue: bin.aggregatedValue,
                 yName,
                 color: fill
             }));

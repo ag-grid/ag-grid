@@ -326,11 +326,14 @@ export class LineSeries extends CartesianSeries {
         const { xName, yName, stroke: color, tooltipRenderer } = this;
 
         if (tooltipRenderer) {
+            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+                datum,
                 xKey,
+                xValue: datum[xKey],
                 xName,
                 yKey,
+                yValue: datum[yKey],
                 yName,
                 title: this.title,
                 color

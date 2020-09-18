@@ -339,10 +339,13 @@ export class ScatterSeries extends CartesianSeries {
         const color = fill || 'gray';
 
         if (tooltipRenderer) {
+            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+                datum,
                 xKey,
+                xValue: datum[xKey],
                 yKey,
+                yValue: datum[yKey],
                 sizeKey,
                 labelKey,
                 xName,

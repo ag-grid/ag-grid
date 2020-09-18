@@ -511,11 +511,14 @@ export class PieSeries extends PolarSeries {
         const color = fills[nodeDatum.index % fills.length];
 
         if (tooltipRenderer) {
+            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+                datum,
                 angleKey,
+                angleValue: datum[angleKey],
                 angleName,
                 radiusKey,
+                radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName,
                 labelKey,
                 labelName,
