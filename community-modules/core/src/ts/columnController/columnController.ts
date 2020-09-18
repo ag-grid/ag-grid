@@ -1812,6 +1812,13 @@ export class ColumnController extends BeanStub {
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType = "api"): boolean {
         if (missingOrEmpty(this.primaryColumns)) { return false; }
 
+        if (params && params.state && !params.state.forEach) {
+            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.')
+            return;
+        }
+
+        this.columnAnimationService.start();
+
         const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
 
         this.autoGroupsNeedBuilding = true;
@@ -1829,10 +1836,6 @@ export class ColumnController extends BeanStub {
         const previousPivotCols = this.pivotColumns.slice();
 
         if (params.state) {
-            if (!params.state.forEach) {
-                console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.')
-                return;
-            }
             params.state.forEach((state: ColumnState) => {
                 const groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
                 const colId = state.colId;
@@ -1946,6 +1949,8 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(event);
 
         raiseEventsFunc();
+
+        this.columnAnimationService.finish();
 
         return success;
     }

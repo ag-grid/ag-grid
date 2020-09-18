@@ -7,10 +7,11 @@ import { PrimaryColsPanel } from "./columnToolPanel/primaryColsPanel";
 
 import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
+import {ModelItemUtils} from "./columnToolPanel/modelItemUtils";
 
 export const ColumnsToolPanelModule: Module = {
     moduleName: ModuleNames.ColumnToolPanelModule,
-    beans: [],
+    beans: [ModelItemUtils],
     agStackComponents: [
         { componentName: 'AgPrimaryColsHeader', componentClass: PrimaryColsHeaderPanel },
         { componentName: 'AgPrimaryColsList', componentClass: PrimaryColsListPanel },
