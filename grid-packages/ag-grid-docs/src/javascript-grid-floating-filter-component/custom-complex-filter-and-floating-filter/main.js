@@ -120,7 +120,7 @@ NumberFilter.prototype.setupGui = function() {
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Greater than: </div>' +
-        '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Number of medals..."/></div>' +
+        '<div><input style="margin: 4px 0px 4px 0px;" type="number" id="filterText" placeholder="Number of medals..."/></div>' +
         '</div>';
 
     var that = this;

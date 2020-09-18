@@ -83,13 +83,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const { fields } = params;
         const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
-        const testDatum = params.data[0];
-        const xValuesAreDates = seriesDefinitions
-            .map(d => d.xField.colId)
-            .map(xKey => testDatum && testDatum[xKey])
-            .every(test => isDate(test));
-
-        this.updateAxes(xValuesAreDates ? 'time' : 'number');
 
         const { chart } = this;
 
