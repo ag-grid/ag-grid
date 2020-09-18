@@ -14,23 +14,22 @@ import {
     PostConstruct,
     RefSelector,
     TouchListener,
-    ManagedFocusComponent,
     KeyCode,
-    ColumnEventType
+    ColumnEventType, Component
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import {ModelItemUtils} from "./modelItemUtils";
 
-export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
+export class ToolPanelColumnGroupComp extends Component {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group" tabindex="-1" role="treeitem">
+        `<div class="ag-column-select-column-group" aria-hidden="true">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -49,25 +48,21 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
 
     private readonly columnGroup: OriginalColumnGroup;
     private readonly columnDept: number;
-    private readonly allowDragging: boolean;
-
-    private modelItem: ColumnModelItem;
 
     private displayName: string | null;
     private processingColumnStateChange = false;
-    private eventType: ColumnEventType;
 
     constructor(
-        modelItem: ColumnModelItem,
-        allowDragging: boolean,
-        eventType: ColumnEventType
+        private readonly modelItem: ColumnModelItem,
+        private readonly allowDragging: boolean,
+        private readonly eventType: ColumnEventType,
+        private readonly focusWrapper: HTMLElement
     ) {
         super();
         this.modelItem = modelItem;
         this.columnGroup = modelItem.getColumnGroup();
         this.columnDept = modelItem.getDept();
         this.allowDragging = allowDragging;
-        this.eventType = eventType;
     }
 
     @PostConstruct
@@ -94,8 +89,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
-
         this.addManagedListener(this.modelItem, ColumnModelItem.EVENT_EXPANDED_CHANGED, this.onExpandChanged.bind(this));
+        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
 
         this.setOpenClosedIcons();
         this.setupDragging();
@@ -107,15 +102,15 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    private handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case KeyCode.LEFT:
                 e.preventDefault();
-                this.modelItem.setExpanded(true);
+                this.modelItem.setExpanded(false);
                 break;
             case KeyCode.RIGHT:
                 e.preventDefault();
-                this.modelItem.setExpanded(false);
+                this.modelItem.setExpanded(true);
                 break;
             case KeyCode.SPACE:
                 e.preventDefault();
@@ -216,7 +211,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
 
     private refreshAriaLabel(): void {
         const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.getGui(), `${this.displayName} column group toggle visibility (${state})`);
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} column group toggle visibility (${state})`);
     }
 
     public onColumnStateChanged(): void {
@@ -302,7 +297,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent {
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.getGui(), this.modelItem.isExpanded());
+        _.setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
     }
 
     public getDisplayName(): string | null {

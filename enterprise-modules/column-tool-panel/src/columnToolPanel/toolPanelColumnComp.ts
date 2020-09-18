@@ -3,56 +3,47 @@ import {
     AgCheckbox,
     Autowired,
     Column,
-    ColumnApi,
     ColumnController,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    GridApi,
     GridOptionsWrapper,
     KeyCode,
-    ManagedFocusComponent,
     PostConstruct,
-    RefSelector
+    RefSelector, Component
 } from "@ag-grid-community/core";
 import {ModelItemUtils} from "./modelItemUtils";
 
-export class ToolPanelColumnComp extends ManagedFocusComponent {
+export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column" tabindex="-1" role="treeitem">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
+        `<div class="ag-column-select-column" aria-hidden="true">
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
+
     private eDragHandle: HTMLElement;
-
-    private column: Column;
-    private columnDept: number;
-
-    private allowDragging: boolean;
     private displayName: string | null;
-
     private processingColumnStateChange = false;
-    private groupsExist: boolean;
 
-    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean) {
+    constructor(
+        private readonly column: Column,
+        private readonly columnDept: number,
+        private readonly allowDragging: boolean,
+        private readonly groupsExist: boolean,
+        private readonly focusWrapper: HTMLElement
+    ) {
         super();
-        this.column = column;
-        this.columnDept = columnDept;
-        this.allowDragging = allowDragging;
-        this.groupsExist = groupsExist;
     }
 
     @PostConstruct
@@ -82,6 +73,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent {
         this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
@@ -133,7 +125,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent {
 
     private refreshAriaLabel(): void {
         const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.getGui(), `${this.displayName} column toggle visibility (${state})`);
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} column toggle visibility (${state})`);
     }
 
     private setupDragging(): void {

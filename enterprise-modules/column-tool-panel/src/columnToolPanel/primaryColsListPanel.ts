@@ -1,6 +1,5 @@
 import {
     _,
-    KeyCode,
     AbstractColDef,
     Autowired,
     ColGroupDef,
@@ -10,7 +9,6 @@ import {
     ColumnEventType,
     Component,
     Events,
-    ManagedFocusComponent,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams,
@@ -42,7 +40,7 @@ class ColumnModel implements VirtualListModel {
     }
 }
 
-export class PrimaryColsListPanel extends ManagedFocusComponent {
+export class PrimaryColsListPanel extends Component {
 
     public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
 
@@ -73,7 +71,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     @PreDestroy
     private destroyColumnTree(): void {
         this.allColsTree = [];
-        this.destroyColumnItemFuncs.forEach( f => f() );
+        this.destroyColumnItemFuncs.forEach(f => f());
         this.destroyColumnItemFuncs = [];
     }
 
@@ -108,46 +106,32 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
-        this.virtualList = this.createManagedBean(new VirtualList('column-select'));
+        this.virtualList = this.createManagedBean(new VirtualList('column-select', 'tree'));
         this.appendChild(this.virtualList.getGui());
 
-        this.virtualList.setComponentCreator(this.createComponentFromItem.bind(this));
+        this.virtualList.setComponentCreator(
+            (item: ColumnModelItem, listItemElement: HTMLElement) => this.createComponentFromItem(item, listItemElement)
+        );
 
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
     }
 
-    private createComponentFromItem(item: ColumnModelItem): Component {
+    private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
         if (item.isGroup()) {
-            const renderedGroup = new ToolPanelColumnGroupComp(item, this.allowDragging, this.eventType);
+            const renderedGroup = new ToolPanelColumnGroupComp(item, this.allowDragging, this.eventType, listItemElement);
             this.getContext().createBean(renderedGroup);
+
             return renderedGroup;
-        } else {
-            const columnComp = new ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist);
-            this.getContext().createBean(columnComp);
-            return columnComp;
         }
+
+        const columnComp = new ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist, listItemElement);
+        this.getContext().createBean(columnComp);
+
+        return columnComp;
     }
 
-
-    protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case KeyCode.UP:
-            case KeyCode.DOWN:
-                e.preventDefault();
-                this.navigateToNextItem(e.keyCode === KeyCode.UP);
-                break;
-        }
-    }
-
-    private navigateToNextItem(up: boolean): void {
-        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), true, up);
-
-        if (nextEl) {
-            nextEl.focus();
-        }
-    }
 
     public onColumnsChanged(): void {
         const pivotModeActive = this.columnController.isPivotMode();
@@ -187,7 +171,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private buildListModel(columnTree: OriginalColumnGroupChild[]): void {
-
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
             item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
@@ -218,7 +201,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
             const item: ColumnModelItem = new ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
 
             parentList.push(item);
-
             addListeners(item);
 
             recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
@@ -226,8 +208,11 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
         const createColumnItem = (column: Column, dept: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
+
             if (skipThisColumn) { return; }
+
             const displayName = this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+
             parentList.push(new ColumnModelItem(displayName, column, dept));
         }
 
@@ -240,7 +225,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private flattenAndFilterModel(): void {
-
         this.displayedColsList = [];
 
         const recursiveFunc = (item: ColumnModelItem)=> {
@@ -254,9 +238,19 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         this.allColsTree.forEach(recursiveFunc);
 
         this.virtualList.setModel(new ColumnModel(this.displayedColsList));
+        const focusedRow = this.virtualList.getLastFocusedRow();
         this.virtualList.refresh();
+        this.focusRowIfAlive(focusedRow);
 
         this.notifyListeners();
+    }
+
+    private focusRowIfAlive(rowIndex: number): void {
+        window.setTimeout(() => {
+            if (this.isAlive()) {
+                this.virtualList.focusRow(rowIndex);
+            }
+        }, 0);
     }
 
     private forEachItem(callback: (item: ColumnModelItem)=>void): void {
@@ -378,6 +372,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
         const passesFilter = (item: ColumnModelItem) => {
             if (!_.exists(this.filterText)) return true;
+
             return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText as string) >= 0 : true;
         };
 

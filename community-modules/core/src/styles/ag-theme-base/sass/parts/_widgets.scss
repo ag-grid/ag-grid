@@ -464,9 +464,8 @@
     }
 
     @include ag-keyboard-focus((
-        ag-column-select-column-group,
-        ag-column-select-column
-    ), ag-param(grid-size) / -2);
+        ag-column-select-virtual-list-item
+    ), 1px);
 
     .ag-column-select-column-group,
     .ag-column-select-column {

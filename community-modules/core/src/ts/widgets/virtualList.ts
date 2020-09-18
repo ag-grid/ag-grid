@@ -16,7 +16,7 @@ export interface VirtualListModel {
 export class VirtualList extends ManagedFocusComponent {
     private model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
-    private componentCreator: (value: any) => Component;
+    private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
     private rowHeight = 20;
     private lastFocusedRowIndex: number;
     private isDestroyed = false;
@@ -24,7 +24,7 @@ export class VirtualList extends ManagedFocusComponent {
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
-    constructor(private readonly cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
         super(VirtualList.getTemplate(cssIdentifier), true);
     }
 
@@ -151,7 +151,7 @@ export class VirtualList extends ManagedFocusComponent {
         }
     }
 
-    public setComponentCreator(componentCreator: (value: any) => Component): void {
+    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
         this.componentCreator = componentCreator;
     }
 
@@ -224,7 +224,7 @@ export class VirtualList extends ManagedFocusComponent {
         addCssClass(eDiv, 'ag-virtual-list-item');
         addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
-        eDiv.setAttribute('role', 'option');
+        eDiv.setAttribute('role', this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
@@ -239,7 +239,7 @@ export class VirtualList extends ManagedFocusComponent {
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
 
-        const rowComponent = this.componentCreator(value);
+        const rowComponent = this.componentCreator(value, eDiv);
 
         rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
 
