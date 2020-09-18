@@ -10,7 +10,7 @@ $version = 'latest';
 <html class="stretch-html" lang="en">
 <head>
 <?php
-$title = 'ag-Grid: Datagrid packed with features that your users need with the performance you expect.';
+$title = 'ag-Grid: High-Performance React Grid, Angular Grid, JavaScript Grid.';
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 23 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
