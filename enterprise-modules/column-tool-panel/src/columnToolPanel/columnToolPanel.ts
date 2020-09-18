@@ -40,7 +40,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private initialised = false;
     private params: ToolPanelColumnCompParams;
 
-    private childDestroyFuncs: Function[] = [];
+    private childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel: PivotModePanel;
     private primaryColsPanel: PrimaryColsPanel;
