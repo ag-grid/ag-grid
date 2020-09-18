@@ -10,6 +10,7 @@ import {
 import {AgChart, AreaSeries, CartesianChart, ChartTheme} from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from "../../typeChecker";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
@@ -18,37 +19,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
-    }
-
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgAreaSeriesOptions>('area.series.area');
-        options.seriesDefaults = {
-            shadow: seriesDefaults.shadow as DropShadowOptions,
-            tooltip: {
-                enabled: seriesDefaults.tooltipEnabled,
-                renderer: seriesDefaults.tooltipRenderer
-            },
-            fill: {
-                colors: theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
-            },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
-        } as AreaSeriesOptions;
-
-        return options;
     }
 
     protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
@@ -63,13 +33,15 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         options = options || this.chartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
 
+        const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
+
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
-            type: grouping ? 'groupedCategory' : 'category',
+            type: grouping ? 'groupedCategory' : xAxisType,
             position: 'bottom',
             paddingInner: 1,
             paddingOuter: 0,
-            ...options.xAxis
+            ...grouping ? options.yAxis : this.getXAxisDefaults(xAxisType, options)
         }, {
             type: 'number',
             position: 'left',
@@ -93,7 +65,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        this.updateAxes();
+        const testDatum = params.data[0];
+        const testValue = testDatum && testDatum[params.category.id];
+        const axisType = isDate(testValue) ? 'time' : 'category';
+        this.updateAxes(axisType);
 
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
@@ -137,7 +112,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             areaSeries.strokes = strokes;
         }
 
-        this.updateLabelRotation(params.category.id);
+        this.updateLabelRotation(params.category.id, false, axisType);
     }
 
     private updateAreaChart(params: UpdateChartParams): void {
@@ -208,6 +183,37 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             previousSeries = areaSeries;
         });
+    }
+
+    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
+        const options = super.getDefaultOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgAreaSeriesOptions>('area.series.area');
+        options.seriesDefaults = {
+            shadow: seriesDefaults.shadow as DropShadowOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltipEnabled,
+                renderer: seriesDefaults.tooltipRenderer
+            },
+            fill: {
+                colors: theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker.enabled,
+                shape: seriesDefaults.marker.shape,
+                size: seriesDefaults.marker.size,
+                strokeWidth: seriesDefaults.marker.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+        } as AreaSeriesOptions;
+
+        return options;
     }
 
     protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {

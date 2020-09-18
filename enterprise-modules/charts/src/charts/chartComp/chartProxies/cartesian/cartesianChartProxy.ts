@@ -55,16 +55,22 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         this.raiseChartOptionsChangedEvent();
     }
 
-    protected updateLabelRotation(categoryId: string, isHorizontalChart = false) {
+    protected updateLabelRotation(
+        categoryId: string,
+        isHorizontalChart = false,
+        axisType: 'time' | 'category' = 'category'
+    ) {
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
         const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
 
         const chartType = this.getStandaloneChartType();
         let userThemeOverrideRotation = undefined;
-        const commonRotation = _.get(themeOverrides, 'common.axes.category.label.rotation', undefined);
-        const cartesianRotation = _.get(themeOverrides, 'cartesian.axes.category.label.rotation', undefined);
-        const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.category.label.rotation`, undefined);
+
+        const commonRotation = _.get(themeOverrides, `common.axes.${axisType}.label.rotation`, undefined);
+        const cartesianRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.label.rotation`, undefined);
+        const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.${axisType}.label.rotation`, undefined);
+
         if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
             userThemeOverrideRotation = chartTypeRotation;
         } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
@@ -154,7 +160,6 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             if (!(baseAxis instanceof GroupedCategoryAxis)) {
                 this.recreateChart();
             }
-
             return;
         }
 
@@ -183,6 +188,13 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         }
 
         this.recreateChart(options);
+    }
+
+    protected getXAxisDefaults(xAxisType: AxisType, options: CartesianChartOptions<T>) {
+        if (xAxisType === 'time') {
+            return this.chartTheme.getConfig(this.getStandaloneChartType() + '.axes.' + 'time');
+        }
+        return options.xAxis;
     }
 
     protected getXAxis(): ChartAxis {

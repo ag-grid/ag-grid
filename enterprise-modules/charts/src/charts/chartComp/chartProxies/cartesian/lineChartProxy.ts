@@ -19,10 +19,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         options = options || this.chartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
+
+        const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
+
         agChartOptions.axes = [{
-            type: 'category',
+            type: xAxisType,
             position: 'bottom',
-            ...options.xAxis
+            ...this.getXAxisDefaults(xAxisType, options)
         }, {
             type: 'number',
             position: 'left',
@@ -42,8 +45,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         const testDatum = params.data[0];
         const testValue = testDatum && testDatum[params.category.id];
-
-        this.updateAxes(isDate(testValue) ? 'time' : 'category');
+        const axisType = isDate(testValue) ? 'time' : 'category';
+        this.updateAxes(axisType);
 
         const { chart } = this;
         const fieldIds = params.fields.map(f => f.colId);
@@ -116,7 +119,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             previousSeries = lineSeries;
         });
 
-        this.updateLabelRotation(params.category.id);
+        this.updateLabelRotation(params.category.id, false, axisType);
     }
 
     protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
