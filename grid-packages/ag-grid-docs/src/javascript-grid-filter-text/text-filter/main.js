@@ -21,7 +21,7 @@ var athleteFilterParams = {
             .replace(/[ýÿ]/g, 'y')
             .replace(/\W/g, '');
     },
-    debounceMs: 0,
+    debounceMs: 200,
     suppressAndOrCondition: true
 };
 

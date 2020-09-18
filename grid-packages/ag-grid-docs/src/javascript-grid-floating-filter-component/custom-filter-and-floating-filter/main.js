@@ -74,7 +74,7 @@ function getNumberFilterComponent() {
         this.gui.innerHTML =
             '<div style="padding: 4px;">' +
             '<div style="font-weight: bold;">Greater than: </div>' +
-            '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Number of medals..."/></div>' +
+            '<div><input style="margin: 4px 0px 4px 0px;" type="number" id="filterText" placeholder="Number of medals..."/></div>' +
             '</div>';
 
         var that = this;
@@ -140,7 +140,7 @@ function getNumberFloatingFilterComponent() {
 
     NumberFloatingFilter.prototype.init = function(params) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>';
+        this.eGui.innerHTML = '&gt; <input style="width:30px" type="number" min="0" />';
         this.currentValue = null;
         this.eFilterInput = this.eGui.querySelector('input');
         var that = this;

@@ -9,7 +9,7 @@ export default Vue.extend({
                    step="1"
                    @change="valueChanged($event)"/>
     `,
-    data: function () {
+    data: function() {
         return {
             maxValue: 0,
             currentValue: 0
@@ -24,7 +24,7 @@ export default Vue.extend({
         valueChanged(event) {
             this.currentValue = event.target.value;
             let valueToUse = (this.currentValue === "0") ? null : this.currentValue;
-            this.params.parentFilterInstance(function (instance) {
+            this.params.parentFilterInstance(function(instance) {
                 instance.onFloatingFilterChanged('greaterThan', valueToUse);
             });
         },
@@ -32,7 +32,7 @@ export default Vue.extend({
         onParentModelChanged(parentModel) {
             // note that the filter could be anything here, but our purposes we're assuming a greater than filter only,
             // so just read off the value and use that
-            this.currentValue = !parentModel ? 0 : parentModel.filter
+            this.currentValue = !parentModel ? 0 : parentModel.filter;
         }
     }
 });
