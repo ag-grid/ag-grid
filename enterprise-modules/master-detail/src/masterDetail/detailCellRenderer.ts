@@ -45,13 +45,15 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
+        const autoHeight = this.gridOptionsWrapper.isDetailRowAutoHeight();
+
         this.checkForDeprecations();
         this.ensureValidRefreshStrategy();
-        this.selectAndSetTemplate();
+        this.selectAndSetTemplate(autoHeight);
 
         if (_.exists(this.eDetailGrid)) {
             this.addThemeToDetailGrid();
-            this.createDetailsGrid();
+            this.createDetailsGrid(autoHeight);
             this.registerDetailWithMaster();
             this.loadRowData();
 
@@ -70,7 +72,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             this.needRefresh = true;
         });
 
-        this.setupAutoGridHeight();
+        // this.setupAutoGridHeight();
     }
 
     public refresh(): boolean {
@@ -129,31 +131,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.params.refreshStrategy = 'rows';
     }
 
-    private setupAutoGridHeight(): void {
 
-        if (!this.params.autoHeight) {
-            return;
-        }
-
-        const checkRowSizeFunc = () => {
-            const clientHeight = this.getGui().clientHeight;
-
-            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
-            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
-            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
-            // empty detail grid would still have some styling around it giving at least a few pixels.
-            if (clientHeight != null && clientHeight > 0) {
-                this.params.node.setRowHeight(clientHeight);
-                this.params.api.onRowHeightChanged();
-            }
-        };
-
-        const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(this.getGui(), checkRowSizeFunc);
-
-        this.addDestroyFunc(resizeObserverDestroyFunc);
-
-        checkRowSizeFunc();
-    }
 
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
@@ -188,11 +166,10 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         });
     }
 
-    private selectAndSetTemplate(): void {
+    private selectAndSetTemplate(autoHeight: boolean): void {
 
         const setDefaultTemplate = () => {
             this.setTemplate(DetailCellRenderer.TEMPLATE);
-            const autoHeight = this.params.autoHeight;
 
             this.addCssClass(autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height');
             _.addCssClass(this.eDetailGrid, autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height');
@@ -216,7 +193,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private createDetailsGrid(): void {
+    private createDetailsGrid(autoHeight: boolean): void {
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
@@ -229,7 +206,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
-        if (this.params.autoHeight) {
+        if (autoHeight) {
             this.detailGridOptions.domLayout = 'autoHeight';
         }
 
@@ -302,6 +279,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     $compile: any;
     pinned: string;
     template: string | TemplateFunc;
+    /** @deprecated */
     autoHeight: boolean;
     /** @deprecated */
     suppressRefresh: boolean;

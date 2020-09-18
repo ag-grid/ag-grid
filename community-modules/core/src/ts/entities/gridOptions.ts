@@ -314,6 +314,7 @@ export interface GridOptions {
     detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
+    detailRowAutoHeight?: boolean;
 
     // changeable with impact
     rowData?: any[];

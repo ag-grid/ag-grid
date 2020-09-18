@@ -58,7 +58,7 @@ var gridOptionsLevel1 = {
 
 <p>
     The next example is identical to the previous except all the Detail Grid's have property
-    <code>autoHeight=true</code>. Notice that this removes all vertical scrolls from all the Detail Grids, leaving
+    <code>detailRowAutoHeight=true</code>. Notice that this removes all vertical scrolls from all the Detail Grids, leaving
     just the main Master Grid with a vertical scroll.
 </p>
 

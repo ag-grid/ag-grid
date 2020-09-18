@@ -667,6 +667,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
+    public isDetailRowAutoHeight() {
+        return isTrue(this.gridOptions.detailRowAutoHeight);
+    }
+
     public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
         return this.gridOptions.suppressKeyboardEvent;
     }
@@ -1477,6 +1481,11 @@ export class GridOptionsWrapper {
 
         if (options.rememberGroupStateWhenNewData) {
             console.warn('ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
+        }
+
+        if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
+            console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
+            options.detailRowAutoHeight = true;
         }
     }
 
