@@ -529,7 +529,7 @@ export class PieSeries extends PolarSeries {
             return toTooltipHtml({
                 content: label + formattedValue,
                 title,
-                color
+                titleBackgroundColor: color
             });
         }
     }
