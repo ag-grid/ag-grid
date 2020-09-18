@@ -293,11 +293,12 @@ export interface GridOptions {
     groupDefaultExpanded?: number;
     alignedGrids?: GridOptions[];
 
-    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowSelection?: string;
-
     suppressRowDeselection?: boolean;
+
+    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowDeselection?: boolean;
+
     rowMultiSelectWithClick?: boolean;
     isRowSelectable?: IsRowSelectable;
     overlayLoadingTemplate?: string;
