@@ -1,7 +1,11 @@
 import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams, HighlightStyle } from "../series";
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams as AreaTooltipRendererParams,
+    HighlightStyle
+} from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Path } from "../../../scene/shape/path";
@@ -9,7 +13,7 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
@@ -46,7 +50,7 @@ export class AreaSeries extends CartesianSeries {
     static className = 'AreaSeries';
     static type = 'area';
 
-    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
 
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
@@ -528,14 +532,14 @@ export class AreaSeries extends CartesianSeries {
         const color = fills[yKeyIndex % fills.length];
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xKey,
                 xName,
                 yKey,
                 yName,
                 color
-            });
+            }));
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';

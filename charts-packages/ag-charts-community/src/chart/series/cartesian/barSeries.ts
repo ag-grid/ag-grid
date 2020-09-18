@@ -14,7 +14,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
@@ -104,7 +104,7 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
 
     @reactive('layoutChange') flipXY = false;
 
@@ -622,14 +622,14 @@ export class BarSeries extends CartesianSeries {
         const color = fills[yKeyIndex % fills.length];
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
                 xName,
                 yKey,
                 yName,
                 color
-            });
+            }));
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';

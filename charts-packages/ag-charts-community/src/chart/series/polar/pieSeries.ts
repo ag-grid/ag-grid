@@ -16,7 +16,7 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { toTooltipHtml } from "../../chart";
+import {TooltipRendererResult, toTooltipHtml} from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -511,7 +511,7 @@ export class PieSeries extends PolarSeries {
         const color = fills[nodeDatum.index % fills.length];
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 angleKey,
                 angleName,
@@ -521,16 +521,20 @@ export class PieSeries extends PolarSeries {
                 labelName,
                 title,
                 color,
-            });
+            }));
         } else {
             const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
             const value = nodeDatum.seriesDatum[angleKey];
             const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-            return toTooltipHtml(label + formattedValue, title, color);
+            return toTooltipHtml({
+                content: label + formattedValue,
+                title,
+                color
+            });
         }
     }
 
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const { labelKey, data } = this;
