@@ -1060,7 +1060,7 @@ export class GridPanel extends Component {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        const availableWidth = this.eBodyViewport.clientWidth;
+        const availableWidth = this.eBodyViewport.getBoundingClientRect().width;
 
         if (availableWidth > 0) {
             this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
