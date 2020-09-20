@@ -131,19 +131,19 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
     }
 
-    private searchText(key: KeyboardEvent | string) {
+    private searchText(event: KeyboardEvent | string) {
         const key = event.which || event.keyCode;
         if (key === KeyCode.BACKSPACE) {
             this.searchString = this.searchString.slice(0, -1);
         }
         else {
-            if (typeof key !== 'string') {
-                if (!_.isCharacterKey(key)) {
+            if (typeof event !== 'string') {
+                if (!_.isCharacterKey(event)) {
                     return;
                 }
-                key = key.key as string;
+                event = event.key as string;
             }
-            this.searchString += key;
+            this.searchString += event;
         }
         this.runSearch();
         this.clearSearchString();
