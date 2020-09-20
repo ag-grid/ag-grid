@@ -91,7 +91,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
 
-        this.clearSearchString = _.debounce(this.clearSearchString, 300);
+        this.clearSearchString = _.debounce(this.clearSearchString, params.searchDebounce || 300);
 
         if (_.exists(params.charPress)) {
             this.searchText(params.charPress as string);
@@ -132,14 +132,19 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private searchText(key: KeyboardEvent | string) {
-        if (typeof key !== 'string') {
-            if (!_.isCharacterKey(key)) {
-                return;
-            }
-            key = key.key as string;
+        const key = event.which || event.keyCode;
+        if (key === KeyCode.BACKSPACE) {
+            this.searchString = this.searchString.slice(0, -1);
         }
-
-        this.searchString += key;
+        else {
+            if (typeof key !== 'string') {
+                if (!_.isCharacterKey(key)) {
+                    return;
+                }
+                key = key.key as string;
+            }
+            this.searchString += key;
+        }
         this.runSearch();
         this.clearSearchString();
     }
