@@ -7,4 +7,5 @@ export interface IRichCellEditorParams extends ICellEditorParams {
     values: CellValue[];
     cellHeight: number;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    searchDebounce ?: number;
 }
