@@ -543,9 +543,9 @@ export class AreaSeries extends CartesianSeries {
                 datum,
                 xKey,
                 xName,
-                xValue: datum[xKey],
+                xValue,
                 yKey,
-                yValue: datum[yKey],
+                yValue,
                 yName,
                 color
             }), {
