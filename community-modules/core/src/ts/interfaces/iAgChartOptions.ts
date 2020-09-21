@@ -323,17 +323,21 @@ interface AgSeriesTooltipRendererParams {
 
 interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     readonly xKey: string;
+    readonly xValue?: any;
     readonly xName?: string;
 
     readonly yKey: string;
+    readonly yValue?: any;
     readonly yName?: string;
 }
 
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     readonly angleKey: string;
+    readonly angleValue?: any;
     readonly angleName?: string;
 
     readonly radiusKey?: string;
+    readonly radiusValue?: any;
     readonly radiusName?: string;
 }
 

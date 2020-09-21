@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function (global) {
+(function(global) {
     var ANGULAR_VERSION = "10.0.0";
     var ANGULAR_CDK_VERSION = "10.0.0";
     var ANGULAR_MATERIAL_VERSION = "10.0.0";
@@ -39,7 +39,7 @@
             typescript: {
                 exports: "ts"
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         },
         paths: {
             // paths serve as alias
@@ -153,7 +153,7 @@
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-enterprise/charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },

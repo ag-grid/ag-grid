@@ -1,11 +1,11 @@
-import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertFunctionalTemplate, getImport} from './react-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor } from './parser-utils';
+import { convertFunctionalTemplate, getImport } from './react-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
 function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
+    const { modules } = gridSettings;
 
     const imports = [
         "import React, { useState } from 'react';",
@@ -18,7 +18,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
         if (modules === true) {
             exampleModules = ['clientside'];
         }
-        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -52,7 +52,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
         "import React, { useState } from 'react';",
@@ -86,7 +86,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, componentAttributes: string[], columnDefs: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const agGridTag = `<div
                 id="myGrid"
                 style={{
@@ -120,30 +120,30 @@ function convertColumnDefs(rawColumnDefs) {
                         // values starting with AG_LITERAL_ are actually functions
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function here
                         // ...all of this is necessary so that we can parse the json string
-                        columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`)
+                        columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`);
                     } else {
-                        columnProperties.push(`${columnProperty}="${value}"`)
+                        columnProperties.push(`${columnProperty}="${value}"`);
                     }
                 } else if (typeof value === 'object') {
                     columnProperties.push(
                         `${columnProperty}={${JSON.stringify(value)}}`
-                    )
+                    );
                 } else {
                     columnProperties.push(
                         `${columnProperty}={${value}}`
-                    )
+                    );
                 }
             }
-        })
+        });
 
-        columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`)
-    })
+        columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`);
+    });
 
     return columnDefs;
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
 
     return importType => {
         const imports = getImports(bindings, componentFilenames, importType);
@@ -164,7 +164,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
-        let rawColumnDefs = [];
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (componentFilenames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
@@ -253,9 +252,8 @@ ${imports.join('\n')}
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
-    
     ${stateProperties.join(',\n    ')}
-    
+
     function onGridReady(params) {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -270,7 +268,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
                 ${template}
             </div>
         );
-    
+
 }
 
 ${bindings.utils.map(gridInstanceConverter).join('\n')}
@@ -280,7 +278,7 @@ render(
     document.querySelector('#root')
 )
 `;
-    }
+    };
 }
 
 if (typeof window !== 'undefined') {

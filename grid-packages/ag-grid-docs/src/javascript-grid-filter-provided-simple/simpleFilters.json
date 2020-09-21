@@ -148,6 +148,13 @@
             "relevantTo": [
                 "Date"
             ]
+        },
+        "minValidYear": {
+            "default": 1000,
+            "description": "This is the minimum year that must be entered in a date field for the value to be considered valid.",
+            "relevantTo": [
+                "Date"
+            ]
         }
     }
 }

@@ -85,7 +85,7 @@
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-enterprise/charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },

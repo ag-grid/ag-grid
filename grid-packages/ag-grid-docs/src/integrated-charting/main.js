@@ -88,9 +88,11 @@
     };
 
     function tooltipRenderer(params) {
-        var value = '$' + params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-        var title = params.title || params.yName;
-        return '<div style="padding: 5px"><b>' + title + '</b>: ' + value + '</div>';
+        var name = params.title || params.yName;
+        var value = '$' + params.yValue.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        return {
+            content: '<b>' + name + '</b>: ' + value
+        };
     }
 
     function numberCellFormatter(params) {

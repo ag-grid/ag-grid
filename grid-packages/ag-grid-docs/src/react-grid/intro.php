@@ -13,13 +13,15 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet language="jsx">
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import React, { useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-const GridExample = () => {
+const App = () => {
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
 
@@ -35,7 +37,7 @@ const GridExample = () => {
     }
 
     return (
-        &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+        &lt;div className="ag-theme-alpine" style={ { height: 400, width: 600 } }&gt;
             &lt;AgGridReact
                 onGridReady={onGridReady}
                 rowData={rowData}&gt;

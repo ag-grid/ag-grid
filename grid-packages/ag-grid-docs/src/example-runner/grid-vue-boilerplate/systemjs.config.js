@@ -1,4 +1,4 @@
-(function (global) {
+(function(global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -72,7 +72,7 @@
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-enterprise/charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
@@ -187,7 +187,7 @@ defaultExtension: 'js'
                     es2015: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);

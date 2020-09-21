@@ -72,9 +72,12 @@ npm install --save ag-grid-community ag-grid-react
 
 <snippet language="jsx">
 <div ng-non-bindable>
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import React, { useState } from 'react';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -87,7 +90,7 @@ const App = () => {
     ]);
 
     return (
-        &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+        &lt;div className="ag-theme-alpine" style={ { height: 400, width: 600 } }&gt;
             &lt;AgGridReact
                 rowData={rowData}&gt;
                 &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
@@ -106,12 +109,14 @@ export default App;
 <img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid in its simplest form" />
 <p>Let's go over the <code>App.jsx</code> changes we made:</p>
 
-<snippet language="jsx">import {AgGridReact} from 'ag-grid-react';
+<snippet language="jsx">
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 </snippet>
 
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
+<p>The three lines above import the <code>AgGridReact</code> and <code>AgGridColumn</code> components, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
 </p>
 
 The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customise it further with Sass variables, a technique which we will cover further down the road.</p>
@@ -139,7 +144,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="jsx">
 <div ng-non-bindable>
-&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+&lt;div className="ag-theme-alpine" style={ { height: 400, width: 600 } }&gt;
     &lt;AgGridReact
         rowData={rowData}&gt;
         &lt;AgGridColumn field="make"&gt;&lt;/AgGridColumn&gt;
@@ -185,11 +190,11 @@ Notice that the actual data fetching is performed outside of the grid component 
 
 + const [rowData, setRowData] = useState([]);
 
-+ componentDidMount() {
-+   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
-+     .then(result =&gt; result.json())
-+     .then(rowData =&gt; setRowData(rowData))
-+ }
++ useEffect(() => {
++     fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
++     .then(result => result.json())
++     .then(rowData => setRowData(rowData))
++ }, []);
 +
 </snippet>
 
@@ -213,7 +218,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
 
 <snippet language="jsx">
-&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+&lt;div className="ag-theme-alpine" style={ { height: 400, width: 600 } }&gt;
     &lt;button onClick=<span>{</span>onButtonClick}&gt;Get selected rows&lt;/button&gt;
     &lt;AgGridReact
         rowData={rowData}
@@ -240,7 +245,7 @@ const onButtonClick = e =&gt; {
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p>
 <p>What happened above? Several things:</p>
 <ul>
-  <li><code>onGridReady={ params =&gt; this.gridApi = params.api }</code> obtained a reference to the ag-grid API instance;</li>
+  <li><code>onGridReady={ params =&gt; setGridApi(params.api) }</code> obtained a reference to the ag-grid API instance;</li>
   <li>We added a button with an event handler;</li>
   <li>Inside the event handler, we accessed the grid api object reference to access the currently selected grid row nodes;</li>
   <li>Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable to be presented to the user in an alert box.</li>
@@ -272,10 +277,11 @@ npm install --save ag-grid-enterprise
 Then, add the import to your file:
 
 <snippet language="diff">
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+
++ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-+ import 'ag-grid-enterprise';
 </snippet>
 
 <p>
@@ -289,22 +295,24 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 <p>Now, let's enable grouping! Update the <code>AgGridReact</code> configuration to this:</p>
 
-<snippet language="jsx">
-&lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
+<snippet language="diff">
+&lt;div className="ag-theme-alpine" style={ { height: 400, width: 600 } }&gt;
     &lt;button onClick=<span>{</span>onButtonClick}&gt;Get selected rows&lt;/button&gt;
     &lt;AgGridReact
         onGridReady={onGridReady}
         rowData={rowData}
         rowSelection="multiple"
-        groupSelectsChildren={true}
-        autoGroupColumnDef=<span>{</span>{
-            headerName: "Model",
-            field: "model",
-            cellRenderer:'agGroupCellRenderer',
-            cellRendererParams: {
-              checkbox: true
-            }
-        }}&gt;
++       groupSelectsChildren={true}
++       autoGroupColumnDef=<span>{</span>{
++           headerName: "Model",
++           field: "model",
++           cellRenderer:'agGroupCellRenderer',
++           cellRendererParams: {
++               checkbox: true
++           }
++       }}
+-       &lt;AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true} &gt;&lt;/AgGridColumn&gt;
++       &lt;AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true} rowGroup={true} &gt;&lt;/AgGridColumn&gt;
 </snippet>
 
 <p>Here we've updated the component definition and set the <code>autoGroupColumnDef</code> and <code>groupSelectsChildren</code> properties.</p>
@@ -314,7 +322,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 <h2 id="customise-the-theme-look">Customise the Theme Look</h2>
 <p>The last thing which we are going to do is to change the grid look and feel by customising a theme.</p>
 <p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/"> pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
-<p>Adding Sass Preprocessor to create-react-app is well documented - follow the steps <a href="https://github.com/facebook/create-react-app/blob/master/grid-packages/react-scripts/template/README.md#adding-a-css-preprocessor-sass-less-etc">outlined in the respective help section</a>.</p>
+<p>Adding Sass Preprocessor to create-react-app is well documented - follow the steps <a href="https://create-react-app.dev/docs/adding-a-sass-stylesheet/">outlined in the respective help section</a>.</p>
 <p>After you are done with the setup, assuming that you have renamed <code>src/App.css</code> to <code>src/App.scss</code>, you can replace its contents with this:</p>
 
 <snippet language="scss">
@@ -331,7 +339,8 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>
 
 <snippet language="diff">
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+
 -import 'ag-grid-community/dist/styles/ag-grid.css';
 -import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 </snippet>

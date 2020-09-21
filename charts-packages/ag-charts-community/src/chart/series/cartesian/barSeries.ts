@@ -616,7 +616,7 @@ export class BarSeries extends CartesianSeries {
         }
 
         const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
-        const { seriesDatum: datum } = nodeDatum;
+        const datum = nodeDatum.seriesDatum;
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
@@ -625,8 +625,10 @@ export class BarSeries extends CartesianSeries {
             return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
+                xValue: datum[xKey],
                 xName,
                 yKey,
+                yValue: datum[yKey],
                 yName,
                 color
             }));

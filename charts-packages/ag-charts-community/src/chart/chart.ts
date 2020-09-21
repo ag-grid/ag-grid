@@ -106,19 +106,29 @@ export interface TooltipMeta {
 }
 
 export interface TooltipRendererResult {
-    content: string;
+    content?: string;
     title?: string;
     titleColor?: string;
     titleBackgroundColor?: string;
 }
 
-export function toTooltipHtml(input: string | TooltipRendererResult): string {
+export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string {
     if (typeof input === 'string') {
         return input;
     }
-    const { content, title, titleColor = 'white', titleBackgroundColor = '#888' } = input;
+
+    defaults = defaults || {};
+
+    const {
+        content = defaults.content || '',
+        title = defaults.title || '',
+        titleColor = defaults.titleColor || 'white',
+        titleBackgroundColor = defaults.titleBackgroundColor || '#888'
+    } = input;
+
     const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
-            style="color: ${titleColor}; background-color: ${titleBackgroundColor}">${title}</div>` : '';
+        style="color: ${titleColor}; background-color: ${titleBackgroundColor}">${title}</div>` : '';
+
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }
 

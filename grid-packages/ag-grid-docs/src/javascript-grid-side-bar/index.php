@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Boolean Configuration', 'boolean-configuration', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h3>String Configuration</h3>
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Side Bar - Only Filters', 'only-filters', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h3>SideBarDef Configuration</h3>
 
@@ -134,7 +134,7 @@ SNIPPET
     The snippet above is demonstrated in the following example:
 </p>
 
-<?= grid_example('SideBarDef', 'sideBarDef', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('SideBarDef', 'sideBarDef', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
@@ -240,7 +240,7 @@ SNIPPET
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Side Bar Fine Tuning', 'fine-tuning', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
 
 <h2>Providing Parameters to Tool Panels</h2>
 
@@ -304,7 +304,8 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
+
+<?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'reactFunctional' => true]) ?>
 
 <h2>Next Up</h2>
 

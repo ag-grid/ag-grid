@@ -103,6 +103,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
+
             if (filter.afterGuiAttached) {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }

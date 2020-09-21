@@ -113,12 +113,8 @@ export class AppModule {}
 <p>The next step is to add the ag-Grid styles - replace the content of <code>styles.scss</code> with the following code:</p>
 
 <snippet language="scss">
-@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
-
-.ag-theme-alpine {
-    @include ag-theme-alpine();
-}
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).

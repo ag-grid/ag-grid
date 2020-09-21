@@ -120,7 +120,7 @@ SNIPPET
 
 <?= chart_example('Default Tooltip with Custom Styling', 'default-tooltip-styling', 'generated'); ?>
 
-<h2>Using Tooltip Renderer</h2>
+<h2>Using Custom Tooltips</h2>
 
 <p>
     <code>chart.tooltipClass</code> allows you to style the tooltip, but not to change its
@@ -206,6 +206,45 @@ SNIPPET
 </p>
 
 <?= chart_example('Column Series with Tooltip Renderer', 'tooltip-renderer', 'generated'); ?>
+
+<h2>Modifying Default Tooltip Values</h2>
+
+<p>
+    Returning markup from a tooltip renderer gives you full control and ability to create completely custom tooltips
+    but may feel too verbose if all you want to do is to modify the shown values while preserving the structure of the DOM
+    and the styling of the default tooltip.
+</p>
+
+<p>
+    In such as case, instead of returning markup you can return an object with the <code>title</code> and <code>content</code>
+    strings, and the charting library will use the returned values to create the default markup automatically before showing the
+    tooltip. If the <code>title</code> or <code>content</code> is not part of the returned object, the tooltip will use the
+    default values for those.
+</p>
+
+<p>
+    We can also use the following shorthands to simplify our tooltip renderer code even further:
+    <ul>
+        <li><code>params.xValue</code> for <code>params.datum[params.xKey]</code></li>
+        <li><code>params.yValue</code> for <code>params.datum[params.yKey]</code></li>
+    </ul>
+</p>
+
+<p>
+    In the end, the original tooltip renderer from the previous section can be reduced to this:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+series: [{
+    type: 'column',
+    tooltipRenderer: function(params) {
+        return {
+            content: params.yValue.toFixed(0)
+        };
+    }
+}]
+SNIPPET
+) ?>
 
 <h2>API Reference</h2>
 

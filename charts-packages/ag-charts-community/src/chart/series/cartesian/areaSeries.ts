@@ -532,11 +532,14 @@ export class AreaSeries extends CartesianSeries {
         const color = fills[yKeyIndex % fills.length];
 
         if (tooltipRenderer) {
+            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+                datum,
                 xKey,
                 xName,
+                xValue: datum[xKey],
                 yKey,
+                yValue: datum[yKey],
                 yName,
                 color
             }));

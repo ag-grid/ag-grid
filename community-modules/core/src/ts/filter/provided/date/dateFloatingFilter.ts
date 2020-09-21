@@ -15,10 +15,10 @@ import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    @RefSelector('eReadOnlyText') private eReadOnlyText: AgInputTextField;
-    @RefSelector('eDateWrapper') private eDateWrapper: HTMLInputElement;
+    @RefSelector('eReadOnlyText') private readonly eReadOnlyText: AgInputTextField;
+    @RefSelector('eDateWrapper') private readonly eDateWrapper: HTMLInputElement;
 
     private dateComp: DateCompWrapper;
     private params: IFloatingFilterParams;
@@ -41,11 +41,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         }
 
         // cater for when the type doesn't need a value
-        if (condition.dateFrom != null) {
-            return `${condition.dateFrom}`;
-        }
-
-        return `${condition.type}`;
+        return condition.dateFrom == null ? `${condition.type}` : `${condition.dateFrom}`;
     }
 
     public init(params: IFloatingFilterParams): void {

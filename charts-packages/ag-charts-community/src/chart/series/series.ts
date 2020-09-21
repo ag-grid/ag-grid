@@ -31,17 +31,21 @@ export interface TooltipRendererParams {
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     readonly xKey: string;
+    readonly xValue: any;
     readonly xName?: string;
 
     readonly yKey: string;
+    readonly yValue: any;
     readonly yName?: string;
 }
 
 export interface PolarTooltipRendererParams extends TooltipRendererParams {
     readonly angleKey: string;
+    readonly angleValue: any;
     readonly angleName?: string;
 
     readonly radiusKey?: string;
+    readonly radiusValue?: any;
     readonly radiusName?: string;
 }
 
