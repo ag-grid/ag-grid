@@ -1367,6 +1367,9 @@ export class RowRenderer extends BeanStub {
                 });
             }
         } else {
+            // if the case it's a popup editor, the focus is on the editor and not the previous cell.
+            // in order for the tab navigation to work, we need to focus the browser back onto the
+            // previous cell.
             previousRenderedCell.focusCell(true);
             if (this.focusController.focusNextGridCoreContainer(false)) {
                 keyboardEvent.preventDefault();
