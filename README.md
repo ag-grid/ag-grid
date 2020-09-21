@@ -26,20 +26,20 @@ Besides the standard set of features you'd expect from any grid:
 
 Here are some of the features that make ag-Grid stand out:
 
-* Grouping / Aggregation *
+* Grouping / Aggregation <b>*</b>
 * Custom Filtering
 * In-place Cell Editing
-* Records Lazy Loading *
-* Server-Side Records Operations *
+* Records Lazy Loading <b>*</b>
+* Server-Side Records Operations <b>*</b>
 * Live Stream Updates
-* Hierarchical Data Support & Tree View *
+* Hierarchical Data Support & Tree View <b>*</b>
 * Customizable Appearance
 * Customizable Cell Contents
-* Excel-like Pivoting *
+* Excel-like Pivoting <b>*</b>
 * State Persistence
 * Keyboard navigation
 * Data Export to CSV
-* Data Export to Excel *
+* Data Export to Excel <b>*</b>
 * Row Reordering
 * Copy / Paste 
 * Column Spanning
