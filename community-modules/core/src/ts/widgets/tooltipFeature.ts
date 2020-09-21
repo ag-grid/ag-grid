@@ -68,7 +68,7 @@ export class TooltipFeature extends BeanStub {
         this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
         this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(el, 'keydown', this.setToDoNothing.bind(this));
+        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
     }
 
     protected destroy(): void {
@@ -94,6 +94,10 @@ export class TooltipFeature extends BeanStub {
     }
 
     public onMouseLeave(): void {
+        this.setToDoNothing();
+    }
+
+    private onKeyDown(): void {
         this.setToDoNothing();
     }
 
