@@ -121,7 +121,7 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
     const {
         content = defaults.content || '',
-        title = defaults.title || '',
+        title = defaults.title || undefined,
         titleColor = defaults.titleColor || 'white',
         titleBackgroundColor = defaults.titleBackgroundColor || '#888'
     } = input;
