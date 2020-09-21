@@ -324,32 +324,34 @@ export class LineSeries extends CartesianSeries {
         }
 
         const { xName, yName, stroke: color, tooltipRenderer } = this;
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
+        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const title = this.title || yName;
+        const content = xString + ': ' + yString;
 
         if (tooltipRenderer) {
             const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
-                xValue: datum[xKey],
+                xValue,
                 xName,
                 yKey,
-                yValue: datum[yKey],
+                yValue,
                 yName,
-                title: this.title,
+                title,
                 color
             }));
-        } else {
-            const title = this.title || yName;
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
-            const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xKey];
-            const yValue = seriesDatum[yKey];
-            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
         }
+
+        return toTooltipHtml({
+            title,
+            titleBackgroundColor: color,
+            content
+        });
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
