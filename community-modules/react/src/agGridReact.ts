@@ -76,9 +76,10 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         };
 
         const gridOptions = this.props.gridOptions || {};
+        const { children } = this.props;
 
-        if (AgGridColumn.hasChildColumns(this.props)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.props);
+        if (AgGridColumn.hasChildColumns(children)) {
+            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
         }
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
@@ -189,11 +190,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
         const debugLogging = !!nextProps.debug;
         const propKey = 'columnDefs';
+        const currentColDefs = this.gridOptions.columnDefs;
 
-        if (AgGridColumn.hasChildColumns(nextProps)) {
+        if (AgGridColumn.hasChildColumns(nextProps.children)) {
             const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-            const currentColDefs = this.gridOptions.columnDefs;
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
+            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps.children);
 
             if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
                 if (debugLogging) {
@@ -202,14 +203,14 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
                 changes[propKey] =
                 {
-                    previousValue: this.gridOptions.columnDefs,
-                    currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
+                    previousValue: currentColDefs,
+                    currentValue: newColDefs
                 };
             }
-        } else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
+        } else if (currentColDefs && currentColDefs.length > 0) {
             changes[propKey] =
             {
-                previousValue: this.gridOptions.columnDefs,
+                previousValue: currentColDefs,
                 currentValue: []
             };
         }
