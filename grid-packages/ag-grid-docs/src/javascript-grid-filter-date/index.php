@@ -124,4 +124,20 @@ SNIPPET
     issues.
 </p>
 
+<h2>Example: Date Filter</h2>
+
+<p>The example below shows the date filter in action, using some of the configuration options discussed above:</p>
+
+<ul>
+    <li>The <strong>Date</strong> column is using a Date Filter.</li>
+    <li>A custom <code>comparator</code> is provided to parse the data and allow date comparisons to be made.</li>
+    <li>The native date picker is forced to be used in every browser.</li>
+    <li>
+        The minimum valid year is set to <code>2000</code>, so dates entered into the filter with a year less than
+        2000 will not be recognised.
+    </li>
+</ul>
+
+<?= grid_example('Date Picker', 'date-filter', 'generated', ['exampleHeight' => 520, 'modules' => true, 'reactFunctional' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
