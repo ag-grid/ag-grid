@@ -13,7 +13,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -180,6 +180,7 @@ export class HistogramSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -190,6 +191,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get areaPlot(): boolean {
         return this._areaPlot;
     }
@@ -200,6 +202,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get bins(): [number, number][] {
         return this._bins;
     }
@@ -210,6 +213,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get aggregation(): HistogramAggregation {
         return this._aggregation;
     }
@@ -220,6 +224,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get binCount(): number {
         return this._binCount;
     }
@@ -231,6 +236,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get xName(): string {
         return this._xName;
     }
@@ -241,6 +247,7 @@ export class HistogramSeries extends CartesianSeries {
         this.seriesItemEnabled = true;
         this.scheduleData();
     }
+
     get yKey(): string {
         return this._yKey;
     }
@@ -250,6 +257,7 @@ export class HistogramSeries extends CartesianSeries {
         this._yName = values;
         this.scheduleData();
     }
+
     get yName(): string {
         return this._yName;
     }
@@ -261,6 +269,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -272,6 +281,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get shadow(): DropShadow | undefined {
         return this._shadow;
     }

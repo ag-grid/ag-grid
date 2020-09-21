@@ -180,6 +180,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -191,6 +192,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get xName(): string {
         return this._xName;
     }
@@ -219,6 +221,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get yKeys(): string[] {
         return this._yKeys;
     }
@@ -228,6 +231,7 @@ export class BarSeries extends CartesianSeries {
         this._yNames = values;
         this.scheduleData();
     }
+
     get yNames(): string[] {
         return this._yNames;
     }
@@ -253,6 +257,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
@@ -264,6 +269,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -275,6 +281,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get shadow(): DropShadow | undefined {
         return this._shadow;
     }

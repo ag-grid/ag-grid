@@ -2,7 +2,11 @@ import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle } from "../series";
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams as LineTooltipRendererParams,
+    HighlightStyle
+} from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { PointerEvents } from "../../../scene/node";
@@ -11,7 +15,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
-import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -107,6 +111,7 @@ export class LineSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -121,6 +126,7 @@ export class LineSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get yKey(): string {
         return this._yKey;
     }

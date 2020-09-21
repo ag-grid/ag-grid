@@ -16,7 +16,7 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import {TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';

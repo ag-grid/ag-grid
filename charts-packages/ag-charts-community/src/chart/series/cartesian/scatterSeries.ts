@@ -9,7 +9,7 @@ import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
@@ -61,6 +61,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get fill(): string | undefined {
         return this._fill;
     }
@@ -72,6 +73,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get stroke(): string | undefined {
         return this._stroke;
     }
@@ -83,6 +85,7 @@ export class ScatterSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -94,6 +97,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
+
     get fillOpacity(): number {
         return this._fillOpacity;
     }
@@ -105,6 +109,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
+
     get strokeOpacity(): number {
         return this._strokeOpacity;
     }

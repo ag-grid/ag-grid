@@ -5,9 +5,9 @@ import {
     HighlightOptions,
     HistogramSeriesOptions
 } from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, HistogramSeries} from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, HistogramSeries } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
 

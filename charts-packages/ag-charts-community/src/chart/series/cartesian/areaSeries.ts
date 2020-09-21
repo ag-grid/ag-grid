@@ -13,7 +13,7 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
@@ -86,7 +86,7 @@ export class AreaSeries extends CartesianSeries {
         '#b58dae',
         '#85c0d1'
     ];
-    
+
     @reactive('dataChange') strokes: string[] = [
         '#874349',
         '#718661',
@@ -114,7 +114,7 @@ export class AreaSeries extends CartesianSeries {
         this.markerSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
     }
 
     protected _xKey: string = '';
@@ -125,6 +125,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -144,6 +145,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get yKeys(): string[] {
         return this._yKeys;
     }
@@ -164,6 +166,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
@@ -257,7 +260,7 @@ export class AreaSeries extends CartesianSeries {
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
-        this.fireEvent({type: 'dataProcessed'});
+        this.fireEvent({ type: 'dataProcessed' });
 
         return true;
     }
