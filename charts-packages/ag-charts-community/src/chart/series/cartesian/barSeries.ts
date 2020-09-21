@@ -14,7 +14,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import {Chart, TooltipRendererResult, toTooltipHtml} from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
@@ -626,6 +626,11 @@ export class BarSeries extends CartesianSeries {
         const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
@@ -637,14 +642,10 @@ export class BarSeries extends CartesianSeries {
                 yValue,
                 yName,
                 color
-            }));
+            }), defaults);
         }
 
-        return toTooltipHtml({
-            title,
-            titleBackgroundColor: color,
-            content
-        });
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

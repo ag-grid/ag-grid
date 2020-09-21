@@ -331,6 +331,11 @@ export class LineSeries extends CartesianSeries {
         const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
         const title = this.title || yName;
         const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
             const datum = nodeDatum.seriesDatum;
@@ -344,14 +349,10 @@ export class LineSeries extends CartesianSeries {
                 yName,
                 title,
                 color
-            }));
+            }), defaults);
         }
 
-        return toTooltipHtml({
-            title,
-            titleBackgroundColor: color,
-            content
-        });
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

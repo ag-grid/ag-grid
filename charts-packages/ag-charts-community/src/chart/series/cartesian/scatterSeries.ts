@@ -353,6 +353,12 @@ export class ScatterSeries extends CartesianSeries {
             content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
         }
 
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
+
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
                 datum,
@@ -368,18 +374,10 @@ export class ScatterSeries extends CartesianSeries {
                 labelName,
                 title,
                 color
-            }), {
-                title,
-                titleBackgroundColor: color,
-                content
-            });
+            }), defaults);
         }
 
-        return toTooltipHtml({
-            title,
-            titleBackgroundColor: color,
-            content
-        });
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

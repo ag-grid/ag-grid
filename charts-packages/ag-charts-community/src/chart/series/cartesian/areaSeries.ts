@@ -537,6 +537,11 @@ export class AreaSeries extends CartesianSeries {
         const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
@@ -548,18 +553,10 @@ export class AreaSeries extends CartesianSeries {
                 yValue,
                 yName,
                 color
-            }), {
-                title,
-                titleBackgroundColor: color,
-                content
-            });
+            }), defaults);
         }
 
-        return toTooltipHtml({
-            title,
-            titleBackgroundColor: color,
-            content
-        });
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

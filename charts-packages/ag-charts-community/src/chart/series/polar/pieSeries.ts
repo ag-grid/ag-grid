@@ -507,15 +507,24 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const title = this.title ? this.title.text : undefined;
         const color = fills[nodeDatum.index % fills.length];
+        const datum = nodeDatum.seriesDatum;
+        const label = labelKey ? `${datum[labelKey]}: ` : '';
+        const angleValue = datum[angleKey];
+        const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
+        const title = this.title ? this.title.text : undefined;
+        const content = label + formattedAngleValue;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
                 datum,
                 angleKey,
-                angleValue: datum[angleKey],
+                angleValue,
                 angleName,
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
@@ -524,17 +533,10 @@ export class PieSeries extends PolarSeries {
                 labelName,
                 title,
                 color,
-            }));
-        } else {
-            const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
-            const value = nodeDatum.seriesDatum[angleKey];
-            const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-            return toTooltipHtml({
-                content: label + formattedValue,
-                title,
-                titleBackgroundColor: color
-            });
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
