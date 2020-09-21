@@ -311,8 +311,8 @@ interface AgBaseSeriesOptions {
 }
 
 export interface AgTooltipRendererResult {
-    content: string;
     title?: string;
+    content?: string;
 }
 
 interface AgSeriesTooltipRendererParams {
