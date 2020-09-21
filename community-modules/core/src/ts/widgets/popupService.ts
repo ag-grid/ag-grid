@@ -387,7 +387,7 @@ export class PopupService extends BeanStub {
         const topPx = params.ePopup.style.top;
         const top = parseInt(topPx.substring(0, topPx.length - 1));
 
-        const intervalId = setInterval( ()=> {
+        const intervalId = window.setInterval( ()=> {
 
             const parentRect = eParent.getBoundingClientRect();
             const sourceRect = params.element.getBoundingClientRect();
@@ -403,7 +403,7 @@ export class PopupService extends BeanStub {
         }, 200);
 
         const res = ()=> {
-            clearInterval(intervalId);
+            window.clearInterval(intervalId);
         };
 
         return res;
