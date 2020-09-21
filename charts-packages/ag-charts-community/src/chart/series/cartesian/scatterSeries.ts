@@ -337,44 +337,49 @@ export class ScatterSeries extends CartesianSeries {
         } = this;
 
         const color = fill || 'gray';
+        const title = this.title || yName;
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
+
+        let content = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
+            + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
+
+        if (sizeKey) {
+            content += `<br><b>${sizeName}</b>: ${datum[sizeKey]}`;
+        }
+
+        if (labelKey) {
+            content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
+        }
 
         if (tooltipRenderer) {
-            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
-                xValue: datum[xKey],
-                yKey,
-                yValue: datum[yKey],
-                sizeKey,
-                labelKey,
+                xValue,
                 xName,
+                yKey,
+                yValue,
                 yName,
+                sizeKey,
                 sizeName,
+                labelKey,
                 labelName,
-                title: this.title,
+                title,
                 color
-            }));
-        } else {
-            const title = this.title || yName;
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
-            const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xKey];
-            const yValue = seriesDatum[yKey];
-            let contentHtml = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
-                + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
-
-            if (sizeKey) {
-                contentHtml += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
-            }
-
-            if (labelKey) {
-                contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
-            }
-
-            return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${contentHtml}</div>`;
+            }), {
+                title,
+                titleBackgroundColor: color,
+                content
+            });
         }
+
+        return toTooltipHtml({
+            title,
+            titleBackgroundColor: color,
+            content
+        });
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
