@@ -117,10 +117,16 @@ function convertColumnDefs(rawColumnDefs) {
                 let value = rawColumnDef[columnProperty];
                 if (typeof value === "string") {
                     if (value.startsWith('AG_LITERAL_')) {
-                        // values starting with AG_LITERAL_ are actually functions
-                        // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function here
+                        // values starting with AG_LITERAL_ are actually function references
+                        // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
                         // ...all of this is necessary so that we can parse the json string
                         columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`);
+                    } else if (value.startsWith('AG_FUNCTION')) {
+                        // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
+                        // turn into lambda functions here
+                        let func = value.replace('AG_FUNCTION_', '');
+                        func = func.replace(/^function\s*\((.*?)\)/, '($1) => ');
+                        columnProperties.push(`${columnProperty}={${func}}`);
                     } else {
                         columnProperties.push(`${columnProperty}="${value}"`);
                     }

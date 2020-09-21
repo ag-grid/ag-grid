@@ -193,6 +193,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
     const extractColDefs = (node) => {
         const copyOfColDefs = JSON.parse(JSON.stringify(node));
+
         // for each column def
         for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
             const columnDef = copyOfColDefs.elements[columnDefIndex];
@@ -201,12 +202,17 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
                 const columnDefProperty = columnDef.properties[colDefPropertyIndex];
 
-                if(columnDefProperty.key.name === 'children') {
+                if (columnDefProperty.key.name === 'children') {
                     const children = extractColDefs(columnDefProperty.value);
                     columnDefProperty.value = children;
                 } else if (columnDefProperty.value.type === 'Identifier') {
                     columnDefProperty.value.type = 'Literal';
                     columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
+                } else if (columnDefProperty.value.type === 'FunctionExpression') {
+                    const func = generate(columnDefProperty.value);
+
+                    columnDefProperty.value.type = 'Literal';
+                    columnDefProperty.value.value = `AG_FUNCTION_${func}`;
                 }
             }
         }
