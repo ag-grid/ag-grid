@@ -569,9 +569,21 @@ export class HistogramSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill, tooltipRenderer, aggregation } = this;
+        const { xName, yName, fill: color, tooltipRenderer, aggregation } = this;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
+        const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        let content = yKey ?
+            `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
+            '';
+
+        content += `<b>Frequency</b>: ${frequency}`;
+
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
@@ -582,27 +594,11 @@ export class HistogramSeries extends CartesianSeries {
                 yKey,
                 yValue: bin.aggregatedValue,
                 yName,
-                color: fill
-            }));
-        } else {
-            const titleStyle = `style="color: white; background-color: ${fill}"`;
-            const titleString = `
-                <div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>
-                    ${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}
-                </div>`;
-
-            let contentHtml = yKey ?
-                `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
-                '';
-
-            contentHtml += `<b>Frequency</b>: ${frequency}`;
-
-            return `
-                ${titleString}
-                <div class="${Chart.defaultTooltipClass}-content">
-                    ${contentHtml}
-                </div>`;
+                color
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

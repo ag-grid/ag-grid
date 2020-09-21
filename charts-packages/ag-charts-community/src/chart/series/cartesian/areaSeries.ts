@@ -527,33 +527,36 @@ export class AreaSeries extends CartesianSeries {
         }
 
         const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
+        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const title = yName;
+        const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            const datum = nodeDatum.seriesDatum;
             return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
                 xName,
-                xValue: datum[xKey],
+                xValue,
                 yKey,
-                yValue: datum[yKey],
+                yValue,
                 yName,
                 color
-            }));
-        } else {
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';
-            const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xKey];
-            const yValue = seriesDatum[yKey];
-            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {
