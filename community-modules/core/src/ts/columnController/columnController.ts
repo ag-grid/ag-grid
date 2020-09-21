@@ -186,6 +186,8 @@ export class ColumnController extends BeanStub {
 
     private colDefVersion = 0;
 
+    private flexColsCalculatedAtLestOnce = false;
+
     @PostConstruct
     public init(): void {
         this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
@@ -3372,8 +3374,6 @@ export class ColumnController extends BeanStub {
 
         return flexingColumns;
     }
-
-    private flexColsCalculatedAtLestOnce = false;
 
     // called from api
     public sizeColumnsToFit(gridWidth: any, source: ColumnEventType = "sizeColumnsToFit", silent?: boolean): void {
