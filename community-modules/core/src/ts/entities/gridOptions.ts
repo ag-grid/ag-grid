@@ -45,6 +45,7 @@ import {
     ColumnValueChangedEvent,
     ColumnValueChangeRequestEvent,
     ColumnVisibleEvent,
+    ComponentStateChangedEvent,
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
@@ -567,6 +568,8 @@ export interface GridOptions {
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
 
     onChartDestroyed?(event: ChartDestroyed): void;
+
+    onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
