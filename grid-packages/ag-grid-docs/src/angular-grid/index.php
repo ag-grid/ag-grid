@@ -416,7 +416,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
     }
 
     getSelectedRows() {
