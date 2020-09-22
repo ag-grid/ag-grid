@@ -43,10 +43,11 @@ var gridOptions = {
                     offset: [5, 5],
                     blur: 8,
                 },
-                tooltipRenderer: function(params) {
-                    var x = params.datum[params.xKey];
-                    var y = params.datum[params.yKey];
-                    return '<u style="color: ' + params.color + '">' + (params.yName || params.title) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+                tooltipRenderer: function (params) {
+                    return {
+                        content: '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
+                            '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue
+                    }
                 },
             }
         }

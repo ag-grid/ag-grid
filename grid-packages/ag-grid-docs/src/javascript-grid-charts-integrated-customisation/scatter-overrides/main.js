@@ -38,16 +38,15 @@ var gridOptions = {
                 },
                 paired: true,
                 tooltipRenderer: function(params) {
-                    var x = params.datum[params.xKey];
-                    var y = params.datum[params.yKey];
                     var label = params.datum[params.labelKey];
                     var size = params.datum[params.sizeKey];
 
-                    return '<u style="color: ' + params.color + '">' + params.title + '</u><br/><br/>' +
-                        (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
-                        '<b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/>' +
-                        '<b>' + params.yName.toUpperCase() + ':</b> ' + y +
-                        (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '');
+                    return {
+                        content: (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
+                            '<b>' + params.xName.toUpperCase() + ':</b> ' + params.xValue + '<br/>' +
+                            '<b>' + params.yName.toUpperCase() + ':</b> ' + params.yValue +
+                            (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '')
+                    };
                 },
             },
         }
