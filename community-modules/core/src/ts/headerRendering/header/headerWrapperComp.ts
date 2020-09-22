@@ -121,7 +121,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private onColumnValueChanged(): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
-        if (this.displayName!==this.calculateDisplayName()) {
+        if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
         }
     }

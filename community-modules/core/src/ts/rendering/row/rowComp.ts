@@ -76,7 +76,7 @@ export class RowComp extends Component {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
-    private fullWidthRowDestroyFuncs: (()=>void)[] = [];
+    private fullWidthRowDestroyFuncs: (() => void)[] = [];
 
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
@@ -583,7 +583,7 @@ export class RowComp extends Component {
 
     private destroyFullWidthComponents(): void {
 
-        this.fullWidthRowDestroyFuncs.forEach( f => f() );
+        this.fullWidthRowDestroyFuncs.forEach(f => f());
         this.fullWidthRowDestroyFuncs = [];
 
         if (this.fullWidthRowComponent) {
@@ -980,7 +980,7 @@ export class RowComp extends Component {
             if (clientHeight != null && clientHeight > 0) {
                 // we do the update in a timeout, to make sure we are not calling from inside the grid
                 // doing another update
-                const updateRowHeightFunc = ()=> {
+                const updateRowHeightFunc = () => {
                     this.rowNode.setRowHeight(clientHeight);
                     if (this.beans.clientSideRowModel) {
                         this.beans.clientSideRowModel.onRowHeightChanged();

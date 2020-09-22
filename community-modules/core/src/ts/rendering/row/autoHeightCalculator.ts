@@ -45,7 +45,7 @@ export class AutoHeightCalculator extends BeanStub {
         const cellComps: CellComp[] = [];
         const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
         const displayedCols = this.columnController.getAllDisplayedColumns();
-        const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col)>=0 );
+        const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col) >= 0);
 
         visibleAutoRowHeightCols.forEach(col => {
             const cellComp = new CellComp(

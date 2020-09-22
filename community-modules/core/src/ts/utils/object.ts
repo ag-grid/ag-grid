@@ -104,12 +104,14 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
         // by putting an empty value into destValue first, it means we end up copying over values from
         // the source object, rather than just copying in the source object in it's entirety.
         if (makeCopyOfSimpleObjects) {
-            const objectIsDueToBeCopied = destValue == null && sourceValue!=null;
+            const objectIsDueToBeCopied = destValue == null && sourceValue != null;
+
             if (objectIsDueToBeCopied) {
                 // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}, as opposed
                 // to a Class instance (such as ColumnAPI instance).
-                const sourceIsSimpleObject = typeof sourceValue === 'object' && sourceValue.constructor===Object;
+                const sourceIsSimpleObject = typeof sourceValue === 'object' && sourceValue.constructor === Object;
                 const dontCopy = sourceIsSimpleObject;
+
                 if (dontCopy) {
                     destValue = {};
                     dest[key] = destValue;

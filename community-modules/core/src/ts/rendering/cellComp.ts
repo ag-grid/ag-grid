@@ -2019,7 +2019,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
 
-        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, ()=>this.value, this.beans);
+        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans);
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value

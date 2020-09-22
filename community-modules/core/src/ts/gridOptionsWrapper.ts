@@ -1533,7 +1533,7 @@ export class GridOptionsWrapper {
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
         // prevent events from being fired _after_ the grid has been destroyed
-        if(this.destroyed) {
+        if (this.destroyed) {
             return;
         }
 

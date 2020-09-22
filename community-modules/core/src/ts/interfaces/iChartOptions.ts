@@ -16,7 +16,7 @@ export enum ChartType {
     Histogram = "histogram"
 }
 
-export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' |'chartDownload';
+export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload';
 
 export interface SeriesOptions {
     fill: FillOptions;

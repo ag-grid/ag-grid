@@ -44,7 +44,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) =>
-        from == null ? null : from.toString().toLowerCase();
+        from == null ? null : from.toString().toLowerCase()
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -66,7 +66,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    };
+    }
 
     @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
     @RefSelector('eValue2') private readonly eValue2: AgInputTextField;

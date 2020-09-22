@@ -1265,12 +1265,12 @@ export class ColumnController extends BeanStub {
     // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
     public sortColumnsLikeGridColumns(cols: Column[]): void {
-        if (!cols || cols.length<=1) { return; }
+        if (!cols || cols.length <= 1) { return; }
 
-        const notAllColsInGridColumns = cols.filter( c => this.gridColumns.indexOf(c) < 0).length > 0;
+        const notAllColsInGridColumns = cols.filter(c => this.gridColumns.indexOf(c) < 0).length > 0;
         if (notAllColsInGridColumns) { return; }
 
-        cols.sort( (a: Column, b: Column) => {
+        cols.sort((a: Column, b: Column) => {
             const indexA = this.gridColumns.indexOf(a);
             const indexB = this.gridColumns.indexOf(b);
             return indexA - indexB;
@@ -1815,7 +1815,7 @@ export class ColumnController extends BeanStub {
         if (missingOrEmpty(this.primaryColumns)) { return false; }
 
         if (params && params.state && !params.state.forEach) {
-            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.')
+            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
             return;
         }
 

@@ -10,10 +10,9 @@ import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { Constants } from "../constants/constants";
-import { assign, iterateObject } from '../utils/object';
+import { assign, iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean, find } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
-import {_} from "../utils";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -362,20 +361,19 @@ export class ColumnFactory extends BeanStub {
         // start with empty merged definition
         const colDefMerged: ColDef = {} as ColDef;
 
-
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
-        _.mergeDeep(colDefMerged, defaultColDef, true, true);
+        mergeDeep(colDefMerged, defaultColDef, true, true);
 
         // merge properties from column type properties
-        if (colDef.type || (defaultColDef && defaultColDef.type) ) {
+        if (colDef.type || (defaultColDef && defaultColDef.type)) {
             // if type of both colDef and defaultColDef, then colDef gets preference
             const columnType = colDef.type ? colDef.type : defaultColDef.type;
             this.assignColumnTypes(columnType, colDefMerged);
         }
 
         // merge properties from column definitions
-        _.mergeDeep(colDefMerged, colDef, true, true);
+        mergeDeep(colDefMerged, colDef, true, true);
 
         return colDefMerged;
     }
@@ -412,7 +410,7 @@ export class ColumnFactory extends BeanStub {
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                _.mergeDeep(colDefMerged, typeColDef, true, true);
+                mergeDeep(colDefMerged, typeColDef, true, true);
             } else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }

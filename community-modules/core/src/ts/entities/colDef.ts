@@ -402,10 +402,10 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface ColumnsMenuParams {
-    suppressSyncLayoutWithGrid?: boolean,
-    suppressColumnFilter?: boolean,
-    suppressColumnSelectAll?: boolean,
-    suppressColumnExpandAll?: boolean,
+    suppressSyncLayoutWithGrid?: boolean;
+    suppressColumnFilter?: boolean;
+    suppressColumnSelectAll?: boolean;
+    suppressColumnExpandAll?: boolean;
     contractColumnSelection?: boolean;
 }
 

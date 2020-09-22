@@ -51,7 +51,6 @@ import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
-import {_} from "../utils";
 import {PopupService} from "../widgets/popupService";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 
@@ -352,7 +351,7 @@ export class GridPanel extends Component {
             this.checkViewportAndScrolls();
 
             const newWidth = this.getCenterWidth();
-            if (newWidth!==this.centerWidth) {
+            if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
                 this.columnController.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
@@ -1430,7 +1429,7 @@ export class GridPanel extends Component {
         this.addManagedListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
 
         const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
-            _.debounce(this.onVerticalScroll.bind(this), 100)
+            debounce(this.onVerticalScroll.bind(this), 100)
             : this.onVerticalScroll.bind(this);
 
         this.addManagedListener(this.eBodyViewport, 'scroll', onVerticalScroll);

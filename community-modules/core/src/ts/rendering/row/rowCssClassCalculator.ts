@@ -179,7 +179,7 @@ export class RowCssClassCalculator {
         const isTreeData = this.gridOptionsWrapper.isTreeData();
         const res = isTreeData ?
             // if doing tree data, we add the expanded classes if any children, as any node can be a parent
-            rowNode.childrenAfterGroup!=null && rowNode.childrenAfterGroup.length > 0:
+            rowNode.childrenAfterGroup != null && rowNode.childrenAfterGroup.length > 0 :
             // if normal row grouping, we add expanded classes to groups only
             rowNode.group && !rowNode.footer;
         return res;
