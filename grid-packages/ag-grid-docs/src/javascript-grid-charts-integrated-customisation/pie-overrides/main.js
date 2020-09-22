@@ -61,9 +61,10 @@ var gridOptions = {
                     length: 15,
                 },
                 tooltipRenderer: function(params) {
-                    var value = params.datum[params.angleKey];
-                    var label = params.datum[params.labelKey];
-                    return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;
+                    return {
+                        content: '<b>' + params.angleName.toUpperCase() + ':</b> ' + params.angleValue + '<br>' +
+                            '<b>' + params.labelName.toUpperCase() + ':</b> ' + params.datum[params.labelKey]
+                    };
                 },
             }
         }
