@@ -213,6 +213,7 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 // used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI or ColumnApi references
 export function removeAllReferences(obj: any, objectName: string): void {
+/*
     Object.keys(obj).forEach( key => {
         const value = obj[key];
         // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
@@ -233,6 +234,7 @@ when the grid is destroyed.`);
             };
         }
     });
+*/
 }
 
 export function isNonNullObject(value: any): boolean {
