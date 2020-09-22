@@ -8,6 +8,16 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Tooltips</h1>
 
+<p>
+    There are four ways of enabling the tooltips in ag-Charts:
+    <ul>
+        <li>using default tooltips</li>
+        <li>using default tooltips with custom styling</li>
+        <li>using custom title / content (with default or custom styling)</li>
+        <li>using completely custom markup for tooltips</li>
+    </ul>
+</p>
+
 <h2>Default Tooltip</h2>
 
 <p>
@@ -207,7 +217,7 @@ SNIPPET
 
 <?= chart_example('Column Series with Tooltip Renderer', 'tooltip-renderer', 'generated'); ?>
 
-<h2>Modifying Default Tooltip Values</h2>
+<h2>Modifying Content / Title</h2>
 
 <p>
     Returning markup from a tooltip renderer gives you full control and ability to create completely custom tooltips
