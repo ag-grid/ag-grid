@@ -511,12 +511,14 @@ const series = {
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
-                xKey: 'string',
+                'xKey': 'string',
+                'xValue': 'any',
                 'xName?': 'string',
-                yKey: 'string',
+                'yKey': 'string',
+                'yValue': 'any',
                 'yName?': 'string',
             },
             returnType: 'string',
@@ -955,12 +957,14 @@ export const scatter = Object.freeze({
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
-                xKey: 'string',
+                'xKey': 'string',
+                'xValue': 'any',
                 'xName?': 'string',
-                yKey: 'string',
+                'yKey': 'string',
+                'yValue': 'any',
                 'yName?': 'string',
                 'sizeKey?': 'string',
                 'sizeName?': 'string',
@@ -1035,12 +1039,14 @@ export const pie = Object.freeze({
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
                 'angleKey': 'string',
+                'angleValue': 'any',
                 'angleName?': 'string',
                 'radiusKey?': 'string',
+                'radiusValue?': 'any',
                 'radiusName?': 'string',
                 'labelKey?': 'string',
                 'labelName?': 'string'
@@ -1188,17 +1194,19 @@ export const histogram = Object.freeze({
     tooltipRenderer: {
         type: {
             parameters: {
-                "datum": "any",
-                "title?": "string",
-                "color?": "string",
-                "xKey": "string",
-                "xName?": "string",
-                "yKey": "string",
-                "yName?": "string",
-                "sizeKey?": "string",
-                "sizeName?": "string",
-                "labelKey?": "string",
-                "labelName?": "string"
+                'datum': 'any',
+                'title?': 'string',
+                'color?': 'string',
+                'xKey': 'string',
+                'xValue': 'any',
+                'xName?': 'string',
+                'yKey': 'string',
+                'yValue': 'any',
+                'yName?': 'string',
+                'sizeKey?': 'string',
+                'sizeName?': 'string',
+                'labelKey?': 'string',
+                'labelName?': 'string'
             },
             returnType: "string"
         },
