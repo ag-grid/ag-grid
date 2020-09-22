@@ -159,41 +159,35 @@ columnApi.applyColumnState({
             sort: 'asc'
         }
     ],
-    defaultState: [
-        {
-            // important to say 'null' as undefined means 'do nothing'
-            sort: null
-        }
-    ]
+    defaultState: {
+        // important to say 'null' as undefined means 'do nothing'
+        sort: null
+    }
 });
 
 // Clear sorting on all columns, leave all other attributes untouched
 columnApi.applyColumnState({
-    defaultState: [
-        {
-            // important to say 'null' as undefined means 'do nothing'
-            sort: null
-        }
-    ]
+    defaultState: {
+        // important to say 'null' as undefined means 'do nothing'
+        sort: null
+    }
 });
 
 // Clear sorting, row group, pivot and pinned on all columns,
 // leave all other attributes untouched
 columnApi.applyColumnState({
-    defaultState: [
-        {
-            // important to say 'null' as undefined means 'do nothing'
-            sort: null,
-            rowGroup: null,
-            pivot: null,
-            pinned: null
-        }
-    ]
+    defaultState: {
+        // important to say 'null' as undefined means 'do nothing'
+        sort: null,
+        rowGroup: null,
+        pivot: null,
+        pinned: null
+    }
 });
 
 // Order columns, but do nothing else
 columnApi.applyColumnState({
-    defaultState: [
+    state: [
         { colId: 'athlete' },
         { colId: 'country' },
         { colId: 'age' },
