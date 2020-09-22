@@ -14,7 +14,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
-        const { parentElement } = this.chartProxyParams;
+        const { grouping, parentElement } = this.chartProxyParams;
 
         options = options || this.chartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
@@ -23,7 +23,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
 
         agChartOptions.axes = [{
-            type: xAxisType,
+            type: grouping ? 'groupedCategory' : xAxisType,
             position: 'bottom',
             ...this.getXAxisDefaults(xAxisType, options)
         }, {
