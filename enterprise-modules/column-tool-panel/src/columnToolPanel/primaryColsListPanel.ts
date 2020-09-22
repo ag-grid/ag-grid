@@ -240,7 +240,9 @@ export class PrimaryColsListPanel extends Component {
         this.virtualList.setModel(new ColumnModel(this.displayedColsList));
         const focusedRow = this.virtualList.getLastFocusedRow();
         this.virtualList.refresh();
-        this.focusRowIfAlive(focusedRow);
+        if (focusedRow) {
+            this.focusRowIfAlive(focusedRow);
+        }
 
         this.notifyListeners();
     }
