@@ -8,9 +8,8 @@
 
 <p> The params for the callback are as follows:</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 interface PostProcessPopupParams {
-
     // the popup we are showing
     ePopup: HTMLElement;
 
@@ -25,7 +24,10 @@ interface PostProcessPopupParams {
     // if the popup is as a result of a button click (eg menu button),
     // this is the component that the user clicked
     eventSource?: HTMLElement;
+
     // if the popup is as a result of a click or touch, this is the event
     // eg user showing context menu
-    mouseEvent?: MouseEvent|Touch;
-}</snippet>
+    mouseEvent?: MouseEvent | Touch;
+}
+SNIPPET
+, 'ts') ?>
