@@ -2,6 +2,7 @@ import { CellClassParams, ColDef } from "../entities/colDef";
 import { Autowired, Bean } from "../context/context";
 import { ExpressionService } from "../valueService/expressionService";
 import { BeanStub } from "../context/beanStub";
+import { isNonNullObject } from "../utils/object";
 
 @Bean('stylingService')
 export class StylingService extends BeanStub {
@@ -14,7 +15,7 @@ export class StylingService extends BeanStub {
     }
 
     public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
-        if (typeof classRules === 'object' && classRules !== null) {
+        if (isNonNullObject(classRules)) {
             const classNames = Object.keys(classRules);
             for (let i = 0; i < classNames.length; i++) {
                 const className = classNames[i];

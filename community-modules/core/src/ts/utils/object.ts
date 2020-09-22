@@ -117,9 +117,7 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
             }
         }
 
-        const destIsObject = destValue!=null && typeof destValue === 'object';
-        const sourceIsObject = sourceValue!=null && typeof sourceValue === 'object';
-        if (destIsObject && sourceIsObject && !Array.isArray(destValue)) {
+        if (isNonNullObject(sourceValue) && isNonNullObject(destValue) && !Array.isArray(destValue)) {
             mergeDeep(destValue, sourceValue, copyUndefined, makeCopyOfSimpleObjects);
         } else if (copyUndefined || sourceValue !== undefined) {
             dest[key] = sourceValue;
@@ -180,7 +178,7 @@ export function deepFreeze(object: any): any {
     Object.freeze(object);
 
     forEach(values(object), v => {
-        if (v != null && (typeof v === 'object' || typeof v === 'function')) {
+        if (isNonNullObject(v) || typeof v === 'function') {
             deepFreeze(v);
         }
     });
@@ -208,4 +206,8 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     }
 
     return currentObject;
+}
+
+export function isNonNullObject(value: any): boolean {
+    return typeof value === 'object' && value !== null;
 }
