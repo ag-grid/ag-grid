@@ -65,9 +65,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        const testDatum = params.data[0];
-        const testValue = testDatum && testDatum[params.category.id];
-        const axisType = isDate(testValue) ? 'time' : 'category';
+        const axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
 
         if (this.chartType === ChartType.Area) {

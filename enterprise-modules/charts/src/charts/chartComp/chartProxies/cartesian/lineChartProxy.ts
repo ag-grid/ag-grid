@@ -35,16 +35,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         return AgChart.create(agChartOptions, parentElement);
     }
 
-    private isTimeAxis(params: UpdateChartParams): boolean {
-        if (params.category && params.category.chartDataType) {
-            return params.category.chartDataType === 'time';
-        }
-
-        const testDatum = params.data[0];
-        const testValue = testDatum && testDatum[params.category.id];
-        return isDate(testValue);
-    }
-
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
