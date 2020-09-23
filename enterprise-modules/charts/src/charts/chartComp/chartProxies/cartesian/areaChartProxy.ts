@@ -10,7 +10,6 @@ import {
 import {AgChart, AreaSeries, CartesianChart, ChartTheme} from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from "../../typeChecker";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
@@ -65,9 +64,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        const testDatum = params.data[0];
-        const testValue = testDatum && testDatum[params.category.id];
-        const axisType = isDate(testValue) ? 'time' : 'category';
+        const axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
 
         if (this.chartType === ChartType.Area) {

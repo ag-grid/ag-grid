@@ -111,6 +111,7 @@ colDef.cellEditorParams = {
     <li>Uses DOM row visualisation so very large lists can be displayed.</li>
     <li>Integrates with the grid perfectly, avoiding glitches seen with the standard select.</li>
     <li>Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.</li>
+    <li>FuzzySearch of values: You can type within the RichSelectCellEditor to select a specific record.</li>
 </ul>
 </p>
 
@@ -132,6 +133,9 @@ colDef.cellEditorParams = {
             HTML values, or when processing complex data.
             See <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>
             for creating custom cell renderers.
+        </li>
+        <li>
+            <code>searchDebounceDelay (Default: 300)</code>: The value in <code>ms</code> for the fuzzy search debounce delay.
         </li>
     </ul>
 </p>

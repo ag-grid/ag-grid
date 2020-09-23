@@ -70,6 +70,7 @@ export interface UpdateChartParams {
     category: {
         id: string;
         name: string;
+        chartDataType?: string
     };
     fields: FieldDefinition[];
 }

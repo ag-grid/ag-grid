@@ -9,7 +9,7 @@ import {
     ChartModel,
     ChartOptions,
     ChartType,
-    ColumnApi,
+    ColumnApi, ColumnController,
     Component,
     Environment,
     Events,
@@ -68,6 +68,8 @@ export class GridChartComp extends Component {
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('popupService') private readonly popupService: PopupService;
@@ -344,17 +346,24 @@ export class GridChartComp extends Component {
         }
 
         const selectedDimension = model.getSelectedDimension();
+
         const chartUpdateParams: UpdateChartParams = {
             data,
             grouping: model.isGrouping(),
             category: {
                 id: selectedDimension.colId,
-                name: selectedDimension.displayName
+                name: selectedDimension.displayName,
+                chartDataType: this.getChartDataType(selectedDimension.colId)
             },
             fields
         };
 
         chartProxy.update(chartUpdateParams);
+    }
+
+    private getChartDataType(colId: string): string | undefined {
+        const column = this.columnController.getPrimaryColumn(colId);
+        return column ? column.getColDef().chartDataType : undefined;
     }
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {

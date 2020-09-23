@@ -1,4 +1,4 @@
-import {ChartProxy, ChartProxyParams} from "../chartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
 import {
     CartesianChart,
@@ -13,6 +13,7 @@ import {
     TimeAxis
 } from "ag-charts-community";
 import {ChartDataModel} from "../../chartDataModel";
+import {isDate} from "../../typeChecker";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
@@ -188,6 +189,16 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         }
 
         this.recreateChart(options);
+    }
+
+    protected isTimeAxis(params: UpdateChartParams): boolean {
+        if (params.category && params.category.chartDataType) {
+            return params.category.chartDataType === 'time';
+        }
+
+        const testDatum = params.data[0];
+        const testValue = testDatum && testDatum[params.category.id];
+        return isDate(testValue);
     }
 
     protected getXAxisDefaults(xAxisType: AxisType, options: CartesianChartOptions<T>) {

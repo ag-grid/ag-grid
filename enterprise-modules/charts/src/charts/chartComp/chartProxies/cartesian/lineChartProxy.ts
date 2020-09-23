@@ -2,7 +2,6 @@ import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeries
 import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
@@ -43,9 +42,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return;
         }
 
-        const testDatum = params.data[0];
-        const testValue = testDatum && testDatum[params.category.id];
-        const axisType = isDate(testValue) ? 'time' : 'category';
+        const axisType = this.isTimeAxis(params) ? 'time' : 'category';
         this.updateAxes(axisType);
 
         const { chart } = this;
