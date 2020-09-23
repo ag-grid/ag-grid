@@ -199,6 +199,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
             const columnDef = copyOfColDefs.elements[columnDefIndex];
 
+            if (columnDef.type !== 'ObjectExpression') {
+                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
+                return null;
+            }
+
             // for each col def property
             for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
                 const columnDefProperty = columnDef.properties[colDefPropertyIndex];
@@ -230,7 +235,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     };
 
     const extractAndParseColDefs = (node) => {
-        return generate(extractColDefs(node), indentOne);
+        const colDefs = extractColDefs(node);
+        return colDefs ? generate(colDefs, indentOne) : '';
     };
 
     PROPERTIES.forEach(propertyName => {
@@ -250,6 +256,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
+                    throw e;
                 }
             }
         });
