@@ -206,19 +206,27 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 if (columnDefProperty.key.name === 'children') {
                     const children = extractColDefs(columnDefProperty.value);
                     columnDefProperty.value = children;
-                } else if (columnDefProperty.value.type === 'Identifier') {
-                    columnDefProperty.value.type = 'Literal';
-                    columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
-                } else if (columnDefProperty.value.type === 'FunctionExpression') {
-                    const func = generate(columnDefProperty.value);
-
-                    columnDefProperty.value.type = 'Literal';
-                    columnDefProperty.value.value = `AG_FUNCTION_${func}`;
+                } else {
+                    convertFunctionsIntoStrings(columnDefProperty);
                 }
             }
         }
 
         return copyOfColDefs;
+    };
+
+    const convertFunctionsIntoStrings = property => {
+        if (property.value.type === 'Identifier') {
+            property.value.type = 'Literal';
+            property.value.value = `AG_LITERAL_${property.value.name}`;
+        } else if (property.value.type === 'FunctionExpression') {
+            const func = generate(property.value);
+
+            property.value.type = 'Literal';
+            property.value.value = `AG_FUNCTION_${func}`;
+        } else if (property.value.type === 'ObjectExpression') {
+            property.value.properties.forEach(p => convertFunctionsIntoStrings(p));
+        }
     };
 
     const extractAndParseColDefs = (node) => {
