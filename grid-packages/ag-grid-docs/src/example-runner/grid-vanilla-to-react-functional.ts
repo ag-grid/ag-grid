@@ -15,9 +15,11 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 
     if (modules) {
         let exampleModules = modules;
+
         if (modules === true) {
             exampleModules = ['clientside'];
         }
+
         const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
@@ -131,7 +133,7 @@ function convertColumnDefs(rawColumnDefs): string[] {
                         func = func.replace(/^function\s*\((.*?)\)/, '($1) => ');
                         columnProperties.push(`${columnProperty}={${func}}`);
                     } else {
-                        columnProperties.push(`${columnProperty}="${value}"`);
+                        columnProperties.push(`${columnProperty}="${value.replace(/(?<!\\)"/g, '\'')}"`);
                     }
                 } else if (typeof value === 'object') {
                     columnProperties.push(`${columnProperty}={${JSON.stringify(value)}}`);
@@ -169,6 +171,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
+        const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
+
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (componentFilenames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
@@ -184,13 +188,12 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                 // tabToNextCell needs to be bound to the react component
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`${property.name}=${property.value}`);
-                } else if (property.name !== 'columnDefs') {
+                } else if (property.name !== 'columnDefs' || columnDefs.length === 0) {
                     componentAttributes.push(`${property.name}={${property.value}}`);
                 }
             }
         });
 
-        const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
         const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
 
         componentAttributes.push('onGridReady={onGridReady}');

@@ -233,7 +233,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                        node.declarations[0].init.type === 'ArrayExpression') {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
 
@@ -248,7 +249,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => {
-                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                    node.value.type === 'ArrayExpression') {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }
 
