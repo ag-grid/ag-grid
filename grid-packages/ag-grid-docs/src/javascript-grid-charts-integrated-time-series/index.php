@@ -6,13 +6,12 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Time Series</h1>
+<h1 class="heading-enterprise">Time Series</h1>
 
-    <p class="lead">
-        This section covers how to chart time series data using integrated charts.
-    </p>
+<p class="lead">
+    This section covers how to chart time series data using integrated charts.
+</p>
 
-    <?= grid_example('Simple Time Series', 'simple-time-series', 'generated', ['exampleHeight' => 710, 'enterprise' => true]) ?>
-
+<?= grid_example('Simple Time Series', 'simple-time-series', 'generated', ['exampleHeight' => 710, 'enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

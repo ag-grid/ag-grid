@@ -6,7 +6,7 @@ var gridOptions = {
         { headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""' },
         { field: 'sport', minWidth: 120, rowGroup: true },
         { field: 'silver' },
-        { field: 'bronze ' },
+        { field: 'bronze' },
         { field: 'total' }
     ],
 
