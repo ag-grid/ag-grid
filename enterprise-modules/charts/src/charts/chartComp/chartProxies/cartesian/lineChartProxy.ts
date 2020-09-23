@@ -2,7 +2,6 @@ import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeries
 import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 

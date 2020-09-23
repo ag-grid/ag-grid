@@ -10,7 +10,6 @@ import {
 import {AgChart, AreaSeries, CartesianChart, ChartTheme} from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from "../../typeChecker";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
