@@ -275,6 +275,9 @@ export class ChartDataModel extends BeanStub {
                     case 'category':
                         dimensionCols.add(col);
                         return;
+                    case 'time':
+                        dimensionCols.add(col);
+                        return;
                     case 'series':
                         valueCols.add(col);
                         return;

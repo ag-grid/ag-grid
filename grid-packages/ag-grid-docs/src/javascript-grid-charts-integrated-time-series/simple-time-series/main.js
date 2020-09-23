@@ -9,19 +9,19 @@ var data = [
     { date: new Date(2019, 0, 22), sport: 'Badminton', gold: 122, silver: 178 },
 ];
 
-var gridOptions = {
-    columnDefs: [
-        { field: 'date',
-            valueFormatter: function(params) {
-                if (params.value) {
-                    return params.value.toISOString().substring(0, 10);
-                }
-            }
+var columnDefs = [
+    { field: 'date',
+        valueFormatter: function(params) {
+            return params.value ?
+                params.value.toISOString().substring(0, 10) : params.value;
         },
-        { field: 'sport', chartDataType: 'category' },
-        { field: 'gold', chartDataType: 'series' },
-        { field: 'silver', chartDataType: 'series' }
-    ],
+        chartDataType: 'time'
+    },
+    { field: 'gold', chartDataType: 'series' }
+];
+
+var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
         resizable: true,
@@ -54,7 +54,12 @@ var gridOptions = {
                 },
                 category: {
                     label: {
-                        rotation: 90,
+                        rotation: 0,
+                        formatter: function(params) {
+                            console.log(params.value.toString());
+                            var v = params.value.toString();
+                            return v.substring(8,10) + ' ' + v.substring(4,8);
+                        }
                     },
                 },
             },
@@ -63,27 +68,33 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered,
 };
 
-function onFirstDataRendered() {
-    createChart('date');
-}
-
 var currentChartRef;
-function createChart(categoryOrTimeColumn) {
+
+function onFirstDataRendered() {
     if (currentChartRef) {
         currentChartRef.destroyChart();
     }
 
     var createRangeChartParams = {
         chartContainer: document.querySelector('#myChart'),
+        suppressChartRanges: true,
         cellRange: {
-            rowStartIndex: 0,
-            rowEndIndex: data.length - 1,
-            columns: [categoryOrTimeColumn, 'gold', 'silver'],
+            columns: ['date', 'gold']
         },
         chartType: 'line',
     };
     currentChartRef = gridOptions.api.createRangeChart(createRangeChartParams);
 }
+
+function switchChartDataType(switchChartDataType) {
+    columnDefs.forEach(function(c) {
+        if (c.field === 'date') {
+            c.chartDataType = switchChartDataType;
+        }
+    });
+    gridOptions.api.setColumnDefs(columnDefs);
+}
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
