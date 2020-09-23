@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Add & Remove Columns', 'add-remove-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Add & Remove Columns', 'add-remove-columns', 'mixed', ['modules' => true]) ?>
 
 <p>
     In the example above, note that any state applied to any column (eg sort, filter, width, column position) will
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Updating Column Definition', 'update-column-definition', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Updating Column Definition', 'update-column-definition', 'mixed', ['modules' => true]) ?>
 
 <h2 id="changing-column-state">Changing Column State</h2>
 
@@ -176,7 +176,7 @@ SNIPPET
         Removing the columns first and then setting them again will use the initial values again.
     </li>
 </ul>
-<?= grid_example('Updating Column Initials', 'changing-default', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Updating Column Initials', 'changing-default', 'mixed', ['modules' => true]) ?>
 
 <br/>
 <p>
@@ -199,7 +199,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Updating Column State', 'changing-state', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Updating Column State', 'changing-state', 'mixed', ['modules' => true]) ?>
 
 <h2>Null vs Undefined</h2>
 
@@ -243,7 +243,7 @@ SNIPPET
     in a different order.
 </p>
 
-<?= grid_example('Column Definition Order', 'col-def-order', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Definition Order', 'col-def-order', 'mixed', ['modules' => true]) ?>
 
 <h2 id="matching-columns">Matching Columns</h2>
 
@@ -300,7 +300,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Matching Columns', 'matching-columns', 'mixed', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Matching Columns', 'matching-columns', 'mixed', ['modules' => true]) ?>
 
 <h2>Column Events</h2>
 
@@ -316,7 +316,7 @@ SNIPPET
     a new tab and observe the dev console.
 </p>
 
-<?= grid_example('Column Events', 'column-events', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Events', 'column-events', 'mixed', ['enterprise' => true]) ?>
 
 <p>
     To suppress events raised when invoking <code>applyColumnState()</code>
@@ -366,7 +366,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Refresh Headers', 'refresh-headers', 'mixed', ['reactFunctional' => true]) ?>
+<?= grid_example('Refresh Headers', 'refresh-headers', 'mixed') ?>
 
 <h2>Column Definition Retrieval</h2>
 

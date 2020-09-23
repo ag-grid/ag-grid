@@ -56,7 +56,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 602, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Filter', 'multi-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 602, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel']]) ?>
 
 <h2>Floating Filters</h2>
 
@@ -71,7 +71,7 @@ SNIPPET
     apply different child filters from the Multi Filter.
 </p>
 
-<?= grid_example('Floating Filters', 'floating-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 635, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Floating Filters', 'floating-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 635, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard']]) ?>
 
 <h2>Display Style</h2>
 
@@ -132,7 +132,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 629, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Display Style', 'display-style', 'generated', ['enterprise' => true, 'exampleHeight' => 629, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard', 'filterpanel']]) ?>
 
 <h2>Custom Filters</h2>
 
@@ -145,7 +145,7 @@ SNIPPET
     <a href="../javascript-grid-filter-number/">Number Filter</a>.
 </p>
 
-<?= grid_example('Custom Filters', 'custom-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 635, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Filters', 'custom-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 635]) ?>
 
 <h2>Multi Filter Model</h2>
 
@@ -189,7 +189,7 @@ SNIPPET
     console and save/restore it using the buttons at the top of the grid
 </p>
 
-<?= grid_example('Multi Filter Model', 'multi-filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 639, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Filter Model', 'multi-filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 639, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard']]) ?>
 
 <h2>Accessing Child Filters</h2>
 
@@ -217,7 +217,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Accessing Child Filters', 'accessing-child-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 624, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Accessing Child Filters', 'accessing-child-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 624, 'modules' => ['clientside', 'multifilter', 'setfilter', 'menu', 'clipboard']]) ?>
 
 <h2>Multi Filter Parameters</h2>
 

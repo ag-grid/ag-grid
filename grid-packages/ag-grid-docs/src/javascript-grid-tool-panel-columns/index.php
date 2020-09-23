@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Tool Panel Simple', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Tool Panel Simple', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel']]) ?>
 
 <note>
     Remember to mark the column definitions with <code>enableRowGroup</code> for grouping, <code>enablePivot</code>
@@ -200,7 +200,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Section Visibility', 'section-visibility', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Section Visibility', 'section-visibility', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'menu', 'columnpanel']]) ?>
 
 <h2>Styling Columns</h2>
 
@@ -253,7 +253,7 @@ SNIPPET
     name dependent on where it appears using the <code>location</code> parameter.</li>
 </ul>
 
-<?= grid_example('Tool Panel Styling', 'styling', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Tool Panel Styling', 'styling', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'menu', 'setfilter', 'columnpanel']]) ?>
 
 <h2>Read Only Functions</h2>
 
@@ -263,7 +263,7 @@ SNIPPET
     so they can see which columns are used, but prevent them from making changes to the selection.
 </p>
 
-<?= grid_example('Read Only Example', 'read-only', 'generated', ['enterprise' => true, 'exampleHeight' => 670, 'modules' => ['clientside', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Read Only Example', 'read-only', 'generated', ['enterprise' => true, 'exampleHeight' => 670, 'modules' => ['clientside', 'menu', 'columnpanel']]) ?>
 
 <h2>Expand / Collapse Column Groups</h2>
 
@@ -323,7 +323,7 @@ SNIPPET
         using <code>collapseColumnGroups(['competitionGroupId'])</code>.</li>
 </ul>
 
-<?= grid_example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', ['enterprise' => true, 'exampleHeight' => 640, 'modules' => ['clientside', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', ['enterprise' => true, 'exampleHeight' => 640, 'modules' => ['clientside', 'menu', 'setfilter', 'columnpanel']]) ?>
 
 <h2>Custom Column Layout</h2>
 
@@ -407,7 +407,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Column Layout', 'custom-layout', 'generated', ['enterprise' => true, 'exampleHeight' => 640, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Column Layout', 'custom-layout', 'generated', ['enterprise' => true, 'exampleHeight' => 640]) ?>
 
 <h2>Next Up</h2>
 

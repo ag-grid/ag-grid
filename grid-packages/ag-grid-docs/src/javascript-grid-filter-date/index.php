@@ -138,6 +138,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Date Picker', 'date-filter', 'generated', ['exampleHeight' => 520, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Date Picker', 'date-filter', 'generated', ['exampleHeight' => 520, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -38,11 +38,11 @@
 <h3>Example: Cell Editing using React Components</h3>
 <p> Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  </p>
 
-<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'react', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>
+<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'react', 'extras' => ['bootstrap']]) ?>
 
 <h3>React Hook Cell Editors</h3>
 
 <p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
             href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
 
-<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'reactFunctional', 'extras' => ['bootstrap'], 'reactFunctional'=>true]) ?>
+<?= grid_example('React Editor Components', 'component-editor', 'mixed', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'reactFunctional', 'extras' => ['bootstrap']]) ?>

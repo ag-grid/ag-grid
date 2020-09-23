@@ -104,7 +104,7 @@ colDef = {
         </li>
     </ul>
 
-<?= grid_example('Group Renderers', 'group-renderer', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Group Renderers', 'group-renderer', 'generated', ['enterprise' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

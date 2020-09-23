@@ -44,7 +44,7 @@ SNIPPET
 var gridOptions = {
     columnDefs: [
         // put the three columns into a group
-        { 
+        {
             headerName: 'Group A',
             children: [
                 { headerName: 'Athlete', field: 'athlete' },
@@ -170,7 +170,7 @@ SNIPPET
     The following example demonstrates the different configuration properties in action.
 </p>
 
-<?= grid_example('Column Definition Example', 'column-definition', 'generated', ['grid' => ['height' => '100%'], 'reactFunctional' => true]) ?>
+<?= grid_example('Column Definition Example', 'column-definition', 'generated', ['grid' => ['height' => '100%']]) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -234,8 +234,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Column IDs', 'column-ids', 'generated', ['reactFunctional' => true]) ?>
-
-
+<?= grid_example('Column IDs', 'column-ids', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

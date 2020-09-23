@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         described above.
     </p>
 
-    <?= grid_example('Range Selection', 'range-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Range Selection', 'range-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range']]) ?>
 
     <h2>Suppress Multi Range Selection</h2>
 
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
         The following example demonstrates single range selection:
     </p>
 
-    <?= grid_example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'range']]) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -223,7 +223,7 @@ interface AddCellRangeParams {
         copying from the clipboard.
     </p>
 
-    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules'=>['clientside', 'range'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules'=>['clientside', 'range']]) ?>
 
 
 </div>

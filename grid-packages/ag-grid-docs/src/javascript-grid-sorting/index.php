@@ -106,7 +106,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true]) ?>
 
 <h3>Example: Custom Sorting Groups</h3>
 
@@ -123,7 +123,7 @@ autoGroupColumnDef = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Custom Sorting Groups', 'custom-sorting-groups', 'generated', ['enterprise'=>true, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Sorting Groups', 'custom-sorting-groups', 'generated', ['enterprise'=>true, 'modules' => true]) ?>
 
 <h2 id="multi-column-sorting">Multi Column Sorting</h2>
 
@@ -145,7 +145,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true]) ?>
 
 <h2>Sorting Animation</h2>
 
@@ -185,7 +185,7 @@ SNIPPET
     <li><b>Column Year:</b> ascending only</li>
 </ul>
 
-<?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', ['modules' => true]) ?>
 
 <h2>Sorting API</h2>
 
@@ -195,7 +195,7 @@ SNIPPET
     the Column State API to control column sorting.
 </p>
 
-<?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true]) ?>
 
 <h2>Accented Sort</h2>
 
@@ -213,7 +213,7 @@ SNIPPET
     The following example is configured to use this feature.
 </p>
 
-<?= grid_example('Accented Sort', 'accented-sort', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Accented Sort', 'accented-sort', 'generated', ['modules' => true]) ?>
 
 <h2 id="post-sort">Post-Sort</h2>
 
@@ -251,6 +251,6 @@ SNIPPET
     The following example uses this configuration to perform a post-sort on the rows.
 </p>
 
-<?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

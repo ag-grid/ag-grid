@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
     This allows the grid to execute all the transactions in one batch which is more efficient.
 </p>
 
-<?= grid_example('Async Transaction', 'async-transaction', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Async Transaction', 'async-transaction', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
 <p>
     To help understand the interface for <code>applyTransaction()</code> and <code>applyTransactionAsync()</code>,

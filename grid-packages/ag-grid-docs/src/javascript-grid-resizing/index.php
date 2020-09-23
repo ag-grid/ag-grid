@@ -218,7 +218,7 @@ SNIPPET
         by its <code>minWidth</code>/<code>maxWidth</code> rules, in which case it should take up the remaining available space.</li>
 </ul>
 
-<?= grid_example('Column Flex', 'flex-columns', 'generated', ['reactFunctional' => true]) ?>
+<?= grid_example('Column Flex', 'flex-columns', 'generated') ?>
 
 <h2 id="shift-resizing">Shift Resizing</h2>
 

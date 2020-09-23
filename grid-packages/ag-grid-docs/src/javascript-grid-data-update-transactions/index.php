@@ -165,7 +165,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Updating with Transaction', 'updating-with-transaction', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Updating with Transaction', 'updating-with-transaction', 'generated', ['modules' => true]) ?>
 
 <h2 id="example-updating-with-transaction-and-groups">Example: Updating with Transaction and Groups</h2>
 
@@ -185,7 +185,7 @@ SNIPPET
     <li><b>Get Row Data:</b> Prints all row data to the console.</li>
 </ul>
 
-<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
 <h2 id="suppressAggAtRootLevel">Suppressing Top Level Aggregations</h2>
 
@@ -256,7 +256,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
 <note>
     Note that <a href="../javascript-grid-selection/#header-checkbox-selection">Header Checkbox Selection</a>

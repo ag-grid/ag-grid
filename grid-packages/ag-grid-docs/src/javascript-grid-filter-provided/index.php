@@ -117,7 +117,7 @@ include '../documentation-main/documentation_header.php';
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Applying the UI Model</h2>
 

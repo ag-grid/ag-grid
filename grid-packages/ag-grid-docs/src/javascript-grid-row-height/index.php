@@ -63,7 +63,7 @@ SNIPPET
     It uses the <code>getRowHeight()</code> callback to achieve this.
 </p>
 
-<?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true]) ?>
 
 <h2>Text Wrapping</h2>
 
@@ -77,7 +77,7 @@ SNIPPET
     being applied to the cell, which causes the text to wrap.
 </p>
 
-<?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true]) ?>
 
 <note>
     If you are providing a custom <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>,
@@ -135,7 +135,7 @@ SNIPPET
 </ul>
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['enterprise' => true, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['enterprise' => true, 'modules' => true]) ?>
 
 <h3>Lazy Height Calculation</h3>
 
@@ -240,7 +240,7 @@ SNIPPET
 height is an ag-Grid free feature, we just demonstrate it against groups and normal
 rows below.</p>
 
-<?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
 <h2>Height for Pinned Rows</h2>
 
