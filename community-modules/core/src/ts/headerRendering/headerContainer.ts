@@ -23,7 +23,6 @@ export class HeaderContainer extends BeanStub {
     private eViewport: HTMLElement;
 
     private pinned: string;
-    private scrollWidth: number;
 
     private filtersRowComp: HeaderRowComp;
     private columnsRowComp: HeaderRowComp;
@@ -50,29 +49,13 @@ export class HeaderContainer extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-
-        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-    }
-
-    // if row group changes, that means we may need to add aggFuncs to the column headers,
-    // if the grid goes from no aggregation (ie no grouping) to grouping
-    private onColumnRowGroupChanged(): void {
-        this.refresh();
-    }
-
-    // if the agg func of a column changes, then we may need to update the agg func in columns header
-    private onColumnValueChanged(): void {
-        this.refresh();
     }
 
     private onColumnResized(): void {
@@ -92,6 +75,7 @@ export class HeaderContainer extends BeanStub {
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
         const controller = this.columnController;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (pinningLeft || pinningRight) {
             // size to fit all columns
@@ -103,7 +87,7 @@ export class HeaderContainer extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
 
             if (addPaddingForScrollbar) {
-                width += this.scrollWidth;
+                width += scrollbarWidth;
             }
 
             setFixedWidth(this.eContainer, width);

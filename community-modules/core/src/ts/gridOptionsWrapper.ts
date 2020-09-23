@@ -13,7 +13,6 @@ import {
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessChartParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
@@ -114,7 +113,7 @@ export class GridOptionsWrapper {
     private layoutElements: HTMLElement[] = [];
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollWidth: number;
+    private scrollbarWidth: number;
     private updateLayoutClassesListener: any;
 
     private destroyed = false;
@@ -1390,11 +1389,11 @@ export class GridOptionsWrapper {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        if (this.scrollWidth == null) {
+        if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            this.scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
         }
-        return this.scrollWidth;
+        return this.scrollbarWidth;
     }
 
     private checkForDeprecated() {

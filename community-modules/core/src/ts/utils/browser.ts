@@ -127,7 +127,7 @@ export function getMaxDivHeight(): number {
     return res;
 }
 
-export function getScrollbarWidth() {
+export function getScrollbarWidth(): number | null {
     const body = document.body;
     const div = document.createElement('div');
 
@@ -140,6 +140,9 @@ export function getScrollbarWidth() {
     body.appendChild(div);
 
     const width = div.offsetWidth - div.clientWidth;
+
+    // if width is 0 and client width is 0, means the DOM isn't ready
+    if (width === 0 && div.clientWidth === 0) { return null; }
 
     // remove divs
     if (div.parentNode) {
