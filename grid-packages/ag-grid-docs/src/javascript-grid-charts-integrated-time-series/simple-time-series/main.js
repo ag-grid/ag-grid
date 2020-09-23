@@ -42,16 +42,19 @@ var gridOptions = {
             },
         },
         line: {
+            navigator: {
+                enabled: true
+            },
             axes: {
                 time: {
                     label: {
                         rotation: 0,
-                        format: '%d %b'
+                        format: '%d %b',
                     },
                 },
                 category: {
                     label: {
-                        rotation: 90
+                        rotation: 90,
                     },
                 },
             },
