@@ -52,10 +52,10 @@ export class HeaderContainer extends BeanStub {
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
     }
 
     private onColumnResized(): void {
@@ -67,6 +67,10 @@ export class HeaderContainer extends BeanStub {
     }
 
     private onScrollVisibilityChanged(): void {
+        this.setWidthOfPinnedContainer();
+    }
+
+    private onScrollbarWidthChanged(): void {
         this.setWidthOfPinnedContainer();
     }
 

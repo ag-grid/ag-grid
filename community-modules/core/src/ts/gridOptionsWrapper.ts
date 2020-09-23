@@ -1392,6 +1392,11 @@ export class GridOptionsWrapper {
         if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
             this.scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            if (this.scrollbarWidth != null) {
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                });
+            }
         }
         return this.scrollbarWidth;
     }

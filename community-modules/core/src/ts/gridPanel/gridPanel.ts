@@ -449,6 +449,7 @@ export class GridPanel extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
@@ -895,6 +896,10 @@ export class GridPanel extends Component {
 
     public isHorizontalScrollShowing(): boolean {
         return isHorizontalScrollShowing(this.eCenterViewport);
+    }
+
+    private onScrollbarWidthChanged() {
+        this.checkViewportAndScrolls();
     }
 
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
