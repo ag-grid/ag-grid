@@ -99,11 +99,13 @@ function get_common_properties($type, $dir, $title, $options)
     $generated = $type === 'generated' || $type === 'mixed';
 
     if ($generated) {
-        $types = array('vanilla', 'angular', 'react');
-        if($options['reactFunctional']) {
-            array_push($types, 'reactFunctional');
+        $types = ['vanilla', 'angular', 'react'];
+
+        if ($options['reactFunctional'] !== false) {
+            $types[]= 'reactFunctional';
         }
-        array_push($types, 'vue');
+
+        $types[]= 'vue';
     } else if ($multi) {
         $types = getTypes($dir);
     } else {

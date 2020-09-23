@@ -59,9 +59,10 @@ function generateWithReplacedGridOptions(node, options?) {
 }
 
 function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
-    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional !== false) {
         return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
     }
+
     return false;
 }
 
@@ -288,7 +289,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         {
             eventHandlers: [],
             properties: [],
-            parsedColDefs: {},
+            parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],
             utils: []

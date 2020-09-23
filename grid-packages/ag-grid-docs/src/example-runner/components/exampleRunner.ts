@@ -99,13 +99,10 @@ class ExampleRunnerController {
         this.titles = {
             vanilla: "JavaScript",
             react: "Class React",
+            reactFunctional: "Functional React",
             angular: "Angular",
             vue: "Vue"
         };
-
-        if (this.config.options.reactFunctional) {
-            this.titles['reactFunctional'] = "Functional React";
-        }
 
         this.titlesToRemove.forEach(titleToRemove => {
             delete this.titles[titleToRemove];
@@ -154,6 +151,7 @@ class ExampleRunnerController {
         if (result === 'reactfunctional') {
             return 'reactFunctional';
         }
+
         return result;
     }
 

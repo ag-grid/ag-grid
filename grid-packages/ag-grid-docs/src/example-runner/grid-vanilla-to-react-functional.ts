@@ -105,16 +105,19 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
     return convertFunctionalTemplate(template);
 }
 
-function convertColumnDefs(rawColumnDefs) {
+function convertColumnDefs(rawColumnDefs): string[] {
     const columnDefs = [];
+
     rawColumnDefs.forEach(rawColumnDef => {
         const columnProperties = [];
         let children = [];
+
         Object.keys(rawColumnDef).forEach(columnProperty => {
             if (columnProperty === 'children') {
                 children = convertColumnDefs(rawColumnDef[columnProperty]);
             } else {
                 let value = rawColumnDef[columnProperty];
+
                 if (typeof value === "string") {
                     if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
@@ -131,13 +134,9 @@ function convertColumnDefs(rawColumnDefs) {
                         columnProperties.push(`${columnProperty}="${value}"`);
                     }
                 } else if (typeof value === 'object') {
-                    columnProperties.push(
-                        `${columnProperty}={${JSON.stringify(value)}}`
-                    );
+                    columnProperties.push(`${columnProperty}={${JSON.stringify(value)}}`);
                 } else {
-                    columnProperties.push(
-                        `${columnProperty}={${value}}`
-                    );
+                    columnProperties.push(`${columnProperty}={${value}}`);
                 }
             }
         });
@@ -191,8 +190,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             }
         });
 
-        const columnDefs = convertColumnDefs(JSON5.parse(bindings.parsedColDefs));
-
+        const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
         const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
 
         componentAttributes.push('onGridReady={onGridReady}');
