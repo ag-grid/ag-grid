@@ -1,7 +1,6 @@
 export class KeyCode {
     static BACKSPACE = 8;
     static TAB = 9;
-    static NEW_LINE = 10;
     static ENTER = 13;
     static SHIFT = 16;
     static ESCAPE = 27;

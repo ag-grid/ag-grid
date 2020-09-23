@@ -6,5 +6,6 @@ type CellValue = object | string | number;
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: CellValue[];
     cellHeight: number;
-    cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    cellRenderer: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    searchDebounceDelay?: number;
 }

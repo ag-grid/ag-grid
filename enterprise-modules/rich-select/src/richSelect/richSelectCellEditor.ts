@@ -10,9 +10,9 @@ import {
     UserComponentFactory,
     GridOptionsWrapper,
     RefSelector,
-    _,
     VirtualList,
-    KeyCode
+    KeyName,
+    _
 } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
 
@@ -57,15 +57,13 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
+
         const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
         _.addCssClass(icon, 'ag-rich-select-value-icon');
         this.eValue.appendChild(icon);
 
-        this.virtualList = new VirtualList('rich-select');
-        this.getContext().createBean(this.virtualList);
-
+        this.virtualList = this.getContext().createBean(new VirtualList('rich-select'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-
         this.eList.appendChild(this.virtualList.getGui());
 
         if (_.exists(this.params.cellHeight)) {
@@ -78,6 +76,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
+
         const values = params.values;
 
         this.virtualList.setModel({
@@ -86,12 +85,15 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+
         const virtualListGui = this.virtualList.getGui();
 
         this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
 
-        this.clearSearchString = _.debounce(this.clearSearchString, 300);
+        const debounceDelay = _.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
+
+        this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
 
         if (_.exists(params.charPress)) {
             this.searchText(params.charPress as string);
@@ -99,14 +101,14 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const key = event.which || event.keyCode;
+        const key = event.key;
 
         switch (key) {
-            case KeyCode.ENTER:
+            case KeyName.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case KeyCode.DOWN:
-            case KeyCode.UP:
+            case KeyName.DOWN:
+            case KeyName.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -119,11 +121,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.params.stopEditing();
     }
 
-    private onNavigationKeyPressed(event: any, key: number): void {
+    private onNavigationKeyPressed(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
-        const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+        const newIndex = key === KeyName.UP ? oldIndex - 1 : oldIndex + 1;
 
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             const valueToSelect = this.params.values[newIndex];
@@ -133,10 +135,17 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private searchText(key: KeyboardEvent | string) {
         if (typeof key !== 'string') {
-            if (!_.isCharacterKey(key)) {
+            let keyName = key.key;
+
+            if (keyName === KeyName.BACKSPACE) {
+                this.searchString = this.searchString.slice(0, -1);
+                keyName = '';
+            } else if (!_.isEventFromPrintableCharacter(key)) {
                 return;
             }
-            key = key.key as string;
+
+            this.searchText(keyName);
+            return;
         }
 
         this.searchString += key;
@@ -148,11 +157,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const values = this.params.values;
         let searchStrings: string[] | undefined;
 
-        if (typeof values[0] === "number" || typeof values[0] === "string") {
+        if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(String);
         }
 
-        if (typeof values[0] === "object" && this.params.colDef.keyCreator) {
+        if (typeof values[0] === 'object' && this.params.colDef.keyCreator) {
             searchStrings = values.map(this.params.colDef.keyCreator);
         }
 
@@ -187,13 +196,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         } as ICellRendererParams;
 
         const promise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
-        if (promise != null) {
-            _.bindCellRendererToHtmlElement(promise, eValue);
-        } else {
-            eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-        }
 
-        if (promise) {
+        if (_.exists(promise)) {
+            _.bindCellRendererToHtmlElement(promise, eValue);
             promise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
             });
@@ -207,22 +212,21 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private setSelectedValue(value: any): void {
-        if (this.selectedValue === value) {
-            return;
-        }
+        if (this.selectedValue === value) { return; }
 
         const index = this.params.values.indexOf(value);
 
-        if (index >= 0) {
-            this.selectedValue = value;
-            this.virtualList.ensureIndexVisible(index);
-            this.virtualList.refresh();
-        }
+        if (index === -1) { return; }
+
+        this.selectedValue = value;
+        this.virtualList.ensureIndexVisible(index);
+        this.virtualList.refresh();
     }
 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
         const row = new RichSelectRow(this.params);
+
         this.getContext().createBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
 
@@ -233,7 +237,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const rect = this.virtualList.getGui().getBoundingClientRect();
         const scrollTop = this.virtualList.getScrollTop();
         const mouseY = mouseEvent.clientY - rect.top + scrollTop;
-
         const row = Math.floor(mouseY / this.virtualList.getRowHeight());
         const value = this.params.values[row];
 
@@ -251,7 +254,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     public afterGuiAttached(): void {
-
         const selectedIndex = this.params.values.indexOf(this.selectedValue);
 
         // we have to call this here to get the list to have the right height, ie
