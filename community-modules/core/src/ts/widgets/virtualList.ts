@@ -6,6 +6,7 @@ import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
+import {ResizeObserverService} from "../misc/resizeObserverService";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -22,6 +23,7 @@ export class VirtualList extends ManagedFocusComponent {
     private isDestroyed = false;
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
@@ -31,8 +33,15 @@ export class VirtualList extends ManagedFocusComponent {
     protected postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
+        this.addResizeObserver();
 
         super.postConstruct();
+    }
+
+    private addResizeObserver(): void {
+        const listener = this.drawVirtualRows.bind(this);
+        const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
+        this.addDestroyFunc(destroyObserver);
     }
 
     protected focusInnerElement(fromBottom: boolean): void {
