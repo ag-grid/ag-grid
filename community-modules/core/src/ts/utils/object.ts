@@ -215,7 +215,8 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 export function removeAllReferences(obj: any, objectName: string): void {
     Object.keys(obj).forEach( key => {
         const value = obj[key];
-        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
+        // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
+        // we don't care about
         if (typeof value === 'object') {
             obj[key] = undefined;
         }
