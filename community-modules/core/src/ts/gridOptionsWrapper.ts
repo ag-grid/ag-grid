@@ -13,7 +13,6 @@ import {
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessChartParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
@@ -39,7 +38,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import {AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "./interfaces/iAgChartOptions";
+import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -114,7 +113,7 @@ export class GridOptionsWrapper {
     private layoutElements: HTMLElement[] = [];
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollWidth: number;
+    private scrollbarWidth: number;
     private updateLayoutClassesListener: any;
 
     private destroyed = false;
@@ -211,6 +210,9 @@ export class GridOptionsWrapper {
         this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
     }
 
     private checkColumnDefProperties() {
@@ -1390,11 +1392,20 @@ export class GridOptionsWrapper {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        if (this.scrollWidth == null) {
+        if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                });
+            }
         }
-        return this.scrollWidth;
+
+        return this.scrollbarWidth;
     }
 
     private checkForDeprecated() {

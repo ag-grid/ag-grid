@@ -25,15 +25,9 @@ export class NavigationService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private scrollWidth: number;
     private gridPanel: GridPanel;
 
     private timeLastPageEventProcessed = 0;
-
-    @PostConstruct
-    private init(): void {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-    }
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
@@ -119,10 +113,11 @@ export class NavigationService extends BeanStub {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
 
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
@@ -149,10 +144,11 @@ export class NavigationService extends BeanStub {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const scrollPosition = this.gridPanel.getVScrollPosition();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
 
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();

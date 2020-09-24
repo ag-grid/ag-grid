@@ -91,7 +91,7 @@ SNIPPET
     <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a> section.
 </note>
 
-<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
 <h2>Row Models</h2>

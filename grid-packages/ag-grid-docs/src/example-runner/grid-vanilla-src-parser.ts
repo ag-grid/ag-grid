@@ -59,9 +59,10 @@ function generateWithReplacedGridOptions(node, options?) {
 }
 
 function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
-    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional) {
+    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional !== false) {
         return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
     }
+
     return false;
 }
 
@@ -198,6 +199,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
             const columnDef = copyOfColDefs.elements[columnDefIndex];
 
+            if (columnDef.type !== 'ObjectExpression') {
+                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
+                return null;
+            }
+
             // for each col def property
             for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
                 const columnDefProperty = columnDef.properties[colDefPropertyIndex];
@@ -205,14 +211,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 if (columnDefProperty.key.name === 'children') {
                     const children = extractColDefs(columnDefProperty.value);
                     columnDefProperty.value = children;
-                } else if (columnDefProperty.value.type === 'Identifier') {
-                    columnDefProperty.value.type = 'Literal';
-                    columnDefProperty.value.value = `AG_LITERAL_${columnDefProperty.value.name}`;
-                } else if (columnDefProperty.value.type === 'FunctionExpression') {
-                    const func = generate(columnDefProperty.value);
-
-                    columnDefProperty.value.type = 'Literal';
-                    columnDefProperty.value.value = `AG_FUNCTION_${func}`;
+                } else {
+                    convertFunctionsIntoStrings(columnDefProperty);
                 }
             }
         }
@@ -220,8 +220,23 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         return copyOfColDefs;
     };
 
+    const convertFunctionsIntoStrings = property => {
+        if (property.value.type === 'Identifier') {
+            property.value.type = 'Literal';
+            property.value.value = `AG_LITERAL_${property.value.name}`;
+        } else if (property.value.type === 'FunctionExpression') {
+            const func = generate(property.value);
+
+            property.value.type = 'Literal';
+            property.value.value = `AG_FUNCTION_${func}`;
+        } else if (property.value.type === 'ObjectExpression') {
+            property.value.properties.forEach(p => convertFunctionsIntoStrings(p));
+        }
+    };
+
     const extractAndParseColDefs = (node) => {
-        return generate(extractColDefs(node), indentOne);
+        const colDefs = extractColDefs(node);
+        return colDefs ? generate(colDefs, indentOne) : '';
     };
 
     PROPERTIES.forEach(propertyName => {
@@ -232,7 +247,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                        node.declarations[0].init.type === 'ArrayExpression') {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
 
@@ -240,6 +256,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
+                    throw e;
                 }
             }
         });
@@ -247,7 +264,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => {
-                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples)) {
+                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                    node.value.type === 'ArrayExpression') {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }
 
@@ -288,7 +306,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         {
             eventHandlers: [],
             properties: [],
-            parsedColDefs: {},
+            parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],
             utils: []

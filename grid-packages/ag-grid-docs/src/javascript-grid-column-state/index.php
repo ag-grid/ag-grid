@@ -63,7 +63,7 @@ SNIPPET
     <li>Click 'Reset State' and the state will go back to what was defined in the Column Definitions.</li>
 </ol>
 
-<?= grid_example('Save and Apply State', 'save-apply-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Save and Apply State', 'save-apply-state', 'generated', ['enterprise' => true]) ?>
 
 <h2>Column State Interface</h2>
 
@@ -203,7 +203,7 @@ SNIPPET
     The example below shows some fine grained access to Column State.
 </p>
 
-<?= grid_example('Fine Grained State', 'fine-grained-state', 'mixed', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Fine Grained State', 'fine-grained-state', 'mixed', ['enterprise' => true]) ?>
 
 <h3>Saving Partial State</h3>
 
@@ -223,7 +223,7 @@ SNIPPET
     re-applying the state.
 </p>
 
-<?= grid_example('Selective State', 'selective-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Selective State', 'selective-state', 'generated', ['enterprise' => true]) ?>
 
 <h2>Considerations</h2>
 
@@ -296,7 +296,7 @@ SNIPPET
     a new tab and observe the dev console.
 </p>
 
-<?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Events', 'column-events', 'generated', ['enterprise' => true]) ?>
 
 <p>
     To suppress events raised when invoking <code>applyColumnState()</code>
@@ -308,7 +308,7 @@ SNIPPET
     raised when the state is changed via the buttons.
 </p>
 
-<?= grid_example('Suppress Events', 'suppress-events', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Suppress Events', 'suppress-events', 'generated', ['enterprise' => true]) ?>
 
 <h2>Column Group State</h2>
 
@@ -335,7 +335,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Column Group State', 'column-group-state', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Group State', 'column-group-state', 'generated', ['enterprise' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

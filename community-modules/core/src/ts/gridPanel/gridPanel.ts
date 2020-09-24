@@ -195,7 +195,6 @@ export class GridPanel extends Component {
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
-    private scrollWidth: number;
 
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
@@ -250,7 +249,6 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
@@ -451,6 +449,7 @@ export class GridPanel extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
@@ -899,6 +898,10 @@ export class GridPanel extends Component {
         return isHorizontalScrollShowing(this.eCenterViewport);
     }
 
+    private onScrollbarWidthChanged() {
+        this.checkViewportAndScrolls();
+    }
+
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
     public checkViewportAndScrolls(): void {
@@ -952,11 +955,11 @@ export class GridPanel extends Component {
 
     private setHorizontalScrollVisible(visible: boolean): void {
         const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
-        const scrollSize = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollSize : 0;
+        const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollbarWidth : 0;
         const addIEPadding = isBrowserIE() && visible;
 
-        this.eCenterViewport.style.height = `calc(100% + ${scrollSize}px)`;
+        this.eCenterViewport.style.height = `calc(100% + ${scrollbarWidth}px)`;
         setFixedHeight(this.eHorizontalScrollBody, scrollContainerSize);
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
@@ -1290,12 +1293,13 @@ export class GridPanel extends Component {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnController.getPinnedRightContainerWidth();
         const scrollOnRight = !this.enableRtl && this.isVerticalScrollShowing();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (scrollOnRight) {
-            rightSpacing += this.scrollWidth;
+            rightSpacing += scrollbarWidth;
         }
         setFixedWidth(this.eHorizontalRightSpacer, rightSpacing);
-        addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= this.scrollWidth);
+        addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= scrollbarWidth);
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
@@ -1303,11 +1307,11 @@ export class GridPanel extends Component {
         const scrollOnLeft = this.enableRtl && this.isVerticalScrollShowing();
 
         if (scrollOnLeft) {
-            leftSpacing += this.scrollWidth;
+            leftSpacing += scrollbarWidth;
         }
 
         setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
-        addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= this.scrollWidth);
+        addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
     private checkBodyHeight(): void {

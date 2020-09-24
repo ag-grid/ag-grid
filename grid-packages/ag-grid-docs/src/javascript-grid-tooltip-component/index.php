@@ -87,7 +87,7 @@ SNIPPET
     <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to <code>0</code>.</li>
 </ul>
 
-<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true]) ?>
 
 <h2>Showing Blank Values</h2>
 
@@ -122,7 +122,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Blank Values', 'blank-values', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Blank Values', 'blank-values', 'generated', ['modules' => true]) ?>
 
 <h2>Header Tooltip with Custom Tooltip</h2>
 
@@ -156,7 +156,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Header Custom Tooltip', 'header-tooltip', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Header Custom Tooltip', 'header-tooltip', 'generated', ['modules' => true]) ?>
 
 <h2>Example: Tooltips With Row Groups</h2>
 
@@ -165,7 +165,7 @@ SNIPPET
     no real field assigned to it, the <code>tooltipValueGetter</code> function must be used.
 </p>
 
-<?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel']]) ?>
 
 <h2>Mouse Tracking</h2>
 
@@ -174,7 +174,7 @@ SNIPPET
     To enable this feature, set the <code>tooltipMouseTrack</code> to true in the gridOptions.
 </p>
 
-<?= grid_example('Tooltip Mouse Tracking', 'tooltip-mouse-tracking', 'generated', ['extras' => ['bootstrap'], 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Tooltip Mouse Tracking', 'tooltip-mouse-tracking', 'generated', ['extras' => ['bootstrap'], 'modules' => true]) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 
@@ -182,6 +182,6 @@ SNIPPET
     The example below demonstrates how to use the default browser tooltips.
 </p>
 
-<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'generated', ['modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

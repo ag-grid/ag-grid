@@ -63,7 +63,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Mini Filter Keyboard Shortcuts', 'mini-filter-keyboard-shortcuts', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
+<?= grid_example('Mini Filter Keyboard Shortcuts', 'mini-filter-keyboard-shortcuts', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Custom Searches</h2>
 
@@ -119,7 +119,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Mini Filter Text Formatter', 'mini-filter-text-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Mini Filter Text Formatter', 'mini-filter-text-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Text Customisation</h2>
 
@@ -137,7 +137,7 @@ SNIPPET
 
 <p>The example below shows this text being customised.</p>
 
-<?= grid_example('Text Customisation', 'text-customisation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
+<?= grid_example('Text Customisation', 'text-customisation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Hiding the Mini Filter</h2>
 
@@ -171,7 +171,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Hiding the Mini Filter', 'mini-filter-hiding', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
+<?= grid_example('Hiding the Mini Filter', 'mini-filter-hiding', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Next Up</h2>
 

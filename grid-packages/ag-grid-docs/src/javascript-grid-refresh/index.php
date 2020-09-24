@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     </p>
         <ul class="content">
             <li>
-                <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will 
+                <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will
                 be used to refresh only cells whose display cell values are out of sync with the actual value.
                 If using a <a href="../javascript-grid-cell-rendering-components/">cellRenderer</a> with a refresh
                 method, the refresh method will get called.
@@ -63,8 +63,8 @@ interface RefreshCellsParams {
 }</snippet>
 
     <p>
-        Each parameter is optional. The simplest is to call with no parameters which will 
-        refresh all cells using <a href="../javascript-grid-change-detection/">change detection</a> 
+        Each parameter is optional. The simplest is to call with no parameters which will
+        refresh all cells using <a href="../javascript-grid-change-detection/">change detection</a>
         (change detection means it will only refresh cells whose values have changed).
     </p>
 
@@ -119,7 +119,7 @@ interface RefreshCellsParams {
         </li>
     </ul>
 
-    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated', ['reactFunctional' => true]) ?>
+    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated') ?>
 
     <note>
         You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
@@ -185,7 +185,7 @@ interface RedrawRowsParams {
 
     </ul>
 
-    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', ['exampleHeight' => 615, 'reactFunctional' => true]) ?>
+    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', ['exampleHeight' => 615]) ?>
 
 
 

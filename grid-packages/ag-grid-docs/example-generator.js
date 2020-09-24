@@ -180,18 +180,19 @@ function createExampleGenerator(prefix, importTypes) {
     });
 
     return (examplePath, type, options) => {
-
         //    src section                        example        glob
         // eg src/javascript-grid-accessing-data/using-for-each/*.js
         const createExamplePath = pattern => path.join(examplePath, pattern);
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         const providedExamples = {};
-        if(type === 'mixed') {
+
+        if (type === 'mixed') {
             // note that there's an expectation that both modules & packages exist
             const providedExamplePaths = glob.sync(`${examplePath}/provided/modules/*`);
+
             for (const providedExamplePath of providedExamplePaths) {
-                providedExamples[path.basename(providedExamplePath)] = `${examplePath}/provided`
+                providedExamples[path.basename(providedExamplePath)] = `${examplePath}/provided`;
             }
         }
 
@@ -258,8 +259,8 @@ function createExampleGenerator(prefix, importTypes) {
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
-        if(type === 'mixed' && providedExamples['react']) {
-            importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']))
+        if (type === 'mixed' && providedExamples['react']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
         } else {
             const reactScripts = getMatchingPaths('*_react.*');
             const reactConfigs = new Map();
@@ -275,29 +276,31 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
 
-        if(type === 'mixed' && providedExamples['reactFunctional']) {
-            importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']))
+        if (type === 'mixed' && providedExamples['reactFunctional']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
         } else {
             let reactDeclarativeScripts = null;
             const reactDeclarativeConfigs = new Map();
-            if (vanillaToReactFunctional && options.reactFunctional) {
+
+            if (vanillaToReactFunctional && options.reactFunctional !== false) {
                 const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*').length > 0;
-                const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react' ;
+                const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
+
                 reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
+
                 try {
                     const getSource = vanillaToReactFunctional(bindings, extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
-                    importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
+                    importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);
                     throw e;
                 }
 
-                debugger
                 importTypes.forEach(importType => writeExampleFiles(importType, 'reactFunctional', reactScriptPostfix, reactDeclarativeScripts, reactDeclarativeConfigs.get(importType)));
             }
         }
 
-        if(type === 'mixed' && providedExamples['angular']) {
+        if (type === 'mixed' && providedExamples['angular']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
         } else {
             const angularScripts = getMatchingPaths('*_angular*');
@@ -320,7 +323,7 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
         }
 
-        if(type === 'mixed' && providedExamples['vue']) {
+        if (type === 'mixed' && providedExamples['vue']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
         } else {
             const vueScripts = getMatchingPaths('*_vue*');
@@ -328,7 +331,7 @@ function createExampleGenerator(prefix, importTypes) {
             try {
                 const getSource = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-                importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+                importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
             } catch (e) {
                 console.error(`Failed to process Vue example in ${examplePath}`, e);
                 throw e;
@@ -352,7 +355,8 @@ function getGeneratorCode(prefix) {
 
     // spl todo - add charts support in time
     let vanillaToReactFunctional = null;
-    if(prefix === './src/example-runner/grid-') {
+
+    if (prefix === './src/example-runner/grid-') {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
     }
 

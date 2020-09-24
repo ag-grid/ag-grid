@@ -466,6 +466,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public gridReady: EventEmitter<any> = new EventEmitter<any>();
     @Output() public gridSizeChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public viewportChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public scrollbarWidthChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public firstDataRendered: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStopped: EventEmitter<any> = new EventEmitter<any>();

@@ -5,8 +5,8 @@
 
     .token.comment,
     .token.string {
-	    word-break: break-all;
-	    word-break: break-word;
+        word-break: break-all;
+        word-break: break-word;
     }
 
     ul.primary {
@@ -283,37 +283,33 @@
     }
 
     .runner-item-angular {
-        background: transparent url('../fw-logos/angular.svg') 0 center no-repeat;
+        background: transparent url("../fw-logos/angular.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-vanilla {
-        background: transparent url('../fw-logos/javascript.svg') 0 center no-repeat;
+        background: transparent url("../fw-logos/javascript.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 
-    .runner-item-react {
-        background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
-        background-size: 25px 25px;
-    }
-
+    .runner-item-react,
     .runner-item-reactFunctional {
-        background: transparent url('../fw-logos/react.svg') 0 center no-repeat;
+        background: transparent url("../fw-logos/react.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-vue {
-        background: transparent url('../fw-logos/vue.svg') 0 center no-repeat;
+        background: transparent url("../fw-logos/vue.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-packages {
-        background: transparent url('../doodles/cubes.svg') 0 center no-repeat;
+        background: transparent url("../doodles/cubes.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-modules {
-        background: transparent url('../doodles/at-symbol.svg') 0 center no-repeat;
+        background: transparent url("../doodles/at-symbol.svg") 0 center no-repeat;
         background-size: 25px 25px;
     }
 }

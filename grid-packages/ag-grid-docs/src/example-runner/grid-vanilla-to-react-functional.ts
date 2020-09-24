@@ -15,9 +15,11 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 
     if (modules) {
         let exampleModules = modules;
+
         if (modules === true) {
             exampleModules = ['clientside'];
         }
+
         const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
@@ -105,44 +107,55 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
     return convertFunctionalTemplate(template);
 }
 
-function convertColumnDefs(rawColumnDefs) {
+function convertColumnDefs(rawColumnDefs): string[] {
     const columnDefs = [];
+    const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
+
+    const processObject = obj => {
+        const output = JSON.stringify(obj);
+
+        return output
+            .replace(/"AG_LITERAL_(.*?)"/g, '$1')
+            .replace(/"AG_FUNCTION_(.*?)"/g, match => parseFunction(JSON.parse(match)));
+    };
+
     rawColumnDefs.forEach(rawColumnDef => {
         const columnProperties = [];
         let children = [];
+
         Object.keys(rawColumnDef).forEach(columnProperty => {
             if (columnProperty === 'children') {
                 children = convertColumnDefs(rawColumnDef[columnProperty]);
             } else {
                 let value = rawColumnDef[columnProperty];
+
                 if (typeof value === "string") {
                     if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
                         // ...all of this is necessary so that we can parse the json string
                         columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`);
-                    } else if (value.startsWith('AG_FUNCTION')) {
+                    } else if (value.startsWith('AG_FUNCTION_')) {
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
-                        let func = value.replace('AG_FUNCTION_', '');
-                        func = func.replace(/^function\s*\((.*?)\)/, '($1) => ');
-                        columnProperties.push(`${columnProperty}={${func}}`);
+                        columnProperties.push(`${columnProperty}={${parseFunction(value)}}`);
                     } else {
-                        columnProperties.push(`${columnProperty}="${value}"`);
+                        // ensure any double quotes inside the string are replaced with single quotes
+                        columnProperties.push(`${columnProperty}="${value.replace(/(?<!\\)"/g, '\'')}"`);
                     }
                 } else if (typeof value === 'object') {
-                    columnProperties.push(
-                        `${columnProperty}={${JSON.stringify(value)}}`
-                    );
+                    columnProperties.push(`${columnProperty}={${processObject(value)}}`);
                 } else {
-                    columnProperties.push(
-                        `${columnProperty}={${value}}`
-                    );
+                    columnProperties.push(`${columnProperty}={${value}}`);
                 }
             }
         });
 
-        columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`);
+        if (children.length === 0) {
+            columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')} />`);
+        } else {
+            columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`);
+        }
     });
 
     return columnDefs;
@@ -170,6 +183,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
+        const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
+
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (componentFilenames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
@@ -185,13 +200,11 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                 // tabToNextCell needs to be bound to the react component
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`${property.name}=${property.value}`);
-                } else if (property.name !== 'columnDefs') {
+                } else if (property.name !== 'columnDefs' || columnDefs.length === 0) {
                     componentAttributes.push(`${property.name}={${property.value}}`);
                 }
             }
         });
-
-        const columnDefs = convertColumnDefs(JSON5.parse(bindings.parsedColDefs));
 
         const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
 
@@ -260,7 +273,7 @@ const GridExample = () => {
     const [gridColumnApi, setGridColumnApi] = useState(null);
     ${stateProperties.join(',\n    ')}
 
-    function onGridReady(params) {
+    const onGridReady = (params) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
 
@@ -279,10 +292,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 ${bindings.utils.map(gridInstanceConverter).join('\n')}
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+render(<GridExample></GridExample>, document.querySelector('#root'))
 `;
     };
 }

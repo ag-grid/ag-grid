@@ -234,7 +234,7 @@ cellClassRules: {
     </li>
 </ul>
 
-<?= grid_example('Cell Styling', 'cell-styling', 'generated', ['enterprise' => false, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Cell Styling', 'cell-styling', 'generated', ['enterprise' => false, 'modules' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

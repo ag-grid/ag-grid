@@ -101,10 +101,12 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    onCellValueChanged: function(event) {
-        console.log('Data after change is', event.data);
-    }
+    onCellValueChanged: onCellValueChanged
 };
+
+function onCellValueChanged(event) {
+    console.log('Data after change is', event.data);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

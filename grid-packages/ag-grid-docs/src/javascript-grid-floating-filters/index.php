@@ -81,7 +81,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
+<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Provided Floating Filters</h2>
 

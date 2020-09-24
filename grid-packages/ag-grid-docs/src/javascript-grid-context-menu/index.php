@@ -145,7 +145,7 @@ SNIPPET
     <li>The 'Always Disabled' menu item has a tooltip.</li>
 </ul>
 
-<?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'menu', 'excel', 'range', 'clipboard', 'charts'], 'reactFunctional' => true]) ?>
+<?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'menu', 'excel', 'range', 'clipboard', 'charts']]) ?>
 
 <h2 id="popup-parent">Popup Parent</h2>
 
@@ -163,7 +163,7 @@ SNIPPET
     <li>Notice the menu will not be fully visible (i.e. clipped)</li>
 </ul>
 
-<?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard']]) ?>
 
 <p>
     The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -193,6 +193,6 @@ SNIPPET
     to the document body.
 </p>
 
-<?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard'], 'reactFunctional' => true]) ?>
+<?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

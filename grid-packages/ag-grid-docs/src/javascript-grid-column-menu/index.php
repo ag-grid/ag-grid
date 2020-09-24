@@ -177,7 +177,7 @@ SNIPPET
     <li><code>postProcessPopup</code> is used on the Gold column to reposition the menu 25px lower.</li>
 </ul>
 
-<?= grid_example('Column Menu', 'column-menu', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Column Menu', 'column-menu', 'generated', ['enterprise' => true]) ?>
 
 <h2>Customising the Columns Menu Tab</h2>
 
@@ -233,7 +233,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Customising Columns Menu Tab', 'customising-columns-menu-tab', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Customising Columns Menu Tab', 'customising-columns-menu-tab', 'generated', ['enterprise' => true]) ?>
 
 <h2>Popup Parent</h2>
 

@@ -52,7 +52,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Excel Mode', 'excel-mode', 'generated', ['enterprise' => true, 'exampleHeight' => 640, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Excel Mode', 'excel-mode', 'generated', ['enterprise' => true, 'exampleHeight' => 640, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 <h2>Differences Between Modes</h2>
 

@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
             not an option.
         </li>
         <li><code>suppressRowDeselection</code>: Set to <code>true</code> to prevent rows from being deselected if
-            you hold down <code>Ctrl</code> and click the row (i.e. once a row is selected, it remains selected 
+            you hold down <code>Ctrl</code> and click the row (i.e. once a row is selected, it remains selected
             until another row is selected in its place). By default the grid allows deselection of rows.
         </li>
         <li><code>suppressRowClickSelection</code>: If <code>true</code>, rows won't be selected when clicked. Use, for
@@ -43,8 +43,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When you pass data to the grid, it wraps each data item in a node object. This is explained
-        in the section <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>. 
-        When you query for the selected rows, there are two method types: ones that return nodes, and 
+        in the section <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>.
+        When you query for the selected rows, there are two method types: ones that return nodes, and
         ones that return data items. To get the selected nodes / rows from the grid, use the following
         API methods:
     </p>
@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Single Row Selection', 'single-row-selection', 'generated', ['modules'=>true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Single Row Selection', 'single-row-selection', 'generated', ['modules'=>true]) ?>
 
     <h3 id="multi-row-selection">Example: Multiple Row Selection</h3>
 
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Multiple Row Selection', 'multiple-row-selection', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Multiple Row Selection', 'multiple-row-selection', 'generated', ['modules' => true]) ?>
 
     <h3 id="multi-select-single-click">Example: Multi Select With Click</h3>
 
@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </p>
 
-    <?= grid_example('Multi Select With Click', 'multi-select-single-click', 'generated', ['modules'=>true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Multi Select With Click', 'multi-select-single-click', 'generated', ['modules'=>true]) ?>
 
     <h2>Checkbox Selection</h2>
 
@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Unselectable Leaf Nodes</h3>
 
@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
         <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Only Filtered Children</h3>
 
@@ -198,18 +198,18 @@ include '../documentation-main/documentation_header.php';
             <li>Filter on swimming</li>
             <li>Select a country</li>
             <li>
-                Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows 
+                Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows
                 are not selected.
             </li>
             <li>
-                Notice that the group checkbox becomes indeterminate while all its filtered children get selected. 
-                This is because the selected state of the group node is independent to the filter, so it becomes 
+                Notice that the group checkbox becomes indeterminate while all its filtered children get selected.
+                This is because the selected state of the group node is independent to the filter, so it becomes
                 indeterminate as not all of its children are selected.
             </li>
         </ol>
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2>Header Checkbox Selection</h2>
 
@@ -272,7 +272,7 @@ colDef = {
             <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
         </ul>
 
-    <?= grid_example('Just Filtered', 'header-checkbox', 'generated', ['exampleHeight' => 590, 'modules'=>true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Just Filtered', 'header-checkbox', 'generated', ['exampleHeight' => 590, 'modules'=>true]) ?>
 
     <h3>Example: Select Everything</h3>
 
@@ -285,7 +285,7 @@ colDef = {
         This can be observed by dragging the columns to reorder them.</li>
     </ul>
 
-    <?= grid_example('Select Everything', 'header-checkbox-entire-set', 'generated', ['exampleHeight' => 590, 'modules'=>true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Select Everything', 'header-checkbox-entire-set', 'generated', ['exampleHeight' => 590, 'modules'=>true]) ?>
 
     <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
 
@@ -315,7 +315,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
     <h3>Example: Specifying Selectable Rows with Groups</h3>
 
@@ -336,7 +336,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2>Selection Events</h2>
 
@@ -352,7 +352,7 @@ colDef = {
                 if you want them.</li>
         </ul>
 
-    <?= grid_example('Selection Events', 'selection-events', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Selection Events', 'selection-events', 'generated', ['modules' => true]) ?>
 
     <h2>Node Selection API</h2>
 
@@ -415,7 +415,7 @@ api.forEachNodeAfterFilter(function(node) {
         data for selection purposes.
     </p>
 
-    <?= grid_example('Using forEachNode', 'using-foreachnode', 'generated', ['exampleHeight' => 590, 'modules' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Using forEachNode', 'using-foreachnode', 'generated', ['exampleHeight' => 590, 'modules' => true]) ?>
 
     <h3>Example: Selection with Keyboard Arrow Keys</h3>
 

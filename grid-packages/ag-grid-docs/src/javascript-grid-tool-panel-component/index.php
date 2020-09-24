@@ -94,6 +94,6 @@ SNIPPET
     Panel Component with the grid and include it the Side Bar:
 </p>
 
-<?= grid_example('Custom Stats', 'custom-stats', 'generated', ['enterprise' => true, 'extras' => ['fontawesome'], 'reactFunctional' => true] ) ?>
+<?= grid_example('Custom Stats', 'custom-stats', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']] ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

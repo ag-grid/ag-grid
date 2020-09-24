@@ -92,7 +92,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Simple', 'simple', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Simple', 'simple', 'generated', ['modules' => true]) ?>
 
 <h2>Dragging Between Grids</h2>
 

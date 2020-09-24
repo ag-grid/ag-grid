@@ -64,7 +64,7 @@ SNIPPET
     also use the buttons to show / hide the different overlays at your will.
 </p>
 
-<?= grid_example('Overlays', 'overlays', 'generated', ['exampleHeight' => 580, 'reactFunctional' => true]) ?>
+<?= grid_example('Overlays', 'overlays', 'generated', ['exampleHeight' => 580]) ?>
 
 <note>It is also possible to provide your own custom Overlay Components - please see
     <a href="../javascript-grid-overlay-component">Overlay Component</a> for more information

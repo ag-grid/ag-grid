@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Filter Tool Panel', 'simple', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Filter Tool Panel', 'simple', 'generated', ['enterprise' => true]) ?>
 
 <h2>Suppress Options</h2>
 
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Suppress Options', 'suppress-options', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'reactFunctional' => true]) ?>
+<?= grid_example('Suppress Options', 'suppress-options', 'generated', ['enterprise' => true, 'exampleHeight' => 610]) ?>
 
 <h2>Filter Instances</h2>
 
@@ -154,7 +154,7 @@ SNIPPET
     <li>Clicking <b>Collapse All</b> collapses all filter groups using: <code>collapseFilterGroups()</code>.</li>
 </ul>
 
-<?= grid_example('Expand / Collapse Groups', 'expand-collapse-groups', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Expand / Collapse Groups', 'expand-collapse-groups', 'generated', ['enterprise' => true]) ?>
 
 <h2>Expand / Collapse Filters</h2>
 
@@ -214,7 +214,7 @@ SNIPPET
     <li>Clicking <b>Collapse All</b> collapses all filters using: <code>collapseFilters()</code>.</li>
 </ul>
 
-<?= grid_example('Expand / Collapse Filters', 'expand-collapse-filters', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Expand / Collapse Filters', 'expand-collapse-filters', 'generated', ['enterprise' => true]) ?>
 
 <h2>Custom Filters Layout</h2>
 
@@ -298,7 +298,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Filters Layout', 'custom-layout', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Filters Layout', 'custom-layout', 'generated', ['enterprise' => true]) ?>
 
 <h2>Next Up</h2>
 
