@@ -38,7 +38,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import {AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "./interfaces/iAgChartOptions";
+import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -210,6 +210,9 @@ export class GridOptionsWrapper {
         this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
     }
 
     private checkColumnDefProperties() {
@@ -1391,13 +1394,17 @@ export class GridOptionsWrapper {
     public getScrollbarWidth() {
         if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
-            if (this.scrollbarWidth != null) {
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+
                 this.eventService.dispatchEvent({
                     type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
                 });
             }
         }
+
         return this.scrollbarWidth;
     }
 
