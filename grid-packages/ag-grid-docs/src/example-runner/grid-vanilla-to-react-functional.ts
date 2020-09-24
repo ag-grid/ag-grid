@@ -218,7 +218,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
             if (data.callback.indexOf('api.setRowData') >= 0) {
                 if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('const [rowData, setRowData] = useState([]);');
+                    stateProperties.push('const [rowData, setRowData] = useState(null);');
                 }
 
                 if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
