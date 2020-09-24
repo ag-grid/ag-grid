@@ -1381,7 +1381,6 @@ export class RowComp extends Component {
     private destroyContainingCells(): void {
         const cellsToDestroy = Object.keys(this.cellComps);
         this.destroyCells(cellsToDestroy);
-        this.destroyFullWidthComponents();
     }
 
     // we clear so that the functions are never executed twice
