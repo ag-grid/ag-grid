@@ -33,27 +33,32 @@ describe('interpolate', () => {
         expect(result).toBe('My favorite number: 42');
     });
 
-    // TODO: Investigate why locale: 'en-GB' doesn't work on CI
-    // it('should format numbers (using Intl.NumberFormat) and dates', () => {
-    //     const format = '%A, %b %d %Y';
-    //     const formatter = locale.format(format);
-    //     const date = new Date('Wed Sep 23 2020');
-    //     const formattedDate = formatter(date);
-    //     const result1 = interpolate('I drank #{drink1:liters} of beer and #{drink2:liters} of vodka on #{day:date}', {
-    //         drink1: 42000000,
-    //         drink2: 1234,
-    //         day: date
-    //     }, {
-    //         liters: {
-    //             locales: 'en-GB',
-    //             options: {
-    //                 style: 'unit',
-    //                 unit: 'liter',
-    //                 unitDisplay: 'long'
-    //             }
-    //         },
-    //         date: '%A, %b %d %Y'
-    //     });
-    //     expect(result1).toBe('I drank 42,000,000 litres of beer and 1,234 litres of vodka on ' + formattedDate);
-    // });
+    it('should format numbers (using Intl.NumberFormat) and dates', () => {
+        const format = '%A, %b %d %Y';
+        const formatter = locale.format(format);
+        const amount1 = 42000000;
+        const amount2 = 1234;
+        const locales = 'en-GB';
+        const date = new Date('Wed Sep 23 2020');
+        const options = {
+            style: 'unit',
+            unit: 'liter',
+            unitDisplay: 'long'
+        };
+        const formattedAmount1 = amount1.toLocaleString(locales, options);
+        const formattedAmount2 = amount2.toLocaleString(locales, options);
+        const formattedDate = formatter(date);
+        const result1 = interpolate('I drank #{amount1:liters} of beer and #{amount2:liters} of vodka on #{day:date}', {
+            amount1,
+            amount2,
+            day: date
+        }, {
+            liters: {
+                locales,
+                options
+            },
+            date: '%A, %b %d %Y'
+        });
+        expect(result1).toBe(`I drank ${formattedAmount1} of beer and ${formattedAmount2} of vodka on ${formattedDate}`);
+    });
 });
