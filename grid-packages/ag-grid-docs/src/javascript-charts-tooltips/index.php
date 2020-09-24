@@ -9,12 +9,12 @@ include '../documentation-main/documentation_header.php';
 <h1>Tooltips</h1>
 
 <p>
-    There are four ways of enabling the tooltips in ag-Charts:
+    There are four ways of enabling the tooltips in ag-Charts by using:
     <ul>
-        <li>using default tooltips</li>
-        <li>using default tooltips with custom styling</li>
-        <li>using custom title / content (with default or custom styling)</li>
-        <li>using completely custom markup for tooltips</li>
+        <li>default tooltips</li>
+        <li>default tooltips with custom styling</li>
+        <li>custom title / content (with default or custom styling)</li>
+        <li>completely custom markup for tooltips</li>
     </ul>
 </p>
 
@@ -95,10 +95,10 @@ SNIPPET
 
 <p>
     The default tooltip already uses <code>ag-chart-tooltip</code>, <code>ag-chart-tooltip-title</code>
-    and <code>ag-chart-tooltip-content</code> CSS classes, but these classes are not meant to be used
-    directly, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting
-    library should provide their own tooltip class name via the <code>chart.tooltipClass</code> config. This class name
-    will be added to the class list of the tooltip element for only that particular chart instance.
+    and <code>ag-chart-tooltip-content</code> CSS classes, but these classes are not meant to be used directly
+    to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead,
+    users of the charting library should provide their own tooltip class name via the <code>chart.tooltipClass</code> config.
+    This class name will be added to the class list of the tooltip element for only that particular chart instance.
 </p>
 
 <p>
@@ -127,6 +127,8 @@ SNIPPET
 </p>
 
 <h3>Example: Tooltip Styling</h3>
+
+<p>In this example we show how to change the content's background color and the color of the tooltip's arrow to gold.</p>
 
 <?= chart_example('Default Tooltip with Custom Styling', 'default-tooltip-styling', 'generated'); ?>
 
@@ -218,6 +220,56 @@ SNIPPET
 <?= chart_example('Column Series with Tooltip Renderer', 'tooltip-renderer', 'generated'); ?>
 
 <h2>Modifying Content / Title</h2>
+
+<p>
+    To control what goes into the title and content divs of the tooltip one can set up a tooltip renderer function
+    (one per series) that receives values associated with the highlighted data point and returns an object with
+    the <code>title</code> and <code>content</code> fields containing plain text or inner HTML that goes into
+    the corresponding divs:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+tooltipRenderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+
+interface AgTooltipRendererResult {
+    title?: string;
+    content?: string;
+}
+SNIPPET
+) ?>
+
+<note>
+    <code>AgTooltipRendererParams</code> is the not the real type name, the actual type of data passed into
+    a tooltip renderer will depend on the chart series being used. For example, bar series' tooltip
+    renderer params object will have the following structure:<br/><br/>
+<?= createSnippet(<<<SNIPPET
+interface AgTooltipRendererParams {
+    // the element of the series' data represented by the highlighted item
+    readonly datum: any;
+    // the title of the series, if any
+    readonly title?: string;
+    // the color of the series
+    readonly color?: string;
+
+    // the xKey used to fetch the xValue from the datum, same as series xKey
+    readonly xKey: string;
+    // the actual xValue used
+    readonly xValue?: any;
+    // same as series.xName
+    readonly xName?: string;
+
+    // the yKey used to fetch the yValue from the datum,
+    // equals to one of the elements in the series.yKeys array,
+    // depending on which bar inside a stack/group is highlighted
+    readonly yKey: string;
+    // the actuall yValue used
+    readonly yValue?: any;
+    // equals to one of the elements in the series.yNames array
+    readonly yName?: string;
+}
+SNIPPET
+) ?>
+</note>
 
 <p>
     Returning markup from a tooltip renderer gives you full control and ability to create completely custom tooltips
