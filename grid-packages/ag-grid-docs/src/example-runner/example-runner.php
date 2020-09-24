@@ -93,7 +93,7 @@ function getTypes($dir)
     return $types;
 }
 
-function get_common_properties($type, $dir, $title, $options)
+function get_common_properties($type, $dir, $title, $options, $includeFunctionalReact = true)
 {
     $multi = $type === 'multi';
     $generated = $type === 'generated' || $type === 'mixed';
@@ -101,7 +101,7 @@ function get_common_properties($type, $dir, $title, $options)
     if ($generated) {
         $types = ['vanilla', 'angular', 'react'];
 
-        if ($options['reactFunctional'] !== false) {
+        if ($includeFunctionalReact && $options['reactFunctional'] !== false) {
             $types[]= 'reactFunctional';
         }
 
@@ -260,7 +260,7 @@ function chart_example($title, $dir, $type = 'vanilla', $options = array())
 {
     // $type can be: angular | vanilla | react | vue | multi | as-is | generated
 
-    $common_properties = get_common_properties($type, $dir, $title, $options);
+    $common_properties = get_common_properties($type, $dir, $title, $options, false);
     $multi = $common_properties['multi'];
     $generated = $common_properties['generated'];
     $types = $common_properties['types'];
