@@ -28,21 +28,21 @@ const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         headerCellMinWidth: 48,
-        listItemHeight: MAT_GRID_SIZE * 5,
+        listItemHeight: MAT_GRID_SIZE * 4,
         rowHeight: MAT_GRID_SIZE * 6,
         chartMenuPanelWidth: 240
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
         headerCellMinWidth: 24,
-        listItemHeight: BALHAM_GRID_SIZE * 7,
+        listItemHeight: BALHAM_GRID_SIZE * 6,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
         headerCellMinWidth: 36,
-        listItemHeight: ALPINE_GRID_SIZE * 5,
+        listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
