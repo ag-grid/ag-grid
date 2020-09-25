@@ -22,24 +22,10 @@ if you're feeling brave! The `div` that you specify will be populated with grid 
 
 Framework-dependent text:
 
-<framework-dependent>
+<framework-specific-content>
+    <default>This is some funky stuff if no content can be found for a particular framework</default>
     <javascript>This is some funky stuff for Javascript</javascript>
     <react>This is some funky stuff for React</react>
     <angular>This is some funky stuff for Angular</angular>
     <vue>This is some funky stuff for Vue</vue>
-</framework-dependent>
-
-Code snippet:
-
-<code-snippet>
-    <javascript>
-// what a comment
-var bob = 3;
-    </javascript>
-    <react>
-// gosh look at my React
-export const MyComponent = () => 'Hello World!';
-    </react>
-    <angular>This is some funky stuff for Angular</angular>
-    <vue>This is some funky stuff for Vue</vue>
-</code-snippet>
+</framework-specific-content>

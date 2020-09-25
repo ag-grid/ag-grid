@@ -16,7 +16,17 @@ module.exports = {
     {
       resolve: "gatsby-transformer-remark",
       options: {
-        plugins: ['gatsby-remark-prismjs']
+        plugins: [
+          'gatsby-remark-component',
+          {
+            resolve: `gatsby-remark-autolink-headers`,
+            options: {
+              enableCustomId: true,
+              removeAccents: true,
+            },
+          },
+          'gatsby-remark-prismjs'
+        ]
       }
     }
   ]
