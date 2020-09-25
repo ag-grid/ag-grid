@@ -1,0 +1,16 @@
+.framework-selector {
+    display: flex;
+}
+
+.framework-selector img {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    flex: 1;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.framework-selector img.selected {
+    box-shadow: 0px 0px 5px 2px white;
+}

@@ -8,6 +8,7 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-diff";
 import "prismjs/components/prism-scss";
+import Layout from '../components/layout';
 
 export default function DocPageTemplate({ data, pageContext: { framework } }) {
   const { markdownRemark: post } = data;
@@ -15,13 +16,15 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
   const codeSnippetsReplaced = processCodeSnippets(frameworkSpecificOutput, framework);
 
   return (
-    <div className="doc-page">
-      <h1>{post.frontmatter.title} ({framework})</h1>
-      <div
-        className="doc-page-content"
-        dangerouslySetInnerHTML={{ __html: codeSnippetsReplaced }}
-      />
-    </div>
+    <Layout framework={framework}>
+      <div className="doc-page">
+        <h1>{post.frontmatter.title} ({framework})</h1>
+        <div
+          className="doc-page-content"
+          dangerouslySetInnerHTML={{ __html: codeSnippetsReplaced }}
+        />
+      </div>
+    </Layout>
   );
 }
 
