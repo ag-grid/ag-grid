@@ -116,6 +116,7 @@ interface AgNavigatorHandleOptions {
 export interface AgNavigatorOptions {
     enabled?: boolean;
     height?: number;
+    margin?: number;
     min?: number;
     max?: number;
     mask?: AgNavigatorMaskOptions;

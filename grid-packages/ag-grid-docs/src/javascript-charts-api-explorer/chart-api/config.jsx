@@ -294,6 +294,14 @@ export const chart = Object.freeze({
             max: 100,
             unit: 'px',
         },
+        margin: {
+            default: 10,
+            description: 'The distance between the navigator and the bottom axis.',
+            editor: NumberEditor,
+            min: 0,
+            max: 100,
+            unit: 'px',
+        },
         min: {
             default: 0,
             description: 'The start of the visible range in the <code>[0, 1]</code> interval.',
