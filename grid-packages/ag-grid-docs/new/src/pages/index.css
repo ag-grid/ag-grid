@@ -1,0 +1,31 @@
+div {
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+
+.getting-started-cards {
+    display: flex;
+}
+
+.getting-started-card {
+    flex: 1;
+    text-align: center;
+    border: solid 1px grey;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.getting-started-card__logo {
+    height: 100px;
+    margin: 50px 0;
+}
+
+.getting-started-card__button {
+    display: block;
+    color: white;
+    padding: 20px;
+    background-color: blue;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+}
