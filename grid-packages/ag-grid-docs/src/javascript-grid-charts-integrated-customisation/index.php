@@ -144,4 +144,11 @@ SNIPPET
 
 <?= grid_example('Histogram Chart Overrides', 'histogram-overrides', 'generated', ['enterprise' => true]) ?>
 
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-container/">Chart Containers</a>.
+</p>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

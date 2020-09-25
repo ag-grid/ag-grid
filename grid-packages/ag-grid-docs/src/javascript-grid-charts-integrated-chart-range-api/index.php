@@ -154,7 +154,7 @@ interface GetChartImageDataUrlParams {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-chart-events/">Chart Events</a>.
+    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
