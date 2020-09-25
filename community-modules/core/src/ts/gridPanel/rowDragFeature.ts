@@ -141,11 +141,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
-        if (this.gridOptionsWrapper.isRowDragManaged()) {
-            this.getRowNodes(draggingEvent).forEach(rowNode => {
-                rowNode.setDragging(true);
-            });
-        }
+        this.getRowNodes(draggingEvent).forEach(rowNode => {
+            rowNode.setDragging(true);
+        });
 
         this.onEnterOrDragging(draggingEvent);
     }
@@ -155,7 +153,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private isFromThisGrid(draggingEvent: DraggingEvent) {
-        return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
+        const { dragSourceContainer } = draggingEvent.dragSource;
+
+        return dragSourceContainer === this.getContainer();
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
@@ -496,10 +496,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
 
-        if (this.gridOptionsWrapper.isRowDragManaged()) {
-            this.getRowNodes(draggingEvent).forEach(rowNode => {
-                rowNode.setDragging(false);
-            });
-        }
+        this.getRowNodes(draggingEvent).forEach(rowNode => {
+            rowNode.setDragging(false);
+        });
     }
 }
