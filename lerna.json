@@ -4,6 +4,7 @@
     "enterprise-modules/*",
     "charts-packages/*",
     "grid-packages/*",
+    "grid-packages/ag-grid-docs/new/",
     "examples-charts/*",
     "examples-grid/*"
   ],
