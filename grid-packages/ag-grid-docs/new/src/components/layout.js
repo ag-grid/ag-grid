@@ -11,10 +11,14 @@ export default function Layout({ children, framework }) {
             <FrameworkSelector currentFramework={ framework } />
         </div>
         <div className="content_viewport">
-            <div className="main_menu">
-                <Menu currentFramework={ framework } />
-            </div>
-            <div className="content">
+            {
+                framework ? (
+                    <div className="main_menu">
+                        <Menu currentFramework={ framework } />
+                    </div>
+                ) : null
+            }
+            <div className="content container">
                 {children}
             </div>
         </div>
