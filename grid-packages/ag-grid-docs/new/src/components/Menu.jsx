@@ -3,7 +3,7 @@ import JSONData from '../data/menu.json';
 import './menu.scss';
 
 const displayMenuItems = (items) => items.map(item => (
-    <ul>
+    <ul key={item.title}>
         <li>
             { item.title }
             { item.items ? displayMenuItems(item.items) : null }
