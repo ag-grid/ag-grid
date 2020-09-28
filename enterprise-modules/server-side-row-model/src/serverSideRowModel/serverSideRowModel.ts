@@ -349,14 +349,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             maxBlocksInCache = undefined;
         }
 
-        // if user provides any negative number, then we set block size to 'undefined' to mean
-        // "dont do infinite scrolling". ideally the default should be "dont do infinite scrolling",
-        // ie if blockSize=undefined/null, then dont do infinite scrolling, however for backwards
-        // compatibility, no value defaults to blockSize=100
         const userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        const blockSize = (typeof userProvidedBlockSize == 'number') ?
-            (userProvidedBlockSize > 0 ? userProvidedBlockSize : undefined) :
-            ServerSideBlock.DefaultBlockSize;
+        let blockSize: number;
+        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize>0) {
+            blockSize = userProvidedBlockSize;
+        } else {
+            blockSize = ServerSideBlock.DefaultBlockSize;
+        }
 
         const params: ServerSideCacheParams = {
             // the columns the user has grouped and aggregated by
