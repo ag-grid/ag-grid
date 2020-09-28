@@ -166,7 +166,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
-        const newRowNode = this.createBlankRowNode();
+        const newRowNode = this.createBlankRowNode(rowIndex);
         const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
@@ -192,7 +192,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.rowNodeCacheParams.blockSize; i++) {
-            const rowNode = this.createBlankRowNode();
+            const rowIndex = this.startRow + i;
+            const rowNode = this.createBlankRowNode(rowIndex);
             this.rowNodes.push(rowNode);
         }
     }
