@@ -26,7 +26,8 @@ var gridOptions = {
             },
             navigator: {
                 enabled: true,
-                height: 10
+                height: 20,
+                margin: 25
             },
             axes: {
                 time: {

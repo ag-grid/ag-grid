@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Integrated Charts supports the charting of time series data using line and area charts when a time axis is chosen
-    instead of a category or numeric Axis.
+    instead of a category or numeric axis.
 </p>
 
 

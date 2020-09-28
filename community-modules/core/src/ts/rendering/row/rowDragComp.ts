@@ -69,6 +69,8 @@ export class RowDragComp extends Component {
             defaultTextValue: this.cellValueFn(),
         };
 
+        const gridPanel = this.beans.gridPanel;
+        const rowDragFeature = gridPanel.getRowDragFeature();
         const rowDragText = this.column.getColDef().rowDragText;
 
         const dragSource: DragSource = {
@@ -83,7 +85,8 @@ export class RowDragComp extends Component {
                 return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
-            dragStartPixels: 0
+            dragStartPixels: 0,
+            dragSourceContainer: rowDragFeature.getContainer()
         };
 
         this.beans.dragAndDropService.addDragSource(dragSource, true);
