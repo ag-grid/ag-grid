@@ -1,14 +1,28 @@
 import React from "react";
+import JSONData from '../data/menu.json';
 import './menu.scss';
 
-const displayMenuItems = () => {
-    return <div>Item</div>;
-}
+const displayMenuItems = (items) => items.map(item => (
+    <ul>
+        <li>
+            { item.title }
+            { item.items ? displayMenuItems(item.items) : null }
+        </li>
+    </ul>
+));
 
-export default function Menu() {
-    return (
-        <div className="menu_view">
-            { displayMenuItems() }
-        </div>
-    )
-}
+const renderMenu = () => (
+    <ul>
+        { JSONData.map(groupItems => (
+            displayMenuItems(groupItems.items)
+        ))}
+    </ul>
+);
+
+const Menu = () => (
+    <div className="menu_view">
+        { renderMenu() }
+    </div>
+);
+
+export default Menu;
