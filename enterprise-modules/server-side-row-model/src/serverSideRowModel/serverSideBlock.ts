@@ -1,8 +1,6 @@
 import {
     _,
-    AgEvent,
     Autowired,
-    BeanStub,
     Column,
     ColumnApi,
     ColumnController,
@@ -18,18 +16,12 @@ import {
     Qualifier,
     RowBounds,
     RowNode,
+    RowNodeBlock,
     RowRenderer,
-    ValueService,
-    RowNodeBlock
+    ValueService
 } from "@ag-grid-community/core";
 
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
-
-export interface LoadCompleteEvent extends AgEvent {
-    success: boolean;
-    page: ServerSideBlock;
-    lastRow: number;
-}
 
 export class ServerSideBlock extends RowNodeBlock {
 
@@ -39,9 +31,6 @@ export class ServerSideBlock extends RowNodeBlock {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-
-    private version = 0;
-    private state = RowNodeBlock.STATE_DIRTY;
 
     private lastAccessed: number;
 
@@ -145,10 +134,6 @@ export class ServerSideBlock extends RowNodeBlock {
         this.forEachNode(callback, sequence, rowCount, false);
     }
 
-    public getVersion(): number {
-        return this.version;
-    }
-
     public getLastAccessed(): number {
         return this.lastAccessed;
     }
@@ -188,19 +173,9 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public setDirty(): void {
-        // in case any current loads in progress, this will have their results ignored
-        this.version++;
-        this.state = RowNodeBlock.STATE_DIRTY;
-    }
-
     public setDirtyAndPurge(): void {
         this.setDirty();
         this.rowNodes.forEach(rowNode => rowNode.setData(null));
-    }
-
-    public getState(): string {
-        return this.state;
     }
 
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
@@ -256,23 +231,7 @@ export class ServerSideBlock extends RowNodeBlock {
         }
     }
 
-    public load(): void {
-        this.state = RowNodeBlock.STATE_LOADING;
-        this.loadFromDatasource();
-    }
-
-    protected pageLoadFailed() {
-        this.state = RowNodeBlock.STATE_FAILED;
-        const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: false,
-            page: this,
-            lastRow: null
-        };
-        this.dispatchEvent(event);
-    }
-
-    private populateWithRowData(rows: any[]): void {
+    protected populateWithRowData(rows: any[]): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
@@ -301,42 +260,6 @@ export class ServerSideBlock extends RowNodeBlock {
             rowNode.clearRowTop();
         });
     }
-
-    protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        // we need to check the version, in case there was an old request
-        // from the server that was sent before we refreshed the cache,
-        // if the load was done as a result of a cache refresh
-        if (version === this.version) {
-            this.state = RowNodeBlock.STATE_LOADED;
-            this.populateWithRowData(rows);
-        }
-
-        lastRow = _.cleanNumber(lastRow);
-
-        // check here if lastRow should be set
-        const event: any = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: true,
-            page: this,
-            lastRow: lastRow
-        };
-
-        this.dispatchEvent(event);
-    }
-
-
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-    ////////////////
-
-
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ServerSideBlock');

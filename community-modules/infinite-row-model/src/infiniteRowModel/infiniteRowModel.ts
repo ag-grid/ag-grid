@@ -84,7 +84,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public isLastRowFound(): boolean {
-        return this.infiniteCache && this.infiniteCache.isMaxRowFound();
+        return this.infiniteCache!=null && this.infiniteCache.isMaxRowFound();
     }
 
     private addEventListeners(): void {
@@ -296,22 +296,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     public getRowCount(): number {
         return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
-    }
-
-    public updateRowData(transaction: RowDataTransaction): void {
-        if (_.exists(transaction.remove) || _.exists(transaction.update)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
-            return;
-        }
-
-        if (_.missing(transaction.addIndex)) {
-            console.warn('ag-Grid: updateRowData for InfiniteRowModel requires add and addIndex to be set');
-            return;
-        }
-
-        if (this.infiniteCache) {
-            this.infiniteCache.insertItemsAtIndex(transaction.addIndex, transaction.add);
-        }
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

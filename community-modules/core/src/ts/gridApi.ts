@@ -1255,18 +1255,13 @@ export class GridApi {
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
-        let res: RowNodeTransaction = null;
-        if (this.clientSideRowModel) {
-            res = this.clientSideRowModel.updateRowData(rowDataTransaction);
-        } else if (this.infiniteRowModel) {
-            const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
 
-            this.infiniteRowModel.updateRowData(rowDataTransaction);
-        } else {
-            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
+        if (!this.clientSideRowModel) {
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
             return;
         }
+
+        const res: RowNodeTransaction = this.clientSideRowModel.updateRowData(rowDataTransaction);
 
         // refresh all the full width rows
         this.rowRenderer.refreshFullWidthRows(res.update);
