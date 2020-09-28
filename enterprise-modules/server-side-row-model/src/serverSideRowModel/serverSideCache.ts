@@ -107,10 +107,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return this.virtualRowCount;
     }
 
-    public hack_setVirtualRowCount(virtualRowCount: number): void {
-        this.virtualRowCount = virtualRowCount;
-    }
-
     public isMaxRowFound(): boolean {
         return this.maxRowFound;
     }

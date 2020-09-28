@@ -263,7 +263,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
+            this.infiniteCache.forEachNodeDeep(callback);
         }
     }
 
@@ -294,7 +294,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRowCount(): number {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
+        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
@@ -315,7 +315,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     public getVirtualRowCount(): number | null {
         if (this.infiniteCache) {
-            return this.infiniteCache.getVirtualRowCount();
+            return this.infiniteCache.getRowCount();
         } else {
             return null;
         }
@@ -327,9 +327,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
     }
 
-    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
+    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.infiniteCache) {
-            this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
+            this.infiniteCache.setRowCount(rowCount, maxRowFound);
         }
     }
 
