@@ -19,7 +19,8 @@ import {
     RowBounds,
     RowNode,
     RowRenderer,
-    ValueService
+    ValueService,
+    RowNodeBlock
 } from "@ag-grid-community/core";
 
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
@@ -30,14 +31,7 @@ export interface LoadCompleteEvent extends AgEvent {
     lastRow: number;
 }
 
-export class ServerSideBlock extends BeanStub {
-
-    public static EVENT_LOAD_COMPLETE = 'loadComplete';
-
-    public static STATE_DIRTY = 'dirty';
-    public static STATE_LOADING = 'loading';
-    public static STATE_LOADED = 'loaded';
-    public static STATE_FAILED = 'failed';
+export class ServerSideBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
@@ -47,7 +41,7 @@ export class ServerSideBlock extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private version = 0;
-    private state = ServerSideBlock.STATE_DIRTY;
+    private state = RowNodeBlock.STATE_DIRTY;
 
     private lastAccessed: number;
 
@@ -97,6 +91,18 @@ export class ServerSideBlock extends BeanStub {
         this.level = parentRowNode.level + 1;
         this.groupLevel = params.rowGroupCols ? this.level < params.rowGroupCols.length : undefined;
         this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
+    }
+
+    public getBlockStateJson(): {id: string, state: any} {
+        return {
+            id: this.getNodeIdPrefix() + this.getBlockNumber(),
+            state: {
+                blockNumber: this.getBlockNumber(),
+                startRow: this.getStartRow(),
+                endRow: this.getEndRow(),
+                pageStatus: this.getState()
+            }
+        };
     }
 
     public isAnyNodeOpen(rowCount: number): boolean {
@@ -185,7 +191,7 @@ export class ServerSideBlock extends BeanStub {
     public setDirty(): void {
         // in case any current loads in progress, this will have their results ignored
         this.version++;
-        this.state = ServerSideBlock.STATE_DIRTY;
+        this.state = RowNodeBlock.STATE_DIRTY;
     }
 
     public setDirtyAndPurge(): void {
@@ -251,14 +257,14 @@ export class ServerSideBlock extends BeanStub {
     }
 
     public load(): void {
-        this.state = ServerSideBlock.STATE_LOADING;
+        this.state = RowNodeBlock.STATE_LOADING;
         this.loadFromDatasource();
     }
 
     protected pageLoadFailed() {
-        this.state = ServerSideBlock.STATE_FAILED;
+        this.state = RowNodeBlock.STATE_FAILED;
         const event: LoadCompleteEvent = {
-            type: ServerSideBlock.EVENT_LOAD_COMPLETE,
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: false,
             page: this,
             lastRow: null
@@ -301,7 +307,7 @@ export class ServerSideBlock extends BeanStub {
         // from the server that was sent before we refreshed the cache,
         // if the load was done as a result of a cache refresh
         if (version === this.version) {
-            this.state = ServerSideBlock.STATE_LOADED;
+            this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
 
@@ -309,7 +315,7 @@ export class ServerSideBlock extends BeanStub {
 
         // check here if lastRow should be set
         const event: any = {
-            type: ServerSideBlock.EVENT_LOAD_COMPLETE,
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,
             page: this,
             lastRow: lastRow

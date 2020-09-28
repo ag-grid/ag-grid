@@ -1,7 +1,6 @@
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
-import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 import { BeanStub } from "../../context/beanStub";
 import { debounce } from "../../utils/function";
 import { exists } from "../../utils/generic";
@@ -13,7 +12,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private readonly checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
-    private blocks: IRowNodeBlock[] = [];
+    private blocks: RowNodeBlock[] = [];
     private logger: Logger;
     private active = true;
 
@@ -31,11 +30,11 @@ export class RowNodeBlockLoader extends BeanStub {
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
 
-    public addBlock(block: IRowNodeBlock): void {
+    public addBlock(block: RowNodeBlock): void {
         this.blocks.push(block);
     }
 
-    public removeBlock(block: IRowNodeBlock): void {
+    public removeBlock(block: RowNodeBlock): void {
         removeFromArray(this.blocks, block);
     }
 
@@ -66,7 +65,7 @@ export class RowNodeBlockLoader extends BeanStub {
             return;
         }
 
-        let blockToLoad: IRowNodeBlock | null = null;
+        let blockToLoad: RowNodeBlock | null = null;
         this.blocks.forEach(block => {
             if (block.getState() === RowNodeBlock.STATE_DIRTY) {
                 blockToLoad = block;
@@ -76,28 +75,15 @@ export class RowNodeBlockLoader extends BeanStub {
         if (blockToLoad) {
             blockToLoad!.load();
             this.activeBlockLoadsCount++;
-            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad!.getBlockNumber()}`);
             this.printCacheStatus();
-        } else {
-            this.logger.log(`checkBlockToLoad: no pages to load`);
         }
     }
 
     public getBlockState(): any {
         const result: any = {};
         this.blocks.forEach((block: RowNodeBlock) => {
-            const nodeIdPrefix = block.getNodeIdPrefix();
-            const stateItem = {
-                blockNumber: block.getBlockNumber(),
-                startRow: block.getStartRow(),
-                endRow: block.getEndRow(),
-                pageStatus: block.getState()
-            };
-            if (exists(nodeIdPrefix)) {
-                result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
-            } else {
-                result[block.getBlockNumber()] = stateItem;
-            }
+            const {id, state} = block.getBlockStateJson();
+            result[id] = state;
         });
         return result;
     }

@@ -27,11 +27,9 @@ import {
     SortController,
     RowRenderer,
     RowNodeBlockLoader,
-    RowNodeCache,
     RowDataTransaction
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
-import { ServerSideBlock } from "./serverSideBlock";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -386,7 +384,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const cache = new ServerSideCache(this.cacheParams, rowNode);
         this.getContext().createBean(cache);
 
-        cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        cache.addEventListener(ServerSideCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
         rowNode.childrenCache = cache;
     }

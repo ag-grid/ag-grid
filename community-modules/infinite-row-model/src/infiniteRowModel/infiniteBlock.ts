@@ -2,15 +2,15 @@ import {
     GridOptionsWrapper,
     RowNode,
     IGetRowsParams,
-    RowNodeBlock,
     NumberSequence,
     Autowired,
     PostConstruct,
     PreDestroy,
-    BeanStub, RowNodeCacheParams,
+    BeanStub,
     RowRenderer,
     AgEvent,
-    _
+    _,
+    RowNodeBlock
 } from "@ag-grid-community/core";
 import {InfiniteCacheParams} from "./infiniteCache";
 
@@ -20,14 +20,7 @@ export interface LoadCompleteEvent extends AgEvent {
     lastRow: number;
 }
 
-export class InfiniteBlock extends BeanStub {
-
-    public static EVENT_LOAD_COMPLETE = 'loadComplete';
-
-    public static STATE_DIRTY = 'dirty';
-    public static STATE_LOADING = 'loading';
-    public static STATE_LOADED = 'loaded';
-    public static STATE_FAILED = 'failed';
+export class InfiniteBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -54,6 +47,18 @@ export class InfiniteBlock extends BeanStub {
         // however it makes the code easier to read if we work them out up front
         this.startRow = blockNumber * params.blockSize;
         this.endRow = this.startRow + params.blockSize;
+    }
+
+    public getBlockStateJson(): {id: string, state: any} {
+        return {
+            id: '' + this.getBlockNumber(),
+            state: {
+                blockNumber: this.getBlockNumber(),
+                startRow: this.getStartRow(),
+                endRow: this.getEndRow(),
+                pageStatus: this.getState()
+            }
+        };
     }
 
     public getDisplayIndexStart(): number {

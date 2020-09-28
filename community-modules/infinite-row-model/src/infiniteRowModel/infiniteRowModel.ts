@@ -18,7 +18,6 @@ import {
     RowDataTransaction,
     RowNode,
     RowNodeBlockLoader,
-    RowNodeCache,
     RowRenderer,
     SelectionController,
     SortController,
@@ -227,7 +226,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
-        this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        this.infiniteCache.addEventListener(InfiniteCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private defaultIfInvalid(value: number, defaultValue: number): number {
