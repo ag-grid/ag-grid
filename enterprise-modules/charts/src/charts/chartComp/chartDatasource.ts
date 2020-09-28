@@ -39,7 +39,6 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         const result = this.extractRowsFromGridRowModel(params);
         result.data = this.aggregateRowsByDimension(params, result.data);
-
         return result;
     }
 
@@ -74,9 +73,13 @@ export class ChartDatasource extends BeanStub {
                         const valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
 
                         // traverse parents to extract group label path
-                        const labels = this.getGroupLabels(rowNode, valueString);
+                        const labels = ChartDatasource.getGroupLabels(rowNode, valueString);
 
-                        data[colId] = { labels, toString: function() { return this.labels.filter((l: string) => !!l).reverse().join(' - '); } };
+                        data[colId] = {
+                            labels, toString: function () {
+                                return this.labels.filter((l: string) => !!l).reverse().join(' - ');
+                            }
+                        };
 
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
@@ -132,7 +135,6 @@ export class ChartDatasource extends BeanStub {
 
         if (params.grouping) {
             const groupIndexesToRemove = _.values(groupsToRemove);
-
             extractedRowData = extractedRowData.filter((_1, index) => !_.includes(groupIndexesToRemove, index));
         }
 
@@ -197,16 +199,14 @@ export class ChartDatasource extends BeanStub {
         return dataAggregated;
     }
 
-    private getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
+    private static getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
         const labels = [initialLabel];
-
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent!;
             if (rowNode) {
                 labels.push(rowNode.key);
             }
         }
-
         return labels;
     }
 }
