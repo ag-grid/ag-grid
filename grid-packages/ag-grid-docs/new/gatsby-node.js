@@ -1,4 +1,5 @@
 const path = require("path");
+const express = require(`express`);
 
 exports.createPages = async ({ actions, graphql, reporter }) => {
     const { createPage } = actions;
@@ -32,4 +33,9 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
             });
         });
     });
+};
+
+// Enable development support for serving HTML from `./static` folder
+exports.onCreateDevServer = ({ app }) => {
+    app.use(express.static(`public`));
 };
