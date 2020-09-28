@@ -1,4 +1,12 @@
 import {BeanStub} from "../../context/beanStub";
+import {AgEvent} from "../../events";
+import {_} from "../../utils";
+
+export interface LoadCompleteEvent extends AgEvent {
+    success: boolean;
+    page: RowNodeBlock;
+    lastRow: number;
+}
 
 export abstract class RowNodeBlock extends BeanStub {
 
@@ -234,10 +242,6 @@ export abstract class RowNodeBlock extends BeanStub {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
+
     }
-
-    public abstract load(): void;
-
-    public abstract getBlockStateJson(): {id: string, state: any};
-
 }

@@ -74,83 +74,6 @@ export class InfiniteCache extends BeanStub {
         this.logger = loggerFactory.create('InfiniteCache');
     }
 
-    private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
-        const startRow = block.getStartRow();
-        const endRow = block.getEndRow();
-        const indexOfLastRowToMove = moveFromIndex + moveCount;
-
-        // all rows need to be moved down below the insertion index
-        for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
-            // don't move rows at or before the insertion index
-            if (currentRowIndex < indexOfLastRowToMove) {
-                continue;
-            }
-
-            const indexOfNodeWeWant = currentRowIndex - moveCount;
-            const nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
-
-            if (nodeForThisIndex) {
-                block.setRowNode(currentRowIndex, nodeForThisIndex);
-            } else {
-                block.setBlankRowNode(currentRowIndex);
-                block.setDirty();
-            }
-        }
-    }
-
-    private insertItems(block: InfiniteBlock, indexToInsert: number, items: any[]): RowNode[] {
-        const pageStartRow = block.getStartRow();
-        const pageEndRow = block.getEndRow();
-        const newRowNodes: RowNode[] = [];
-
-        // next stage is insert the rows into this page, if applicable
-        for (let index = 0; index < items.length; index++) {
-            const rowIndex = indexToInsert + index;
-
-            const currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
-
-            if (currentRowInThisPage) {
-                const dataItem = items[index];
-                const newRowNode = block.setNewData(rowIndex, dataItem);
-                newRowNodes.push(newRowNode);
-            }
-        }
-
-        return newRowNodes;
-    }
-
-    public insertItemsAtIndex(indexToInsert: number | undefined, items: any[] | undefined): void {
-        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-
-        const newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder(block => {
-            const pageEndRow = block.getEndRow();
-
-            // if the insertion is after this page, then this page is not impacted
-            if (pageEndRow <= indexToInsert) {
-                return;
-            }
-
-            this.moveItemsDown(block, indexToInsert, items.length);
-            const newNodesThisPage = this.insertItems(block, indexToInsert, items);
-            newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
-        });
-
-        if (this.isMaxRowFound()) {
-            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
-        }
-
-        this.onCacheUpdated();
-
-        const event: RowDataUpdatedEvent = {
-            type: Events.EVENT_ROW_DATA_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
@@ -263,13 +186,6 @@ export class InfiniteCache extends BeanStub {
 
             if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
 
-                // we never purge blocks if they are open, as purging them would mess up with
-                // our indexes, it would be very messy to restore the purged block to it's
-                // previous state if it had open children (and what if open children of open
-                // children, jeeeesus, just thinking about it freaks me out) so best is have a
-                // rule, if block is open, we never purge.
-                if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
-
                 // if the block currently has rows been displayed, then don't remove it either.
                 // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
                 // but the screen is showing 20 rows, so at least 4 blocks are needed.
@@ -286,12 +202,8 @@ export class InfiniteCache extends BeanStub {
         const firstViewportRow = this.rowRenderer.getFirstVirtualRenderedRow();
         const lastViewportRow = this.rowRenderer.getLastVirtualRenderedRow();
 
-        const firstRowIndex = block.getDisplayIndexStart();
-        const lastRowIndex = block.getDisplayIndexEnd() - 1;
-
-        // parent closed means the parent node is not expanded, thus these blocks are not visible
-        const parentClosed = firstRowIndex == null || lastRowIndex == null;
-        if (parentClosed) { return false; }
+        const firstRowIndex = block.getStartRow();
+        const lastRowIndex = block.getEndRow() - 1;
 
         const blockBeforeViewport = firstRowIndex > lastViewportRow;
         const blockAfterViewport = lastRowIndex < firstViewportRow;
@@ -362,7 +274,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.forEachBlockInOrder(block => block.forEachNodeDeep(callback, sequence, this.virtualRowCount));
+        this.forEachBlockInOrder(block => block.forEachNode(callback, sequence, this.virtualRowCount));
     }
 
     public forEachBlockInOrder(callback: (block: InfiniteBlock, id: number) => void): void {
@@ -476,7 +388,7 @@ export class InfiniteCache extends BeanStub {
 
             lastBlockId = id;
 
-            block.forEachNodeShallow(rowNode => {
+            block.forEachNode(rowNode => {
                 const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
                 if (inActiveRange || hitFirstOrLast) {
                     result.push(rowNode);

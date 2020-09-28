@@ -1,40 +1,30 @@
 import {
+    _,
+    Autowired,
     GridOptionsWrapper,
-    RowNode,
     IGetRowsParams,
     NumberSequence,
-    Autowired,
     PostConstruct,
     PreDestroy,
-    BeanStub,
-    RowRenderer,
-    AgEvent,
-    _,
-    RowNodeBlock
+    RowNode,
+    RowNodeBlock,
+    RowRenderer
 } from "@ag-grid-community/core";
 import {InfiniteCacheParams} from "./infiniteCache";
-
-export interface LoadCompleteEvent extends AgEvent {
-    success: boolean;
-    page: InfiniteBlock;
-    lastRow: number;
-}
 
 export class InfiniteBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private params: InfiniteCacheParams;
-
-    private version = 0;
-    private state = RowNodeBlock.STATE_DIRTY;
-
-    private lastAccessed: number;
-
     private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
+
+    private params: InfiniteCacheParams;
+
+    private lastAccessed: number;
+
     public rowNodes: RowNode[];
 
     constructor(blockNumber: number, params: InfiniteCacheParams) {
@@ -61,17 +51,6 @@ export class InfiniteBlock extends RowNodeBlock {
         };
     }
 
-    public getDisplayIndexStart(): number {
-        return this.getBlockNumber() * this.params.blockSize;
-    }
-
-    // this is an estimate, as the last block will probably only be partially full. however
-    // this method is used to know if this block is been rendered, before destroying, so
-    // and this estimate works in that use case.
-    public getDisplayIndexEnd(): number {
-        return this.getDisplayIndexStart() + this.params.blockSize;
-    }
-
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
         if (_.exists(data)) {
             // this means if the user is not providing id's we just use the
@@ -84,26 +63,25 @@ export class InfiniteBlock extends RowNodeBlock {
         }
     }
 
-    public setRowNode(rowIndex: number, rowNode: RowNode): void {
-        const localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = rowNode;
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
-    }
-
-    public getNodeIdPrefix(): string {
-        return null;
-    }
-
-    public getRow(displayIndex: number): RowNode {
-        return this.getRowUsingLocalIndex(displayIndex);
-    }
-
     private setIndexAndTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
         rowNode.setRowIndex(rowIndex);
         rowNode.rowTop = this.params.rowHeight * rowIndex;
     }
 
     protected loadFromDatasource(): void {
+        const params = this.createLoadParams();
+        if (_.missing(this.params.datasource.getRows)) {
+            console.warn(`ag-Grid: datasource is missing getRows method`);
+            return;
+        }
+
+        // put in timeout, to force result to be async
+        window.setTimeout(() => {
+            this.params.datasource.getRows(params);
+        }, 0);
+    }
+
+    protected createLoadParams(): any {
         // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
@@ -117,63 +95,27 @@ export class InfiniteBlock extends RowNodeBlock {
             filterModel: this.params.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
-
-        if (_.missing(this.params.datasource.getRows)) {
-            console.warn(`ag-Grid: datasource is missing getRows method`);
-            return;
-        }
-
-        // put in timeout, to force result to be async
-        window.setTimeout(() => {
-            this.params.datasource.getRows(params);
-        }, 0);
+        return params;
     }
 
-    public isAnyNodeOpen(rowCount: number): boolean {
-        // because SSRM doesn't extend from here, we always return false.
-        // this method should be taken out.
-        return false;
-    }
-
-    private forEachNodeCallback(callback: (rowNode: RowNode, index: number) => void, rowCount: number): void {
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void,
+                       sequence: NumberSequence,
+                       rowCount: number): void {
         for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
             // we check against rowCount as this page may be the last one, and if it is, then
             // the last rows are not part of the set
             if (rowIndex < rowCount) {
-                const rowNode = this.getRowUsingLocalIndex(rowIndex);
-                callback(rowNode, rowIndex);
+                const rowNode = this.getRow(rowIndex);
+                callback(rowNode, sequence.next());
             }
         }
-    }
-
-    private forEachNode(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
-        this.forEachNodeCallback((rowNode: RowNode) => {
-            callback(rowNode, sequence.next());
-            // this will only every happen for server side row model, as infinite
-            // row model doesn't have groups
-            if (deep && rowNode.childrenCache) {
-                // rowNode.childrenCache.forEachNodeDeep(callback, sequence);
-            }
-        }, rowCount);
-    }
-
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, true);
-    }
-
-    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, false);
-    }
-
-    public getVersion(): number {
-        return this.version;
     }
 
     public getLastAccessed(): number {
         return this.lastAccessed;
     }
 
-    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+    public getRow(rowIndex: number, dontTouchLastAccessed = false): RowNode {
         if (!dontTouchLastAccessed) {
             this.lastAccessed = this.params.lastAccessedSequence.next();
         }
@@ -182,7 +124,7 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     @PostConstruct
-    protected init(): void {
+    protected postConstruct(): void {
         this.createRowNodes();
     }
 
@@ -198,19 +140,9 @@ export class InfiniteBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public setDirty(): void {
-        // in case any current loads in progress, this will have their results ignored
-        this.version++;
-        this.state = RowNodeBlock.STATE_DIRTY;
-    }
-
     public setDirtyAndPurge(): void {
         this.setDirty();
         this.rowNodes.forEach(rowNode => rowNode.setData(null));
-    }
-
-    public getState(): string {
-        return this.state;
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
@@ -250,23 +182,7 @@ export class InfiniteBlock extends RowNodeBlock {
         }
     }
 
-    public load(): void {
-        this.state = RowNodeBlock.STATE_LOADING;
-        this.loadFromDatasource();
-    }
-
-    protected pageLoadFailed() {
-        this.state = RowNodeBlock.STATE_FAILED;
-        const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: false,
-            page: this,
-            lastRow: null
-        };
-        this.dispatchEvent(event);
-    }
-
-    private populateWithRowData(rows: any[]): void {
+    protected populateWithRowData(rows: any[]): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
@@ -285,36 +201,10 @@ export class InfiniteBlock extends RowNodeBlock {
     @PreDestroy
     private destroyRowNodes(): void {
         this.rowNodes.forEach(rowNode => {
-            if (rowNode.childrenCache) {
-                this.destroyBean(rowNode.childrenCache);
-                rowNode.childrenCache = null;
-            }
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown. maybe
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
-    }
-
-    protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        // we need to check the version, in case there was an old request
-        // from the server that was sent before we refreshed the cache,
-        // if the load was done as a result of a cache refresh
-        if (version === this.version) {
-            this.state = RowNodeBlock.STATE_LOADED;
-            this.populateWithRowData(rows);
-        }
-
-        lastRow = _.cleanNumber(lastRow);
-
-        // check here if lastRow should be set
-        const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: true,
-            page: this,
-            lastRow: lastRow
-        };
-
-        this.dispatchEvent(event);
     }
 }
