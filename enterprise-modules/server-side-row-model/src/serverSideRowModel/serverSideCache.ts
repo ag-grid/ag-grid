@@ -62,8 +62,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     private params: ServerSideCacheParams;
 
-    private active: boolean;
-
     private blocks: { [blockNumber: string]: ServerSideBlock; } = {};
     private blockCount = 0;
 
@@ -93,14 +91,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.forEachBlockInOrder(block => this.destroyBlock(block));
     }
 
-    @PostConstruct
-    protected init(): void {
-        this.active = true;
-        this.addDestroyFunc(() => this.active = false);
-    }
-
-    public isActive(): boolean {
-        return this.active;
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('ServerSideCache');
     }
 
     public getVirtualRowCount(): number {
@@ -118,7 +110,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
-        if (!this.isActive()) {
+        if (!this.isAlive()) {
             return;
         }
 
@@ -306,7 +298,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
     protected onCacheUpdated(): void {
-        if (this.isActive()) {
+        if (this.isAlive()) {
 
             // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
             // in the valid range. so we must remove these. this can happen if user explicitly sets
@@ -390,28 +382,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // inActiveRange will be still true if we never hit the second rowNode
         const invalidRange = foundGapInSelection || inActiveRange;
         return invalidRange ? [] : result;
-    }
-
-
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-///////////////
-
-
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ServerSideCache');
     }
 
     public getRowBounds(index: number): RowBounds {

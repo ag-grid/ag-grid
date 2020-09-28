@@ -57,7 +57,6 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        console.log('setDataAndId id = ' + index);
         if (_.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
@@ -157,7 +156,7 @@ export class InfiniteBlock extends RowNodeBlock {
         }
     }
 
-    protected populateWithRowData(rows: any[]): void {
+    protected processServerResult(rows: any[]): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
