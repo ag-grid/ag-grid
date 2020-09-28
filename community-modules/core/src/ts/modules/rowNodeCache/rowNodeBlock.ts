@@ -1,20 +1,6 @@
-import { NumberSequence } from "../../utils";
-import { RowNode } from "../../entities/rowNode";
-import {Autowired, PostConstruct, PreDestroy} from "../../context/context";
-import { BeanStub } from "../../context/beanStub";
-import { RowNodeCacheParams } from "./rowNodeCache";
-import { RowRenderer } from "../../rendering/rowRenderer";
-import { AgEvent } from "../../events";
-import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
-import { cleanNumber } from "../../utils/number";
+import {BeanStub} from "../../context/beanStub";
 
-export interface LoadCompleteEvent extends AgEvent {
-    success: boolean;
-    page: RowNodeBlock;
-    lastRow: number;
-}
-
-export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
+export abstract class RowNodeBlock extends BeanStub {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
@@ -248,17 +234,10 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             this.state = RowNodeBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
-
-        lastRow = cleanNumber(lastRow);
-
-        // check here if lastRow should be set
-        const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: true,
-            page: this,
-            lastRow: lastRow
-        };
-
-        this.dispatchEvent(event);
     }
+
+    public abstract load(): void;
+
+    public abstract getBlockStateJson(): {id: string, state: any};
+
 }

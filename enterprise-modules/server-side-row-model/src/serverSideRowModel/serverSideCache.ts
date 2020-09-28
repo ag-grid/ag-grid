@@ -17,7 +17,6 @@ import {
     Logger,
     PostConstruct,
     PreDestroy,
-    RowNodeBlock,
     RowNodeBlockLoader,
     AgEvent
 } from "@ag-grid-community/core";
@@ -160,7 +159,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         blocksForPurging.forEach((block: ServerSideBlock, index: number) => {
 
-            const purgeBecauseBlockEmpty = block.getState() === RowNodeBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === ServerSideBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 
@@ -204,7 +203,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     protected postCreateBlock(newBlock: ServerSideBlock): void {
-        newBlock.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        newBlock.addEventListener(ServerSideBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
         this.setBlock(newBlock.getBlockNumber(), newBlock);
         this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();

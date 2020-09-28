@@ -177,7 +177,6 @@ export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
 export { PaginationProxy } from "./pagination/paginationProxy";
 export { RefreshModelParams } from "./interfaces/refreshModelParams";
 export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
