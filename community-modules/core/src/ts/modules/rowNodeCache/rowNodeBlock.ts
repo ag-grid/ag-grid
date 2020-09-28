@@ -73,13 +73,9 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     }
 
     public isAnyNodeOpen(rowCount: number): boolean {
-        let result = false;
-        this.forEachNodeCallback((rowNode: RowNode) => {
-            if (rowNode.expanded) {
-                result = true;
-            }
-        }, rowCount);
-        return result;
+        // because SSRM doesn't extend from here, we always return false.
+        // this method should be taken out.
+        return false;
     }
 
     private forEachNodeCallback(callback: (rowNode: RowNode, index: number) => void, rowCount: number): void {
@@ -99,7 +95,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
             if (deep && rowNode.childrenCache) {
-                rowNode.childrenCache.forEachNodeDeep(callback, sequence);
+                // rowNode.childrenCache.forEachNodeDeep(callback, sequence);
             }
         }, rowCount);
     }

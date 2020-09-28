@@ -21,7 +21,7 @@ var gridOptions = {
     },
 
     rowBuffer: 0,
-    cacheBlockSize: 2,
+    cacheBlockSize: 100,
     maxBlocksInCache: 5,
 
     // use the server-side row model
