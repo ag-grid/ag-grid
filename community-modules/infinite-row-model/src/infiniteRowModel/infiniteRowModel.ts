@@ -15,7 +15,6 @@ import {
     PostConstruct,
     PreDestroy,
     RowBounds,
-    RowDataTransaction,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,

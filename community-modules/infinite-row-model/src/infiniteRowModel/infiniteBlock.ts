@@ -39,6 +39,11 @@ export class InfiniteBlock extends RowNodeBlock {
         this.endRow = this.startRow + params.blockSize;
     }
 
+    @PostConstruct
+    protected postConstruct(): void {
+        this.createRowNodes();
+    }
+
     public getBlockStateJson(): {id: string, state: any} {
         return {
             id: '' + this.getBlockNumber(),
@@ -52,6 +57,7 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
+        console.log('setDataAndId id = ' + index);
         if (_.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
@@ -61,11 +67,6 @@ export class InfiniteBlock extends RowNodeBlock {
         } else {
             rowNode.setDataAndId(undefined, undefined);
         }
-    }
-
-    private setIndexAndTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
-        rowNode.setRowIndex(rowIndex);
-        rowNode.rowTop = this.params.rowHeight * rowIndex;
     }
 
     protected loadFromDatasource(): void {
@@ -123,11 +124,6 @@ export class InfiniteBlock extends RowNodeBlock {
         return this.rowNodes[localIndex];
     }
 
-    @PostConstruct
-    protected postConstruct(): void {
-        this.createRowNodes();
-    }
-
     public getStartRow(): number {
         return this.startRow;
     }
@@ -140,34 +136,13 @@ export class InfiniteBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public setDirtyAndPurge(): void {
-        this.setDirty();
-        this.rowNodes.forEach(rowNode => rowNode.setData(null));
-    }
-
-    public setBlankRowNode(rowIndex: number): RowNode {
-        const newRowNode = this.createBlankRowNode(rowIndex);
-        const localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = newRowNode;
-        return newRowNode;
-    }
-
-    public setNewData(rowIndex: number, dataItem: any): RowNode {
-        const newRowNode = this.setBlankRowNode(rowIndex);
-
-        this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
-
-        return newRowNode;
-    }
-
     protected createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = this.getContext().createBean(new RowNode());
 
         rowNode.setRowHeight(this.params.rowHeight);
-
         rowNode.uiLevel = 0;
-
-        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
+        rowNode.setRowIndex(rowIndex);
+        rowNode.rowTop = this.params.rowHeight * rowIndex;
 
         return rowNode;
     }

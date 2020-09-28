@@ -173,29 +173,9 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public setDirtyAndPurge(): void {
-        this.setDirty();
-        this.rowNodes.forEach(rowNode => rowNode.setData(null));
-    }
-
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
         const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
-    }
-
-    public setBlankRowNode(rowIndex: number): RowNode {
-        const newRowNode = this.createBlankRowNode();
-        const localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = newRowNode;
-        return newRowNode;
-    }
-
-    public setNewData(rowIndex: number, dataItem: any): RowNode {
-        const newRowNode = this.setBlankRowNode(rowIndex);
-
-        this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
-
-        return newRowNode;
     }
 
     protected createBlankRowNode(): RowNode {
