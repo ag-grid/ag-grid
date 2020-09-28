@@ -112,7 +112,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public isLastRowFound(): boolean {
         if (this.cacheExists()) {
-            return this.rootNode.childrenCache!.isMaxRowFound();
+            return (this.rootNode.childrenCache as ServerSideCache)!.isMaxRowFound();
         }
 
         return false;
@@ -356,7 +356,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
         const blockSize = (typeof userProvidedBlockSize == 'number') ?
             (userProvidedBlockSize > 0 ? userProvidedBlockSize : undefined) :
-            ServerSideBlock.DefaultBlockSize;
+            100;
 
         const params: ServerSideCacheParams = {
             // the columns the user has grouped and aggregated by
@@ -373,8 +373,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
-            overflowSize: 1,
-            initialRowCount: 1,
             maxBlocksInCache: maxBlocksInCache,
             blockSize: blockSize,
             rowHeight: this.rowHeight,
@@ -445,7 +443,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRow(index: number): RowNode | null {
         if (this.cacheExists()) {
-            return this.rootNode.childrenCache!.getRow(index);
+            return (this.rootNode.childrenCache as ServerSideCache)!.getRow(index);
         }
 
         return null;
@@ -517,7 +515,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.cacheExists()) {
-            this.rootNode.childrenCache!.forEachNodeDeep(callback);
+            (this.rootNode.childrenCache as ServerSideCache)!.forEachNodeDeep(callback);
         }
     }
 
@@ -540,7 +538,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return firstInRange.parent!.childrenCache!.getRowNodesInRange(lastInRange, firstInRange);
+        return (firstInRange.parent!.childrenCache as ServerSideCache)!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {

@@ -1,7 +1,12 @@
 import {
+    _,
+    AgEvent,
     Autowired,
+    BeanStub,
     Column,
+    ColumnApi,
     ColumnController,
+    GridApi,
     GridOptionsWrapper,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
@@ -9,26 +14,48 @@ import {
     LoggerFactory,
     NumberSequence,
     PostConstruct,
+    PreDestroy,
     Qualifier,
     RowBounds,
     RowNode,
     RowRenderer,
-    ValueService,
-    ColumnApi,
-    GridApi,
-    RowNodeBlock,
-    _
+    ValueService
 } from "@ag-grid-community/core";
 
-import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
-export class ServerSideBlock extends RowNodeBlock {
+export interface LoadCompleteEvent extends AgEvent {
+    success: boolean;
+    page: ServerSideBlock;
+    lastRow: number;
+}
 
+export class ServerSideBlock extends BeanStub {
+
+    public static EVENT_LOAD_COMPLETE = 'loadComplete';
+
+    public static STATE_DIRTY = 'dirty';
+    public static STATE_LOADING = 'loading';
+    public static STATE_LOADED = 'loaded';
+    public static STATE_FAILED = 'failed';
+
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+
+    private version = 0;
+    private state = ServerSideBlock.STATE_DIRTY;
+
+    private lastAccessed: number;
+
+    private readonly blockNumber: number;
+    private readonly startRow: number;
+    private readonly endRow: number;
+
+    public rowNodes: RowNode[];
 
     private logger: Logger;
 
@@ -53,11 +80,18 @@ export class ServerSideBlock extends RowNodeBlock {
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
-    public static readonly DefaultBlockSize = 100;
+    constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
+        super();
 
-    constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
-        super(pageNumber, params);
         this.params = params;
+
+        this.blockNumber = blockNumber;
+
+        // we don't need to calculate these now, as the inputs don't change,
+        // however it makes the code easier to read if we work them out up front
+        this.startRow = blockNumber * params.blockSize;
+        this.endRow = this.startRow + params.blockSize;
+
         this.parentRowNode = parentRowNode;
         this.parentCache = parentCache;
         this.level = parentRowNode.level + 1;
@@ -65,8 +99,64 @@ export class ServerSideBlock extends RowNodeBlock {
         this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
     }
 
-    // no need for @postConstruct, as attached to parent
-    protected init(): void {
+    public isAnyNodeOpen(rowCount: number): boolean {
+        let result = false;
+        this.forEachNodeCallback((rowNode: RowNode) => {
+            if (rowNode.expanded) {
+                result = true;
+            }
+        }, rowCount);
+        return result;
+    }
+
+    private forEachNodeCallback(callback: (rowNode: RowNode, index: number) => void, rowCount: number): void {
+        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
+            // we check against rowCount as this page may be the last one, and if it is, then
+            // the last rows are not part of the set
+            if (rowIndex < rowCount) {
+                const rowNode = this.getRowUsingLocalIndex(rowIndex);
+                callback(rowNode, rowIndex);
+            }
+        }
+    }
+
+    private forEachNode(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
+        this.forEachNodeCallback((rowNode: RowNode) => {
+            callback(rowNode, sequence.next());
+            // this will only every happen for server side row model, as infinite
+            // row model doesn't have groups
+            if (deep && rowNode.childrenCache) {
+                (rowNode.childrenCache as ServerSideCache).forEachNodeDeep(callback, sequence);
+            }
+        }, rowCount);
+    }
+
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, true);
+    }
+
+    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, false);
+    }
+
+    public getVersion(): number {
+        return this.version;
+    }
+
+    public getLastAccessed(): number {
+        return this.lastAccessed;
+    }
+
+    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.params.lastAccessedSequence.next();
+        }
+        const localIndex = rowIndex - this.startRow;
+        return this.rowNodes[localIndex];
+    }
+
+    @PostConstruct
+    protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
 
@@ -77,9 +167,170 @@ export class ServerSideBlock extends RowNodeBlock {
         }
 
         this.createNodeIdPrefix();
-
-        super.init();
+        this.createRowNodes();
     }
+
+    public getStartRow(): number {
+        return this.startRow;
+    }
+
+    public getEndRow(): number {
+        return this.endRow;
+    }
+
+    public getBlockNumber(): number {
+        return this.blockNumber;
+    }
+
+    public setDirty(): void {
+        // in case any current loads in progress, this will have their results ignored
+        this.version++;
+        this.state = ServerSideBlock.STATE_DIRTY;
+    }
+
+    public setDirtyAndPurge(): void {
+        this.setDirty();
+        this.rowNodes.forEach(rowNode => rowNode.setData(null));
+    }
+
+    public getState(): string {
+        return this.state;
+    }
+
+    public setRowNode(rowIndex: number, rowNode: RowNode): void {
+        const localIndex = rowIndex - this.startRow;
+        this.rowNodes[localIndex] = rowNode;
+    }
+
+    public setBlankRowNode(rowIndex: number): RowNode {
+        const newRowNode = this.createBlankRowNode();
+        const localIndex = rowIndex - this.startRow;
+        this.rowNodes[localIndex] = newRowNode;
+        return newRowNode;
+    }
+
+    public setNewData(rowIndex: number, dataItem: any): RowNode {
+        const newRowNode = this.setBlankRowNode(rowIndex);
+
+        this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
+
+        return newRowNode;
+    }
+
+    protected createBlankRowNode(): RowNode {
+
+        const rowNode = this.getContext().createBean(new RowNode());
+
+        rowNode.setRowHeight(this.params.rowHeight);
+
+        rowNode.group = this.groupLevel;
+        rowNode.leafGroup = this.leafGroup;
+        rowNode.level = this.level;
+        rowNode.uiLevel = this.level;
+        rowNode.parent = this.parentRowNode;
+
+        // stub gets set to true here, and then false when this rowNode gets it's data
+        rowNode.stub = true;
+
+        if (rowNode.group) {
+            rowNode.expanded = false;
+            rowNode.field = this.groupField;
+            rowNode.rowGroupColumn = this.rowGroupColumn;
+        }
+
+        return rowNode;
+    }
+
+    // creates empty row nodes, data is missing as not loaded yet
+    protected createRowNodes(): void {
+        this.rowNodes = [];
+        for (let i = 0; i < this.params.blockSize; i++) {
+            const rowNode = this.createBlankRowNode();
+            this.rowNodes.push(rowNode);
+        }
+    }
+
+    public load(): void {
+        this.state = ServerSideBlock.STATE_LOADING;
+        this.loadFromDatasource();
+    }
+
+    protected pageLoadFailed() {
+        this.state = ServerSideBlock.STATE_FAILED;
+        const event: LoadCompleteEvent = {
+            type: ServerSideBlock.EVENT_LOAD_COMPLETE,
+            success: false,
+            page: this,
+            lastRow: null
+        };
+        this.dispatchEvent(event);
+    }
+
+    private populateWithRowData(rows: any[]): void {
+        const rowNodesToRefresh: RowNode[] = [];
+
+        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+            const data = rows[index];
+            if (rowNode.stub) {
+                rowNodesToRefresh.push(rowNode);
+            }
+            this.setDataAndId(rowNode, data, this.startRow + index);
+        });
+
+        if (rowNodesToRefresh.length > 0) {
+            this.rowRenderer.redrawRows(rowNodesToRefresh);
+        }
+    }
+
+    @PreDestroy
+    private destroyRowNodes(): void {
+        this.rowNodes.forEach(rowNode => {
+            if (rowNode.childrenCache) {
+                this.destroyBean(rowNode.childrenCache);
+                rowNode.childrenCache = null;
+            }
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // sees row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
+        });
+    }
+
+    protected pageLoaded(version: number, rows: any[], lastRow: number) {
+        // we need to check the version, in case there was an old request
+        // from the server that was sent before we refreshed the cache,
+        // if the load was done as a result of a cache refresh
+        if (version === this.version) {
+            this.state = ServerSideBlock.STATE_LOADED;
+            this.populateWithRowData(rows);
+        }
+
+        lastRow = _.cleanNumber(lastRow);
+
+        // check here if lastRow should be set
+        const event: any = {
+            type: ServerSideBlock.EVENT_LOAD_COMPLETE,
+            success: true,
+            page: this,
+            lastRow: lastRow
+        };
+
+        this.dispatchEvent(event);
+    }
+
+
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+    ////////////////
+
+
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ServerSideBlock');
@@ -130,7 +381,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
         while (true) {
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            const currentRowNode = super.getRowUsingLocalIndex(midPointer);
+            const currentRowNode = this.getRowUsingLocalIndex(midPointer);
 
             // first check current row for index
             if (currentRowNode.rowIndex === displayRowIndex) {
@@ -264,27 +515,6 @@ export class ServerSideBlock extends RowNodeBlock {
                 this.params.datasource.getRows(params);
             }
         }, 0);
-    }
-
-    protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = super.createBlankRowNode(rowIndex);
-
-        rowNode.group = this.groupLevel;
-        rowNode.leafGroup = this.leafGroup;
-        rowNode.level = this.level;
-        rowNode.uiLevel = this.level;
-        rowNode.parent = this.parentRowNode;
-
-        // stub gets set to true here, and then false when this rowNode gets it's data
-        rowNode.stub = true;
-
-        if (rowNode.group) {
-            rowNode.expanded = false;
-            rowNode.field = this.groupField;
-            rowNode.rowGroupColumn = this.rowGroupColumn;
-        }
-
-        return rowNode;
     }
 
     private createGroupKeys(groupNode: RowNode): string[] {

@@ -16,6 +16,7 @@ import { DetailGridInfo, GridApi } from "../gridApi";
 import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
+import {IServerSideCache} from "../interfaces/iServerSideCache";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -184,7 +185,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
+    public childrenCache: IServerSideCache | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
