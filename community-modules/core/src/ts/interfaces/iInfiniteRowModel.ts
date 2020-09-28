@@ -8,6 +8,6 @@ export interface IInfiniteRowModel extends IRowModel {
     purgeCache(): void;
     getVirtualRowCount(): number | null;
     isMaxRowFound(): boolean | undefined;
-    setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
+    setRowCount(rowCount: number, maxRowFound?: boolean): void;
     getBlockState(): any;
 }

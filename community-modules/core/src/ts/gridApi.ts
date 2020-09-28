@@ -1400,7 +1400,7 @@ export class GridApi {
 
     public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.infiniteRowModel) {
-            this.infiniteRowModel.setVirtualRowCount(rowCount, maxRowFound);
+            this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
             console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
         }
