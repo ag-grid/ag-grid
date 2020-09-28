@@ -1,5 +1,5 @@
 import React from "react";
-import './framework-selector.css';
+import './framework-selector.scss';
 
 export default function FrameworkSelector({ currentFramework }) {
     if (!currentFramework) { return null; }
@@ -13,8 +13,11 @@ export default function FrameworkSelector({ currentFramework }) {
 
     return <div className="framework-selector">
         {['javascript', 'angular', 'react', 'vue'].map(framework =>
-            <div key={framework} onClick={() => changeFramework(framework)}>
-                <img className={framework === currentFramework ? "selected" : ""} src={`/fw-logos/${framework}.svg`} />
+            <div 
+                key={ framework } onClick={ () => changeFramework(framework) } 
+                className={`framework-thumbnail${framework === currentFramework ? ' selected' : '' }`}
+            >
+                <img src={`/fw-logos/${framework}.svg`} />
             </div>)}
     </div>;
 }

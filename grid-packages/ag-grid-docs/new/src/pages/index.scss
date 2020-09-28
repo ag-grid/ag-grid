@@ -1,0 +1,26 @@
+@import '~bootstrap/scss/bootstrap';
+
+div {
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+}
+
+.getting-started-cards {
+    @extend .d-flex;
+}
+
+.getting-started-card {
+    @extend .card;
+    @extend .flex-grow-1;
+    @extend .m-3;
+    @extend .p-4;
+}
+
+.getting-started-card__logo {
+    @extend .my-5;
+    height: 100px;
+}
+
+.getting-started-card__button {
+    @extend .btn;
+    @extend .btn-primary;
+}

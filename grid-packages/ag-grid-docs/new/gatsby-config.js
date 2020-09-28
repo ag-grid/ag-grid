@@ -25,9 +25,12 @@ module.exports = {
               removeAccents: true,
             },
           },
-          'gatsby-remark-prismjs'
+          'gatsby-remark-prismjs',
         ]
       }
+    },
+    {
+      resolve: 'gatsby-plugin-sass'
     }
   ]
 };

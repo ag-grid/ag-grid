@@ -1,6 +1,6 @@
 import React from "react";
 import FrameworkSelector from './FrameworkSelector';
-import './layout.css';
+import './layout.scss';
 
 export default function Layout({ children, framework }) {
     return <div className="container">
