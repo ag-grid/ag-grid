@@ -25,7 +25,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected abstract loadFromDatasource(): void;
 
-    protected abstract populateWithRowData(rows: any[]): void;
+    protected abstract processServerResult(rows: any[]): void;
 
     public load(): void {
         this.state = RowNodeBlock.STATE_LOADING;
@@ -63,7 +63,7 @@ export abstract class RowNodeBlock extends BeanStub {
         // if the load was done as a result of a cache refresh
         if (version === this.version) {
             this.state = RowNodeBlock.STATE_LOADED;
-            this.populateWithRowData(rows);
+            this.processServerResult(rows);
         }
 
         lastRow = _.cleanNumber(lastRow);

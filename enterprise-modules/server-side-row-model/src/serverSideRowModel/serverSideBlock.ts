@@ -32,11 +32,11 @@ export class ServerSideBlock extends RowNodeBlock {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private lastAccessed: number;
-
     private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
+
+    private lastAccessed: number;
 
     public rowNodes: RowNode[];
 
@@ -82,70 +82,6 @@ export class ServerSideBlock extends RowNodeBlock {
         this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
     }
 
-    public getBlockStateJson(): {id: string, state: any} {
-        return {
-            id: this.getNodeIdPrefix() + this.getBlockNumber(),
-            state: {
-                blockNumber: this.getBlockNumber(),
-                startRow: this.getStartRow(),
-                endRow: this.getEndRow(),
-                pageStatus: this.getState()
-            }
-        };
-    }
-
-    public isAnyNodeOpen(rowCount: number): boolean {
-        let result = false;
-        this.forEachNodeCallback((rowNode: RowNode) => {
-            if (rowNode.expanded) {
-                result = true;
-            }
-        }, rowCount);
-        return result;
-    }
-
-    private forEachNodeCallback(callback: (rowNode: RowNode, index: number) => void, rowCount: number): void {
-        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
-            // we check against rowCount as this page may be the last one, and if it is, then
-            // the last rows are not part of the set
-            if (rowIndex < rowCount) {
-                const rowNode = this.getRowUsingLocalIndex(rowIndex);
-                callback(rowNode, rowIndex);
-            }
-        }
-    }
-
-    private forEachNode(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
-        this.forEachNodeCallback((rowNode: RowNode) => {
-            callback(rowNode, sequence.next());
-            // this will only every happen for server side row model, as infinite
-            // row model doesn't have groups
-            if (deep && rowNode.childrenCache) {
-                (rowNode.childrenCache as ServerSideCache).forEachNodeDeep(callback, sequence);
-            }
-        }, rowCount);
-    }
-
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, true);
-    }
-
-    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, false);
-    }
-
-    public getLastAccessed(): number {
-        return this.lastAccessed;
-    }
-
-    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
-        if (!dontTouchLastAccessed) {
-            this.lastAccessed = this.params.lastAccessedSequence.next();
-        }
-        const localIndex = rowIndex - this.startRow;
-        return this.rowNodes[localIndex];
-    }
-
     @PostConstruct
     protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -173,12 +109,116 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public setRowNode(rowIndex: number, rowNode: RowNode): void {
-        const localIndex = rowIndex - this.startRow;
-        this.rowNodes[localIndex] = rowNode;
+    public getNodeIdPrefix(): string {
+        return this.nodeIdPrefix;
     }
 
-    protected createBlankRowNode(): RowNode {
+    public isDisplayIndexInBlock(displayIndex: number): boolean {
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+    }
+
+    public isBlockBefore(displayIndex: number): boolean {
+        return displayIndex >= this.displayIndexEnd;
+    }
+
+    public getDisplayIndexStart(): number {
+        return this.displayIndexStart;
+    }
+
+    public getDisplayIndexEnd(): number {
+        return this.displayIndexEnd;
+    }
+
+    public getBlockHeight(): number {
+        return this.blockHeight;
+    }
+
+    public getBlockTop(): number {
+        return this.blockTop;
+    }
+
+    public isGroupLevel(): boolean | undefined {
+        return this.groupLevel;
+    }
+
+    public getGroupField(): string {
+        return this.groupField;
+    }
+
+    public getBlockStateJson(): {id: string, state: any} {
+        return {
+            id: this.nodeIdPrefix + this.blockNumber,
+            state: {
+                blockNumber: this.blockNumber,
+                startRow: this.startRow,
+                endRow: this.endRow,
+                pageStatus: this.getState()
+            }
+        };
+    }
+
+    public isAnyNodeOpen(rowCount: number): boolean {
+        let result = false;
+        this.forEachNodeCallback((rowNode: RowNode) => {
+            if (rowNode.expanded) {
+                result = true;
+            }
+        }, rowCount);
+        return result;
+    }
+
+    private forEachNodeCallback(callback_B: (rowNode: RowNode) => void, rowCount: number): void {
+        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
+            // we check against rowCount as this page may be the last one, and if it is, then
+            // the last rows are not part of the set
+            if (rowIndex < rowCount) {
+                const rowNode = this.getRowUsingLocalIndex(rowIndex);
+                callback_B(rowNode);
+            }
+        }
+    }
+
+    private forEachNode(callback: (rowNode: RowNode, index: number) => void,
+                        sequence: NumberSequence,
+                        rowCount: number,
+                        includeChildren: boolean): void {
+        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
+            // we check against rowCount as this page may be the last one, and if it is, then
+            // the last rows are not part of the set
+            if (rowIndex < rowCount) {
+                const rowNode = this.getRowUsingLocalIndex(rowIndex);
+                callback(rowNode, sequence.next());
+
+                // this will only every happen for server side row model, as infinite
+                // row model doesn't have groups
+                if (includeChildren && rowNode.childrenCache) {
+                    (rowNode.childrenCache as ServerSideCache).forEachNodeDeep(callback, sequence);
+                }
+            }
+        }
+    }
+
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, true);
+    }
+
+    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, false);
+    }
+
+    public getLastAccessed(): number {
+        return this.lastAccessed;
+    }
+
+    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.params.lastAccessedSequence.next();
+        }
+        const localIndex = rowIndex - this.startRow;
+        return this.rowNodes[localIndex];
+    }
+
+    private createStubRowNode(): RowNode {
 
         const rowNode = this.getContext().createBean(new RowNode());
 
@@ -206,12 +246,12 @@ export class ServerSideBlock extends RowNodeBlock {
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.params.blockSize; i++) {
-            const rowNode = this.createBlankRowNode();
+            const rowNode = this.createStubRowNode();
             this.rowNodes.push(rowNode);
         }
     }
 
-    protected populateWithRowData(rows: any[]): void {
+    protected processServerResult(rows: any[]): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
@@ -258,18 +298,6 @@ export class ServerSideBlock extends RowNodeBlock {
         if (parts.length > 0) {
             this.nodeIdPrefix = parts.reverse().join('-') + '-';
         }
-    }
-
-    protected createIdForIndex(index: number): string {
-        if (_.exists(this.nodeIdPrefix)) {
-            return this.nodeIdPrefix + index.toString();
-        } else {
-            return index.toString();
-        }
-    }
-
-    public getNodeIdPrefix(): string {
-        return this.nodeIdPrefix;
     }
 
     public getRow(displayRowIndex: number): RowNode | null {
@@ -326,7 +354,6 @@ export class ServerSideBlock extends RowNodeBlock {
 
         if (_.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
-            // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
             // we combine the index with the level and group key, so that the id is
             // unique across the set.
             //
@@ -337,19 +364,19 @@ export class ServerSideBlock extends RowNodeBlock {
             //
             // id's are also used by the row renderer for updating the dom as it identifies
             // rowNodes by id
-            const idToUse = this.createIdForIndex(index);
+            const defaultId = this.nodeIdPrefix + index.toString();
 
-            rowNode.setDataAndId(data, idToUse);
+            rowNode.setDataAndId(data, defaultId);
 
             if (this.usingTreeData) {
-                const getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
-                if (_.exists(getServerSideGroupKey) && getServerSideGroupKey) {
-                    rowNode.key = getServerSideGroupKey(rowNode.data);
-                }
+                const isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+                const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
 
-                const isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-                if (_.exists(isServerSideGroup) && isServerSideGroup) {
-                    rowNode.group = isServerSideGroup(rowNode.data);
+                if (isGroupFunc != null) {
+                    rowNode.group = isGroupFunc(rowNode.data);
+                    if (rowNode.group && getKeyFunc != null) {
+                        rowNode.key = getKeyFunc(rowNode.data);
+                    }
                 }
 
             } else if (rowNode.group) {
@@ -364,9 +391,9 @@ export class ServerSideBlock extends RowNodeBlock {
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }
             } else if (this.usingMasterDetail) {
-                const isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-                if (_.exists(isRowMasterFunc) && isRowMasterFunc) {
-                    rowNode.master = isRowMasterFunc(rowNode.data);
+                const isMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+                if (isMasterFunc != null) {
+                    rowNode.master = isMasterFunc(rowNode.data);
                 } else {
                     rowNode.master = true;
                 }
@@ -402,16 +429,13 @@ export class ServerSideBlock extends RowNodeBlock {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
 
         groupDisplayCols.forEach(col => {
+            if (rowNode.groupData == null) {
+                rowNode.groupData = {};
+            }
             if (usingTreeData) {
-                if (_.missing(rowNode.groupData)) {
-                    rowNode.groupData = {};
-                }
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
                 const groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
-                if (_.missing(rowNode.groupData)) {
-                    rowNode.groupData = {};
-                }
                 rowNode.groupData[col.getColId()] = groupValue;
             }
         });
@@ -638,37 +662,5 @@ export class ServerSideBlock extends RowNodeBlock {
         } as IServerSideGetRowsParams;
 
         return params;
-    }
-
-    public isDisplayIndexInBlock(displayIndex: number): boolean {
-        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
-    }
-
-    public isBlockBefore(displayIndex: number): boolean {
-        return displayIndex >= this.displayIndexEnd;
-    }
-
-    public getDisplayIndexStart(): number {
-        return this.displayIndexStart;
-    }
-
-    public getDisplayIndexEnd(): number {
-        return this.displayIndexEnd;
-    }
-
-    public getBlockHeight(): number {
-        return this.blockHeight;
-    }
-
-    public getBlockTop(): number {
-        return this.blockTop;
-    }
-
-    public isGroupLevel(): boolean | undefined {
-        return this.groupLevel;
-    }
-
-    public getGroupField(): string {
-        return this.groupField;
     }
 }
