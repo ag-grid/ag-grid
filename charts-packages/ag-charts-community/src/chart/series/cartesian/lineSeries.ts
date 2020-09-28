@@ -16,6 +16,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
+import Scale from "../../../scale/scale";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -189,6 +190,18 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
+    private getDatums(i: number, xData: number[], yData: number[],
+                      xScale: Scale<any, number>, yScale: Scale<any, number>): [number, number] | undefined {
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
+        const xDatum = xData[i];
+        const yDatum = yData[i];
+        const noDatum =
+            yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+        return noDatum ? undefined : [xDatum, yDatum];
+    }
+
     private updateLinePath() {
         if (!this.data) {
             return;
@@ -206,20 +219,24 @@ export class LineSeries extends CartesianSeries {
 
         linePath.clear();
         let moveTo = true;
+        let outOfRange = false;
+        let nextDatums: [number, number] | undefined = undefined;
         for (let i = 0; i < xData.length; i++) {
-            const xDatum = xData[i];
-            const yDatum = yData[i];
-            const isGap =
-                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            const datums = nextDatums || this.getDatums(i, xData, yData, xScale, yScale);
 
-            if (isGap) {
+            if (!datums) {
                 moveTo = true;
             } else {
+                const [xDatum, yDatum] = datums;
                 const x = xScale.convert(xDatum) + xOffset;
-                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                nextDatums = this.getDatums(i + 1, xData, yData, xScale, yScale);
+                if (!outOfRange && !xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1) &&
+                    (!nextDatums || !xAxis.inRange(xScale.convert(nextDatums[0]) + xOffset, 0, (xScale.bandwidth || 20) + 1))) {
+                    outOfRange = true;
                     continue;
                 }
+                outOfRange = false;
+
                 const y = yScale.convert(yDatum) + yOffset;
 
                 if (moveTo) {
