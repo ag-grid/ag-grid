@@ -18,6 +18,7 @@ import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
+import { interpolate } from "../../../util/string";
 
 interface AreaSelectionDatum {
     readonly yKey: string;
@@ -51,6 +52,7 @@ export class AreaSeries extends CartesianSeries {
     static type = 'area';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    tooltipFormat?: string;
 
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
@@ -529,7 +531,7 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltipFormat, tooltipRenderer } = this;
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -546,8 +548,8 @@ export class AreaSeries extends CartesianSeries {
             content
         };
 
-        if (tooltipRenderer) {
-            return toTooltipHtml(tooltipRenderer({
+        if (tooltipFormat || tooltipRenderer) {
+            const params = {
                 datum,
                 xKey,
                 xName,
@@ -556,7 +558,15 @@ export class AreaSeries extends CartesianSeries {
                 yValue,
                 yName,
                 color
-            }), defaults);
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
 
         return toTooltipHtml(defaults);
