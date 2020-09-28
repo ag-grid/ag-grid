@@ -7,6 +7,14 @@ body {
     @extend .vh-100;
 }
 
+.main_container {
+    @extend .container-fluid;
+    @extend .p-0;
+    @extend .vh-100;
+    @extend .d-flex;
+    @extend .flex-column;
+}
+
 .header {
     @extend .d-flex;
     justify-content: space-between;
@@ -23,8 +31,15 @@ body {
     min-width: 5.5rem;
 }
 
+
+.content_viewport {
+    @extend .d-flex;
+    @extend .flex-grow-1;
+}
+
+.main_menu {
+    width: 300px;
+}
 .content {
-    margin: 0 auto;
-    max-width: 1200px;
-    padding: 0 1rem;
+    @extend .p-3;
 }
