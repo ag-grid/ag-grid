@@ -14,6 +14,7 @@ import {MarkersPanel} from "./markersPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 import {ShadowPanel} from "./shadowPanel";
 import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
+import {initFillOpacitySlider, initLineOpacitySlider} from "../widgetInitialiser";
 
 export class AreaSeriesPanel extends Component {
 
@@ -86,21 +87,8 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initOpacity() {
-        this.seriesLineOpacitySlider
-            .setLabel(this.chartTranslator.translate("strokeOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
-
-        this.seriesFillOpacitySlider
-            .setLabel(this.chartTranslator.translate("fillOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fill.opacity", newValue));
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
     }
 
     private initMarkersPanel() {

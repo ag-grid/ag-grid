@@ -16,6 +16,7 @@ import {ShadowPanel} from "./shadowPanel";
 import {Font, FontPanel, FontPanelParams} from "../fontPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 import {HistogramChartProxy} from "../../../chartProxies/cartesian/histogramChartProxy";
+import {initFillOpacitySlider, initLineOpacitySlider} from "../widgetInitialiser";
 
 export class HistogramSeriesPanel extends Component {
 
@@ -88,21 +89,8 @@ export class HistogramSeriesPanel extends Component {
     }
 
     private initOpacity() {
-        this.seriesLineOpacitySlider
-            .setLabel(this.chartTranslator.translate("strokeOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
-
-        this.seriesFillOpacitySlider
-            .setLabel(this.chartTranslator.translate("fillOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fill.opacity", newValue));
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
     }
 
     private initBins() {
