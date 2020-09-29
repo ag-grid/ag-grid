@@ -14,7 +14,6 @@
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "dependencies": {
-    "@popperjs/core": "^2.5.2",
     "bootstrap": "^4.5.2",
     "gatsby": "^2.24.63",
     "gatsby-cli": "^2.12.100",
@@ -28,6 +27,7 @@
     "gatsby-transformer-remark": "^2.8.35",
     "jquery": "^3.5.1",
     "node-sass": "^4.14.1",
+    "popper.js": "^1.16.1",
     "prismjs": "^1.21.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
