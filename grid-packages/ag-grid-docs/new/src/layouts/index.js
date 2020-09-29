@@ -3,12 +3,12 @@ import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
 import './index.scss';
 
-export default function Layout({ children, pageContext: { framework } }) {
+export default function Layout({ path, children, pageContext: { framework } }) {
     return <div className="main_container">
         <div className="header">
             <a href="/" className="header__logo"></a>
 
-            <FrameworkSelector currentFramework={framework} />
+            <FrameworkSelector path={path} currentFramework={framework} />
         </div>
         <div className="content_viewport">
             {

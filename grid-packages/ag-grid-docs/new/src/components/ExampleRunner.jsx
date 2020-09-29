@@ -41,7 +41,7 @@ const CodeViewer = ({ framework, name, imports = 'modules' }) => {
         framework = 'vanilla';
     }
 
-    if (files == null) {
+    if (files == null && typeof window !== 'undefined') {
         const rootFolder = `${name}/_gen/${imports}/${framework}/`;
         const filesForExample = data.allFile.edges
             .filter(edge => edge.node.relativePath.startsWith(rootFolder))
