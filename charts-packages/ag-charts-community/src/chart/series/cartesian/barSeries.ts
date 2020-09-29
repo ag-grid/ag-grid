@@ -137,7 +137,7 @@ export class BarSeries extends CartesianSeries {
         this.addEventListener('update', this.update);
 
         this.label.enabled = false;
-        this.label.addEventListener('update', this.update, this);
+        this.label.addEventListener('change', this.update, this);
     }
 
     /**
