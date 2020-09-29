@@ -1,42 +1,22 @@
 .example-runner {
     border: 1px solid grey;
     border-radius: 5px;
+}
+
+.example-runner__header {
+    display: flex;
+    background-image: linear-gradient(to bottom right, #0084e7, #0067b4);
     padding: 10px;
+    border-radius: 5px 5px 0 0;
 }
 
-.code-viewer {
-    margin-top: 20px;
-    width: 100%;
-    border: 0;
-    height: 500px;
-    display: flex;
-    width: 100%;
-}
-
-.code-viewer__files {
-    width: 20%;
-    margin: 20px 0;
-    padding: 20px 0;
-    background-color: lightblue;
-    border-radius: 5px 0 0 5px;
-}
-
-.code-viewer__file {
-    padding: 20px;
-}
-
-.code-viewer__file--active {
+.example-runner__title {
+    flex: 1;
+    font-weight: bold;
     color: white;
-    background-color: darkblue;
 }
 
-.code-viewer__code {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-}
-
-.code-viewer__code pre {
-    flex: 1;
+.example-runner__import-type select {
+    padding: 5px;
+    border-radius: 5px;
 }

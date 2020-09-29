@@ -11,7 +11,7 @@ export default function FrameworkSelector({ path, currentFramework }) {
                 key={framework}
                 to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}
                 className={`framework-thumbnail${framework === currentFramework ? ' selected' : ''}`}>
-                <img src={`/fw-logos/${framework}.svg`} />
+                <img src={`/fw-logos/${framework}.svg`} alt={framework} />
             </Link>;
         })}
     </div>;
