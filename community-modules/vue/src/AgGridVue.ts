@@ -1,16 +1,19 @@
-import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Prop} from 'vue-property-decorator';
+import {h} from 'vue'
+import {Options, Vue} from 'vue-class-component';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
 
-const [props, watch, model] = getAgGridProperties();
+const [props, watch, model, events] = getAgGridProperties();
 
 @Bean('agGridVue')
-@Component({
+@Options({
     props,
     watch,
     model,
+    emits: events
 })
 export class AgGridVue extends Vue {
 
@@ -37,7 +40,7 @@ export class AgGridVue extends Vue {
     private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
-    public render(h: any) {
+    public render() {
         return h('div');
     }
 
@@ -55,9 +58,9 @@ export class AgGridVue extends Vue {
         // only emit if someone is listening
         // we allow both kebab and camelCase event listeners, so check for both
         const kebabName = AgGridVue.kebabProperty(eventType);
-        if (this.$listeners[kebabName]) {
+        if (this.$attrs[kebabName]) {
             this.$emit(kebabName, event);
-        } else if (this.$listeners[eventType]) {
+        } else if (this.$attrs[eventType]) {
             this.$emit(eventType, event);
         }
     }
@@ -140,7 +143,7 @@ export class AgGridVue extends Vue {
 
     private updateModelIfUsed(eventType: string) {
         if (this.gridReadyFired &&
-            this.$listeners['data-model-changed'] &&
+            this.$attrs['data-model-changed'] &&
             AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
 
             if (this.emitRowModel) {
@@ -163,7 +166,7 @@ export class AgGridVue extends Vue {
     private skipChange(propertyName: string, currentValue: any, previousValue: any) {
         if (this.gridReadyFired &&
             propertyName === 'rowData' &&
-            this.$listeners['data-model-changed']) {
+            this.$attrs['data-model-changed']) {
             if (currentValue === previousValue) {
                 return true;
             }
@@ -188,7 +191,7 @@ export class AgGridVue extends Vue {
     private debounce(func: () => void, delay: number) {
         let timeout: number;
         return () => {
-            const later = function() {
+            const later = function () {
                 func();
             };
             window.clearTimeout(timeout);

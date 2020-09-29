@@ -4,7 +4,7 @@ export interface Properties {
     [propertyName: string]: any;
 }
 
-export const getAgGridProperties = (): [Properties, Properties, {}] => {
+export const getAgGridProperties = (): [Properties, Properties, { prop: string, event: string }, string[]] => {
     const props: Properties = {
         gridOptions: {
             default() {
@@ -27,11 +27,16 @@ export const getAgGridProperties = (): [Properties, Properties, {}] => {
         };
     });
 
+    const events: string[]  = [];
+    ComponentUtil.EVENTS.forEach((eventName) => {
+        events.push(eventName);
+    });
+
     const model: { prop: string, event: string } = {
         prop: 'rowDataModel',
         event: 'data-model-changed',
     };
 
-    return [props, watch, model];
+    return [props, watch, model, events];
 };
 

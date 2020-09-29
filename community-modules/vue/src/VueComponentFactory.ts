@@ -1,25 +1,50 @@
-import Vue, {AsyncComponent, VueConstructor} from 'vue';
+import {createApp, defineComponent} from 'vue';
+import {Vue} from 'vue-class-component';
 import {AgGridVue} from './AgGridVue';
-import {Component} from 'vue/types/options';
 
 export class VueComponentFactory {
 
-    public static getComponentType(parent: AgGridVue, component: VueConstructor) {
+    public static getComponentType(component: any, params: any, parent: AgGridVue) {
+        let componentDefinition: any = null;
         if (typeof component === 'string') {
-            const componentInstance: VueConstructor =
-                this.searchForComponentInstance(parent, component) as VueConstructor;
-            if (!componentInstance) {
+            componentDefinition =  this.searchForComponentInstance(parent, component);
+            if (!componentDefinition) {
                 console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
                 return null;
             }
-            return Vue.extend(componentInstance);
         } else {
-            // assume a type
-            return component;
+            componentDefinition = component;
         }
+
+        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to provide the grid's params
+
+        let componentInstance:any = null;
+        componentDefinition = defineComponent({ extends: defineComponent({ ...component }), data: () => ({params: params}), created: function() { componentInstance = (this as any).$root }});
+        return createApp(componentDefinition);
     }
 
-    public static createAndMountComponent(params: any, componentType: any, parent: AgGridVue) {
+    public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
+        // const componentType = VueComponentFactory.getComponentType(component, params, parent);
+        // if (!componentType) {
+        //     return;
+        // }
+
+        let componentDefinition: any = null;
+        if (typeof component === 'string') {
+            componentDefinition =  this.searchForComponentInstance(parent, component);
+            if (!componentDefinition) {
+                console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+                return null;
+            }
+        } else {
+            componentDefinition = component;
+        }
+
+        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to provide the grid's params
+
+        let componentInstance:any = null;
+        componentDefinition = defineComponent({ extends: defineComponent({ ...component }), data: () => ({params: params}), created: function() { componentInstance = (this as any).$root }});
+
         const details = {
             data: {
                 params: Object.freeze(params),
@@ -33,15 +58,17 @@ export class VueComponentFactory {
             );
         }
 
-        const component = new componentType(details);
-        component.$mount();
-        return component;
+        const container = document.createElement('div');
+
+        createApp(componentDefinition).mount(container);
+
+        return componentInstance;
     }
 
-    private static searchForComponentInstance(parent: AgGridVue, component: VueConstructor, maxDepth = 10) {
-        let componentInstance: Component | AsyncComponent | null = null;
+    private static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10) {
+        let componentInstance: any = null;
 
-        let currentParent: Vue = parent.$parent;
+        let currentParent: Vue<any> = parent.$parent;
         let depth = 0;
         while (!componentInstance &&
         currentParent &&

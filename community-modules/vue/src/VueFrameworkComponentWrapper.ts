@@ -65,11 +65,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
     }
 
     public createComponent<T>(component: any, params: any): any {
-        const componentType = VueComponentFactory.getComponentType(this.parent!, component);
-        if (!componentType) {
-            return;
-        }
-        return VueComponentFactory.createAndMountComponent(params, componentType, this.parent!);
+        return VueComponentFactory.createAndMountComponent(component, params, this.parent!);
     }
 
     protected createMethodProxy(wrapper: VueWrapableInterface, methodName: string, mandatory: boolean): () => any {
