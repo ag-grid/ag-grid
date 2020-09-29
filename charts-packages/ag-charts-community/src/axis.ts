@@ -207,9 +207,19 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * @param width Object's width.
      * @param tolerance Expands the range on both ends by this amount.
      */
-    inRange(x: number, width = 0, tolerance = 0) {
+    inRange(x: number, width = 0, tolerance = 0): boolean {
+        return this.inRangeEx(x, width, tolerance) === 0;
+    }
+
+    inRangeEx(x: number, width = 0, tolerance = 0): -1 | 0 | 1 {
         const { range } = this;
-        return (x + width) >= (range[0] - tolerance) && x <= (range[1] + tolerance);
+        if ((x + width) < (range[0] - tolerance)) {
+            return -1; // left or range
+        }
+        if (x > (range[1] + tolerance)) {
+            return 1; // right of range
+        }
+        return 0; // in range
     }
 
     protected requestedRange: number[];
