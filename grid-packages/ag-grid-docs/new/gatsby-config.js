@@ -6,6 +6,7 @@
 
 module.exports = {
   plugins: [
+    'gatsby-plugin-layout',
     {
       resolve: "gatsby-source-filesystem",
       options: {
@@ -48,6 +49,7 @@ module.exports = {
     },
     {
       resolve: 'gatsby-plugin-sass'
-    }
+    },
+    'gatsby-plugin-catch-links'
   ]
 };

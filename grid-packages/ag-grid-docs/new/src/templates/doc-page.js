@@ -8,7 +8,6 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-sql";
 import "prismjs/components/prism-diff";
 import "prismjs/components/prism-scss";
-import Layout from '../components/layout';
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
 import FrameworkSpecificContent from '../components/FrameworkSpecificContent';
@@ -25,12 +24,10 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
   }).Compiler;
 
   return (
-    <Layout framework={framework}>
-      <div className="doc-page">
-        <h1>{page.frontmatter.title}</h1>
-        {renderAst(page.htmlAst)}
-      </div>
-    </Layout>
+    <div className="doc-page">
+      <h1>{page.frontmatter.title}</h1>
+      {renderAst(page.htmlAst)}
+    </div>
   );
 }
 

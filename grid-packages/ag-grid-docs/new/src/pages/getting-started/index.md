@@ -29,3 +29,5 @@ Framework-dependent text:
     <angular>This is some funky stuff for Angular</angular>
     <vue>This is some funky stuff for Vue</vue>
 </framework-specific-content>
+
+You should go and check out [this page](./column-definitions/)

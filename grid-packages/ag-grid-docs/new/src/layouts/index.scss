@@ -1,4 +1,4 @@
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
 body {
     @extend .m-0;
@@ -34,12 +34,23 @@ body {
 .content_viewport {
     @extend .d-flex;
     @extend .flex-grow-1;
+    overflow: auto;
 }
 
 .main_menu {
     width: 300px;
+    overflow: auto;
 }
 
 .content {
     @extend .p-3;
+    overflow: auto;
+}
+
+.footer {
+    height: 100px;
+    text-align: center;
+    padding: 1rem;
+    background-image: linear-gradient(to top left, #00407f, #0084e7);
+    color: white;
 }
