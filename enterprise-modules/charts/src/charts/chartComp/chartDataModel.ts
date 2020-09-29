@@ -107,6 +107,8 @@ export class ChartDataModel extends BeanStub {
 
         if (!updatedColState) {
             this.resetColumnState();
+            // dimension / category cell range could be out of sync after resetting column state when row grouping
+            this.syncDimensionCellRange();
         }
 
         this.updateData();
@@ -535,6 +537,13 @@ export class ChartDataModel extends BeanStub {
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
 
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
+        }
+    }
+
+    private syncDimensionCellRange() {
+        const selectedDimension = this.getSelectedDimension()
+        if (selectedDimension && selectedDimension.column) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
         }
     }
 }
