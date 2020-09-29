@@ -57,6 +57,16 @@ function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
+function toNumber(value: any): number {
+    if (typeof value == 'number') {
+        return value;
+    } else if (typeof value == 'string') {
+        return parseInt(value);
+    } else {
+        return undefined;
+    }
+}
+
 function zeroOrGreater(value: any, defaultValue: number): number {
     if (value >= 0) { return value; }
 
@@ -737,7 +747,7 @@ export class GridOptionsWrapper {
     }
 
     public getPaginationPageSize(): number | undefined {
-        return this.gridOptions.paginationPageSize;
+        return toNumber(this.gridOptions.paginationPageSize);
     }
 
     public isPaginateChildRows(): boolean {
