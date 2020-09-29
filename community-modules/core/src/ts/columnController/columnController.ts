@@ -3410,7 +3410,7 @@ export class ColumnController extends BeanStub {
         //
         // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
         // for this reason we need to manually fire resize events after the resize has been done for each column.
-        colsToSpread.forEach(column => column.resetActualWidth());
+        colsToSpread.forEach(column => column.resetActualWidth(source));
 
         while (!finishedResizing) {
             finishedResizing = true;

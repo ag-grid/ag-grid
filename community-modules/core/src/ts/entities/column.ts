@@ -218,7 +218,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.maxWidth = maxColWidth;
         }
 
-        this.resetActualWidth();
+        this.resetActualWidth('gridInitializing');
 
         const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
@@ -227,9 +227,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
-    public resetActualWidth(): void {
+    public resetActualWidth(source: ColumnEventType = 'api'): void {
         const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
-        this.setActualWidth(initialWidth, 'resetWidth', true);
+        this.setActualWidth(initialWidth, source, true);
     }
 
     public isEmptyGroup(): boolean {
