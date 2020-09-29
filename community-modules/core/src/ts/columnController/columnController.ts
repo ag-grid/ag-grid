@@ -3407,6 +3407,9 @@ export class ColumnController extends BeanStub {
         // immediately after grid is created, so will make no difference. however if application is calling
         // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
         // the columns to start shrinking / growing over time.
+        //
+        // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
+        // for this reason we need to manually fire resize events after the resize has been done for each column.
         colsToSpread.forEach(column => column.resetActualWidth());
 
         while (!finishedResizing) {
@@ -3425,27 +3428,32 @@ export class ColumnController extends BeanStub {
                 // backwards through loop, as we are removing items as we go
                 for (let i = colsToSpread.length - 1; i >= 0; i--) {
                     const column = colsToSpread[i];
-                    const newWidth = Math.round(column.getActualWidth() * scale);
-                    if (newWidth < column.getMinWidth()) {
-                        column.setMinimum(source);
+                    const minWidth = column.getMinWidth();
+                    const maxWidth = column.getMaxWidth();
+                    let newWidth = Math.round(column.getActualWidth() * scale);
+
+                    if (newWidth < minWidth) {
+                        newWidth = column.getMinWidth();
                         moveToNotSpread(column);
                         finishedResizing = false;
                     } else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getMaxWidth(), source);
+                        newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else {
-                        const onLastCol = i === 0;
-                        if (onLastCol) {
-                            column.setActualWidth(pixelsForLastCol, source);
-                        } else {
-                            column.setActualWidth(newWidth, source);
-                        }
+                    } else if (i === 0) { // if this is the last column
+                        newWidth = pixelsForLastCol;
                     }
+
+                    column.setActualWidth(newWidth, source, true);
                     pixelsForLastCol -= newWidth;
                 }
             }
         }
+
+        // see notes above
+        colsToFireEventFor.forEach(col => {
+            col.fireColumnWidthChangedEvent(source);
+        });
 
         this.setLeftValues(source);
         this.updateBodyWidths();

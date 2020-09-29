@@ -203,7 +203,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     private initialise(): void {
-
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
@@ -229,7 +228,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public resetActualWidth(): void {
-        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        this.setActualWidth(initialWidth, 'resetWidth', true);
     }
 
     public isEmptyGroup(): boolean {
@@ -640,7 +640,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return Math.max(rowSpan, 1);
     }
 
-    public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
+    public setActualWidth(actualWidth: number, source: ColumnEventType = "api", silent: boolean = false): void {
         if (this.minWidth != null) {
             actualWidth = Math.max(actualWidth, this.minWidth);
         }
@@ -653,8 +653,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             if (this.flex && source !== 'flex') {
                 this.flex = null;
             }
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
+
+            if (!silent) {
+                this.fireColumnWidthChangedEvent(source);
+            }
         }
+    }
+
+    public fireColumnWidthChangedEvent(source: ColumnEventType): void {
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
     }
 
     public isGreaterThanMax(width: number): boolean {
