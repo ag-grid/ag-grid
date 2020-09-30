@@ -147,7 +147,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         blocksForPurging.forEach((block: ServerSideBlock, index: number) => {
 
-            const purgeBecauseBlockEmpty = block.getState() === ServerSideBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === ServerSideBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 

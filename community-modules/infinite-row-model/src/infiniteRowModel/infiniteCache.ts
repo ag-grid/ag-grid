@@ -107,7 +107,7 @@ export class InfiniteCache extends BeanStub {
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
-        this.forEachBlockInOrder(block => block.setDirty());
+        this.forEachBlockInOrder(block => block.setStateWaitingToLoad());
         this.params.rowNodeBlockLoader.checkBlockToLoad();
     }
 
@@ -168,7 +168,7 @@ export class InfiniteCache extends BeanStub {
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
 
-            const purgeBecauseBlockEmpty = block.getState() === InfiniteBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === InfiniteBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 
