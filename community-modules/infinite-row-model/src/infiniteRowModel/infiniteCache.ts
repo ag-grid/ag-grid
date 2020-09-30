@@ -52,15 +52,15 @@ export class InfiniteCache extends BeanStub {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
 
+    private readonly params: InfiniteCacheParams;
+
     private rowCount: number;
     private lastRowIndexKnown = false;
 
-    protected params: InfiniteCacheParams;
-
-    public blocks: { [blockNumber: string]: InfiniteBlock; } = {};
+    private blocks: { [blockNumber: string]: InfiniteBlock; } = {};
     private blockCount = 0;
 
-    protected logger: Logger;
+    private logger: Logger;
 
     constructor(params: InfiniteCacheParams) {
         super();
@@ -107,13 +107,13 @@ export class InfiniteCache extends BeanStub {
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
-        this.forEachBlockInOrder(block => block.setStateWaitingToLoad());
+        this.getBlocksInOrder().forEach(block => block.setStateWaitingToLoad());
         this.params.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     @PreDestroy
     private destroyAllBlocks(): void {
-        this.forEachBlockInOrder(block => this.destroyBlock(block));
+        this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
     }
 
     public getRowCount(): number {
@@ -125,7 +125,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     // listener on EVENT_LOAD_COMPLETE
-    protected onPageLoaded(event: any): void {
+    private onPageLoaded(event: any): void {
         this.params.rowNodeBlockLoader.loadComplete();
         this.params.rowNodeBlockLoader.checkBlockToLoad();
 
@@ -146,7 +146,7 @@ export class InfiniteCache extends BeanStub {
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
         // put all candidate blocks into a list for sorting
         const blocksForPurging: InfiniteBlock[] = [];
-        this.forEachBlockInOrder((block: InfiniteBlock) => {
+        this.getBlocksInOrder().forEach(block => {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
             if (block === blockToExclude) {
@@ -200,7 +200,7 @@ export class InfiniteCache extends BeanStub {
         return blockInsideViewport;
     }
 
-    protected removeBlockFromCache(blockToRemove: InfiniteBlock): void {
+    private removeBlockFromCache(blockToRemove: InfiniteBlock): void {
         if (!blockToRemove) {
             return;
         }
@@ -252,40 +252,23 @@ export class InfiniteCache extends BeanStub {
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
         const sequence = new NumberSequence();
-        this.forEachBlockInOrder(block => block.forEachNode(callback, sequence, this.rowCount));
+        this.getBlocksInOrder().forEach(block => block.forEachNode(callback, sequence, this.rowCount));
     }
 
-    public forEachBlockInOrder(callback: (block: InfiniteBlock, id: number) => void): void {
-        const ids = this.getBlockIdsSorted();
-        this.forEachBlockId(ids, callback);
-    }
-
-    protected forEachBlockInReverseOrder(callback: (block: InfiniteBlock, id: number) => void): void {
-        const ids = this.getBlockIdsSorted().reverse();
-        this.forEachBlockId(ids, callback);
-    }
-
-    private forEachBlockId(ids: number[], callback: (block: InfiniteBlock, id: number) => void): void {
-        ids.forEach(id => {
-            const block = this.blocks[id];
-            callback(block, id);
-        });
-    }
-
-    protected getBlockIdsSorted(): number[] {
+    public getBlocksInOrder(): InfiniteBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        const numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
-        const blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr, 10)).sort(numberComparator);
-        return blockIds;
+        const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getBlockNumber() - b.getBlockNumber();
+        const blocks = Object.values(this.blocks).sort(blockComparator);
+        return blocks;
     }
 
-    protected setBlock(id: number, block: InfiniteBlock): void {
+    private setBlock(id: number, block: InfiniteBlock): void {
         this.blocks[id] = block;
         this.blockCount++;
         this.params.rowNodeBlockLoader.addBlock(block);
     }
 
-    protected destroyBlock(block: InfiniteBlock): void {
+    private destroyBlock(block: InfiniteBlock): void {
         delete this.blocks[block.getBlockNumber()];
         this.destroyBean(block);
         this.blockCount--;
@@ -293,7 +276,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
-    protected onCacheUpdated(): void {
+    private onCacheUpdated(): void {
         if (this.isAlive()) {
 
             // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
@@ -313,8 +296,8 @@ export class InfiniteCache extends BeanStub {
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
-        this.forEachBlockInOrder((block: InfiniteBlock, id: number) => {
-            const startRow = id * this.params.blockSize;
+        this.getBlocksInOrder().forEach( block => {
+            const startRow = block.getBlockNumber() * this.params.blockSize;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
@@ -325,7 +308,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     public purgeCache(): void {
-        this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
+        this.getBlocksInOrder().forEach(block => this.removeBlockFromCache(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
@@ -352,15 +335,15 @@ export class InfiniteCache extends BeanStub {
 
         let foundGapInSelection = false;
 
-        this.forEachBlockInOrder((block: InfiniteBlock, id: number) => {
+        this.getBlocksInOrder().forEach(block => {
             if (foundGapInSelection) { return; }
 
-            if (inActiveRange && (lastBlockId + 1 !== id)) {
+            if (inActiveRange && (lastBlockId + 1 !== block.getBlockNumber())) {
                 foundGapInSelection = true;
                 return;
             }
 
-            lastBlockId = id;
+            lastBlockId = block.getBlockNumber();
 
             block.forEachNode(rowNode => {
                 const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
