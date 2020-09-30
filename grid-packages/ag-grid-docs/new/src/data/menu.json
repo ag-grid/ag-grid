@@ -7,25 +7,27 @@
           "items": [
             {
               "title": "Overview",
-              "url": "javascript-grid-getting-started/"
+              "url": "${framework}/getting-started/"
             },
             {
               "title": "Vanilla JavaScript",
               "url": "javascript-grid/",
+              "frameworkSpecific": true,
               "items": [
                 {
                   "title": "Install with NPM",
-                  "url": "javascript-grid-npm/"
+                  "url": "${framework}/npm/"
                 },
                 {
                   "title": "Download Bundles",
-                  "url": "javascript-grid-download/"
+                  "url": "${framework}/download/"
                 }
               ]
             },
             {
               "title": "Angular",
               "url": "angular-grid/",
+              "frameworkSpecific": true,
               "items": [
                 {
                   "title": "Components",
@@ -64,6 +66,7 @@
             {
               "title": "React",
               "url": "react-grid/",
+              "frameworkSpecific": true,
               "items": [
                 {
                   "title": "Column Configuration",
@@ -98,6 +101,7 @@
             {
               "title": "Vue",
               "url": "vuejs-grid/",
+              "frameworkSpecific": true,
               "items": [
                 {
                   "title": "Components",
@@ -119,11 +123,13 @@
             },
             {
               "title": "AngularJS",
-              "url": "best-angularjs-grid/"
+              "url": "best-angularjs-grid/",
+              "frameworkSpecific": true
             },
             {
               "title": "Polymer",
-              "url": "polymer-getting-started/"
+              "url": "polymer-getting-started/",
+              "frameworkSpecific": true
             }
           ]
         },
@@ -133,55 +139,55 @@
           "items": [
             {
               "title": "Grid Interface",
-              "url": "javascript-grid-reference-overview/",
+              "url": "${framework}/reference-overview/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Grid Properties",
-                  "url": "javascript-grid-properties/",
+                  "url": "${framework}/properties/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Grid API",
-                  "url": "javascript-grid-api/",
+                  "url": "${framework}/api/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Grid Events",
                   "box-title": "Events",
-                  "url": "javascript-grid-events/",
+                  "url": "${framework}/events/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Grid Callbacks",
-                  "url": "javascript-grid-callbacks/",
+                  "url": "${framework}/callbacks/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Row Object",
-                  "url": "javascript-grid-row-node/",
+                  "url": "${framework}/row-node/",
                   "showInCollapsed": true
                 }
               ]
             },
             {
               "title": "Column Interface",
-              "url": "javascript-grid-column-interface/",
+              "url": "${framework}/column-interface/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Column Properties",
-                  "url": "javascript-grid-column-properties/",
+                  "url": "${framework}/column-properties/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Column API",
-                  "url": "javascript-grid-column-api/",
+                  "url": "${framework}/column-api/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Column Object",
-                  "url": "javascript-grid-column/",
+                  "url": "${framework}/column/",
                   "showInCollapsed": true
                 }
               ]
@@ -195,55 +201,55 @@
             {
               "title": "Column Definitions",
               "box-title": "Definitions",
-              "url": "javascript-grid-column-definitions/",
+              "url": "${framework}/column-definitions/",
               "showInCollapsed": true
             },
             {
               "title": "Updating Definitions",
               "box-title": "State",
-              "url": "javascript-grid-column-updating-definitions/",
+              "url": "${framework}/column-updating-definitions/",
               "showInCollapsed": true
             },
             {
               "title": "Column State",
               "box-title": "State",
-              "url": "javascript-grid-column-state/",
+              "url": "${framework}/column-state/",
               "showInCollapsed": true
             },
             {
               "title": "Column Headers",
               "box-title": "Headers",
-              "url": "javascript-grid-column-header/",
+              "url": "${framework}/column-header/",
               "showInCollapsed": true
             },
             {
               "title": "Column Groups",
               "box-title": "Groups",
-              "url": "javascript-grid-grouping-headers/",
+              "url": "${framework}/grouping-headers/",
               "showInCollapsed": true
             },
             {
               "title": "Column Sizing",
               "box-title": "Sizing",
-              "url": "javascript-grid-resizing/",
+              "url": "${framework}/resizing/",
               "showInCollapsed": true
             },
             {
               "title": "Column Moving",
               "box-title": "Moving",
-              "url": "javascript-grid-column-moving/",
+              "url": "${framework}/column-moving/",
               "showInCollapsed": true
             },
             {
               "title": "Column Pinning",
               "box-title": "Pinning",
-              "url": "javascript-grid-pinning/",
+              "url": "${framework}/pinning/",
               "showInCollapsed": true
             },
             {
               "title": "Column Spanning",
               "box-title": "Spanning",
-              "url": "javascript-grid-column-spanning/",
+              "url": "${framework}/column-spanning/",
               "showInCollapsed": true
             }
           ]
@@ -255,52 +261,52 @@
             {
               "title": "Row Sorting",
               "box-title": "Sorting",
-              "url": "javascript-grid-sorting/",
+              "url": "${framework}/sorting/",
               "showInCollapsed": true
             },
             {
               "title": "Row Spanning",
               "box-title": "Spanning",
-              "url": "javascript-grid-row-spanning/",
+              "url": "${framework}/row-spanning/",
               "showInCollapsed": true
             },
             {
               "title": "Row Pinning",
               "box-title": "Pinning",
-              "url": "javascript-grid-row-pinning/",
+              "url": "${framework}/row-pinning/",
               "showInCollapsed": true
             },
             {
               "title": "Row Height",
               "box-title": "Height",
-              "url": "javascript-grid-row-height/",
+              "url": "${framework}/row-height/",
               "showInCollapsed": true
             },
             {
               "title": "Full Width Rows",
               "box-title": "Full Width",
-              "url": "javascript-grid-full-width-rows/",
+              "url": "${framework}/full-width-rows/",
               "showInCollapsed": true
             },
             {
               "title": "Row Animation",
               "box-title": "Animation",
-              "url": "javascript-grid-animation/",
+              "url": "${framework}/animation/",
               "showInCollapsed": true
             },
             {
               "title": "Row Dragging",
               "box-title": "Dragging",
               "showInCollapsed": true,
-              "url": "javascript-grid-row-dragging/",
+              "url": "${framework}/row-dragging/",
               "items": [
                 {
                   "title": "External DropZone",
-                  "url": "javascript-grid-row-dragging-to-external-dropzone/"
+                  "url": "${framework}/row-dragging-to-external-dropzone/"
                 },
                 {
                   "title": "Grid to Grid",
-                  "url": "javascript-grid-row-dragging-to-grid/"
+                  "url": "${framework}/row-dragging-to-grid/"
                 }
               ]
             }
@@ -312,36 +318,36 @@
           "items": [
             {
               "title": "Community & Enterprise",
-              "url": "javascript-grid-set-license/",
+              "url": "${framework}/set-license/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Packages & Modules",
-              "url": "javascript-grid-packages-modules/",
+              "url": "${framework}/packages-modules/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Packages",
-                  "url": "javascript-grid-packages/"
+                  "url": "${framework}/packages/"
                 },
                 {
                   "title": "Modules - Overview",
-                  "url": "javascript-grid-modules/"
+                  "url": "${framework}/modules/"
                 },
                 {
                   "title": "Modules - More Details",
-                  "url": "javascript-grid-modules-more-details/"
+                  "url": "${framework}/modules-more-details/"
                 },
                 {
                   "title": "Building",
-                  "url": "javascript-grid-modules-building/"
+                  "url": "${framework}/modules-building/"
                 }
               ]
             },
             {
               "title": "Supported Browsers",
-              "url": "javascript-grid-supported-browsers/",
+              "url": "${framework}/supported-browsers/",
               "showInCollapsed": true
             },
             {
@@ -377,48 +383,48 @@
             {
               "title": "Styling Rows",
               "box-title": "Rows",
-              "url": "javascript-grid-row-styles/",
+              "url": "${framework}/row-styles/",
               "showInCollapsed": true
             },
             {
               "title": "Styling Cells",
               "box-title": "Cells",
-              "url": "javascript-grid-cell-styles/",
+              "url": "${framework}/cell-styles/",
               "showInCollapsed": true
             },
             {
               "title": "Themes",
-              "url": "javascript-grid-styling/",
+              "url": "${framework}/styling/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Provided Themes",
-                  "url": "javascript-grid-themes-provided/"
+                  "url": "${framework}/themes-provided/"
                 },
                 {
                   "title": "Customising Themes",
-                  "url": "javascript-grid-themes-customising/"
+                  "url": "${framework}/themes-customising/"
                 },
                 {
                   "title": "Migrating to v23",
-                  "url": "javascript-grid-themes-v23-migration/"
+                  "url": "${framework}/themes-v23-migration/"
                 }
               ]
             },
             {
               "title": "Grid Size",
-              "url": "javascript-grid-width-and-height/",
+              "url": "${framework}/width-and-height/",
               "showInCollapsed": true
             },
             {
               "title": "Custom Icons",
               "box-title": "Icons",
-              "url": "javascript-grid-icons/",
+              "url": "${framework}/icons/",
               "showInCollapsed": true
             },
             {
               "title": "Printing",
-              "url": "javascript-grid-for-print/",
+              "url": "${framework}/for-print/",
               "showInCollapsed": true
             }
           ]
@@ -429,44 +435,44 @@
           "items": [
             {
               "title": "Overview",
-              "url": "javascript-grid-client-side-model/",
+              "url": "${framework}/client-side-model/",
               "showInCollapsed": true
             },
             {
               "title": "Accessing Data",
-              "url": "javascript-grid-accessing-data/",
+              "url": "${framework}/accessing-data/",
               "showInCollapsed": true
             },
             {
               "title": "Updating Data",
-              "url": "javascript-grid-data-update/",
+              "url": "${framework}/data-update/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Single Row / Cell",
-                  "url": "javascript-grid-data-update-single-row-cell/",
+                  "url": "${framework}/data-update-single-row-cell/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Transactions",
-                  "url": "javascript-grid-data-update-transactions/",
+                  "url": "${framework}/data-update-transactions/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "High Frequency",
-                  "url": "javascript-grid-data-update-high-frequency/",
+                  "url": "${framework}/data-update-high-frequency/",
                   "showInCollapsed": true
                 }
               ]
             },
             {
               "title": "Immutable Data",
-              "url": "javascript-grid-immutable-data/",
+              "url": "${framework}/immutable-data/",
               "showInCollapsed": true
             },
             {
               "title": "Context",
-              "url": "javascript-grid-context/",
+              "url": "${framework}/context/",
               "showInCollapsed": true
             },
             {
@@ -475,7 +481,7 @@
               "items": [
                 {
                   "title": "Use with RxJS",
-                  "url": "javascript-grid-rxjs/"
+                  "url": "${framework}/rxjs/"
                 }
               ]
             }
@@ -487,78 +493,78 @@
           "items": [
             {
               "title": "Row Models",
-              "url": "javascript-grid-row-models/",
+              "url": "${framework}/row-models/",
               "showInCollapsed": true
             },
             {
               "title": "Server-Side Row Model",
-              "url": "javascript-grid-server-side-model/",
+              "url": "${framework}/server-side-model/",
               "showInCollapsed": true,
               "enterprise": true,
               "items": [
                 {
                   "title": "Datasource",
-                  "url": "javascript-grid-server-side-model-datasource/",
+                  "url": "${framework}/server-side-model-datasource/",
                   "enterprise": true
                 },
                 {
                   "title": "Configuration",
-                  "url": "javascript-grid-server-side-model-configuration/",
+                  "url": "${framework}/server-side-model-configuration/",
                   "enterprise": true
                 },
                 {
                   "title": "Sorting",
-                  "url": "javascript-grid-server-side-model-sorting/",
+                  "url": "${framework}/server-side-model-sorting/",
                   "enterprise": true
                 },
                 {
                   "title": "Filtering",
-                  "url": "javascript-grid-server-side-model-filtering/",
+                  "url": "${framework}/server-side-model-filtering/",
                   "enterprise": true
                 },
                 {
                   "title": "Row Grouping",
-                  "url": "javascript-grid-server-side-model-grouping/",
+                  "url": "${framework}/server-side-model-grouping/",
                   "enterprise": true
                 },
                 {
                   "title": "Pivoting",
-                  "url": "javascript-grid-server-side-model-pivoting/",
+                  "url": "${framework}/server-side-model-pivoting/",
                   "enterprise": true
                 },
                 {
                   "title": "Pagination",
-                  "url": "javascript-grid-server-side-model-pagination/",
+                  "url": "${framework}/server-side-model-pagination/",
                   "enterprise": true
                 },
                 {
                   "title": "Row Selection",
-                  "url": "javascript-grid-server-side-model-selection/",
+                  "url": "${framework}/server-side-model-selection/",
                   "enterprise": true
                 },
                 {
                   "title": "Row Height",
-                  "url": "javascript-grid-server-side-model-row-height/",
+                  "url": "${framework}/server-side-model-row-height/",
                   "enterprise": true
                 },
                 {
                   "title": "Master Detail",
-                  "url": "javascript-grid-server-side-model-master-detail/",
+                  "url": "${framework}/server-side-model-master-detail/",
                   "enterprise": true
                 },
                 {
                   "title": "Tree Data",
-                  "url": "javascript-grid-server-side-model-tree-data/",
+                  "url": "${framework}/server-side-model-tree-data/",
                   "enterprise": true
                 },
                 {
                   "title": "Changing Columns",
-                  "url": "javascript-grid-server-side-model-changing-columns/",
+                  "url": "${framework}/server-side-model-changing-columns/",
                   "enterprise": true
                 },
                 {
                   "title": "CRUD",
-                  "url": "javascript-grid-server-side-model-crud/",
+                  "url": "${framework}/server-side-model-crud/",
                   "enterprise": true
                 },
                 {
@@ -591,12 +597,12 @@
             },
             {
               "title": "Infinite Row Model",
-              "url": "javascript-grid-infinite-scrolling/",
+              "url": "${framework}/infinite-scrolling/",
               "showInCollapsed": true
             },
             {
               "title": "Viewport Row Model",
-              "url": "javascript-grid-viewport/",
+              "url": "${framework}/viewport/",
               "enterprise": true,
               "showInCollapsed": true
             }
@@ -608,29 +614,29 @@
           "items": [
             {
               "title": "Overview",
-              "url": "javascript-grid-selection-overview/",
+              "url": "${framework}/selection-overview/",
               "showInCollapsed": true
             },
             {
               "title": "Row Selection",
-              "url": "javascript-grid-selection/",
+              "url": "${framework}/selection/",
               "showInCollapsed": true
             },
             {
               "title": "Range Selection",
-              "url": "javascript-grid-range-selection/",
+              "url": "${framework}/range-selection/",
               "enterprise": true,
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Range Handle",
-                  "url": "javascript-grid-range-selection-handle/",
+                  "url": "${framework}/range-selection-handle/",
                   "enterprise": true,
                   "showInCollapsed": true
                 },
                 {
                   "title": "Fill Handle",
-                  "url": "javascript-grid-range-selection-fill-handle/",
+                  "url": "${framework}/range-selection-fill-handle/",
                   "enterprise": true,
                   "showInCollapsed": true
                 }
@@ -644,100 +650,100 @@
           "items": [
             {
               "title": "Overview",
-              "url": "javascript-grid-filtering-overview/",
+              "url": "${framework}/filtering-overview/",
               "showInCollapsed": true
             },
             {
               "title": "Column Filters",
-              "url": "javascript-grid-filtering/",
+              "url": "${framework}/filtering/",
               "showInCollapsed": false,
               "items": [
                 {
                   "title": "Provided Column Filters",
-                  "url": "javascript-grid-filter-provided/"
+                  "url": "${framework}/filter-provided/"
                 },
                 {
                   "title": "Simple Column Filters",
-                  "url": "javascript-grid-filter-provided-simple/",
+                  "url": "${framework}/filter-provided-simple/",
                   "items": [
                     {
                       "title": "Text Filter",
-                      "url": "javascript-grid-filter-text/",
+                      "url": "${framework}/filter-text/",
                       "showInCollapsed": true
                     },
                     {
                       "title": "Number Filter",
-                      "url": "javascript-grid-filter-number/",
+                      "url": "${framework}/filter-number/",
                       "showInCollapsed": true
                     },
                     {
                       "title": "Date Filter",
-                      "url": "javascript-grid-filter-date/",
+                      "url": "${framework}/filter-date/",
                       "showInCollapsed": true
                     }
                   ]
                 },
                 {
                   "title": "Set Filter",
-                  "url": "javascript-grid-filter-set/",
+                  "url": "${framework}/filter-set/",
                   "enterprise": true,
                   "showInCollapsed": true,
                   "items": [
                     {
                       "title": "Filter List",
-                      "url": "javascript-grid-filter-set-filter-list/",
+                      "url": "${framework}/filter-set-filter-list/",
                       "enterprise": true
                     },
                     {
                       "title": "Data Updates",
-                      "url": "javascript-grid-filter-set-data-updates/",
+                      "url": "${framework}/filter-set-data-updates/",
                       "enterprise": true
                     },
                     {
                       "title": "Mini Filter",
-                      "url": "javascript-grid-filter-set-mini-filter/",
+                      "url": "${framework}/filter-set-mini-filter/",
                       "enterprise": true
                     },
                     {
                       "title": "Excel Mode",
-                      "url": "javascript-grid-filter-set-excel-mode/",
+                      "url": "${framework}/filter-set-excel-mode/",
                       "enterprise": true
                     },
                     {
                       "title": "API",
-                      "url": "javascript-grid-filter-set-api/",
+                      "url": "${framework}/filter-set-api/",
                       "enterprise": true
                     }
                   ]
                 },
                 {
                   "title": "Multi Filter",
-                  "url": "javascript-grid-filter-multi/",
+                  "url": "${framework}/filter-multi/",
                   "enterprise": true,
                   "showInCollapsed": true
                 },
                 {
                   "title": "Filter API",
-                  "url": "javascript-grid-filter-api/"
+                  "url": "${framework}/filter-api/"
                 },
                 {
                   "title": "Floating Filters",
-                  "url": "javascript-grid-floating-filters/"
+                  "url": "${framework}/floating-filters/"
                 },
                 {
                   "title": "Custom Filter",
-                  "url": "javascript-grid-filter-custom/"
+                  "url": "${framework}/filter-custom/"
                 }
               ]
             },
             {
               "title": "External Filter",
-              "url": "javascript-grid-filter-external/",
+              "url": "${framework}/filter-external/",
               "showInCollapsed": true
             },
             {
               "title": "Quick Filter",
-              "url": "javascript-grid-filter-quick/",
+              "url": "${framework}/filter-quick/",
               "showInCollapsed": true
             }
           ]
@@ -748,64 +754,64 @@
           "items": [
             {
               "title": "Cell Content",
-              "url": "javascript-grid-rendering-flow/",
+              "url": "${framework}/rendering-flow/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Value Getters",
-                  "url": "javascript-grid-value-getters/",
+                  "url": "${framework}/value-getters/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Value Formatters",
-                  "url": "javascript-grid-value-formatters/",
+                  "url": "${framework}/value-formatters/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Expressions",
-                  "url": "javascript-grid-cell-expressions/",
+                  "url": "${framework}/cell-expressions/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Reference Data",
-                  "url": "javascript-grid-reference-data/",
+                  "url": "${framework}/reference-data/",
                   "showInCollapsed": true
                 }
               ]
             },
             {
               "title": "Cell Rendering",
-              "url": "javascript-grid-cell-rendering/",
+              "url": "${framework}/cell-rendering/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Group Cell Renderer",
-                  "url": "javascript-grid-provided-renderer-group/"
+                  "url": "${framework}/provided-renderer-group/"
                 },
                 {
                   "title": "Change Cell Renderers",
-                  "url": "javascript-grid-provided-renderer-change/"
+                  "url": "${framework}/provided-renderer-change/"
                 }
               ]
             },
             {
               "title": "Rendering API",
-              "url": "javascript-grid-rendering-api/",
+              "url": "${framework}/rendering-api/",
               "showInCollapsed": true
             },
             {
               "title": "View Refresh",
-              "url": "javascript-grid-refresh/",
+              "url": "${framework}/refresh/",
               "showInCollapsed": true
             },
             {
               "title": "Flashing Cells",
-              "url": "javascript-grid-flashing-cells/",
+              "url": "${framework}/flashing-cells/",
               "showInCollapsed": true
             },
             {
               "title": "Change Detection",
-              "url": "javascript-grid-change-detection/",
+              "url": "${framework}/change-detection/",
               "showInCollapsed": true
             },
             {
@@ -826,34 +832,34 @@
           "items": [
             {
               "title": "Cell Editing",
-              "url": "javascript-grid-cell-editing/",
+              "url": "${framework}/cell-editing/",
               "showInCollapsed": true
             },
             {
               "title": "Saving Content",
-              "url": "javascript-grid-editing-flow/",
+              "url": "${framework}/editing-flow/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Value Parsers",
-                  "url": "javascript-grid-value-parsers/",
+                  "url": "${framework}/value-parsers/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Value Setters",
-                  "url": "javascript-grid-value-setters/",
+                  "url": "${framework}/value-setters/",
                   "showInCollapsed": true
                 }
               ]
             },
             {
               "title": "Provided Editors",
-              "url": "javascript-grid-provided-cell-editors/",
+              "url": "${framework}/provided-cell-editors/",
               "showInCollapsed": true
             },
             {
               "title": "Undo / Redo Edits",
-              "url": "javascript-grid-undo-redo-edits/",
+              "url": "${framework}/undo-redo-edits/",
               "showInCollapsed": true
             }
           ]
@@ -864,55 +870,55 @@
           "items": [
             {
               "title": "Row Grouping",
-              "url": "javascript-grid-grouping/",
+              "url": "${framework}/grouping/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Master Detail",
-              "url": "javascript-grid-master-detail/",
+              "url": "${framework}/master-detail/",
               "enterprise": true,
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Detail Grids",
-                  "url": "javascript-grid-master-detail-detail-grids/",
+                  "url": "${framework}/master-detail-detail-grids/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Detail Height",
-                  "url": "javascript-grid-master-detail-height/",
+                  "url": "${framework}/master-detail-height/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Detail Refresh",
-                  "url": "javascript-grid-master-detail-refresh/",
+                  "url": "${framework}/master-detail-refresh/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Master Rows",
-                  "url": "javascript-grid-master-detail-master-rows/",
+                  "url": "${framework}/master-detail-master-rows/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Nesting",
-                  "url": "javascript-grid-master-detail-nesting/",
+                  "url": "${framework}/master-detail-nesting/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Custom Detail",
-                  "url": "javascript-grid-master-detail-custom-detail/",
+                  "url": "${framework}/master-detail-custom-detail/",
                   "enterprise": true,
                   "showInCollapsed": false
                 },
                 {
                   "title": "Other",
-                  "url": "javascript-grid-master-detail-other/",
+                  "url": "${framework}/master-detail-other/",
                   "enterprise": true,
                   "showInCollapsed": false
                 }
@@ -920,19 +926,19 @@
             },
             {
               "title": "Tree Data",
-              "url": "javascript-grid-tree-data/",
+              "url": "${framework}/tree-data/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Aggregation",
-              "url": "javascript-grid-aggregation/",
+              "url": "${framework}/aggregation/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Pivoting",
-              "url": "javascript-grid-pivoting/",
+              "url": "${framework}/pivoting/",
               "enterprise": true,
               "showInCollapsed": true
             }
@@ -944,29 +950,29 @@
           "items": [
             {
               "title": "Export",
-              "url": "javascript-grid-export/",
+              "url": "${framework}/export/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "CSV Export",
-                  "url": "javascript-grid-csv/"
+                  "url": "${framework}/csv/"
                 },
                 {
                   "title": "Excel Export",
-                  "url": "javascript-grid-excel/",
+                  "url": "${framework}/excel/",
                   "enterprise": true
                 }
               ]
             },
             {
               "title": "Clipboard",
-              "url": "javascript-grid-clipboard/",
+              "url": "${framework}/clipboard/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Drag & Drop",
-              "url": "javascript-grid-drag-and-drop/",
+              "url": "${framework}/drag-and-drop/",
               "showInCollapsed": true
             },
             {
@@ -993,25 +999,25 @@
           "items": [
             {
               "title": "Tool Panels",
-              "url": "javascript-grid-tool-panel/",
+              "url": "${framework}/tool-panel/",
               "enterprise": true,
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Side Bar",
-                  "url": "javascript-grid-side-bar/",
+                  "url": "${framework}/side-bar/",
                   "enterprise": true,
                   "showInCollapsed": true
                 },
                 {
                   "title": "Columns Tool Panel",
-                  "url": "javascript-grid-tool-panel-columns/",
+                  "url": "${framework}/tool-panel-columns/",
                   "showInCollapsed": true,
                   "enterprise": true
                 },
                 {
                   "title": "Filters Tool Panel",
-                  "url": "javascript-grid-tool-panel-filters/",
+                  "url": "${framework}/tool-panel-filters/",
                   "showInCollapsed": true,
                   "enterprise": true
                 }
@@ -1019,25 +1025,25 @@
             },
             {
               "title": "Column Menu",
-              "url": "javascript-grid-column-menu/",
+              "url": "${framework}/column-menu/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Context Menu",
-              "url": "javascript-grid-context-menu/",
+              "url": "${framework}/context-menu/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Status Bar",
-              "url": "javascript-grid-status-bar/",
+              "url": "${framework}/status-bar/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Overlays",
-              "url": "javascript-grid-overlays/",
+              "url": "${framework}/overlays/",
               "showInCollapsed": true
             }
           ]
@@ -1048,76 +1054,76 @@
           "items": [
             {
               "title": "Registering Components",
-              "url": "javascript-grid-components/",
+              "url": "${framework}/components/",
               "showInCollapsed": true
             },
             {
               "title": "Component Types",
-              "url": "javascript-grid-component-types/",
+              "url": "${framework}/component-types/",
               "showInCollapsed": true,
               "items": [
                 {
                   "title": "Cell Renderer",
                   "box-title": "Cell",
-                  "url": "javascript-grid-cell-rendering-components/",
+                  "url": "${framework}/cell-rendering-components/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Cell Editor",
                   "box-title": "Editor",
-                  "url": "javascript-grid-cell-editor/",
+                  "url": "${framework}/cell-editor/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Date Component",
                   "box-title": "Date",
-                  "url": "javascript-grid-date-component/"
+                  "url": "${framework}/date-component/"
                 },
                 {
                   "title": "Filter Component",
                   "box-title": "Filter",
-                  "url": "javascript-grid-filter-component/",
+                  "url": "${framework}/filter-component/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Floating Filter Component",
                   "box-title": "Floating Filter",
-                  "url": "javascript-grid-floating-filter-component/"
+                  "url": "${framework}/floating-filter-component/"
                 },
                 {
                   "title": "Header Component",
                   "box-title": "Header",
-                  "url": "javascript-grid-header-rendering/",
+                  "url": "${framework}/header-rendering/",
                   "showInCollapsed": true
                 },
                 {
                   "title": "Loading Cell Renderer",
                   "box-title": "Loading",
-                  "url": "javascript-grid-loading-cell-renderer/"
+                  "url": "${framework}/loading-cell-renderer/"
                 },
                 {
                   "title": "Overlay Component",
                   "box-title": "Overlays",
-                  "url": "javascript-grid-overlay-component/"
+                  "url": "${framework}/overlay-component/"
                 },
                 {
                   "title": "Status Bar Component",
                   "box-title": "Status Bar",
-                  "url": "javascript-grid-status-bar-component/",
+                  "url": "${framework}/status-bar-component/",
                   "enterprise": true,
                   "showInCollapsed": true
                 },
                 {
                   "title": "Tool Panel Component",
                   "box-title": "Tool Panel",
-                  "url": "javascript-grid-tool-panel-component/",
+                  "url": "${framework}/tool-panel-component/",
                   "enterprise": true,
                   "showInCollapsed": true
                 },
                 {
                   "title": "Tooltip Component",
                   "box-title": "Tooltip",
-                  "url": "javascript-grid-tooltip-component/",
+                  "url": "${framework}/tooltip-component/",
                   "showInCollapsed": true
                 }
               ]
@@ -1130,58 +1136,58 @@
           "items": [
             {
               "title": "Overview",
-              "url": "javascript-grid-charts-integrated-overview/",
+              "url": "${framework}/charts-integrated-overview/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Range Chart",
-              "url": "javascript-grid-charts-integrated-range-chart/",
+              "url": "${framework}/charts-integrated-range-chart/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Pivot Chart",
-              "url": "javascript-grid-charts-integrated-pivot-chart/",
+              "url": "${framework}/charts-integrated-pivot-chart/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Chart Toolbar",
-              "url": "javascript-grid-charts-integrated-chart-toolbar/",
+              "url": "${framework}/charts-integrated-chart-toolbar/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Chart API",
-              "url": "javascript-grid-charts-integrated-chart-range-api/",
+              "url": "${framework}/charts-integrated-chart-range-api/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Customisation",
-              "url": "javascript-grid-charts-integrated-customisation/",
+              "url": "${framework}/charts-integrated-customisation/",
               "enterprise": true,
               "showInCollapsed": true
             },
             {
               "title": "Chart Container",
-              "url": "javascript-grid-charts-integrated-container/",
+              "url": "${framework}/charts-integrated-container/",
               "enterprise": true
             },
             {
               "title": "Chart Events",
-              "url": "javascript-grid-charts-integrated-chart-events/",
+              "url": "${framework}/charts-integrated-chart-events/",
               "enterprise": true
             },
             {
               "title": "Time Series",
-              "url": "javascript-grid-charts-integrated-time-series/",
+              "url": "${framework}/charts-integrated-time-series/",
               "enterprise": true
             },
             {
               "title": "Third-Party Charting",
-              "url": "javascript-grid-graphing/"
+              "url": "${framework}/graphing/"
             }
           ]
         },
@@ -1510,22 +1516,22 @@
           "items": [
             {
               "title": "DOM Virtualisation",
-              "url": "javascript-grid-dom-virtualisation/",
+              "url": "${framework}/dom-virtualisation/",
               "showInCollapsed": true
             },
             {
               "title": "Row Pagination",
-              "url": "javascript-grid-pagination/",
+              "url": "${framework}/pagination/",
               "showInCollapsed": true
             },
             {
               "title": "Aligned Grids",
-              "url": "javascript-grid-aligned-grids/",
+              "url": "${framework}/aligned-grids/",
               "showInCollapsed": true
             },
             {
               "title": "Scrolling Performance",
-              "url": "javascript-grid-performance/",
+              "url": "${framework}/performance/",
               "showInCollapsed": true
             },
             {
@@ -1534,7 +1540,7 @@
               "items": [
                 {
                   "title": "Scrolling Scenarios",
-                  "url": "javascript-grid-scrolling-scenarios/"
+                  "url": "${framework}/scrolling-scenarios/"
                 }
               ]
             }
@@ -1546,27 +1552,27 @@
           "items": [
             {
               "title": "Keyboard Navigation",
-              "url": "javascript-grid-keyboard-navigation/",
+              "url": "${framework}/keyboard-navigation/",
               "showInCollapsed": true
             },
             {
               "title": "Touch",
-              "url": "javascript-grid-touch/",
+              "url": "${framework}/touch/",
               "showInCollapsed": true
             },
             {
               "title": "Accessibility (ARIA)",
-              "url": "javascript-grid-accessibility/",
+              "url": "${framework}/accessibility/",
               "showInCollapsed": true
             },
             {
               "title": "RTL Text Direction",
-              "url": "javascript-grid-rtl/",
+              "url": "${framework}/rtl/",
               "showInCollapsed": true
             },
             {
               "title": "Localisation",
-              "url": "javascript-grid-localisation/",
+              "url": "${framework}/localisation/",
               "showInCollapsed": true
             }
           ]
@@ -1578,32 +1584,32 @@
           "items": [
             {
               "title": "Testing Overview",
-              "url": "javascript-grid-testing/",
+              "url": "${framework}/testing/",
               "showInCollapsed": true
             },
             {
               "title": "Testing Angular",
-              "url": "javascript-grid-testing-angular/",
+              "url": "${framework}/testing-angular/",
               "showInCollapsed": true
             },
             {
               "title": "Testing React",
-              "url": "javascript-grid-testing-react/",
+              "url": "${framework}/testing-react/",
               "showInCollapsed": true
             },
             {
               "title": "Testing Vue",
-              "url": "javascript-grid-testing-vue/",
+              "url": "${framework}/testing-vue/",
               "showInCollapsed": true
             },
             {
               "title": "Jasmine & Protractor",
-              "url": "javascript-grid-e2e-test-with-jasmine/",
+              "url": "${framework}/e2e-test-with-jasmine/",
               "showInCollapsed": true
             },
             {
               "title": "Security",
-              "url": "javascript-grid-security/",
+              "url": "${framework}/security/",
               "showInCollapsed": true
             }
           ]
