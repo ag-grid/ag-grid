@@ -234,9 +234,11 @@ export class LineSeries extends CartesianSeries {
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
                 const nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {
+                    moveTo = true;
                     continue;
                 }
                 if (xInRange === 1 && prevXInRange === 1) {
+                    moveTo = true;
                     continue;
                 }
                 prevXInRange = xInRange;
