@@ -31,35 +31,35 @@
               "items": [
                 {
                   "title": "Components",
-                  "url": "angular-more-details/"
+                  "url": "${framework}/more-details/"
                 },
                 {
                   "title": "Markup",
-                  "url": "angular-markup/"
+                  "url": "${framework}/markup/"
                 },
                 {
                   "title": "SystemJS",
-                  "url": "ag-grid-angular-systemjs/"
+                  "url": "${framework}/systemjs/"
                 },
                 {
                   "title": "Webpack 3",
-                  "url": "ag-grid-angular-webpack-3/"
+                  "url": "${framework}/webpack-3/"
                 },
                 {
                   "title": "Webpack 2",
-                  "url": "ag-grid-angular-webpack-2/"
+                  "url": "${framework}/webpack-2/"
                 },
                 {
                   "title": "Webpack 1",
-                  "url": "ag-grid-angular-webpack/"
+                  "url": "${framework}/webpack/"
                 },
                 {
                   "title": "Material Components",
-                  "url": "example-angular-material-design/"
+                  "url": "${framework}/material-design/"
                 },
                 {
                   "title": "Use with RxJS",
-                  "url": "example-angular-rxjs/"
+                  "url": "${framework}/rxjs/"
                 }
               ]
             },
@@ -70,31 +70,31 @@
               "items": [
                 {
                   "title": "Column Configuration",
-                  "url": "react-column-configuration/"
+                  "url": "${framework}/column-configuration/"
                 },
                 {
                   "title": "Context API & Redux",
-                  "url": "react-apis/"
+                  "url": "${framework}/apis/"
                 },
                 {
                   "title": "Fine Tuning",
-                  "url": "react-fine-tuning/"
+                  "url": "${framework}/fine-tuning/"
                 },
                 {
                   "title": "Hooks & Functional Components",
-                  "url": "react-hooks/"
+                  "url": "${framework}/hooks/"
                 },
                 {
                   "title": "Redux Integration Part 1",
-                  "url": "react-redux-integration-pt1/"
+                  "url": "${framework}/redux-integration-pt1/"
                 },
                 {
                   "title": "Redux Integration Part 2",
-                  "url": "react-redux-integration-pt2/"
+                  "url": "${framework}/redux-integration-pt2/"
                 },
                 {
                   "title": "React 15.x",
-                  "url": "react-15/"
+                  "url": "${framework}/react-15/"
                 }
               ]
             },
@@ -105,30 +105,30 @@
               "items": [
                 {
                   "title": "Components",
-                  "url": "vue-components/"
+                  "url": "${framework}/components/"
                 },
                 {
                   "title": "Markup",
-                  "url": "vue-markup/"
+                  "url": "${framework}/markup/"
                 },
                 {
                   "title": "Vue & Unidirectional Data Flow",
-                  "url": "vuex-data-flow/"
+                  "url": "${framework}/data-flow/"
                 },
                 {
                   "title": "Misc",
-                  "url": "vuejs-misc/"
+                  "url": "${framework}/misc/"
                 }
               ]
             },
             {
               "title": "AngularJS",
-              "url": "best-angularjs-grid/",
+              "url": "${framework}/best-grid/",
               "frameworkSpecific": true
             },
             {
               "title": "Polymer",
-              "url": "polymer-getting-started/",
+              "url": "${framework}/getting-started/",
               "frameworkSpecific": true
             }
           ]
