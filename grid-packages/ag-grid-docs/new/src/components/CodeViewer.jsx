@@ -3,11 +3,22 @@ import { useStaticQuery, graphql } from "gatsby";
 import './code-viewer.css';
 import Prism from 'prismjs';
 
-const updateFiles = (data, name, framework, importType, setFiles, setActiveFile) => {
+const updateFiles = (data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
+
+    const defaultFile = {
+        'react': 'index.jsx',
+        'angular': 'app/app.component.ts'
+    };
+
+    const mainFile = defaultFile[framework] || 'main.js';
+
+    setActiveFile(mainFile);
 
     if (framework === 'javascript') {
         framework = 'vanilla';
+    } else if (framework === 'react' && useFunctionalReact) {
+        framework = 'reactFunctional';
     }
 
     const rootFolder = `${name}/_gen/${importType}/${framework}/`;
@@ -23,17 +34,10 @@ const updateFiles = (data, name, framework, importType, setFiles, setActiveFile)
         promises.push(fetch(f.publicURL).then(response => response.text()).then(text => files[f.path] = text));
     });
 
-    const defaultFile = {
-        'react': 'index.jsx',
-        'angular': 'app/app.component.ts'
-    };
-
-    const mainFile = defaultFile[framework] || 'main.js';
-
-    Promise.all(promises).then(() => setFiles(files)).then(() => setActiveFile(mainFile));
+    Promise.all(promises).then(() => setFiles(files));
 };
 
-const CodeViewer = ({ framework, name, importType = 'modules' }) => {
+const CodeViewer = ({ framework, name, importType = 'modules', useFunctionalReact = false }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 
@@ -50,7 +54,9 @@ const CodeViewer = ({ framework, name, importType = 'modules' }) => {
     }
     `);
 
-    useEffect(() => updateFiles(data, name, framework, importType, setFiles, setActiveFile), [name, framework, importType]);
+    useEffect(
+        () => updateFiles(data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
+        [data, name, framework, useFunctionalReact, importType]);
 
     return <div className="code-viewer">
         <div className="code-viewer__files">{files && Object.keys(files).map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}</div>

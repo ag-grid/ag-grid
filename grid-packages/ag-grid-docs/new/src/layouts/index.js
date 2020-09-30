@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from 'gatsby';
-import { GlobalContextProvider } from '../components/Context';
+import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
 import './index.scss';
