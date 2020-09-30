@@ -3,7 +3,7 @@ import {
     Autowired,
     BeanStub,
     Column,
-    ColumnController,
+    ColumnController, ColumnGroup, GridOptionsWrapper,
     IAggFunc,
     IAggregationStage,
     IRowModel,
@@ -31,12 +31,18 @@ interface IData {
 }
 
 export class ChartDatasource extends BeanStub {
-    @Autowired('rowModel') gridRowModel: IRowModel;
-    @Autowired('valueService') valueService: ValueService;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Optional('aggregationStage') aggregationStage: IAggregationStage;
+    @Autowired('rowModel') private readonly gridRowModel: IRowModel;
+    @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
+        const isServerSide = this.gridOptionsWrapper.isRowModelServerSide();
+        if (isServerSide && params.pivoting) {
+            this.updatePivotKeysForSSRM();
+        }
+
         const result = this.extractRowsFromGridRowModel(params);
         result.data = this.aggregateRowsByDimension(params, result.data);
         return result;
@@ -197,6 +203,37 @@ export class ChartDatasource extends BeanStub {
         }));
 
         return dataAggregated;
+    }
+
+    private updatePivotKeysForSSRM() {
+        let secondaryColumns = this.columnController.getSecondaryColumns();
+
+        // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
+        // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
+        let pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
+
+        // 'pivotKeys' is not used by the SSRM for pivoting so it is safe to reuse this colDef property, this way
+        // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
+        secondaryColumns.forEach(col => {
+            const keys = col.getColId().split(pivotKeySeparator);
+            col.getColDef()['pivotKeys'] = keys.slice(0, keys.length - 1);
+        });
+    }
+
+    private extractPivotKeySeparator(secondaryColumns: any) {
+        if (secondaryColumns.length === 0) return "";
+
+        const extractSeparator = (columnGroup: ColumnGroup, childId: string): string => {
+            const groupId = columnGroup.getGroupId();
+            if (!columnGroup.getParent()) {
+                // removing groupId ('2000') from childId ('2000|Swimming') yields '|Swimming' so first char is separator
+                return childId.split(groupId)[1][0];
+            }
+            return extractSeparator(columnGroup.getParent(), groupId);
+        }
+
+        const firstSecondaryCol = secondaryColumns[0];
+        return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
     }
 
     private static getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
