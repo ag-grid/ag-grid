@@ -82,10 +82,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
     }
 
-    public isLastRowFound(): boolean {
-        return this.infiniteCache!=null && this.infiniteCache.isMaxRowFound();
-    }
-
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
@@ -313,23 +309,16 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
     }
 
-    public getVirtualRowCount(): number | null {
+    // for iRowModel
+    public isLastRowIndexKnown(): boolean {
         if (this.infiniteCache) {
-            return this.infiniteCache.getRowCount();
-        } else {
-            return null;
+            return this.infiniteCache.isLastRowIndexKnown();
         }
     }
 
-    public isMaxRowFound(): boolean | undefined {
+    public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         if (this.infiniteCache) {
-            return this.infiniteCache.isMaxRowFound();
-        }
-    }
-
-    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.infiniteCache) {
-            this.infiniteCache.setRowCount(rowCount, maxRowFound);
+            this.infiniteCache.setRowCount(rowCount, lastRowIndexKnown);
         }
     }
 

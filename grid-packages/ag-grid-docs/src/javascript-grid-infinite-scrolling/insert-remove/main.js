@@ -46,10 +46,10 @@ function insertItemsAt2AndRefresh(count) {
     // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
     // refreshVirtualPageCache() method, as this would be assuming you want to do it which
     // is not true, maybe the row count is constant and you just want to refresh the details.
-    var maxRowFound = gridOptions.api.isMaxRowFound();
+    var maxRowFound = gridOptions.api.isLastRowIndexKnown();
     if (maxRowFound) {
         var rowCount = gridOptions.api.getInfiniteRowCount();
-        gridOptions.api.setInfiniteRowCount(rowCount + count);
+        gridOptions.api.setRowCount(rowCount + count);
     }
 
     // get grid to refresh the data
@@ -80,12 +80,12 @@ function purgeCache() {
 }
 
 function setRowCountTo200() {
-    gridOptions.api.setInfiniteRowCount(200, false);
+    gridOptions.api.setRowCount(200, false);
 }
 
 function rowsAndMaxFound() {
     console.log('getInfiniteRowCount() => ' + gridOptions.api.getInfiniteRowCount());
-    console.log('isMaxRowFound() => ' + gridOptions.api.isMaxRowFound());
+    console.log('isLastRowIndexKnown() => ' + gridOptions.api.isLastRowIndexKnown());
 }
 
 // function just gives new prices to the row data, it does not update the grid
@@ -108,8 +108,8 @@ function printCacheState() {
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
-    if (gridOptions.api.getInfiniteRowCount() < 501) {
-        gridOptions.api.setInfiniteRowCount(501, false);
+    if (gridOptions.api.setRowCount() < 501) {
+        gridOptions.api.setRowCount(501, false);
     }
     // next, we can jump to the row
     gridOptions.api.ensureIndexVisible(500);

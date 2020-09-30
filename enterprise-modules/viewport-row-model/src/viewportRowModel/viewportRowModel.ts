@@ -51,7 +51,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         return true;
     }
 

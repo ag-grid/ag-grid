@@ -108,7 +108,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         if (this.cacheExists()) {
             return (this.rootNode.childrenCache as ServerSideCache)!.isMaxRowFound();
         }
