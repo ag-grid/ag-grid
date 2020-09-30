@@ -57,27 +57,25 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private rowCount: number;
-    private maxRowFound = false;
-
-    private params: ServerSideCacheParams;
-
-    private blocks: { [blockNumber: string]: ServerSideBlock; } = {};
-    private blockCount = 0;
+    private readonly params: ServerSideCacheParams;
+    private readonly parentRowNode: RowNode;
 
     private logger: Logger;
+
+    private readonly blocks: { [blockNumber: string]: ServerSideBlock; } = {};
+    private readonly blockHeights: { [blockId: number]: number } = {};
+    private blockCount = 0;
+
+    private rowCount: number;
+    private lastRowIndexKnown = false;
 
     // this will always be zero for the top level cache only,
     // all the other ones change as the groups open and close
     private displayIndexStart = 0;
     private displayIndexEnd = 0; // not sure if setting this one to zero is necessary
 
-    private readonly parentRowNode: RowNode;
-
-    private cacheTop = 0;
-    private cacheHeight: number;
-
-    private blockHeights: { [blockId: number]: number } = {};
+    private cacheTopPixel = 0;
+    private cacheHeightPixels: number;
 
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super();
@@ -99,8 +97,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return this.rowCount;
     }
 
-    public isMaxRowFound(): boolean {
-        return this.maxRowFound;
+    public isLastRowIndexKnown(): boolean {
+        return this.lastRowIndexKnown;
     }
 
     // listener on EVENT_LOAD_COMPLETE
@@ -219,8 +217,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.rowCount = lastRow;
-            this.maxRowFound = true;
-        } else if (!this.maxRowFound) {
+            this.lastRowIndexKnown = true;
+        } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getBlockNumber() + 1) * this.params.blockSize;
             const lastRowIndexPlusOverflow = lastRowIndex + ServerSideCache.OVERFLOW_SIZE;
@@ -236,13 +234,13 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
         if (_.exists(maxRowFound)) {
-            this.maxRowFound = maxRowFound;
+            this.lastRowIndexKnown = maxRowFound;
         }
 
         // if we are still searching, then the row count must not end at the end
         // of a particular page, otherwise the searching will not pop into the
         // next page
-        if (!this.maxRowFound) {
+        if (!this.lastRowIndexKnown) {
             if (this.rowCount % this.params.blockSize === 0) {
                 this.rowCount++;
             }
@@ -330,7 +328,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
-        this.maxRowFound = false;
+        this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
@@ -418,7 +416,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             } else {
-                nextRowTop = this.cacheTop;
+                nextRowTop = this.cacheTopPixel;
                 nextRowIndex = this.displayIndexStart;
             }
 
@@ -470,7 +468,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             } else {
-                nextRowTop = this.cacheTop;
+                nextRowTop = this.cacheTopPixel;
                 nextRowIndex = this.displayIndexStart;
             }
 
@@ -502,7 +500,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                              nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
-        this.cacheTop = nextRowTop.value;
+        this.cacheTopPixel = nextRowTop.value;
 
         let lastBlockId = -1;
 
@@ -548,7 +546,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         }
 
         this.displayIndexEnd = displayIndexSeq.peek();
-        this.cacheHeight = nextRowTop.value - this.cacheTop;
+        this.cacheHeightPixels = nextRowTop.value - this.cacheTopPixel;
     }
 
     // gets called in a) init() above and b) by the grid
@@ -621,7 +619,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 const localIndex = displayRowIndex - this.displayIndexStart;
                 blockNumber = Math.floor(localIndex / blockSize);
                 displayIndexStart = this.displayIndexStart + (blockNumber * blockSize);
-                nextRowTop = this.cacheTop + (blockNumber * blockSize * this.params.rowHeight);
+                nextRowTop = this.cacheTopPixel + (blockNumber * blockSize * this.params.rowHeight);
             }
 
             block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
@@ -769,7 +767,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         if (this.getRowCount() === 0) {
             return false;
         }
-        return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
+        return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
     }
 
     public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {

@@ -110,7 +110,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public isLastRowIndexKnown(): boolean {
         if (this.cacheExists()) {
-            return (this.rootNode.childrenCache as ServerSideCache)!.isMaxRowFound();
+            return (this.rootNode.childrenCache as ServerSideCache)!.isLastRowIndexKnown();
         }
 
         return false;
