@@ -4,64 +4,58 @@ import {AgGridVue} from './AgGridVue';
 
 export class VueComponentFactory {
 
-    public static getComponentType(component: any, params: any, parent: AgGridVue) {
+    private static getComponentDefinition(component: any, parent: AgGridVue) {
         let componentDefinition: any = null;
         if (typeof component === 'string') {
-            componentDefinition =  this.searchForComponentInstance(parent, component);
-            if (!componentDefinition) {
-                console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
-                return null;
-            }
+            componentDefinition = this.searchForComponentInstance(parent, component);
         } else {
             componentDefinition = component;
         }
-
-        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to provide the grid's params
-
-        let componentInstance:any = null;
-        componentDefinition = defineComponent({ extends: defineComponent({ ...component }), data: () => ({params: params}), created: function() { componentInstance = (this as any).$root }});
-        return createApp(componentDefinition);
+        if (!componentDefinition) {
+            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+        }
+        return componentDefinition;
     }
 
-    public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
-        // const componentType = VueComponentFactory.getComponentType(component, params, parent);
-        // if (!componentType) {
-        //     return;
-        // }
-
-        let componentDefinition: any = null;
-        if (typeof component === 'string') {
-            componentDefinition =  this.searchForComponentInstance(parent, component);
-            if (!componentDefinition) {
-                console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
-                return null;
-            }
-        } else {
-            componentDefinition = component;
-        }
-
-        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to provide the grid's params
-
-        let componentInstance:any = null;
-        componentDefinition = defineComponent({ extends: defineComponent({ ...component }), data: () => ({params: params}), created: function() { componentInstance = (this as any).$root }});
-
-        const details = {
-            data: {
-                params: Object.freeze(params),
-            },
+    private static createComponentParams(params: any, parent: AgGridVue) {
+        const extendedParams = {
+            params: Object.freeze(params),
             parent,
         };
 
         if (parent.componentDependencies) {
             parent.componentDependencies.forEach((dependency) =>
-                (details as any)[dependency] = (parent as any)[dependency],
+                (extendedParams as any)[dependency] = (parent as any)[dependency],
             );
         }
 
+        return extendedParams;
+    }
+
+    public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
+        const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
+        if (!componentDefinition) {
+            return;
+        }
+
+        const componentParams = VueComponentFactory.createComponentParams(params, parent);
+
+        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
+        // provide the grid's params and capture the resulting component instance
+        let componentInstance: any = null;
+        const extendedComponentDefinition = defineComponent({
+            extends: defineComponent({...component}),
+            data: () => componentParams,
+            created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
+                componentInstance = (this as any).$root;
+            }
+        });
+
+        // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
+        createApp(extendedComponentDefinition).mount(container);
 
-        createApp(componentDefinition).mount(container);
-
+        // note that the component creation is synchronous so that componentInstance is set by this point
         return componentInstance;
     }
 

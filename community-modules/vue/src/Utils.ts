@@ -1,10 +1,19 @@
-import { ComponentUtil } from '@ag-grid-community/core';
+import {ComponentUtil} from '@ag-grid-community/core';
+
+export const kebabProperty = (property: string) => {
+    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+};
+
+export const kebabNameToAttrEventName = (kebabName: string) => {
+    // grid-ready for example would become onGrid-ready in Vue
+    return `on${kebabName.charAt(0).toUpperCase()}${kebabName.substring(1, kebabName.length)}`
+};
 
 export interface Properties {
     [propertyName: string]: any;
 }
 
-export const getAgGridProperties = (): [Properties, Properties, { prop: string, event: string }, string[]] => {
+export const getAgGridProperties = (): [Properties, Properties, { prop: string, event: string }] => {
     const props: Properties = {
         gridOptions: {
             default() {
@@ -13,6 +22,16 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
         },
         rowDataModel: undefined,
     };
+
+    // for example, 'grid-ready' would become 'onGrid-ready': undefined
+    // without this emitting events results in a warning
+    // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
+    const eventNameAsProps = ComponentUtil.EVENTS.map(eventName => kebabNameToAttrEventName(kebabProperty(eventName)))
+    eventNameAsProps.reduce((accumulator, eventName) => {
+        accumulator[eventName] = undefined
+        return accumulator;
+    }, props);
+
     const watch: Properties = {
         rowDataModel(currentValue: any, previousValue: any) {
             this.processChanges('rowData', currentValue, previousValue);
@@ -22,14 +41,9 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
         props[propertyName] = {};
 
-        watch[propertyName] = function(currentValue: any, previousValue: any) {
+        watch[propertyName] = function (currentValue: any, previousValue: any) {
             this.processChanges(propertyName, currentValue, previousValue);
         };
-    });
-
-    const events: string[]  = [];
-    ComponentUtil.EVENTS.forEach((eventName) => {
-        events.push(eventName);
     });
 
     const model: { prop: string, event: string } = {
@@ -37,6 +51,6 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
         event: 'data-model-changed',
     };
 
-    return [props, watch, model, events];
+    return [props, watch, model];
 };
 

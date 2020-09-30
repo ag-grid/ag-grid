@@ -3,25 +3,23 @@ import {h} from 'vue'
 import {Options, Vue} from 'vue-class-component';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, Properties} from './Utils';
+import {getAgGridProperties, kebabNameToAttrEventName, kebabProperty, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
 
-const [props, watch, model, events] = getAgGridProperties();
+const [props, watch, model] = getAgGridProperties();
 
 @Bean('agGridVue')
 @Options({
     props,
     watch,
     model,
-    emits: events
+    // emits: ['onGrid-ready' / 'grid-ready' / 'gridReady' doesn't work :-) ]
 })
 export class AgGridVue extends Vue {
 
     private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
 
-    private static kebabProperty(property: string) {
-        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    }
+    private static DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-changed'));
 
     @Prop(Boolean)
     public autoParamsRefresh!: boolean;
@@ -54,15 +52,6 @@ export class AgGridVue extends Vue {
         }
 
         this.updateModelIfUsed(eventType);
-
-        // only emit if someone is listening
-        // we allow both kebab and camelCase event listeners, so check for both
-        const kebabName = AgGridVue.kebabProperty(eventType);
-        if (this.$attrs[kebabName]) {
-            this.$emit(kebabName, event);
-        } else if (this.$attrs[eventType]) {
-            this.$emit(eventType, event);
-        }
     }
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
@@ -89,7 +78,7 @@ export class AgGridVue extends Vue {
         // we debounce the model update to prevent a flood of updates in the event there are many individual
         // cell/row updates
         this.emitRowModel = this.debounce(() => {
-            this.$emit('data-model-changed', Object.freeze(this.getRowData()));
+            this.$emit(AgGridVue.DATA_MODEL_ATTR_NAME, Object.freeze(this.getRowData()));
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
@@ -143,7 +132,7 @@ export class AgGridVue extends Vue {
 
     private updateModelIfUsed(eventType: string) {
         if (this.gridReadyFired &&
-            this.$attrs['data-model-changed'] &&
+            this.$attrs[AgGridVue.DATA_MODEL_ATTR_NAME] &&
             AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
 
             if (this.emitRowModel) {
@@ -166,7 +155,7 @@ export class AgGridVue extends Vue {
     private skipChange(propertyName: string, currentValue: any, previousValue: any) {
         if (this.gridReadyFired &&
             propertyName === 'rowData' &&
-            this.$attrs['data-model-changed']) {
+            this.$attrs[AgGridVue.DATA_MODEL_ATTR_NAME]) {
             if (currentValue === previousValue) {
                 return true;
             }
