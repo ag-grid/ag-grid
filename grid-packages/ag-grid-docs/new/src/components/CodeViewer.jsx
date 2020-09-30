@@ -3,11 +3,25 @@ import { useStaticQuery, graphql } from "gatsby";
 import './code-viewer.css';
 import Prism from 'prismjs';
 
-const CodeViewer = ({ framework, name, importType = 'modules' }) => {
-    const [files, setFiles] = useState(null);
-    const [activeFile, setActiveFile] = useState(null);
+const updateFiles = (data, name, framework, importType, setFiles, setActiveFile) => {
+    if (typeof window === 'undefined') { return; }
 
-    useEffect(() => setFiles(null), [importType]);
+    if (framework === 'javascript') {
+        framework = 'vanilla';
+    }
+
+    const rootFolder = `${name}/_gen/${importType}/${framework}/`;
+    const filesForExample = data.allFile.edges
+        .filter(edge => edge.node.relativePath.startsWith(rootFolder))
+        .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));
+
+    const files = {};
+    const promises = [];
+
+    filesForExample.forEach(f => {
+        files[f.path] = null; // preserve ordering
+        promises.push(fetch(f.publicURL).then(response => response.text()).then(text => files[f.path] = text));
+    });
 
     const defaultFile = {
         'react': 'index.jsx',
@@ -15,6 +29,13 @@ const CodeViewer = ({ framework, name, importType = 'modules' }) => {
     };
 
     const mainFile = defaultFile[framework] || 'main.js';
+
+    Promise.all(promises).then(() => setFiles(files)).then(() => setActiveFile(mainFile));
+};
+
+const CodeViewer = ({ framework, name, importType = 'modules' }) => {
+    const [files, setFiles] = useState(null);
+    const [activeFile, setActiveFile] = useState(null);
 
     const data = useStaticQuery(graphql`
     {
@@ -29,31 +50,13 @@ const CodeViewer = ({ framework, name, importType = 'modules' }) => {
     }
     `);
 
-    if (framework === 'javascript') {
-        framework = 'vanilla';
-    }
-
-    if (files == null && typeof window !== 'undefined') {
-        const rootFolder = `${name}/_gen/${importType}/${framework}/`;
-        const filesForExample = data.allFile.edges
-            .filter(edge => edge.node.relativePath.startsWith(rootFolder))
-            .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));
-
-        filesForExample.forEach(f => {
-            fetch(f.publicURL).then(response => response.text().then(text => f.code = text)).then(() => {
-                if (f.path === mainFile) {
-                    setActiveFile(f);
-                }
-            });
-        });
-
-        setFiles(filesForExample);
-    }
+    useEffect(() => updateFiles(data, name, framework, importType, setFiles, setActiveFile), [name, framework, importType]);
 
     return <div className="code-viewer">
-        <div className="code-viewer__files">{files && files.map(f => <FileItem key={f.path} path={f.path} isActive={activeFile === f} onClick={() => setActiveFile(f)} />)}</div>
+        <div className="code-viewer__files">{files && Object.keys(files).map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}</div>
         <div className="code-viewer__code">
-            {activeFile && <FileView path={activeFile.path} code={activeFile.code} />}
+            {!files && <div>Loading...</div>}
+            {files && activeFile && <FileView path={activeFile} code={files[activeFile]} />}
         </div>
     </div>;
 };
