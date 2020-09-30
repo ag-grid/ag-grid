@@ -104,6 +104,8 @@ export class ChartTheme {
             grouped: false,
             normalizedTo: undefined,
             strokeWidth: 1,
+            lineDash: undefined,
+            lineDashOffset: 0,
             tooltipRenderer: undefined,
             highlightStyle: {
                 fill: 'yellow'
@@ -243,6 +245,8 @@ export class ChartTheme {
                     yName: '',
                     strokeWidth: 2,
                     strokeOpacity: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
                     tooltipRenderer: undefined,
                     highlightStyle: {
                         fill: 'yellow'
@@ -284,6 +288,8 @@ export class ChartTheme {
                     fillOpacity: 0.8,
                     strokeOpacity: 1,
                     strokeWidth: 2,
+                    lineDash: [20, 10],
+                    lineDashOffset: 0,
                     shadow: {
                         enabled: false,
                         color: 'rgba(0, 0, 0, 0.5)',
@@ -310,6 +316,8 @@ export class ChartTheme {
                     strokeWidth: 1,
                     fillOpacity: 1,
                     strokeOpacity: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
                     areaPlot: false,
                     aggregation: 'sum',
                     tooltipRenderer: undefined,
@@ -396,6 +404,8 @@ export class ChartTheme {
                     fillOpacity: 1,
                     strokeOpacity: 1,
                     strokeWidth: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
                     rotation: 0,
                     outerRadiusOffset: 0,
                     innerRadiusOffset: 0,

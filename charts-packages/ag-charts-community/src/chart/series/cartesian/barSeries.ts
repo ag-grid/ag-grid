@@ -129,6 +129,9 @@ export class BarSeries extends CartesianSeries {
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
     @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
 
     constructor() {
@@ -572,6 +575,8 @@ export class BarSeries extends CartesianSeries {
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
+            rect.lineDash = this.lineDash;
+            rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
         });

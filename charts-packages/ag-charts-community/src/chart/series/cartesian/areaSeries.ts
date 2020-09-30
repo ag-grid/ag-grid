@@ -101,6 +101,9 @@ export class AreaSeries extends CartesianSeries {
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
     constructor() {
         super();
 
@@ -384,6 +387,8 @@ export class AreaSeries extends CartesianSeries {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
 
@@ -431,6 +436,8 @@ export class AreaSeries extends CartesianSeries {
             shape.strokeWidth = strokeWidth;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
 
             path.clear();
 
