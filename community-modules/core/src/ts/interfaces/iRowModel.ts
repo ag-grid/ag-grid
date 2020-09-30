@@ -53,7 +53,7 @@ export interface IRowModel {
      * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
      * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.
      */
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
 
     /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;

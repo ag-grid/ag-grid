@@ -6,8 +6,6 @@ export interface IInfiniteRowModel extends IRowModel {
     setDatasource(datasource: IDatasource | undefined): void;
     refreshCache(): void;
     purgeCache(): void;
-    getVirtualRowCount(): number | null;
-    isMaxRowFound(): boolean | undefined;
     setRowCount(rowCount: number, maxRowFound?: boolean): void;
     getBlockState(): any;
 }

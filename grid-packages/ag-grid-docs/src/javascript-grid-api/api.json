@@ -378,11 +378,11 @@
         "getInfiniteRowCount()": {
             "description": "The row count defines how many rows the grid allows scrolling to."
         },
-        "isMaxRowFound()": {
-            "description": "The property <code>maxRowFound</code> is a boolean, <code>true</code> or <code>false</code>. When <code>false</code>, the grid will allow scrolling beyond the <code>rowCount</code> looking for more rows. When the last row is found, <code>maxRowFound</code> becomes <code>true</code>, and the grid will only scroll to the last available row as it has finished looking for more data."
+        "isLastRowIndexKnown()": {
+            "description": "Returns <code>true</code> if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll."
         },
-        "setInfiniteRowCount(rowCount, maxRowFound)": {
-            "description": "Sets the <code>rowCount</code> and <code>maxRowFound</code> properties. The second parameter, <code>maxRowFound</code>, is optional and if left out, only <code>rowCount</code> is set. Set <code>rowCount</code> to adjust the height of the vertical scroll. Set <code>maxRowFound</code> to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode."
+        "setRowCount(rowCount, lastRowIndexKnown)": {
+            "description": "Sets the <code>rowCount</code> and <code>lastRowIndexKnown</code> properties. The second parameter, <code>lastRowIndexKnown</code>, is optional and if left out, only <code>rowCount</code> is set. Set <code>rowCount</code> to adjust the height of the vertical scroll. Set <code>lastRowIndexKnown</code> to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode."
         },
         "getCacheBlockState()": {
             "description": "Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working."

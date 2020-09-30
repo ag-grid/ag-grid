@@ -53,7 +53,7 @@ export class InfiniteCache extends BeanStub {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
 
     private rowCount: number;
-    private maxRowFound = false;
+    private lastRowIndexKnown = false;
 
     protected params: InfiniteCacheParams;
 
@@ -120,8 +120,8 @@ export class InfiniteCache extends BeanStub {
         return this.rowCount;
     }
 
-    public isMaxRowFound(): boolean {
-        return this.maxRowFound;
+    public isLastRowIndexKnown(): boolean {
+        return this.lastRowIndexKnown;
     }
 
     // listener on EVENT_LOAD_COMPLETE
@@ -156,8 +156,8 @@ export class InfiniteCache extends BeanStub {
             blocksForPurging.push(block);
         });
 
-        // note: need to verify that this sorts items in the right order
-        blocksForPurging.sort((a: InfiniteBlock, b: InfiniteBlock) => b.getLastAccessed() - a.getLastAccessed());
+        const lastAccessedComparator = (a: InfiniteBlock, b: InfiniteBlock) => b.getLastAccessed() - a.getLastAccessed();
+        blocksForPurging.sort(lastAccessedComparator);
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
@@ -217,8 +217,8 @@ export class InfiniteCache extends BeanStub {
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.rowCount = lastRow;
-            this.maxRowFound = true;
-        } else if (!this.maxRowFound) {
+            this.lastRowIndexKnown = true;
+        } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getBlockNumber() + 1) * this.params.blockSize;
             const lastRowIndexPlusOverflow = lastRowIndex + this.params.overflowSize;
@@ -229,19 +229,19 @@ export class InfiniteCache extends BeanStub {
         }
     }
 
-    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
+    public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         this.rowCount = rowCount;
 
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
-        if (_.exists(maxRowFound)) {
-            this.maxRowFound = maxRowFound;
+        if (_.exists(lastRowIndexKnown)) {
+            this.lastRowIndexKnown = lastRowIndexKnown;
         }
 
         // if we are still searching, then the row count must not end at the end
         // of a particular page, otherwise the searching will not pop into the
         // next page
-        if (!this.maxRowFound) {
+        if (!this.lastRowIndexKnown) {
             if (this.rowCount % this.params.blockSize === 0) {
                 this.rowCount++;
             }
@@ -326,7 +326,7 @@ export class InfiniteCache extends BeanStub {
 
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
-        this.maxRowFound = false;
+        this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.

@@ -1379,15 +1379,20 @@ export class GridApi {
 
     public getInfiniteRowCount(): number {
         if (this.infiniteRowModel) {
-            return this.infiniteRowModel.getVirtualRowCount();
+            return this.infiniteRowModel.getRowCount();
         } else {
             console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public isMaxRowFound(): boolean {
+        console.warn(`ag-Grid: api.isLastRowIndexKnown is deprecated, please use api.isLastRowIndexKnown()`);
+        return this.isLastRowIndexKnown();
+    }
+
+    public isLastRowIndexKnown(): boolean {
         if (this.infiniteRowModel) {
-            return this.infiniteRowModel.isMaxRowFound();
+            return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
             console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
@@ -1395,14 +1400,19 @@ export class GridApi {
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
         console.warn('ag-Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead');
-        this.setInfiniteRowCount(rowCount, maxRowFound);
+        this.setRowCount(rowCount, maxRowFound);
     }
 
     public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
+        console.warn('ag-Grid: setInfiniteRowCount() is now called setRowCount(), please call setRowCount() instead');
+        this.setRowCount(rowCount, maxRowFound);
+    }
+
+    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
-            console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.setRowCount is only available for Infinite Row Model.`);
         }
     }
 

@@ -186,7 +186,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public isLastPageFound(): boolean {
-        return this.rowModel.isLastRowFound();
+        return this.rowModel.isLastRowIndexKnown();
     }
 
     public getCurrentPage(): number {

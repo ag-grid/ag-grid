@@ -269,7 +269,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.lastHighlightedRow;
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         return true;
     }
 
