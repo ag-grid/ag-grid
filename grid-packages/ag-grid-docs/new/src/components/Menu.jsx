@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import JSONData from '../data/menu.json';
 import './menu.scss';
 
@@ -11,13 +11,9 @@ const displayMenuItems = (items) => items.map(item => (
     </ul>
 ));
 
-const renderMenu = () => (
-    <ul>
-        { JSONData.map(groupItems => (
-            displayMenuItems(groupItems.items)
-        ))}
-    </ul>
-);
+const renderMenu = () => JSONData.map(groupItems => (
+    displayMenuItems(groupItems.items)
+));
 
 const Menu = () => (
     <div className="menu_view">
