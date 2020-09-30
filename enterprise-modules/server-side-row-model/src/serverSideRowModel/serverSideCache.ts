@@ -57,7 +57,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private virtualRowCount: number;
+    private rowCount: number;
     private maxRowFound = false;
 
     private params: ServerSideCacheParams;
@@ -82,7 +82,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
-        this.virtualRowCount = ServerSideCache.INITIAL_ROW_COUNT;
+        this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
         this.params  = cacheParams;
     }
 
@@ -95,8 +95,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.logger = loggerFactory.create('ServerSideCache');
     }
 
-    public getVirtualRowCount(): number {
-        return this.virtualRowCount;
+    public getRowCount(): number {
+        return this.rowCount;
     }
 
     public isMaxRowFound(): boolean {
@@ -158,7 +158,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 // previous state if it had open children (and what if open children of open
                 // children, jeeeesus, just thinking about it freaks me out) so best is have a
                 // rule, if block is open, we never purge.
-                if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
+                if (block.isAnyNodeOpen(this.rowCount)) { return; }
 
                 // if the block currently has rows been displayed, then don't remove it either.
                 // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
@@ -218,21 +218,21 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
-            this.virtualRowCount = lastRow;
+            this.rowCount = lastRow;
             this.maxRowFound = true;
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getBlockNumber() + 1) * this.params.blockSize;
             const lastRowIndexPlusOverflow = lastRowIndex + ServerSideCache.OVERFLOW_SIZE;
 
-            if (this.virtualRowCount < lastRowIndexPlusOverflow) {
-                this.virtualRowCount = lastRowIndexPlusOverflow;
+            if (this.rowCount < lastRowIndexPlusOverflow) {
+                this.rowCount = lastRowIndexPlusOverflow;
             }
         }
     }
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        this.virtualRowCount = rowCount;
+        this.rowCount = rowCount;
         // if undefined is passed, we do not set this value, if one of {true,false}
         // is passed, we do set the value.
         if (_.exists(maxRowFound)) {
@@ -243,8 +243,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // of a particular page, otherwise the searching will not pop into the
         // next page
         if (!this.maxRowFound) {
-            if (this.virtualRowCount % this.params.blockSize === 0) {
-                this.virtualRowCount++;
+            if (this.rowCount % this.params.blockSize === 0) {
+                this.rowCount++;
             }
         }
 
@@ -252,7 +252,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.forEachBlockInOrder(block => block.forEachNodeDeep(callback, sequence, this.virtualRowCount));
+        this.forEachBlockInOrder(block => block.forEachNodeDeep(callback, sequence, this.rowCount));
     }
 
     public forEachBlockInOrder(callback: (block: ServerSideBlock, id: number) => void): void {
@@ -319,7 +319,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         const blocksToDestroy: ServerSideBlock[] = [];
         this.forEachBlockInOrder((block: ServerSideBlock, id: number) => {
             const startRow = id * this.params.blockSize;
-            if (startRow >= this.virtualRowCount) {
+            if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
         });
@@ -335,8 +335,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
-        if (this.virtualRowCount === 0) {
-            this.virtualRowCount = ServerSideCache.INITIAL_ROW_COUNT;
+        if (this.rowCount === 0) {
+            this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
         }
 
         this.onCacheUpdated();
@@ -376,7 +376,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                     inActiveRange = !inActiveRange;
                 }
 
-            }, numberSequence, this.virtualRowCount);
+            }, numberSequence, this.rowCount);
         });
 
         // inActiveRange will be still true if we never hit the second rowNode
@@ -402,7 +402,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             if (blockFound) { return; }
 
             if (block.isDisplayIndexInBlock(index)) {
-                result = block.getRowBounds(index, this.getVirtualRowCount());
+                result = block.getRowBounds(index, this.getRowCount());
                 blockFound = true;
             } else if (block.isBlockBefore(index)) {
                 lastBlock = block;
@@ -454,7 +454,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             if (blockFound) { return; }
 
             if (block.isPixelInRange(pixel)) {
-                result = block.getRowIndexAtPixel(pixel, this.getVirtualRowCount());
+                result = block.getRowIndexAtPixel(pixel, this.getRowCount());
                 blockFound = true;
             } else if (block.getBlockTop() < pixel) {
                 lastBlock = block;
@@ -495,7 +495,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     public clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.forEachBlockInOrder(block => block.clearDisplayIndexes(this.getVirtualRowCount()));
+        this.forEachBlockInOrder(block => block.clearDisplayIndexes(this.getRowCount()));
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
@@ -530,7 +530,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
             lastBlockId = blockId;
 
-            currentBlock.setDisplayIndexes(displayIndexSeq, this.getVirtualRowCount(), nextRowTop);
+            currentBlock.setDisplayIndexes(displayIndexSeq, this.getRowCount(), nextRowTop);
 
             this.blockHeights[blockId] = currentBlock.getBlockHeight();
         });
@@ -540,7 +540,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
         const lastVisitedRow = ((lastBlockId + 1) * blockSize) - 1;
-        const rowCount = this.getVirtualRowCount();
+        const rowCount = this.getRowCount();
         const rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
             displayIndexSeq.skip(rowsNotAccountedFor);
@@ -552,7 +552,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRow(displayRowIndex: number, dontCreateBlock = false): RowNode | null {
+    public getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock = false): RowNode | null {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
@@ -629,7 +629,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
 
-        return block ? block.getRow(displayRowIndex) : null;
+        return block ? block.getRowUsingDisplayIndex(displayRowIndex) : null;
     }
 
     private getBlockSize(): number {
@@ -701,7 +701,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         const displayIndexSequence = new NumberSequence(displayIndex);
 
-        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
+        newBlock.setDisplayIndexes(displayIndexSequence, this.getRowCount(), nextRowTop);
 
         this.postCreateBlock(newBlock);
 
@@ -713,7 +713,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public isDisplayIndexInCache(displayIndex: number): boolean {
-        if (this.getVirtualRowCount() === 0) {
+        if (this.getRowCount() === 0) {
             return false;
         }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
@@ -754,7 +754,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 if (rowNode.key === nextKey) {
                     nextServerSideCache = rowNode.childrenCache as ServerSideCache;
                 }
-            }, new NumberSequence(), this.getVirtualRowCount());
+            }, new NumberSequence(), this.getRowCount());
         });
 
         if (nextServerSideCache) {
@@ -766,7 +766,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public isPixelInRange(pixel: number): boolean {
-        if (this.getVirtualRowCount() === 0) {
+        if (this.getRowCount() === 0) {
             return false;
         }
         return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
@@ -798,7 +798,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                             nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
-                    block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
+                    block.forEachNodeShallow(callback, new NumberSequence(), this.getRowCount());
                 }
             });
         }

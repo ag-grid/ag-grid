@@ -441,7 +441,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRow(index: number): RowNode | null {
         if (this.cacheExists()) {
-            return (this.rootNode.childrenCache as ServerSideCache)!.getRow(index);
+            return (this.rootNode.childrenCache as ServerSideCache)!.getRowUsingDisplayIndex(index);
         }
 
         return null;
@@ -460,7 +460,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!this.cacheExists()) { return 1; }
 
         const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getVirtualRowCount();
+        return serverSideCache.getRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {

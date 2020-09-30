@@ -32,15 +32,26 @@ export class ServerSideBlock extends RowNodeBlock {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
+    private logger: Logger;
+
+    private readonly params: ServerSideCacheParams;
     private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
 
+    private readonly level: number;
+    private readonly groupLevel: boolean | undefined;
+    private readonly leafGroup: boolean;
+
+    private readonly parentCache: ServerSideCache;
+    private readonly parentRowNode: RowNode;
+
+    private usingTreeData: boolean;
+    private usingMasterDetail: boolean;
+
     private lastAccessed: number;
 
     public rowNodes: RowNode[];
-
-    private logger: Logger;
 
     private displayIndexStart: number;
     private displayIndexEnd: number;
@@ -48,20 +59,9 @@ export class ServerSideBlock extends RowNodeBlock {
     private blockTop: number;
     private blockHeight: number;
 
-    private params: ServerSideCacheParams;
-    private parentCache: ServerSideCache;
-
-    private parentRowNode: RowNode;
-
-    private level: number;
-    private groupLevel: boolean | undefined;
-    private leafGroup: boolean;
     private groupField: string;
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
-
-    private usingTreeData: boolean;
-    private usingMasterDetail: boolean;
 
     constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super();
@@ -159,23 +159,12 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public isAnyNodeOpen(rowCount: number): boolean {
         let result = false;
-        this.forEachNodeCallback((rowNode: RowNode) => {
+        this.forEachNodeShallow((rowNode: RowNode) => {
             if (rowNode.expanded) {
                 result = true;
             }
-        }, rowCount);
+        }, new NumberSequence(), rowCount);
         return result;
-    }
-
-    private forEachNodeCallback(callback_B: (rowNode: RowNode) => void, rowCount: number): void {
-        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
-            // we check against rowCount as this page may be the last one, and if it is, then
-            // the last rows are not part of the set
-            if (rowIndex < rowCount) {
-                const rowNode = this.getRowUsingLocalIndex(rowIndex);
-                callback_B(rowNode);
-            }
-        }
     }
 
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
@@ -218,35 +207,30 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.rowNodes[localIndex];
     }
 
-    private createStubRowNode(): RowNode {
-
-        const rowNode = this.getContext().createBean(new RowNode());
-
-        rowNode.setRowHeight(this.params.rowHeight);
-
-        rowNode.group = this.groupLevel;
-        rowNode.leafGroup = this.leafGroup;
-        rowNode.level = this.level;
-        rowNode.uiLevel = this.level;
-        rowNode.parent = this.parentRowNode;
-
-        // stub gets set to true here, and then false when this rowNode gets it's data
-        rowNode.stub = true;
-
-        if (rowNode.group) {
-            rowNode.expanded = false;
-            rowNode.field = this.groupField;
-            rowNode.rowGroupColumn = this.rowGroupColumn;
-        }
-
-        return rowNode;
-    }
-
     // creates empty row nodes, data is missing as not loaded yet
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.params.blockSize; i++) {
-            const rowNode = this.createStubRowNode();
+
+            const rowNode = this.getContext().createBean(new RowNode());
+
+            rowNode.setRowHeight(this.params.rowHeight);
+
+            rowNode.group = this.groupLevel;
+            rowNode.leafGroup = this.leafGroup;
+            rowNode.level = this.level;
+            rowNode.uiLevel = this.level;
+            rowNode.parent = this.parentRowNode;
+
+            // stub gets set to true here, and then false when this rowNode gets it's data
+            rowNode.stub = true;
+
+            if (rowNode.group) {
+                rowNode.expanded = false;
+                rowNode.field = this.groupField;
+                rowNode.rowGroupColumn = this.rowGroupColumn;
+            }
+
             this.rowNodes.push(rowNode);
         }
     }
@@ -300,14 +284,14 @@ export class ServerSideBlock extends RowNodeBlock {
         }
     }
 
-    public getRow(displayRowIndex: number): RowNode | null {
+    public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
         let bottomPointer = this.getStartRow();
 
         // the end row depends on whether all this block is used or not. if the virtual row count
         // is before the end, then not all the row is used
-        const virtualRowCount = this.parentCache.getVirtualRowCount();
+        const rowCount = this.parentCache.getRowCount();
         const endRow = this.getEndRow();
-        const actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
+        const actualEnd = (rowCount < endRow) ? rowCount : endRow;
 
         let topPointer = actualEnd - 1;
 
@@ -334,7 +318,7 @@ export class ServerSideBlock extends RowNodeBlock {
             // then check if child cache contains index
             const childrenCache = currentRowNode.childrenCache as ServerSideCache;
             if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
-                return childrenCache.getRow(displayRowIndex);
+                return childrenCache.getRowUsingDisplayIndex(displayRowIndex);
             }
 
             // otherwise adjust pointers to continue searching for index
@@ -468,7 +452,7 @@ export class ServerSideBlock extends RowNodeBlock {
         return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
     }
 
-    public getRowBounds(index: number, virtualRowCount: number): RowBounds | null {
+    public getRowBounds(index: number, rowCount: number): RowBounds | null {
 
         const start = this.getStartRow();
         const end = this.getEndRow();
@@ -483,7 +467,7 @@ export class ServerSideBlock extends RowNodeBlock {
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) {
+            if (i >= rowCount) {
                 continue;
             }
 
@@ -552,11 +536,11 @@ export class ServerSideBlock extends RowNodeBlock {
         return 0;
     }
 
-    public clearDisplayIndexes(virtualRowCount: number): void {
+    public clearDisplayIndexes(rowCount: number): void {
         this.displayIndexEnd = undefined;
         this.displayIndexStart = undefined;
 
-        this.forEachRowNode(virtualRowCount, rowNode => {
+        this.forEachRowNode(rowCount, rowNode => {
             rowNode.clearRowTop();
             rowNode.setRowIndex(undefined);
 
@@ -575,13 +559,13 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
-                             virtualRowCount: number,
+                             rowCount: number,
                              nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
         this.blockTop = nextRowTop.value;
 
-        this.forEachRowNode(virtualRowCount, rowNode => {
+        this.forEachRowNode(rowCount, rowNode => {
             // set this row
             rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
@@ -618,14 +602,14 @@ export class ServerSideBlock extends RowNodeBlock {
         this.blockHeight = nextRowTop.value - this.blockTop;
     }
 
-    private forEachRowNode(virtualRowCount: number, callback: (rowNode: RowNode) => void): void {
+    private forEachRowNode(rowCount: number, callback: (rowNode: RowNode) => void): void {
         const start = this.getStartRow();
         const end = this.getEndRow();
 
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) {
+            if (i >= rowCount) {
                 continue;
             }
 
