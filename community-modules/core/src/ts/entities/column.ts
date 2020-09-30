@@ -650,7 +650,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
-            if (this.flex && source !== 'flex') {
+            if (this.flex && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
             }
 
