@@ -1,19 +1,21 @@
-import React, { Fragment } from "react";
+import React from "react";
 import JSONData from '../data/menu.json';
 import './menu.scss';
 
-const displayMenuItems = (items) => items.map(item => (
-    <ul key={item.title}>
-        <li>
-            { item.title }
-            { item.items ? displayMenuItems(item.items) : null }
-        </li>
-    </ul>
-));
+const displayMenuItem = (item) => (
+    <li>
+        { item.title }
+        { item.items ? displayMenuGroup({ group: item.title, items: item.items }) : null }
+    </li>
+);
 
-const renderMenu = () => JSONData.map(groupItems => (
-    displayMenuItems(groupItems.items)
-));
+const displayMenuGroup = (group) => (
+    <ul key={ group.group }>
+        { group.items.map(item => displayMenuItem(item)) }
+    </ul>
+);
+
+const renderMenu = () => JSONData.map(group => displayMenuGroup(group));
 
 const Menu = () => (
     <div className="menu_view">
