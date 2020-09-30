@@ -92,22 +92,26 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
 }
 
 abstract class VueComponent<P, T> {
-    private component: any;
+    private componentInstance: any;
+    private mountedComponent: any;
 
     public getGui(): HTMLElement {
-        return this.component.$el;
+        return this.componentInstance.$el;
     }
 
     public destroy(): void {
-        this.component.$destroy();
+        this.mountedComponent.unmount();
     }
 
     public getFrameworkComponentInstance(): any {
-        return this.component;
+        return this.componentInstance;
     }
 
     protected init(params: P): void {
-        this.component = this.createComponent(params);
+        const {mountedComponent, componentInstance} = this.createComponent(params);
+
+        this.mountedComponent = mountedComponent;
+        this.componentInstance = componentInstance;
     }
 
     protected abstract createComponent(params: P): any;

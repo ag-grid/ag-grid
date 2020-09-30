@@ -53,10 +53,11 @@ export class VueComponentFactory {
 
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
-        createApp(extendedComponentDefinition).mount(container);
+        const mountedComponent = createApp(extendedComponentDefinition)
+        mountedComponent.mount(container);
 
         // note that the component creation is synchronous so that componentInstance is set by this point
-        return componentInstance;
+        return { mountedComponent, componentInstance };
     }
 
     private static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10) {
