@@ -101,14 +101,12 @@ export class InfiniteBlock extends RowNodeBlock {
     public forEachNode(callback: (rowNode: RowNode, index: number) => void,
                        sequence: NumberSequence,
                        rowCount: number): void {
-        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
-            // we check against rowCount as this page may be the last one, and if it is, then
-            // the last rows are not part of the set
+        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+            const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
-                const rowNode = this.getRow(rowIndex);
                 callback(rowNode, sequence.next());
             }
-        }
+        });
     }
 
     public getLastAccessed(): number {
@@ -135,23 +133,19 @@ export class InfiniteBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = this.getContext().createBean(new RowNode());
-
-        rowNode.setRowHeight(this.params.rowHeight);
-        rowNode.uiLevel = 0;
-        rowNode.setRowIndex(rowIndex);
-        rowNode.rowTop = this.params.rowHeight * rowIndex;
-
-        return rowNode;
-    }
-
     // creates empty row nodes, data is missing as not loaded yet
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.params.blockSize; i++) {
             let rowIndex = this.startRow + i;
-            const rowNode = this.createBlankRowNode(rowIndex);
+
+            const rowNode = this.getContext().createBean(new RowNode());
+
+            rowNode.setRowHeight(this.params.rowHeight);
+            rowNode.uiLevel = 0;
+            rowNode.setRowIndex(rowIndex);
+            rowNode.rowTop = this.params.rowHeight * rowIndex;
+
             this.rowNodes.push(rowNode);
         }
     }

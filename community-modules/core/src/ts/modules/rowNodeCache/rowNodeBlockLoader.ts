@@ -67,7 +67,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
         let blockToLoad: RowNodeBlock | null = null;
         this.blocks.forEach(block => {
-            if (block.getState() === RowNodeBlock.STATE_DIRTY) {
+            if (block.getState() === RowNodeBlock.STATE_WAITING_TO_LOAD) {
                 blockToLoad = block;
             }
         });

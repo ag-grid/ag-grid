@@ -52,7 +52,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private logger: Logger;    
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
+    public ensureRowHeightsValid(): boolean { return false; }
 
     @PostConstruct
     private postConstruct(): void {

@@ -12,7 +12,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
-    public static STATE_DIRTY = 'dirty';
+    public static STATE_WAITING_TO_LOAD = 'needsLoading';
     public static STATE_LOADING = 'loading';
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
@@ -138,7 +138,7 @@ export abstract class RowNodeBlock extends BeanStub {
     public setDirty(): void {
         // in case any current loads in progress, this will have their results ignored
         this.version++;
-        this.state = RowNodeBlock.STATE_DIRTY;
+        this.state = RowNodeBlock.STATE_WAITING_TO_LOAD;
     }
 
     public setDirtyAndPurge(): void {
