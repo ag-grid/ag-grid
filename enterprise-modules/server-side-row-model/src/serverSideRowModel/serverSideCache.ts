@@ -103,8 +103,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     // listener on EVENT_LOAD_COMPLETE
     private onPageLoaded(event: LoadCompleteEvent): void {
-        this.params.rowNodeBlockLoader.loadComplete();
-
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) {
