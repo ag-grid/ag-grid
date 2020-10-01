@@ -17,7 +17,8 @@ import {
     Logger,
     PreDestroy,
     RowNodeBlockLoader,
-    AgEvent
+    AgEvent,
+    LoadCompleteEvent
 } from "@ag-grid-community/core";
 
 import {ServerSideBlock} from "./serverSideBlock";
@@ -101,7 +102,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     // listener on EVENT_LOAD_COMPLETE
-    private onPageLoaded(event: any): void {
+    private onPageLoaded(event: LoadCompleteEvent): void {
         this.params.rowNodeBlockLoader.loadComplete();
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
@@ -110,10 +111,10 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.page.getId()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
 
         if (event.success) {
-            this.checkRowCount(event.page, event.lastRow);
+            this.checkRowCount(event.block as ServerSideBlock, event.lastRow);
             this.onCacheUpdated();
         }
     }

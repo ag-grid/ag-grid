@@ -16,7 +16,8 @@ import {
     PostConstruct,
     PreDestroy,
     RowRenderer,
-    _
+    _,
+    LoadCompleteEvent
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -127,7 +128,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     // listener on EVENT_LOAD_COMPLETE
-    private onPageLoaded(event: any): void {
+    private onPageLoaded(event: LoadCompleteEvent): void {
         this.params.rowNodeBlockLoader.loadComplete();
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
@@ -136,10 +137,10 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.page.getId()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
 
         if (event.success) {
-            this.checkRowCount(event.page, event.lastRow);
+            this.checkRowCount(event.block as InfiniteBlock, event.lastRow);
             this.onCacheUpdated();
         }
     }
