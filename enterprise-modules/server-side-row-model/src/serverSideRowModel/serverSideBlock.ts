@@ -153,14 +153,9 @@ export class ServerSideBlock extends RowNodeBlock {
         };
     }
 
-    public isAnyNodeOpen(rowCount: number): boolean {
-        let result = false;
-        this.forEachNodeShallow((rowNode: RowNode) => {
-            if (rowNode.expanded) {
-                result = true;
-            }
-        }, new NumberSequence(), rowCount);
-        return result;
+    public isAnyNodeOpen(): boolean {
+        const openNodeCount = this.rowNodes.filter( node => node.expanded ).length;
+        return openNodeCount > 0;
     }
 
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
@@ -187,7 +182,7 @@ export class ServerSideBlock extends RowNodeBlock {
         this.forEachNode(callback, sequence, rowCount, true);
     }
 
-    public forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
+    public forEachNodeShallow(callback: (rowNode: RowNode) => void, sequence: NumberSequence, rowCount: number): void {
         this.forEachNode(callback, sequence, rowCount, false);
     }
 

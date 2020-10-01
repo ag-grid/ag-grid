@@ -155,7 +155,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 // previous state if it had open children (and what if open children of open
                 // children, jeeeesus, just thinking about it freaks me out) so best is have a
                 // rule, if block is open, we never purge.
-                if (block.isAnyNodeOpen(this.rowCount)) { return; }
+                if (block.isAnyNodeOpen()) { return; }
 
                 // if the block currently has rows been displayed, then don't remove it either.
                 // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
