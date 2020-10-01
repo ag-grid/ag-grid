@@ -55,3 +55,13 @@ body {
     background-image: linear-gradient(to top left, #00407f, #0084e7);
     color: white;
 }
+
+.note {
+    padding: 20px;
+    background-color: lightyellow;
+    border: 1px solid orange;
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}

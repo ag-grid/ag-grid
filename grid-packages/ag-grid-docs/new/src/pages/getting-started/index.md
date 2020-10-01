@@ -22,12 +22,40 @@ if you're feeling brave! The `div` that you specify will be populated with grid 
 
 Framework-dependent text:
 
-<framework-specific-content>
-    <default>This is some funky stuff if no content can be found for a particular framework</default>
-    <javascript>This is some funky stuff for Javascript</javascript>
-    <react>This is some funky stuff for React</react>
-    <angular>This is some funky stuff for Angular</angular>
-    <vue>This is some funky stuff for Vue</vue>
-</framework-specific-content>
+[[only-javascript]]
+| This content is specific to `JavaScript` issues
+|
+| ```js
+| const myVariable = 123;
+| ```
+
+[[only-angular]]
+|
+| This content is specific to `Angular` issues
+|
+| ```ts
+| class MyComponent {
+|  foo = 123;
+| }
+| ```
+
+[[only-react]]
+|
+| This content is specific to `React` issues
+|
+| ```jsx
+| <MyComponent rocks={true} />
+| ```
+
+[[only-vue]]
+|
+| This content is specific to `Vue` issues
+|
+| ```js
+| var bob = 'hello';
+| ```
 
 You should go and check out [this page](./column-definitions/)
+
+[[note]]
+| Make sure you don't do anything bad!

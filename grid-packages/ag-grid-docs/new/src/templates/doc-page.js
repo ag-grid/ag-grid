@@ -1,16 +1,8 @@
 import React from "react";
 import { graphql } from "gatsby";
-import * as Prism from "prismjs";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-bash";
-import "prismjs/components/prism-jsx";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-sql";
-import "prismjs/components/prism-diff";
-import "prismjs/components/prism-scss";
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
-import FrameworkSpecificContent from '../components/FrameworkSpecificContent';
+import FrameworkSpecificSection from '../components/FrameworkSpecificSection';
 
 export default function DocPageTemplate({ data, pageContext: { framework } }) {
   const { markdownRemark: page } = data;
@@ -19,7 +11,7 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
     createElement: React.createElement,
     components: {
       "example-runner": props => ExampleRunner({ ...props, framework }),
-      "framework-specific-content": props => FrameworkSpecificContent({ ...props, framework })
+      "div": props => FrameworkSpecificSection({ ...props, framework })
     },
   }).Compiler;
 
@@ -29,18 +21,6 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
       {renderAst(page.htmlAst)}
     </div>
   );
-}
-
-const FrameworkMap = {
-  javascript: Prism.languages.javascript,
-  angular: Prism.languages.typescript,
-  react: Prism.languages.jsx,
-  vue: Prism.languages.javascript,
-};
-
-export function highlight(code, framework) {
-  const prismLanguage = FrameworkMap[framework];
-  return `<pre class="language-${prismLanguage}><code class="language-${prismLanguage}>${Prism.highlight(code, prismLanguage)}</code></pre>`;
 }
 
 export const pageQuery = graphql`

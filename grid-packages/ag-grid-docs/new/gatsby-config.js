@@ -25,6 +25,28 @@ module.exports = {
       resolve: "gatsby-transformer-remark",
       options: {
         plugins: [
+          {
+            resolve: "gatsby-remark-custom-blocks",
+            options: {
+              blocks: {
+                note: {
+                  classes: "note",
+                },
+                "only-javascript": {
+                  classes: "javascript-only-section",
+                },
+                "only-angular": {
+                  classes: "angular-only-section",
+                },
+                "only-react": {
+                  classes: "react-only-section",
+                },
+                "only-vue": {
+                  classes: "vue-only-section",
+                },
+              },
+            },
+          },
           'gatsby-remark-component',
           {
             resolve: `gatsby-remark-autolink-headers`,
@@ -50,6 +72,6 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sass'
     },
-    'gatsby-plugin-catch-links'
+    'gatsby-plugin-catch-links',
   ]
 };
