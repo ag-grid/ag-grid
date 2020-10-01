@@ -45,6 +45,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public loadComplete(): void {
         this.activeBlockLoadsCount--;
+        this.checkBlockToLoad();
     }
 
     public checkBlockToLoad(): void {

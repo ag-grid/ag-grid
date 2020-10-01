@@ -104,7 +104,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     // listener on EVENT_LOAD_COMPLETE
     private onPageLoaded(event: any): void {
         this.params.rowNodeBlockLoader.loadComplete();
-        this.checkBlockToLoad();
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
@@ -190,9 +189,13 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     protected postCreateBlock(newBlock: ServerSideBlock): void {
         newBlock.addEventListener(ServerSideBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-        this.setBlock(newBlock.getBlockNumber(), newBlock);
+
+        this.blocks[newBlock.getBlockNumber()] = newBlock;
+        this.blockCount++;
+        this.params.rowNodeBlockLoader.addBlock(newBlock);
+
         this.purgeBlocksIfNeeded(newBlock);
-        this.checkBlockToLoad();
+        this.params.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     protected removeBlockFromCache(blockToRemove: ServerSideBlock): void {
@@ -205,11 +208,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete
         // if the purged page is in loading state
-    }
-
-    // gets called after: 1) block loaded 2) block created 3) cache refresh
-    protected checkBlockToLoad() {
-        this.params.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     protected checkVirtualRowCount(block: ServerSideBlock, lastRow?: number): void {
@@ -262,12 +260,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     protected getBlock(blockId: string | number): ServerSideBlock {
         return this.blocks[blockId];
-    }
-
-    protected setBlock(id: number, block: ServerSideBlock): void {
-        this.blocks[id] = block;
-        this.blockCount++;
-        this.params.rowNodeBlockLoader.addBlock(block);
     }
 
     protected destroyBlock(block: ServerSideBlock): void {

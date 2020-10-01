@@ -127,7 +127,6 @@ export class InfiniteCache extends BeanStub {
     // listener on EVENT_LOAD_COMPLETE
     private onPageLoaded(event: any): void {
         this.params.rowNodeBlockLoader.loadComplete();
-        this.params.rowNodeBlockLoader.checkBlockToLoad();
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
