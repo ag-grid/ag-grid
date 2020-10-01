@@ -32,6 +32,9 @@ export class RowNodeBlockLoader extends BeanStub {
     public addBlock(block: RowNodeBlock): void {
         this.blocks.push(block);
 
+        // note that we do not remove this listener when removing the block. this is because the
+        // cache can get destroyed (and containing blocks) when a block is loading. however the loading block
+        // is still counted as an active loading block and we must decrement activeBlockLoadsCount when it finishes.
         block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.loadComplete.bind(this));
 
         this.checkBlockToLoad();
