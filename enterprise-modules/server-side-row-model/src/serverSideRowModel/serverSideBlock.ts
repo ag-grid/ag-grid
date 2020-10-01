@@ -56,8 +56,8 @@ export class ServerSideBlock extends RowNodeBlock {
     private displayIndexStart: number;
     private displayIndexEnd: number;
 
-    private blockTop: number;
-    private blockHeight: number;
+    private blockTopPx: number;
+    private blockHeightPx: number;
 
     private groupField: string;
     private rowGroupColumn: Column;
@@ -129,12 +129,12 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.displayIndexEnd;
     }
 
-    public getBlockHeight(): number {
-        return this.blockHeight;
+    public getBlockHeightPx(): number {
+        return this.blockHeightPx;
     }
 
-    public getBlockTop(): number {
-        return this.blockTop;
+    public getBlockTopPx(): number {
+        return this.blockTopPx;
     }
 
     public isGroupLevel(): boolean | undefined {
@@ -449,7 +449,7 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     public isPixelInRange(pixel: number): boolean {
-        return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
+        return pixel >= this.blockTopPx && pixel < (this.blockTopPx + this.blockHeightPx);
     }
 
     public getRowBounds(index: number, rowCount: number): RowBounds | null {
@@ -563,7 +563,7 @@ export class ServerSideBlock extends RowNodeBlock {
                              nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
-        this.blockTop = nextRowTop.value;
+        this.blockTopPx = nextRowTop.value;
 
         this.forEachRowNode(rowCount, rowNode => {
             // set this row
@@ -599,7 +599,7 @@ export class ServerSideBlock extends RowNodeBlock {
         });
 
         this.displayIndexEnd = displayIndexSeq.peek();
-        this.blockHeight = nextRowTop.value - this.blockTop;
+        this.blockHeightPx = nextRowTop.value - this.blockTopPx;
     }
 
     private forEachRowNode(rowCount: number, callback: (rowNode: RowNode) => void): void {

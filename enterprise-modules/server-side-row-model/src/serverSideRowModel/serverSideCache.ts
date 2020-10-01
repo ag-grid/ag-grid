@@ -86,7 +86,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     @PreDestroy
     private destroyAllBlocks(): void {
-        this.forEachBlockInOrder(block => this.destroyBlock(block));
+        this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -123,7 +123,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     private purgeBlocksIfNeeded(blockToExclude: ServerSideBlock): void {
         // put all candidate blocks into a list for sorting
         const blocksForPurging: ServerSideBlock[] = [];
-        this.forEachBlockInOrder((block: ServerSideBlock) => {
+        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
             if (block === blockToExclude) {
@@ -250,31 +250,14 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.forEachBlockInOrder(block => block.forEachNodeDeep(callback, sequence, this.rowCount));
+        this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence, this.rowCount));
     }
 
-    public forEachBlockInOrder(callback: (block: ServerSideBlock, id: number) => void): void {
-        const ids = this.getBlockIdsSorted();
-        this.forEachBlockId(ids, callback);
-    }
-
-    protected forEachBlockInReverseOrder(callback: (block: ServerSideBlock, id: number) => void): void {
-        const ids = this.getBlockIdsSorted().reverse();
-        this.forEachBlockId(ids, callback);
-    }
-
-    private forEachBlockId(ids: number[], callback: (block: ServerSideBlock, id: number) => void): void {
-        ids.forEach(id => {
-            const block = this.blocks[id];
-            callback(block, id);
-        });
-    }
-
-    protected getBlockIdsSorted(): number[] {
+    public getBlocksInOrder(): ServerSideBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        const numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
-        const blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr, 10)).sort(numberComparator);
-        return blockIds;
+        const blockComparator = (a: ServerSideBlock, b: ServerSideBlock) => a.getBlockNumber() - b.getBlockNumber();
+        const blocks = Object.values(this.blocks).sort(blockComparator);
+        return blocks;
     }
 
     protected getBlock(blockId: string | number): ServerSideBlock {
@@ -315,8 +298,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: ServerSideBlock[] = [];
-        this.forEachBlockInOrder((block: ServerSideBlock, id: number) => {
-            const startRow = id * this.params.blockSize;
+        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
+            const startRow = block.getBlockNumber() * this.params.blockSize;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
@@ -327,7 +310,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public purgeCache(): void {
-        this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
+        this.getBlocksInOrder().forEach(block => this.removeBlockFromCache(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
@@ -354,15 +337,15 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         let foundGapInSelection = false;
 
-        this.forEachBlockInOrder((block: ServerSideBlock, id: number) => {
+        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
             if (foundGapInSelection) { return; }
 
-            if (inActiveRange && (lastBlockId + 1 !== id)) {
+            if (inActiveRange && (lastBlockId + 1 !== block.getBlockNumber())) {
                 foundGapInSelection = true;
                 return;
             }
 
-            lastBlockId = id;
+            lastBlockId = block.getBlockNumber();
 
             block.forEachNodeShallow(rowNode => {
                 const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
@@ -394,9 +377,9 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
         // should be ServerSideBlock
-        let lastBlock: any = null;
+        let lastBlock: ServerSideBlock = null;
 
-        this.forEachBlockInOrder(block => {
+        this.getBlocksInOrder().forEach(block => {
             if (blockFound) { return; }
 
             if (block.isDisplayIndexInBlock(index)) {
@@ -413,7 +396,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             let nextRowIndex: number;
 
             if (lastBlock !== null) {
-                nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
+                nextRowTop = lastBlock.getBlockTopPx() + lastBlock.getBlockHeightPx();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             } else {
                 nextRowTop = this.cacheTopPixel;
@@ -446,15 +429,15 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
         // should be ServerSideBlock
-        let lastBlock: any;
+        let lastBlock: ServerSideBlock;
 
-        this.forEachBlockInOrder(block => {
+        this.getBlocksInOrder().forEach(block => {
             if (blockFound) { return; }
 
             if (block.isPixelInRange(pixel)) {
                 result = block.getRowIndexAtPixel(pixel, this.getRowCount());
                 blockFound = true;
-            } else if (block.getBlockTop() < pixel) {
+            } else if (block.getBlockTopPx() < pixel) {
                 lastBlock = block;
             }
         });
@@ -465,7 +448,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             let nextRowIndex: number;
 
             if (lastBlock) {
-                nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
+                nextRowTop = lastBlock.getBlockTopPx() + lastBlock.getBlockHeightPx();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             } else {
                 nextRowTop = this.cacheTopPixel;
@@ -493,7 +476,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     public clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.forEachBlockInOrder(block => block.clearDisplayIndexes(this.getRowCount()));
+        this.getBlocksInOrder().forEach(block => block.clearDisplayIndexes(this.getRowCount()));
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
@@ -506,11 +489,12 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         const blockSize = this.getBlockSize();
 
-        this.forEachBlockInOrder((currentBlock: ServerSideBlock, blockId: number) => {
+        this.getBlocksInOrder().forEach((currentBlock: ServerSideBlock) => {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
+            const blockId = currentBlock.getBlockNumber();
             const blocksSkippedCount = blockId - lastBlockId - 1;
             const rowsSkippedCount = blocksSkippedCount * blockSize;
             if (rowsSkippedCount > 0) {
@@ -530,7 +514,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
             currentBlock.setDisplayIndexes(displayIndexSeq, this.getRowCount(), nextRowTop);
 
-            this.blockHeights[blockId] = currentBlock.getBlockHeight();
+            this.blockHeights[blockId] = currentBlock.getBlockHeightPx();
         });
 
         // if any blocks missing at the end, need to increase the row index for them also
@@ -565,9 +549,9 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // this is the last block that we have BEFORE the right block
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
         // should be ServerSideBlock
-        let beforeBlock: any = null;
+        let beforeBlock: ServerSideBlock = null;
 
-        this.forEachBlockInOrder(currentBlock => {
+        this.getBlocksInOrder().forEach(currentBlock => {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
                 block = currentBlock;
             } else if (currentBlock.isBlockBefore(displayRowIndex)) {
@@ -597,7 +581,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             if (beforeBlock) {
                 blockNumber = beforeBlock.getBlockNumber() + 1;
                 displayIndexStart = beforeBlock.getDisplayIndexEnd();
-                nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
+                nextRowTop = beforeBlock.getBlockHeightPx() + beforeBlock.getBlockTopPx();
 
                 const isInRange = (): boolean => {
                     return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + blockSize);
@@ -647,8 +631,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         } else {
             // otherwise we need to calculate it from the previous block
             let blockBefore: ServerSideBlock | undefined;
-            this.forEachBlockInOrder((currentBlock:ServerSideBlock, currentId: number) => {
-                if (blockId > currentId) {
+            this.getBlocksInOrder().forEach((currentBlock:ServerSideBlock) => {
+                if (blockId > currentBlock.getBlockNumber()) {
                     // this will get assigned many times, but the last time will
                     // be the closest block to the required block that is BEFORE
                     blockBefore = currentBlock;
@@ -746,7 +730,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         let nextServerSideCache: any = null;
 
-        this.forEachBlockInOrder(block => {
+        this.getBlocksInOrder().forEach(block => {
             // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
             block.forEachNodeShallow(rowNode => {
                 if (rowNode.key === nextKey) {
@@ -788,7 +772,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         if (shouldPurgeCache) {
             this.purgeCache();
         } else {
-            this.forEachBlockInOrder(block => {
+            this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
                         const nextCache = (rowNode.childrenCache as ServerSideCache);
