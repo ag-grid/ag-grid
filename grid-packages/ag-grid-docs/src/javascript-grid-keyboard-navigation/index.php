@@ -409,7 +409,7 @@ myInput.addEventListener("keydown", function (event) {
 
     <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', ['enterprise' => true]) ?>
 
-    <h2 id="suppressKeyboardEvents">Suppress Grid Keyboard Events</h2>
+    <h2 id="suppressKeyboardEvents">Suppress Keyboard Events</h2>
 
     <p>
         It is possible to stop the grid acting on particular events. To do this implement

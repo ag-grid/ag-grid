@@ -279,6 +279,7 @@ export {
     ColSpanParams,
     RowSpanParams,
     SuppressKeyboardEventParams,
+    SuppressHeaderKeyboardEventParams,
     ValueGetterParams,
     NewValueParams,
     CellClassParams,
