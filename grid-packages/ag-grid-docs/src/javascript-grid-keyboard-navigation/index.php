@@ -135,17 +135,18 @@ include '../documentation-main/documentation_header.php';
         Most people will be happy with the default navigation the grid does when you use the arrow keys
         and the tab key. Some people will want to override this - for example maybe you want the tab key
         to navigate to the cell below, not the cell to the right. To facilitate this, the grid offers
-        two methods: <code>navigateToNextCell</code> and <code>tabToNextCell</code>.
+        two methods: <code>navigateToNextCell</code>, <code>tabToNextCell</code>, <code>navigateToNextHeader</code>
+        and <code>tabToNextHeader</code>.
     </p>
 
-    <h2><code>navigateToNextCell</code></h2>
+    <h3>navigateToNextCell</h3>
 
     <p>
         Provide a callback <code>navigateToNextCell</code> if you want to override the arrow key navigation. The
-        function signature is as follows:
+        parameter object is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface NavigateToNextCellParams {
 
     // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
@@ -160,14 +161,14 @@ interface NavigateToNextCellParams {
     event: KeyboardEvent;
 }</snippet>
 
-    <h2><code>tabToNextCell</code></h2>
+    <h3>tabToNextCell</h3>
 
     <p>
         Provide a callback <code>tabToNextCell</code> if you want to override the tab key navigation. The
         parameter object is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface TabToNextCellParams {
 
     // true if the shift key is also down
@@ -184,20 +185,21 @@ interface TabToNextCellParams {
     nextCellPosition: CellPosition;
 }</snippet>
 
-    <h2><code>CellPosition</code></h2>
+    <h3>CellPosition</h3>
 
     <p>
         Both functions above use CellPosition. This is an object that represents a cell in the grid. Its
         interface is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface CellPosition {
 
     // either 'top', 'bottom' or undefined/null (for not pinned)
     rowPinned: string;
 
     // a positive number from 0 to n, where n is the last row the grid is rendering
+    // or -1 if you want to navigate to the grid header
     rowIndex: number;
 
     // the grid column
@@ -211,17 +213,90 @@ interface CellPosition {
     </p>
 
     <note>
-        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to navigate
-        within the grid header. If you need to navigate into the grid header, you can pass <strong>rowIndex: -1</strong>, but
-        once focus is within the header, the standard keyboard navigation will take place.
+        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to 
+        navigate within the grid header (see the <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> methods below). 
+        If you need to navigate from the grid into the grid header, pass <strong>rowIndex: -1</strong>. This will navigate into the
+        last header row.
     </note>
 
-    <h2>Example Custom Navigation</h2>
+    <h3>navigateToNextHeader</h3>
 
     <p>
-        The example below shows both <code>navigateToNextCell</code> and <code>tabToNextCell</code> in practice.
-        <code>navigateToNextCell</code> swaps the up and down arrow keys. <code>tabToNextCell</code> uses tabbing
-        to go up and down rather than right and left.
+        Provide a callback <code>navigateToNextHeader</code> if you want to override the arrow key navigation. The
+        parameter object is as follows:
+    </p>
+
+<snippet>
+interface NavigateToNextHeaderParams {
+
+    // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
+    key: number;
+
+    // the header that currently has focus
+    previousHeaderPosition: HeaderPosition;
+
+    // the header the grid would normally pick as the next header for this navigation
+    nextHeaderPosition: HeaderPosition;
+
+    event: KeyboardEvent;
+}</snippet>
+
+    <h3>tabToNextHeader</h3>
+
+    <p>
+        Provide a callback <code>tabToNextHeader</code> if you want to override the tab key navigation. The
+        parameter object is as follows:
+    </p>
+
+<snippet>
+interface TabToNextHeaderParams {
+
+    // true if the shift key is also down
+    backwards: boolean;
+
+    // the header that currently has focus
+    previousHeaderPosition: HeaderPosition;
+
+    // the header the grid would normally pick as the next header for this navigation
+    nextHeaderPosition: HeaderPosition;
+}</snippet>
+
+    <h3>HeaderPosition</h3>
+
+    <p>
+        Both <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> use HeaderPosition. This is an object that 
+        represents a header in the grid. Its interface is as follows:
+    </p>
+
+<snippet>
+interface HeaderPosition {
+
+    // a number from 0 to n, where n is the last header row the grid is rendering
+    headerRowIndex: number;
+
+    // the grid column or column group
+    column: Column | ColumnGroup;
+
+}</snippet>
+
+    <h2>Example Custom Cell Navigation</h2>
+
+    <p>
+        The example below shows how to use <code>navigateToNextCell</code>, <code>tabToNextCell</code>, 
+        <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> in practice.
+
+    </p>
+
+    <p>
+        Note the following: 
+        <ul>
+            <li><code>navigateToNextCell</code> swaps the up and down arrow keys.</li>
+            <li><code>tabToNextCell</code> uses tabbing to go up and down rather than right and left.</li>
+            <li><code>navigateToNextHeader</code> swaps the left and right arrow keys.</li>
+            <li><code>tabToNextHeader</code> uses tabbing to go up and down rather than right and left.</li>
+            <li>Pressing the down arrow will navigate to the header by passing <strong>rowIndex: -1</strong></li>
+            <li>Tabbing will go up, but it will not go into the grid header.</li>
+        </ul>
     </p>
 
     <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
