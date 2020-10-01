@@ -131,11 +131,11 @@ export const chart = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart into.'
+        description: 'The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default).'
     },
     autoSize: {
         default: true,
-        description: 'By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.',
+        description: 'By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart\'s <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.',
         editor: BooleanEditor,
     },
     width: {

@@ -11,11 +11,11 @@
     },
     "container": {
       "type": "HTMLElement",
-      "description": "The element to place the rendered chart into."
+      "description": "The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default)."
     },
     "autoSize": {
       "default": true,
-      "description": "By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>."
+      "description": "By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart's <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container."
     },
     "width": {
       "type": "number",
@@ -331,6 +331,13 @@
         "default": 30,
         "description": "The height of the navigator.",
         "min": 10,
+        "max": 100,
+        "unit": "px"
+      },
+      "margin": {
+        "default": 10,
+        "description": "The distance between the navigator and the bottom axis.",
+        "min": 0,
         "max": 100,
         "unit": "px"
       },
@@ -763,8 +770,10 @@
           "title?": "string",
           "color?": "string",
           "xKey": "string",
+          "xValue": "any",
           "xName?": "string",
           "yKey": "string",
+          "yValue": "any",
           "yName?": "string"
         },
         "returnType": "string"
@@ -1021,8 +1030,10 @@
           "title?": "string",
           "color?": "string",
           "xKey": "string",
+          "xValue": "any",
           "xName?": "string",
           "yKey": "string",
+          "yValue": "any",
           "yName?": "string"
         },
         "returnType": "string"
@@ -1203,8 +1214,10 @@
           "title?": "string",
           "color?": "string",
           "xKey": "string",
+          "xValue": "any",
           "xName?": "string",
           "yKey": "string",
+          "yValue": "any",
           "yName?": "string"
         },
         "returnType": "string"
@@ -1450,8 +1463,10 @@
           "title?": "string",
           "color?": "string",
           "xKey": "string",
+          "xValue": "any",
           "xName?": "string",
           "yKey": "string",
+          "yValue": "any",
           "yName?": "string",
           "sizeKey?": "string",
           "sizeName?": "string",
@@ -1656,8 +1671,10 @@
           "title?": "string",
           "color?": "string",
           "angleKey": "string",
+          "angleValue": "any",
           "angleName?": "string",
           "radiusKey?": "string",
+          "radiusValue?": "any",
           "radiusName?": "string",
           "labelKey?": "string",
           "labelName?": "string"
@@ -1995,8 +2012,10 @@
           "title?": "string",
           "color?": "string",
           "xKey": "string",
+          "xValue": "any",
           "xName?": "string",
           "yKey": "string",
+          "yValue": "any",
           "yName?": "string",
           "sizeKey?": "string",
           "sizeName?": "string",
