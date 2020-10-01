@@ -10,6 +10,7 @@ import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
+import { ColumnGroup } from "./columnGroup";
 
 /***********************************************************************
  * Don't forget to update PropertyKeys if changing this class. PLEASE! *
@@ -284,8 +285,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
-    /** Allows user to suppress certain keyboard events */
+    /** Allows the user to suppress certain keyboard events in the grid cell */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+
+    /** Allows the user to suppress certain keyboard events in the grid header */
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
@@ -452,6 +456,16 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     event: KeyboardEvent;
     // whether the cell is editing or not
     editing: boolean;
+}
+
+export interface SuppressHeaderKeyboardEventParams {
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    column: Column | ColumnGroup;
+    colDef: ColDef;
+    context: any;
+    headerRowIndex: number;
+    event: KeyboardEvent;
 }
 
 export interface CellClassParams {

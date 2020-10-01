@@ -7,7 +7,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams, SuppressHeaderKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
@@ -144,7 +144,7 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
 
-    /** Allows user to suppress certain keyboard events */
+    /** @deprecated Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;

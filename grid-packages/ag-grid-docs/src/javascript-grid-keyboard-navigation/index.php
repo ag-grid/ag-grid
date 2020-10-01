@@ -424,7 +424,7 @@ myInput.addEventListener("keydown", function (event) {
 <?= createSnippet(<<<SNIPPET
 function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
 
-interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+interface SuppressKeyboardEventParams {
     // the keyboard event the grid received. inspect this to see what key was pressed
     event: KeyboardEvent;
 
@@ -444,10 +444,8 @@ SNIPPET
 , 'ts') ?>
 
     <p>
-        The callback is available as a <a href="../javascript-grid-callbacks/">grid callback</a>
-        (gets called regardless of what cell the keyboard event is on) and as a
-        <a href="../javascript-grid-column-properties/">column callback</a>
-        (set on the column definition and gets called only for that column). If you provide the callback on both
+        The callback is available as a <a href="../javascript-grid-column-properties/">column callback</a>
+        (set on the column definition). If you provide the callback on both
         the grid and column definition, then if either return 'true' the event
         will be suppressed.
     </p>

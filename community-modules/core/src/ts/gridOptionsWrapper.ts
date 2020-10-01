@@ -1508,6 +1508,13 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
             options.detailRowAutoHeight = true;
         }
+
+        if (options.suppressKeyboardEvent) {
+            console.warn(
+                `ag-Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
+                 future versions of ag-Grid. If you need this to be set for every column use the defaultColDef property.`
+            );
+        }
     }
 
     private checkForViolations() {

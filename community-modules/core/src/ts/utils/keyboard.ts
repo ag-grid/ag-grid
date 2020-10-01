@@ -3,6 +3,7 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { SuppressKeyboardEventParams } from '../entities/colDef';
 import { isBrowserEdge, isBrowserIE } from './browser';
+import { doOnce } from './function';
 
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 const NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
