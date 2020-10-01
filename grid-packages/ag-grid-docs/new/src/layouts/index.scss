@@ -57,9 +57,10 @@ body {
 }
 
 .note {
-    padding: 20px;
+    padding: 1rem;
     background-color: lightyellow;
     border: 1px solid orange;
+    margin-bottom: 1rem;
 
     p:last-child {
         margin-bottom: 0;
