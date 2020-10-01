@@ -2,6 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import './code-viewer.css';
 import Prism from 'prismjs';
+import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-bash";
+import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-sql";
+import "prismjs/components/prism-diff";
+import "prismjs/components/prism-scss";
 
 const updateFiles = (data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
