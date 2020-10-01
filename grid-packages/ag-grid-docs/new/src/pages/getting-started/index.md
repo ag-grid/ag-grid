@@ -1,5 +1,4 @@
 ---
-path: '/getting-started'
 title: "Getting Started with AG-Grid"
 ---
 Welcome to the best JavaScript grid in the world!

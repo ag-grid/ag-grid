@@ -1,5 +1,4 @@
 ---
-path: '/column-definitions'
 title: "Column Definitions"
 ---
 Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the

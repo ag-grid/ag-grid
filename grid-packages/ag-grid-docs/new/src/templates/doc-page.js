@@ -27,10 +27,9 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
 
 export const pageQuery = graphql`
   query DocPageByPath($srcPath: String!) {
-    markdownRemark(frontmatter: { path: { eq: $srcPath } }) {
+    markdownRemark(fields: { path: { eq: $srcPath } }) {
       htmlAst
       frontmatter {
-        path
         title
       }
     }

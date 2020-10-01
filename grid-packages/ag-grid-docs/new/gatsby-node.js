@@ -1,5 +1,20 @@
 const path = require("path");
 const express = require(`express`);
+const { createFilePath } = require(`gatsby-source-filesystem`);
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+    const { createNodeField } = actions;
+
+    if (node.internal.type === `MarkdownRemark`) {
+        const filePath = createFilePath({ node, getNode });
+
+        createNodeField({
+            node,
+            name: 'path',
+            value: filePath.substring(0, filePath.length - 1)
+        });
+    }
+};
 
 exports.createPages = async ({ actions, graphql, reporter }) => {
     const { createPage } = actions;
@@ -10,7 +25,7 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
             allMarkdownRemark {
                 edges {
                     node {
-                        frontmatter {
+                        fields {
                             path
                         }
                     }
@@ -27,9 +42,9 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
     result.data.allMarkdownRemark.edges.forEach(({ node }) => {
         ['javascript', 'react', 'angular', 'vue'].forEach(framework => {
             createPage({
-                path: `/${framework}${node.frontmatter.path}`,
+                path: `/${framework}${node.fields.path}`,
                 component: docPageTemplate,
-                context: { framework, srcPath: node.frontmatter.path, }
+                context: { framework, srcPath: node.fields.path, }
             });
         });
     });
