@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { graphql } from "gatsby";
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
@@ -17,6 +18,7 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
 
   return (
     <div className="doc-page">
+      <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
       <h1>{page.frontmatter.title}</h1>
       {renderAst(page.htmlAst)}
     </div>

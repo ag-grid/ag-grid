@@ -1,10 +1,8 @@
-/**
- * Configure your Gatsby site with this file.
- *
- * See: https://www.gatsbyjs.com/docs/gatsby-config/
- */
-
 module.exports = {
+  siteMetadata: {
+    title: 'AG-Grid Documentation',
+    author: 'AG-Grid'
+  },
   plugins: [
     'gatsby-plugin-layout',
     {
@@ -73,5 +71,6 @@ module.exports = {
       resolve: 'gatsby-plugin-sass'
     },
     'gatsby-plugin-catch-links',
+    'gatsby-plugin-react-helmet',
   ]
 };
