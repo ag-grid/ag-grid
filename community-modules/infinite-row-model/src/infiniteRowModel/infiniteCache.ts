@@ -145,18 +145,9 @@ export class InfiniteCache extends BeanStub {
     }
 
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
-        // put all candidate blocks into a list for sorting
-        const blocksForPurging: InfiniteBlock[] = [];
-        this.getBlocksInOrder().forEach(block => {
-            // we exclude checking for the page just created, as this has yet to be accessed and hence
-            // the lastAccessed stamp will not be updated for the first time yet
-            if (block === blockToExclude) {
-                return;
-            }
-
-            blocksForPurging.push(block);
-        });
-
+        // we exclude checking for the page just created, as this has yet to be accessed and hence
+        // the lastAccessed stamp will not be updated for the first time yet
+        const blocksForPurging = this.getBlocksInOrder().filter( b => b!=blockToExclude);
         const lastAccessedComparator = (a: InfiniteBlock, b: InfiniteBlock) => b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 

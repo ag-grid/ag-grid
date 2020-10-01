@@ -113,26 +113,17 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.logger.log(`onPageLoaded: page = ${event.page.getBlockNumber()}, lastRow = ${event.lastRow}`);
 
         if (event.success) {
-            this.checkVirtualRowCount(event.page, event.lastRow);
+            this.checkRowCount(event.page, event.lastRow);
             this.onCacheUpdated();
         }
     }
 
     private purgeBlocksIfNeeded(blockToExclude: ServerSideBlock): void {
-        // put all candidate blocks into a list for sorting
-        const blocksForPurging: ServerSideBlock[] = [];
-        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
-            // we exclude checking for the page just created, as this has yet to be accessed and hence
-            // the lastAccessed stamp will not be updated for the first time yet
-            if (block === blockToExclude) {
-                return;
-            }
-
-            blocksForPurging.push(block);
-        });
-
-        // note: need to verify that this sorts items in the right order
-        blocksForPurging.sort((a: ServerSideBlock, b: ServerSideBlock) => b.getLastAccessed() - a.getLastAccessed());
+        // we exclude checking for the page just created, as this has yet to be accessed and hence
+        // the lastAccessed stamp will not be updated for the first time yet
+        const blocksForPurging = this.getBlocksInOrder().filter( b => b!=blockToExclude );
+        const lastAccessedComparator = (a: ServerSideBlock, b: ServerSideBlock) => b.getLastAccessed() - a.getLastAccessed();
+        blocksForPurging.sort(lastAccessedComparator);
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
@@ -151,9 +142,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
                 // we never purge blocks if they are open, as purging them would mess up with
                 // our indexes, it would be very messy to restore the purged block to it's
-                // previous state if it had open children (and what if open children of open
-                // children, jeeeesus, just thinking about it freaks me out) so best is have a
-                // rule, if block is open, we never purge.
+                // previous state if it had open children.
                 if (block.isAnyNodeOpen()) { return; }
 
                 // if the block currently has rows been displayed, then don't remove it either.
@@ -198,7 +187,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // if the purged page is in loading state
     }
 
-    protected checkVirtualRowCount(block: ServerSideBlock, lastRow?: number): void {
+    private checkRowCount(block: ServerSideBlock, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -215,26 +204,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         }
     }
 
-    public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        this.rowCount = rowCount;
-        // if undefined is passed, we do not set this value, if one of {true,false}
-        // is passed, we do set the value.
-        if (_.exists(maxRowFound)) {
-            this.lastRowIndexKnown = maxRowFound;
-        }
-
-        // if we are still searching, then the row count must not end at the end
-        // of a particular page, otherwise the searching will not pop into the
-        // next page
-        if (!this.lastRowIndexKnown) {
-            if (this.rowCount % this.params.blockSize === 0) {
-                this.rowCount++;
-            }
-        }
-
-        this.onCacheUpdated();
-    }
-
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence, this.rowCount));
     }
@@ -246,11 +215,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return blocks;
     }
 
-    protected getBlock(blockId: string | number): ServerSideBlock {
-        return this.blocks[blockId];
-    }
-
-    protected destroyBlock(block: ServerSideBlock): void {
+    private destroyBlock(block: ServerSideBlock): void {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.blockCount--;
@@ -575,7 +540,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         const blockSize = this.params.blockSize;
         const blockId = Math.floor(topLevelIndex / blockSize);
 
-        const block = this.getBlock(blockId);
+        const block = this.blocks[blockId];
 
         if (block) {
             // if we found a block, means row is in memory, so we can report the row index directly
