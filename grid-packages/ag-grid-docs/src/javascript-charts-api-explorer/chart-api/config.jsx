@@ -535,6 +535,27 @@ const series = {
     },
 };
 
+const getLineDashConfig = (description = '') => ({
+    lineDash: {
+        default: [],
+        type: 'number[]',
+        description: description + ' Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
+        editor: ArrayEditor,
+    },
+});
+
+const getLineDashOffsetConfig = () => ({
+    lineDashOffset: {
+        default: 0,
+        type: 'number',
+        description: 'The initial offset of the dashed line in pixels.',
+        editor: NumberEditor,
+        min: 0,
+        max: 200,
+        unit: 'px',
+    },
+});
+
 const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
     marker: {
         meta: {
@@ -824,6 +845,8 @@ export const bar = Object.freeze({
     ...getColourConfig('bars', true),
     ...getHighlightConfig('bars'),
     ...shadowConfig,
+    ...getLineDashConfig('Defines how the bar/column strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     label: {
         meta: {
             description: 'Configuration for the labels shown on bars.',
@@ -897,6 +920,8 @@ export const line = Object.freeze({
     ...getColourConfig('lines', false, false),
     ...getMarkerConfig(),
     ...getHighlightConfig(),
+    ...getLineDashConfig('Defines how the line stroke is rendered.'),
+    ...getLineDashOffsetConfig(),
     listeners: {
         meta: {
             description: "A map of event names to event listeners."
@@ -936,6 +961,8 @@ export const area = Object.freeze({
     ...getColourConfig('areas', true),
     ...getMarkerConfig({ enabledByDefault: false }),
     ...getHighlightConfig(),
+    ...getLineDashConfig('Defines how the area strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     ...shadowConfig,
 });
 
@@ -1044,6 +1071,8 @@ export const pie = Object.freeze({
         description: 'A human-readable description of the radius values.',
     },
     ...series,
+    ...getLineDashConfig('Defines how the pie sector strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     tooltipRenderer: {
         type: {
             parameters: {
@@ -1199,6 +1228,8 @@ export const histogram = Object.freeze({
         "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
         "default": "false"
     },
+    ...getLineDashConfig('Defines how the column strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     tooltipRenderer: {
         type: {
             parameters: {

@@ -887,6 +887,19 @@
         "unit": "px"
       }
     },
+    "lineDash": {
+      "default": [],
+      "type": "number[]",
+      "description": "Defines how the bar/column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "type": "number",
+      "description": "The initial offset of the dashed line in pixels.",
+      "min": 0,
+      "max": 200,
+      "unit": "px"
+    },
     "label": {
       "meta": {
         "description": "Configuration for the labels shown on bars."
@@ -1148,6 +1161,19 @@
         "description": "The colour of the stroke around the markers when hovered over."
       }
     },
+    "lineDash": {
+      "default": [],
+      "type": "number[]",
+      "description": "Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "type": "number",
+      "description": "The initial offset of the dashed line in pixels.",
+      "min": 0,
+      "max": 200,
+      "unit": "px"
+    },
     "listeners": {
       "meta": {
         "description": "A map of event names to event listeners."
@@ -1364,6 +1390,19 @@
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
       }
+    },
+    "lineDash": {
+      "default": [],
+      "type": "number[]",
+      "description": "Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "type": "number",
+      "description": "The initial offset of the dashed line in pixels.",
+      "min": 0,
+      "max": 200,
+      "unit": "px"
     },
     "shadow": {
       "meta": {
@@ -1682,6 +1721,19 @@
         "returnType": "string"
       },
       "description": "Function used to create the content for tooltips."
+    },
+    "lineDash": {
+      "default": [],
+      "type": "number[]",
+      "description": "Defines how the pie sector strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "type": "number",
+      "description": "The initial offset of the dashed line in pixels.",
+      "min": 0,
+      "max": 200,
+      "unit": "px"
     },
     "rotation": {
       "default": 0,
@@ -2069,6 +2121,19 @@
       "type": "boolean",
       "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
       "default": "false"
+    },
+    "lineDash": {
+      "default": [],
+      "type": "number[]",
+      "description": "Defines how the column strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels."
+    },
+    "lineDashOffset": {
+      "default": 0,
+      "type": "number",
+      "description": "The initial offset of the dashed line in pixels.",
+      "min": 0,
+      "max": 200,
+      "unit": "px"
     },
     "highlightStyle": {
       "meta": {
