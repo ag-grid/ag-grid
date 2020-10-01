@@ -3,7 +3,6 @@ import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { debounce } from "../../utils/function";
-import { exists } from "../../utils/generic";
 import { removeFromArray } from "../../utils/array";
 
 export class RowNodeBlockLoader extends BeanStub {
@@ -32,6 +31,9 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public addBlock(block: RowNodeBlock): void {
         this.blocks.push(block);
+
+        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.loadComplete.bind(this));
+
         this.checkBlockToLoad();
     }
 
@@ -44,7 +46,7 @@ export class RowNodeBlockLoader extends BeanStub {
         this.active = false;
     }
 
-    public loadComplete(): void {
+    private loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
     }

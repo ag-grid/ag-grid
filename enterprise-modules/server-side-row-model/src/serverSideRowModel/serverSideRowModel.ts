@@ -27,7 +27,8 @@ import {
     SortController,
     RowRenderer,
     RowNodeBlockLoader,
-    RowDataTransaction
+    RowDataTransaction,
+    RowGroupOpenedEvent
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
@@ -226,7 +227,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
-    private onRowGroupOpened(event: any): void {
+    private onRowGroupOpened(event: RowGroupOpenedEvent): void {
         const rowNode: RowNode = event.node;
 
         if (rowNode.expanded) {
