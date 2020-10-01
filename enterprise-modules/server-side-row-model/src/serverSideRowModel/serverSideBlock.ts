@@ -109,10 +109,6 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.blockNumber;
     }
 
-    public getNodeIdPrefix(): string {
-        return this.nodeIdPrefix;
-    }
-
     public isDisplayIndexInBlock(displayIndex: number): boolean {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
@@ -281,6 +277,9 @@ export class ServerSideBlock extends RowNodeBlock {
 
         if (parts.length > 0) {
             this.nodeIdPrefix = parts.reverse().join('-') + '-';
+        } else {
+            // no prefix, so node id's are left as they are
+            this.nodeIdPrefix = '';
         }
     }
 
