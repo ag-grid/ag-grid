@@ -5,11 +5,24 @@ import {AgGridVue} from './AgGridVue';
 export class VueComponentFactory {
 
     private static getComponentDefinition(component: any, parent: AgGridVue) {
-        let componentDefinition: any = null;
+        let componentDefinition: any;
+
+        // when referencing components by name - ie: cellRendererFramework: 'MyComponent'
         if (typeof component === 'string') {
+            // look up the definition in Vue
             componentDefinition = this.searchForComponentInstance(parent, component);
+
+            // it's probably an SFC, but if it has template attribute it's probably
+            // an inline/non-sfc component (ie an object a template property)
+            if (componentDefinition.template) {
+                // inline / non sfc component
+                componentDefinition = {...defineComponent(componentDefinition)};
+            } else {
+                // SFC
+                componentDefinition = {extends: defineComponent(componentDefinition)};
+            }
         } else {
-            componentDefinition = component;
+            componentDefinition = {extends: defineComponent({...component})}
         }
         if (!componentDefinition) {
             console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
@@ -43,13 +56,29 @@ export class VueComponentFactory {
         // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
         // provide the grid's params and capture the resulting component instance
         let componentInstance: any = null;
+        // const extendedComponentDefinition = defineComponent({
+        //     ...componentDefinition,
+        //     // extends: componentDefinition,
+        //     data: () => componentParams,
+        //     created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
+        //         debugger
+        //         componentInstance = (this as any).$root;
+        //     }
+        // });
         const extendedComponentDefinition = defineComponent({
-            extends: defineComponent({...component}),
+            ...componentDefinition,
             data: () => componentParams,
             created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
                 componentInstance = (this as any).$root;
             }
         });
+        // const extendedComponentDefinition = defineComponent({
+        //     extends: defineComponent({...component}),
+        //     data: () => componentParams,
+        //     created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
+        //         componentInstance = (this as any).$root;
+        //     }
+        // });
 
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
@@ -57,7 +86,9 @@ export class VueComponentFactory {
         mountedComponent.mount(container);
 
         // note that the component creation is synchronous so that componentInstance is set by this point
-        return { mountedComponent, componentInstance };
+        // console.log(componentInstance.$el);
+        // setTimeout(() => console.log(componentInstance.$el), 100)
+        return {mountedComponent, componentInstance};
     }
 
     private static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10) {
