@@ -239,7 +239,7 @@ export class ServerSideBlock extends RowNodeBlock {
             if (rowNode.stub) {
                 rowNodesToRefresh.push(rowNode);
             }
-            this.setDataAndId(rowNode, data, this.startRow + index);
+            this.setDataIntoRowNode(rowNode, data, this.startRow + index);
         });
 
         if (rowNodesToRefresh.length > 0) {
@@ -332,7 +332,7 @@ export class ServerSideBlock extends RowNodeBlock {
         }
     }
 
-    protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
+    private setDataIntoRowNode(rowNode: RowNode, data: any, index: number): void {
         rowNode.stub = false;
 
         if (_.exists(data)) {
