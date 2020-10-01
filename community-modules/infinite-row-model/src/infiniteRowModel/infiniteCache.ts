@@ -136,7 +136,7 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.page.getBlockNumber()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${event.page.getId()}, lastRow = ${event.lastRow}`);
 
         if (event.success) {
             this.checkRowCount(event.page, event.lastRow);
