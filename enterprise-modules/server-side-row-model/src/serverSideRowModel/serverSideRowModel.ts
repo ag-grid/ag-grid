@@ -109,11 +109,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isLastRowIndexKnown(): boolean {
-        if (this.cacheExists()) {
-            return (this.rootNode.childrenCache as ServerSideCache)!.isLastRowIndexKnown();
-        }
-
-        return false;
+        const cache = this.getRootCache();
+        if (!cache) { return false; }
+        return cache.isLastRowIndexKnown();
     }
 
     private onColumnEverything(): void {
@@ -190,7 +188,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onSortChanged(): void {
-        if (!this.cacheExists()) { return; }
+        const cache = this.getRootCache();
+        if (!cache) { return; }
 
         const newSortModel = this.extractSortModel();
         const oldSortModel = this.cacheParams.sortModel;
@@ -199,7 +198,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.cacheParams.sortModel = newSortModel;
 
         const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
 
         const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
         const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
@@ -208,7 +206,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.reset();
         } else {
-            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+            cache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     }
 
@@ -418,81 +416,63 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public updateRowIndexesAndBounds(): void {
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-            this.resetRowTops(serverSideCache);
-            this.setDisplayIndexes(serverSideCache);
-        }
-    }
+        const cache = this.getRootCache();
+        if (!cache) { return; }
 
-    private setDisplayIndexes(cache: ServerSideCache): void {
-        const numberSequence = new NumberSequence();
+        cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), new NumberSequence());
+
         const nextRowTop = {value: 0};
-        cache.setDisplayIndexes(numberSequence, nextRowTop);
-    }
-
-    // resetting row tops is needed for animation, as part of the operation is saving the old location,
-    // which is needed for rows that are transitioning in
-    private resetRowTops(cache: ServerSideCache): void {
-        const numberSequence = new NumberSequence();
-        cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), numberSequence);
+        cache.setDisplayIndexes(new NumberSequence(), nextRowTop);
     }
 
     public getRow(index: number): RowNode | null {
-        if (this.cacheExists()) {
-            return (this.rootNode.childrenCache as ServerSideCache)!.getRowUsingDisplayIndex(index);
-        }
+        const cache = this.getRootCache();
+        if (!cache) { return null; }
+        return cache.getRowUsingDisplayIndex(index);
+    }
 
-        return null;
+    private getRootCache(): ServerSideCache {
+        if (this.rootNode && this.rootNode.childrenCache) {
+            return (this.rootNode.childrenCache as ServerSideCache);
+        } else {
+            return undefined;
+        }
     }
 
     public getRowCount(): number {
-        if (!this.cacheExists()) { return 1; }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        const res = serverSideCache.getDisplayIndexEnd();
-
-        return res;
+        const cache = this.getRootCache();
+        if (!cache) { return 1; }
+        return cache.getDisplayIndexEnd();
     }
 
     public getTopLevelRowCount(): number {
-        if (!this.cacheExists()) { return 1; }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getRowCount();
+        const cache = this.getRootCache();
+        if (!cache) { return 1; }
+        return cache.getRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        if (!this.cacheExists()) { return topLevelIndex; }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
+        const cache = this.getRootCache();
+        if (!cache) { return topLevelIndex; }
+        return cache.getTopLevelRowDisplayedIndex(topLevelIndex);
     }
 
     public getRowBounds(index: number): RowBounds {
-        if (!this.cacheExists()) {
+        const cache = this.getRootCache();
+        if (!cache) {
             return {
                 rowTop: 0,
                 rowHeight: this.rowHeight
             };
         }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getRowBounds(index);
+        return cache.getRowBounds(index);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (pixel === 0) {
-            return 0;
-        }
-
-        if (!this.cacheExists()) {
-            return 0;
-        }
-
-        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-        return serverSideCache.getRowIndexAtPixel(pixel);
+        if (pixel === 0) { return 0; }
+        const cache = this.getRootCache();
+        if (!cache) { return 0; }
+        return cache.getRowIndexAtPixel(pixel);
     }
 
     public getCurrentPageHeight(): number {
@@ -504,7 +484,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isRowsToRender(): boolean {
-        return this.cacheExists() && this.getRowCount() > 0;
+        return this.getRootCache()!=null && this.getRowCount() > 0;
     }
 
     public getType(): string {
@@ -512,16 +492,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        if (this.cacheExists()) {
-            (this.rootNode.childrenCache as ServerSideCache)!.forEachNodeDeep(callback);
-        }
+        const cache = this.getRootCache();
+        if (!cache) { return; }
+        cache.forEachNodeDeep(callback);
     }
 
     private executeOnCache(route: string[], callback: (cache: ServerSideCache) => void) {
-        if (!this.cacheExists()) { return; }
+        const cache = this.getRootCache();
+        if (!cache) { return; }
 
-        const topLevelCache = this.rootNode.childrenCache as ServerSideCache;
-        const cacheToPurge = topLevelCache.getChildCache(route);
+        const cacheToPurge = cache.getChildCache(route);
 
         if (cacheToPurge) {
             callback(cacheToPurge);
@@ -653,10 +633,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         return false;
-    }
-
-    private cacheExists(): boolean {
-        return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
