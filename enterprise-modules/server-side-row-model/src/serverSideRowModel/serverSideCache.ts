@@ -110,7 +110,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.page.getBlockNumber()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${event.page.getId()}, lastRow = ${event.lastRow}`);
 
         if (event.success) {
             this.checkRowCount(event.page, event.lastRow);
