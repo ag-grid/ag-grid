@@ -105,16 +105,21 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     private onPageLoaded(event: LoadCompleteEvent): void {
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
-        if (!this.isAlive()) {
-            return;
-        }
+        if (!this.isAlive()) { return; }
 
         this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
 
-        if (event.success) {
-            this.checkRowCount(event.block as ServerSideBlock, event.lastRow);
-            this.onCacheUpdated();
-        }
+        if (!event.success) { return; }
+
+        this.checkRowCount(event.block as ServerSideBlock, event.lastRow);
+
+        // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+        // in the valid range. so we must remove these. this can happen if the datasource returns a
+        // result and sets lastRow to something less than virtualRowCount (can happen if user scrolls
+        // down, server reduces dataset size).
+        this.destroyAllBlocksPastVirtualRowCount();
+
+        this.fireCacheUpdatedEvent();
     }
 
     private purgeBlocksIfNeeded(blockToExclude: ServerSideBlock): void {
@@ -204,7 +209,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence, this.rowCount));
+        this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, this.rowCount, sequence));
     }
 
     public getBlocksInOrder(): ServerSideBlock[] {
@@ -222,22 +227,13 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
-    protected onCacheUpdated(): void {
-        if (this.isAlive()) {
-
-            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
-            // in the valid range. so we must remove these. this can happen if user explicitly sets
-            // the virtual row count, or the datasource returns a result and sets lastRow to something
-            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
-            this.destroyAllBlocksPastVirtualRowCount();
-
-            // this results in both row models (infinite and server side) firing ModelUpdated,
-            // however server side row model also updates the row indexes first
-            const event: CacheUpdatedEvent = {
-                type: ServerSideCache.EVENT_CACHE_UPDATED
-            };
-            this.dispatchEvent(event);
-        }
+    private fireCacheUpdatedEvent(): void {
+        // this results in row model firing ModelUpdated.
+        // server side row model also updates the row indexes first
+        const event: CacheUpdatedEvent = {
+            type: ServerSideCache.EVENT_CACHE_UPDATED
+        };
+        this.dispatchEvent(event);
     }
 
     private destroyAllBlocksPastVirtualRowCount(): void {
@@ -264,7 +260,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
         }
 
-        this.onCacheUpdated();
+        this.fireCacheUpdatedEvent();
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
@@ -272,7 +268,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         let lastBlockId = -1;
         let inActiveRange = false;
-        const numberSequence: NumberSequence = new NumberSequence();
 
         // if only one node passed, we start the selection at the top
         if (_.missing(firstInRange)) {
@@ -281,7 +276,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         let foundGapInSelection = false;
 
-        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
+        this.getBlocksInOrder().forEach(block => {
             if (foundGapInSelection) { return; }
 
             if (inActiveRange && (lastBlockId + 1 !== block.getId())) {
@@ -301,7 +296,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                     inActiveRange = !inActiveRange;
                 }
 
-            }, numberSequence, this.rowCount);
+            }, this.rowCount);
         });
 
         // inActiveRange will be still true if we never hit the second rowNode
@@ -659,7 +654,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 if (rowNode.key === nextKey) {
                     nextServerSideCache = rowNode.childrenCache as ServerSideCache;
                 }
-            }, new NumberSequence(), this.getRowCount());
+            }, this.getRowCount(), new NumberSequence());
         });
 
         if (nextServerSideCache) {
@@ -703,7 +698,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                             nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
-                    block.forEachNodeShallow(callback, new NumberSequence(), this.getRowCount());
+                    block.forEachNodeShallow(callback, this.getRowCount(), new NumberSequence());
                 }
             });
         }

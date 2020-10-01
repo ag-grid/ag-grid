@@ -152,8 +152,8 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
-                        sequence: NumberSequence,
                         rowCount: number,
+                        sequence: NumberSequence = new NumberSequence(),
                         includeChildren: boolean): void {
         for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
             // we check against rowCount as this page may be the last one, and if it is, then
@@ -171,12 +171,12 @@ export class ServerSideBlock extends RowNodeBlock {
         }
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, true);
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, rowCount: number, sequence?: NumberSequence): void {
+        this.forEachNode(callback, rowCount, sequence, true);
     }
 
-    public forEachNodeShallow(callback: (rowNode: RowNode) => void, sequence: NumberSequence, rowCount: number): void {
-        this.forEachNode(callback, sequence, rowCount, false);
+    public forEachNodeShallow(callback: (rowNode: RowNode) => void, rowCount: number, sequence?: NumberSequence): void {
+        this.forEachNode(callback, rowCount, sequence, false);
     }
 
     public getLastAccessed(): number {
