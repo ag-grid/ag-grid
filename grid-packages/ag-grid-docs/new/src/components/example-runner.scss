@@ -1,6 +1,7 @@
 .example-runner {
     border: 1px solid grey;
     border-radius: 5px;
+    margin: 20px 0;
 }
 
 .example-runner__header {
@@ -16,7 +17,11 @@
     color: white;
 }
 
-.example-runner__import-type select {
-    padding: 5px;
-    border-radius: 5px;
+.example-runner__import-type,
+.react-version-selector {
+    select {
+        padding: 5px;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from './GlobalContext';
-import './example-runner.css';
+import './example-runner.scss';
 
 export default ({ framework, name, title, type, options = '{}' }) => {
     //const parsedOptions = JSON.parse(options);
@@ -11,6 +11,9 @@ export default ({ framework, name, title, type, options = '{}' }) => {
             return <div className="example-runner">
                 <div className="example-runner__header">
                     <div className="example-runner__title">Example: {title}</div>
+                    {framework === 'react' &&
+                        <ReactVersionSelector useFunctionalReact={useFunctionalReact} onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
+                    }
                     {framework !== 'javascript' &&
                         <ImportTypeSelector importType={exampleImportType} onChange={event => set({ exampleImportType: event.target.value })} />
                     }
@@ -27,6 +30,15 @@ const ImportTypeSelector = ({ importType, onChange }) => {
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
             )}
+        </select>
+    </div>;
+};
+
+const ReactVersionSelector = ({ useFunctionalReact, onChange }) => {
+    return <div className="react-version-selector">
+        <select value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
+            <option value="false">Classes</option>
+            <option value="true">Hooks</option>
         </select>
     </div>;
 };
