@@ -175,7 +175,7 @@ export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
+export { RowNodeBlock, LoadCompleteEvent } from "./modules/rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
 export { RefreshModelParams } from "./interfaces/refreshModelParams";

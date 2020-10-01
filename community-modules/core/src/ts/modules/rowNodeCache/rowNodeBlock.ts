@@ -4,7 +4,7 @@ import {_} from "../../utils";
 
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;
-    page: RowNodeBlock;
+    block: RowNodeBlock;
     lastRow: number;
 }
 
@@ -62,7 +62,7 @@ export abstract class RowNodeBlock extends BeanStub {
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: false,
-            page: this,
+            block: this,
             lastRow: null
         };
         this.dispatchEvent(event);
@@ -83,7 +83,7 @@ export abstract class RowNodeBlock extends BeanStub {
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,
-            page: this,
+            block: this,
             lastRow: lastRow
         };
 
