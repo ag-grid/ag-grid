@@ -35,7 +35,6 @@ export class ServerSideBlock extends RowNodeBlock {
     private logger: Logger;
 
     private readonly params: ServerSideCacheParams;
-    private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
 
@@ -64,11 +63,9 @@ export class ServerSideBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
     constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
-        super();
+        super(blockNumber);
 
         this.params = params;
-
-        this.blockNumber = blockNumber;
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
@@ -105,10 +102,6 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.endRow;
     }
 
-    public getBlockNumber(): number {
-        return this.blockNumber;
-    }
-
     public isDisplayIndexInBlock(displayIndex: number): boolean {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
@@ -143,9 +136,9 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public getBlockStateJson(): {id: string, state: any} {
         return {
-            id: this.nodeIdPrefix + this.blockNumber,
+            id: this.nodeIdPrefix + this.getId(),
             state: {
-                blockNumber: this.blockNumber,
+                blockNumber: this.getId(),
                 startRow: this.startRow,
                 endRow: this.endRow,
                 pageStatus: this.getState()

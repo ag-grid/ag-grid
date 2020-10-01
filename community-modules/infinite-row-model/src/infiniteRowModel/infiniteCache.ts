@@ -94,10 +94,12 @@ export class InfiniteCache extends BeanStub {
         const newBlock = this.createBean(new InfiniteBlock(blockNumber, this.params));
 
         newBlock.addEventListener(InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        this.blocks[newBlock.getId()] = newBlock;
+        this.blockCount++;
 
-        this.setBlock(blockNumber, newBlock);
         this.purgeBlocksIfNeeded(newBlock);
-        this.params.rowNodeBlockLoader.checkBlockToLoad();
+
+        this.params.rowNodeBlockLoader.addBlock(newBlock);
 
         return newBlock;
     }
@@ -219,7 +221,7 @@ export class InfiniteCache extends BeanStub {
             this.lastRowIndexKnown = true;
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
-            const lastRowIndex = (block.getBlockNumber() + 1) * this.params.blockSize;
+            const lastRowIndex = (block.getId() + 1) * this.params.blockSize;
             const lastRowIndexPlusOverflow = lastRowIndex + this.params.overflowSize;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
@@ -256,19 +258,13 @@ export class InfiniteCache extends BeanStub {
 
     public getBlocksInOrder(): InfiniteBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getBlockNumber() - b.getBlockNumber();
+        const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getId() - b.getId();
         const blocks = Object.values(this.blocks).sort(blockComparator);
         return blocks;
     }
 
-    private setBlock(id: number, block: InfiniteBlock): void {
-        this.blocks[id] = block;
-        this.blockCount++;
-        this.params.rowNodeBlockLoader.addBlock(block);
-    }
-
     private destroyBlock(block: InfiniteBlock): void {
-        delete this.blocks[block.getBlockNumber()];
+        delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.blockCount--;
         this.params.rowNodeBlockLoader.removeBlock(block);
@@ -296,7 +292,7 @@ export class InfiniteCache extends BeanStub {
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
         this.getBlocksInOrder().forEach( block => {
-            const startRow = block.getBlockNumber() * this.params.blockSize;
+            const startRow = block.getId() * this.params.blockSize;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
@@ -337,12 +333,12 @@ export class InfiniteCache extends BeanStub {
         this.getBlocksInOrder().forEach(block => {
             if (foundGapInSelection) { return; }
 
-            if (inActiveRange && (lastBlockId + 1 !== block.getBlockNumber())) {
+            if (inActiveRange && (lastBlockId + 1 !== block.getId())) {
                 foundGapInSelection = true;
                 return;
             }
 
-            lastBlockId = block.getBlockNumber();
+            lastBlockId = block.getId();
 
             block.forEachNode(rowNode => {
                 const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
