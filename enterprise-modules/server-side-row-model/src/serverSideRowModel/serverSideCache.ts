@@ -405,7 +405,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         const blockSize = this.params.blockSize;
 
-        this.getBlocksInOrder().forEach((currentBlock: ServerSideBlock) => {
+        this.getBlocksInOrder().forEach(currentBlock => {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
@@ -461,10 +461,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         // if we have the block, then this is the block
         let block: ServerSideBlock = null;
-
-        // this is the last block that we have BEFORE the right block
-        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
-        // should be ServerSideBlock
         let beforeBlock: ServerSideBlock = null;
 
         this.getBlocksInOrder().forEach(currentBlock => {
@@ -484,8 +480,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
         const blockSize = this.params.blockSize;
 
-        // if block not found, we need to load it
-        if (_.missing(block)) {
+        // if block not found, we need to create it
+        if (block==null) {
 
             let blockNumber: number;
             let displayIndexStart: number;
@@ -527,7 +523,9 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
 
-        return block ? block.getRowUsingDisplayIndex(displayRowIndex) : null;
+        const res = block.getRowUsingDisplayIndex(displayRowIndex);
+
+        return res;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
@@ -590,22 +588,17 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
 
-        const newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.params, this);
-        this.createBean(newBlock);
+        const block = this.createBean(new ServerSideBlock(blockNumber, this.parentRowNode, this.params, this));
+        block.setDisplayIndexes(new NumberSequence(displayIndex), this.getRowCount(), nextRowTop);
+        block.addEventListener(ServerSideBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
-        const displayIndexSequence = new NumberSequence(displayIndex);
-
-        newBlock.setDisplayIndexes(displayIndexSequence, this.getRowCount(), nextRowTop);
-
-        newBlock.addEventListener(ServerSideBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-
-        this.blocks[newBlock.getId()] = newBlock;
+        this.blocks[block.getId()] = block;
         this.blockCount++;
-        this.purgeBlocksIfNeeded(newBlock);
+        this.purgeBlocksIfNeeded(block);
 
-        this.params.rowNodeBlockLoader.addBlock(newBlock);
+        this.params.rowNodeBlockLoader.addBlock(block);
 
-        return newBlock;
+        return block;
     }
 
     public getDisplayIndexEnd(): number {
