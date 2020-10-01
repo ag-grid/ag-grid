@@ -9,6 +9,7 @@
     background-image: linear-gradient(to bottom right, #0084e7, #0067b4);
     padding: 10px;
     border-radius: 5px 5px 0 0;
+    height: 3.2em;
 }
 
 .example-runner__title {
@@ -20,6 +21,7 @@
 .example-runner__import-type,
 .react-version-selector {
     select {
+        font-size: 0.9rem;
         padding: 5px;
         border-radius: 5px;
         margin-left: 10px;

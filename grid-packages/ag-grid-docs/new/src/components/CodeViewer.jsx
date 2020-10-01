@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useStaticQuery, graphql } from "gatsby";
-import './code-viewer.css';
+import './code-viewer.scss';
 import Prism from 'prismjs';
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-bash";
@@ -68,7 +68,7 @@ const CodeViewer = ({ framework, name, importType = 'modules', useFunctionalReac
     return <div className="code-viewer">
         <div className="code-viewer__files">{files && Object.keys(files).map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}</div>
         <div className="code-viewer__code">
-            {!files && <div>Loading...</div>}
+            {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
             {files && activeFile && <FileView path={activeFile} code={files[activeFile]} />}
         </div>
     </div>;
