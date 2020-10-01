@@ -32,6 +32,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
     public addBlock(block: RowNodeBlock): void {
         this.blocks.push(block);
+        this.checkBlockToLoad();
     }
 
     public removeBlock(block: RowNodeBlock): void {

@@ -17,7 +17,6 @@ export class InfiniteBlock extends RowNodeBlock {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
 
@@ -27,15 +26,14 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public rowNodes: RowNode[];
 
-    constructor(blockNumber: number, params: InfiniteCacheParams) {
-        super();
+    constructor(id: number, params: InfiniteCacheParams) {
+        super(id);
 
         this.params = params;
-        this.blockNumber = blockNumber;
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = blockNumber * params.blockSize;
+        this.startRow = id * params.blockSize;
         this.endRow = this.startRow + params.blockSize;
     }
 
@@ -46,9 +44,9 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public getBlockStateJson(): {id: string, state: any} {
         return {
-            id: '' + this.getBlockNumber(),
+            id: '' + this.getId(),
             state: {
-                blockNumber: this.getBlockNumber(),
+                blockNumber: this.getId(),
                 startRow: this.getStartRow(),
                 endRow: this.getEndRow(),
                 pageStatus: this.getState()
@@ -127,10 +125,6 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public getEndRow(): number {
         return this.endRow;
-    }
-
-    public getBlockNumber(): number {
-        return this.blockNumber;
     }
 
     // creates empty row nodes, data is missing as not loaded yet

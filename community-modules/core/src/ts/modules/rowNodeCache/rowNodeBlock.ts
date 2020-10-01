@@ -17,6 +17,8 @@ export abstract class RowNodeBlock extends BeanStub {
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
 
+    private readonly id: number;
+
     private state = RowNodeBlock.STATE_WAITING_TO_LOAD;
 
     private version = 0;
@@ -26,6 +28,15 @@ export abstract class RowNodeBlock extends BeanStub {
     protected abstract loadFromDatasource(): void;
 
     protected abstract processServerResult(rows: any[]): void;
+
+    protected constructor(id: number) {
+        super();
+        this.id = id;
+    }
+
+    public getId(): number {
+        return this.id;
+    }
 
     public load(): void {
         this.state = RowNodeBlock.STATE_LOADING;
