@@ -313,6 +313,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     public isLastRowIndexKnown(): boolean {
         if (this.infiniteCache) {
             return this.infiniteCache.isLastRowIndexKnown();
+        } else {
+            return false;
         }
     }
 
