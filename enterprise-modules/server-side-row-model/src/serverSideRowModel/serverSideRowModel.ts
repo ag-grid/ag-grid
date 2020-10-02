@@ -27,7 +27,8 @@ import {
     SortController,
     RowRenderer,
     RowNodeBlockLoader,
-    RowDataTransaction
+    RowDataTransaction,
+    CacheUpdatedEvent
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import {GroupExpandListener} from "./groupExpandListener";
@@ -347,23 +348,27 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return params;
     }
 
-    public createNodeCache(rowNode: RowNode): void {
-        const cache = this.getContext().createBean(new ServerSideCache(this.cacheParams, rowNode));
-        rowNode.childrenCache = cache;
+    public getParams(): ServerSideCacheParams {
+        return this.cacheParams;
     }
 
-    private onCacheUpdated(): void {
+    private createNodeCache(rowNode: RowNode): void {
+        rowNode.childrenCache = this.context.createBean(new ServerSideCache(this.cacheParams, rowNode));
+    }
+
+    private onCacheUpdated(event: CacheUpdatedEvent): void {
         this.updateRowIndexesAndBounds();
-        const event: ModelUpdatedEvent = {
+        const animate = event.suppressAnimation ? false : this.gridOptionsWrapper.isAnimateRows();
+        const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: this.gridOptionsWrapper.isAnimateRows(),
+            animate: animate,
             keepRenderedRows: true,
             newPage: false,
             newData: false
         };
-        this.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
     public onRowHeightChanged(): void {
