@@ -31,6 +31,7 @@ import {
     RowGroupOpenedEvent
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {GroupExpandListener} from "./groupExpandListener";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -42,6 +43,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+
+    private groupExpandListener: GroupExpandListener;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -57,6 +60,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PostConstruct
     private postConstruct(): void {
+        this.groupExpandListener = this.createManagedBean(new GroupExpandListener());
+
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
     }
@@ -93,7 +98,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
 
@@ -227,42 +231,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
-    private onRowGroupOpened(event: RowGroupOpenedEvent): void {
-        const rowNode: RowNode = event.node;
-
-        if (rowNode.expanded) {
-            if (rowNode.master) {
-                this.createDetailNode(rowNode);
-            } else if (_.missing(rowNode.childrenCache)) {
-                this.createNodeCache(rowNode);
-            }
-        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
-        }
-
-        const shouldAnimate = () => {
-            const rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
-
-            if (rowNode.master) { return rowAnimationEnabled && rowNode.expanded; }
-
-            return rowAnimationEnabled;
-        };
-
-        this.updateRowIndexesAndBounds();
-
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            newPage: false,
-            newData: false,
-            animate: shouldAnimate(),
-            keepRenderedRows: true
-        };
-
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    }
-
     private reset(): void {
         this.rootNode = new RowNode();
         this.rootNode.group = true;
@@ -379,12 +347,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return params;
     }
 
-    private createNodeCache(rowNode: RowNode): void {
-        const cache = new ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().createBean(cache);
-
+    public createNodeCache(rowNode: RowNode): void {
+        const cache = this.getContext().createBean(new ServerSideCache(this.cacheParams, rowNode));
         cache.addEventListener(ServerSideCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
-
         rowNode.childrenCache = cache;
     }
 
@@ -636,32 +601,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return false;
     }
 
-    private createDetailNode(masterNode: RowNode): RowNode {
-        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
-
-        const detailNode = new RowNode();
-
-        this.getContext().createBean(detailNode);
-
-        detailNode.detail = true;
-        detailNode.selectable = false;
-        detailNode.parent = masterNode;
-
-        if (_.exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
-        }
-
-        detailNode.data = masterNode.data;
-        detailNode.level = masterNode.level + 1;
-
-        const defaultDetailRowHeight = 200;
-        const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
-
-        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
-        masterNode.detailNode = detailNode;
-
-        return detailNode;
-    }
 
     public isLoading(): boolean {
         return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
