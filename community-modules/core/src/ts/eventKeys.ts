@@ -182,4 +182,6 @@ export class Events {
 
     public static EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
     public static EVENT_MOUSE_FOCUS = 'mouseFocus';
+
+    public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 }

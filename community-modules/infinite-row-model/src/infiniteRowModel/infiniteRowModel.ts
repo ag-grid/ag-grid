@@ -86,6 +86,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -221,7 +222,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
-        this.infiniteCache.addEventListener(InfiniteCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private defaultIfInvalid(value: number, defaultValue: number): number {

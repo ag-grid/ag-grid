@@ -1,25 +1,23 @@
 import {
+    _,
     Autowired,
+    BeanStub,
+    CacheUpdatedEvent,
     ColumnApi,
     Events,
     GridApi,
     IDatasource,
-    LoggerFactory,
-    Qualifier,
-    RowDataUpdatedEvent,
-    RowNode,
-    BeanStub,
+    LoadCompleteEvent,
     Logger,
-    RowNodeBlockLoader,
-    AgEvent,
+    LoggerFactory,
     NumberSequence,
-    PostConstruct,
     PreDestroy,
-    RowRenderer,
-    _,
-    LoadCompleteEvent
+    Qualifier,
+    RowNode,
+    RowNodeBlockLoader,
+    RowRenderer
 } from "@ag-grid-community/core";
-import { InfiniteBlock } from "./infiniteBlock";
+import {InfiniteBlock} from "./infiniteBlock";
 
 export interface InfiniteCacheParams {
     datasource: IDatasource;
@@ -36,13 +34,7 @@ export interface InfiniteCacheParams {
     dynamicRowHeight: boolean;
 }
 
-export interface CacheUpdatedEvent extends AgEvent {
-
-}
-
 export class InfiniteCache extends BeanStub {
-
-    public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -273,9 +265,9 @@ export class InfiniteCache extends BeanStub {
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: CacheUpdatedEvent = {
-                type: InfiniteCache.EVENT_CACHE_UPDATED
+                type: Events.EVENT_CACHE_UPDATED
             };
-            this.dispatchEvent(event);
+            this.eventService.dispatchEvent(event);
         }
     }
 

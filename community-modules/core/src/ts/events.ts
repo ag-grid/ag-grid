@@ -379,3 +379,5 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 }
 
 export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
+
+export interface CacheUpdatedEvent extends AgEvent { } // not documented

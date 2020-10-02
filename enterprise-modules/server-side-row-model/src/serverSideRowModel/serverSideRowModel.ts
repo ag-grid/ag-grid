@@ -27,8 +27,7 @@ import {
     SortController,
     RowRenderer,
     RowNodeBlockLoader,
-    RowDataTransaction,
-    RowGroupOpenedEvent
+    RowDataTransaction
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import {GroupExpandListener} from "./groupExpandListener";
@@ -100,6 +99,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
@@ -349,13 +349,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public createNodeCache(rowNode: RowNode): void {
         const cache = this.getContext().createBean(new ServerSideCache(this.cacheParams, rowNode));
-        cache.addEventListener(ServerSideCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
         rowNode.childrenCache = cache;
     }
 
     private onCacheUpdated(): void {
         this.updateRowIndexesAndBounds();
-        const modelUpdatedEvent: ModelUpdatedEvent = {
+        const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -364,7 +363,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             newPage: false,
             newData: false
         };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.eventService.dispatchEvent(event);
     }
 
     public onRowHeightChanged(): void {
