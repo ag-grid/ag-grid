@@ -29,6 +29,7 @@ import {
     RowRenderer,
     RowNodeBlockLoader,
     RowDataTransaction,
+    CacheUpdatedEvent,
     RowGroupOpenedEvent} from "@ag-grid-community/core";
 import {ServerSideCache} from "./serverSideCache";
 import {ServerSideRowModel} from "./serverSideRowModel";
@@ -50,33 +51,19 @@ export class GroupExpandListener extends BeanStub {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
             } else if (_.missing(rowNode.childrenCache)) {
-                this.serverSideRowModel.createNodeCache(rowNode);
+                const params = this.serverSideRowModel.getParams();
+                rowNode.childrenCache = this.context.createBean(new ServerSideCache(params, rowNode));
             }
         } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
         }
 
-        const shouldAnimate = () => {
-            const rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
-
-            if (rowNode.master) { return rowAnimationEnabled && rowNode.expanded; }
-
-            return rowAnimationEnabled;
+        const suppressAnimation = rowNode.master && !rowNode.expanded;
+        const cacheUpdatedEvent: CacheUpdatedEvent = {
+            type: Events.EVENT_CACHE_UPDATED,
+            suppressAnimation: suppressAnimation
         };
-
-        this.serverSideRowModel.updateRowIndexesAndBounds();
-
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            newPage: false,
-            newData: false,
-            animate: shouldAnimate(),
-            keepRenderedRows: true
-        };
-
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.eventService.dispatchEvent(cacheUpdatedEvent);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
