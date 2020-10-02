@@ -669,12 +669,24 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private isSelectAllSelected(): boolean | undefined {
-        if (this.valueModel.isEverythingVisibleSelected()) {
-            return true;
-        }
+        if (!this.setFilterParams.defaultToNothingSelected) {
+            // everything selected by default
+            if (this.valueModel.hasSelections() && this.valueModel.isNothingVisibleSelected()) {
+                return false;
+            }
 
-        if (this.valueModel.isNothingVisibleSelected()) {
-            return false;
+            if (this.valueModel.isEverythingVisibleSelected()) {
+                return true;
+            }
+        } else {
+            // nothing selected by default
+            if (this.valueModel.hasSelections() && this.valueModel.isEverythingVisibleSelected()) {
+                return true;
+            }
+
+            if (this.valueModel.isNothingVisibleSelected()) {
+                return false;
+            }
         }
 
         return undefined;
