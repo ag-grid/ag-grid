@@ -6,5 +6,5 @@ import {createApp} from 'vue';
  * Not deployed/built for downstream consumption
  */
 const app = createApp(AgGridVue)
-app.mount("#app");
+app.mount('#app');
 

@@ -56,29 +56,13 @@ export class VueComponentFactory {
         // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
         // provide the grid's params and capture the resulting component instance
         let componentInstance: any = null;
-        // const extendedComponentDefinition = defineComponent({
-        //     ...componentDefinition,
-        //     // extends: componentDefinition,
-        //     data: () => componentParams,
-        //     created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
-        //         debugger
-        //         componentInstance = (this as any).$root;
-        //     }
-        // });
         const extendedComponentDefinition = defineComponent({
             ...componentDefinition,
             data: () => componentParams,
-            created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
+            created() { // note: function - don't use arrow functions here (for the correct "this" to be used)
                 componentInstance = (this as any).$root;
             }
         });
-        // const extendedComponentDefinition = defineComponent({
-        //     extends: defineComponent({...component}),
-        //     data: () => componentParams,
-        //     created: function () { // note: function - don't use arrow functions here (for the correct "this" to be used)
-        //         componentInstance = (this as any).$root;
-        //     }
-        // });
 
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
@@ -86,8 +70,6 @@ export class VueComponentFactory {
         mountedComponent.mount(container);
 
         // note that the component creation is synchronous so that componentInstance is set by this point
-        // console.log(componentInstance.$el);
-        // setTimeout(() => console.log(componentInstance.$el), 100)
         return {mountedComponent, componentInstance};
     }
 
