@@ -99,7 +99,11 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.headerContainers.set(type, headerContainer);
     }
 
-    protected onTabKeyDown(e: KeyboardEvent): void {
+    protected onTabKeyDown(): void { }
+
+    // we override onTabKeyDown and use a private version of it here
+    // to allow the user to suppress tabs using `suppressHeaderKeyboardEvent`
+    private handleTabKey(e: KeyboardEvent): void {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
@@ -121,7 +125,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
             return;
         }
 
-        switch (e.key) {
+        const key = e.key;
+
+        if (key === KeyName.TAB) {
+            return this.handleTabKey(e);
+        }
+
+        switch (key) {
             case KeyName.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case KeyName.RIGHT:
