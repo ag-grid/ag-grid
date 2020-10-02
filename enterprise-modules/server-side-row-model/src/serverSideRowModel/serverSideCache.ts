@@ -17,7 +17,8 @@ import {
     Logger,
     PreDestroy,
     RowNodeBlockLoader,
-    AgEvent,
+    Events,
+    CacheUpdatedEvent,
     LoadCompleteEvent
 } from "@ag-grid-community/core";
 
@@ -39,12 +40,7 @@ export interface ServerSideCacheParams {
     datasource?: IServerSideDatasource;
 }
 
-export interface CacheUpdatedEvent extends AgEvent {
-}
-
 export class ServerSideCache extends BeanStub implements IServerSideCache {
-
-    public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -231,9 +227,9 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
         const event: CacheUpdatedEvent = {
-            type: ServerSideCache.EVENT_CACHE_UPDATED
+            type: Events.EVENT_CACHE_UPDATED
         };
-        this.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);
     }
 
     private destroyAllBlocksPastVirtualRowCount(): void {
