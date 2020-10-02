@@ -1,8 +1,4 @@
-@import '~bootstrap/scss/bootstrap';
-
-div {
-    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
-}
+@import "~bootstrap/scss/bootstrap";
 
 .getting-started-cards {
     @extend .d-flex;

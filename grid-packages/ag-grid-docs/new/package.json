@@ -36,7 +36,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
-    "rehype-react": "^6.1.0"
+    "rehype-react": "^6.1.0",
+    "typeface-roboto": "0.0.75"
   },
   "devDependencies": {
     "prettier": "2.1.1"
