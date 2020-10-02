@@ -43,6 +43,9 @@ export interface AbstractColDef {
     tooltipComponent?: { new(): ITooltipComp; } | string;
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
+
+    /** Allows the user to suppress certain keyboard events in the grid header */
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -288,9 +291,6 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Allows the user to suppress certain keyboard events in the grid cell */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
-    /** Allows the user to suppress certain keyboard events in the grid header */
-    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
-
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
 
@@ -462,7 +462,7 @@ export interface SuppressHeaderKeyboardEventParams {
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     column: Column | ColumnGroup;
-    colDef: ColDef;
+    colDef: ColDef | ColGroupDef;
     context: any;
     headerRowIndex: number;
     event: KeyboardEvent;

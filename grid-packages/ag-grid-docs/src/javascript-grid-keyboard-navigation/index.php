@@ -412,10 +412,34 @@ myInput.addEventListener("keydown", function (event) {
     <h2 id="suppressKeyboardEvents">Suppress Keyboard Events</h2>
 
     <p>
-        It is possible to stop the grid acting on particular events. To do this implement
-        <code>suppressKeyboardEvent</code> callback. The callback should return true if the
-        grid should suppress the events, or false to continue as normal.
+        It is possible to stop the grid acting on particular events. To do this implement <code>suppressHeaderKeyboardEvent</code> 
+        and/or <code>suppressKeyboardEvent</code> callback. The callback should return true if the grid should suppress 
+        the events, or false to continue as normal.
     </p>
+
+    <h3>suppressHeaderKeyboardEvent</h3>
+
+    <p>
+        The callback has the following signature:
+    </p>
+
+<?= createSnippet(<<<SNIPPET
+function suppressHeaderKeyboardEvent(params: SuppressHeaderKeyboardEventParams) => boolean;
+
+interface SuppressKeyboardEventParams {
+    api: GridApi; // grid API
+    columnApi: ColumnApi; // column API
+    context: any; // context object
+    event: KeyboardEvent; // the keyboard event the grid received. inspect this to see what key was pressed
+    headerRowIndex: number; // the index of the header row of the current focused header
+    column: Column | ColumnGroup; // the current Column or Column Group
+    colDef: ColDef | ColGroupDef; // Column Definition or Column Group Definition
+}
+SNIPPET
+, 'ts') ?>
+
+
+    <h3>suppressKeyboardEvent</h3>
 
     <p>
         The callback has the following signature:
@@ -425,20 +449,20 @@ myInput.addEventListener("keydown", function (event) {
 function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
 
 interface SuppressKeyboardEventParams {
-    // the keyboard event the grid received. inspect this to see what key was pressed
-    event: KeyboardEvent;
+// the keyboard event the grid received. inspect this to see what key was pressed
+event: KeyboardEvent;
 
-    // whether the cell is editing or not. sometimes you might want to suppress event
-    // only when cell is editing.
-    editing: boolean;
+// whether the cell is editing or not. sometimes you might want to suppress event
+// only when cell is editing.
+editing: boolean;
 
-    node: RowNode; // row node
-    data: any; // row data
-    column: Column; // column
-    colDef: ColDef; // column definition
-    context: any; // context object
-    api: GridApi | null | undefined; // grid API
-    columnApi: ColumnApi | null | undefined; // column API
+node: RowNode; // row node
+data: any; // row data
+column: Column; // column
+colDef: ColDef; // column definition
+context: any; // context object
+api: GridApi | null | undefined; // grid API
+columnApi: ColumnApi | null | undefined; // column API
 }
 SNIPPET
 , 'ts') ?>
@@ -450,17 +474,25 @@ SNIPPET
         will be suppressed.
     </p>
 
+    <h3>Example: Suppress Keyboard Navigation</h3>
+
     <p>
         The example below demonstrates suppressing the following keyboard events:
     </p>
 
     <ul>
-        <li>On the Athlete column only:
+        <li>On the Athlete column cells only:
             <ul>
-                <kbd>Enter</kbd> will not start or stop editing.
+                <li><kbd>Enter</kbd> will not start or stop editing.</li>
             </ul>
         </li>
-        <li>On all columns:
+        <li>
+            On the Country column cells only:
+            <ul>
+                <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> arrow keys are allowed. This is the only column that allows navigation from the grid to the header.</li>
+            </ul>
+        </li>
+        <li>On all cells (including the cells of the Athlete Column):
             <ul>
                 <li><kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
                 <li><kbd>Ctrl & C</kbd> will not copy to clipboard.</li>
@@ -476,6 +508,23 @@ SNIPPET
                 <li><kbd>Escape</kbd> will not cancel editing.</li>
                 <li><kbd>Space</kbd> will not select current row.</li>
                 <li><kbd>Tab</kbd> will not be handled by the grid.</li>
+            </ul>
+        </li>
+        <li>
+            On the Country header only:
+            <ul>
+                <li>
+                    Navigation is blocked from the left to right using arrows but is allowed using tab.
+                </li>
+                <li>
+                    Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
+                </li>
+            </ul>
+        </li>
+        <li>
+            On all headers (excluding country):
+            <ul>
+                <li>Navigation is blocked up and down, but navigation left / right is allowed using arrows and tab.
             </ul>
         </li>
     </ul>
