@@ -5,6 +5,7 @@ import {Bean, ComponentUtil, Grid, GridOptions, Module} from 'ag-grid-community'
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, kebabNameToAttrEventName, kebabProperty, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
+import {markRaw, toRaw} from '@vue/reactivity';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -16,6 +17,8 @@ const [props, watch, model] = getAgGridProperties();
     // emits: ['onGrid-ready' / 'grid-ready' / 'gridReady' doesn't work :-) ]
 })
 export class AgGridVue extends Vue {
+
+    public static VERSION = 'Vue 3+';
 
     private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
 
@@ -82,6 +85,10 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
+
+        // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
+        // with mergeDeep for example
+        // const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
@@ -99,7 +106,7 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
+        markRaw(new Grid(this.$el as HTMLElement, markRaw(toRaw(gridOptions)), markRaw(toRaw(gridParams))));
 
         this.gridCreated = true;
     }
