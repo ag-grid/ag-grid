@@ -545,7 +545,8 @@ export class BarSeries extends CartesianSeries {
             highlightStyle: { fill, stroke },
             shadow,
             formatter,
-            xKey
+            xKey,
+            flipXY
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -578,7 +579,8 @@ export class BarSeries extends CartesianSeries {
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
+            // Prevent stroke from rendering for zero height columns and zero width bars.
+            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
         });
     }
 
