@@ -1224,9 +1224,9 @@ export class RowRenderer extends BeanStub {
         if (nextCell.rowIndex < 0) {
             const headerLen = this.beans.headerNavigationService.getHeaderRowCount();
 
-            this.focusController.focusHeaderPosition({
-                headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column
-            });
+            this.focusController.focusHeaderPosition(
+                { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column }
+            );
 
             return;
         }
@@ -1361,10 +1361,11 @@ export class RowRenderer extends BeanStub {
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
                 keyboardEvent.preventDefault();
-                this.focusController.focusHeaderPosition({
-                    headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1,
-                    column: last(this.columnController.getAllDisplayedColumns())
-                });
+
+                const headerRowIndex = this.beans.headerNavigationService.getHeaderRowCount() - 1;
+                const column = last(this.columnController.getAllDisplayedColumns());
+
+                this.focusController.focusHeaderPosition({ headerRowIndex, column });
             }
         } else {
             // if the case it's a popup editor, the focus is on the editor and not the previous cell.

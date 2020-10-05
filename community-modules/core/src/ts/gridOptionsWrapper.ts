@@ -10,11 +10,13 @@ import {
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
+    NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
-    TabToNextCellParams
+    TabToNextCellParams,
+    TabToNextHeaderParams
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -46,6 +48,7 @@ import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
 import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
+import { HeaderPosition } from './headerRendering/header/headerPosition';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1106,6 +1109,14 @@ export class GridOptionsWrapper {
 
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
+    }
+
+    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.navigateToNextHeader;
+    }
+
+    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.tabToNextHeader;
     }
 
     public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {

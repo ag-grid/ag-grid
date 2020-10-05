@@ -229,8 +229,8 @@ interface CellPosition {
 <snippet>
 interface NavigateToNextHeaderParams {
 
-    // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
-    key: number;
+    // the key for the arrow key pressed, left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown'
+    key: string;
 
     // the header that currently has focus
     previousHeaderPosition: HeaderPosition;

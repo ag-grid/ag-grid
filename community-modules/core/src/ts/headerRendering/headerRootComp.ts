@@ -99,22 +99,24 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.headerContainers.set(type, headerContainer);
     }
 
-    protected onTabKeyDown(): void { }
-
-    // we override onTabKeyDown and use a private version of it here
-    // to allow the user to suppress tabs using `suppressHeaderKeyboardEvent`
-    private handleTabKey(e: KeyboardEvent): void {
+    protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
 
-        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
+        const { headerRowIndex, column } = this.focusController.getFocusedHeader();
+
+        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
+            return;
+        }
+
+        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
-    }
+     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection;
@@ -125,20 +127,14 @@ export class HeaderRootComp extends ManagedFocusComponent {
             return;
         }
 
-        const key = e.key;
-
-        if (key === KeyName.TAB) {
-            return this.handleTabKey(e);
-        }
-
-        switch (key) {
+        switch (e.key) {
             case KeyName.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case KeyName.RIGHT:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                this.headerNavigationService.navigateHorizontally(direction);
+                this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
             case KeyName.UP:
                 direction = HeaderNavigationDirection.UP;
@@ -146,7 +142,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerNavigationService.navigateVertically(direction)) {
+                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
                     e.preventDefault();
                 }
                 break;

@@ -22,6 +22,7 @@ import { GridCore } from "./gridCore";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
+import { NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams } from "./entities/gridOptions";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -192,7 +193,45 @@ export class FocusController extends BeanStub {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
-    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean {
+    public focusHeaderPosition(
+        headerPosition: HeaderPosition,
+        direction: 'Before' | 'After' = null,
+        fromTab: boolean = false,
+        allowUserOverride: boolean = false,
+        event?: KeyboardEvent
+    ): boolean {
+        if (allowUserOverride) {
+            const { gridOptionsWrapper } = this;
+            const currentPosition = this.getFocusedHeader();
+
+            if (fromTab) {
+                const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
+                if (userFunc) {
+                    const params: TabToNextHeaderParams = {
+                        backwards: direction === 'Before',
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition
+                    };
+                    headerPosition = userFunc(params);
+                }
+            } else {
+                const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
+                if (userFunc) {
+                    const params: NavigateToNextHeaderParams = {
+                        key: event.key,
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition,
+                        event
+                    };
+                    headerPosition = userFunc(params);
+                }
+            }
+        }
+
+        if (headerPosition.headerRowIndex === -1) {
+            return this.focusGridView(headerPosition.column as Column);
+        }
+
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
         const childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());

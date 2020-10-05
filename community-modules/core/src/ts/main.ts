@@ -300,6 +300,8 @@ export {
     GetMainMenuItems,
     GetRowNodeIdFunc,
     ProcessRowParams,
+    NavigateToNextHeaderParams,
+    TabToNextHeaderParams,
     NavigateToNextCellParams,
     TabToNextCellParams,
     PostProcessPopupParams,
