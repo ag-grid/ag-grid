@@ -158,7 +158,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 if (this.isBlockCurrentlyDisplayed(block)) { return; }
 
                 // at this point, block is not needed, and no open nodes, so burn baby burn
-                this.removeBlockFromCache(block);
+                this.destroyBlock(block);
             }
 
         });
@@ -180,18 +180,6 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
 
         return blockInsideViewport;
-    }
-
-    private removeBlockFromCache(blockToRemove: ServerSideBlock): void {
-        if (!blockToRemove) {
-            return;
-        }
-
-        this.destroyBlock(blockToRemove);
-
-        // we do not want to remove the 'loaded' event listener, as the
-        // concurrent loads count needs to be updated when the load is complete
-        // if the purged page is in loading state
     }
 
     private checkRowCount(block: ServerSideBlock, lastRow?: number): void {
@@ -253,7 +241,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public purgeCache(): void {
-        this.getBlocksInOrder().forEach(block => this.removeBlockFromCache(block));
+        this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
