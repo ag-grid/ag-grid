@@ -41,7 +41,7 @@ var gridOptions = {
     },
     navigateToNextCell: this.navigateToNextCell.bind(this),
     tabToNextCell: this.tabToNextCell.bind(this),
-    tabToNextHeaderCell: this.tabToNextHeaderCell.bind(this),
+    tabToNextHeader: this.tabToNextHeader.bind(this),
     columnDefs: columnDefs,
     onGridReady: function(params) {
         // note that the columns can be added/removed as the viewport changes
@@ -93,9 +93,31 @@ var gridOptions = {
     }
 };
 
-function tabToNextHeaderCell(params) {
-    debugger;
-    return;
+function tabToNextHeader(params) {
+    var previousHeader = params.previousHeaderPosition;
+    var previousColumn = previousHeader.column;
+    var lastRowIndex = previousHeader.headerRowIndex;
+    var nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
+
+    if (nextRowIndex === -1) {
+        return previousHeader;
+    }
+
+    if (nextRowIndex === params.headerRowCount) { nextRowIndex = -1; }
+    
+    var nextColumn;
+    var parentColumn = previousColumn.getParent();
+
+    if (params.backwards) {
+        nextColumn = parentColumn || previousColumn;
+    } else {
+        nextColumn = previousColumn.children ? previousColumn.children[0] : previousColumn;
+    }
+
+    return {
+        headerRowIndex: nextRowIndex,
+        column: nextColumn
+    };
 }
 
 function tabToNextCell(params) {

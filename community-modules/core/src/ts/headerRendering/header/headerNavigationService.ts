@@ -142,19 +142,16 @@ export class HeaderNavigationService extends BeanStub {
         let nextRowIndex: number;
 
         if (direction === 'Before') {
-            if (currentIndex === 0) { return false; }
-            nextRowIndex = currentIndex - 1;
-            nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
+            if (currentIndex > 0) {
+                nextRowIndex = currentIndex - 1;
+                nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
+            }
         } else {
             nextRowIndex = currentIndex + 1;
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start');
         }
 
-        if (nextPosition) {
-            return this.focusController.focusHeaderPosition(nextPosition, direction, true, true, event);
-        }
-
-        return false;
+        return this.focusController.focusHeaderPosition(nextPosition, direction, true, true, event);
     }
 
     public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' = 'After'): void {
