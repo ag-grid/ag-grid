@@ -288,7 +288,7 @@ export class ChartTheme {
                     fillOpacity: 0.8,
                     strokeOpacity: 1,
                     strokeWidth: 2,
-                    lineDash: [20, 10],
+                    lineDash: undefined,
                     lineDashOffset: 0,
                     shadow: {
                         enabled: false,
