@@ -29,6 +29,7 @@ import {
     SortController
 } from "@ag-grid-community/core";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
+import {ServerSideSortService} from "./serverSideSortService";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -40,6 +41,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('serverSideSortService') private serverSideSortService: ServerSideSortService;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -95,7 +97,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
@@ -127,9 +128,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
 
         const sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
@@ -145,65 +146,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private onFilterChanged(): void {
         this.reset();
-    }
-
-    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
-    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
-    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
-    // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(
-        newSortModel: { colId: string, sort: string }[],
-        oldSortModel: { colId: string, sort: string }[]): string[] {
-
-        let allColsInBothSorts: string[] = [];
-
-        [newSortModel, oldSortModel].forEach(sortModel => {
-            if (sortModel) {
-                const ids = sortModel.map(sm => sm.colId);
-                allColsInBothSorts = allColsInBothSorts.concat(ids);
-            }
-        });
-
-        const differentSorts = (oldSortItem: any, newSortItem: any) => {
-            const oldSort = oldSortItem ? oldSortItem.sort : null;
-            const newSort = newSortItem ? newSortItem.sort : null;
-            return oldSort !== newSort;
-        };
-
-        const differentIndexes = (oldSortItem: any, newSortItem: any) => {
-            const oldIndex = oldSortModel.indexOf(oldSortItem);
-            const newIndex = newSortModel.indexOf(newSortItem);
-            return oldIndex !== newIndex;
-        };
-
-        return allColsInBothSorts.filter(colId => {
-            const oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
-            const newSortItem = _.find(newSortModel, sm => sm.colId === colId);
-            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
-        });
-    }
-
-    private onSortChanged(): void {
-        const cache = this.getRootCache();
-        if (!cache) { return; }
-
-        const newSortModel = this.extractSortModel();
-        const oldSortModel = this.cacheParams.sortModel;
-        const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-
-        this.cacheParams.sortModel = newSortModel;
-
-        const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-
-        const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
-
-        const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.reset();
-        } else {
-            cache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-        }
     }
 
     private onValueChanged(): void {
@@ -228,7 +170,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
     }
 
-    private reset(): void {
+    public reset(): void {
         this.destroyCache();
 
         this.rootNode = new RowNode();
@@ -256,7 +198,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.dispatchModelUpdated(true);
     }
 
-    private toValueObjects(columns: Column[]): ColumnVO[] {
+    public columnsToValueObjects(columns: Column[]): ColumnVO[] {
         return columns.map(col => ({
             id: col.getId(),
             aggFunc: col.getAggFunc(),
@@ -267,9 +209,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private createCacheParams(): ServerSideCacheParams {
 
-        const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
 
         const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
@@ -304,7 +246,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.extractSortModel(),
+            sortModel: this.serverSideSortService.extractSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
@@ -357,7 +299,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return cache.getRowUsingDisplayIndex(index);
     }
 
-    private getRootCache(): ServerSideCache {
+    public updateSortModel(newSortModel: any): void {
+        this.cacheParams.sortModel = newSortModel;
+    }
+
+    public getRootCache(): ServerSideCache {
         if (this.rootNode && this.rootNode.childrenCache) {
             return (this.rootNode.childrenCache as ServerSideCache);
         } else {
@@ -458,94 +404,5 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public isRowPresent(rowNode: RowNode): boolean {
         const foundRowNode = this.getRowNode(rowNode.id);
         return !!foundRowNode;
-    }
-
-    private extractSortModel(): { colId: string; sort: string }[] {
-        const sortModel = this.sortController.getSortModel();
-
-        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
-        // into it's constitute group columns as they are not defined up front and can vary per node.
-        if (this.gridOptionsWrapper.isTreeData()) {
-            return sortModel;
-        }
-
-        const rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
-
-        // find index of auto group column in sort model
-        let autoGroupIndex = -1;
-        for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === Constants.GROUP_AUTO_COLUMN_ID) {
-                autoGroupIndex = i;
-                break;
-            }
-        }
-
-        // replace auto column with individual group columns
-        if (autoGroupIndex > -1) {
-            const individualGroupCols =
-                rowGroupCols.map(group => {
-                    return {
-                        colId: group.id,
-                        sort: sortModel[autoGroupIndex].sort
-                    };
-                });
-
-            // remove auto group column
-            sortModel.splice(autoGroupIndex, 1);
-
-            // insert individual group columns
-            for (let i = 0; i < individualGroupCols.length; i++) {
-                const individualGroupCol = individualGroupCols[i];
-
-                // don't add individual group column if non group column already exists as it gets precedence
-                const sameNonGroupColumnExists = sortModel.some(sm => sm.colId === individualGroupCol.colId);
-                if (sameNonGroupColumnExists) {
-                    continue;
-                }
-
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
-            }
-        }
-
-        // strip out multi-column prefix on colId's
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            const multiColumnPrefix = Constants.GROUP_AUTO_COLUMN_ID + "-";
-
-            for (let i = 0; i < sortModel.length; ++i) {
-                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
-                }
-            }
-        }
-
-        return sortModel;
-    }
-
-    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) {
-            return false;
-        }
-
-        const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
