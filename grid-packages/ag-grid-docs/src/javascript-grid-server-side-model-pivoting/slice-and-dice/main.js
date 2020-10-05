@@ -309,7 +309,7 @@ function createFakeServer(data) {
         // it in a timeout to a) give a delay and b) make it asynchronous
         setTimeout(function() {
             callback(rowData, lastRow, secondaryColDefs);
-        }, 5000);
+        }, 1000);
     };
 
     FakeServer.prototype.sortList = function(data, sortModel) {
