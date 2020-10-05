@@ -22,8 +22,6 @@ export interface IRowModel {
 
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
-    /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
-    getCurrentPageHeight(): number;
     /** Returns true if the provided rowNode is in the list of rows to render */
     isRowPresent(rowNode: RowNode): boolean;
     /** Returns row top and bottom for a given row */

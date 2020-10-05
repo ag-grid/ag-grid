@@ -558,16 +558,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return pixelInRow;
     }
 
-    public getCurrentPageHeight(): number {
-        if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            const lastRow = _.last(this.rowsToDisplay);
-            const lastPixel = lastRow.rowTop + lastRow.rowHeight;
-            return lastPixel;
-        }
-
-        return 0;
-    }
-
     public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
         if (this.rootNode.allLeafChildren) {
             this.rootNode.allLeafChildren.forEach((rowNode, index) => callback(rowNode, index));

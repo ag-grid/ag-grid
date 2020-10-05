@@ -179,10 +179,6 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return topLevelIndex;
     }
 
-    public getCurrentPageHeight(): number {
-        return this.rowCount * this.rowHeight;
-    }
-
     public isEmpty(): boolean {
         return this.rowCount > 0;
     }

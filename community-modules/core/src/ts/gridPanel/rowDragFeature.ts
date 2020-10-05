@@ -21,6 +21,7 @@ import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
+import {PaginationProxy} from "../pagination/paginationProxy";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -39,6 +40,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('sortController') private sortController: SortController;
@@ -421,7 +423,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private draggingToRowDragEvent(type: string, draggingEvent: DraggingEvent): RowDragEvent {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
-        const mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
+        const mouseIsPastLastRow = yNormalised > this.paginationProxy.getCurrentPageHeight();
 
         let overIndex = -1;
         let overNode = null;
