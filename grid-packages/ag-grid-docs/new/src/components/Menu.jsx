@@ -16,7 +16,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
 };
 
 const MenuGroup = ({ group, currentFramework }) => {
-    if (group.frameworkSpecific && !isCurrentFramework(group.title, currentFramework)) { return null; }
+    if (group.framework && group.framework !== currentFramework) { return null; }
 
     return (
         <ul className="menu-group">
@@ -26,20 +26,18 @@ const MenuGroup = ({ group, currentFramework }) => {
 };
 
 const MenuItem = ({ item, currentFramework }) => {
-    if (item.frameworkSpecific && !isCurrentFramework(item.title, currentFramework)) { return null; }
+    if (item.framework && item.framework !== currentFramework) { return null; }
 
     return (
         <li key={item.title}>
             {item.url
-                ? <Link to={`../../${item.url.replace('${framework}', currentFramework)}`}>{item.title}</Link>
+                ? <Link to={item.url}>{item.title}</Link>
                 : item.title
             }
             {item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
         </li>
     );
 };
-
-const isCurrentFramework = (title, currentFramework) => title.toLowerCase().indexOf(currentFramework) !== -1;
 
 const Menu = ({ currentFramework }) => {
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], []);

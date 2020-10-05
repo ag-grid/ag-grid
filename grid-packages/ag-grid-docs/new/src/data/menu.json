@@ -1,1619 +1,1615 @@
 [
-    {
-      "group": "Basics",
-      "items": [
-        {
-          "title": "Getting Started",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "${framework}/getting-started/"
-            },
-            {
-              "title": "Vanilla JavaScript",
-              "url": "javascript-grid/",
-              "frameworkSpecific": true,
-              "items": [
-                {
-                  "title": "Install with NPM",
-                  "url": "${framework}/npm/"
-                },
-                {
-                  "title": "Download Bundles",
-                  "url": "${framework}/download/"
-                }
-              ]
-            },
-            {
-              "title": "Angular",
-              "url": "angular-grid/",
-              "frameworkSpecific": true,
-              "items": [
-                {
-                  "title": "Components",
-                  "url": "${framework}/more-details/"
-                },
-                {
-                  "title": "Markup",
-                  "url": "${framework}/markup/"
-                },
-                {
-                  "title": "SystemJS",
-                  "url": "${framework}/systemjs/"
-                },
-                {
-                  "title": "Webpack 3",
-                  "url": "${framework}/webpack-3/"
-                },
-                {
-                  "title": "Webpack 2",
-                  "url": "${framework}/webpack-2/"
-                },
-                {
-                  "title": "Webpack 1",
-                  "url": "${framework}/webpack/"
-                },
-                {
-                  "title": "Material Components",
-                  "url": "${framework}/material-design/"
-                },
-                {
-                  "title": "Use with RxJS",
-                  "url": "${framework}/rxjs/"
-                }
-              ]
-            },
-            {
-              "title": "React",
-              "url": "react-grid/",
-              "frameworkSpecific": true,
-              "items": [
-                {
-                  "title": "Column Configuration",
-                  "url": "${framework}/column-configuration/"
-                },
-                {
-                  "title": "Context API & Redux",
-                  "url": "${framework}/apis/"
-                },
-                {
-                  "title": "Fine Tuning",
-                  "url": "${framework}/fine-tuning/"
-                },
-                {
-                  "title": "Hooks & Functional Components",
-                  "url": "${framework}/hooks/"
-                },
-                {
-                  "title": "Redux Integration Part 1",
-                  "url": "${framework}/redux-integration-pt1/"
-                },
-                {
-                  "title": "Redux Integration Part 2",
-                  "url": "${framework}/redux-integration-pt2/"
-                },
-                {
-                  "title": "React 15.x",
-                  "url": "${framework}/react-15/"
-                }
-              ]
-            },
-            {
-              "title": "Vue",
-              "url": "vuejs-grid/",
-              "frameworkSpecific": true,
-              "items": [
-                {
-                  "title": "Components",
-                  "url": "${framework}/components/"
-                },
-                {
-                  "title": "Markup",
-                  "url": "${framework}/markup/"
-                },
-                {
-                  "title": "Vue & Unidirectional Data Flow",
-                  "url": "${framework}/data-flow/"
-                },
-                {
-                  "title": "Misc",
-                  "url": "${framework}/misc/"
-                }
-              ]
-            },
-            {
-              "title": "AngularJS",
-              "url": "${framework}/best-grid/",
-              "frameworkSpecific": true
-            },
-            {
-              "title": "Polymer",
-              "url": "${framework}/getting-started/",
-              "frameworkSpecific": true
-            }
-          ]
-        },
-        {
-          "title": "Interface / API",
-          "icon": "icon-api",
-          "items": [
-            {
-              "title": "Grid Interface",
-              "url": "${framework}/reference-overview/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Grid Properties",
-                  "url": "${framework}/properties/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Grid API",
-                  "url": "${framework}/api/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Grid Events",
-                  "box-title": "Events",
-                  "url": "${framework}/events/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Grid Callbacks",
-                  "url": "${framework}/callbacks/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Row Object",
-                  "url": "${framework}/row-node/",
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Column Interface",
-              "url": "${framework}/column-interface/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Column Properties",
-                  "url": "${framework}/column-properties/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Column API",
-                  "url": "${framework}/column-api/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Column Object",
-                  "url": "${framework}/column/",
-                  "showInCollapsed": true
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Columns",
-          "icon": "icon-columns",
-          "items": [
-            {
-              "title": "Column Definitions",
-              "box-title": "Definitions",
-              "url": "${framework}/column-definitions/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Updating Definitions",
-              "box-title": "State",
-              "url": "${framework}/column-updating-definitions/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column State",
-              "box-title": "State",
-              "url": "${framework}/column-state/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Headers",
-              "box-title": "Headers",
-              "url": "${framework}/column-header/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Groups",
-              "box-title": "Groups",
-              "url": "${framework}/grouping-headers/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Sizing",
-              "box-title": "Sizing",
-              "url": "${framework}/resizing/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Moving",
-              "box-title": "Moving",
-              "url": "${framework}/column-moving/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Pinning",
-              "box-title": "Pinning",
-              "url": "${framework}/pinning/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Spanning",
-              "box-title": "Spanning",
-              "url": "${framework}/column-spanning/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Rows",
-          "icon": "icon-rows",
-          "items": [
-            {
-              "title": "Row Sorting",
-              "box-title": "Sorting",
-              "url": "${framework}/sorting/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Spanning",
-              "box-title": "Spanning",
-              "url": "${framework}/row-spanning/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Pinning",
-              "box-title": "Pinning",
-              "url": "${framework}/row-pinning/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Height",
-              "box-title": "Height",
-              "url": "${framework}/row-height/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Full Width Rows",
-              "box-title": "Full Width",
-              "url": "${framework}/full-width-rows/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Animation",
-              "box-title": "Animation",
-              "url": "${framework}/animation/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Dragging",
-              "box-title": "Dragging",
-              "showInCollapsed": true,
-              "url": "${framework}/row-dragging/",
-              "items": [
-                {
-                  "title": "External DropZone",
-                  "url": "${framework}/row-dragging-to-external-dropzone/"
-                },
-                {
-                  "title": "Grid to Grid",
-                  "url": "${framework}/row-dragging-to-grid/"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Build & Tooling",
-          "icon": "icon-information",
-          "items": [
-            {
-              "title": "Community & Enterprise",
-              "url": "${framework}/set-license/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Packages & Modules",
-              "url": "${framework}/packages-modules/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Packages",
-                  "url": "${framework}/packages/"
-                },
-                {
-                  "title": "Modules - Overview",
-                  "url": "${framework}/modules/"
-                },
-                {
-                  "title": "Modules - More Details",
-                  "url": "${framework}/modules-more-details/"
-                },
-                {
-                  "title": "Building",
-                  "url": "${framework}/modules-building/"
-                }
-              ]
-            },
-            {
-              "title": "Supported Browsers",
-              "url": "${framework}/supported-browsers/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Building",
-              "url": "ag-grid-building/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Rollup",
-                  "url": "ag-grid-building-rollup/"
-                },
-                {
-                  "title": "TypeScript & Webpack",
-                  "url": "ag-grid-building-typescript/"
-                },
-                {
-                  "title": "AMD",
-                  "url": "ag-grid-building-amd/"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Core Features",
-      "items": [
-        {
-          "title": "Layout & Styling",
-          "icon": "icon-style",
-          "items": [
-            {
-              "title": "Styling Rows",
-              "box-title": "Rows",
-              "url": "${framework}/row-styles/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Styling Cells",
-              "box-title": "Cells",
-              "url": "${framework}/cell-styles/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Themes",
-              "url": "${framework}/styling/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Provided Themes",
-                  "url": "${framework}/themes-provided/"
-                },
-                {
-                  "title": "Customising Themes",
-                  "url": "${framework}/themes-customising/"
-                },
-                {
-                  "title": "Migrating to v23",
-                  "url": "${framework}/themes-v23-migration/"
-                }
-              ]
-            },
-            {
-              "title": "Grid Size",
-              "url": "${framework}/width-and-height/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Custom Icons",
-              "box-title": "Icons",
-              "url": "${framework}/icons/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Printing",
-              "url": "${framework}/for-print/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Client-Side Data",
-          "icon": "icon-data",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "${framework}/client-side-model/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Accessing Data",
-              "url": "${framework}/accessing-data/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Updating Data",
-              "url": "${framework}/data-update/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Single Row / Cell",
-                  "url": "${framework}/data-update-single-row-cell/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Transactions",
-                  "url": "${framework}/data-update-transactions/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "High Frequency",
-                  "url": "${framework}/data-update-high-frequency/",
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Immutable Data",
-              "url": "${framework}/immutable-data/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Context",
-              "url": "${framework}/context/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "See Also",
-              "url": "",
-              "items": [
-                {
-                  "title": "Use with RxJS",
-                  "url": "${framework}/rxjs/"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Server-Side Data",
-          "icon": "icon-data",
-          "items": [
-            {
-              "title": "Row Models",
-              "url": "${framework}/row-models/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Server-Side Row Model",
-              "url": "${framework}/server-side-model/",
-              "showInCollapsed": true,
-              "enterprise": true,
-              "items": [
-                {
-                  "title": "Datasource",
-                  "url": "${framework}/server-side-model-datasource/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Configuration",
-                  "url": "${framework}/server-side-model-configuration/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Sorting",
-                  "url": "${framework}/server-side-model-sorting/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Filtering",
-                  "url": "${framework}/server-side-model-filtering/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Row Grouping",
-                  "url": "${framework}/server-side-model-grouping/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Pivoting",
-                  "url": "${framework}/server-side-model-pivoting/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Pagination",
-                  "url": "${framework}/server-side-model-pagination/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Row Selection",
-                  "url": "${framework}/server-side-model-selection/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Row Height",
-                  "url": "${framework}/server-side-model-row-height/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Master Detail",
-                  "url": "${framework}/server-side-model-master-detail/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Tree Data",
-                  "url": "${framework}/server-side-model-tree-data/",
-                  "enterprise": true
-                },
-                {
-                  "title": "Changing Columns",
-                  "url": "${framework}/server-side-model-changing-columns/",
-                  "enterprise": true
-                },
-                {
-                  "title": "CRUD",
-                  "url": "${framework}/server-side-model-crud/",
-                  "enterprise": true
-                },
-                {
-                  "title": "See Also",
-                  "url": "",
-                  "items": [
-                    {
-                      "title": "Using Node.js & MySQL",
-                      "url": "nodejs-server-side-operations/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Using GraphQL & MySQL",
-                      "url": "graphql-server-side-operations/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Using Java & Oracle",
-                      "url": "oracle-server-side-operations/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Using Java & Apache Spark",
-                      "url": "spark-server-side-operations/",
-                      "enterprise": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "Infinite Row Model",
-              "url": "${framework}/infinite-scrolling/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Viewport Row Model",
-              "url": "${framework}/viewport/",
-              "enterprise": true,
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Selection",
-          "icon": "icon-selection",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "${framework}/selection-overview/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Selection",
-              "url": "${framework}/selection/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Range Selection",
-              "url": "${framework}/range-selection/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Range Handle",
-                  "url": "${framework}/range-selection-handle/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Fill Handle",
-                  "url": "${framework}/range-selection-fill-handle/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Filtering",
-          "icon": "icon-filter",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "${framework}/filtering-overview/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Column Filters",
-              "url": "${framework}/filtering/",
-              "showInCollapsed": false,
-              "items": [
-                {
-                  "title": "Provided Column Filters",
-                  "url": "${framework}/filter-provided/"
-                },
-                {
-                  "title": "Simple Column Filters",
-                  "url": "${framework}/filter-provided-simple/",
-                  "items": [
-                    {
-                      "title": "Text Filter",
-                      "url": "${framework}/filter-text/",
-                      "showInCollapsed": true
-                    },
-                    {
-                      "title": "Number Filter",
-                      "url": "${framework}/filter-number/",
-                      "showInCollapsed": true
-                    },
-                    {
-                      "title": "Date Filter",
-                      "url": "${framework}/filter-date/",
-                      "showInCollapsed": true
-                    }
-                  ]
-                },
-                {
-                  "title": "Set Filter",
-                  "url": "${framework}/filter-set/",
-                  "enterprise": true,
-                  "showInCollapsed": true,
-                  "items": [
-                    {
-                      "title": "Filter List",
-                      "url": "${framework}/filter-set-filter-list/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Data Updates",
-                      "url": "${framework}/filter-set-data-updates/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Mini Filter",
-                      "url": "${framework}/filter-set-mini-filter/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "Excel Mode",
-                      "url": "${framework}/filter-set-excel-mode/",
-                      "enterprise": true
-                    },
-                    {
-                      "title": "API",
-                      "url": "${framework}/filter-set-api/",
-                      "enterprise": true
-                    }
-                  ]
-                },
-                {
-                  "title": "Multi Filter",
-                  "url": "${framework}/filter-multi/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Filter API",
-                  "url": "${framework}/filter-api/"
-                },
-                {
-                  "title": "Floating Filters",
-                  "url": "${framework}/floating-filters/"
-                },
-                {
-                  "title": "Custom Filter",
-                  "url": "${framework}/filter-custom/"
-                }
-              ]
-            },
-            {
-              "title": "External Filter",
-              "url": "${framework}/filter-external/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Quick Filter",
-              "url": "${framework}/filter-quick/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Rendering",
-          "icon": "icon-render-cells",
-          "items": [
-            {
-              "title": "Cell Content",
-              "url": "${framework}/rendering-flow/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Value Getters",
-                  "url": "${framework}/value-getters/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Value Formatters",
-                  "url": "${framework}/value-formatters/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Expressions",
-                  "url": "${framework}/cell-expressions/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Reference Data",
-                  "url": "${framework}/reference-data/",
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Cell Rendering",
-              "url": "${framework}/cell-rendering/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Group Cell Renderer",
-                  "url": "${framework}/provided-renderer-group/"
-                },
-                {
-                  "title": "Change Cell Renderers",
-                  "url": "${framework}/provided-renderer-change/"
-                }
-              ]
-            },
-            {
-              "title": "Rendering API",
-              "url": "${framework}/rendering-api/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "View Refresh",
-              "url": "${framework}/refresh/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Flashing Cells",
-              "url": "${framework}/flashing-cells/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Change Detection",
-              "url": "${framework}/change-detection/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "See Also",
-              "url": "",
-              "items": [
-                {
-                  "title": "Expressions & Context",
-                  "url": "example-expressions-and-context/"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Editing",
-          "icon": "icon-edit-cells",
-          "items": [
-            {
-              "title": "Cell Editing",
-              "url": "${framework}/cell-editing/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Saving Content",
-              "url": "${framework}/editing-flow/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Value Parsers",
-                  "url": "${framework}/value-parsers/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Value Setters",
-                  "url": "${framework}/value-setters/",
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Provided Editors",
-              "url": "${framework}/provided-cell-editors/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Undo / Redo Edits",
-              "url": "${framework}/undo-redo-edits/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Group & Pivot",
-          "icon": "icon-group",
-          "items": [
-            {
-              "title": "Row Grouping",
-              "url": "${framework}/grouping/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Master Detail",
-              "url": "${framework}/master-detail/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Detail Grids",
-                  "url": "${framework}/master-detail-detail-grids/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Detail Height",
-                  "url": "${framework}/master-detail-height/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Detail Refresh",
-                  "url": "${framework}/master-detail-refresh/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Master Rows",
-                  "url": "${framework}/master-detail-master-rows/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Nesting",
-                  "url": "${framework}/master-detail-nesting/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Custom Detail",
-                  "url": "${framework}/master-detail-custom-detail/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                },
-                {
-                  "title": "Other",
-                  "url": "${framework}/master-detail-other/",
-                  "enterprise": true,
-                  "showInCollapsed": false
-                }
-              ]
-            },
-            {
-              "title": "Tree Data",
-              "url": "${framework}/tree-data/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Aggregation",
-              "url": "${framework}/aggregation/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Pivoting",
-              "url": "${framework}/pivoting/",
-              "enterprise": true,
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Import & Export",
-          "icon": "icon-import-export",
-          "items": [
-            {
-              "title": "Export",
-              "url": "${framework}/export/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "CSV Export",
-                  "url": "${framework}/csv/"
-                },
-                {
-                  "title": "Excel Export",
-                  "url": "${framework}/excel/",
-                  "enterprise": true
-                }
-              ]
-            },
-            {
-              "title": "Clipboard",
-              "url": "${framework}/clipboard/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Drag & Drop",
-              "url": "${framework}/drag-and-drop/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "See Also",
-              "url": "",
-              "items": [
-                {
-                  "title": "Import Excel",
-                  "url": "example-excel-import/"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Extending the grid",
-      "items": [
-        {
-          "title": "Accessories",
-          "icon": "icon-accessories",
-          "level-2-display-style-forced": "block",
-          "items": [
-            {
-              "title": "Tool Panels",
-              "url": "${framework}/tool-panel/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Side Bar",
-                  "url": "${framework}/side-bar/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Columns Tool Panel",
-                  "url": "${framework}/tool-panel-columns/",
-                  "showInCollapsed": true,
-                  "enterprise": true
-                },
-                {
-                  "title": "Filters Tool Panel",
-                  "url": "${framework}/tool-panel-filters/",
-                  "showInCollapsed": true,
-                  "enterprise": true
-                }
-              ]
-            },
-            {
-              "title": "Column Menu",
-              "url": "${framework}/column-menu/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Context Menu",
-              "url": "${framework}/context-menu/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Status Bar",
-              "url": "${framework}/status-bar/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Overlays",
-              "url": "${framework}/overlays/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Components",
-          "icon": "icon-components",
-          "items": [
-            {
-              "title": "Registering Components",
-              "url": "${framework}/components/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Component Types",
-              "url": "${framework}/component-types/",
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Cell Renderer",
-                  "box-title": "Cell",
-                  "url": "${framework}/cell-rendering-components/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Cell Editor",
-                  "box-title": "Editor",
-                  "url": "${framework}/cell-editor/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Date Component",
-                  "box-title": "Date",
-                  "url": "${framework}/date-component/"
-                },
-                {
-                  "title": "Filter Component",
-                  "box-title": "Filter",
-                  "url": "${framework}/filter-component/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Floating Filter Component",
-                  "box-title": "Floating Filter",
-                  "url": "${framework}/floating-filter-component/"
-                },
-                {
-                  "title": "Header Component",
-                  "box-title": "Header",
-                  "url": "${framework}/header-rendering/",
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Loading Cell Renderer",
-                  "box-title": "Loading",
-                  "url": "${framework}/loading-cell-renderer/"
-                },
-                {
-                  "title": "Overlay Component",
-                  "box-title": "Overlays",
-                  "url": "${framework}/overlay-component/"
-                },
-                {
-                  "title": "Status Bar Component",
-                  "box-title": "Status Bar",
-                  "url": "${framework}/status-bar-component/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Tool Panel Component",
-                  "box-title": "Tool Panel",
-                  "url": "${framework}/tool-panel-component/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Tooltip Component",
-                  "box-title": "Tooltip",
-                  "url": "${framework}/tooltip-component/",
-                  "showInCollapsed": true
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Integrated Charts",
-          "icon": "icon-charts",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "${framework}/charts-integrated-overview/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Range Chart",
-              "url": "${framework}/charts-integrated-range-chart/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Pivot Chart",
-              "url": "${framework}/charts-integrated-pivot-chart/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart Toolbar",
-              "url": "${framework}/charts-integrated-chart-toolbar/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart API",
-              "url": "${framework}/charts-integrated-chart-range-api/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Customisation",
-              "url": "${framework}/charts-integrated-customisation/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart Container",
-              "url": "${framework}/charts-integrated-container/",
-              "enterprise": true
-            },
-            {
-              "title": "Chart Events",
-              "url": "${framework}/charts-integrated-chart-events/",
-              "enterprise": true
-            },
-            {
-              "title": "Time Series",
-              "url": "${framework}/charts-integrated-time-series/",
-              "enterprise": true
-            },
-            {
-              "title": "Third-Party Charting",
-              "url": "${framework}/graphing/"
-            }
-          ]
-        },
-        {
-          "title": "Standalone Charts",
-          "icon": "icon-charts",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "javascript-charts-overview/",
-              "showInCollapsed": true,
-              "hideChildren": true,
-              "items": [
-                {
-                  "title": "Bar/Column",
-                  "url": "javascript-charts-overview/#bar-column",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Bar",
-                      "url": "javascript-charts-overview/simple-bar.php"
-                    },
-                    {
-                      "title": "Grouped Bar",
-                      "url": "javascript-charts-overview/grouped-bar.php"
-                    },
-                    {
-                      "title": "Stacked Bar",
-                      "url": "javascript-charts-overview/stacked-bar.php"
-                    },
-                    {
-                      "title": "100% Stacked Bar",
-                      "url": "javascript-charts-overview/100--stacked-bar.php"
-                    },
-                    {
-                      "title": "Bar With Labels",
-                      "url": "javascript-charts-overview/bar-with-labels.php"
-                    },
-                    {
-                      "title": "Simple Column",
-                      "url": "javascript-charts-overview/simple-column.php"
-                    },
-                    {
-                      "title": "Grouped Column",
-                      "url": "javascript-charts-overview/grouped-column.php"
-                    },
-                    {
-                      "title": "Stacked Column",
-                      "url": "javascript-charts-overview/stacked-column.php"
-                    },
-                    {
-                      "title": "100% Stacked Column",
-                      "url": "javascript-charts-overview/100--stacked-column.php"
-                    },
-                    {
-                      "title": "Column With Negative Values",
-                      "url": "javascript-charts-overview/column-with-negative-values.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Pie/Doughnut",
-                  "url": "javascript-charts-overview/#pie-doughnut",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Pie",
-                      "url": "javascript-charts-overview/simple-pie.php"
-                    },
-                    {
-                      "title": "Simple Doughnut",
-                      "url": "javascript-charts-overview/simple-doughnut.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Line",
-                  "url": "javascript-charts-overview/#line",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Line",
-                      "url": "javascript-charts-overview/simple-line.php"
-                    },
-                    {
-                      "title": "Line With Gaps",
-                      "url": "javascript-charts-overview/line-with-gaps.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Scatter/Bubble",
-                  "url": "javascript-charts-overview/#scatter-bubble",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Scatter",
-                      "url": "javascript-charts-overview/simple-scatter.php"
-                    },
-                    {
-                      "title": "Simple Bubble",
-                      "url": "javascript-charts-overview/simple-bubble.php"
-                    },
-                    {
-                      "title": "Bubble With Negative Values",
-                      "url": "javascript-charts-overview/bubble-with-negative-values.php"
-                    },
-                    {
-                      "title": "Bubble With Categories",
-                      "url": "javascript-charts-overview/bubble-with-categories.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Area",
-                  "url": "javascript-charts-overview/#area",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Area",
-                      "url": "javascript-charts-overview/simple-area.php"
-                    },
-                    {
-                      "title": "Stacked Area",
-                      "url": "javascript-charts-overview/stacked-area.php"
-                    },
-                    {
-                      "title": "100% Stacked Area",
-                      "url": "javascript-charts-overview/100--stacked-area.php"
-                    },
-                    {
-                      "title": "Area With Negative Values",
-                      "url": "javascript-charts-overview/area-with-negative-values.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Histogram",
-                  "url": "javascript-charts-overview/#histogram",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Simple Histogram",
-                      "url": "javascript-charts-overview/simple-histogram.php"
-                    },
-                    {
-                      "title": "Histogram with specified bins",
-                      "url": "javascript-charts-overview/histogram-with-specified-bins.php"
-                    },
-                    {
-                      "title": "XY Histogram with Mean Aggregation",
-                      "url": "javascript-charts-overview/xy-histogram-with-mean-aggregation.php"
-                    }
-                  ]
-                },
-                {
-                  "title": "Feature Highlights",
-                  "url": "javascript-charts-overview/#feature-highlights",
-                  "disableActive": true,
-                  "hideChildren": true,
-                  "items": [
-                    {
-                      "title": "Time Axis With Irregular Intervals",
-                      "url": "javascript-charts-overview/time-axis-with-irregular-intervals.php"
-                    },
-                    {
-                      "title": "Real-Time Data Updates",
-                      "url": "javascript-charts-overview/real-time-data-updates.php"
-                    },
-                    {
-                      "title": "Combination of Different Series Types",
-                      "url": "javascript-charts-overview/combination-of-different-series-types.php"
-                    },
-                    {
-                      "title": "Chart Customisation",
-                      "url": "javascript-charts-overview/chart-customisation.php"
-                    },
-                    {
-                      "title": "Custom Marker Shapes",
-                      "url": "javascript-charts-overview/custom-marker-shapes.php"
-                    },
-                    {
-                      "title": "Custom Tooltips",
-                      "url": "javascript-charts-overview/custom-tooltips.php"
-                    },
-                    {
-                      "title": "Per-Marker Customisation",
-                      "url": "javascript-charts-overview/per-marker-customisation.php"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "Getting Started",
-              "isCategory": true,
-              "items": [
-                {
-                  "title": "Vanilla JavaScript",
-                  "url": "javascript-charts/"
-                },
-                {
-                  "title": "Angular",
-                  "url": "angular-charts/"
-                },
-                {
-                  "title": "React",
-                  "url": "react-charts/"
-                },
-                {
-                  "title": "Vue",
-                  "url": "vuejs-charts/"
-                }
-              ]
-            },
-            {
-              "title": "API",
-              "isCategory": true,
-              "forceTopLevelSubItems": true,
-              "items": [
-                {
-                  "title": "Options Reference",
-                  "showInCollapsed": true,
-                  "url": "javascript-charts-api/"
-                },
-                {
-                  "title": "Themes Reference",
-                  "showInCollapsed": true,
-                  "url": "javascript-charts-api-themes/"
-                },
-                {
-                  "title": "Explorer",
-                  "showInCollapsed": true,
-                  "url": "javascript-charts-api-explorer/"
-                }
-              ]
-            },
-            {
-              "title": "Series",
-              "isCategory": true,
-              "items": [
-                {
-                  "title": "Line",
-                  "url": "javascript-charts-line-series/"
-                },
-                {
-                  "title": "Bar/Column",
-                  "url": "javascript-charts-bar-series/"
-                },
-                {
-                  "title": "Histogram",
-                  "url": "javascript-charts-histogram-series/"
-                },
-                {
-                  "title": "Area",
-                  "url": "javascript-charts-area-series/"
-                },
-                {
-                  "title": "Scatter/Bubble",
-                  "url": "javascript-charts-scatter-series/"
-                },
-                {
-                  "title": "Pie/Doughnut",
-                  "url": "javascript-charts-pie-series/"
-                }
-              ]
-            },
-            {
-              "title": "Features",
-              "isCategory": true,
-              "items": [
-                {
-                  "title": "Layout",
-                  "url": "javascript-charts-layout/"
-                },
-                {
-                  "title": "Legend",
-                  "url": "javascript-charts-legend/"
-                },
-                {
-                  "title": "Themes",
-                  "url": "javascript-charts-themes/"
-                },
-                {
-                  "title": "Navigator",
-                  "url": "javascript-charts-navigator/"
-                },
-                {
-                  "title": "Markers",
-                  "url": "javascript-charts-markers/"
-                },
-                {
-                  "title": "Formatters",
-                  "url": "javascript-charts-formatters/"
-                },
-                {
-                  "title": "Tooltips",
-                  "url": "javascript-charts-tooltips/"
-                },
-                {
-                  "title": "Axes",
-                  "url": "javascript-charts-axis/"
-                },
-                {
-                  "title": "Events",
-                  "url": "javascript-charts-events/"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Other",
-      "items": [
-        {
-          "title": "Scrolling",
-          "icon": "icon-scrolling",
-          "items": [
-            {
-              "title": "DOM Virtualisation",
-              "url": "${framework}/dom-virtualisation/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Row Pagination",
-              "url": "${framework}/pagination/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Aligned Grids",
-              "url": "${framework}/aligned-grids/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Scrolling Performance",
-              "url": "${framework}/performance/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "See Also",
-              "url": "",
-              "items": [
-                {
-                  "title": "Scrolling Scenarios",
-                  "url": "${framework}/scrolling-scenarios/"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Interactivity",
-          "icon": "icon-interactivity",
-          "items": [
-            {
-              "title": "Keyboard Navigation",
-              "url": "${framework}/keyboard-navigation/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Touch",
-              "url": "${framework}/touch/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Accessibility (ARIA)",
-              "url": "${framework}/accessibility/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "RTL Text Direction",
-              "url": "${framework}/rtl/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Localisation",
-              "url": "${framework}/localisation/",
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Testing & Security",
-          "icon": "icon-test",
-          "level-2-display-style-forced": "block",
-          "items": [
-            {
-              "title": "Testing Overview",
-              "url": "${framework}/testing/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Testing Angular",
-              "url": "${framework}/testing-angular/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Testing React",
-              "url": "${framework}/testing-react/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Testing Vue",
-              "url": "${framework}/testing-vue/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Jasmine & Protractor",
-              "url": "${framework}/e2e-test-with-jasmine/",
-              "showInCollapsed": true
-            },
-            {
-              "title": "Security",
-              "url": "${framework}/security/",
-              "showInCollapsed": true
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  {
+    "group": "Basics",
+    "items": [
+      {
+        "title": "Getting Started",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "../getting-started/",
+            "framework": "javascript",
+            "items": [
+              {
+                "title": "Install with NPM",
+                "url": "../npm/"
+              },
+              {
+                "title": "Download Bundles",
+                "url": "../download/"
+              }
+            ]
+          },
+          {
+            "title": "Overview",
+            "url": "../getting-started/",
+            "framework": "angular",
+            "items": [
+              {
+                "title": "Components",
+                "url": "../more-details/"
+              },
+              {
+                "title": "Markup",
+                "url": "../markup/"
+              },
+              {
+                "title": "SystemJS",
+                "url": "../systemjs/"
+              },
+              {
+                "title": "Webpack 3",
+                "url": "../webpack-3/"
+              },
+              {
+                "title": "Webpack 2",
+                "url": "../webpack-2/"
+              },
+              {
+                "title": "Webpack 1",
+                "url": "../webpack/"
+              },
+              {
+                "title": "Material Components",
+                "url": "../material-design/"
+              },
+              {
+                "title": "Use with RxJS",
+                "url": "../rxjs/"
+              }
+            ]
+          },
+          {
+            "title": "Overview",
+            "url": "../getting-started/",
+            "framework": "react",
+            "items": [
+              {
+                "title": "Column Configuration",
+                "url": "../column-configuration/"
+              },
+              {
+                "title": "Context API & Redux",
+                "url": "../apis/"
+              },
+              {
+                "title": "Fine Tuning",
+                "url": "../fine-tuning/"
+              },
+              {
+                "title": "Hooks & Functional Components",
+                "url": "../hooks/"
+              },
+              {
+                "title": "Redux Integration Part 1",
+                "url": "../redux-integration-pt1/"
+              },
+              {
+                "title": "Redux Integration Part 2",
+                "url": "../redux-integration-pt2/"
+              },
+              {
+                "title": "React 15.x",
+                "url": "../react-15/"
+              }
+            ]
+          },
+          {
+            "title": "Overview",
+            "url": "../getting-started/",
+            "framework": "vue",
+            "items": [
+              {
+                "title": "Components",
+                "url": "../components/"
+              },
+              {
+                "title": "Markup",
+                "url": "../markup/"
+              },
+              {
+                "title": "Vue & Unidirectional Data Flow",
+                "url": "../data-flow/"
+              },
+              {
+                "title": "Misc",
+                "url": "../misc/"
+              }
+            ]
+          },
+          {
+            "title": "AngularJS",
+            "url": "../best-grid/",
+            "framework": "angular"
+          },
+          {
+            "title": "Polymer",
+            "url": "../getting-started/",
+            "framework": "vanilla"
+          }
+        ]
+      },
+      {
+        "title": "Interface / API",
+        "icon": "icon-api",
+        "items": [
+          {
+            "title": "Grid Interface",
+            "url": "../reference-overview/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Grid Properties",
+                "url": "../properties/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Grid API",
+                "url": "../api/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Grid Events",
+                "box-title": "Events",
+                "url": "../events/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Grid Callbacks",
+                "url": "../callbacks/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Row Object",
+                "url": "../row-node/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Column Interface",
+            "url": "../column-interface/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Column Properties",
+                "url": "../column-properties/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Column API",
+                "url": "../column-api/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Column Object",
+                "url": "../column/",
+                "showInCollapsed": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Columns",
+        "icon": "icon-columns",
+        "items": [
+          {
+            "title": "Column Definitions",
+            "box-title": "Definitions",
+            "url": "../column-definitions/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Updating Definitions",
+            "box-title": "State",
+            "url": "../column-updating-definitions/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column State",
+            "box-title": "State",
+            "url": "../column-state/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Headers",
+            "box-title": "Headers",
+            "url": "../column-header/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Groups",
+            "box-title": "Groups",
+            "url": "../grouping-headers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Sizing",
+            "box-title": "Sizing",
+            "url": "../resizing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Moving",
+            "box-title": "Moving",
+            "url": "../column-moving/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Pinning",
+            "box-title": "Pinning",
+            "url": "../pinning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Spanning",
+            "box-title": "Spanning",
+            "url": "../column-spanning/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Rows",
+        "icon": "icon-rows",
+        "items": [
+          {
+            "title": "Row Sorting",
+            "box-title": "Sorting",
+            "url": "../sorting/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Spanning",
+            "box-title": "Spanning",
+            "url": "../row-spanning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Pinning",
+            "box-title": "Pinning",
+            "url": "../row-pinning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Height",
+            "box-title": "Height",
+            "url": "../row-height/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Full Width Rows",
+            "box-title": "Full Width",
+            "url": "../full-width-rows/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Animation",
+            "box-title": "Animation",
+            "url": "../animation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Dragging",
+            "box-title": "Dragging",
+            "showInCollapsed": true,
+            "url": "../row-dragging/",
+            "items": [
+              {
+                "title": "External DropZone",
+                "url": "../row-dragging-to-external-dropzone/"
+              },
+              {
+                "title": "Grid to Grid",
+                "url": "../row-dragging-to-grid/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Build & Tooling",
+        "icon": "icon-information",
+        "items": [
+          {
+            "title": "Community & Enterprise",
+            "url": "../set-license/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Packages & Modules",
+            "url": "../packages-modules/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Packages",
+                "url": "../packages/"
+              },
+              {
+                "title": "Modules - Overview",
+                "url": "../modules/"
+              },
+              {
+                "title": "Modules - More Details",
+                "url": "../modules-more-details/"
+              },
+              {
+                "title": "Building",
+                "url": "../modules-building/"
+              }
+            ]
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "../supported-browsers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Building",
+            "url": "ag-grid-building/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Rollup",
+                "url": "ag-grid-building-rollup/"
+              },
+              {
+                "title": "TypeScript & Webpack",
+                "url": "ag-grid-building-typescript/"
+              },
+              {
+                "title": "AMD",
+                "url": "ag-grid-building-amd/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Core Features",
+    "items": [
+      {
+        "title": "Layout & Styling",
+        "icon": "icon-style",
+        "items": [
+          {
+            "title": "Styling Rows",
+            "box-title": "Rows",
+            "url": "../row-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Styling Cells",
+            "box-title": "Cells",
+            "url": "../cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Themes",
+            "url": "../styling/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Provided Themes",
+                "url": "../themes-provided/"
+              },
+              {
+                "title": "Customising Themes",
+                "url": "../themes-customising/"
+              },
+              {
+                "title": "Migrating to v23",
+                "url": "../themes-v23-migration/"
+              }
+            ]
+          },
+          {
+            "title": "Grid Size",
+            "url": "../width-and-height/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Custom Icons",
+            "box-title": "Icons",
+            "url": "../icons/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Printing",
+            "url": "../for-print/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Client-Side Data",
+        "icon": "icon-data",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "../client-side-model/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Accessing Data",
+            "url": "../accessing-data/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Updating Data",
+            "url": "../data-update/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Single Row / Cell",
+                "url": "../data-update-single-row-cell/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Transactions",
+                "url": "../data-update-transactions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "High Frequency",
+                "url": "../data-update-high-frequency/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Immutable Data",
+            "url": "../immutable-data/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Context",
+            "url": "../context/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Use with RxJS",
+                "url": "../rxjs/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Server-Side Data",
+        "icon": "icon-data",
+        "items": [
+          {
+            "title": "Row Models",
+            "url": "../row-models/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Server-Side Row Model",
+            "url": "../server-side-model/",
+            "showInCollapsed": true,
+            "enterprise": true,
+            "items": [
+              {
+                "title": "Datasource",
+                "url": "../server-side-model-datasource/",
+                "enterprise": true
+              },
+              {
+                "title": "Configuration",
+                "url": "../server-side-model-configuration/",
+                "enterprise": true
+              },
+              {
+                "title": "Sorting",
+                "url": "../server-side-model-sorting/",
+                "enterprise": true
+              },
+              {
+                "title": "Filtering",
+                "url": "../server-side-model-filtering/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Grouping",
+                "url": "../server-side-model-grouping/",
+                "enterprise": true
+              },
+              {
+                "title": "Pivoting",
+                "url": "../server-side-model-pivoting/",
+                "enterprise": true
+              },
+              {
+                "title": "Pagination",
+                "url": "../server-side-model-pagination/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Selection",
+                "url": "../server-side-model-selection/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Height",
+                "url": "../server-side-model-row-height/",
+                "enterprise": true
+              },
+              {
+                "title": "Master Detail",
+                "url": "../server-side-model-master-detail/",
+                "enterprise": true
+              },
+              {
+                "title": "Tree Data",
+                "url": "../server-side-model-tree-data/",
+                "enterprise": true
+              },
+              {
+                "title": "Changing Columns",
+                "url": "../server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "CRUD",
+                "url": "../server-side-model-crud/",
+                "enterprise": true
+              },
+              {
+                "title": "See Also",
+                "url": "",
+                "items": [
+                  {
+                    "title": "Using Node.js & MySQL",
+                    "url": "nodejs-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using GraphQL & MySQL",
+                    "url": "graphql-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using Java & Oracle",
+                    "url": "oracle-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using Java & Apache Spark",
+                    "url": "spark-server-side-operations/",
+                    "enterprise": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Infinite Row Model",
+            "url": "../infinite-scrolling/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Viewport Row Model",
+            "url": "../viewport/",
+            "enterprise": true,
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Selection",
+        "icon": "icon-selection",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "../selection-overview/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Selection",
+            "url": "../selection/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Range Selection",
+            "url": "../range-selection/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Handle",
+                "url": "../range-selection-handle/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Fill Handle",
+                "url": "../range-selection-fill-handle/",
+                "enterprise": true,
+                "showInCollapsed": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Filtering",
+        "icon": "icon-filter",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "../filtering-overview/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Filters",
+            "url": "../filtering/",
+            "showInCollapsed": false,
+            "items": [
+              {
+                "title": "Provided Column Filters",
+                "url": "../filter-provided/"
+              },
+              {
+                "title": "Simple Column Filters",
+                "url": "../filter-provided-simple/",
+                "items": [
+                  {
+                    "title": "Text Filter",
+                    "url": "../filter-text/",
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "Number Filter",
+                    "url": "../filter-number/",
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "Date Filter",
+                    "url": "../filter-date/",
+                    "showInCollapsed": true
+                  }
+                ]
+              },
+              {
+                "title": "Set Filter",
+                "url": "../filter-set/",
+                "enterprise": true,
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Filter List",
+                    "url": "../filter-set-filter-list/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Data Updates",
+                    "url": "../filter-set-data-updates/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Mini Filter",
+                    "url": "../filter-set-mini-filter/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Excel Mode",
+                    "url": "../filter-set-excel-mode/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "API",
+                    "url": "../filter-set-api/",
+                    "enterprise": true
+                  }
+                ]
+              },
+              {
+                "title": "Multi Filter",
+                "url": "../filter-multi/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Filter API",
+                "url": "../filter-api/"
+              },
+              {
+                "title": "Floating Filters",
+                "url": "../floating-filters/"
+              },
+              {
+                "title": "Custom Filter",
+                "url": "../filter-custom/"
+              }
+            ]
+          },
+          {
+            "title": "External Filter",
+            "url": "../filter-external/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Quick Filter",
+            "url": "../filter-quick/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Rendering",
+        "icon": "icon-render-cells",
+        "items": [
+          {
+            "title": "Cell Content",
+            "url": "../rendering-flow/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Value Getters",
+                "url": "../value-getters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Value Formatters",
+                "url": "../value-formatters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Expressions",
+                "url": "../cell-expressions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Reference Data",
+                "url": "../reference-data/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Cell Rendering",
+            "url": "../cell-rendering/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Group Cell Renderer",
+                "url": "../provided-renderer-group/"
+              },
+              {
+                "title": "Change Cell Renderers",
+                "url": "../provided-renderer-change/"
+              }
+            ]
+          },
+          {
+            "title": "Rendering API",
+            "url": "../rendering-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "View Refresh",
+            "url": "../refresh/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Flashing Cells",
+            "url": "../flashing-cells/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Change Detection",
+            "url": "../change-detection/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Expressions & Context",
+                "url": "example-expressions-and-context/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Editing",
+        "icon": "icon-edit-cells",
+        "items": [
+          {
+            "title": "Cell Editing",
+            "url": "../cell-editing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Saving Content",
+            "url": "../editing-flow/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Value Parsers",
+                "url": "../value-parsers/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Value Setters",
+                "url": "../value-setters/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Provided Editors",
+            "url": "../provided-cell-editors/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Undo / Redo Edits",
+            "url": "../undo-redo-edits/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Group & Pivot",
+        "icon": "icon-group",
+        "items": [
+          {
+            "title": "Row Grouping",
+            "url": "../grouping/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Master Detail",
+            "url": "../master-detail/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Detail Grids",
+                "url": "../master-detail-detail-grids/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Detail Height",
+                "url": "../master-detail-height/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Detail Refresh",
+                "url": "../master-detail-refresh/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Master Rows",
+                "url": "../master-detail-master-rows/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Nesting",
+                "url": "../master-detail-nesting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Custom Detail",
+                "url": "../master-detail-custom-detail/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "../master-detail-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
+            "title": "Tree Data",
+            "url": "../tree-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Aggregation",
+            "url": "../aggregation/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Pivoting",
+            "url": "../pivoting/",
+            "enterprise": true,
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Import & Export",
+        "icon": "icon-import-export",
+        "items": [
+          {
+            "title": "Export",
+            "url": "../export/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "CSV Export",
+                "url": "../csv/"
+              },
+              {
+                "title": "Excel Export",
+                "url": "../excel/",
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Clipboard",
+            "url": "../clipboard/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Drag & Drop",
+            "url": "../drag-and-drop/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Import Excel",
+                "url": "example-excel-import/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Extending the grid",
+    "items": [
+      {
+        "title": "Accessories",
+        "icon": "icon-accessories",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Tool Panels",
+            "url": "../tool-panel/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Side Bar",
+                "url": "../side-bar/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Columns Tool Panel",
+                "url": "../tool-panel-columns/",
+                "showInCollapsed": true,
+                "enterprise": true
+              },
+              {
+                "title": "Filters Tool Panel",
+                "url": "../tool-panel-filters/",
+                "showInCollapsed": true,
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Column Menu",
+            "url": "../column-menu/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Context Menu",
+            "url": "../context-menu/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Status Bar",
+            "url": "../status-bar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Overlays",
+            "url": "../overlays/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Components",
+        "icon": "icon-components",
+        "items": [
+          {
+            "title": "Registering Components",
+            "url": "../components/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Component Types",
+            "url": "../component-types/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Cell Renderer",
+                "box-title": "Cell",
+                "url": "../cell-rendering-components/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cell Editor",
+                "box-title": "Editor",
+                "url": "../cell-editor/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Component",
+                "box-title": "Date",
+                "url": "../date-component/"
+              },
+              {
+                "title": "Filter Component",
+                "box-title": "Filter",
+                "url": "../filter-component/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Floating Filter Component",
+                "box-title": "Floating Filter",
+                "url": "../floating-filter-component/"
+              },
+              {
+                "title": "Header Component",
+                "box-title": "Header",
+                "url": "../header-rendering/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Loading Cell Renderer",
+                "box-title": "Loading",
+                "url": "../loading-cell-renderer/"
+              },
+              {
+                "title": "Overlay Component",
+                "box-title": "Overlays",
+                "url": "../overlay-component/"
+              },
+              {
+                "title": "Status Bar Component",
+                "box-title": "Status Bar",
+                "url": "../status-bar-component/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Tool Panel Component",
+                "box-title": "Tool Panel",
+                "url": "../tool-panel-component/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Tooltip Component",
+                "box-title": "Tooltip",
+                "url": "../tooltip-component/",
+                "showInCollapsed": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Integrated Charts",
+        "icon": "icon-charts",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "../charts-integrated-overview/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Range Chart",
+            "url": "../charts-integrated-range-chart/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Pivot Chart",
+            "url": "../charts-integrated-pivot-chart/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Toolbar",
+            "url": "../charts-integrated-chart-toolbar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart API",
+            "url": "../charts-integrated-chart-range-api/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Customisation",
+            "url": "../charts-integrated-customisation/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Container",
+            "url": "../charts-integrated-container/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Events",
+            "url": "../charts-integrated-chart-events/",
+            "enterprise": true
+          },
+          {
+            "title": "Time Series",
+            "url": "../charts-integrated-time-series/",
+            "enterprise": true
+          },
+          {
+            "title": "Third-Party Charting",
+            "url": "../graphing/"
+          }
+        ]
+      },
+      {
+        "title": "Standalone Charts",
+        "icon": "icon-charts",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-charts-overview/",
+            "showInCollapsed": true,
+            "hideChildren": true,
+            "items": [
+              {
+                "title": "Bar/Column",
+                "url": "javascript-charts-overview/#bar-column",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Bar",
+                    "url": "javascript-charts-overview/simple-bar.php"
+                  },
+                  {
+                    "title": "Grouped Bar",
+                    "url": "javascript-charts-overview/grouped-bar.php"
+                  },
+                  {
+                    "title": "Stacked Bar",
+                    "url": "javascript-charts-overview/stacked-bar.php"
+                  },
+                  {
+                    "title": "100% Stacked Bar",
+                    "url": "javascript-charts-overview/100--stacked-bar.php"
+                  },
+                  {
+                    "title": "Bar With Labels",
+                    "url": "javascript-charts-overview/bar-with-labels.php"
+                  },
+                  {
+                    "title": "Simple Column",
+                    "url": "javascript-charts-overview/simple-column.php"
+                  },
+                  {
+                    "title": "Grouped Column",
+                    "url": "javascript-charts-overview/grouped-column.php"
+                  },
+                  {
+                    "title": "Stacked Column",
+                    "url": "javascript-charts-overview/stacked-column.php"
+                  },
+                  {
+                    "title": "100% Stacked Column",
+                    "url": "javascript-charts-overview/100--stacked-column.php"
+                  },
+                  {
+                    "title": "Column With Negative Values",
+                    "url": "javascript-charts-overview/column-with-negative-values.php"
+                  }
+                ]
+              },
+              {
+                "title": "Pie/Doughnut",
+                "url": "javascript-charts-overview/#pie-doughnut",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Pie",
+                    "url": "javascript-charts-overview/simple-pie.php"
+                  },
+                  {
+                    "title": "Simple Doughnut",
+                    "url": "javascript-charts-overview/simple-doughnut.php"
+                  }
+                ]
+              },
+              {
+                "title": "Line",
+                "url": "javascript-charts-overview/#line",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Line",
+                    "url": "javascript-charts-overview/simple-line.php"
+                  },
+                  {
+                    "title": "Line With Gaps",
+                    "url": "javascript-charts-overview/line-with-gaps.php"
+                  }
+                ]
+              },
+              {
+                "title": "Scatter/Bubble",
+                "url": "javascript-charts-overview/#scatter-bubble",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Scatter",
+                    "url": "javascript-charts-overview/simple-scatter.php"
+                  },
+                  {
+                    "title": "Simple Bubble",
+                    "url": "javascript-charts-overview/simple-bubble.php"
+                  },
+                  {
+                    "title": "Bubble With Negative Values",
+                    "url": "javascript-charts-overview/bubble-with-negative-values.php"
+                  },
+                  {
+                    "title": "Bubble With Categories",
+                    "url": "javascript-charts-overview/bubble-with-categories.php"
+                  }
+                ]
+              },
+              {
+                "title": "Area",
+                "url": "javascript-charts-overview/#area",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Area",
+                    "url": "javascript-charts-overview/simple-area.php"
+                  },
+                  {
+                    "title": "Stacked Area",
+                    "url": "javascript-charts-overview/stacked-area.php"
+                  },
+                  {
+                    "title": "100% Stacked Area",
+                    "url": "javascript-charts-overview/100--stacked-area.php"
+                  },
+                  {
+                    "title": "Area With Negative Values",
+                    "url": "javascript-charts-overview/area-with-negative-values.php"
+                  }
+                ]
+              },
+              {
+                "title": "Histogram",
+                "url": "javascript-charts-overview/#histogram",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Histogram",
+                    "url": "javascript-charts-overview/simple-histogram.php"
+                  },
+                  {
+                    "title": "Histogram with specified bins",
+                    "url": "javascript-charts-overview/histogram-with-specified-bins.php"
+                  },
+                  {
+                    "title": "XY Histogram with Mean Aggregation",
+                    "url": "javascript-charts-overview/xy-histogram-with-mean-aggregation.php"
+                  }
+                ]
+              },
+              {
+                "title": "Feature Highlights",
+                "url": "javascript-charts-overview/#feature-highlights",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Time Axis With Irregular Intervals",
+                    "url": "javascript-charts-overview/time-axis-with-irregular-intervals.php"
+                  },
+                  {
+                    "title": "Real-Time Data Updates",
+                    "url": "javascript-charts-overview/real-time-data-updates.php"
+                  },
+                  {
+                    "title": "Combination of Different Series Types",
+                    "url": "javascript-charts-overview/combination-of-different-series-types.php"
+                  },
+                  {
+                    "title": "Chart Customisation",
+                    "url": "javascript-charts-overview/chart-customisation.php"
+                  },
+                  {
+                    "title": "Custom Marker Shapes",
+                    "url": "javascript-charts-overview/custom-marker-shapes.php"
+                  },
+                  {
+                    "title": "Custom Tooltips",
+                    "url": "javascript-charts-overview/custom-tooltips.php"
+                  },
+                  {
+                    "title": "Per-Marker Customisation",
+                    "url": "javascript-charts-overview/per-marker-customisation.php"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Getting Started",
+            "isCategory": true,
+            "items": [
+              {
+                "title": "Vanilla JavaScript",
+                "url": "javascript-charts/"
+              },
+              {
+                "title": "Angular",
+                "url": "angular-charts/"
+              },
+              {
+                "title": "React",
+                "url": "react-charts/"
+              },
+              {
+                "title": "Vue",
+                "url": "vuejs-charts/"
+              }
+            ]
+          },
+          {
+            "title": "API",
+            "isCategory": true,
+            "forceTopLevelSubItems": true,
+            "items": [
+              {
+                "title": "Options Reference",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api/"
+              },
+              {
+                "title": "Themes Reference",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api-themes/"
+              },
+              {
+                "title": "Explorer",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api-explorer/"
+              }
+            ]
+          },
+          {
+            "title": "Series",
+            "isCategory": true,
+            "items": [
+              {
+                "title": "Line",
+                "url": "javascript-charts-line-series/"
+              },
+              {
+                "title": "Bar/Column",
+                "url": "javascript-charts-bar-series/"
+              },
+              {
+                "title": "Histogram",
+                "url": "javascript-charts-histogram-series/"
+              },
+              {
+                "title": "Area",
+                "url": "javascript-charts-area-series/"
+              },
+              {
+                "title": "Scatter/Bubble",
+                "url": "javascript-charts-scatter-series/"
+              },
+              {
+                "title": "Pie/Doughnut",
+                "url": "javascript-charts-pie-series/"
+              }
+            ]
+          },
+          {
+            "title": "Features",
+            "isCategory": true,
+            "items": [
+              {
+                "title": "Layout",
+                "url": "javascript-charts-layout/"
+              },
+              {
+                "title": "Legend",
+                "url": "javascript-charts-legend/"
+              },
+              {
+                "title": "Themes",
+                "url": "javascript-charts-themes/"
+              },
+              {
+                "title": "Navigator",
+                "url": "javascript-charts-navigator/"
+              },
+              {
+                "title": "Markers",
+                "url": "javascript-charts-markers/"
+              },
+              {
+                "title": "Formatters",
+                "url": "javascript-charts-formatters/"
+              },
+              {
+                "title": "Tooltips",
+                "url": "javascript-charts-tooltips/"
+              },
+              {
+                "title": "Axes",
+                "url": "javascript-charts-axis/"
+              },
+              {
+                "title": "Events",
+                "url": "javascript-charts-events/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Other",
+    "items": [
+      {
+        "title": "Scrolling",
+        "icon": "icon-scrolling",
+        "items": [
+          {
+            "title": "DOM Virtualisation",
+            "url": "../dom-virtualisation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Pagination",
+            "url": "../pagination/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Aligned Grids",
+            "url": "../aligned-grids/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Scrolling Performance",
+            "url": "../performance/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Scrolling Scenarios",
+                "url": "../scrolling-scenarios/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Interactivity",
+        "icon": "icon-interactivity",
+        "items": [
+          {
+            "title": "Keyboard Navigation",
+            "url": "../keyboard-navigation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Touch",
+            "url": "../touch/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Accessibility (ARIA)",
+            "url": "../accessibility/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "RTL Text Direction",
+            "url": "../rtl/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Localisation",
+            "url": "../localisation/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Testing & Security",
+        "icon": "icon-test",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Testing Overview",
+            "url": "../testing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Testing Angular",
+            "url": "../testing-angular/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Testing React",
+            "url": "../testing-react/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Testing Vue",
+            "url": "../testing-vue/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Jasmine & Protractor",
+            "url": "../e2e-test-with-jasmine/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Security",
+            "url": "../security/",
+            "showInCollapsed": true
+          }
+        ]
+      }
+    ]
+  }
+]
