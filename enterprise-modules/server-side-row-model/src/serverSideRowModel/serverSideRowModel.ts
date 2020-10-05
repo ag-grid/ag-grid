@@ -120,23 +120,23 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
         // every other customer can continue as normal and have it working!!!
 
+        if (!this.cacheParams) {
+            this.reset();
+            return;
+        }
+
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        let resetRequired: boolean;
-        if (!this.cacheParams) {
-            resetRequired = true;
-        } else {
+        const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+        const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
 
-            const rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-            const valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-            const pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+        const sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+        const rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
+        const pivotDifferent = !_.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
+        const valuesDifferent = !_.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
 
-            const sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-            const rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-            const pivotDifferent = !_.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-            const valuesDifferent = !_.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
-            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
-        }
+        const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
             this.reset();
@@ -222,6 +222,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
+    @PreDestroy
     private destroyCache(): void {
         if (!this.rootNode || !this.rootNode.childrenCache) { return; }
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
@@ -347,9 +348,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (!cache) { return; }
 
         cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), new NumberSequence());
-
-        const nextRowTop = {value: 0};
-        cache.setDisplayIndexes(new NumberSequence(), nextRowTop);
+        cache.setDisplayIndexes(new NumberSequence(), {value: 0});
     }
 
     public getRow(index: number): RowNode | null {
@@ -397,9 +396,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (pixel === 0) { return 0; }
         const cache = this.getRootCache();
-        if (!cache) { return 0; }
+        if (pixel===0 || !cache) { return 0; }
         return cache.getRowIndexAtPixel(pixel);
     }
 
