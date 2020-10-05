@@ -699,12 +699,14 @@ export interface NavigateToNextHeaderParams {
     previousHeaderPosition: HeaderPosition;
     nextHeaderPosition: HeaderPosition;
     event: KeyboardEvent;
+    headerRowCount: number;
 }
 
 export interface TabToNextHeaderParams {
     backwards: boolean;
     previousHeaderPosition: HeaderPosition;
     nextHeaderPosition: HeaderPosition;
+    headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {

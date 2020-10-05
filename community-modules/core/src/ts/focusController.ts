@@ -22,7 +22,6 @@ import { GridCore } from "./gridCore";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
-import { NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams } from "./entities/gridOptions";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -203,30 +202,35 @@ export class FocusController extends BeanStub {
         if (allowUserOverride) {
             const { gridOptionsWrapper } = this;
             const currentPosition = this.getFocusedHeader();
+            const headerRowCount = this.headerNavigationService.getHeaderRowCount();
 
             if (fromTab) {
                 const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
                 if (userFunc) {
-                    const params: TabToNextHeaderParams = {
+                    const params = {
                         backwards: direction === 'Before',
                         previousHeaderPosition: currentPosition,
-                        nextHeaderPosition: headerPosition
+                        nextHeaderPosition: headerPosition,
+                        headerRowCount
                     };
                     headerPosition = userFunc(params);
                 }
             } else {
                 const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
                 if (userFunc) {
-                    const params: NavigateToNextHeaderParams = {
+                    const params = {
                         key: event.key,
                         previousHeaderPosition: currentPosition,
                         nextHeaderPosition: headerPosition,
+                        headerRowCount,
                         event
                     };
                     headerPosition = userFunc(params);
                 }
             }
         }
+
+        if (!headerPosition) { return false; }
 
         if (headerPosition.headerRowIndex === -1) {
             return this.focusGridView(headerPosition.column as Column);

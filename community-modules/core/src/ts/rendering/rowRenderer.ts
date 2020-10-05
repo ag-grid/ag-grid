@@ -1406,7 +1406,9 @@ export class RowRenderer extends BeanStub {
         } else {
             res = this.moveToNextCellNotEditing(previousRenderedCell, backwards);
         }
-        return res;
+
+        // if a cell wasn't found, it's possible that focus was moved to the header
+        return res || !!this.focusController.getFocusedHeader();
     }
 
     private moveToNextEditingCell(previousRenderedCell: CellComp, backwards: boolean): boolean {
@@ -1443,7 +1445,6 @@ export class RowRenderer extends BeanStub {
         if (foundCell) {
             this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
         }
-
         return foundCell;
     }
 
@@ -1525,6 +1526,16 @@ export class RowRenderer extends BeanStub {
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) { return null; }
+
+            if (nextCell.rowIndex < 0) {
+                const headerLen = this.beans.headerNavigationService.getHeaderRowCount();
+
+                this.focusController.focusHeaderPosition(
+                    { headerRowIndex: headerLen + (nextCell.rowIndex), column: nextCell.column }
+                );
+
+                return null;
+            }
 
             // if editing, but cell not editable, skip cell. we do this before we do all of
             // the 'ensure index visible' and 'flush all frames', otherwise if we are skipping

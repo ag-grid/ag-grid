@@ -133,10 +133,9 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Most people will be happy with the default navigation the grid does when you use the arrow keys
-        and the tab key. Some people will want to override this - for example maybe you want the tab key
-        to navigate to the cell below, not the cell to the right. To facilitate this, the grid offers
-        two methods: <code>navigateToNextCell</code>, <code>tabToNextCell</code>, <code>navigateToNextHeader</code>
-        and <code>tabToNextHeader</code>.
+        and the tab key. Some people will want to override this (ie. you may want the tab key to navigate to the cell 
+        below, not the cell to the right). To facilitate this, the grid offers four methods: <code>navigateToNextCell</code>, 
+        <code>tabToNextCell</code>, <code>navigateToNextHeader</code> and <code>tabToNextHeader</code>.
     </p>
 
     <h3>navigateToNextCell</h3>
@@ -212,13 +211,6 @@ interface CellPosition {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
-    <note>
-        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to 
-        navigate within the grid header (see the <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> methods below). 
-        If you need to navigate from the grid into the grid header, pass <strong>rowIndex: -1</strong>. This will navigate into the
-        last header row.
-    </note>
-
     <h3>navigateToNextHeader</h3>
 
     <p>
@@ -237,6 +229,9 @@ interface NavigateToNextHeaderParams {
 
     // the header the grid would normally pick as the next header for this navigation
     nextHeaderPosition: HeaderPosition;
+
+    // the number of header rows present in the grid
+    headerRowCount: number;
 
     event: KeyboardEvent;
 }</snippet>
@@ -259,6 +254,9 @@ interface TabToNextHeaderParams {
 
     // the header the grid would normally pick as the next header for this navigation
     nextHeaderPosition: HeaderPosition;
+
+    // the number of header rows present in the grid
+    headerRowCount: number;
 }</snippet>
 
     <h3>HeaderPosition</h3>
@@ -279,6 +277,19 @@ interface HeaderPosition {
 
 }</snippet>
 
+    <p>
+        You should return the <code>HeaderPosition</code> you want in the <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> functions
+        to have it focused. Returning <code>null</code> or <code>undefined</code> in <code>navigateToNextHeader</code> will do nothing (same as focusing 
+        the current focused cell), however, doing the same thing in <code>tabToNextHeader</code> will allow the browser default behavior for tab to happen.
+    </p>
+
+    <note>
+        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> are only called while navigating across grid cells, while
+        <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> are only called while navigating across grid headers.
+        If you need to navigate from one container to another, pass <strong>rowIndex: -1</strong> in <code>CellPosition</code> 
+        or <strong>headerRowIndex: -1</strong> in <code>HeaderPosition</code>.
+    </note>
+
     <h2>Example Custom Cell Navigation</h2>
 
     <p>
@@ -292,10 +303,20 @@ interface HeaderPosition {
         <ul>
             <li><code>navigateToNextCell</code> swaps the up and down arrow keys.</li>
             <li><code>tabToNextCell</code> uses tabbing to go up and down rather than right and left.</li>
-            <li><code>navigateToNextHeader</code> swaps the left and right arrow keys.</li>
+            <li><code>navigateToNextHeader</code> swaps the up and down arrow keys.</li>
             <li><code>tabToNextHeader</code> uses tabbing to go up and down rather than right and left.</li>
-            <li>Pressing the down arrow will navigate to the header by passing <strong>rowIndex: -1</strong></li>
-            <li>Tabbing will go up, but it will not go into the grid header.</li>
+            <li>
+                Pressing the down arrow will navigate to the header by passing <strong>rowIndex: -1</strong> when 
+                a cell in the first rows is focused.
+            </li>
+            <li>
+                Pressing the up arrow will navigate to the first grid row by passing <strong>headerRowIndex: -1</strong> when
+                a header cell in the last header row is focused.
+            </li>
+            <li>
+                Tabbing when a grid cell is focused will move selection upwards, but it will not go into the grid header.
+            </li>
+            
         </ul>
     </p>
 
