@@ -165,18 +165,18 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     animateRows: true,
-    debug: true,
+    // debug: true,
     enableRangeSelection: true,
     sideBar: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,
-    maxBlocksInCache: 2,
+    // maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
     onFirstDataRendered: onFirstDataRendered,
     enableCharts: true,
-    chartThemes: ['ag-default-dark'],
+    chartThemes: ['ag-default-dark', 'ag-material-dark', 'ag-pastel-dark', 'ag-vivid-dark', 'ag-solar-dark'],
     chartThemeOverrides: {
         common: {
             navigator: {
