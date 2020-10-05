@@ -190,7 +190,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         const params = this.createParams();
-        const res = this.headerComp.refresh(params);
+
+        // take any custom params off of the user
+        const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+
+        const res = this.headerComp.refresh(finalParams);
 
         return res;
     }
