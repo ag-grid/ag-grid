@@ -1,39 +1,38 @@
 import React from "react";
-import JSONData from '../data/menu.json';
+import menuData from '../data/menu.json';
 import './menu.scss';
+import { Link } from 'gatsby';
 
-const displayMenuItem = (item, currentFramework) => {
+const MenuItem = ({ item, currentFramework }) => {
     if (item.frameworkSpecific && !isCurrentFramework(item.title, currentFramework)) { return null; }
 
     return (
-        <li key={ item.title }>
-            { item.url
-                ? <a href={ `../../${item.url.replace('${framework}', currentFramework)}` }>{ item.title }</a>
+        <li key={item.title}>
+            {item.url
+                ? <Link to={`../../${item.url.replace('${framework}', currentFramework)}`}>{item.title}</Link>
                 : item.title
             }
-            { item.items ? displayMenuGroup({ group: item.title, items: item.items }, currentFramework) : null }
+            {item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
         </li>
     );
-}
+};
 
-const displayMenuGroup = (group, currentFramework) => {
+const MenuGroup = ({ group, currentFramework }) => {
     if (group.frameworkSpecific && !isCurrentFramework(group.title, currentFramework)) { return null; }
 
     return (
-        <ul key={ group.group }>
-            { group.items.map(item => displayMenuItem(item, currentFramework)) }
+        <ul>
+            {group.items.map(item => <MenuItem key={item.title} item={item} currentFramework={currentFramework} />)}
         </ul>
-    )
+    );
 };
-
-const renderMenu = (currentFramework) => JSONData.map(group => displayMenuGroup(group, currentFramework));
 
 const isCurrentFramework = (title, currentFramework) => title.toLowerCase().indexOf(currentFramework) !== -1;
 
 const Menu = ({ currentFramework }) => {
     return <div className="menu_view">
-        { renderMenu(currentFramework) }
-    </div>
+        {menuData.map(group => <MenuGroup key={group.group} group={group} currentFramework={currentFramework} />)}
+    </div>;
 };
 
 export default Menu;

@@ -1,7 +1,7 @@
 {
-  "name": "gatsby-starter-hello-world",
+  "name": "ag-grid",
   "private": true,
-  "description": "A simplified bare-bones starter for Gatsby",
+  "description": "The website for AG-Grid",
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
@@ -41,12 +41,5 @@
   },
   "devDependencies": {
     "prettier": "2.1.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-hello-world"
-  },
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
   }
 }
