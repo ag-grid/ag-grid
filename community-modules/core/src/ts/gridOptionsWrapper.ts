@@ -1601,7 +1601,7 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
-            if (height != null) {
+            if (this.isNumeric(height)) {
                 return { height, estimated: false };
             }
         }
@@ -1646,7 +1646,7 @@ export class GridOptionsWrapper {
     }
 
     private isNumeric(value: any) {
-        return !isNaN(value) && typeof value === 'number';
+        return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
