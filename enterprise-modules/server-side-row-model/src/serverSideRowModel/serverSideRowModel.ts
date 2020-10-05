@@ -48,7 +48,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
-    private rowHeight: number;
     private cacheParams: ServerSideCacheParams;
     private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
 
@@ -60,8 +59,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @PostConstruct
     private postConstruct(): void {
         this.groupExpandListener = this.createManagedBean(new GroupExpandListener());
-
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
     }
 
@@ -340,7 +337,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
             blockSize: blockSize,
-            rowHeight: this.rowHeight,
             dynamicRowHeight: dynamicRowHeight
         };
 
@@ -428,9 +424,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getRowBounds(index: number): RowBounds {
         const cache = this.getRootCache();
         if (!cache) {
+            const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
             return {
                 rowTop: 0,
-                rowHeight: this.rowHeight
+                rowHeight: rowHeight
             };
         }
         return cache.getRowBounds(index);

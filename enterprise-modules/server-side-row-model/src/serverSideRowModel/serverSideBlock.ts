@@ -45,6 +45,7 @@ export class ServerSideBlock extends RowNodeBlock {
     private readonly parentCache: ServerSideCache;
     private readonly parentRowNode: RowNode;
 
+    private defaultRowHeight: number;
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
@@ -83,6 +84,7 @@ export class ServerSideBlock extends RowNodeBlock {
     protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.params.rowGroupCols[this.level];
@@ -198,7 +200,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
             const rowNode = this.getContext().createBean(new RowNode());
 
-            rowNode.setRowHeight(this.params.rowHeight);
+            rowNode.setRowHeight(this.defaultRowHeight);
 
             rowNode.group = this.groupLevel;
             rowNode.leafGroup = this.leafGroup;

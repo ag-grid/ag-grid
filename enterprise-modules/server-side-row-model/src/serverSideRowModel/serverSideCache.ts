@@ -1,25 +1,26 @@
 import {
     _,
     Autowired,
+    BeanStub,
+    CacheUpdatedEvent,
     ColumnVO,
+    Events,
     GridOptionsWrapper,
     IServerSideCache,
     IServerSideDatasource,
+    LoadCompleteEvent,
+    Logger,
     LoggerFactory,
     NumberSequence,
+    PostConstruct,
+    PreDestroy,
     Qualifier,
     RowBounds,
-    RowNode,
     RowDataTransaction,
-    RowNodeTransaction,
-    BeanStub,
-    RowRenderer,
-    Logger,
-    PreDestroy,
+    RowNode,
     RowNodeBlockLoader,
-    Events,
-    CacheUpdatedEvent,
-    LoadCompleteEvent
+    RowNodeTransaction,
+    RowRenderer
 } from "@ag-grid-community/core";
 
 import {ServerSideBlock} from "./serverSideBlock";
@@ -29,7 +30,6 @@ export interface ServerSideCacheParams {
     sortModel: any;
     filterModel: any;
     maxBlocksInCache?: number;
-    rowHeight: number;
     lastAccessedSequence: NumberSequence;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
@@ -58,6 +58,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     private readonly blocks: { [blockNumber: string]: ServerSideBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
 
+    private defaultRowHeight: number;
+
     private logger: Logger;
 
     private blockCount = 0;
@@ -78,6 +80,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.parentRowNode = parentRowNode;
         this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
         this.params  = cacheParams;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
     }
 
     @PreDestroy
@@ -334,8 +341,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             const rowsBetween = index - nextRowIndex;
 
             result = {
-                rowHeight: this.params.rowHeight,
-                rowTop: nextRowTop + rowsBetween * this.params.rowHeight
+                rowHeight: this.defaultRowHeight,
+                rowTop: nextRowTop + rowsBetween * this.defaultRowHeight
             };
         }
 
@@ -372,7 +379,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             }
 
             const pixelsBetween = pixel - nextRowTop;
-            const rowsBetween = (pixelsBetween / this.params.rowHeight) | 0;
+            const rowsBetween = (pixelsBetween / this.defaultRowHeight) | 0;
 
             result = nextRowIndex + rowsBetween;
         }
@@ -418,7 +425,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 if (_.exists(this.blockHeights[blockToAddId])) {
                     nextRowTop.value += this.blockHeights[blockToAddId];
                 } else {
-                    nextRowTop.value += blockSize * this.params.rowHeight;
+                    nextRowTop.value += blockSize * this.defaultRowHeight;
                 }
             }
 
@@ -438,7 +445,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         const rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
             displayIndexSeq.skip(rowsNotAccountedFor);
-            nextRowTop.value += rowsNotAccountedFor * this.params.rowHeight;
+            nextRowTop.value += rowsNotAccountedFor * this.defaultRowHeight;
         }
 
         this.displayIndexEnd = displayIndexSeq.peek();
@@ -502,7 +509,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                     if (_.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     } else {
-                        nextRowTop += this.params.rowHeight * blockSize;
+                        nextRowTop += this.defaultRowHeight * blockSize;
                     }
 
                     blockNumber++;
@@ -511,7 +518,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 const localIndex = displayRowIndex - this.displayIndexStart;
                 blockNumber = Math.floor(localIndex / blockSize);
                 displayIndexStart = this.displayIndexStart + (blockNumber * blockSize);
-                nextRowTop = this.cacheTopPixel + (blockNumber * blockSize * this.params.rowHeight);
+                nextRowTop = this.cacheTopPixel + (blockNumber * blockSize * this.defaultRowHeight);
             }
 
             block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
