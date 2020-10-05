@@ -1,5 +1,24 @@
-@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap/scss/bootstrap";
 
-.menu_view {
+.menu {
     @extend .p-2;
+}
+
+.menu__sections {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-section {
+    padding: 0.5rem;
+
+    .fa-chevron-right {
+        margin-right: 0.5rem;
+        transition: all 0.5s;
+    }
+}
+
+.menu-group {
+    margin: 0.5rem auto;
 }
