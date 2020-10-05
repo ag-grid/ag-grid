@@ -356,14 +356,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         rowNode.childrenCache = this.context.createBean(new ServerSideCache(this.cacheParams, rowNode));
     }
 
-    private onCacheUpdated(event: CacheUpdatedEvent): void {
+    private onCacheUpdated(): void {
         this.updateRowIndexesAndBounds();
-        const animate = event.suppressAnimation ? false : this.gridOptionsWrapper.isAnimateRows();
         const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: animate,
+            animate: true,
             keepRenderedRows: true,
             newPage: false,
             newData: false

@@ -58,11 +58,7 @@ export class GroupExpandListener extends BeanStub {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
         }
 
-        const suppressAnimation = rowNode.master && !rowNode.expanded;
-        const cacheUpdatedEvent: CacheUpdatedEvent = {
-            type: Events.EVENT_CACHE_UPDATED,
-            suppressAnimation: suppressAnimation
-        };
+        const cacheUpdatedEvent: CacheUpdatedEvent = { type: Events.EVENT_CACHE_UPDATED };
         this.eventService.dispatchEvent(cacheUpdatedEvent);
     }
 
