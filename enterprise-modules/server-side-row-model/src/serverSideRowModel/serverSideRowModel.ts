@@ -23,14 +23,13 @@ import {
     Qualifier,
     RowBounds,
     RowDataChangedEvent,
-    RowNode,
-    SortController,
-    RowRenderer,
-    RowNodeBlockLoader,
     RowDataTransaction,
-    CacheUpdatedEvent
+    RowNode,
+    RowNodeBlockLoader,
+    RowRenderer,
+    SortController
 } from "@ag-grid-community/core";
-import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 import {GroupExpandListener} from "./groupExpandListener";
 
 @Bean('rowModel')
