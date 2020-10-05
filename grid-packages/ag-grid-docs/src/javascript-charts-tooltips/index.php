@@ -225,9 +225,7 @@ SNIPPET
 series: [{
     type: 'column',
     tooltipRenderer: function (params) {
-        var xValue = params.datum[params.xKey];
-        var yValue = params.datum[params.yKey].toFixed(0);
-        return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + yValue + '</div>';
+        return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + params.xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + params.yValue + '</div>';
     }
 }]
 SNIPPET
@@ -235,11 +233,10 @@ SNIPPET
 
 <p>
     The tooltip renderer function receives the <code>params</code> object as a single parameter.
-    Inside that object you get a reference to the raw <code>datum</code> element (from the <code>chart.data</code>
-    or <code>series.data</code> array) that corresponds to the highlighted series item.
-    You also get a reference to the series' <code>xKey</code> and <code>yKey</code>, so that you could fetch
-    the actual values like so: <code>params.datum[params.yKey]</code>. You can then process the raw
-    values however you like before using them as a part of the returned HTML string.
+    Inside that object you get the <code>xValue</code> and <code>yValue</code> for the highlighted data point
+    as well as the reference to the raw <code>datum</code> element from the <code>chart.data</code>
+    or <code>series.data</code> array.
+    You can then process the raw values however you like before using them as a part of the returned HTML string.
 </p>
 
 <p>
@@ -265,14 +262,14 @@ SNIPPET
             Returns two <code>div</code> elements, one for the tooltip's title and another for its content.
         </li>
         <li>
-            The value of the title comes from <code>params.datum[params.xKey]</code> which is the name of the month.
+            The value of the title comes from <code>params.xValue</code> which is the name of the month.
         </li>
         <li>
             The title element gets its background color from the <code>params</code> object.
             The provided color matches the color of the series.
         </li>
         <li>
-            The <code>'Sweaters Made'</code> value comes from the <code>params.datum[params.yKey]</code>, which we then
+            The <code>'Sweaters Made'</code> value comes from the <code>params.yValue</code>, which we then
             stringify as an integer via <code>toFixed(0)</code>.
         </li>
         <li>
