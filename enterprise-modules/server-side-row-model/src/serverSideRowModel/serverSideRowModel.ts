@@ -25,12 +25,10 @@ import {
     RowDataChangedEvent,
     RowDataTransaction,
     RowNode,
-    RowNodeBlockLoader,
     RowRenderer,
     SortController
 } from "@ag-grid-community/core";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
-import {GroupExpandListener} from "./groupExpandListener";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -42,8 +40,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
-    private groupExpandListener: GroupExpandListener;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -57,7 +53,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PostConstruct
     private postConstruct(): void {
-        this.groupExpandListener = this.createManagedBean(new GroupExpandListener());
         this.addEventListeners();
     }
 
