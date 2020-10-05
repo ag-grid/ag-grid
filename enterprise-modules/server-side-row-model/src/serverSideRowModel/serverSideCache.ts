@@ -31,7 +31,6 @@ export interface ServerSideCacheParams {
     filterModel: any;
     maxBlocksInCache?: number;
     lastAccessedSequence: NumberSequence;
-    rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
@@ -52,6 +51,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     private readonly params: ServerSideCacheParams;
     private readonly parentRowNode: RowNode;
@@ -226,7 +226,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.blockCount--;
-        this.params.rowNodeBlockLoader.removeBlock(block);
+        this.rowNodeBlockLoader.removeBlock(block);
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
@@ -599,7 +599,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.blockCount++;
         this.purgeBlocksIfNeeded(block);
 
-        this.params.rowNodeBlockLoader.addBlock(block);
+        this.rowNodeBlockLoader.addBlock(block);
 
         return block;
     }

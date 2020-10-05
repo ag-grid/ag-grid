@@ -49,7 +49,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private datasource: IServerSideDatasource | undefined;
 
     private cacheParams: ServerSideCacheParams;
-    private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
 
     private logger: Logger;    
 
@@ -228,17 +227,22 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
+    private destroyCache(): void {
+        if (!this.rootNode || !this.rootNode.childrenCache) { return; }
+        this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
+    }
+
     private reset(): void {
+        this.destroyCache();
+
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.createBean(this.rootNode);
 
         if (this.datasource) {
-            this.createNewRowNodeBlockLoader();
             this.cacheParams = this.createCacheParams();
-            this.createNodeCache(this.rootNode);
-
+            this.rootNode.childrenCache = this.context.createBean(new ServerSideCache(this.cacheParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
 
@@ -253,32 +257,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            animate: false,
-            keepRenderedRows: false,
-            newData: false,
-            newPage: false
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
-    }
-
-    private createNewRowNodeBlockLoader(): void {
-        this.destroyRowNodeBlockLoader();
-        const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.createBean(this.rowNodeBlockLoader);
-    }
-
-    @PreDestroy
-    private destroyRowNodeBlockLoader(): void {
-        if (this.rowNodeBlockLoader) {
-            this.destroyBean(this.rowNodeBlockLoader);
-            this.rowNodeBlockLoader = undefined;
-        }
+        this.dispatchModelUpdated(true);
     }
 
     private toValueObjects(columns: Column[]): ColumnVO[] {
@@ -331,8 +310,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.extractSortModel(),
 
-            rowNodeBlockLoader: this.rowNodeBlockLoader,
-
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
@@ -347,36 +324,27 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return this.cacheParams;
     }
 
-    private createNodeCache(rowNode: RowNode): void {
-        rowNode.childrenCache = this.context.createBean(new ServerSideCache(this.cacheParams, rowNode));
-    }
-
-    private onCacheUpdated(): void {
-        this.updateRowIndexesAndBounds();
+    private dispatchModelUpdated(reset = false): void {
         const modelUpdatedEvent: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: true,
-            keepRenderedRows: true,
+            animate: !reset,
+            keepRenderedRows: !reset,
             newPage: false,
             newData: false
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
+    private onCacheUpdated(): void {
+        this.updateRowIndexesAndBounds();
+        this.dispatchModelUpdated();
+    }
+
     public onRowHeightChanged(): void {
         this.updateRowIndexesAndBounds();
-        const modelUpdatedEvent: ModelUpdatedEvent = {
-            type: Events.EVENT_MODEL_UPDATED,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            newPage: false,
-            newData: false,
-            animate: true,
-            keepRenderedRows: true
-        };
-        this.eventService.dispatchEvent(modelUpdatedEvent);
+        this.dispatchModelUpdated();
     }
 
     public updateRowIndexesAndBounds(): void {
@@ -493,14 +461,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return result;
     }
 
-    public getBlockState(): any {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
-        }
- 
-        return null;
-    }
-
     // always returns true - this is used by the
     public isRowPresent(rowNode: RowNode): boolean {
         const foundRowNode = this.getRowNode(rowNode.id);
@@ -594,10 +554,5 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         return false;
-    }
-
-
-    public isLoading(): boolean {
-        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     }
 }

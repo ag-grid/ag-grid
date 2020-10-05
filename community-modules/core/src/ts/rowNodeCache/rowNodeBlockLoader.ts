@@ -1,27 +1,29 @@
 import { RowNodeBlock } from "./rowNodeBlock";
-import { Logger, LoggerFactory } from "../../logger";
-import { Qualifier } from "../../context/context";
-import { BeanStub } from "../../context/beanStub";
-import { debounce } from "../../utils/function";
-import { removeFromArray } from "../../utils/array";
+import {Autowired, Bean, PostConstruct, Qualifier} from "../context/context";
+import {BeanStub} from "../context/beanStub";
+import {Logger, LoggerFactory} from "../logger";
+import {_} from "../utils";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
+@Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
 
-    private readonly maxConcurrentRequests: number;
-    private readonly checkBlockToLoadDebounce: () => void;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private maxConcurrentRequests: number;
+    private checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
     private blocks: RowNodeBlock[] = [];
     private logger: Logger;
     private active = true;
 
-    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {
-        super();
-
-        this.maxConcurrentRequests = maxConcurrentRequests;
-
+    @PostConstruct
+    private postConstruct(): void {
+        this.maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
 
@@ -41,7 +43,7 @@ export class RowNodeBlockLoader extends BeanStub {
     }
 
     public removeBlock(block: RowNodeBlock): void {
-        removeFromArray(this.blocks, block);
+        _.removeFromArray(this.blocks, block);
     }
 
     protected destroy(): void {

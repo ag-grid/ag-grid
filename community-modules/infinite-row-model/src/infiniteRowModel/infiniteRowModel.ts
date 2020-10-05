@@ -34,9 +34,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
+    @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
     private infiniteCache: InfiniteCache | null;
-    private rowNodeBlockLoader: RowNodeBlockLoader | null;
 
     private datasource: IDatasource | null | undefined;
 
@@ -184,11 +184,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.destroyCache();
 
         const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-
-        // there is a bi-directional dependency between the loader and the cache,
-        // so we create loader here, and then pass dependencies in setDependencies() method later
-        this.rowNodeBlockLoader = this.createBean(new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis));
 
         this.cacheParams = {
             // the user provided datasource
@@ -231,10 +226,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private destroyCache(): void {
         if (this.infiniteCache) {
             this.infiniteCache = this.destroyBean(this.infiniteCache);
-        }
-
-        if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     }
 
@@ -317,14 +308,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         if (this.infiniteCache) {
             this.infiniteCache.setRowCount(rowCount, lastRowIndexKnown);
-        }
-    }
-
-    public getBlockState(): any {
-        if (this.rowNodeBlockLoader) {
-            return this.rowNodeBlockLoader.getBlockState();
-        } else {
-            return null;
         }
     }
 }

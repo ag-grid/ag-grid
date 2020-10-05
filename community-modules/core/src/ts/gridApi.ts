@@ -64,6 +64,7 @@ import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import {_} from "./utils";
+import {RowNodeBlockLoader} from "./rowNodeCache/rowNodeBlockLoader";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -155,6 +156,7 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
+    @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -1427,13 +1429,7 @@ export class GridApi {
     }
 
     public getCacheBlockState(): any {
-        if (this.infiniteRowModel) {
-            return this.infiniteRowModel.getBlockState();
-        } else if (this.serverSideRowModel) {
-            return this.serverSideRowModel.getBlockState();
-        } else {
-            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='serverSide'.`);
-        }
+        return this.rowNodeBlockLoader.getBlockState();
     }
 
     public checkGridSize(): void {

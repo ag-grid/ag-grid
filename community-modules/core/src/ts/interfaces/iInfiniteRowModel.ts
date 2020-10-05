@@ -7,5 +7,4 @@ export interface IInfiniteRowModel extends IRowModel {
     refreshCache(): void;
     purgeCache(): void;
     setRowCount(rowCount: number, maxRowFound?: boolean): void;
-    getBlockState(): any;
 }

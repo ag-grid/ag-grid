@@ -64,7 +64,7 @@ var gridOptions = {
     sideBar: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
-    maxConcurrentDatasourceRequests: 2,
+    maxConcurrentDatasourceRequests: 1,
     cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
