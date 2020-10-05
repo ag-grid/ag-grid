@@ -208,6 +208,8 @@ export class ChartDatasource extends BeanStub {
     private updatePivotKeysForSSRM() {
         let secondaryColumns = this.columnController.getSecondaryColumns();
 
+        if (!secondaryColumns) return;
+
         // we don't know what the application will use for the pivot key separator (i.e. '_' or '|' ) as the
         // secondary columns are provided to grid by the application via columnApi.setSecondaryColumns()
         let pivotKeySeparator = this.extractPivotKeySeparator(secondaryColumns);
