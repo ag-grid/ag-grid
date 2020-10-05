@@ -7,11 +7,13 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     RowGroupOpenedEvent,
-    RowNode
+    RowNode,
+    Bean
 } from "@ag-grid-community/core";
 import {ServerSideCache} from "./serverSideCache";
 import {ServerSideRowModel} from "./serverSideRowModel";
 
+@Bean('groupExpandListener')
 export class GroupExpandListener extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
