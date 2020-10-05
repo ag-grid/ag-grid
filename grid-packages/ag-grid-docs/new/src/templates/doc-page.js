@@ -4,6 +4,8 @@ import { graphql } from "gatsby";
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
 import FrameworkSpecificSection from '../components/FrameworkSpecificSection';
+import './doc-page.scss';
+import SideMenu from '../components/SideMenu';
 
 export default function DocPageTemplate({ data, pageContext: { framework } }) {
   const { markdownRemark: page } = data;
@@ -17,10 +19,13 @@ export default function DocPageTemplate({ data, pageContext: { framework } }) {
   }).Compiler;
 
   return (
-    <div className="doc-page">
-      <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-      <h1>{page.frontmatter.title}</h1>
-      {renderAst(page.htmlAst)}
+    <div className="doc-page-container">
+      <div className="doc-page">
+        <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
+        <h1>{page.frontmatter.title}</h1>
+        {renderAst(page.htmlAst)}
+      </div>
+      {page.headings && <SideMenu headings={page.headings} />}
     </div>
   );
 }
@@ -31,6 +36,11 @@ export const pageQuery = graphql`
       htmlAst
       frontmatter {
         title
+      }
+      headings {
+        id
+        depth
+        value
       }
     }
   }

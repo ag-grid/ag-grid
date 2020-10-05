@@ -17,7 +17,7 @@ export default ({ path, children, pageContext: { framework } }) => {
                 {framework && <div className="main_menu">
                     <Menu currentFramework={framework} />
                 </div>}
-                <div className="content container">
+                <div className="content">
                     {children}
                 </div>
             </div>

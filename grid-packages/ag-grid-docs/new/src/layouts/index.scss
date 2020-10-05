@@ -35,7 +35,7 @@ body {
 .content_viewport {
     @extend .d-flex;
     @extend .flex-grow-1;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .main_menu {
@@ -46,6 +46,7 @@ body {
 
 .content {
     @extend .p-3;
+    flex: 1;
     overflow: auto;
 }
 
@@ -66,4 +67,8 @@ body {
     p:last-child {
         margin-bottom: 0;
     }
+}
+
+a {
+    color: #0084e7;
 }
