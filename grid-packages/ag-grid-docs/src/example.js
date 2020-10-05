@@ -224,6 +224,7 @@ var gridOptions = {
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
     suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+    // suppressExpandablePivotGroups: true,
     // pivotColumnGroupTotals: 'before',
     // pivotRowTotals: 'before',
     // suppressRowTransform: true,
