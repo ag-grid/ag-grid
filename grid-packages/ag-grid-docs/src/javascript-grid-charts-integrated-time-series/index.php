@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     provide.
 </p>
 
-<?= grid_example('Time vs Category Axis', 'time-vs-category', 'generated', ['exampleHeight' => 740, 'enterprise' => true]) ?>
+<?= grid_example('Time vs Category Axis', 'time-vs-category', 'generated', ['exampleHeight' => 740, 'enterprise' => true, 'extras' => ['momentjs']]) ?>
 
 
 <h2>Time Axis Configuration</h2>
@@ -80,7 +80,7 @@ that <code>chartDataType='time'</code> is set on the column definitions.
     using the <code>chartDataType='time'</code> property on the 'timestamp' column definition:
 </p>
 
-<?= grid_example('Time Axis Configuration', 'time-axis-config', 'generated', ['exampleHeight' => 740, 'enterprise' => true]) ?>
+<?= grid_example('Time Axis Configuration', 'time-axis-config', 'generated', ['exampleHeight' => 740, 'enterprise' => true, 'extras' => ['momentjs']]) ?>
 
 
 <h2>Next Up</h2>
