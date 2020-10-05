@@ -263,10 +263,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
     }
 
-    public getCurrentPageHeight(): number {
-        return this.getRowCount() * this.rowHeight;
-    }
-
     public getTopLevelRowCount(): number {
         return this.getRowCount();
     }

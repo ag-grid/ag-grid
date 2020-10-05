@@ -443,10 +443,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return cache.getRowIndexAtPixel(pixel);
     }
 
-    public getCurrentPageHeight(): number {
-        return this.rowHeight * this.getRowCount();
-    }
-
     public isEmpty(): boolean {
         return false;
     }
