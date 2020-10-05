@@ -88,6 +88,6 @@ export class PropertyKeys {
      * framework-specific properties to colDefs, gridOptions etc.
      */
     public static FRAMEWORK_PROPERTIES = [
-        '__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
+        '__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
     ];
 }

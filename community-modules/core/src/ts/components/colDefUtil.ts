@@ -161,6 +161,6 @@ export class ColDefUtil {
 
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc
-    public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+    public static FRAMEWORK_PROPERTIES = ['__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
 }

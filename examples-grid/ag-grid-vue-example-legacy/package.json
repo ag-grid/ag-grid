@@ -1,0 +1,42 @@
+{
+  "name": "ag-grid-vue-example-legacy",
+  "version": "24.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm run serve",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build && npm run hash",
+    "hash": "sh ./hashDirectory.sh > .hash",
+    "test": "vue-cli-service test:unit --env=jest-environment-jsdom-fourteen",
+    "test:debug": "node --inspect-brk ./node_modules/@vue/cli-service/bin/vue-cli-service.js test:unit"
+  },
+  "dependencies": {
+    "@ag-grid-community/all-modules": "~24.0.0",
+    "@ag-grid-community/client-side-row-model": "~24.0.0",
+    "@ag-grid-community/core": "~24.0.0",
+    "@ag-grid-community/csv-export": "~24.0.0",
+    "@ag-grid-community/infinite-row-model": "~24.0.0",
+    "@ag-grid-community/vue": "~24.0.0",
+    "@ag-grid-enterprise/all-modules": "~24.0.0",
+    "bootstrap": "4.5.0",
+    "vue": "2.6.12",
+    "vue-property-decorator": "9.0.0",
+    "vue-class-component": "7.2.6",
+    "vue-router": "3.4.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "4.5.4",
+    "@vue/cli-plugin-unit-jest": "4.5.4",
+    "@vue/cli-service": "4.5.4",
+    "@vue/test-utils": "1.0.4",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "26.3.0",
+    "jest-environment-jsdom-fourteen": "1.0.1",
+    "vue-template-compiler": "2.6.12"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
