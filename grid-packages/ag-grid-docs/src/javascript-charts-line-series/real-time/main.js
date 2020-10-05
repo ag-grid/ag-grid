@@ -66,5 +66,6 @@ function startUpdates() {
 
 // inScope[update]
 function update() {
-    chart.data = getData();
+    options.data = getData();
+    agCharts.AgChart.update(chart, options);
 }
