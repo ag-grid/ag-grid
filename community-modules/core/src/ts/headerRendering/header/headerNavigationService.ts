@@ -71,40 +71,43 @@ export class HeaderNavigationService extends BeanStub {
         const { headerRowIndex, column } = fromHeader;
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP ;
-        const nextRow = isUp ?  headerRowIndex - 1 : headerRowIndex + 1;
+        let nextRow = isUp ?  headerRowIndex - 1 : headerRowIndex + 1;
+        let nextFocusColumn: ColumnGroup | Column;
+        let skipColumn = false;
 
-        if (nextRow < 0) { return false; }
+        if (nextRow < 0) {
+            nextRow = 0;
+            nextFocusColumn = column;
+            skipColumn = true;
+        }
 
         if (nextRow >= rowLen) {
-            // focusGridView returns false when the grid has no cells rendered.
-            return this.focusController.focusGridView();
+            nextRow = -1; // -1 indicates the focus should move to grid rows.
         }
 
         const currentRowType = this.getHeaderRowType(headerRowIndex);
 
-        let nextFocusColumn: ColumnGroup | Column;
+        if (!skipColumn) {
+            if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+                const currentColumn = column as ColumnGroup;
+                nextFocusColumn = isUp ? column.getParent() : currentColumn.getDisplayedChildren()[0] as ColumnGroup;
+            } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
+                nextFocusColumn = column;
+            } else {
+                const currentColumn = column as Column;
+                nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
+            }
 
-        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const currentColumn = column as ColumnGroup;
-            nextFocusColumn = isUp ? column.getParent() : currentColumn.getDisplayedChildren()[0] as ColumnGroup;
-        } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
-            nextFocusColumn = column;
-        } else {
-            const currentColumn = column as Column;
-            nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
+            if (!nextFocusColumn) { return false; }
         }
 
-        if (!nextFocusColumn) { return false; }
-
-        this.focusController.focusHeaderPosition(
+        return this.focusController.focusHeaderPosition(
             { headerRowIndex: nextRow, column: nextFocusColumn },
             undefined,
             false,
             true,
             event
         );
-
-        return true;
     }
 
     /*

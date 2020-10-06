@@ -281,6 +281,7 @@ interface HeaderPosition {
         You should return the <code>HeaderPosition</code> you want in the <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> functions
         to have it focused. Returning <code>null</code> or <code>undefined</code> in <code>navigateToNextHeader</code> will do nothing (same as focusing 
         the current focused cell), however, doing the same thing in <code>tabToNextHeader</code> will allow the browser default behavior for tab to happen.
+        This is useful for tabbing outside of the grid from the last cell or <code>shift</code> tabbing out of the grid from the first cell.
     </p>
 
     <note>
@@ -306,15 +307,16 @@ interface HeaderPosition {
             <li><code>navigateToNextHeader</code> swaps the up and down arrow keys.</li>
             <li><code>tabToNextHeader</code> uses tabbing to go up and down rather than right and left.</li>
             <li>
-                Pressing the down arrow will navigate to the header by passing <strong>rowIndex: -1</strong> when 
-                a cell in the first rows is focused.
+                When a cell in the first grid row is focused, pressing the down arrow will navigate to 
+                the header by passing <strong>rowIndex: -1</strong>.
             </li>
             <li>
-                Pressing the up arrow will navigate to the first grid row by passing <strong>headerRowIndex: -1</strong> when
-                a header cell in the last header row is focused.
+                When a header cell in the last header row is focused, pressing the up arrow will navigate 
+                to the first grid row by passing <strong>headerRowIndex: -1</strong>.
             </li>
             <li>
-                Tabbing when a grid cell is focused will move selection upwards, but it will not go into the grid header.
+                Tabbing/Shift tabbing will move the focus until the first header or the last grid row, but 
+                focus will not leave the grid.
             </li>
             
         </ul>
