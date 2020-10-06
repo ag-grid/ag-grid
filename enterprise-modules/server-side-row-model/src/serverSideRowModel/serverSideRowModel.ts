@@ -53,11 +53,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean { return false; }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.addEventListeners();
-    }
-
     public start(): void {
         const datasource = this.gridOptionsWrapper.getServerSideDatasource();
 
@@ -88,21 +83,23 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         });
     }
 
+    @PostConstruct
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        const resetListener = this.resetRootCache.bind(this);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
         this.destroyDatasource();
         this.datasource = datasource;
-        this.reset();
+        this.resetRootCache();
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -121,8 +118,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
         // every other customer can continue as normal and have it working!!!
 
+        // if first time, alwasy reset
         if (!this.cacheParams) {
-            this.reset();
+            this.resetRootCache();
             return;
         }
 
@@ -140,28 +138,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
-            this.reset();
+            this.resetRootCache();
         }
-    }
-
-    private onFilterChanged(): void {
-        this.reset();
-    }
-
-    private onValueChanged(): void {
-        this.reset();
-    }
-
-    private onColumnRowGroupChanged(): void {
-        this.reset();
-    }
-
-    private onColumnPivotChanged(): void {
-        this.reset();
-    }
-
-    private onPivotModeChanged(): void {
-        this.reset();
     }
 
     @PreDestroy
@@ -170,7 +148,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
     }
 
-    public reset(): void {
+    public resetRootCache(): void {
         this.destroyCache();
 
         this.rootNode = new RowNode();

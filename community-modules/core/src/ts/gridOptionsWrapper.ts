@@ -1532,6 +1532,11 @@ export class GridOptionsWrapper {
                  future versions of ag-Grid. If you need this to be set for every column use the defaultColDef property.`
             );
         }
+
+        if (options.suppressEnterpriseResetOnNewColumns) {
+            console.warn('ag-Grid: since v25, grid property suppressEnterpriseResetOnNewColumns is deprecated. This was a temporary property to allow changing columns in Server Side Row Model without triggering a reload. Now that it is possible to dynamically change columns in the grid, this is no longer needed.');
+            options.detailRowAutoHeight = true;
+        }
     }
 
     private checkForViolations() {
