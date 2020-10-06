@@ -153,9 +153,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private isFromThisGrid(draggingEvent: DraggingEvent) {
-        const { dragSourceContainer } = draggingEvent.dragSource;
+        const { dragSourceDomDataKey } = draggingEvent.dragSource;
 
-        return dragSourceContainer === this.getContainer();
+        return dragSourceDomDataKey === this.gridOptionsWrapper.getDomDataKey();
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {

@@ -63,10 +63,10 @@ function isTrue(value: any): boolean {
 function toNumber(value: any): number {
     if (typeof value == 'number') {
         return value;
-    } else if (typeof value == 'string') {
-        return parseInt(value);
-    } else {
-        return undefined;
+    }
+
+    if (typeof value == 'string') {
+        return parseInt(value, 10);
     }
 }
 
@@ -286,18 +286,24 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getDomDataKey(): string {
+        return this.domDataKey;
+    }
+
     // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
-        const domData = (element as any)[this.domDataKey];
+        const domData = (element as any)[this.getDomDataKey()];
 
         return domData ? domData[key] : undefined;
     }
 
     public setDomData(element: Element, key: string, value: any): any {
-        let domData = (element as any)[this.domDataKey];
+        const domDataKey = this.getDomDataKey();
+        let domData = (element as any)[domDataKey];
+
         if (missing(domData)) {
             domData = {};
-            (element as any)[this.domDataKey] = domData;
+            (element as any)[domDataKey] = domData;
         }
         domData[key] = value;
     }
