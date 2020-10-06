@@ -449,7 +449,7 @@ myInput.addEventListener("keydown", function (event) {
 <?= createSnippet(<<<SNIPPET
 function suppressHeaderKeyboardEvent(params: SuppressHeaderKeyboardEventParams) => boolean;
 
-interface SuppressKeyboardEventParams {
+interface SuppressHeaderKeyboardEventParams {
     api: GridApi; // grid API
     columnApi: ColumnApi; // column API
     context: any; // context object
