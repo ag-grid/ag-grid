@@ -21,6 +21,9 @@ export class GroupExpandListener extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+        // only want to be active if SSRM active, otherwise would be interfering with other row models
+        if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
+
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
     }
 
