@@ -80,11 +80,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     public getFuncNames(column: Column): string[] {
         const userAllowedFuncs = column.getColDef().allowedAggFuncs;
 
-        if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
-            return userAllowedFuncs;
-        }
-
-        return Object.keys(this.aggFuncsMap).sort();
+        return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;
     }
 
     public clear(): void {
@@ -93,9 +89,23 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
 }
 
 function aggSum(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((sum, value) => sum === null ? value : sum + value, null);
+    const { values } = params;
+    let result = null;
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if (typeof value === 'number') {
+            if (result === null) {
+                result = value;
+            } else {
+                result += value;
+            }
+        }
+    }
+
+    return result;
 }
 
 function aggFirst(params: IAggFuncParams): any {
@@ -107,26 +117,51 @@ function aggLast(params: IAggFuncParams): any {
 }
 
 function aggMin(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((min, value) => min === null || value < min ? value : min, null);
+    const { values } = params;
+    let result = null;
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if (typeof value === 'number' && (result === null || result > value)) {
+            result = value;
+        }
+    }
+
+    return result;
 }
 
 function aggMax(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((max, value) => max === null || value > max ? value : max, null);
+    const { values } = params;
+    let result = null;
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if (typeof value === 'number' && (result === null || result < value)) {
+            result = value;
+        }
+    }
+
+    return result;
 }
 
 function aggCount(params: IAggFuncParams): any {
-    const value = params.values.reduce((count, item) => {
-        const isGroupAgg = _.exists(item) && typeof item.value === 'number';
+    const { values } = params;
+    let result = 0;
 
-        return count + (isGroupAgg ? item.value : 1);
-    }, 0);
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        // check if the value is from an aggregated group
+        result += value != null && typeof value.value === 'number' ? value.value : 1;
+    }
 
     return {
-        value,
+        value: result,
         toString: function() {
             return this.value.toString();
         },
@@ -140,27 +175,23 @@ function aggCount(params: IAggFuncParams): any {
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
 function aggAvg(params: IAggFuncParams): any {
-    // the average will be the sum / count
-    const { sum, count } = params.values.reduce(({ sum, count }, item) => {
-        const itemIsGroupResult = _.exists(item) &&
-            typeof item.value === 'number' &&
-            typeof item.count === 'number';
+    const { values } = params;
+    let sum = 0;
+    let count = 0;
 
-        if (typeof item === 'number') {
-            return { sum: sum + item, count: count + 1 };
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if (typeof value === 'number') {
+            sum += value;
+            count++;
+        } else if (value != null && typeof value.value === 'number' && typeof value.count === 'number') {
+            // we are aggregating groups, so we take the aggregated values to calculated a weighted average
+            sum += value.value * value.count;
+            count += value.count;
         }
-
-        if (itemIsGroupResult) {
-            // we are aggregating groups, so we take the
-            // aggregated values to calculated a weighted average
-            return {
-                sum: sum + item.value * item.count,
-                count: count + item.count
-            };
-        }
-
-        return { sum, count };
-    }, { sum: 0, count: 0 });
+    }
 
     // avoid divide by zero error
     const value = count > 0 ? sum / count : null;
@@ -174,11 +205,7 @@ function aggAvg(params: IAggFuncParams): any {
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
         toString: function() {
-            if (typeof this.value === 'number') {
-                return this.value.toString();
-            }
-
-            return '';
+            return typeof this.value === 'number' ? this.value.toString() : '';
         },
         // used for sorting
         toNumber: function() {
