@@ -39,6 +39,8 @@ export interface ServerSideCacheParams {
     datasource?: IServerSideDatasource;
 }
 
+enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
+
 export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
@@ -106,12 +108,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     // listener on EVENT_LOAD_COMPLETE
     private onPageLoaded(event: LoadCompleteEvent): void {
+        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
+
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) { return; }
-
-        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
-
         if (!event.success) { return; }
 
         this.checkRowCount(event.block as ServerSideBlock, event.lastRow);
@@ -295,32 +296,60 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return invalidRange ? [] : result;
     }
 
-    public getRowBounds(index: number): RowBounds {
-        // we return null if row not found
+    private findBlockAndExecute<T>(matchBlockFunc: (block: ServerSideBlock) => FindResult,
+                                blockFoundFunc: (foundBlock: ServerSideBlock)=>T,
+                                blockNotFoundFunc: (previousBlock: ServerSideBlock)=>T,
+                 ): T {
 
-        let result: RowBounds;
         let blockFound = false;
+        let breakSearch = false;
         let lastBlock: ServerSideBlock | null = null;
 
-        this.getBlocksInOrder().forEach(block => {
-            if (blockFound) { return; }
+        let res: T = undefined;
 
-            if (block.isDisplayIndexInBlock(index)) {
-                result = block.getRowBounds(index, this.getRowCount());
+        this.getBlocksInOrder().forEach(block => {
+            if (blockFound || breakSearch) { return; }
+
+            const comparatorResult = matchBlockFunc(block);
+
+            if (comparatorResult==FindResult.FOUND) {
+                res = blockFoundFunc(block);
                 blockFound = true;
-            } else if (block.isBlockBefore(index)) {
+            } else if (comparatorResult==FindResult.CONTINUE_FIND) {
                 lastBlock = block;
+            } else if (comparatorResult==FindResult.BREAK_FIND) {
+                breakSearch = true;
             }
         });
 
         if (!blockFound) {
+            res = blockNotFoundFunc(lastBlock);
+        }
 
+        return res;
+    }
+
+    public getRowBounds(index: number): RowBounds {
+
+        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+            if (block.isDisplayIndexInBlock(index)) {
+                return FindResult.FOUND;
+            } else {
+                return block.isBlockBefore(index) ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+            }
+        };
+
+        const blockFoundFunc = (foundBlock: ServerSideBlock): RowBounds => {
+            return foundBlock.getRowBounds(index, this.getRowCount());
+        };
+
+        const blockNotFoundFunc = (previousBlock: ServerSideBlock): RowBounds => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
-            if (lastBlock !== null) {
-                nextRowTop = lastBlock.getBlockTopPx() + lastBlock.getBlockHeightPx();
-                nextRowIndex = lastBlock.getDisplayIndexEnd();
+            if (previousBlock !== null) {
+                nextRowTop = previousBlock.getBlockTopPx() + previousBlock.getBlockHeightPx();
+                nextRowIndex = previousBlock.getDisplayIndexEnd();
             } else {
                 nextRowTop = this.cacheTopPixel;
                 nextRowIndex = this.displayIndexStart;
@@ -328,39 +357,36 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
             const rowsBetween = index - nextRowIndex;
 
-            result = {
+            return {
                 rowHeight: this.defaultRowHeight,
                 rowTop: nextRowTop + rowsBetween * this.defaultRowHeight
             };
-        }
+        };
 
-        return result;
+        return this.findBlockAndExecute<RowBounds>(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        let result: number;
-        let blockFound = false;
-        let lastBlock: ServerSideBlock;
 
-        this.getBlocksInOrder().forEach(block => {
-            if (blockFound) { return; }
-
+        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
             if (block.isPixelInRange(pixel)) {
-                result = block.getRowIndexAtPixel(pixel, this.getRowCount());
-                blockFound = true;
-            } else if (block.getBlockTopPx() < pixel) {
-                lastBlock = block;
+                return FindResult.FOUND;
+            } else {
+                return block.getBlockTopPx() < pixel ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
             }
-        });
+        };
 
-        if (!blockFound) {
+        const blockFoundFunc = (foundBlock: ServerSideBlock): number => {
+            return foundBlock.getRowIndexAtPixel(pixel, this.getRowCount());
+        };
 
+        const blockNotFoundFunc = (previousBlock: ServerSideBlock): number => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
-            if (lastBlock) {
-                nextRowTop = lastBlock.getBlockTopPx() + lastBlock.getBlockHeightPx();
-                nextRowIndex = lastBlock.getDisplayIndexEnd();
+            if (previousBlock) {
+                nextRowTop = previousBlock.getBlockTopPx() + previousBlock.getBlockHeightPx();
+                nextRowIndex = previousBlock.getDisplayIndexEnd();
             } else {
                 nextRowTop = this.cacheTopPixel;
                 nextRowIndex = this.displayIndexStart;
@@ -369,13 +395,13 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             const pixelsBetween = pixel - nextRowTop;
             const rowsBetween = (pixelsBetween / this.defaultRowHeight) | 0;
 
-            result = nextRowIndex + rowsBetween;
-        }
+            return nextRowIndex + rowsBetween;
+        };
+
+        let result = this.findBlockAndExecute<number>(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
 
         const lastAllowedIndex = this.getDisplayIndexEnd() - 1;
-        if (result > lastAllowedIndex) {
-            result = lastAllowedIndex;
-        }
+        result = Math.min(result, lastAllowedIndex);
 
         return result;
     }
@@ -444,47 +470,37 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     public getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock = false): RowNode | null {
 
         // this can happen if asking for a row that doesn't exist in the model,
-        // eg if a cell range is selected, and the user filters so rows no longer
-        // exist
-        if (!this.isDisplayIndexInCache(displayRowIndex)) {
-            return null;
-        }
+        // eg if a cell range is selected, and the user filters so rows no longer exists
+        if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
 
-        // if we have the block, then this is the block
-        let block: ServerSideBlock = null;
-        let beforeBlock: ServerSideBlock = null;
-
-        this.getBlocksInOrder().forEach(currentBlock => {
-            if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
-                block = currentBlock;
-            } else if (currentBlock.isBlockBefore(displayRowIndex)) {
-                // this will get assigned many times, but the last time will
-                // be the closest block to the required block that is BEFORE
-                beforeBlock = currentBlock;
+        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+            if (block.isDisplayIndexInBlock(displayRowIndex)) {
+                return FindResult.FOUND;
+            } else {
+                return block.isBlockBefore(displayRowIndex) ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
             }
-        });
+        };
 
-        // when we are moving rows around, we don't want to trigger loads
-        if (_.missing(block) && dontCreateBlock) {
-            return null;
-        }
+        const blockFoundFunc = (foundBlock: ServerSideBlock): RowNode => {
+            return foundBlock.getRowUsingDisplayIndex(displayRowIndex);
+        };
 
-        const blockSize = this.params.blockSize;
-
-        // if block not found, we need to create it
-        if (block==null) {
+        const blockNotFoundFunc = (previousBlock: ServerSideBlock): RowNode => {
+            if (dontCreateBlock) { return; }
 
             let blockNumber: number;
             let displayIndexStart: number;
             let nextRowTop: number;
 
+            const blockSize = this.params.blockSize;
+
             // because missing blocks are always fully closed, we can work out
             // the start index of the block we want by hopping from the closest block,
             // as we know the row count in closed blocks is equal to the page size
-            if (beforeBlock) {
-                blockNumber = beforeBlock.getId() + 1;
-                displayIndexStart = beforeBlock.getDisplayIndexEnd();
-                nextRowTop = beforeBlock.getBlockHeightPx() + beforeBlock.getBlockTopPx();
+            if (previousBlock) {
+                blockNumber = previousBlock.getId() + 1;
+                displayIndexStart = previousBlock.getDisplayIndexEnd();
+                nextRowTop = previousBlock.getBlockHeightPx() + previousBlock.getBlockTopPx();
 
                 const isInRange = (): boolean => {
                     return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + blockSize);
@@ -509,72 +525,70 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
                 nextRowTop = this.cacheTopPixel + (blockNumber * blockSize * this.defaultRowHeight);
             }
 
-            block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
-
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
-        }
 
-        const res = block.getRowUsingDisplayIndex(displayRowIndex);
+            const newBlock = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
+            return newBlock.getRowUsingDisplayIndex(displayRowIndex);
+        };
 
-        return res;
+        return this.findBlockAndExecute<RowNode>(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+
         const blockSize = this.params.blockSize;
         const blockId = Math.floor(topLevelIndex / blockSize);
 
-        const block = this.blocks[blockId];
-
-        if (block) {
-            // if we found a block, means row is in memory, so we can report the row index directly
-            const rowNode = block.getRowUsingLocalIndex(topLevelIndex, true);
-            return rowNode.rowIndex;
-        } else {
-            // otherwise we need to calculate it from the previous block
-            let blockBefore: ServerSideBlock | undefined;
-            this.getBlocksInOrder().forEach((currentBlock:ServerSideBlock) => {
-                if (blockId > currentBlock.getId()) {
-                    // this will get assigned many times, but the last time will
-                    // be the closest block to the required block that is BEFORE
-                    blockBefore = currentBlock;
-                }
-            });
-
-            if (blockBefore) {
-                // note: the local index is the same as the top level index, two terms for same thing
-                //
-                // get index of the last row before this row
-                // eg if blocksize = 100, then:
-                //   last row of first block is 99 (100 * 1) -1;
-                //   last row of second block is 199 (100 * 2) -1;
-                const lastRowTopLevelIndex = (blockSize * (blockBefore.getId() + 1)) - 1;
-
-                // get the last top level node in the block before the wanted block. this will be the last
-                // loaded displayed top level node.
-                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
-
-                // we want the index of the last displayed node, not just the top level node, so if the last top level node
-                // is open, we get the index of the last displayed child node.
-                let lastDisplayedNodeIndexInBlockBefore: number;
-                if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                    const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
-                    lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
-                } else if (lastRowNode.expanded && lastRowNode.detailNode) {
-                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
-                } else {
-                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
-                }
-
-                // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
-                // same as the difference between the displayed index
-                const indexDiff = topLevelIndex - lastRowTopLevelIndex;
-
-                return lastDisplayedNodeIndexInBlockBefore + indexDiff;
-
+        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+            if (block.getId()===blockId) {
+                return FindResult.FOUND;
             } else {
+                return block.getId() < blockId ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
+            }
+        };
+
+        const blockFoundFunc = (foundBlock: ServerSideBlock): number => {
+            const rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex, true);
+            return rowNode.rowIndex;
+        };
+
+        const blockNotFoundFunc = (previousBlock: ServerSideBlock): number => {
+            if (!previousBlock) {
                 return topLevelIndex;
             }
-        }
+
+            // note: the local index is the same as the top level index, two terms for same thing
+            //
+            // get index of the last row before this row
+            // eg if blocksize = 100, then:
+            //   last row of first block is 99 (100 * 1) -1;
+            //   last row of second block is 199 (100 * 2) -1;
+            const lastRowTopLevelIndex = (blockSize * (previousBlock.getId() + 1)) - 1;
+
+            // get the last top level node in the block before the wanted block. this will be the last
+            // loaded displayed top level node.
+            const lastRowNode = previousBlock!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+
+            // we want the index of the last displayed node, not just the top level node, so if the last top level node
+            // is open, we get the index of the last displayed child node.
+            let lastDisplayedNodeIndexInBlockBefore: number;
+            if (lastRowNode.expanded && lastRowNode.childrenCache) {
+                const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
+                lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+            } else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
+            } else {
+                lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
+            }
+
+            // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
+            // same as the difference between the displayed index
+            const indexDiff = topLevelIndex - lastRowTopLevelIndex;
+
+            return lastDisplayedNodeIndexInBlockBefore + indexDiff;
+        };
+
+        return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
