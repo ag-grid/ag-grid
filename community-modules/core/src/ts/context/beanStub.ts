@@ -17,6 +17,10 @@ export class BeanStub implements IEventEmitter {
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
+    // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
+    // prevents vue from creating proxies for created objects and prevents identity related issues
+    public __v_skip = true;
+
     @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
     @Autowired('context') protected readonly context: Context;
     @Autowired('eventService') protected readonly eventService: EventService;
