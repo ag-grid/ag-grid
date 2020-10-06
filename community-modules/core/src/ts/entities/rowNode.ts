@@ -729,7 +729,7 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect) {
+        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
             const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
