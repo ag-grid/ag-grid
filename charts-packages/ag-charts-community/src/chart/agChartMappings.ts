@@ -1,6 +1,6 @@
 import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
-import { GroupedCategoryChart } from "./GroupedCategoryChart";
+import { GroupedCategoryChart } from "./groupedCategoryChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
