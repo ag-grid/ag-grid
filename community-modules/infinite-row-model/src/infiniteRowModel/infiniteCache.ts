@@ -170,17 +170,9 @@ export class InfiniteCache extends BeanStub {
     }
 
     private isBlockCurrentlyDisplayed(block: InfiniteBlock): boolean {
-        const firstViewportRow = this.rowRenderer.getFirstVirtualRenderedRow();
-        const lastViewportRow = this.rowRenderer.getLastVirtualRenderedRow();
-
-        const firstRowIndex = block.getStartRow();
-        const lastRowIndex = block.getEndRow() - 1;
-
-        const blockBeforeViewport = firstRowIndex > lastViewportRow;
-        const blockAfterViewport = lastRowIndex < firstViewportRow;
-        const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
-
-        return blockInsideViewport;
+        const startIndex = block.getStartRow();
+        const endIndex = block.getEndRow() - 1;
+        return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
     }
 
     private removeBlockFromCache(blockToRemove: InfiniteBlock): void {

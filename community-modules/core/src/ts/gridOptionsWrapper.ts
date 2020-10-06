@@ -41,6 +41,7 @@ import { ChartOptions } from './interfaces/iChartOptions';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
@@ -64,10 +65,13 @@ function zeroOrGreater(value: any, defaultValue: number): number {
     return defaultValue;
 }
 
-function oneOrGreater(value: any, defaultValue: number): number {
-    if (value > 0) { return value; }
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
+function oneOrGreater(value: any, defaultValue: number = undefined): number {
+    const valueNumber = parseInt(value);
+    if (isNumeric(valueNumber) && valueNumber > 0) {
+        return valueNumber;
+    } else {
+        return defaultValue;
+    }
 }
 
 export interface PropertyChangedEvent extends AgEvent {
@@ -747,7 +751,7 @@ export class GridOptionsWrapper {
     }
 
     public getCacheBlockSize(): number | undefined {
-        return this.gridOptions.cacheBlockSize;
+        return oneOrGreater(this.gridOptions.cacheBlockSize);
     }
 
     public getInfiniteInitialRowCount(): number | undefined {
