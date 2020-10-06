@@ -51,6 +51,9 @@ grid-packages/ag-grid-enterprise/main.js
 grid-packages/ag-grid-vue/lib/**
 grid-packages/ag-grid-vue/main.js
 grid-packages/ag-grid-vue/main.d.ts
+grid-packages/ag-grid-vue-legacy/lib/**
+grid-packages/ag-grid-vue-legacy/main.js
+grid-packages/ag-grid-vue-legacy/main.d.ts
 community-modules/vue/lib/**
 community-modules/vue/main.js
 community-modules/vue-legacy/lib/**
