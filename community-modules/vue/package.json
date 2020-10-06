@@ -42,7 +42,9 @@
     "vue-property-decorator": "9.0.0",
     "core-js": "^3.6.5",
     "vue-class-component": "^8.0.0-beta.3",
-    "@ag-grid-community/vue-legacy": "~24.0.0"
+    "@ag-grid-community/vue-legacy": "~24.0.0",
+    "@vue/composition-api": "^1.0.0-beta.14",
+    "vue-template-compiler": "^2.6.12"
   },
   "peerDependencies": {
     "@ag-grid-community/core": "~24.0.0",
@@ -52,9 +54,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "dependencies": {
-    "@vue/composition-api": "^1.0.0-beta.14",
-    "vue-template-compiler": "^2.6.12"
   }
 }

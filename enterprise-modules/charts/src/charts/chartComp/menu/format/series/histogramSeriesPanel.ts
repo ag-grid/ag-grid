@@ -6,16 +6,15 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    FontStyle,
-    FontWeight,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {ShadowPanel} from "./shadowPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {FontPanel, FontPanelParams} from "../fontPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 import {HistogramChartProxy} from "../../../chartProxies/cartesian/histogramChartProxy";
+import {initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider} from "../widgetInitialiser";
 
 export class HistogramSeriesPanel extends Component {
 
@@ -88,21 +87,8 @@ export class HistogramSeriesPanel extends Component {
     }
 
     private initOpacity() {
-        this.seriesLineOpacitySlider
-            .setLabel(this.chartTranslator.translate("strokeOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
-
-        this.seriesFillOpacitySlider
-            .setLabel(this.chartTranslator.translate("fillOpacity"))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fill.opacity", newValue));
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
     }
 
     private initBins() {
@@ -116,47 +102,9 @@ export class HistogramSeriesPanel extends Component {
     }
 
     private initLabelPanel() {
-        const chartProxy = this.getChartProxy();
-        const initialFont = {
-            family: chartProxy.getSeriesOption("label.fontFamily"),
-            style: chartProxy.getSeriesOption<FontStyle>("label.fontStyle"),
-            weight: chartProxy.getSeriesOption<FontWeight>("label.fontWeight"),
-            size: chartProxy.getSeriesOption<number>("label.fontSize"),
-            color: chartProxy.getSeriesOption("label.color")
-        };
-
-        const setFont = (font: Font) => {
-            const chartProxy = this.getChartProxy();
-
-            if (font.family) {
-                chartProxy.setSeriesOption("label.fontFamily", font.family);
-            }
-            if (font.weight) {
-                chartProxy.setSeriesOption("label.fontWeight", font.weight);
-            }
-            if (font.style) {
-                chartProxy.setSeriesOption("label.fontStyle", font.style);
-            }
-            if (font.size) {
-                chartProxy.setSeriesOption("label.fontSize", font.size);
-            }
-            if (font.color) {
-                chartProxy.setSeriesOption("label.color", font.color);
-            }
-        };
-
-        const params: FontPanelParams = {
-            name: this.chartTranslator.translate('labels'),
-            enabled: chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: (enabled: boolean) => this.getChartProxy().setSeriesOption("label.enabled", enabled),
-            suppressEnabledCheckbox: false,
-            initialFont: initialFont,
-            setFont: setFont
-        };
-
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
-
         this.seriesGroup.addItem(labelPanelComp);
     }
 

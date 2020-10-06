@@ -107,6 +107,8 @@ export class ChartDataModel extends BeanStub {
 
         if (!updatedColState) {
             this.resetColumnState();
+            // dimension / category cell range could be out of sync after resetting column state when row grouping
+            this.syncDimensionCellRange();
         }
 
         this.updateData();
@@ -116,19 +118,18 @@ export class ChartDataModel extends BeanStub {
         return this.chartData;
     }
 
-    public isGrouping(): boolean {
+    private isGroupActive() {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
         const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
-        const groupActive = usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+        return usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+    }
 
+    public isGrouping(): boolean {
         // charts only group when the selected category is a group column
-        const groupCols = this.columnController.getGroupDisplayColumns();
         const colId = this.getSelectedDimension().colId;
-        const groupDimensionSelected = groupCols
-            .map(col => col.getColId())
-            .some(id => id === colId);
-
-        return groupActive && groupDimensionSelected;
+        const displayedGroupCols = this.columnController.getGroupDisplayColumns();
+        const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
+        return this.isGroupActive() && groupDimensionSelected;
     }
 
     public isPivotActive(): boolean {
@@ -228,7 +229,7 @@ export class ChartDataModel extends BeanStub {
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
             return _.convertToSet(this.columnController.getAllDisplayedColumns());
-        };
+        }
 
         let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
@@ -394,7 +395,8 @@ export class ChartDataModel extends BeanStub {
         let order = 1;
 
         dimensionCols.forEach(column => {
-            const selected = !hasSelectedDimension && allCols.has(column);
+            const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
+            let selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
 
             this.dimensionColState.push({
                 column,
@@ -535,6 +537,13 @@ export class ChartDataModel extends BeanStub {
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
 
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
+        }
+    }
+
+    private syncDimensionCellRange() {
+        const selectedDimension = this.getSelectedDimension()
+        if (selectedDimension && selectedDimension.column) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
         }
     }
 }

@@ -15,6 +15,7 @@ import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
+    maxConcurrentRequests: number;
 }
 
 export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {

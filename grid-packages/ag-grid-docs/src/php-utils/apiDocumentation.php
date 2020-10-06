@@ -15,8 +15,8 @@
         $breadcrumbs[$title] = $displayName;
         $id = join(array_keys($breadcrumbs), '.');
 
-        if (!$config['skipHeader']) {
-            $headerLevel = count($breadcrumbs) + ($config['isSubset'] ? 2 : 1);
+        if (!$config['isSubset']) {
+            $headerLevel = count($breadcrumbs) + 1;
             $headerTag = "h$headerLevel";
 
             echo "<$headerTag id='reference-$id'>$displayName</$headerTag>";
@@ -112,6 +112,8 @@
         }
 
         echo '</table>';
+
+        $config['isSubset'] = false;
 
         foreach ($objectProperties as $name => $definition) {
             createPropertyTable($name, $definition, $config, $breadcrumbs);
@@ -291,12 +293,7 @@
             }
 
             $properties = mergeObjects($propertiesFromFiles);
-
-            if (count($names) > 0) {
-                $config['skipHeader'] = true;
-            } else {
-                $config['isSubset'] = true;
-            }
+            $config['isSubset'] = true;
 
             createPropertyTable($key, $properties, $config, [], $names);
         } else {

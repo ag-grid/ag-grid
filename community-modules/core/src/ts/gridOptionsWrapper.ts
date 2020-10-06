@@ -10,11 +10,13 @@ import {
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
+    NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
-    TabToNextCellParams
+    TabToNextCellParams,
+    TabToNextHeaderParams
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -46,6 +48,7 @@ import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
 import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
+import { HeaderPosition } from './headerRendering/header/headerPosition';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -55,6 +58,16 @@ const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
+}
+
+function toNumber(value: any): number {
+    if (typeof value == 'number') {
+        return value;
+    } else if (typeof value == 'string') {
+        return parseInt(value);
+    } else {
+        return undefined;
+    }
 }
 
 function zeroOrGreater(value: any, defaultValue: number): number {
@@ -737,7 +750,7 @@ export class GridOptionsWrapper {
     }
 
     public getPaginationPageSize(): number | undefined {
-        return this.gridOptions.paginationPageSize;
+        return toNumber(this.gridOptions.paginationPageSize);
     }
 
     public isPaginateChildRows(): boolean {
@@ -1096,6 +1109,14 @@ export class GridOptionsWrapper {
 
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
+    }
+
+    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.navigateToNextHeader;
+    }
+
+    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.tabToNextHeader;
     }
 
     public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
@@ -1498,6 +1519,13 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
             options.detailRowAutoHeight = true;
         }
+
+        if (options.suppressKeyboardEvent) {
+            console.warn(
+                `ag-Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
+                 future versions of ag-Grid. If you need this to be set for every column use the defaultColDef property.`
+            );
+        }
     }
 
     private checkForViolations() {
@@ -1584,7 +1612,7 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
-            if (height != null) {
+            if (this.isNumeric(height)) {
                 return { height, estimated: false };
             }
         }
@@ -1629,7 +1657,7 @@ export class GridOptionsWrapper {
     }
 
     private isNumeric(value: any) {
-        return !isNaN(value) && typeof value === 'number';
+        return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones

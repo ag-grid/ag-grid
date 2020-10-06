@@ -49,6 +49,10 @@ export interface DragSource {
     /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** The Drag Container associated with this DragSource. Mainly used by the rowDragFeature to detect
+     * grid to grid drag and drop
+     */
+    dragSourceContainer?: HTMLElement;
     /** After how many pixels of dragging should the drag operation start. Default is 4. */
     dragStartPixels?: number;
     /** Callback for drag started */

@@ -260,6 +260,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processSecondaryColGroupDef : any = undefined;
     @Input() public getBusinessKeyForNode : any = undefined;
     @Input() public sendToClipboard : any = undefined;
+    @Input() public navigateToNextHeader : any = undefined;
+    @Input() public tabToNextHeaderCell : any = undefined;
     @Input() public navigateToNextCell : any = undefined;
     @Input() public tabToNextCell : any = undefined;
     @Input() public getDetailRowData : any = undefined;

@@ -2,17 +2,14 @@ import { AgCheckbox } from "../../widgets/agCheckbox";
 import { Autowired, PreDestroy } from "../../context/context";
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
-import {
-    DragAndDropService, DragItem, DragSource, DragSourceType,
-    DropTarget
-} from "../../dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
 import { Constants } from "../../constants/constants";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
-import {ColumnValueChangedEvent, Events} from "../../events";
+import { Events } from "../../events";
 import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
@@ -193,7 +190,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         const params = this.createParams();
-        const res = this.headerComp.refresh(params);
+
+        // take any custom params off of the user
+        const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+
+        const res = this.headerComp.refresh(finalParams);
 
         return res;
     }

@@ -135,6 +135,7 @@ export class ColDefUtil {
         'equals',
         'pivotComparator',
         'suppressKeyboardEvent',
+        'suppressHeaderKeyboardEvent',
         'colSpan',
         'rowSpan',
         'getQuickFilterText',

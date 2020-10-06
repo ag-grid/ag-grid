@@ -133,19 +133,19 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Most people will be happy with the default navigation the grid does when you use the arrow keys
-        and the tab key. Some people will want to override this - for example maybe you want the tab key
-        to navigate to the cell below, not the cell to the right. To facilitate this, the grid offers
-        two methods: <code>navigateToNextCell</code> and <code>tabToNextCell</code>.
+        and the tab key. Some people will want to override this (ie. you may want the tab key to navigate to the cell 
+        below, not the cell to the right). To facilitate this, the grid offers four methods: <code>navigateToNextCell</code>, 
+        <code>tabToNextCell</code>, <code>navigateToNextHeader</code> and <code>tabToNextHeader</code>.
     </p>
 
-    <h2><code>navigateToNextCell</code></h2>
+    <h3>navigateToNextCell</h3>
 
     <p>
         Provide a callback <code>navigateToNextCell</code> if you want to override the arrow key navigation. The
-        function signature is as follows:
+        parameter object is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface NavigateToNextCellParams {
 
     // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
@@ -160,14 +160,14 @@ interface NavigateToNextCellParams {
     event: KeyboardEvent;
 }</snippet>
 
-    <h2><code>tabToNextCell</code></h2>
+    <h3>tabToNextCell</h3>
 
     <p>
         Provide a callback <code>tabToNextCell</code> if you want to override the tab key navigation. The
         parameter object is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface TabToNextCellParams {
 
     // true if the shift key is also down
@@ -184,20 +184,21 @@ interface TabToNextCellParams {
     nextCellPosition: CellPosition;
 }</snippet>
 
-    <h2><code>CellPosition</code></h2>
+    <h3>CellPosition</h3>
 
     <p>
         Both functions above use CellPosition. This is an object that represents a cell in the grid. Its
         interface is as follows:
     </p>
 
-    <snippet>
+<snippet>
 interface CellPosition {
 
     // either 'top', 'bottom' or undefined/null (for not pinned)
     rowPinned: string;
 
     // a positive number from 0 to n, where n is the last row the grid is rendering
+    // or -1 if you want to navigate to the grid header
     rowIndex: number;
 
     // the grid column
@@ -210,18 +211,113 @@ interface CellPosition {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
-    <note>
-        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to navigate
-        within the grid header. If you need to navigate into the grid header, you can pass <strong>rowIndex: -1</strong>, but
-        once focus is within the header, the standard keyboard navigation will take place.
-    </note>
-
-    <h2>Example Custom Navigation</h2>
+    <h3>navigateToNextHeader</h3>
 
     <p>
-        The example below shows both <code>navigateToNextCell</code> and <code>tabToNextCell</code> in practice.
-        <code>navigateToNextCell</code> swaps the up and down arrow keys. <code>tabToNextCell</code> uses tabbing
-        to go up and down rather than right and left.
+        Provide a callback <code>navigateToNextHeader</code> if you want to override the arrow key navigation. The
+        parameter object is as follows:
+    </p>
+
+<snippet>
+interface NavigateToNextHeaderParams {
+
+    // the key for the arrow key pressed, left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown'
+    key: string;
+
+    // the header that currently has focus
+    previousHeaderPosition: HeaderPosition;
+
+    // the header the grid would normally pick as the next header for this navigation
+    nextHeaderPosition: HeaderPosition;
+
+    // the number of header rows present in the grid
+    headerRowCount: number;
+
+    event: KeyboardEvent;
+}</snippet>
+
+    <h3>tabToNextHeader</h3>
+
+    <p>
+        Provide a callback <code>tabToNextHeader</code> if you want to override the tab key navigation. The
+        parameter object is as follows:
+    </p>
+
+<snippet>
+interface TabToNextHeaderParams {
+
+    // true if the shift key is also down
+    backwards: boolean;
+
+    // the header that currently has focus
+    previousHeaderPosition: HeaderPosition;
+
+    // the header the grid would normally pick as the next header for this navigation
+    nextHeaderPosition: HeaderPosition;
+
+    // the number of header rows present in the grid
+    headerRowCount: number;
+}</snippet>
+
+    <h3>HeaderPosition</h3>
+
+    <p>
+        Both <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> use HeaderPosition. This is an object that 
+        represents a header in the grid. Its interface is as follows:
+    </p>
+
+<snippet>
+interface HeaderPosition {
+
+    // a number from 0 to n, where n is the last header row the grid is rendering
+    headerRowIndex: number;
+
+    // the grid column or column group
+    column: Column | ColumnGroup;
+
+}</snippet>
+
+    <p>
+        You should return the <code>HeaderPosition</code> you want in the <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> functions
+        to have it focused. Returning <code>null</code> or <code>undefined</code> in <code>navigateToNextHeader</code> will do nothing (same as focusing 
+        the current focused cell), however, doing the same thing in <code>tabToNextHeader</code> will allow the browser default behavior for tab to happen.
+    </p>
+
+    <note>
+        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> are only called while navigating across grid cells, while
+        <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> are only called while navigating across grid headers.
+        If you need to navigate from one container to another, pass <strong>rowIndex: -1</strong> in <code>CellPosition</code> 
+        or <strong>headerRowIndex: -1</strong> in <code>HeaderPosition</code>.
+    </note>
+
+    <h2>Example Custom Cell Navigation</h2>
+
+    <p>
+        The example below shows how to use <code>navigateToNextCell</code>, <code>tabToNextCell</code>, 
+        <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> in practice.
+
+    </p>
+
+    <p>
+        Note the following: 
+        <ul>
+            <li><code>navigateToNextCell</code> swaps the up and down arrow keys.</li>
+            <li><code>tabToNextCell</code> uses tabbing to go up and down rather than right and left.</li>
+            <li><code>navigateToNextHeader</code> swaps the up and down arrow keys.</li>
+            <li><code>tabToNextHeader</code> uses tabbing to go up and down rather than right and left.</li>
+            <li>
+                Pressing the down arrow will navigate to the header by passing <strong>rowIndex: -1</strong> when 
+                a cell in the first rows is focused.
+            </li>
+            <li>
+                Pressing the up arrow will navigate to the first grid row by passing <strong>headerRowIndex: -1</strong> when
+                a header cell in the last header row is focused.
+            </li>
+            <li>
+                Tabbing when a grid cell is focused will move selection upwards, but it will not go into the grid header.
+            </li>
+            
+        </ul>
     </p>
 
     <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
@@ -334,13 +430,37 @@ myInput.addEventListener("keydown", function (event) {
 
     <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', ['enterprise' => true]) ?>
 
-    <h2 id="suppressKeyboardEvents">Suppress Grid Keyboard Events</h2>
+    <h2 id="suppressKeyboardEvents">Suppress Keyboard Events</h2>
 
     <p>
-        It is possible to stop the grid acting on particular events. To do this implement
-        <code>suppressKeyboardEvent</code> callback. The callback should return true if the
-        grid should suppress the events, or false to continue as normal.
+        It is possible to stop the grid acting on particular events. To do this implement <code>suppressHeaderKeyboardEvent</code> 
+        and/or <code>suppressKeyboardEvent</code> callback. The callback should return true if the grid should suppress 
+        the events, or false to continue as normal.
     </p>
+
+    <h3>suppressHeaderKeyboardEvent</h3>
+
+    <p>
+        The callback has the following signature:
+    </p>
+
+<?= createSnippet(<<<SNIPPET
+function suppressHeaderKeyboardEvent(params: SuppressHeaderKeyboardEventParams) => boolean;
+
+interface SuppressKeyboardEventParams {
+    api: GridApi; // grid API
+    columnApi: ColumnApi; // column API
+    context: any; // context object
+    event: KeyboardEvent; // the keyboard event the grid received. inspect this to see what key was pressed
+    headerRowIndex: number; // the index of the header row of the current focused header
+    column: Column | ColumnGroup; // the current Column or Column Group
+    colDef: ColDef | ColGroupDef; // Column Definition or Column Group Definition
+}
+SNIPPET
+, 'ts') ?>
+
+
+    <h3>suppressKeyboardEvent</h3>
 
     <p>
         The callback has the following signature:
@@ -349,45 +469,51 @@ myInput.addEventListener("keydown", function (event) {
 <?= createSnippet(<<<SNIPPET
 function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
 
-interface SuppressKeyboardEventParams extends IsColumnFuncParams {
-    // the keyboard event the grid received. inspect this to see what key was pressed
-    event: KeyboardEvent;
+interface SuppressKeyboardEventParams {
+// the keyboard event the grid received. inspect this to see what key was pressed
+event: KeyboardEvent;
 
-    // whether the cell is editing or not. sometimes you might want to suppress event
-    // only when cell is editing.
-    editing: boolean;
+// whether the cell is editing or not. sometimes you might want to suppress event
+// only when cell is editing.
+editing: boolean;
 
-    node: RowNode; // row node
-    data: any; // row data
-    column: Column; // column
-    colDef: ColDef; // column definition
-    context: any; // context object
-    api: GridApi | null | undefined; // grid API
-    columnApi: ColumnApi | null | undefined; // column API
+node: RowNode; // row node
+data: any; // row data
+column: Column; // column
+colDef: ColDef; // column definition
+context: any; // context object
+api: GridApi | null | undefined; // grid API
+columnApi: ColumnApi | null | undefined; // column API
 }
 SNIPPET
 , 'ts') ?>
 
     <p>
-        The callback is available as a <a href="../javascript-grid-callbacks/">grid callback</a>
-        (gets called regardless of what cell the keyboard event is on) and as a
-        <a href="../javascript-grid-column-properties/">column callback</a>
-        (set on the column definition and gets called only for that column). If you provide the callback on both
+        The callback is available as a <a href="../javascript-grid-column-properties/">column callback</a>
+        (set on the column definition). If you provide the callback on both
         the grid and column definition, then if either return 'true' the event
         will be suppressed.
     </p>
+
+    <h3>Example: Suppress Keyboard Navigation</h3>
 
     <p>
         The example below demonstrates suppressing the following keyboard events:
     </p>
 
     <ul>
-        <li>On the Athlete column only:
+        <li>On the Athlete column cells only:
             <ul>
-                <kbd>Enter</kbd> will not start or stop editing.
+                <li><kbd>Enter</kbd> will not start or stop editing.</li>
             </ul>
         </li>
-        <li>On all columns:
+        <li>
+            On the Country column cells only:
+            <ul>
+                <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> arrow keys are allowed. This is the only column that allows navigation from the grid to the header.</li>
+            </ul>
+        </li>
+        <li>On all cells (including the cells of the Athlete Column):
             <ul>
                 <li><kbd>Ctrl & A</kbd> will not select all cells into a range.</li>
                 <li><kbd>Ctrl & C</kbd> will not copy to clipboard.</li>
@@ -403,6 +529,23 @@ SNIPPET
                 <li><kbd>Escape</kbd> will not cancel editing.</li>
                 <li><kbd>Space</kbd> will not select current row.</li>
                 <li><kbd>Tab</kbd> will not be handled by the grid.</li>
+            </ul>
+        </li>
+        <li>
+            On the Country header only:
+            <ul>
+                <li>
+                    Navigation is blocked from the left to right using arrows but is allowed using tab.
+                </li>
+                <li>
+                    Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
+                </li>
+            </ul>
+        </li>
+        <li>
+            On all headers (excluding country):
+            <ul>
+                <li>Navigation is blocked up and down, but navigation left / right is allowed using arrows and tab.
             </ul>
         </li>
     </ul>

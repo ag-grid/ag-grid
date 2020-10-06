@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { ColumnController } from '../columnController/columnController';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';

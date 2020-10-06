@@ -1,17 +1,12 @@
 import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
-import { Context, PreDestroy } from "../../context/context";
+import {Autowired, PostConstruct, PreDestroy} from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 import { cleanNumber } from "../../utils/number";
-
-export interface RowNodeBlockBeans {
-    context: Context;
-    rowRenderer: RowRenderer;
-}
 
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;
@@ -28,6 +23,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     public static STATE_LOADED = 'loaded';
     public static STATE_FAILED = 'failed';
 
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+
     private version = 0;
     private state = RowNodeBlock.STATE_DIRTY;
 
@@ -37,11 +34,6 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     private readonly startRow: number;
     private readonly endRow: number;
     public rowNodes: RowNode[];
-
-    // because the framework cannot wire beans in parent classes, this is a hack
-    // to pass bean references up. give out to niall for not getting an IoC context
-    // that can do this yet
-    private beans: RowNodeBlockBeans;
 
     private rowNodeCacheParams: RowNodeCacheParams;
 
@@ -136,8 +128,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         return this.rowNodes[localIndex];
     }
 
-    protected init(beans: RowNodeBlockBeans): void {
-        this.beans = beans;
+    @PostConstruct
+    protected init(): void {
         this.createRowNodes();
     }
 
@@ -174,8 +166,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
-        const localIndex = rowIndex - this.startRow;
         const newRowNode = this.createBlankRowNode(rowIndex);
+        const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
     }
@@ -188,8 +180,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         return newRowNode;
     }
 
-    protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = this.beans.context.createBean(new RowNode());
+    protected createBlankRowNode(rowIndex?: number): RowNode {
+        const rowNode = this.getContext().createBean(new RowNode());
 
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
 
@@ -234,7 +226,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         });
 
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
+            this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     }
 

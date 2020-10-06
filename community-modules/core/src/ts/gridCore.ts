@@ -199,10 +199,9 @@ export class GridCore extends ManagedFocusComponent {
             firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
         }
 
-        this.focusController.focusHeaderPosition({
-            headerRowIndex: 0,
-            column: firstColumn
-        });
+        this.focusController.focusHeaderPosition(
+            { headerRowIndex: 0, column: firstColumn }
+        );
 
         return true;
     }

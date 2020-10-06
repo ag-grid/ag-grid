@@ -88,8 +88,7 @@ export class AgGridVue extends Vue {
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        // const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
-        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
@@ -106,7 +105,7 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        markRaw(new Grid(this.$el as HTMLElement, markRaw(toRaw(gridOptions)), markRaw(toRaw(gridParams))));
+        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
 
         this.gridCreated = true;
     }

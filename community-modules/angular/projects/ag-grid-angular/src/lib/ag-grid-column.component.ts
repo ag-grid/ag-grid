@@ -119,6 +119,7 @@ export class AgGridColumn {
     @Input() public equals: any;
     @Input() public pivotComparator: any;
     @Input() public suppressKeyboardEvent: any;
+    @Input() public suppressHeaderKeyboardEvent: any;
     @Input() public colSpan: any;
     @Input() public rowSpan: any;
     @Input() public getQuickFilterText: any;

@@ -139,6 +139,9 @@ export class HistogramSeries extends CartesianSeries {
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
     constructor() {
         super();
 
@@ -530,6 +533,8 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = this.lineDash;
+            rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });

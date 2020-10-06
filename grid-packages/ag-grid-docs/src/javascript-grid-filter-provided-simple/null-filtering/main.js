@@ -1,5 +1,5 @@
 var filterParams = {
-    comparator: function (filterLocalDateAtMidnight, cellValue) {
+    comparator: function(filterLocalDateAtMidnight, cellValue) {
         var dateAsString = cellValue;
         if (dateAsString == null) return -1;
         var dateParts = dateAsString.split('/');
@@ -19,11 +19,12 @@ var filterParams = {
     },
     includeBlanksInEquals: false,
     includeBlanksInLessThan: false,
-    includeBlanksInGreaterThan: false
-}
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false,
+};
 
 var columnDefs = [
-    {field: 'athlete'},
+    { field: 'athlete' },
     {
         field: 'age',
         maxWidth: 120,
@@ -31,7 +32,8 @@ var columnDefs = [
         filterParams: {
             includeBlanksInEquals: false,
             includeBlanksInLessThan: false,
-            includeBlanksInGreaterThan: false
+            includeBlanksInGreaterThan: false,
+            includeBlanksInRange: false,
         }
     },
     {
@@ -70,8 +72,14 @@ function changeNull(toChange, value) {
             columnDefs[1].filterParams.includeBlanksInGreaterThan = value;
             columnDefs[2].filterParams.includeBlanksInGreaterThan = value;
             break;
+        case 'inRange':
+            columnDefs[1].filterParams.includeBlanksInRange = value;
+            columnDefs[2].filterParams.includeBlanksInRange = value;
+            break;
     }
+
     var filterModel = gridOptions.api.getFilterModel();
+
     gridOptions.api.setColumnDefs(columnDefs);
     gridOptions.api.destroyFilter('age');
     gridOptions.api.destroyFilter('date');
@@ -79,7 +87,7 @@ function changeNull(toChange, value) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 

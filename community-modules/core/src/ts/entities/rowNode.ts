@@ -588,7 +588,8 @@ export class RowNode implements IEventEmitter {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        const newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        const newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = newValue;
             if (this.eventService) {

@@ -16,6 +16,7 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
+    onFirstDataRendered: onFirstDataRendered,
     enableRangeSelection: true,
     statusBar: {
         statusPanels: [
@@ -29,6 +30,14 @@ var gridOptions = {
         ]
     }
 };
+
+function onFirstDataRendered(event) {
+    event.api.addCellRange({
+        rowStartIndex: 3,
+        rowEndIndex: 8,
+        columns: ['age']
+    });
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

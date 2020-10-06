@@ -24,7 +24,6 @@ import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
 export class ServerSideBlock extends RowNodeBlock {
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -66,7 +65,7 @@ export class ServerSideBlock extends RowNodeBlock {
         this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
     }
 
-    @PostConstruct
+    // no need for @postConstruct, as attached to parent
     protected init(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
@@ -79,10 +78,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
         this.createNodeIdPrefix();
 
-        super.init({
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        super.init();
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {

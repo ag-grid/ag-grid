@@ -116,6 +116,7 @@ interface AgNavigatorHandleOptions {
 export interface AgNavigatorOptions {
     enabled?: boolean;
     height?: number;
+    margin?: number;
     min?: number;
     max?: number;
     mask?: AgNavigatorMaskOptions;
@@ -427,6 +428,8 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
     highlightStyle?: {
         fill?: string;
@@ -468,6 +471,8 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
     highlightStyle?: {
         fill?: string;
@@ -489,6 +494,8 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     xKey?: string;
     xName?: string;
     yKey?: string;
@@ -547,6 +554,8 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
