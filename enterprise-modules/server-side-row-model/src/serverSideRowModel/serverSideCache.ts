@@ -60,6 +60,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     private readonly blocks: { [blockNumber: string]: ServerSideBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
 
+    private infiniteScroll: boolean;
+
     private defaultRowHeight: number;
 
     private logger: Logger;
@@ -82,6 +84,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.parentRowNode = parentRowNode;
         this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
         this.params  = cacheParams;
+        this.infiniteScroll = this.params.blockSize != null;
     }
 
     @PostConstruct
@@ -166,21 +169,9 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     private isBlockCurrentlyDisplayed(block: ServerSideBlock): boolean {
-        const firstViewportRow = this.rowRenderer.getFirstVirtualRenderedRow();
-        const lastViewportRow = this.rowRenderer.getLastVirtualRenderedRow();
-
-        const firstRowIndex = block.getDisplayIndexStart();
-        const lastRowIndex = block.getDisplayIndexEnd() - 1;
-
-        // parent closed means the parent node is not expanded, thus these blocks are not visible
-        const parentClosed = firstRowIndex == null || lastRowIndex == null;
-        if (parentClosed) { return false; }
-
-        const blockBeforeViewport = firstRowIndex > lastViewportRow;
-        const blockAfterViewport = lastRowIndex < firstViewportRow;
-        const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
-
-        return blockInsideViewport;
+        const startIndex = block.getDisplayIndexStart();
+        const endIndex = block.getDisplayIndexEnd() - 1;
+        return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
     }
 
     private checkRowCount(block: ServerSideBlock, lastRow?: number): void {
