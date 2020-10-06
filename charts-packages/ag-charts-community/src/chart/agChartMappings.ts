@@ -1,5 +1,6 @@
 import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
+import { GroupedCategoryChart } from "./GroupedCategoryChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
@@ -709,5 +710,11 @@ mappings['histogram'] = {
         }
     }
 };
+
+const groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
+const groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
+groupedCategoryChartMeta.constructor = GroupedCategoryChart;
+groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
+mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;
 
 export default mappings;

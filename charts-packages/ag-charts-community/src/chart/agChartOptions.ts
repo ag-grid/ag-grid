@@ -583,7 +583,7 @@ type AgCartesianSeriesOptions =
 type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
-    type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
     axes?: TAxisOptions;
     series?: TSeriesOptions;
 }

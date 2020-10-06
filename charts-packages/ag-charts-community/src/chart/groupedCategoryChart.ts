@@ -6,6 +6,9 @@ import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 export type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 
 export class GroupedCategoryChart extends CartesianChart {
+    static className = 'GroupedCategoryChart';
+    static type = 'groupedCategory';
+
     updateAxes() {
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;

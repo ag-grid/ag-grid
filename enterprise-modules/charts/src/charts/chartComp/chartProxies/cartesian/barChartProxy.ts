@@ -30,7 +30,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const seriesType = integratedChartType === ChartType.GroupedBar
             || integratedChartType === ChartType.StackedBar
             || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
-            
+
         const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
 
         options.seriesDefaults = {
@@ -64,6 +64,9 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         const agChartOptions = options as AgCartesianChartOptions;
 
+        if (grouping) {
+            agChartOptions.type = 'groupedCategory';
+        }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
             ...(isColumn ? options.xAxis : options.yAxis),

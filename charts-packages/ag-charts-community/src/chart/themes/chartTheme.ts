@@ -210,162 +210,165 @@ export class ChartTheme {
         };
     }
 
-    static readonly defaults: any = {
-        cartesian: {
-            ...ChartTheme.getChartDefaults(),
-            axes: {
-                number: {
-                    ...ChartTheme.getAxisDefaults()
+    private static readonly cartesianDefaults: any = {
+        ...ChartTheme.getChartDefaults(),
+        axes: {
+            number: {
+                ...ChartTheme.getAxisDefaults()
+            },
+            category: {
+                ...ChartTheme.getAxisDefaults()
+            },
+            groupedCategory: {
+                ...ChartTheme.getAxisDefaults()
+            },
+            time: {
+                ...ChartTheme.getAxisDefaults()
+            }
+        },
+        series: {
+            column: {
+                ...ChartTheme.getBarSeriesDefaults(),
+                flipXY: false
+            },
+            bar: {
+                ...ChartTheme.getBarSeriesDefaults(),
+                flipXY: true
+            },
+            line: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: undefined,
+                xKey: '',
+                xName: '',
+                yKey: '',
+                yName: '',
+                strokeWidth: 2,
+                strokeOpacity: 1,
+                lineDash: undefined,
+                lineDashOffset: 0,
+                tooltipRenderer: undefined,
+                highlightStyle: {
+                    fill: 'yellow'
                 },
-                category: {
-                    ...ChartTheme.getAxisDefaults()
-                },
-                groupedCategory: {
-                    ...ChartTheme.getAxisDefaults()
-                },
-                time: {
-                    ...ChartTheme.getAxisDefaults()
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 }
             },
-            series: {
-                column: {
-                    ...ChartTheme.getBarSeriesDefaults(),
-                    flipXY: false
+            scatter: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: undefined,
+                xKey: '',
+                yKey: '',
+                sizeKey: undefined,
+                labelKey: undefined,
+                xName: '',
+                yName: '',
+                sizeName: 'Size',
+                labelName: 'Label',
+                strokeWidth: 2,
+                fillOpacity: 1,
+                strokeOpacity: 1,
+                tooltipRenderer: undefined,
+                highlightStyle: {
+                    fill: 'yellow'
                 },
-                bar: {
-                    ...ChartTheme.getBarSeriesDefaults(),
-                    flipXY: true
-                },
-                line: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    title: undefined,
-                    xKey: '',
-                    xName: '',
-                    yKey: '',
-                    yName: '',
-                    strokeWidth: 2,
-                    strokeOpacity: 1,
-                    lineDash: undefined,
-                    lineDashOffset: 0,
-                    tooltipRenderer: undefined,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
-                    }
-                },
-                scatter: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    title: undefined,
-                    xKey: '',
-                    yKey: '',
-                    sizeKey: undefined,
-                    labelKey: undefined,
-                    xName: '',
-                    yName: '',
-                    sizeName: 'Size',
-                    labelName: 'Label',
-                    strokeWidth: 2,
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    tooltipRenderer: undefined,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults()
-                    }
-                },
-                area: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    title: undefined,
-                    xKey: '',
-                    xName: '',
-                    yKeys: [],
-                    yNames: [],
-                    normalizedTo: undefined,
-                    fillOpacity: 0.8,
-                    strokeOpacity: 1,
-                    strokeWidth: 2,
-                    lineDash: undefined,
-                    lineDashOffset: 0,
-                    shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    },
-                    tooltipRenderer: undefined,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    marker: {
-                        ...ChartTheme.getCartesianSeriesMarkerDefaults(),
-                        enabled: false
-                    }
-                },
-                histogram: {
-                    ...ChartTheme.getSeriesDefaults(),
-                    title: undefined,
-                    xKey: '',
-                    yKey: '',
-                    xName: '',
-                    yName: '',
-                    strokeWidth: 1,
-                    fillOpacity: 1,
-                    strokeOpacity: 1,
-                    lineDash: undefined,
-                    lineDashOffset: 0,
-                    areaPlot: false,
-                    aggregation: 'sum',
-                    tooltipRenderer: undefined,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
-                    label: {
-                        enabled: false,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: ChartTheme.fontFamily,
-                        color: 'rgb(70, 70, 70)',
-                        formatter: undefined
-                    }
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 }
             },
-            navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
+            area: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: undefined,
+                xKey: '',
+                xName: '',
+                yKeys: [],
+                yNames: [],
+                normalizedTo: undefined,
+                fillOpacity: 0.8,
+                strokeOpacity: 1,
+                strokeWidth: 2,
+                lineDash: undefined,
+                lineDashOffset: 0,
+                shadow: {
+                    enabled: false,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 3,
+                    yOffset: 3,
+                    blur: 5
                 },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
+                tooltipRenderer: undefined,
+                highlightStyle: {
+                    fill: 'yellow'
                 },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
+                marker: {
+                    ...ChartTheme.getCartesianSeriesMarkerDefaults(),
+                    enabled: false
+                }
+            },
+            histogram: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: undefined,
+                xKey: '',
+                yKey: '',
+                xName: '',
+                yName: '',
+                strokeWidth: 1,
+                fillOpacity: 1,
+                strokeOpacity: 1,
+                lineDash: undefined,
+                lineDashOffset: 0,
+                areaPlot: false,
+                aggregation: 'sum',
+                tooltipRenderer: undefined,
+                highlightStyle: {
+                    fill: 'yellow'
+                },
+                label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
                 }
             }
         },
+        navigator: {
+            enabled: false,
+            height: 30,
+            min: 0,
+            max: 1,
+            mask: {
+                fill: '#999999',
+                stroke: '#999999',
+                strokeWidth: 1,
+                fillOpacity: 0.2
+            },
+            minHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            },
+            maxHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            }
+        }
+    };
+
+    static readonly defaults: any = {
+        cartesian: ChartTheme.cartesianDefaults,
+        groupedCategory: ChartTheme.cartesianDefaults,
         polar: {
             ...ChartTheme.getChartDefaults(),
             series: {
