@@ -16,6 +16,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
+import Scale from "../../../scale/scale";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -189,6 +190,18 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
+    private getXYDatums(i: number, xData: number[], yData: number[],
+                      xScale: Scale<any, any>, yScale: Scale<any, any>): [number, number] | undefined {
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
+        const xDatum = xData[i];
+        const yDatum = yData[i];
+        const noDatum =
+            yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+        return noDatum ? undefined : [xDatum, yDatum];
+    }
+
     private updateLinePath() {
         if (!this.data) {
             return;
@@ -199,27 +212,37 @@ export class LineSeries extends CartesianSeries {
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
         const linePath = lineNode.path;
         const nodeData: LineNodeDatum[] = [];
 
         linePath.clear();
         let moveTo = true;
+        let prevXInRange: undefined | -1 | 0 | 1 = undefined;
+        let nextXYDatums: [number, number] | undefined = undefined;
         for (let i = 0; i < xData.length; i++) {
-            const xDatum = xData[i];
-            const yDatum = yData[i];
-            const isGap =
-                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            const xyDatums = nextXYDatums || this.getXYDatums(i, xData, yData, xScale, yScale);
 
-            if (isGap) {
+            if (!xyDatums) {
+                prevXInRange = undefined;
                 moveTo = true;
             } else {
+                const [xDatum, yDatum] = xyDatums;
                 const x = xScale.convert(xDatum) + xOffset;
-                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                const tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
+
+                nextXYDatums = this.getXYDatums(i + 1, xData, yData, xScale, yScale);
+                const xInRange = xAxis.inRangeEx(x, 0, tolerance);
+                const nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
+                if (xInRange === -1 && nextXInRange === -1) {
+                    moveTo = true;
                     continue;
                 }
+                if (xInRange === 1 && prevXInRange === 1) {
+                    moveTo = true;
+                    continue;
+                }
+                prevXInRange = xInRange;
+
                 const y = yScale.convert(yDatum) + yOffset;
 
                 if (moveTo) {

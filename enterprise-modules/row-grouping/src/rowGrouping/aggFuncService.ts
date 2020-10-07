@@ -9,7 +9,7 @@ import {
     PostConstruct,
     _,
     IAggFuncParams
-} from "@ag-grid-community/core";
+} from '@ag-grid-community/core';
 
 @Bean('aggFuncService')
 export class AggFuncService extends BeanStub implements IAggFuncService {
@@ -22,7 +22,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     private static AGG_COUNT = 'count';
     private static AGG_AVG = 'avg';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
 
     private aggFuncsMap: { [key: string]: IAggFunc; } = {};
     private initialised = false;
@@ -80,11 +80,7 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     public getFuncNames(column: Column): string[] {
         const userAllowedFuncs = column.getColDef().allowedAggFuncs;
 
-        if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
-            return userAllowedFuncs;
-        }
-
-        return Object.keys(this.aggFuncsMap).sort();
+        return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;
     }
 
     public clear(): void {
@@ -92,10 +88,30 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     }
 }
 
-function aggSum(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((sum, value) => sum === null ? value : sum + value, null);
+function aggSum(params: IAggFuncParams): number | bigint {
+    const { values } = params;
+    let result: any = null; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if (typeof value === 'number') {
+            if (result === null) {
+                result = value;
+            } else {
+                result += typeof result === 'number' ? value : BigInt(value);
+            }
+        } else if (typeof value === 'bigint') {
+            if (result === null) {
+                result = value;
+            } else {
+                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
+            }
+        }
+    }
+
+    return result;
 }
 
 function aggFirst(params: IAggFuncParams): any {
@@ -106,27 +122,52 @@ function aggLast(params: IAggFuncParams): any {
     return params.values.length > 0 ? _.last(params.values) : null;
 }
 
-function aggMin(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((min, value) => min === null || value < min ? value : min, null);
+function aggMin(params: IAggFuncParams): number | bigint {
+    const { values } = params;
+    let result: number | bigint = null;
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
+            result = value;
+        }
+    }
+
+    return result;
 }
 
-function aggMax(params: IAggFuncParams): any {
-    return params.values
-        .filter(value => typeof value === 'number')
-        .reduce((max, value) => max === null || value > max ? value : max, null);
+function aggMax(params: IAggFuncParams): number | bigint {
+    const { values } = params;
+    let result: number | bigint = null;
+
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
+            result = value;
+        }
+    }
+
+    return result;
 }
 
-function aggCount(params: IAggFuncParams): any {
-    const value = params.values.reduce((count, item) => {
-        const isGroupAgg = _.exists(item) && typeof item.value === 'number';
+function aggCount(params: IAggFuncParams): { value: number; toString(): string; toNumber(): number; } {
+    const { values } = params;
+    let result = 0;
 
-        return count + (isGroupAgg ? item.value : 1);
-    }, 0);
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+
+        // check if the value is from a group, in which case use the group's count
+        result += value != null && typeof value.value === 'number' ? value.value : 1;
+    }
 
     return {
-        value,
+        value: result,
         toString: function() {
             return this.value.toString();
         },
@@ -139,31 +180,38 @@ function aggCount(params: IAggFuncParams): any {
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): any {
-    // the average will be the sum / count
-    const { sum, count } = params.values.reduce(({ sum, count }, item) => {
-        const itemIsGroupResult = _.exists(item) &&
-            typeof item.value === 'number' &&
-            typeof item.count === 'number';
+function aggAvg(params: IAggFuncParams): { value: number | bigint; count: number; toString(): string; toNumber(): number; } {
+    const { values } = params;
+    let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    let count = 0;
 
-        if (typeof item === 'number') {
-            return { sum: sum + item, count: count + 1 };
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+        let valueToAdd = null;
+
+        if (typeof value === 'number' || typeof value === 'bigint') {
+            valueToAdd = value;
+            count++;
+        } else if (value != null && (typeof value.value === 'number' || typeof value.value === 'bigint') && typeof value.count === 'number') {
+            // we are aggregating groups, so we take the aggregated values to calculated a weighted average
+            valueToAdd = value.value * (typeof value.value === 'number' ? value.count : BigInt(value.count));
+            count += value.count;
         }
 
-        if (itemIsGroupResult) {
-            // we are aggregating groups, so we take the
-            // aggregated values to calculated a weighted average
-            return {
-                sum: sum + item.value * item.count,
-                count: count + item.count
-            };
+        if (typeof valueToAdd === 'number') {
+            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
+        } else if (typeof valueToAdd === 'bigint') {
+            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
         }
+    }
 
-        return { sum, count };
-    }, { sum: 0, count: 0 });
+    let value = null;
 
     // avoid divide by zero error
-    const value = count > 0 ? sum / count : null;
+    if (count > 0) {
+        value = sum / ((typeof sum === 'number' ? count : BigInt(count)) as any);
+    }
 
     // the result will be an object. when this cell is rendered, only the avg is shown.
     // however when this cell is part of another aggregation, the count is also needed
@@ -174,11 +222,7 @@ function aggAvg(params: IAggFuncParams): any {
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
         toString: function() {
-            if (typeof this.value === 'number') {
-                return this.value.toString();
-            }
-
-            return '';
+            return typeof this.value === 'number' || typeof this.value === 'bigint' ? this.value.toString() : '';
         },
         // used for sorting
         toNumber: function() {

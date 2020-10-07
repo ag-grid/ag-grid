@@ -10,7 +10,9 @@ import {
     Qualifier,
     RowBounds,
     RowNode,
-    RowNodeCacheParams, RowNodeCache
+    RowNodeCacheParams, RowNodeCache,
+    RowDataTransaction,
+    RowNodeTransaction
 } from "@ag-grid-community/core";
 
 import {ServerSideBlock} from "./serverSideBlock";
@@ -385,6 +387,26 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             return false;
         }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+    }
+
+    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null {
+        // if (this.isMaxRowFound() || this.getBlock()) {
+        //     return null;
+        // }
+
+        const res: RowNodeTransaction = {
+            add: [],
+            remove: [],
+            update: []
+        };
+
+        if (rowDataTransaction.add) {
+            rowDataTransaction.add.forEach( item => {
+
+            });
+        }
+
+        return res;
     }
 
     public getChildCache(keys: string[]): ServerSideCache | null {

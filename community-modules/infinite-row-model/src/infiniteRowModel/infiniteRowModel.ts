@@ -85,7 +85,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public isLastRowFound(): boolean {
-        return this.infiniteCache && this.infiniteCache.isMaxRowFound();
+        return this.infiniteCache!=null && this.infiniteCache.isMaxRowFound();
     }
 
     private addEventListeners(): void {

@@ -325,6 +325,7 @@ export class MoveColumnController implements DropListener {
         }
 
         const validMoves = [firstValidMove];
+        const numberComparator = (a: number, b:number) => a-b;
 
         // add in other valid moves due to hidden columns and married children. for example, a particular
         // move might break a group that has married children (so move isn't valid), however there could
@@ -345,11 +346,14 @@ export class MoveColumnController implements DropListener {
                 validMoves.push(pointer);
                 pointer++;
             }
+
+            // adding columns here means the order is now messed up
+            validMoves.sort(numberComparator);
         } else {
             // if dragging left we do the reverse of dragging right, we add in all the valid moves to the
             // left. however we also have to consider moves to the right for all hidden columns first.
             // (this logic is hard to reason with, it was worked out with trial and error,
-            // move observation rather than science).
+            // more observation rather than science).
 
             // add moves to the right
             let pointer = firstValidMove;
@@ -368,6 +372,9 @@ export class MoveColumnController implements DropListener {
                 validMoves.push(pointer);
                 pointer--;
             }
+
+            // adding columns here means the order is now messed up
+            validMoves.sort(numberComparator).reverse();
         }
 
         return validMoves;

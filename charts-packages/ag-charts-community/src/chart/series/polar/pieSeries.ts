@@ -207,6 +207,9 @@ export class PieSeries extends PolarSeries {
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
     @reactive('update') formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
 
     /**
@@ -428,6 +431,8 @@ export class PieSeries extends PolarSeries {
             sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
+            sector.lineDash = this.lineDash;
+            sector.lineDashOffset = this.lineDashOffset;
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';

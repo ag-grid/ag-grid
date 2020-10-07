@@ -1,5 +1,6 @@
 import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
+import { GroupedCategoryChart } from "./groupedCategoryChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
@@ -204,6 +205,8 @@ const columnSeriesDefaults: any = {
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,
+    lineDash: undefined,
+    lineDashOffset: 0,
     shadow: undefined,
     highlightStyle: {
         fill: 'yellow'
@@ -397,6 +400,8 @@ const mappings: any = {
                         yName: '',
                         strokeWidth: 2,
                         strokeOpacity: 1,
+                        lineDash: undefined,
+                        lineDashOffset: 0,
                         tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
@@ -469,6 +474,8 @@ const mappings: any = {
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 2,
+                        lineDash: undefined,
+                        lineDashOffset: 0,
                         shadow: undefined,
                         tooltipRenderer: undefined,
                         highlightStyle: {
@@ -505,6 +512,8 @@ const mappings: any = {
                         strokeWidth: 1,
                         fillOpacity: 1,
                         strokeOpacity: 1,
+                        lineDash: undefined,
+                        lineDashOffset: 0,
                         areaPlot: false,
                         aggregation: 'sum',
                         tooltipRenderer: undefined,
@@ -616,6 +625,8 @@ const mappings: any = {
                         outerRadiusOffset: 0,
                         innerRadiusOffset: 0,
                         strokeWidth: 1,
+                        lineDash: undefined,
+                        lineDashOffset: 0,
                         shadow: undefined
                     }
                 },
@@ -699,5 +710,11 @@ mappings['histogram'] = {
         }
     }
 };
+
+const groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
+const groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
+groupedCategoryChartMeta.constructor = GroupedCategoryChart;
+groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
+mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;
 
 export default mappings;

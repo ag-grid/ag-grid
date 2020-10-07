@@ -83,7 +83,8 @@ export class RowDragComp extends Component {
                 return dragItemCount === 1 ? this.cellValueFn() : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
-            dragStartPixels: 0
+            dragStartPixels: 0,
+            dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
 
         this.beans.dragAndDropService.addDragSource(dragSource, true);

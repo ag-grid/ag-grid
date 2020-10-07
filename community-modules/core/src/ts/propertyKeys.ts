@@ -65,8 +65,8 @@ export class PropertyKeys {
         'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework', 'dateComponent', 'dateComponentFramework', 'groupRowRenderer',
         'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle',
         'getRowClassRules', 'traverseNode', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
-        'processSecondaryColDef', 'processSecondaryColGroupDef', 'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell',
+        'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework', 'processSecondaryColDef',
+        'processSecondaryColGroupDef', 'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader', 'tabToNextHeader', 'navigateToNextCell',
         'tabToNextCell', 'getDetailRowData', 'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath',
         'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'defaultGroupSortComparator', 'isRowMaster',
@@ -88,6 +88,6 @@ export class PropertyKeys {
      * framework-specific properties to colDefs, gridOptions etc.
      */
     public static FRAMEWORK_PROPERTIES = [
-        '__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
+        '__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
     ];
 }

@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet language="ts">
-        ColDef.chartDataType = 'category' | 'series' | 'excluded' | undefined
+        ColDef.chartDataType = 'category' | 'series' | 'time' | excluded' | undefined
     </snippet>
 
     <p>
@@ -142,6 +142,12 @@ include '../documentation-main/documentation_header.php';
         { field: 'gold', chartDataType: 'series' },
         { field: 'silver', width: 100 } // contains numbers
     </snippet>
+
+    <p>
+        See the <a href="../javascript-grid-charts-integrated-time-series">Time Series</a> section for details on
+        the <code>'time'</code> chart data type.
+    </p>
+
 
     <h3>Inferred by the Grid</h3>
 

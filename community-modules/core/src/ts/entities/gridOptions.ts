@@ -89,6 +89,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import { HeaderPosition } from "../headerRendering/header/headerPosition";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -144,7 +145,7 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
 
-    /** Allows user to suppress certain keyboard events */
+    /** @deprecated Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
@@ -366,8 +367,13 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
+
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
+    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
+
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
+
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
@@ -686,6 +692,21 @@ export interface ProcessRowParams {
     columnApi: ColumnApi;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
     context: any;
+}
+
+export interface NavigateToNextHeaderParams {
+    key: string;
+    previousHeaderPosition: HeaderPosition;
+    nextHeaderPosition: HeaderPosition;
+    event: KeyboardEvent;
+    headerRowCount: number;
+}
+
+export interface TabToNextHeaderParams {
+    backwards: boolean;
+    previousHeaderPosition: HeaderPosition;
+    nextHeaderPosition: HeaderPosition;
+    headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {

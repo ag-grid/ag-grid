@@ -61,7 +61,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
         this.printCacheStatus();
 
-        if (this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
+        if (this.maxConcurrentRequests!=null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
             this.logger.log(`checkBlockToLoad: max loads exceeded`);
             return;
         }

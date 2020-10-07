@@ -34,6 +34,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
 
+        if (grouping) {
+            agChartOptions.type = 'groupedCategory';
+        }
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
             type: grouping ? 'groupedCategory' : xAxisType,

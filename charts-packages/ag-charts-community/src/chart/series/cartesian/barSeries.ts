@@ -129,6 +129,9 @@ export class BarSeries extends CartesianSeries {
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
     @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
 
     constructor() {
@@ -137,7 +140,7 @@ export class BarSeries extends CartesianSeries {
         this.addEventListener('update', this.update);
 
         this.label.enabled = false;
-        this.label.addEventListener('update', this.update, this);
+        this.label.addEventListener('change', this.update, this);
     }
 
     /**
@@ -542,7 +545,8 @@ export class BarSeries extends CartesianSeries {
             highlightStyle: { fill, stroke },
             shadow,
             formatter,
-            xKey
+            xKey,
+            flipXY
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -572,8 +576,11 @@ export class BarSeries extends CartesianSeries {
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
+            rect.lineDash = this.lineDash;
+            rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
+            // Prevent stroke from rendering for zero height columns and zero width bars.
+            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
         });
     }
 

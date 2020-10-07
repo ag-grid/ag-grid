@@ -530,25 +530,23 @@ SNIPPET
 <h2>Blank Cells (Date and Number Filters)</h2>
 
 <p>
-    If the row data contains blanks (i.e. <code>null</code> or <code>undefined</code>), by default the row won't be included in
-    filter results. To change this, use the filter params <code>includeBlanksInEquals</code>,
-    <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>.
+    If the row data contains blanks (i.e. <code>null</code> or <code>undefined</code>), by default the row won't be
+    included in filter results. To change this, use the filter params <code>includeBlanksInEquals</code>,
+    <code>includeBlanksInLessThan</code>, <code>includeBlanksInGreaterThan</code> and
+    <code>includeBlanksInRange</code>.
     For example, the code snippet below configures a filter to include <code>null</code> for equals,
-    but not for less than or great than:
+    but not for less than, greater than or in range:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 filterParams = {
     includeBlanksInEquals: true,
     includeBlanksInLessThan: false,
-    includeBlanksInGreaterThan: false
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false
 };
 SNIPPET
 ) ?>
-
-<p>
-    Only less than, greater than and equals allow <code>null</code> values; 'In Range' will never include them.
-</p>
 
 <p>
     In the following example you can filter by age or date and see how blank values are included.

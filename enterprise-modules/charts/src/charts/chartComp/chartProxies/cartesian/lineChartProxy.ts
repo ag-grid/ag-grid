@@ -21,6 +21,9 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
 
+        if (grouping) {
+            agChartOptions.type = 'groupedCategory';
+        }
         agChartOptions.axes = [{
             type: grouping ? 'groupedCategory' : xAxisType,
             position: 'bottom',

@@ -30,7 +30,7 @@
                 'css': 'npm:systemjs-plugin-css/css.js',
 
                 // vuejs
-                'vue': 'npm:vue/dist/vue.min.js',
+                'vue': 'npm:vue@2.6.12/dist/vue.min.js',
 
                 // vue property decorator
                 'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
@@ -55,7 +55,7 @@
                 defaultExtension: 'js'
             },
             'ag-grid-vue': {
-                main: './main.js',
+                main: './lib/legacy/AgGridVue.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
@@ -67,7 +67,7 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-community/vue': {
-                main: './main.js',
+                main: './lib/legacy/AgGridVue.js',
                 defaultExtension: 'js'
             }
         },

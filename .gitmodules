@@ -42,3 +42,6 @@
 	path = examples-grid/ag-grid-angular-cli-package-example
 	url = https://github.com/seanlandsman/ag-grid-angular-cli-package-example.git
 	branch = latest
+[submodule "examples-grid/ag-grid-vue-legacy-example"]
+	path = examples-grid/ag-grid-vue-legacy-example
+	url = https://github.com/ag-grid/ag-grid-vue-legacy-example.git

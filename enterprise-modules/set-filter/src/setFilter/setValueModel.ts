@@ -301,7 +301,7 @@ export class SetValueModel implements IEventEmitter {
         return this.displayedValues[index];
     }
 
-    public isFilterActive(): boolean {
+    public hasSelections(): boolean {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedValues.size > 0 :
             this.allValues.length !== this.selectedValues.size;
@@ -367,7 +367,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public getModel(): string[] | null {
-        return this.isFilterActive() ? _.values(this.selectedValues) : null;
+        return this.hasSelections() ? _.values(this.selectedValues) : null;
     }
 
     public setModel(model: string[]): Promise<void> {

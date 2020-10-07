@@ -410,6 +410,9 @@ function renderExampleExtras($config)
         'lodash' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
         ),
+        'momentjs' => array(
+            'scripts' => array('https://momentjs.com/downloads/moment-with-locales.min.js')
+        ),
         'alasql' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js')
         ),

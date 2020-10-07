@@ -2,7 +2,7 @@ var options = {
     container: document.getElementById('myChart'),
     autoSize: true,
     title: {
-        text: 'Height vs Weight'
+        text: 'Weight vs Height'
     },
     subtitle: {
         text: 'by gender'

@@ -564,7 +564,7 @@ export class RowComp extends Component {
 
     private updateExpandedCss(): void {
 
-        const expandable = this.beans.rowCssClassCalculator.isExpandable(this.rowNode);
+        const expandable = this.rowNode.isExpandable();
         const expanded = this.rowNode.expanded;
 
         this.eAllRowContainers.forEach(eRow => {
@@ -1039,7 +1039,7 @@ export class RowComp extends Component {
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
-            expandable: this.beans.rowCssClassCalculator.isExpandable(this.rowNode),
+            expandable: this.rowNode.isExpandable(),
             scope: this.scope
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);

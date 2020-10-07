@@ -1248,6 +1248,12 @@ export class GridApi {
         }
     }
 
+    public applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route: string[] = []): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+        }
+    }
+
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {

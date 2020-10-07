@@ -13,7 +13,8 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { KeyCode } from '../constants/keyCode';
+import { isUserSuppressingHeaderKeyboardEvent } from '../utils/keyboard';
+import { KeyName } from '../constants/keyName';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -104,32 +105,44 @@ export class HeaderRootComp extends ManagedFocusComponent {
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
 
-        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
+        const { headerRowIndex, column } = this.focusController.getFocusedHeader();
+
+        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
+            return;
+        }
+
+        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
-    }
+     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection;
 
-        switch (e.keyCode) {
-            case KeyCode.LEFT:
+        const { headerRowIndex, column } = this.focusController.getFocusedHeader();
+
+        if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
+            return;
+        }
+
+        switch (e.key) {
+            case KeyName.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case KeyCode.RIGHT:
+            case KeyName.RIGHT:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                this.headerNavigationService.navigateHorizontally(direction);
+                this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
-            case KeyCode.UP:
+            case KeyName.UP:
                 direction = HeaderNavigationDirection.UP;
-            case KeyCode.DOWN:
+            case KeyName.DOWN:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerNavigationService.navigateVertically(direction)) {
+                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
                     e.preventDefault();
                 }
                 break;

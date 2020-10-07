@@ -360,7 +360,11 @@
         },
         "suppressKeyboardEvent(params)": {
             "default": false,
-            "description": "Function to allow skipping default keyboard behaviour of the grid. For example, if you don't want the grid to move focus up on up arrow key while editing, implement this method to return <code>true</code> when <code>params.editing = true</code> and <code>params.event.keyCode = [key code for up arrow key]</code>."
+            "description": "Suppress the grid taking action for the relevant keyboard event.",
+            "more": {
+                "name": "Suppress Keyboard Events",
+                "url": "../javascript-grid-keyboard-navigation/#suppressKeyboardEvents"
+            }
         },
         "onCellClicked(params)": {
             "description": "Callback called when a cell is clicked."

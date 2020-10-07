@@ -1,8 +1,10 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { SuppressKeyboardEventParams } from '../entities/colDef';
+import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
 import { isBrowserEdge, isBrowserIE } from './browser';
+import { ColumnGroup } from '../entities/columnGroup';
+import { exists } from './generic';
 
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 const NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
@@ -74,6 +76,30 @@ export function isUserSuppressingKeyboardEvent(
 
     // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
     return false;
+}
+
+export function isUserSuppressingHeaderKeyboardEvent(
+    gridOptionsWrapper: GridOptionsWrapper,
+    keyboardEvent: KeyboardEvent,
+    headerRowIndex: number,
+    column: Column | ColumnGroup
+): boolean {
+    const colDef = column.getDefinition();
+    const colDefFunc = colDef.suppressHeaderKeyboardEvent;
+
+    if (!exists(colDefFunc)) { return false; }
+
+    const params: SuppressHeaderKeyboardEventParams = {
+        api: gridOptionsWrapper.getApi(),
+        columnApi: gridOptionsWrapper.getColumnApi(),
+        context: gridOptionsWrapper.getContext(),
+        colDef: colDef,
+        column,
+        headerRowIndex,
+        event: keyboardEvent
+    };
+
+    return !!colDefFunc(params);
 }
 
 function isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {

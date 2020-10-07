@@ -19,7 +19,6 @@ export interface RowNodeCacheParams {
     maxBlocksInCache?: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests?: number;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }

@@ -26,7 +26,8 @@ var gridOptions = {
             },
             navigator: {
                 enabled: true,
-                height: 10
+                height: 20,
+                margin: 25
             },
             axes: {
                 time: {
@@ -39,9 +40,7 @@ var gridOptions = {
                     label: {
                         rotation: 0,
                         formatter: function(params) {
-                            //TODO replace with new formatter
-                            var v = params.value.toString();
-                            return v.substring(8,10) + ' ' + v.substring(4,8);
+                            return moment(new Date(params.value)).format('DD MMM');
                         }
                     },
                 },

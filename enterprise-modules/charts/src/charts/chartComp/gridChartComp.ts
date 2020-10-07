@@ -200,7 +200,7 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart changes
         this.chartType = chartType;
         this.chartThemeName = this.model.getChartThemeName();
-        this.chartProxy = this.createChartProxy(chartProxyParams);
+        this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
@@ -220,7 +220,7 @@ export class GridChartComp extends Component {
         return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 
-    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
+    private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:

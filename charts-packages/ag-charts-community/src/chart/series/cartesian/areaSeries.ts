@@ -18,6 +18,7 @@ import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
+import { interpolate } from "../../../util/string";
 
 interface AreaSelectionDatum {
     readonly yKey: string;
@@ -51,6 +52,7 @@ export class AreaSeries extends CartesianSeries {
     static type = 'area';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    tooltipFormat?: string;
 
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
@@ -98,6 +100,9 @@ export class AreaSeries extends CartesianSeries {
 
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
+
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
 
     constructor() {
         super();
@@ -382,6 +387,8 @@ export class AreaSeries extends CartesianSeries {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
 
@@ -429,6 +436,8 @@ export class AreaSeries extends CartesianSeries {
             shape.strokeWidth = strokeWidth;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
 
             path.clear();
 
@@ -529,7 +538,7 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltipFormat, tooltipRenderer } = this;
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -546,8 +555,8 @@ export class AreaSeries extends CartesianSeries {
             content
         };
 
-        if (tooltipRenderer) {
-            return toTooltipHtml(tooltipRenderer({
+        if (tooltipFormat || tooltipRenderer) {
+            const params = {
                 datum,
                 xKey,
                 xName,
@@ -556,7 +565,15 @@ export class AreaSeries extends CartesianSeries {
                 yValue,
                 yName,
                 color
-            }), defaults);
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
 
         return toTooltipHtml(defaults);

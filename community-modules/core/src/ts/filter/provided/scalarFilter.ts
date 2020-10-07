@@ -13,6 +13,7 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     includeBlanksInEquals?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
+    includeBlanksInRange?: boolean;
 
     /** @deprecated in v21*/
     nullComparator?: NullComparator;
@@ -48,31 +49,6 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
         }
     }
 
-    private nullComparator(selectedOption: string, filterValue: T, gridValue: T): number {
-        if (gridValue == null) {
-            switch (selectedOption) {
-                case ScalarFilter.EMPTY:
-                    return 0;
-
-                case ScalarFilter.EQUALS:
-                    return this.scalarFilterParams.includeBlanksInEquals ? 0 : 1;
-
-                case ScalarFilter.NOT_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInEquals ? 1 : 0;
-
-                case ScalarFilter.GREATER_THAN:
-                case ScalarFilter.GREATER_THAN_OR_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInGreaterThan ? 1 : -1;
-
-                case ScalarFilter.LESS_THAN:
-                case ScalarFilter.LESS_THAN_OR_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInLessThan ? -1 : 1;
-            }
-        }
-
-        return this.comparator()(filterValue, gridValue);
-    }
-
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel) {
         const cellValue = this.scalarFilterParams.valueGetter(params.node);
         const range = this.mapRangeFromModel(filterModel);
@@ -88,7 +64,40 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
             }
         }
 
-        const compareResult = this.nullComparator(filterType, filterValue, cellValue);
+        if (cellValue == null) {
+            switch (filterType) {
+                case ScalarFilter.EQUALS:
+                case ScalarFilter.NOT_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInEquals) {
+                        return true;
+                    }
+                    break;
+
+                case ScalarFilter.GREATER_THAN:
+                case ScalarFilter.GREATER_THAN_OR_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInGreaterThan) {
+                        return true;
+                    }
+                    break;
+
+                case ScalarFilter.LESS_THAN:
+                case ScalarFilter.LESS_THAN_OR_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInLessThan) {
+                        return true;
+                    }
+                    break;
+                case ScalarFilter.IN_RANGE:
+                    if (this.scalarFilterParams.includeBlanksInRange) {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
+
+        const comparator = this.comparator();
+        const compareResult = comparator(filterValue, cellValue);
 
         switch (filterType) {
             case ScalarFilter.EQUALS:
@@ -110,7 +119,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
                 return compareResult <= 0;
 
             case ScalarFilter.IN_RANGE: {
-                const compareToResult = this.nullComparator(filterType, filterValueTo, cellValue);
+                const compareToResult = comparator(filterValueTo, cellValue);
 
                 return this.scalarFilterParams.inRangeInclusive ?
                     compareResult >= 0 && compareToResult <= 0 :

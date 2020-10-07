@@ -103,13 +103,6 @@
                 "url": "../javascript-grid-grouping/#default-group-order"
             }
         },
-        "suppressKeyboardEvent(params)": {
-            "description": "Suppress the grid taking action for the relevant keyboard event.",
-            "more": {
-                "name": "Suppress Grid Keyboard Events",
-                "url": "../javascript-grid-keyboard-navigation/#suppressKeyboardEvents"
-            }
-        },
         "processChartOptions(params)": {
             "description": "Callback to be used to with charts to override default chart options.",
             "more": {
