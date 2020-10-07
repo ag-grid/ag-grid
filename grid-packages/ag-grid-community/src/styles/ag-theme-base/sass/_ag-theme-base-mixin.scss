@@ -1,0 +1,56 @@
+@import "./ag-theme-base-default-params";
+@import "./legacy/ag-theme-base-create-params-from-legacy-vars";
+@import "./legacy/ag-v22-to-v23-compatibility-mode";
+@import "../../mixins/ag-theme-mixins";
+@import "./parts/reset";
+@import "./parts/grid-layout";
+@import "./parts/grid-borders";
+@import "./parts/menu";
+@import "./parts/sidebar";
+@import "./parts/filter-tool-panel";
+@import "./parts/columns-tool-panel";
+@import "./parts/widgets";
+@import "./parts/header";
+@import "./parts/footer";
+@import "./parts/column-drop";
+@import "./parts/charts";
+@import "./parts/date-time";
+
+$ag-compatibility-mode: "variables" !default;
+
+@mixin ag-theme-base($params: ()) {
+    @include ag-allow-color-param-access-with-ag-param(false);
+    @include ag-include-theme-once-only();
+    $params: ag-process-theme-variables($params, $ag-theme-base-default-params);
+
+    @include ag-icons-font-face();
+    @include ag-icons-webfont();
+
+    -webkit-font-smoothing: antialiased;
+    @include ag-color-property(color, foreground-color);
+    font-family: ag-param(font-family);
+    font-size: ag-param(font-size);
+    line-height: normal;
+    .ag-root-wrapper {
+        @include ag-color-property(background-color, background-color);
+    }
+
+    @include ag-theme-base-part-reset();
+    @include ag-theme-base-part-widgets();
+    @include ag-theme-base-part-grid-layout();
+    @include ag-theme-base-part-grid-borders();
+    @include ag-theme-base-part-menu();
+    @include ag-theme-base-part-sidebar();
+    @include ag-theme-base-part-filter-tool-panel();
+    @include ag-theme-base-part-columns-tool-panel();
+    @include ag-theme-base-part-header();
+    @include ag-theme-base-part-footer();
+    @include ag-theme-base-part-column-drop();
+    @include ag-theme-base-part-charts();
+    @include ag-theme-base-part-date-time();
+
+    @if not ag-param(suppress-native-widget-styling) {
+        @include ag-native-inputs();
+    }
+    @include ag-allow-color-param-access-with-ag-param(true);
+}

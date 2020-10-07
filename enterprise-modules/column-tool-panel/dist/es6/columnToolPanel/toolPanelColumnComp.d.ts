@@ -1,0 +1,34 @@
+import { Column, Component } from "@ag-grid-community/core";
+export declare class ToolPanelColumnComp extends Component {
+    private readonly column;
+    private readonly columnDept;
+    private readonly allowDragging;
+    private readonly groupsExist;
+    private readonly focusWrapper;
+    private static TEMPLATE;
+    private gridOptionsWrapper;
+    private columnController;
+    private dragAndDropService;
+    private modelItemUtils;
+    private eLabel;
+    private cbSelect;
+    private eDragHandle;
+    private displayName;
+    private processingColumnStateChange;
+    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean, focusWrapper: HTMLElement);
+    init(): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    private onLabelClicked;
+    private onCheckboxChanged;
+    private onChangeCommon;
+    private refreshAriaLabel;
+    private setupDragging;
+    private createDragItem;
+    private onColumnStateChanged;
+    getDisplayName(): string | null;
+    onSelectAllChanged(value: boolean): void;
+    isSelected(): boolean;
+    isSelectable(): boolean;
+    isExpandable(): boolean;
+    setExpanded(value: boolean): void;
+}

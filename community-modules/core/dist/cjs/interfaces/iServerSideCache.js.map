@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/ts/interfaces/iServerSideCache.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iServerSideCache.js","sourcesContent":["export interface IServerSideCache { }\n"]}
