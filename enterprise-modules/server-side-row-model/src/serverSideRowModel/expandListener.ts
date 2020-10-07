@@ -10,11 +10,10 @@ import {
     RowNode,
     Bean
 } from "@ag-grid-community/core";
-import {ServerSideCache} from "./serverSideCache";
-import {ServerSideRowModel} from "./serverSideRowModel";
+import {cacheFactory, ServerSideRowModel} from "./serverSideRowModel";
 
-@Bean('groupExpandListener')
-export class GroupExpandListener extends BeanStub {
+@Bean('ssrmExpandListener')
+export class ExpandListener extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
@@ -35,7 +34,7 @@ export class GroupExpandListener extends BeanStub {
                 this.createDetailNode(rowNode);
             } else if (_.missing(rowNode.childrenCache)) {
                 const params = this.serverSideRowModel.getParams();
-                rowNode.childrenCache = this.context.createBean(new ServerSideCache(params, rowNode));
+                rowNode.childrenCache = this.createBean(cacheFactory(params, rowNode));
             }
         } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);

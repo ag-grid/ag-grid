@@ -26,10 +26,18 @@ import {
     RowDataTransaction,
     RowNode,
     RowRenderer,
-    SortController
+    SortController,
+    IServerSideCache
 } from "@ag-grid-community/core";
-import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
-import {ServerSideSortService} from "./serverSideSortService";
+import {MultiBlockCache, ServerSideCacheParams} from "./multiBlockCache";
+import {SortService} from "./sortService";
+import {SingleBlockCache} from "./singleBlockCache";
+
+export function cacheFactory(params: ServerSideCacheParams, parentNode: RowNode): IServerSideCache {
+    const oneBlockCache = params.blockSize == null;
+    const CacheClass = oneBlockCache ? SingleBlockCache : MultiBlockCache;
+    return new CacheClass(params, parentNode);
+}
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -41,7 +49,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('serverSideSortService') private serverSideSortService: ServerSideSortService;
+    @Autowired('ssrmSortService') private sortService: SortService;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -158,7 +166,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.datasource) {
             this.cacheParams = this.createCacheParams();
-            this.rootNode.childrenCache = this.context.createBean(new ServerSideCache(this.cacheParams, this.rootNode));
+            this.rootNode.childrenCache = this.createBean(cacheFactory(this.cacheParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
 
@@ -217,7 +225,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.serverSideSortService.extractSortModel(),
+            sortModel: this.sortService.extractSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
@@ -274,9 +282,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.cacheParams.sortModel = newSortModel;
     }
 
-    public getRootCache(): ServerSideCache {
+    public getRootCache(): IServerSideCache {
         if (this.rootNode && this.rootNode.childrenCache) {
-            return (this.rootNode.childrenCache as ServerSideCache);
+            return (this.rootNode.childrenCache as IServerSideCache);
         } else {
             return undefined;
         }
@@ -336,7 +344,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         cache.forEachNodeDeep(callback);
     }
 
-    private executeOnCache(route: string[], callback: (cache: ServerSideCache) => void) {
+    private executeOnCache(route: string[], callback: (cache: IServerSideCache) => void) {
         const cache = this.getRootCache();
         if (!cache) { return; }
 
@@ -355,7 +363,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return (firstInRange.parent!.childrenCache as ServerSideCache)!.getRowNodesInRange(lastInRange, firstInRange);
+        return (firstInRange.parent!.childrenCache as IServerSideCache)!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {
