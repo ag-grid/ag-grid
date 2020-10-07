@@ -12,8 +12,8 @@ import {
 } from "@ag-grid-community/core";
 import {ServerSideRowModel} from "./serverSideRowModel";
 
-@Bean('serverSideSortService')
-export class ServerSideSortService extends BeanStub {
+@Bean('ssrmSortService')
+export class SortService extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

@@ -20,10 +20,12 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowNodeTransaction,
+    RowNodeBlock,
     RowRenderer
 } from "@ag-grid-community/core";
 
-import {ServerSideBlock} from "./serverSideBlock";
+import {CacheUtils} from "./cacheUtils";
+import {CacheBlock} from "./cacheBlock";
 
 export interface ServerSideCacheParams {
     blockSize?: number;
@@ -41,7 +43,7 @@ export interface ServerSideCacheParams {
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
-export class ServerSideCache extends BeanStub implements IServerSideCache {
+export class MultiBlockCache extends BeanStub implements IServerSideCache {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -54,10 +56,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
 
     private readonly params: ServerSideCacheParams;
     private readonly parentRowNode: RowNode;
-    private readonly blocks: { [blockNumber: string]: ServerSideBlock; } = {};
+    private readonly blocks: { [blockNumber: string]: CacheBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
 
     private infiniteScroll: boolean;
@@ -82,7 +85,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
-        this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
+        this.rowCount = MultiBlockCache.INITIAL_ROW_COUNT;
         this.params  = cacheParams;
         this.infiniteScroll = this.params.blockSize != null;
     }
@@ -118,7 +121,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         if (!this.isAlive()) { return; }
         if (!event.success) { return; }
 
-        this.checkRowCount(event.block as ServerSideBlock, event.lastRow);
+        this.checkRowCount(event.block as CacheBlock, event.lastRow);
 
         // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
         // in the valid range. so we must remove these. this can happen if the datasource returns a
@@ -129,11 +132,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.fireCacheUpdatedEvent();
     }
 
-    private purgeBlocksIfNeeded(blockToExclude: ServerSideBlock): void {
+    private purgeBlocksIfNeeded(blockToExclude: CacheBlock): void {
         // we exclude checking for the page just created, as this has yet to be accessed and hence
         // the lastAccessed stamp will not be updated for the first time yet
         const blocksForPurging = this.getBlocksInOrder().filter( b => b!=blockToExclude );
-        const lastAccessedComparator = (a: ServerSideBlock, b: ServerSideBlock) => b.getLastAccessed() - a.getLastAccessed();
+        const lastAccessedComparator = (a: CacheBlock, b: CacheBlock) => b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
@@ -141,11 +144,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.params.maxBlocksInCache > 0;
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache - 1 : null;
-        const emptyBlocksToKeep = ServerSideCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = MultiBlockCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
-        blocksForPurging.forEach((block: ServerSideBlock, index: number) => {
+        blocksForPurging.forEach((block: CacheBlock, index: number) => {
 
-            const purgeBecauseBlockEmpty = block.getState() === ServerSideBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
+            const purgeBecauseBlockEmpty = block.getState() === CacheBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 
@@ -168,13 +171,13 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         });
     }
 
-    private isBlockCurrentlyDisplayed(block: ServerSideBlock): boolean {
+    private isBlockCurrentlyDisplayed(block: CacheBlock): boolean {
         const startIndex = block.getDisplayIndexStart();
         const endIndex = block.getDisplayIndexEnd() - 1;
         return this.rowRenderer.isRangeInRenderedViewport(startIndex, endIndex);
     }
 
-    private checkRowCount(block: ServerSideBlock, lastRow?: number): void {
+    private checkRowCount(block: CacheBlock, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -183,7 +186,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.params.blockSize;
-            const lastRowIndexPlusOverflow = lastRowIndex + ServerSideCache.OVERFLOW_SIZE;
+            const lastRowIndexPlusOverflow = lastRowIndex + MultiBlockCache.OVERFLOW_SIZE;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
                 this.rowCount = lastRowIndexPlusOverflow;
@@ -195,14 +198,14 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, this.rowCount, sequence));
     }
 
-    public getBlocksInOrder(): ServerSideBlock[] {
+    public getBlocksInOrder(): CacheBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        const blockComparator = (a: ServerSideBlock, b: ServerSideBlock) => a.getId() - b.getId();
+        const blockComparator = (a: CacheBlock, b: CacheBlock) => a.getId() - b.getId();
         const blocks = Object.values(this.blocks).sort(blockComparator);
         return blocks;
     }
 
-    private destroyBlock(block: ServerSideBlock): void {
+    private destroyBlock(block: CacheBlock): void {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.blockCount--;
@@ -220,8 +223,8 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     private destroyAllBlocksPastVirtualRowCount(): void {
-        const blocksToDestroy: ServerSideBlock[] = [];
-        this.getBlocksInOrder().forEach((block: ServerSideBlock) => {
+        const blocksToDestroy: CacheBlock[] = [];
+        this.getBlocksInOrder().forEach((block: CacheBlock) => {
             const startRow = block.getId() * this.params.blockSize;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
@@ -240,7 +243,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
         if (this.rowCount === 0) {
-            this.rowCount = ServerSideCache.INITIAL_ROW_COUNT;
+            this.rowCount = MultiBlockCache.INITIAL_ROW_COUNT;
         }
 
         this.fireCacheUpdatedEvent();
@@ -287,14 +290,14 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return invalidRange ? [] : result;
     }
 
-    private findBlockAndExecute<T>(matchBlockFunc: (block: ServerSideBlock) => FindResult,
-                                blockFoundFunc: (foundBlock: ServerSideBlock)=>T,
-                                blockNotFoundFunc: (previousBlock: ServerSideBlock)=>T,
+    private findBlockAndExecute<T>(matchBlockFunc: (block: CacheBlock) => FindResult,
+                                blockFoundFunc: (foundBlock: CacheBlock)=>T,
+                                blockNotFoundFunc: (previousBlock: CacheBlock)=>T,
                  ): T {
 
         let blockFound = false;
         let breakSearch = false;
-        let lastBlock: ServerSideBlock | null = null;
+        let lastBlock: CacheBlock | null = null;
 
         let res: T = undefined;
 
@@ -322,7 +325,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     public getRowBounds(index: number): RowBounds {
 
-        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+        const matchBlockFunc = (block: CacheBlock): FindResult => {
             if (block.isDisplayIndexInBlock(index)) {
                 return FindResult.FOUND;
             } else {
@@ -330,11 +333,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             }
         };
 
-        const blockFoundFunc = (foundBlock: ServerSideBlock): RowBounds => {
+        const blockFoundFunc = (foundBlock: CacheBlock): RowBounds => {
             return foundBlock.getRowBounds(index, this.getRowCount());
         };
 
-        const blockNotFoundFunc = (previousBlock: ServerSideBlock): RowBounds => {
+        const blockNotFoundFunc = (previousBlock: CacheBlock): RowBounds => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
@@ -359,7 +362,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
 
     public getRowIndexAtPixel(pixel: number): number {
 
-        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+        const matchBlockFunc = (block: CacheBlock): FindResult => {
             if (block.isPixelInRange(pixel)) {
                 return FindResult.FOUND;
             } else {
@@ -367,11 +370,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             }
         };
 
-        const blockFoundFunc = (foundBlock: ServerSideBlock): number => {
+        const blockFoundFunc = (foundBlock: CacheBlock): number => {
             return foundBlock.getRowIndexAtPixel(pixel, this.getRowCount());
         };
 
-        const blockNotFoundFunc = (previousBlock: ServerSideBlock): number => {
+        const blockNotFoundFunc = (previousBlock: CacheBlock): number => {
             let nextRowTop: number;
             let nextRowIndex: number;
 
@@ -464,7 +467,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         // eg if a cell range is selected, and the user filters so rows no longer exists
         if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
 
-        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+        const matchBlockFunc = (block: CacheBlock): FindResult => {
             if (block.isDisplayIndexInBlock(displayRowIndex)) {
                 return FindResult.FOUND;
             } else {
@@ -472,11 +475,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             }
         };
 
-        const blockFoundFunc = (foundBlock: ServerSideBlock): RowNode => {
+        const blockFoundFunc = (foundBlock: CacheBlock): RowNode => {
             return foundBlock.getRowUsingDisplayIndex(displayRowIndex);
         };
 
-        const blockNotFoundFunc = (previousBlock: ServerSideBlock): RowNode => {
+        const blockNotFoundFunc = (previousBlock: CacheBlock): RowNode => {
             if (dontCreateBlock) { return; }
 
             let blockNumber: number;
@@ -530,7 +533,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         const blockSize = this.params.blockSize;
         const blockId = Math.floor(topLevelIndex / blockSize);
 
-        const matchBlockFunc = (block: ServerSideBlock): FindResult => {
+        const matchBlockFunc = (block: CacheBlock): FindResult => {
             if (block.getId()===blockId) {
                 return FindResult.FOUND;
             } else {
@@ -538,12 +541,12 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             }
         };
 
-        const blockFoundFunc = (foundBlock: ServerSideBlock): number => {
+        const blockFoundFunc = (foundBlock: CacheBlock): number => {
             const rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex, true);
             return rowNode.rowIndex;
         };
 
-        const blockNotFoundFunc = (previousBlock: ServerSideBlock): number => {
+        const blockNotFoundFunc = (previousBlock: CacheBlock): number => {
             if (!previousBlock) {
                 return topLevelIndex;
             }
@@ -564,7 +567,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             // is open, we get the index of the last displayed child node.
             let lastDisplayedNodeIndexInBlockBefore: number;
             if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
+                const serverSideCache = lastRowNode.childrenCache as IServerSideCache;
                 lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
             } else if (lastRowNode.expanded && lastRowNode.detailNode) {
                 lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
@@ -582,11 +585,11 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): CacheBlock {
 
-        const block = this.createBean(new ServerSideBlock(blockNumber, this.parentRowNode, this.params, this));
+        const block = this.createBean(new CacheBlock(blockNumber, this.parentRowNode, this.params, this));
         block.setDisplayIndexes(new NumberSequence(displayIndex), this.getRowCount(), nextRowTop);
-        block.addEventListener(ServerSideBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
         this.blocks[block.getId()] = block;
         this.blockCount++;
@@ -628,30 +631,21 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
         return res;
     }
 
-    public getChildCache(keys: string[]): ServerSideCache | null {
-        if (_.missingOrEmpty(keys)) {
-            return this;
-        }
+    public getChildCache(keys: string[]): IServerSideCache | null {
 
-        const nextKey = keys[0];
+        const findNodeCallback = (key: string) => {
+            let nextNode: RowNode = null;
+            this.getBlocksInOrder().forEach(block => {
+                block.forEachNodeShallow(rowNode => {
+                    if (rowNode.key === key) {
+                        nextNode = rowNode;
+                    }
+                }, this.getRowCount(), new NumberSequence());
+            });
+            return nextNode;
+        };
 
-        let nextServerSideCache: any = null;
-
-        this.getBlocksInOrder().forEach(block => {
-            // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
-            block.forEachNodeShallow(rowNode => {
-                if (rowNode.key === nextKey) {
-                    nextServerSideCache = rowNode.childrenCache as ServerSideCache;
-                }
-            }, this.getRowCount(), new NumberSequence());
-        });
-
-        if (nextServerSideCache) {
-            const keyListForNextLevel = keys.slice(1, keys.length);
-            return nextServerSideCache ? nextServerSideCache.getChildCache(keyListForNextLevel) : null;
-        } else {
-            return null;
-        }
+        return this.cacheUtils.getChildCache(keys, this, findNodeCallback);
     }
 
     public isPixelInRange(pixel: number): boolean {
@@ -662,19 +656,12 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
     }
 
     public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
-        const level = this.parentRowNode.level + 1;
-        const grouping = level < this.params.rowGroupCols.length;
-
-        let shouldPurgeCache: boolean;
-        if (grouping) {
-            const groupColVo = this.params.rowGroupCols[level];
-            const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
-            const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
-
-            shouldPurgeCache = rowGroupBlock && sortingByGroup;
-        } else {
-            shouldPurgeCache = true;
-        }
+        const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
+            parentRowNode: this.parentRowNode,
+            cacheParams: this.params,
+            changedColumnsInSort: changedColumnsInSort,
+            rowGroupColIds: rowGroupColIds
+        });
 
         if (shouldPurgeCache) {
             this.purgeCache();
@@ -682,7 +669,7 @@ export class ServerSideCache extends BeanStub implements IServerSideCache {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
-                        const nextCache = (rowNode.childrenCache as ServerSideCache);
+                        const nextCache = (rowNode.childrenCache as IServerSideCache);
                         if (nextCache) {
                             nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
