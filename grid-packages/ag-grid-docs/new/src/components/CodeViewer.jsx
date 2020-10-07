@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useStaticQuery, graphql } from "gatsby";
 import './code-viewer.scss';
 import Prism from 'prismjs';
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-bash";
-import "prismjs/components/prism-jsx";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-sql";
-import "prismjs/components/prism-diff";
-import "prismjs/components/prism-scss";
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-diff';
+import 'prismjs/components/prism-scss';
 
-const updateFiles = (data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
+const updateFiles = (pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
 
     const defaultFile = {
@@ -28,7 +28,7 @@ const updateFiles = (data, name, framework, useFunctionalReact, importType, setF
         framework = 'reactFunctional';
     }
 
-    const rootFolder = `${name}/_gen/${importType}/${framework}/`;
+    const rootFolder = `${pageName}/examples/${name}/_gen/${importType}/${framework}/`;
     const filesForExample = data.allFile.edges
         .filter(edge => edge.node.relativePath.startsWith(rootFolder))
         .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));
@@ -44,13 +44,13 @@ const updateFiles = (data, name, framework, useFunctionalReact, importType, setF
     Promise.all(promises).then(() => setFiles(files));
 };
 
-const CodeViewer = ({ framework, name, importType = 'modules', useFunctionalReact = false }) => {
+const CodeViewer = ({ pageName, framework, name, importType = 'modules', useFunctionalReact = false }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 
     const data = useStaticQuery(graphql`
     {
-        allFile(filter: { sourceInstanceName: { eq: "examples" } }) {
+        allFile(filter: { sourceInstanceName: { eq: "examples" }, relativePath: { regex: "/.*\/examples\/.*/" } }) {
             edges {
                 node {
                     relativePath
@@ -62,7 +62,7 @@ const CodeViewer = ({ framework, name, importType = 'modules', useFunctionalReac
     `);
 
     useEffect(
-        () => updateFiles(data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
+        () => updateFiles(pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
         [data, name, framework, useFunctionalReact, importType]);
 
     return <div className="code-viewer">
@@ -94,7 +94,7 @@ const FileView = ({ path, code }) => {
     const parts = path.split('.');
     const extension = parts[parts.length - 1];
 
-    return <pre className="language-"><code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, LanguageMap[extension]) }}></code></pre>;
+    return <pre className="language-"><code dangerouslySetInnerHTML={{ __html: Prism.highlight(code || '', LanguageMap[extension]) }}></code></pre>;
 };
 
 export default CodeViewer;

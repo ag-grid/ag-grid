@@ -3,7 +3,7 @@ import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from './GlobalContext';
 import './example-runner.scss';
 
-export default ({ framework, name, title, type, options = '{}' }) => {
+const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     //const parsedOptions = JSON.parse(options);
 
     return <GlobalContextConsumer>
@@ -12,13 +12,22 @@ export default ({ framework, name, title, type, options = '{}' }) => {
                 <div className="example-runner__header">
                     <div className="example-runner__title">Example: {title}</div>
                     {framework === 'react' &&
-                        <ReactVersionSelector useFunctionalReact={useFunctionalReact} onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
+                        <ReactVersionSelector
+                            useFunctionalReact={useFunctionalReact}
+                            onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
                     {framework !== 'javascript' &&
-                        <ImportTypeSelector importType={exampleImportType} onChange={event => set({ exampleImportType: event.target.value })} />
+                        <ImportTypeSelector
+                            importType={exampleImportType}
+                            onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                <CodeViewer framework={framework} name={name} importType={exampleImportType} useFunctionalReact={useFunctionalReact} />
+                <CodeViewer
+                    pageName={pageName}
+                    framework={framework}
+                    name={name}
+                    importType={exampleImportType}
+                    useFunctionalReact={useFunctionalReact} />
             </div >;
         }}
     </GlobalContextConsumer>;
@@ -42,3 +51,5 @@ const ReactVersionSelector = ({ useFunctionalReact, onChange }) => {
         </select>
     </div>;
 };
+
+export default ExampleRunner;

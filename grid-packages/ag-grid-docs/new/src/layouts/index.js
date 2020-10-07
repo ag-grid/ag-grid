@@ -4,7 +4,6 @@ import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
 import './index.scss';
-import 'typeface-roboto';
 
 export default ({ path, children, pageContext: { framework } }) => {
     return <GlobalContextProvider>

@@ -4,43 +4,51 @@ module.exports = {
     author: 'AG-Grid'
   },
   plugins: [
-    'gatsby-plugin-layout',
     {
-      resolve: "gatsby-source-filesystem",
+      resolve: 'gatsby-plugin-page-creator',
       options: {
         path: `${__dirname}/src/pages`,
-        name: "pages"
-      }
+        ignore: ['**/examples/**'],
+      },
     },
+    'gatsby-plugin-layout',
     {
-      resolve: "gatsby-source-filesystem",
+      resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${__dirname}/src/examples`,
-        name: "examples"
+        path: `${__dirname}/src/pages`,
+        name: 'pages',
+        ignore: ['**/examples/**'],
       }
     },
     {
-      resolve: "gatsby-transformer-remark",
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        path: `${__dirname}/src/pages`,
+        name: 'examples',
+      }
+    },
+    {
+      resolve: 'gatsby-transformer-remark',
       options: {
         plugins: [
           {
-            resolve: "gatsby-remark-custom-blocks",
+            resolve: 'gatsby-remark-custom-blocks',
             options: {
               blocks: {
                 note: {
-                  classes: "note",
+                  classes: 'note',
                 },
-                "only-javascript": {
-                  classes: "javascript-only-section",
+                'only-javascript': {
+                  classes: 'javascript-only-section',
                 },
-                "only-angular": {
-                  classes: "angular-only-section",
+                'only-angular': {
+                  classes: 'angular-only-section',
                 },
-                "only-react": {
-                  classes: "react-only-section",
+                'only-react': {
+                  classes: 'react-only-section',
                 },
-                "only-vue": {
-                  classes: "vue-only-section",
+                'only-vue': {
+                  classes: 'vue-only-section',
                 },
               },
             },
