@@ -5,7 +5,9 @@ import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
 import './index.scss';
 
-export default ({ path, children, pageContext: { framework } }) => {
+export const Layout = ({ path, children, pageContext: { framework } }) => {
+    const pageName = path.replace(`/${framework}/`, '');
+
     return <GlobalContextProvider>
         <div className="main_container">
             <div className="header">
@@ -14,7 +16,7 @@ export default ({ path, children, pageContext: { framework } }) => {
             </div>
             <div className="content_viewport">
                 {framework && <div className="main_menu">
-                    <Menu currentFramework={framework} />
+                    <Menu currentFramework={framework} currentPage={pageName} />
                 </div>}
                 <div className="content">
                     {children}
@@ -26,3 +28,5 @@ export default ({ path, children, pageContext: { framework } }) => {
         </div>
     </GlobalContextProvider>;
 };
+
+export default Layout;

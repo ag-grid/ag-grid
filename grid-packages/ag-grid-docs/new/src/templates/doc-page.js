@@ -7,9 +7,9 @@ import FrameworkSpecificSection from '../components/FrameworkSpecificSection';
 import './doc-page.scss';
 import SideMenu from '../components/SideMenu';
 
-export default function DocPageTemplate({ location, data, pageContext: { framework } }) {
+export default function DocPageTemplate({ path, data, pageContext: { framework } }) {
   const { markdownRemark: page } = data;
-  const pageName = location.pathname.replace(`/${framework}/`, '');
+  const pageName = path.replace(`/${framework}/`, '');
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
