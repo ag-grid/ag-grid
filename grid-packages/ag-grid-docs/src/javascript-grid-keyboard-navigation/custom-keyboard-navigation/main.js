@@ -102,12 +102,6 @@ function navigateToNextHeader(params) {
     var nextHeader = params.nextHeaderPosition;
     var processedNextHeader;
 
-    switch (params.key) {
-        case 'ArrowRight':
-        case 'ArrowLeft':
-            return nextHeader;
-    }
-
     if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
         return nextHeader;
     }
