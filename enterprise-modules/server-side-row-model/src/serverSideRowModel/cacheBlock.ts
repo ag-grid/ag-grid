@@ -82,10 +82,6 @@ export class CacheBlock extends RowNodeBlock {
         this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
     }
 
-    public getRowCount(): number {
-        return this.parentStore.getRowCount();
-    }
-
     @PostConstruct
     protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -100,10 +96,6 @@ export class CacheBlock extends RowNodeBlock {
 
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
         this.setData([]);
-    }
-
-    public getStartRow(): number {
-        return this.startRow;
     }
 
     public isDisplayIndexInBlock(displayIndex: number): boolean {
@@ -185,10 +177,14 @@ export class CacheBlock extends RowNodeBlock {
 
     public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
         if (!dontTouchLastAccessed) {
-            this.lastAccessed = this.storeParams.lastAccessedSequence.next();
+            this.touchLastAccessed();
         }
         const localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
+    }
+
+    private touchLastAccessed(): void {
+        this.lastAccessed = this.storeParams.lastAccessedSequence.next();
     }
 
     protected processServerResult(rows: any[], newLastRow: number): void {
@@ -245,7 +241,7 @@ export class CacheBlock extends RowNodeBlock {
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
         let bottomPointer = this.startRow;
         let topPointer = bottomPointer + this.rowNodes.length - 1;
-        const res = this.blockUtils.getRowUsingDisplayIndex(displayRowIndex, bottomPointer, topPointer, this.getRowUsingLocalIndex.bind(this));
+        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, bottomPointer, topPointer, this.getRowUsingLocalIndex.bind(this));
         return res;
     }
 
@@ -266,15 +262,12 @@ export class CacheBlock extends RowNodeBlock {
 
     public getRowBounds(index: number): RowBounds | null {
 
-        const start = this.getStartRow();
+        this.touchLastAccessed();
 
         for (let i = 0; i <= this.rowNodes.length; i++) {
-            const localIndex = i + start;
-            const rowNode = this.getRowUsingLocalIndex(localIndex);
-            if (rowNode) {
-                const res = this.blockUtils.extractRowBounds(rowNode, index);
-                if (res) { return res; }
-            }
+            const rowNode = this.rowNodes[i];
+            const res = this.blockUtils.extractRowBounds(rowNode, index);
+            if (res) { return res; }
         }
 
         console.error(` ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
@@ -284,7 +277,7 @@ export class CacheBlock extends RowNodeBlock {
 
     public getRowIndexAtPixel(pixel: number): number {
 
-        const start = this.getStartRow();
+        const start = this.startRow;
 
         for (let i = 0; i <= this.rowNodes.length; i++) {
             const localIndex = i + start;

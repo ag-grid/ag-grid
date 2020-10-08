@@ -189,7 +189,7 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         const topPointer = this.rowNodes.length - 1;
         const getRowNodeFunc = (index: number) => this.rowNodes[index];
 
-        const res = this.blockUtils.getRowUsingDisplayIndex(displayRowIndex, bottomPointer, topPointer, getRowNodeFunc);
+        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, bottomPointer, topPointer, getRowNodeFunc);
         return res;
     }
 
