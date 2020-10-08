@@ -86,7 +86,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private onFilterChanged(): void {

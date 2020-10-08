@@ -57,7 +57,6 @@ export class BlockUtils extends BeanStub {
         return rowNode;
     }
 
-
     public setDataIntoRowNode(rowNode: RowNode, data: any,  index: number, nodeIdPrefix: string): void {
         rowNode.stub = false;
 
@@ -154,10 +153,10 @@ export class BlockUtils extends BeanStub {
         rowNode.clearRowTop();
         rowNode.setRowIndex(undefined);
 
-        const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
-        if (hasChildCache) {
-            const serverSideCache = rowNode.childrenCache as IServerSideChildStore;
-            serverSideCache.clearDisplayIndexes();
+        const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
+        if (hasChildStore) {
+            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            childStore.clearDisplayIndexes();
         }
 
         const hasDetailNode = rowNode.master && rowNode.detailNode;
@@ -165,7 +164,6 @@ export class BlockUtils extends BeanStub {
             rowNode.detailNode.clearRowTop();
             rowNode.detailNode.setRowIndex(undefined);
         }
-
     }
 
     public setDisplayIndex(rowNode: RowNode, displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void {
@@ -188,15 +186,15 @@ export class BlockUtils extends BeanStub {
         }
 
         // set children for SSRM child rows
-        const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
-        if (hasChildCache) {
-            const serverSideCache = rowNode.childrenCache as IServerSideChildStore;
+        const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
+        if (hasChildStore) {
+            const childStore = rowNode.childrenCache as IServerSideChildStore;
             if (rowNode.expanded) {
-                serverSideCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                childStore.setDisplayIndexes(displayIndexSeq, nextRowTop);
             } else {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out
-                serverSideCache.clearDisplayIndexes();
+                childStore.clearDisplayIndexes();
             }
         }
     }
@@ -224,9 +222,9 @@ export class BlockUtils extends BeanStub {
             }
 
             // then check if child cache contains index
-            const childrenCache = currentRowNode.childrenCache as IServerSideChildStore;
-            if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
-                return childrenCache.getRowUsingDisplayIndex(displayRowIndex);
+            const childStore = currentRowNode.childrenCache as IServerSideChildStore;
+            if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
+                return childStore.getRowUsingDisplayIndex(displayRowIndex);
             }
 
             // otherwise adjust pointers to continue searching for index
@@ -255,9 +253,9 @@ export class BlockUtils extends BeanStub {
         }
 
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const serverSideCache = rowNode.childrenCache as IServerSideChildStore;
-            if (serverSideCache.isDisplayIndexInCache(index)) {
-                return serverSideCache.getRowBounds(index);
+            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            if (childStore.isDisplayIndexInStore(index)) {
+                return childStore.getRowBounds(index);
             }
         } else if (rowNode.master && rowNode.expanded && _.exists(rowNode.detailNode)) {
             if (rowNode.detailNode.rowIndex === index) {
@@ -280,9 +278,9 @@ export class BlockUtils extends BeanStub {
 
         // then check if it's a group row with a child cache with pixel in range
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const serverSideCache = rowNode.childrenCache as IServerSideChildStore;
-            if (serverSideCache.isPixelInRange(pixel)) {
-                return serverSideCache.getRowIndexAtPixel(pixel);
+            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            if (childStore.isPixelInRange(pixel)) {
+                return childStore.getRowIndexAtPixel(pixel);
             }
         }
 

@@ -2,12 +2,10 @@ import {
     _,
     Autowired,
     BeanStub,
-    CacheUpdatedEvent,
-    ColumnVO,
+    StoreUpdatedEvent,
     Events,
     GridOptionsWrapper,
     IServerSideChildStore,
-    IServerSideDatasource,
     LoadCompleteEvent,
     Logger,
     LoggerFactory,
@@ -18,9 +16,9 @@ import {
     RowBounds,
     RowDataTransaction,
     RowNode,
+    RowNodeBlock,
     RowNodeBlockLoader,
     RowNodeTransaction,
-    RowNodeBlock,
     RowRenderer
 } from "@ag-grid-community/core";
 
@@ -200,8 +198,8 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     private fireCacheUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: CacheUpdatedEvent = {
-            type: Events.EVENT_CACHE_UPDATED
+        const event: StoreUpdatedEvent = {
+            type: Events.EVENT_STORE_UPDATED
         };
         this.eventService.dispatchEvent(event);
     }
@@ -219,7 +217,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         }
     }
 
-    public purgeCache(): void {
+    public purgeStore(): void {
         this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
@@ -449,7 +447,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer exists
-        if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
+        if (!this.isDisplayIndexInStore(displayRowIndex)) { return null; }
 
         const matchBlockFunc = (block: CacheBlock): FindResult => {
             if (block.isDisplayIndexInBlock(displayRowIndex)) {
@@ -588,7 +586,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         return this.displayIndexEnd;
     }
 
-    public isDisplayIndexInCache(displayIndex: number): boolean {
+    public isDisplayIndexInStore(displayIndex: number): boolean {
         if (this.getRowCount() === 0) {
             return false;
         }
@@ -615,7 +613,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         return res;
     }
 
-    public getChildCache(keys: string[]): IServerSideChildStore | null {
+    public getChildStore(keys: string[]): IServerSideChildStore | null {
 
         const findNodeCallback = (key: string) => {
             let nextNode: RowNode = null;
@@ -629,7 +627,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
             return nextNode;
         };
 
-        return this.cacheUtils.getChildCache(keys, this, findNodeCallback);
+        return this.cacheUtils.getChildStore(keys, this, findNodeCallback);
     }
 
     public isPixelInRange(pixel: number): boolean {
@@ -639,7 +637,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
     }
 
-    public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
             parentRowNode: this.parentRowNode,
             storeParams: this.storeParams,
@@ -648,14 +646,14 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         });
 
         if (shouldPurgeCache) {
-            this.purgeCache();
+            this.purgeStore();
         } else {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
                         const nextCache = (rowNode.childrenCache as IServerSideChildStore);
                         if (nextCache) {
-                            nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+                            nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
                     block.forEachNodeShallow(callback, this.getRowCount(), new NumberSequence());

@@ -1368,7 +1368,7 @@ export class GridApi {
 
     public purgeServerSideCache(route?: string[]): void {
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeCache(route);
+            this.serverSideRowModel.purgeStore(route);
         } else {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }

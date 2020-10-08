@@ -2,7 +2,7 @@ import {
     _,
     Autowired,
     BeanStub,
-    CacheUpdatedEvent,
+    StoreUpdatedEvent,
     ColumnApi,
     Events,
     GridApi,
@@ -256,8 +256,8 @@ export class InfiniteCache extends BeanStub {
 
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
-            const event: CacheUpdatedEvent = {
-                type: Events.EVENT_CACHE_UPDATED
+            const event: StoreUpdatedEvent = {
+                type: Events.EVENT_STORE_UPDATED
             };
             this.eventService.dispatchEvent(event);
         }

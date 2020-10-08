@@ -46,7 +46,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentCache: ChildStoreCache;
+    private readonly parentStore: ChildStoreCache;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -67,8 +67,7 @@ export class CacheBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentCache: ChildStoreCache) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: ChildStoreCache) {
         super(blockNumber);
 
         this.storeParams = storeParams;
@@ -79,14 +78,14 @@ export class CacheBlock extends RowNodeBlock {
         this.startRow = blockNumber * storeParams.blockSize;
         this.endRow = this.startRow + storeParams.blockSize;
 
-        this.parentCache = parentCache;
+        this.parentStore = parentStore;
         this.level = parentRowNode.level + 1;
         this.groupLevel = storeParams.rowGroupCols ? this.level < storeParams.rowGroupCols.length : undefined;
         this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
     }
 
     public getRowCount(): number {
-        return this.parentCache.getRowCount();
+        return this.parentStore.getRowCount();
     }
 
     @PostConstruct
@@ -197,7 +196,8 @@ export class CacheBlock extends RowNodeBlock {
                 // this will only every happen for server side row model, as infinite
                 // row model doesn't have groups
                 if (includeChildren && rowNode.childrenCache) {
-                    (rowNode.childrenCache as IServerSideChildStore).forEachNodeDeep(callback, sequence);
+                    const childStore = rowNode.childrenCache as IServerSideChildStore;
+                    childStore.forEachNodeDeep(callback, sequence);
                 }
             }
         }
@@ -274,7 +274,7 @@ export class CacheBlock extends RowNodeBlock {
 
         // the end row depends on whether all this block is used or not. if the virtual row count
         // is before the end, then not all the row is used
-        const rowCount = this.parentCache.getRowCount();
+        const rowCount = this.parentStore.getRowCount();
         const endRow = this.getEndRow();
         const actualEnd = (rowCount < endRow) ? rowCount : endRow;
 
@@ -289,7 +289,7 @@ export class CacheBlock extends RowNodeBlock {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             parentNode: this.parentRowNode,
-            cacheParams: this.storeParams,
+            storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this)
         });
