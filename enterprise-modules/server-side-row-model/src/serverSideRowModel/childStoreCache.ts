@@ -638,7 +638,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     }
 
     public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
-        const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
+        const shouldPurgeCache = this.cacheUtils.shouldPurgeStoreAfterSort({
             parentRowNode: this.parentRowNode,
             storeParams: this.storeParams,
             changedColumnsInSort: changedColumnsInSort,
