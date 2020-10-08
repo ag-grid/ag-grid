@@ -140,19 +140,19 @@ include '../documentation-main/documentation_header.php';
 <?= createSnippet(<<<SNIPPET
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-grid.css" />
+  href="https://unpkg.com/@ag-grid-community/all-modules@24.1.0/dist/styles/ag-grid.css" />
 
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-alpine.css" />
+  href="https://unpkg.com/@ag-grid-community/all-modules@24.1.0/dist/styles/ag-theme-alpine.css" />
 SNIPPET
 , 'html') ?>
 
-<p>
+<note>
     Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches
-    the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app
-    will be unavailable if the unpkg servers are down.
-</p>
+    the JS version you're using. This is useful for testing and prototyping but not recommended for production as your
+    app will be unavailable if the unpkg servers are down.
+</note>
 
 <h2>Loading the Roboto font for Material theme</h2>
 
