@@ -101,7 +101,7 @@ export class CacheBlock extends RowNodeBlock {
         }
 
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
-        this.createRowNodes();
+        this.setData([]);
     }
 
     public getStartRow(): number {
@@ -161,54 +161,28 @@ export class CacheBlock extends RowNodeBlock {
         return openNodeCount > 0;
     }
 
-    // this method is repeated, see forEachNode, why?
-    private forEachRowNode(rowCount: number, callback: (rowNode: RowNode) => void): void {
-        const start = this.getStartRow();
-        const end = this.getEndRow();
-
-        for (let i = start; i <= end; i++) {
-            // the blocks can have extra rows in them, if they are the last block
-            // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= rowCount) {
-                continue;
-            }
-
-            const rowNode = this.getRowUsingLocalIndex(i);
-
-            if (rowNode) {
-                callback(rowNode);
-            }
-        }
-    }
-
     // this method is repeated, see forEachRowNode, why?
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
-                        rowCount: number,
                         sequence: NumberSequence = new NumberSequence(),
                         includeChildren: boolean): void {
-        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
-            // we check against rowCount as this page may be the last one, and if it is, then
-            // the last rows are not part of the set
-            if (rowIndex < rowCount) {
-                const rowNode = this.getRowUsingLocalIndex(rowIndex);
-                callback(rowNode, sequence.next());
+        this.rowNodes.forEach( rowNode => {
+            callback(rowNode, sequence.next());
 
-                // this will only every happen for server side row model, as infinite
-                // row model doesn't have groups
-                if (includeChildren && rowNode.childrenCache) {
-                    const childStore = rowNode.childrenCache as IServerSideChildStore;
-                    childStore.forEachNodeDeep(callback, sequence);
-                }
+            // this will only every happen for server side row model, as infinite
+            // row model doesn't have groups
+            if (includeChildren && rowNode.childrenCache) {
+                const childStore = rowNode.childrenCache as IServerSideChildStore;
+                childStore.forEachNodeDeep(callback, sequence);
             }
-        }
+        });
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, rowCount: number, sequence?: NumberSequence): void {
-        this.forEachNode(callback, rowCount, sequence, true);
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void {
+        this.forEachNode(callback, sequence, true);
     }
 
-    public forEachNodeShallow(callback: (rowNode: RowNode) => void, rowCount: number, sequence?: NumberSequence): void {
-        this.forEachNode(callback, rowCount, sequence, false);
+    public forEachNodeShallow(callback: (rowNode: RowNode) => void, sequence?: NumberSequence): void {
+        this.forEachNode(callback, sequence, false);
     }
 
     public getLastAccessed(): number {
@@ -223,46 +197,51 @@ export class CacheBlock extends RowNodeBlock {
         return this.rowNodes[localIndex];
     }
 
-    // creates empty row nodes, data is missing as not loaded yet
-    private createRowNodes(): void {
-        this.rowNodes = [];
-        for (let i = 0; i < this.storeParams.blockSize; i++) {
+    protected processServerResult(rows: any[], newLastRow: number): void {
+        this.parentStore.onBlockLoaded(this, rows, newLastRow);
+    }
+
+    public setData(rows: any[]): void {
+
+        this.destroyRowNodes();
+
+        const storeRowCount = this.parentStore.getRowCount();
+        const startRow = this.getId() * this.storeParams.blockSize;
+        const endRow = Math.min(startRow + this.storeParams.blockSize, storeRowCount);
+        const rowsToCreate = endRow - startRow;
+
+        for (let i = 0; i<rowsToCreate; i++) {
             const rowNode = this.blockUtils.createRowNode(
                 {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
-            this.rowNodes.push(rowNode);
-        }
-    }
-
-    protected processServerResult(rows: any[]): void {
-        const rowNodesToRefresh: RowNode[] = [];
-
-        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
-            const data = rows[index];
-            if (rowNode.stub) {
-                rowNodesToRefresh.push(rowNode);
+            // application user should ALWAYS provide a for this index. if they did not, it means the we
+            // asked from eg 100 rows but application returned less than 100 and didn't update lastRow
+            // accordingly, eg they returned less data than how much they say should be returned.
+            const applicationProvidedRowForThisIndex = i < rows.length;
+            if (applicationProvidedRowForThisIndex) {
+                const data = rows[i];
+                this.blockUtils.setDataIntoRowNode(rowNode, data, this.startRow + i, this.nodeIdPrefix);
             }
-            this.blockUtils.setDataIntoRowNode(rowNode, data, this.startRow + index, this.nodeIdPrefix);
-        });
-
-        if (rowNodesToRefresh.length > 0) {
-            this.rowRenderer.redrawRows(rowNodesToRefresh);
+            this.rowNodes.push(rowNode);
         }
     }
 
     @PreDestroy
     private destroyRowNodes(): void {
-        this.rowNodes.forEach(rowNode => {
-            if (rowNode.childrenCache) {
-                this.destroyBean(rowNode.childrenCache);
-                rowNode.childrenCache = null;
-            }
-            // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
-        });
+        if (this.rowNodes) {
+            this.rowNodes.forEach(rowNode => {
+                if (rowNode.childrenCache) {
+                    this.destroyBean(rowNode.childrenCache);
+                    rowNode.childrenCache = null;
+                }
+                // this is needed, so row render knows to fade out the row, otherwise it
+                // sees row top is present, and thinks the row should be shown. maybe
+                // rowNode should have a flag on whether it is visible???
+                rowNode.clearRowTop();
+            });
+        }
+        this.rowNodes = [];
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -299,19 +278,13 @@ export class CacheBlock extends RowNodeBlock {
         return pixel >= this.blockTopPx && pixel < (this.blockTopPx + this.blockHeightPx);
     }
 
-    public getRowBounds(index: number, rowCount: number): RowBounds | null {
+    public getRowBounds(index: number): RowBounds | null {
 
         const start = this.getStartRow();
-        const end = this.getEndRow();
 
-        for (let i = start; i <= end; i++) {
-            // the blocks can have extra rows in them, if they are the last block
-            // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= rowCount) {
-                continue;
-            }
-
-            const rowNode = this.getRowUsingLocalIndex(i);
+        for (let i = 0; i <= this.rowNodes.length; i++) {
+            const localIndex = i + start;
+            const rowNode = this.getRowUsingLocalIndex(localIndex);
             if (rowNode) {
                 const res = this.blockUtils.extractRowBounds(rowNode, index);
                 if (res) { return res; }
@@ -323,19 +296,13 @@ export class CacheBlock extends RowNodeBlock {
         return null;
     }
 
-    public getRowIndexAtPixel(pixel: number, virtualRowCount: number): number {
+    public getRowIndexAtPixel(pixel: number): number {
 
         const start = this.getStartRow();
-        const end = this.getEndRow();
 
-        for (let i = start; i <= end; i++) {
-            // the blocks can have extra rows in them, if they are the last block
-            // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) {
-                continue;
-            }
-
-            const rowNode = this.getRowUsingLocalIndex(i);
+        for (let i = 0; i <= this.rowNodes.length; i++) {
+            const localIndex = i + start;
+            const rowNode = this.getRowUsingLocalIndex(localIndex);
             if (rowNode) {
                 const res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
                 if (res!=null) {
@@ -348,22 +315,18 @@ export class CacheBlock extends RowNodeBlock {
         return 0;
     }
 
-    public clearDisplayIndexes(rowCount: number): void {
+    public clearDisplayIndexes(): void {
         this.displayIndexEnd = undefined;
         this.displayIndexStart = undefined;
-        this.forEachRowNode(rowCount, rowNode => this.blockUtils.clearDisplayIndex(rowNode) );
+        this.rowNodes.forEach( rowNode => this.blockUtils.clearDisplayIndex(rowNode) );
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
-                             rowCount: number,
                              nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
-
         this.blockTopPx = nextRowTop.value;
 
-        this.forEachRowNode(rowCount, rowNode =>
-            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop)
-        );
+        this.rowNodes.forEach( rowNode => this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop) );
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.blockHeightPx = nextRowTop.value - this.blockTopPx;

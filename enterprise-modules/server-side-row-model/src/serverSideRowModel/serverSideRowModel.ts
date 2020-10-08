@@ -179,7 +179,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.createBean(this.rootNode);
 
         if (this.datasource) {
-            this.storeParams = this.createCacheParams();
+            this.storeParams = this.createStoreParams();
             this.rootNode.childrenCache = this.createBean(cacheFactory(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
@@ -207,7 +207,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }) as ColumnVO);
     }
 
-    private createCacheParams(): ChildStoreParams {
+    private createStoreParams(): ChildStoreParams {
 
         const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
         const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
@@ -244,7 +244,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize,
+            blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight
         };
 
@@ -282,7 +282,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const cache = this.getRootStore();
         if (!cache) { return; }
 
-        cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), new NumberSequence());
+        cache.forEachNodeDeep(rowNode => { rowNode.clearRowTop() }, new NumberSequence());
         cache.setDisplayIndexes(new NumberSequence(), {value: 0});
     }
 

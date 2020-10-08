@@ -78,7 +78,9 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         this.addManagedListener(this, RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
         this.initialiseRowNodes();
+
         this.rowNodeBlockLoader.addBlock(this);
+        this.addDestroyFunc( () => this.rowNodeBlockLoader.removeBlock(this) );
     }
 
     @PreDestroy
@@ -93,11 +95,11 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
-        this.rowNodeBlockLoader.removeBlock(this);
+        this.rowNodes = [];
     }
 
     private initialiseRowNodes(): void {
-        this.rowNodes = [];
+        this.destroyRowNodes();
         const loadingRowNode = this.blockUtils.createRowNode(
             {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
