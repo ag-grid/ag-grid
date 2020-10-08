@@ -23,7 +23,8 @@ var gridOptions = {
             ],
             defaultColDef: {
                 flex: 1,
-                filter: true
+                filter: true,
+                sortable: true
             }
         },
         getDetailRowData: function(params) {
