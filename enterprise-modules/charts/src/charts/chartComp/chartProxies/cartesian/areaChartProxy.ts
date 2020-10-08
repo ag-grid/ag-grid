@@ -43,7 +43,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             position: 'bottom',
             paddingInner: 1,
             paddingOuter: 0,
-            ...grouping ? options.yAxis : this.getXAxisDefaults(xAxisType, options)
+            ...this.getXAxisDefaults(xAxisType, options)
         }, {
             type: 'number',
             position: 'left',
