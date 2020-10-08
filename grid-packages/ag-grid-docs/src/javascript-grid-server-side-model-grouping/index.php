@@ -189,11 +189,6 @@ SNIPPET
     <li>
         Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
     </li>
-    <li>
-        The example implements <code>getChildCount()</code> to set the child count for each group.
-        Your application is responsible for figuring out the child count (maybe it's an attribute you set
-        on the data?), the example sets a random number.
-    </li>
 </ul>
 
 <?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
