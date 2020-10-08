@@ -11,10 +11,10 @@ include '../documentation-main/documentation_header.php';
 <p>
     There are four ways of enabling the tooltips in ag-Charts by using:
     <ul>
-        <li>default tooltips</li>
-        <li>default tooltips with custom styling</li>
-        <li>custom title / content (with default or custom styling)</li>
-        <li>completely custom markup for tooltips</li>
+        <li><a href="#default-tooltip">default tooltips</a></li>
+        <li><a href="#styling-the-default-tooltip">custom styled tooltips</a> via CSS classes</li>
+        <li><a href="#modifying-content-title">custom title / content</a> via a renderer function</li>
+        <li><a href="#using-custom-tooltips">completely custom template and markup</a> via a renderer function</li>
     </ul>
 </p>
 
