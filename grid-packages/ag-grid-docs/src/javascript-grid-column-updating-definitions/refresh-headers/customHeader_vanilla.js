@@ -1,7 +1,7 @@
 function CustomHeader() {
 }
 
-CustomHeader.prototype.init = function (params) {
+CustomHeader.prototype.init = function(params) {
     this.params = params;
     console.log('CustomHeader.init() -> ' + this.params.column.getId());
     this.eGui = document.createElement('div');
@@ -28,11 +28,11 @@ CustomHeader.prototype.init = function (params) {
     this.updateHeaderNameText();
 };
 
-CustomHeader.prototype.getGui = function () {
+CustomHeader.prototype.getGui = function() {
     return this.eGui;
 };
 
-CustomHeader.prototype.refresh = function (params) {
+CustomHeader.prototype.refresh = function(params) {
     this.params = params;
 
     var res = this.params.enableMenu === this.menuPresent;
@@ -44,17 +44,17 @@ CustomHeader.prototype.refresh = function (params) {
     return res;
 };
 
-CustomHeader.prototype.updateHeaderNameText = function () {
+CustomHeader.prototype.updateHeaderNameText = function() {
     this.eText.innerHTML = this.params.displayName;
 };
 
-CustomHeader.prototype.onMenuClick = function () {
+CustomHeader.prototype.onMenuClick = function() {
     this.params.showColumnMenu(this.eMenu);
 };
 
-CustomHeader.prototype.destroy = function () {
+CustomHeader.prototype.destroy = function() {
     console.log('CustomHeader.destroy() -> ' + this.params.column.getId());
     if (this.onMenuClickListener) {
-        this.eMenu.removeEventListener('click', this.onMenuClickListener)
+        this.eMenu.removeEventListener('click', this.onMenuClickListener);
     }
 };
