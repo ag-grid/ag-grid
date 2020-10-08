@@ -205,7 +205,7 @@ SNIPPET
     The example below demonstrates the above tooltip renderer in action:
 </p>
 
-<?= chart_example("Modifying Tooltips's Content", 'tooltip-content-title', 'generated'); ?>
+<?= chart_example('Modifying Tooltips Content', 'tooltip-content-title', 'generated'); ?>
 
 <h2>Using Custom Tooltips</h2>
 
