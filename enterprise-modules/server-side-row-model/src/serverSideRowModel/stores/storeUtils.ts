@@ -12,10 +12,10 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "./serverSideRowModel";
+import {ChildStoreParams} from "../serverSideRowModel";
 
 @Bean('ssrmCacheUtils')
-export class CacheUtils extends BeanStub {
+export class StoreUtils extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;

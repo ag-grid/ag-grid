@@ -19,13 +19,13 @@ import {
     RowNodeTransaction,
     RowRenderer,
 } from "@ag-grid-community/core";
-import {CacheUtils} from "./cacheUtils";
-import {BlockUtils} from "./blockUtils";
-import {ChildStoreParams} from "./serverSideRowModel";
+import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreUtils} from "./storeUtils";
+import {BlockUtils} from "../blocks/blockUtils";
 
-export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildStore {
+export class FiniteStore extends RowNodeBlock implements IServerSideChildStore {
 
-    @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
+    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
