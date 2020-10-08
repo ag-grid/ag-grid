@@ -17,8 +17,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Example: Click Selection</h2>
 
 <p>
-    The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
-    is not allowed as clicking on groups is reserved for opening and closing the groups.
+    The example below shows both simple 'click' selection as well as multiple 'shift-click' selections.
 </p>
 
 <ul class="content">
