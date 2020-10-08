@@ -19,14 +19,13 @@ import {
     RowRenderer,
     StoreUpdatedEvent
 } from "@ag-grid-community/core";
-
-import {CacheUtils} from "./cacheUtils";
-import {CacheBlock} from "./cacheBlock";
-import {ChildStoreParams} from "./serverSideRowModel";
+import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreUtils} from "./storeUtils";
+import {CacheBlock} from "../blocks/cacheBlock";
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
-export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
+export class CacheStore extends BeanStub implements IServerSideChildStore {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -39,7 +38,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
+    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
 
     private readonly storeParams: ChildStoreParams;
     private readonly parentRowNode: RowNode;
@@ -66,7 +65,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     constructor(storeParams: ChildStoreParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
-        this.rowCount = ChildStoreCache.INITIAL_ROW_COUNT;
+        this.rowCount = CacheStore.INITIAL_ROW_COUNT;
         this.storeParams  = storeParams;
     }
 
@@ -124,7 +123,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.storeParams.maxBlocksInCache > 0;
         const blocksToKeep = maxBlocksProvided ? this.storeParams.maxBlocksInCache - 1 : null;
-        const emptyBlocksToKeep = ChildStoreCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = CacheStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: CacheBlock, index: number) => {
 
@@ -166,7 +165,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.storeParams.blockSize;
-            const lastRowIndexPlusOverflow = lastRowIndex + ChildStoreCache.OVERFLOW_SIZE;
+            const lastRowIndexPlusOverflow = lastRowIndex + CacheStore.OVERFLOW_SIZE;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
                 this.rowCount = lastRowIndexPlusOverflow;
@@ -223,7 +222,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
         if (this.rowCount === 0) {
-            this.rowCount = ChildStoreCache.INITIAL_ROW_COUNT;
+            this.rowCount = CacheStore.INITIAL_ROW_COUNT;
         }
 
         this.fireCacheUpdatedEvent();

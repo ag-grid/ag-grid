@@ -19,11 +19,11 @@ import {
     RowRenderer,
     ValueService
 } from "@ag-grid-community/core";
-
-import {ChildStoreCache} from "./childStoreCache";
-import {CacheUtils} from "./cacheUtils";
+import {StoreUtils} from "../stores/storeUtils";
 import {BlockUtils} from "./blockUtils";
-import {ChildStoreParams} from "./serverSideRowModel";
+import {ChildStoreParams} from "../serverSideRowModel";
+import {CacheStore} from "../stores/cacheStore";
+
 
 export class CacheBlock extends RowNodeBlock {
 
@@ -33,7 +33,7 @@ export class CacheBlock extends RowNodeBlock {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
+    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
 
     private logger: Logger;
@@ -45,7 +45,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentStore: ChildStoreCache;
+    private readonly parentStore: CacheStore;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -66,7 +66,7 @@ export class CacheBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: ChildStoreCache) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: CacheStore) {
         super(blockNumber);
 
         this.storeParams = storeParams;

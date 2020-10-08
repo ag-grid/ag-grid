@@ -29,13 +29,13 @@ import {
     SortController,
     IServerSideChildStore
 } from "@ag-grid-community/core";
-import {ChildStoreCache} from "./childStoreCache";
 import {SortService} from "./sortService";
-import {ChildStoreFinite} from "./childStoreFinite";
+import {FiniteStore} from "./stores/finiteStore";
+import {CacheStore} from "./stores/cacheStore";
 
 export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? ChildStoreFinite : ChildStoreCache;
+    const CacheClass = oneBlockCache ? FiniteStore : CacheStore;
     return new CacheClass(params, parentNode);
 }
 
