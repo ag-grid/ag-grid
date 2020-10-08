@@ -1,7 +1,7 @@
 import {
     _,
     Autowired,
-    CacheUpdatedEvent,
+    StoreUpdatedEvent,
     Column,
     ColumnController,
     Events,
@@ -117,7 +117,7 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
             startRow: undefined,
             endRow: undefined,
             parentNode: this.parentRowNode,
-            cacheParams: this.storeParams,
+            storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this)
         });
@@ -153,7 +153,7 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         return this.displayIndexEnd;
     }
 
-    public isDisplayIndexInCache(displayIndex: number): boolean {
+    public isDisplayIndexInStore(displayIndex: number): boolean {
         if (this.getRowCount() === 0) {
             return false;
         }
@@ -225,14 +225,14 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         }
     }
 
-    public getChildCache(keys: string[]): IServerSideChildStore | null {
-        return this.cacheUtils.getChildCache(keys, this, (key: string) => {
+    public getChildStore(keys: string[]): IServerSideChildStore | null {
+        return this.cacheUtils.getChildStore(keys, this, (key: string) => {
             const rowNode = _.find(this.rowNodes, rowNode => rowNode.key === key);
             return rowNode;
         });
     }
 
-    public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
             parentRowNode: this.parentRowNode,
             storeParams: this.storeParams,
@@ -241,12 +241,12 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         });
 
         if (shouldPurgeCache) {
-            this.purgeCache();
+            this.purgeStore();
         } else {
             this.rowNodes.forEach(rowNode => {
                 const nextCache = (rowNode.childrenCache as IServerSideChildStore);
                 if (nextCache) {
-                    nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+                    nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
                 }
             });
         }
@@ -256,7 +256,7 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
         return null;
     }
 
-    public purgeCache(): void {
+    public purgeStore(): void {
         this.initialiseRowNodes();
         this.setStateWaitingToLoad();
         this.rowNodeBlockLoader.checkBlockToLoad();
@@ -267,8 +267,8 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
     private fireCacheUpdatedEvent(): void {
         // this results in row model firing ModelUpdated.
         // server side row model also updates the row indexes first
-        const event: CacheUpdatedEvent = {
-            type: Events.EVENT_CACHE_UPDATED
+        const event: StoreUpdatedEvent = {
+            type: Events.EVENT_STORE_UPDATED
         };
         this.eventService.dispatchEvent(event);
     }

@@ -2,7 +2,7 @@ import {
     _,
     Autowired,
     BeanStub,
-    CacheUpdatedEvent,
+    StoreUpdatedEvent,
     Events,
     GridOptionsWrapper,
     PostConstruct,
@@ -40,7 +40,7 @@ export class ExpandListener extends BeanStub {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
         }
 
-        const cacheUpdatedEvent: CacheUpdatedEvent = { type: Events.EVENT_CACHE_UPDATED };
+        const cacheUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };
         this.eventService.dispatchEvent(cacheUpdatedEvent);
     }
 
