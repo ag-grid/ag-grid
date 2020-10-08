@@ -12,7 +12,7 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {ServerSideCacheParams} from "./cacheChildStore";
+import {ChildStoreParams} from "./cacheChildStore";
 
 @Bean('ssrmCacheUtils')
 export class CacheUtils extends BeanStub {
@@ -40,7 +40,7 @@ export class CacheUtils extends BeanStub {
     }
 
     public loadFromDatasource(p: {
-        cacheParams: ServerSideCacheParams,
+        cacheParams: ChildStoreParams,
         parentNode: RowNode,
         successCallback: ()=>void,
         failCallback: ()=>void,
@@ -81,7 +81,7 @@ export class CacheUtils extends BeanStub {
     }
 
     public createLoadParams(p: {
-                                cacheParams: ServerSideCacheParams,
+                                cacheParams: ChildStoreParams,
                                 parentNode: RowNode,
                                 successCallback: ()=>void,
                                 failCallback: ()=>void,
@@ -137,14 +137,14 @@ export class CacheUtils extends BeanStub {
                                         changedColumnsInSort: string[],
                                         rowGroupColIds: string[],
                                         parentRowNode: RowNode,
-                                        cacheParams: ServerSideCacheParams}): boolean {
-        const {changedColumnsInSort, rowGroupColIds, parentRowNode, cacheParams} = params;
+                                        storeParams: ChildStoreParams}): boolean {
+        const {changedColumnsInSort, rowGroupColIds, parentRowNode, storeParams} = params;
 
         const level = parentRowNode.level + 1;
-        const grouping = level < cacheParams.rowGroupCols.length;
+        const grouping = level < storeParams.rowGroupCols.length;
 
         if (grouping) {
-            const groupColVo = cacheParams.rowGroupCols[level];
+            const groupColVo = storeParams.rowGroupCols[level];
             const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
             const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
 

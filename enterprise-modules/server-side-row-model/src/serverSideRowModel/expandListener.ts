@@ -33,8 +33,8 @@ export class ExpandListener extends BeanStub {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
             } else if (_.missing(rowNode.childrenCache)) {
-                const params = this.serverSideRowModel.getParams();
-                rowNode.childrenCache = this.createBean(cacheFactory(params, rowNode));
+                const storeParams = this.serverSideRowModel.getParams();
+                rowNode.childrenCache = this.createBean(cacheFactory(storeParams, rowNode));
             }
         } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);

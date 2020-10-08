@@ -19,7 +19,7 @@ import {
     RowNodeTransaction,
     RowRenderer,
 } from "@ag-grid-community/core";
-import {ServerSideCacheParams} from "./cacheChildStore";
+import {ChildStoreParams} from "./cacheChildStore";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
 
@@ -35,7 +35,7 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
-    private readonly params: ServerSideCacheParams;
+    private readonly storeParams: ChildStoreParams;
     private readonly parentRowNode: RowNode;
 
     private usingTreeData: boolean;
@@ -53,14 +53,14 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
     private topPx: number;
     private heightPx: number;
 
-    constructor(params: ServerSideCacheParams, parentRowNode: RowNode) {
+    constructor(storeParams: ChildStoreParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
-        this.params = params;
+        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
         this.level = parentRowNode.level + 1;
-        this.groupLevel = params.rowGroupCols ? this.level < params.rowGroupCols.length : undefined;
-        this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
+        this.groupLevel = storeParams.rowGroupCols ? this.level < storeParams.rowGroupCols.length : undefined;
+        this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
     }
 
     @PostConstruct
@@ -70,7 +70,7 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
-            const groupColVo = this.params.rowGroupCols[this.level];
+            const groupColVo = this.storeParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
@@ -117,7 +117,7 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
             startRow: undefined,
             endRow: undefined,
             parentNode: this.parentRowNode,
-            cacheParams: this.params,
+            cacheParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this)
         });
@@ -249,7 +249,7 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
     public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
             parentRowNode: this.parentRowNode,
-            cacheParams: this.params,
+            storeParams: this.storeParams,
             changedColumnsInSort: changedColumnsInSort,
             rowGroupColIds: rowGroupColIds
         });
