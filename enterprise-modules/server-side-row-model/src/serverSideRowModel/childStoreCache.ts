@@ -522,7 +522,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         };
 
         const blockFoundFunc = (foundBlock: CacheBlock): number => {
-            const rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex, true);
+            const rowNode = foundBlock.getRowUsingLocalIndex(topLevelIndex);
             return rowNode.rowIndex;
         };
 
@@ -541,7 +541,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
 
             // get the last top level node in the block before the wanted block. this will be the last
             // loaded displayed top level node.
-            const lastRowNode = previousBlock!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+            const lastRowNode = previousBlock!.getRowUsingLocalIndex(lastRowTopLevelIndex);
 
             // we want the index of the last displayed node, not just the top level node, so if the last top level node
             // is open, we get the index of the last displayed child node.
