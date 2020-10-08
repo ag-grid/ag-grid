@@ -175,12 +175,8 @@ export class CacheBlock extends RowNodeBlock {
         return this.lastAccessed;
     }
 
-    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
-        if (!dontTouchLastAccessed) {
-            this.touchLastAccessed();
-        }
-        const localIndex = rowIndex - this.startRow;
-        return this.rowNodes[localIndex];
+    public getRowUsingLocalIndex(rowIndex: number): RowNode {
+        return this.rowNodes[rowIndex - this.startRow];
     }
 
     private touchLastAccessed(): void {
@@ -239,6 +235,7 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
+        this.touchLastAccessed();
         let bottomPointer = this.startRow;
         let topPointer = bottomPointer + this.rowNodes.length - 1;
         const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, bottomPointer, topPointer, this.getRowUsingLocalIndex.bind(this));
@@ -261,37 +258,27 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     public getRowBounds(index: number): RowBounds | null {
-
         this.touchLastAccessed();
 
-        for (let i = 0; i <= this.rowNodes.length; i++) {
-            const rowNode = this.rowNodes[i];
-            const res = this.blockUtils.extractRowBounds(rowNode, index);
-            if (res) { return res; }
-        }
+        let res: RowBounds = undefined;
+        _.find(this.rowNodes, rowNode => {
+            res = this.blockUtils.extractRowBounds(rowNode, index);
+            return res != null;
+        });
 
-        console.error(` ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
-
-        return null;
+        return res;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
+        this.touchLastAccessed();
 
-        const start = this.startRow;
+        let res: number = undefined;
+        _.find(this.rowNodes, rowNode => {
+            res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
+            return res != null;
+        });
 
-        for (let i = 0; i <= this.rowNodes.length; i++) {
-            const localIndex = i + start;
-            const rowNode = this.getRowUsingLocalIndex(localIndex);
-            if (rowNode) {
-                const res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
-                if (res!=null) {
-                    return res;
-                }
-            }
-        }
-
-        console.warn(`ag-Grid: invalid pixel range for server side block ${pixel}`);
-        return 0;
+        return res;
     }
 
     public clearDisplayIndexes(): void {
