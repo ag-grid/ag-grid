@@ -22,7 +22,7 @@ var gridOptions = {
 };
 
 function onRowSelected(event) {
-    window.alert("row " + event.node.data.athlete + " selected = " + event.node.selected);
+    window.alert("row " + event.node.data.athlete + " selected = " + event.node.isSelected());
 }
 
 function onSelectionChanged(event) {
