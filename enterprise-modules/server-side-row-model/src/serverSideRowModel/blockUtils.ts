@@ -199,7 +199,7 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public getRowUsingDisplayIndex(displayRowIndex: number, bottomPointer: number, topPointer: number, getRowUsingLocalIndex: (index:number)=>RowNode): RowNode | null {
+    public binarySearchForDisplayIndex(displayRowIndex: number, bottomPointer: number, topPointer: number, getRowUsingLocalIndex: (index:number)=>RowNode): RowNode | null {
 
         if (_.missing(topPointer) || _.missing(bottomPointer)) {
             console.warn(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
