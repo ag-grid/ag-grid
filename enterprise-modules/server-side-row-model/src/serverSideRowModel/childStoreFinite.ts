@@ -233,7 +233,7 @@ export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildSt
     }
 
     public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
-        const shouldPurgeCache = this.cacheUtils.shouldPurgeCacheAfterSort({
+        const shouldPurgeCache = this.cacheUtils.shouldPurgeStoreAfterSort({
             parentRowNode: this.parentRowNode,
             storeParams: this.storeParams,
             changedColumnsInSort: changedColumnsInSort,

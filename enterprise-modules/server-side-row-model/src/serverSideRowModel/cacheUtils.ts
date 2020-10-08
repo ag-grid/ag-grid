@@ -97,7 +97,7 @@ export class CacheUtils extends BeanStub {
         }
     }
 
-    public shouldPurgeCacheAfterSort(params: {
+    public shouldPurgeStoreAfterSort(params: {
                                         changedColumnsInSort: string[],
                                         rowGroupColIds: string[],
                                         parentRowNode: RowNode,
