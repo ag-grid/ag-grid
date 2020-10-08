@@ -1,6 +1,6 @@
 import {
     _,
-    IServerSideCache,
+    IServerSideChildStore,
     Autowired,
     Bean,
     BeanStub,
@@ -12,7 +12,7 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {ServerSideCacheParams} from "./multiBlockCache";
+import {ServerSideCacheParams} from "./cacheChildStore";
 
 @Bean('ssrmCacheUtils')
 export class CacheUtils extends BeanStub {
@@ -116,7 +116,7 @@ export class CacheUtils extends BeanStub {
         return res;
     }
 
-    public getChildCache(keys: string[], currentCache: IServerSideCache, findNodeFunc: (key: string)=>RowNode ): IServerSideCache {
+    public getChildCache(keys: string[], currentCache: IServerSideChildStore, findNodeFunc: (key: string)=>RowNode ): IServerSideChildStore {
         if (_.missingOrEmpty(keys)) {
             return currentCache;
         }
@@ -126,7 +126,7 @@ export class CacheUtils extends BeanStub {
 
         if (nextNode) {
             const keyListForNextLevel = keys.slice(1, keys.length);
-            const nextCache = nextNode.childrenCache as IServerSideCache;
+            const nextCache = nextNode.childrenCache as IServerSideChildStore;
             return nextCache ? nextCache.getChildCache(keyListForNextLevel) : null;
         } else {
             return null;

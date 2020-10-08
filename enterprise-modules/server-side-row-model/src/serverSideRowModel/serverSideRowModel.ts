@@ -27,15 +27,15 @@ import {
     RowNode,
     RowRenderer,
     SortController,
-    IServerSideCache
+    IServerSideChildStore
 } from "@ag-grid-community/core";
-import {MultiBlockCache, ServerSideCacheParams} from "./multiBlockCache";
+import {CacheChildStore, ServerSideCacheParams} from "./cacheChildStore";
 import {SortService} from "./sortService";
-import {SingleBlockCache} from "./singleBlockCache";
+import {FiniteChildStore} from "./finiteChildStore";
 
-export function cacheFactory(params: ServerSideCacheParams, parentNode: RowNode): IServerSideCache {
+export function cacheFactory(params: ServerSideCacheParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? SingleBlockCache : MultiBlockCache;
+    const CacheClass = oneBlockCache ? FiniteChildStore : CacheChildStore;
     return new CacheClass(params, parentNode);
 }
 
@@ -282,9 +282,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.cacheParams.sortModel = newSortModel;
     }
 
-    public getRootCache(): IServerSideCache {
+    public getRootCache(): IServerSideChildStore {
         if (this.rootNode && this.rootNode.childrenCache) {
-            return (this.rootNode.childrenCache as IServerSideCache);
+            return (this.rootNode.childrenCache as IServerSideChildStore);
         } else {
             return undefined;
         }
@@ -344,7 +344,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         cache.forEachNodeDeep(callback);
     }
 
-    private executeOnCache(route: string[], callback: (cache: IServerSideCache) => void) {
+    private executeOnCache(route: string[], callback: (cache: IServerSideChildStore) => void) {
         const cache = this.getRootCache();
         if (!cache) { return; }
 
@@ -363,7 +363,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return (firstInRange.parent!.childrenCache as IServerSideCache)!.getRowNodesInRange(lastInRange, firstInRange);
+        return (firstInRange.parent!.childrenCache as IServerSideChildStore)!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {

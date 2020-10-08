@@ -6,7 +6,7 @@ import {
     ColumnVO,
     Events,
     GridOptionsWrapper,
-    IServerSideCache,
+    IServerSideChildStore,
     IServerSideDatasource,
     LoadCompleteEvent,
     Logger,
@@ -43,7 +43,7 @@ export interface ServerSideCacheParams {
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
-export class MultiBlockCache extends BeanStub implements IServerSideCache {
+export class CacheChildStore extends BeanStub implements IServerSideChildStore {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -85,7 +85,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
-        this.rowCount = MultiBlockCache.INITIAL_ROW_COUNT;
+        this.rowCount = CacheChildStore.INITIAL_ROW_COUNT;
         this.params  = cacheParams;
         this.infiniteScroll = this.params.blockSize != null;
     }
@@ -144,7 +144,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
         // we want to keep, which means we are left with blocks that we can potentially purge
         const maxBlocksProvided = this.params.maxBlocksInCache > 0;
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache - 1 : null;
-        const emptyBlocksToKeep = MultiBlockCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
+        const emptyBlocksToKeep = CacheChildStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: CacheBlock, index: number) => {
 
@@ -186,7 +186,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.params.blockSize;
-            const lastRowIndexPlusOverflow = lastRowIndex + MultiBlockCache.OVERFLOW_SIZE;
+            const lastRowIndexPlusOverflow = lastRowIndex + CacheChildStore.OVERFLOW_SIZE;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
                 this.rowCount = lastRowIndexPlusOverflow;
@@ -243,7 +243,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
         if (this.rowCount === 0) {
-            this.rowCount = MultiBlockCache.INITIAL_ROW_COUNT;
+            this.rowCount = CacheChildStore.INITIAL_ROW_COUNT;
         }
 
         this.fireCacheUpdatedEvent();
@@ -567,7 +567,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
             // is open, we get the index of the last displayed child node.
             let lastDisplayedNodeIndexInBlockBefore: number;
             if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                const serverSideCache = lastRowNode.childrenCache as IServerSideCache;
+                const serverSideCache = lastRowNode.childrenCache as IServerSideChildStore;
                 lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
             } else if (lastRowNode.expanded && lastRowNode.detailNode) {
                 lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
@@ -631,7 +631,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
         return res;
     }
 
-    public getChildCache(keys: string[]): IServerSideCache | null {
+    public getChildCache(keys: string[]): IServerSideChildStore | null {
 
         const findNodeCallback = (key: string) => {
             let nextNode: RowNode = null;
@@ -669,7 +669,7 @@ export class MultiBlockCache extends BeanStub implements IServerSideCache {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
-                        const nextCache = (rowNode.childrenCache as IServerSideCache);
+                        const nextCache = (rowNode.childrenCache as IServerSideChildStore);
                         if (nextCache) {
                             nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
