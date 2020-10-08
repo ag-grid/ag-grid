@@ -40,14 +40,9 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    In the example below, the following can be noted:
+    In the example below, Column A & B have <code>autoHeight=true</code> and <code>wrapText=true</code>.
+    See <a href="../javascript-grid-row-height/">Row Height</a> for details on these properties.
 </p>
-
-<ul class="content">
-    <li>All top level groups are the same height.</li>
-    <li>Column A & B have <code>autoHeight=true</code> and <code>wrapText=true</code>.
-        See <a href="../javascript-grid-row-height/">Row Height</a> for details on these properties.</li>
-</ul>
 
 <?= grid_example('Auto Row Height Example', 'auto-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
