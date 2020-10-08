@@ -19,11 +19,11 @@ import {
     RowNodeTransaction,
     RowRenderer,
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "./cacheChildStore";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
+import {ChildStoreParams} from "./serverSideRowModel";
 
-export class FiniteChildStore extends RowNodeBlock implements IServerSideChildStore {
+export class ChildStoreFinite extends RowNodeBlock implements IServerSideChildStore {
 
     @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -132,29 +132,15 @@ export class FiniteChildStore extends RowNodeBlock implements IServerSideChildSt
     }
 
     protected processServerResult(rowData: any[] = []): void {
-
-        const nodesToRefresh: RowNode[] = [];
-
+        this.rowNodes = [];
         rowData.forEach( (item: any, index: number) => {
-            let rowNode: RowNode;
-            if (index<this.rowNodes.length) {
-                rowNode = this.rowNodes[0];
-                nodesToRefresh.push(rowNode);
-            } else {
-                rowNode = this.blockUtils.createRowNode(
-                    {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
-                        level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
-                );
-                this.rowNodes.push(rowNode)
-            }
+            const rowNode = this.blockUtils.createRowNode(
+                {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+            );
+            this.rowNodes.push(rowNode)
             this.blockUtils.setDataIntoRowNode(rowNode, item, index, this.nodeIdPrefix);
         });
-
-        // in case zero rows came back, or in case this is not the first load, and we
-        // need to trim, as less data second time around.
-        this.rowNodes.length = rowData.length;
-
-        this.getFrameworkOverrides().setTimeout(()=> this.rowRenderer.redrawRows(nodesToRefresh), 0);
     }
 
     public clearDisplayIndexes(): void {
