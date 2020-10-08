@@ -98,7 +98,7 @@ class ExampleRunnerController {
 
         this.titles = {
             vanilla: "JavaScript",
-            react: "Class React",
+            react: "Classic React",
             reactFunctional: "Functional React",
             angular: "Angular",
             vue: "Vue"
