@@ -50,7 +50,7 @@ function suppressNavigation(params) {
     var KEY_F2 = 'F2';
     var KEY_BACKSPACE = 'Backspace';
     var KEY_ESCAPE = 'Escape';
-    var KEY_SPACE = 'Space';
+    var KEY_SPACE = ' ';
     var KEY_DELETE = 'Delete';
     var KEY_PAGE_HOME = 'Home';
     var KEY_PAGE_END = 'End';
@@ -77,8 +77,8 @@ function suppressNavigation(params) {
         return false;
     }
 
-    var suppress = keysToSuppress.some(function (el) {
-        return el === key || key === el.toUpperCase();
+    var suppress = keysToSuppress.some(function (suppressedKey) {
+        return suppressedKey === key || key.toUpperCase() === suppressedKey;
     });
 
     return suppress;

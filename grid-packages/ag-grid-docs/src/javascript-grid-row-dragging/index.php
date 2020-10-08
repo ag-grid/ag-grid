@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Dragging: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Dragging. Row Dragging allows you to re-arrange rows by dragging them. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Dragging. Row Dragging allows you to re-arrange rows by dragging them. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "Javascript Grid row dragging";
 $pageGroup = "features";
 include '../documentation-main/documentation_header.php';

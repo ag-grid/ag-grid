@@ -184,6 +184,12 @@
         height: ag-param(grid-size) * 7;
     }
 
+    .ag-layout-auto-height, .ag-layout-print {
+        .ag-center-cols-clipper, .ag-center-cols-container {
+            min-height: 150px;
+        }
+    }
+
     .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
         padding-top: 60px;
     }

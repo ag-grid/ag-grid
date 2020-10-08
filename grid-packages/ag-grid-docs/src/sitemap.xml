@@ -91,12 +91,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/javascript-more-details/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -349,12 +343,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-web-component-data-grid/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-callbacks/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -439,8 +427,8 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/react-more-details/</loc>
-    <lastmod>2018-03-07</lastmod>
+    <loc>https://www.ag-grid.com/react-fine-tuning/</loc>
+    <lastmod>2020-06-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -926,12 +914,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/license-pricing.php/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-angular-typeahead/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

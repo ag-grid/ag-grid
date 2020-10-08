@@ -90,12 +90,6 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>http://localhost:8080/javascript-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
 <!--   <url>
     <loc>http://localhost:8080/ag-grid-changelog/</loc>
     <lastmod>2018-01-24</lastmod>
@@ -355,12 +349,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-web-component-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>http://localhost:8080/javascript-grid-callbacks/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -445,8 +433,8 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/react-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <loc>http://localhost:8080/react-fine-tuning/</loc>
+    <lastmod>2020-06-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -938,12 +926,6 @@
   </url>
   <url>
     <loc>http://localhost:8080/license-pricing.php/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>http://localhost:8080/example-angular-typeahead/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

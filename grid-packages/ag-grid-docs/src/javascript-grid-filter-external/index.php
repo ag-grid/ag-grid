@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "External Filter: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is External Filter which allows you to build filters that live outside of the grid. For example, you can include your own widgets outside the grid for your own filter. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is External Filter which allows you to build filters that live outside of the grid. For example, you can include your own widgets outside the grid for your own filter. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Quick Filter";
 $pageGroup = "feature";
 define('skipInPageNav', true);
