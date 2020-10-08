@@ -29,14 +29,28 @@ import {
     SortController,
     IServerSideChildStore
 } from "@ag-grid-community/core";
-import {CacheChildStore, ChildStoreParams} from "./cacheChildStore";
+import {ChildStoreCache} from "./childStoreCache";
 import {SortService} from "./sortService";
-import {FiniteChildStore} from "./finiteChildStore";
+import {ChildStoreFinite} from "./childStoreFinite";
 
 export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? FiniteChildStore : CacheChildStore;
+    const CacheClass = oneBlockCache ? ChildStoreFinite : ChildStoreCache;
     return new CacheClass(params, parentNode);
+}
+
+export interface ChildStoreParams {
+    blockSize?: number;
+    sortModel: any;
+    filterModel: any;
+    maxBlocksInCache?: number;
+    lastAccessedSequence: NumberSequence;
+    dynamicRowHeight: boolean;
+    rowGroupCols: ColumnVO[];
+    valueCols: ColumnVO[];
+    pivotCols: ColumnVO[];
+    pivotMode: boolean;
+    datasource?: IServerSideDatasource;
 }
 
 @Bean('rowModel')

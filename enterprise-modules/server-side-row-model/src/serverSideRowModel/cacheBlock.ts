@@ -20,9 +20,10 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-import {ChildStoreParams, CacheChildStore} from "./cacheChildStore";
+import {ChildStoreCache} from "./childStoreCache";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
+import {ChildStoreParams} from "./serverSideRowModel";
 
 export class CacheBlock extends RowNodeBlock {
 
@@ -45,7 +46,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentCache: CacheChildStore;
+    private readonly parentCache: ChildStoreCache;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -67,7 +68,7 @@ export class CacheBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
 
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentCache: CacheChildStore) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentCache: ChildStoreCache) {
         super(blockNumber);
 
         this.storeParams = storeParams;

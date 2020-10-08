@@ -12,7 +12,7 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "./cacheChildStore";
+import {ChildStoreParams} from "./serverSideRowModel";
 
 @Bean('ssrmCacheUtils')
 export class CacheUtils extends BeanStub {
