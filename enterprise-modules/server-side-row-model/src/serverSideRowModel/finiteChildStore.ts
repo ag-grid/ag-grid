@@ -6,7 +6,7 @@ import {
     ColumnController,
     Events,
     GridOptionsWrapper,
-    IServerSideCache,
+    IServerSideChildStore,
     LoadCompleteEvent,
     NumberSequence,
     PostConstruct,
@@ -19,11 +19,11 @@ import {
     RowNodeTransaction,
     RowRenderer,
 } from "@ag-grid-community/core";
-import {ServerSideCacheParams} from "./multiBlockCache";
+import {ServerSideCacheParams} from "./cacheChildStore";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
 
-export class SingleBlockCache extends RowNodeBlock implements IServerSideCache {
+export class FiniteChildStore extends RowNodeBlock implements IServerSideChildStore {
 
     @Autowired('ssrmCacheUtils') private cacheUtils: CacheUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -189,7 +189,7 @@ export class SingleBlockCache extends RowNodeBlock implements IServerSideCache {
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.rowNodes.forEach( rowNode => {
             callback(rowNode, sequence.next());
-            const childCache = rowNode.childrenCache as IServerSideCache;
+            const childCache = rowNode.childrenCache as IServerSideChildStore;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -239,7 +239,7 @@ export class SingleBlockCache extends RowNodeBlock implements IServerSideCache {
         }
     }
 
-    public getChildCache(keys: string[]): IServerSideCache | null {
+    public getChildCache(keys: string[]): IServerSideChildStore | null {
         return this.cacheUtils.getChildCache(keys, this, (key: string) => {
             const rowNode = _.find(this.rowNodes, rowNode => rowNode.key === key);
             return rowNode;
@@ -258,7 +258,7 @@ export class SingleBlockCache extends RowNodeBlock implements IServerSideCache {
             this.purgeCache();
         } else {
             this.rowNodes.forEach(rowNode => {
-                const nextCache = (rowNode.childrenCache as IServerSideCache);
+                const nextCache = (rowNode.childrenCache as IServerSideChildStore);
                 if (nextCache) {
                     nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                 }

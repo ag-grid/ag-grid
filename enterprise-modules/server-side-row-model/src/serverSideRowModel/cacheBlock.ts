@@ -6,7 +6,7 @@ import {
     ColumnController,
     GridApi,
     GridOptionsWrapper,
-    IServerSideCache,
+    IServerSideChildStore,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -20,7 +20,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-import {ServerSideCacheParams, MultiBlockCache} from "./multiBlockCache";
+import {ServerSideCacheParams, CacheChildStore} from "./cacheChildStore";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
 
@@ -45,7 +45,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentCache: MultiBlockCache;
+    private readonly parentCache: CacheChildStore;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -67,7 +67,7 @@ export class CacheBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
 
-    constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: MultiBlockCache) {
+    constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: CacheChildStore) {
         super(blockNumber);
 
         this.params = params;
@@ -196,7 +196,7 @@ export class CacheBlock extends RowNodeBlock {
                 // this will only every happen for server side row model, as infinite
                 // row model doesn't have groups
                 if (includeChildren && rowNode.childrenCache) {
-                    (rowNode.childrenCache as IServerSideCache).forEachNodeDeep(callback, sequence);
+                    (rowNode.childrenCache as IServerSideChildStore).forEachNodeDeep(callback, sequence);
                 }
             }
         }

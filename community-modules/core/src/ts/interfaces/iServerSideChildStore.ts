@@ -4,7 +4,7 @@ import {RowBounds} from "./iRowModel";
 import {RowDataTransaction} from "./rowDataTransaction";
 import {RowNodeTransaction} from "./rowNodeTransaction";
 
-export interface IServerSideCache {
+export interface IServerSideChildStore {
 
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number;
@@ -16,7 +16,7 @@ export interface IServerSideCache {
     getRowBounds(index: number): RowBounds;
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number;
-    getChildCache(keys: string[]): IServerSideCache | null;
+    getChildCache(keys: string[]): IServerSideChildStore | null;
     refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
     applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null
     purgeCache(): void;
