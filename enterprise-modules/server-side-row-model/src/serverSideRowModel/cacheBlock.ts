@@ -20,7 +20,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 
-import {ServerSideCacheParams, CacheChildStore} from "./cacheChildStore";
+import {ChildStoreParams, CacheChildStore} from "./cacheChildStore";
 import {CacheUtils} from "./cacheUtils";
 import {BlockUtils} from "./blockUtils";
 
@@ -37,7 +37,7 @@ export class CacheBlock extends RowNodeBlock {
 
     private logger: Logger;
 
-    private readonly params: ServerSideCacheParams;
+    private readonly storeParams: ChildStoreParams;
     private readonly startRow: number;
     private readonly endRow: number;
 
@@ -67,21 +67,21 @@ export class CacheBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
 
-    constructor(blockNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: CacheChildStore) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentCache: CacheChildStore) {
         super(blockNumber);
 
-        this.params = params;
+        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = blockNumber * params.blockSize;
-        this.endRow = this.startRow + params.blockSize;
+        this.startRow = blockNumber * storeParams.blockSize;
+        this.endRow = this.startRow + storeParams.blockSize;
 
         this.parentCache = parentCache;
         this.level = parentRowNode.level + 1;
-        this.groupLevel = params.rowGroupCols ? this.level < params.rowGroupCols.length : undefined;
-        this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
+        this.groupLevel = storeParams.rowGroupCols ? this.level < storeParams.rowGroupCols.length : undefined;
+        this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
     }
 
     public getRowCount(): number {
@@ -95,7 +95,7 @@ export class CacheBlock extends RowNodeBlock {
         this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         if (!this.usingTreeData && this.groupLevel) {
-            const groupColVo = this.params.rowGroupCols[this.level];
+            const groupColVo = this.storeParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
@@ -216,7 +216,7 @@ export class CacheBlock extends RowNodeBlock {
 
     public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
         if (!dontTouchLastAccessed) {
-            this.lastAccessed = this.params.lastAccessedSequence.next();
+            this.lastAccessed = this.storeParams.lastAccessedSequence.next();
         }
         const localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
@@ -225,7 +225,7 @@ export class CacheBlock extends RowNodeBlock {
     // creates empty row nodes, data is missing as not loaded yet
     private createRowNodes(): void {
         this.rowNodes = [];
-        for (let i = 0; i < this.params.blockSize; i++) {
+        for (let i = 0; i < this.storeParams.blockSize; i++) {
             const rowNode = this.blockUtils.createRowNode(
                 {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
@@ -288,7 +288,7 @@ export class CacheBlock extends RowNodeBlock {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             parentNode: this.parentRowNode,
-            cacheParams: this.params,
+            cacheParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this)
         });

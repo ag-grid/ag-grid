@@ -29,11 +29,11 @@ import {
     SortController,
     IServerSideChildStore
 } from "@ag-grid-community/core";
-import {CacheChildStore, ServerSideCacheParams} from "./cacheChildStore";
+import {CacheChildStore, ChildStoreParams} from "./cacheChildStore";
 import {SortService} from "./sortService";
 import {FiniteChildStore} from "./finiteChildStore";
 
-export function cacheFactory(params: ServerSideCacheParams, parentNode: RowNode): IServerSideChildStore {
+export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
     const CacheClass = oneBlockCache ? FiniteChildStore : CacheChildStore;
     return new CacheClass(params, parentNode);
@@ -54,7 +54,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
-    private cacheParams: ServerSideCacheParams;
+    private storeParams: ChildStoreParams;
 
     private logger: Logger;    
 
@@ -127,7 +127,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // every other customer can continue as normal and have it working!!!
 
         // if first time, alwasy reset
-        if (!this.cacheParams) {
+        if (!this.storeParams) {
             this.resetRootCache();
             return;
         }
@@ -138,10 +138,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
         const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
 
-        const sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-        const rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-        const pivotDifferent = !_.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-        const valuesDifferent = !_.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const rowGroupDifferent = !_.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
+        const pivotDifferent = !_.jsonEquals(this.storeParams.pivotCols, pivotColumnVos);
+        const valuesDifferent = !_.jsonEquals(this.storeParams.valueCols, valueColumnVos);
 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
@@ -165,8 +165,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.createBean(this.rootNode);
 
         if (this.datasource) {
-            this.cacheParams = this.createCacheParams();
-            this.rootNode.childrenCache = this.createBean(cacheFactory(this.cacheParams, this.rootNode));
+            this.storeParams = this.createCacheParams();
+            this.rootNode.childrenCache = this.createBean(cacheFactory(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
 
@@ -193,7 +193,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }) as ColumnVO);
     }
 
-    private createCacheParams(): ServerSideCacheParams {
+    private createCacheParams(): ChildStoreParams {
 
         const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
         const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
@@ -223,7 +223,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             blockSize = ServerSideBlock.DefaultBlockSize;
         }
 
-        const params: ServerSideCacheParams = {
+        const params: ChildStoreParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
@@ -244,8 +244,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return params;
     }
 
-    public getParams(): ServerSideCacheParams {
-        return this.cacheParams;
+    public getParams(): ChildStoreParams {
+        return this.storeParams;
     }
 
     private dispatchModelUpdated(reset = false): void {
@@ -286,7 +286,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public updateSortModel(newSortModel: any): void {
-        this.cacheParams.sortModel = newSortModel;
+        this.storeParams.sortModel = newSortModel;
     }
 
     public getRootCache(): IServerSideChildStore {

@@ -93,10 +93,10 @@ export class SortService extends BeanStub {
         const cache = this.serverSideRowModel.getRootCache();
         if (!cache) { return; }
 
-        const params = this.serverSideRowModel.getParams();
+        const storeParams = this.serverSideRowModel.getParams();
 
         const newSortModel = this.extractSortModel();
-        const oldSortModel = params.sortModel;
+        const oldSortModel = storeParams.sortModel;
         const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
 
         this.serverSideRowModel.updateSortModel(newSortModel);
