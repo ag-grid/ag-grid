@@ -40,7 +40,6 @@ export class CacheBlock extends RowNodeBlock {
 
     private readonly storeParams: ChildStoreParams;
     private readonly startRow: number;
-    private readonly endRow: number;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -76,7 +75,6 @@ export class CacheBlock extends RowNodeBlock {
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
         this.startRow = blockNumber * storeParams.blockSize;
-        this.endRow = this.startRow + storeParams.blockSize;
 
         this.parentStore = parentStore;
         this.level = parentRowNode.level + 1;
@@ -106,10 +104,6 @@ export class CacheBlock extends RowNodeBlock {
 
     public getStartRow(): number {
         return this.startRow;
-    }
-
-    public getEndRow(): number {
-        return this.endRow;
     }
 
     public isDisplayIndexInBlock(displayIndex: number): boolean {
@@ -150,7 +144,7 @@ export class CacheBlock extends RowNodeBlock {
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
-                endRow: this.endRow,
+                endRow: this.startRow + this.storeParams.blockSize,
                 pageStatus: this.getState()
             }
         };
@@ -249,24 +243,16 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
-        let bottomPointer = this.getStartRow();
-
-        // the end row depends on whether all this block is used or not. if the virtual row count
-        // is before the end, then not all the row is used
-        const rowCount = this.parentStore.getRowCount();
-        const endRow = this.getEndRow();
-        const actualEnd = (rowCount < endRow) ? rowCount : endRow;
-
-        let topPointer = actualEnd - 1;
-
+        let bottomPointer = this.startRow;
+        let topPointer = bottomPointer + this.rowNodes.length - 1;
         const res = this.blockUtils.getRowUsingDisplayIndex(displayRowIndex, bottomPointer, topPointer, this.getRowUsingLocalIndex.bind(this));
         return res;
     }
 
     protected loadFromDatasource(): void {
         this.cacheUtils.loadFromDatasource({
-            startRow: this.getStartRow(),
-            endRow: this.getEndRow(),
+            startRow: this.startRow,
+            endRow: this.startRow + this.storeParams.blockSize,
             parentNode: this.parentRowNode,
             storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
