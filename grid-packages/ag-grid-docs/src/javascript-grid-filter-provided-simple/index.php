@@ -560,8 +560,8 @@ SNIPPET
     </li>
     <li>
         Toggle the controls on the top to see how <code>includeBlanksInEquals</code>,
-        <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>
-        impact the search result.
+        <code>includeBlanksInLessThan</code>, <code>includeBlanksInGreaterThan</code> and
+        <code>includeBlanksInRange</code> impact the search result.
     </li>
 </ul>
 
