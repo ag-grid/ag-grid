@@ -152,6 +152,9 @@ SNIPPET
         <b>Add Items</b>: Adds three items.
     </li>
     <li>
+        <b>Add Items addIndex=2</b>: Adds items at index 2.
+    </li>
+    <li>
         <b>Update Top 2</b>: Updates the price on the first 2 rows in the list.
     </li>
     <li>
