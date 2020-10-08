@@ -236,9 +236,7 @@ export class CacheBlock extends RowNodeBlock {
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
         this.touchLastAccessed();
-        let bottomPointer = this.startRow;
-        let topPointer = bottomPointer + this.rowNodes.length - 1;
-        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, bottomPointer, topPointer, this.getRowUsingLocalIndex.bind(this));
+        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.rowNodes);
         return res;
     }
 
