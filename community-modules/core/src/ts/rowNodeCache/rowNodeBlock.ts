@@ -235,12 +235,15 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {
+        lastRow = _.cleanNumber(lastRow);
+        if (lastRow<0) { lastRow = undefined; }
+
         // we need to check the version, in case there was an old request
         // from the server that was sent before we refreshed the cache,
         // if the load was done as a result of a cache refresh
         if (version === this.version) {
             this.state = RowNodeBlock.STATE_LOADED;
-            this.processServerResult(rows);
+            this.processServerResult(rows, lastRow);
         }
     }
 }

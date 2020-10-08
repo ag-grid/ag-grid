@@ -2,11 +2,9 @@ import {
     _,
     Autowired,
     BeanStub,
-    StoreUpdatedEvent,
     Events,
     GridOptionsWrapper,
     IServerSideChildStore,
-    LoadCompleteEvent,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -16,10 +14,10 @@ import {
     RowBounds,
     RowDataTransaction,
     RowNode,
-    RowNodeBlock,
     RowNodeBlockLoader,
     RowNodeTransaction,
-    RowRenderer
+    RowRenderer,
+    StoreUpdatedEvent
 } from "@ag-grid-community/core";
 
 import {CacheUtils} from "./cacheUtils";
@@ -94,16 +92,16 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         return this.lastRowIndexKnown;
     }
 
-    // listener on EVENT_LOAD_COMPLETE
-    private onPageLoaded(event: LoadCompleteEvent): void {
-        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
+    public onBlockLoaded(block: CacheBlock, rows: any[], newLastRow: number): void {
+        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${newLastRow}`);
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) { return; }
-        if (!event.success) { return; }
 
-        this.checkRowCount(event.block as CacheBlock, event.lastRow);
+        this.checkRowCount(block, newLastRow);
+
+        block.setData(rows);
 
         // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
         // in the valid range. so we must remove these. this can happen if the datasource returns a
@@ -177,7 +175,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, this.rowCount, sequence));
+        this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence));
     }
 
     public getBlocksInOrder(): CacheBlock[] {
@@ -264,7 +262,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
                     inActiveRange = !inActiveRange;
                 }
 
-            }, this.rowCount);
+            });
         });
 
         // inActiveRange will be still true if we never hit the second rowNode
@@ -316,7 +314,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         };
 
         const blockFoundFunc = (foundBlock: CacheBlock): RowBounds => {
-            return foundBlock.getRowBounds(index, this.getRowCount());
+            return foundBlock.getRowBounds(index);
         };
 
         const blockNotFoundFunc = (previousBlock: CacheBlock): RowBounds => {
@@ -353,7 +351,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
         };
 
         const blockFoundFunc = (foundBlock: CacheBlock): number => {
-            return foundBlock.getRowIndexAtPixel(pixel, this.getRowCount());
+            return foundBlock.getRowIndexAtPixel(pixel);
         };
 
         const blockNotFoundFunc = (previousBlock: CacheBlock): number => {
@@ -385,7 +383,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     public clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.getBlocksInOrder().forEach(block => block.clearDisplayIndexes(this.getRowCount()));
+        this.getBlocksInOrder().forEach(block => block.clearDisplayIndexes());
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
@@ -421,7 +419,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
 
             lastBlockId = blockId;
 
-            currentBlock.setDisplayIndexes(displayIndexSeq, this.getRowCount(), nextRowTop);
+            currentBlock.setDisplayIndexes(displayIndexSeq, nextRowTop);
 
             this.blockHeights[blockId] = currentBlock.getBlockHeightPx();
         });
@@ -570,8 +568,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): CacheBlock {
 
         const block = this.createBean(new CacheBlock(blockNumber, this.parentRowNode, this.storeParams, this));
-        block.setDisplayIndexes(new NumberSequence(displayIndex), this.getRowCount(), nextRowTop);
-        block.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        block.setDisplayIndexes(new NumberSequence(displayIndex), nextRowTop);
 
         this.blocks[block.getId()] = block;
         this.blockCount++;
@@ -622,7 +619,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
                     if (rowNode.key === key) {
                         nextNode = rowNode;
                     }
-                }, this.getRowCount(), new NumberSequence());
+                }, new NumberSequence());
             });
             return nextNode;
         };
@@ -656,7 +653,7 @@ export class ChildStoreCache extends BeanStub implements IServerSideChildStore {
                             nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
-                    block.forEachNodeShallow(callback, this.getRowCount(), new NumberSequence());
+                    block.forEachNodeShallow(callback, new NumberSequence());
                 }
             });
         }
