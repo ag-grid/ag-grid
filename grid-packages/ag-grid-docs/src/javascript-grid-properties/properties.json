@@ -343,14 +343,6 @@
                 "url": "../javascript-grid-grouping/#multi-auto-column-group"
             }
         },
-        "groupSuppressRow": {
-            "default": false,
-            "description": "If <code>true</code>, the group row won't be displayed and the groups will be expanded by default with no ability to expand / contract the groups. Useful when you want to just 'group' the rows, but not add a parent group row to each group.",
-            "more": {
-                "name": "Suppress Group Row",
-                "url": "../javascript-grid-grouping/#suppress-group-row"
-            }
-        },
         "groupSelectsChildren": {
             "default": false,
             "description": "When <code>true</code>, if you select a group, the children of the group will also be selected.",

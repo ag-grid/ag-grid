@@ -363,7 +363,7 @@ var RowNode = /** @class */ (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer

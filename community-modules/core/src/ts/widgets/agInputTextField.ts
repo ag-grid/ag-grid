@@ -41,7 +41,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
 
         this.addManagedListener(this.eInput, 'paste', e => {
-            const text = (e.clipboardData || e.clipboardData).getData('text');
+            const text = e.clipboardData.getData('text');
 
             if (some(text, (c: string) => !pattern.test(c))) {
                 e.preventDefault();

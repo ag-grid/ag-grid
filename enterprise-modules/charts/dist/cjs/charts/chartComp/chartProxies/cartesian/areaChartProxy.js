@@ -50,7 +50,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             agChartOptions.type = 'groupedCategory';
         }
         agChartOptions.autoSize = true;
-        agChartOptions.axes = [__assign({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, grouping ? options.yAxis : this.getXAxisDefaults(xAxisType, options)), __assign({ type: 'number', position: 'left' }, options.yAxis)];
+        agChartOptions.axes = [__assign({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign({ type: 'number', position: 'left' }, options.yAxis)];
         agChartOptions.series = [__assign(__assign({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
         return ag_charts_community_1.AgChart.create(agChartOptions, parentElement);
     };

@@ -56,7 +56,10 @@ export function convertFunctionalTemplate(template: string) {
     template = template
         .replace(/,\s+event([),])/g, '$1')
         .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/ class=/g, ' className=');
+        .replace(/ class=/g, ' className=')
+        // when using fontawesome just use "class" instead - it's always the case that we're treating it as a raw value
+        // I had some fancy regex here to exclude rows with <i class but I thought this was easier to grok and maintain
+        .replace(/<i className=/g, '<i class=');
 
     return convertStyles(template);
 }

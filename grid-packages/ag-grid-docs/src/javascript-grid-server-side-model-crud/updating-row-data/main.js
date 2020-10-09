@@ -17,8 +17,14 @@ var gridOptions = {
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  animateRows: true
+  animateRows: true,
+  isRowSelectable: isRowSelectable
 };
+
+// only select group rows
+function isRowSelectable(rowNode) {
+  return !rowNode.group;
+}
 
 function purgeCache() {
   gridOptions.api.purgeServerSideCache([]);

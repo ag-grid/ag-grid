@@ -418,7 +418,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.updateExpandedCss = function () {
         var expandable = this.rowNode.isExpandable();
-        var expanded = this.rowNode.expanded;
+        var expanded = this.rowNode.expanded == true;
         this.eAllRowContainers.forEach(function (eRow) {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);

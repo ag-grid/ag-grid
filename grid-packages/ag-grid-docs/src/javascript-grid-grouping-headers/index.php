@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Groups: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Groups. Columns can be grouped together into Column Groups. Additionally you can configure groups to be expandable to show and hide columns within the group. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Groups. Columns can be grouped together into Column Groups. Additionally you can configure groups to be expandable to show and hide columns within the group. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Group Columns ag-Grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

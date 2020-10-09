@@ -60,7 +60,6 @@ var gridOptions = {
     },
     groupDefaultExpanded: 1,
     rowData: getInitialRowData(),
-    rememberGroupStateWhenNewData: true,
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
     animateRows: true,

@@ -61,6 +61,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            paired: true
         };
         return options;
     };
@@ -151,7 +152,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: 1,
             }, tooltip: {
                 enabled: true,
-            }, paired: false });
+            }, paired: true });
         return options;
     };
     ScatterChartProxy.prototype.getSeriesDefinitions = function (fields, paired) {

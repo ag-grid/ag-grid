@@ -12564,7 +12564,7 @@ var RowNode = /** @class */ (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
@@ -21279,7 +21279,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.updateExpandedCss = function () {
         var expandable = this.rowNode.isExpandable();
-        var expanded = this.rowNode.expanded;
+        var expanded = this.rowNode.expanded == true;
         this.eAllRowContainers.forEach(function (eRow) {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
@@ -25975,7 +25975,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
             else if (column.isAllowRowGroup()) {
                 _this.columnsToGroup.push(column);
             }
-            else if (column.isAllowRowGroup()) {
+            else if (column.isAllowPivot()) {
                 _this.columnsToPivot.push(column);
             }
         });
@@ -37549,7 +37549,7 @@ var AgInputTextField = /** @class */ (function (_super) {
         };
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
         this.addManagedListener(this.eInput, 'paste', function (e) {
-            var text = (e.clipboardData || e.clipboardData).getData('text');
+            var text = e.clipboardData.getData('text');
             if (some(text, function (c) { return !pattern.test(c); })) {
                 e.preventDefault();
             }

@@ -22,27 +22,27 @@ var gridOptions = {
 };
 
 function clearPinned() {
-    gridOptions.columnApi.applyColumnState({defaultState: {pinned: null}});
+    gridOptions.columnApi.applyColumnState({ defaultState: { pinned: null } });
 }
 
 function resetPinned() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'rowNum', pinned: 'left'},
-            {colId: 'athlete', pinned: 'left'},
-            {colId: 'age', pinned: 'left'},
-            {colId: 'country', pinned: 'right'},
+            { colId: 'rowNum', pinned: 'left' },
+            { colId: 'athlete', pinned: 'left' },
+            { colId: 'age', pinned: 'left' },
+            { colId: 'total', pinned: 'right' },
         ],
-        defaultState: {pinned: null}
+        defaultState: { pinned: null }
     });
 }
 
 function pinCountry() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            {colId: 'country', pinned: 'left'},
+            { colId: 'country', pinned: 'left' },
         ],
-        defaultState: {pinned: null}
+        defaultState: { pinned: null }
     });
 }
 

@@ -12295,7 +12295,7 @@ var RowNode = /** @class */ (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
@@ -21015,7 +21015,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.updateExpandedCss = function () {
         var expandable = this.rowNode.isExpandable();
-        var expanded = this.rowNode.expanded;
+        var expanded = this.rowNode.expanded == true;
         this.eAllRowContainers.forEach(function (eRow) {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
@@ -25711,7 +25711,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
             else if (column.isAllowRowGroup()) {
                 _this.columnsToGroup.push(column);
             }
-            else if (column.isAllowRowGroup()) {
+            else if (column.isAllowPivot()) {
                 _this.columnsToPivot.push(column);
             }
         });
@@ -37265,7 +37265,7 @@ var AgInputTextField = /** @class */ (function (_super) {
         };
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
         this.addManagedListener(this.eInput, 'paste', function (e) {
-            var text = (e.clipboardData || e.clipboardData).getData('text');
+            var text = e.clipboardData.getData('text');
             if (some(text, function (c) { return !pattern.test(c); })) {
                 e.preventDefault();
             }
@@ -61366,6 +61366,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            paired: true
         };
         return options;
     };
@@ -61456,7 +61457,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: 1,
             }, tooltip: {
                 enabled: true,
-            }, paired: false });
+            }, paired: true });
         return options;
     };
     ScatterChartProxy.prototype.getSeriesDefinitions = function (fields, paired) {
@@ -64489,7 +64490,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             agChartOptions.type = 'groupedCategory';
         }
         agChartOptions.autoSize = true;
-        agChartOptions.axes = [__assign$h({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, grouping ? options.yAxis : this.getXAxisDefaults(xAxisType, options)), __assign$h({ type: 'number', position: 'left' }, options.yAxis)];
+        agChartOptions.axes = [__assign$h({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign$h({ type: 'number', position: 'left' }, options.yAxis)];
         agChartOptions.series = [__assign$h(__assign$h({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
         return AgChart.create(agChartOptions, parentElement);
     };

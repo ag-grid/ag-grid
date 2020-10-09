@@ -52,6 +52,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            paired: true
         } as ScatterSeriesOptions;
 
         return options;
@@ -193,7 +194,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             tooltip: {
                 enabled: true,
             },
-            paired: false,
+            paired: true,
         };
 
         return options;

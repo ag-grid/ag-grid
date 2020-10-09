@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Spanning: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Spanning. Column Spanning allows cells to span columns, similar to cell span in Excel. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Spanning. Column Spanning allows cells to span columns, similar to cell span in Excel. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "Javascript Grid Column Spanning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

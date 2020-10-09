@@ -116,7 +116,8 @@
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
 
-                rxjs: "npm:rxjs@6.3.3/bundles/rxjs.umd.min.js"
+                rxjs: "npm:rxjs@6.3.3/bundles/rxjs.umd.min.js",
+                lodash: 'npm:lodash@4.17.15',
             },
             systemJsMap
         ),

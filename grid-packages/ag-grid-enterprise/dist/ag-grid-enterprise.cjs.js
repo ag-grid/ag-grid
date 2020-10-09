@@ -29611,6 +29611,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle,
+            paired: true
         };
         return options;
     };
@@ -29701,7 +29702,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 strokeWidth: 1,
             }, tooltip: {
                 enabled: true,
-            }, paired: false });
+            }, paired: true });
         return options;
     };
     ScatterChartProxy.prototype.getSeriesDefinitions = function (fields, paired) {
@@ -32734,7 +32735,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             agChartOptions.type = 'groupedCategory';
         }
         agChartOptions.autoSize = true;
-        agChartOptions.axes = [__assign$c({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, grouping ? options.yAxis : this.getXAxisDefaults(xAxisType, options)), __assign$c({ type: 'number', position: 'left' }, options.yAxis)];
+        agChartOptions.axes = [__assign$c({ type: grouping ? 'groupedCategory' : xAxisType, position: 'bottom', paddingInner: 1, paddingOuter: 0 }, this.getXAxisDefaults(xAxisType, options)), __assign$c({ type: 'number', position: 'left' }, options.yAxis)];
         agChartOptions.series = [__assign$c(__assign$c({}, seriesDefaults), { type: 'area', fills: seriesDefaults.fill.colors, fillOpacity: seriesDefaults.fill.opacity, strokes: seriesDefaults.stroke.colors, strokeOpacity: seriesDefaults.stroke.opacity, strokeWidth: seriesDefaults.stroke.width, tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer, marker: marker })];
         return AgChart.create(agChartOptions, parentElement);
     };

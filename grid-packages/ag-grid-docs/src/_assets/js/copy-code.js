@@ -1,4 +1,4 @@
-(function() {
+setTimeout(function() {
   function getButtonHtml(icon, text) {
     return '<span class="copy-code-button__text">' + text + '</span><i class="' + icon + '"></i>';
   }
@@ -45,12 +45,8 @@
 
     button.onclick = copyCode;
 
-    var wrapper = document.createElement('div');
-    wrapper.style.setProperty('position', 'relative');
-
-    snippet.parentNode.insertBefore(wrapper, snippet);
-
-    wrapper.appendChild(button);
-    wrapper.appendChild(snippet);
+    var pre = snippet.getElementsByTagName('pre')[0];
+    pre.style.setProperty('position', 'relative');
+    pre.appendChild(button);
   }
-})();
+}, 0);
