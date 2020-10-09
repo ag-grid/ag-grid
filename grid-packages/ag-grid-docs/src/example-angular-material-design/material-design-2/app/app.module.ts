@@ -5,18 +5,18 @@ import { FormsModule } from "@angular/forms";
 import { AgGridModule } from "@ag-grid-community/angular";
 
 // material design
-import {
-    MatCardModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatSliderModule
-} from "@angular/material";
+import {MatCardModule} from '@angular/material/card';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatSelectModule} from '@angular/material/select';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatInputModule} from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
+
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatEditorComponentTwo } from "./mat-editor-two.component";
 import { MatSliderComponent } from "./mat-slider.component";
