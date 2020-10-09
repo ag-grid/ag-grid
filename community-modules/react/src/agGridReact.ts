@@ -52,6 +52,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     render() {
         return React.createElement('div', {
             style: this.createStyleForDiv(),
+            className: this.props.className,
             ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
