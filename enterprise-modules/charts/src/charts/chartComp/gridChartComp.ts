@@ -359,6 +359,7 @@ export class GridChartComp extends Component {
         };
 
         chartProxy.update(chartUpdateParams);
+        this.titleEdit.setChartProxy(this.chartProxy);
     }
 
     private getChartDataType(colId: string): string | undefined {
