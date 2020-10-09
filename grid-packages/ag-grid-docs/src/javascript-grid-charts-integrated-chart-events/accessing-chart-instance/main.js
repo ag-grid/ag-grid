@@ -43,6 +43,7 @@ function onChartDestroyed(event) {
 // inScope[updateTitle]
 function updateTitle() {
     var cellRange = gridOptions.api.getCellRanges()[1];
+    if (!cellRange) return;
     var columnCount = cellRange.columns.length;
     var rowCount = cellRange.endRow.rowIndex - cellRange.startRow.rowIndex + 1;
 
