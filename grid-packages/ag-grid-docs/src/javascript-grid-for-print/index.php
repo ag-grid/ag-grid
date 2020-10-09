@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-<!--    --><?//= gri d_example('For Print Simple', 'for-print-simple', 'generated', [ 'modules' => true]) ?>
+    <?= grid_example('For Print Simple', 'for-print-simple', 'generated', [ 'modules' => true, 'reactFunctional' => true]) ?>
 
     <h2>Toggling Print Layout</h2>
 
