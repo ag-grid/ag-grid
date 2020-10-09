@@ -196,7 +196,7 @@ function createFakeServer(data) {
             }
 
             if (filterModel.year) {
-                if (filterModel.year.indexOf(item.year.toString()) < 0) {
+                if (filterModel.year.values.indexOf(item.year.toString()) < 0) {
                     // year didn't match, so skip this record
                     continue;
                 }
