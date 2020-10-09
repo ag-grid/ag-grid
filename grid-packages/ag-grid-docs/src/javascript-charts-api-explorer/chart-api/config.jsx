@@ -452,12 +452,11 @@ export const axis = Object.freeze({
         },
         rotation: {
             default: 0,
-            description: 'The rotation of the axis labels in degrees.',
+            description: 'The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.',
             editor: NumberEditor,
             min: -359,
             max: 359,
             unit: '&deg;',
-            description: 'Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.'
         },
         format: {
             type: 'string',
