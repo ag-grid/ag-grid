@@ -85,7 +85,7 @@ class ExampleRunnerController {
 
         const options = this.config.options;
 
-        this.showImportsDropdown = this.config.showImportsDropdown === undefined ? true : this.config.showImportsDropdown;
+        this.showImportsDropdown = this.config.showImportsDropdown === undefined ? this.config.type !== "multi" : this.config.showImportsDropdown;
         this.titlesToRemove = this.config.removeTitles === undefined ? [] : this.config.removeTitles;
 
         if (options.exampleHeight) {
