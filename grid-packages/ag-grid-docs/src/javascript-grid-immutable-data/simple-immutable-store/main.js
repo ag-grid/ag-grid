@@ -16,7 +16,7 @@ function addFiveItems(append) {
         if (append) {
             newStore.push(newItem);
         } else {
-            newStore.splice(0,0,newItem);
+            newStore.splice(0, 0, newItem);
         }
     }
     immutableStore = newStore;
@@ -97,23 +97,28 @@ function onGroupingEnabled(enabled) {
 
 function setGroupingEnabled(enabled, columnApi) {
     if (enabled) {
-        columnApi.applyColumnState({state: [
-            {colId: 'group', rowGroup: true, hide: true},
-            {colId: 'symbol', hide: true}
-        ]});
+        columnApi.applyColumnState({
+            state: [
+                { colId: 'group', rowGroup: true, hide: true },
+                { colId: 'symbol', hide: true }
+            ]
+        });
     } else {
-        columnApi.applyColumnState({state: [
-            {colId: 'group', rowGroup: false, hide: false},
-            {colId: 'symbol', hide: false}
-        ]});
+        columnApi.applyColumnState({
+            state: [
+                { colId: 'group', rowGroup: false, hide: false },
+                { colId: 'symbol', hide: false }
+            ]
+        });
     }
+
     setItemVisible('groupingOn', !enabled);
     setItemVisible('groupingOff', enabled);
 }
 
 function setItemVisible(id, visible) {
     var element = document.querySelector('#' + id);
-    element.style.display = visible ? null : 'none';
+    element.style.display = visible ? 'inline' : 'none';
 }
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
@@ -147,9 +152,9 @@ function reverseItems() {
 
 var gridOptions = {
     columnDefs: [
-        {headerName: 'Symbol', field: 'symbol'},
-        {headerName: 'Price', field: 'price'},
-        {headerName: 'Group', field: 'group'}
+        { headerName: 'Symbol', field: 'symbol' },
+        { headerName: 'Price', field: 'price' },
+        { headerName: 'Group', field: 'group' }
     ],
     defaultColDef: {
         width: 250,
@@ -166,7 +171,7 @@ var gridOptions = {
     rowSelection: 'multiple',
     autoGroupColumnDef: {
         headerName: 'Symbol',
-        cellRenderer:'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         field: 'symbol'
     },
     enableRangeSelection: true,
