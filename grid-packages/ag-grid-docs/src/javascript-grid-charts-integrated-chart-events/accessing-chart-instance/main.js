@@ -27,12 +27,12 @@ var chart = null;
 function onChartCreated(event) {
     console.log('Created chart with ID ' + event.chartId);
     chart = event.chartModel.chart;
-    updateTitle();
+    this.updateTitle ? this.updateTitle() : updateTitle();
 }
 
 function onChartRangeSelectionChanged(event) {
     console.log('Changed range selection of chart with ID ' + event.chartId);
-    updateTitle();
+    this.updateTitle ? this.updateTitle() : updateTitle();
 }
 
 function onChartDestroyed(event) {
@@ -40,6 +40,7 @@ function onChartDestroyed(event) {
     chart = null;
 }
 
+// inScope[updateTitle]
 function updateTitle() {
     var cellRange = gridOptions.api.getCellRanges()[1];
     var columnCount = cellRange.columns.length;
