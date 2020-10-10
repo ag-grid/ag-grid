@@ -47,9 +47,11 @@ export class FillHandle extends AbstractSelectionHandle {
         super(FillHandle.TEMPLATE);
     }
 
-    protected onDrag(e: MouseEvent) {
+    protected updateValuesOnMove(e: MouseEvent) {
+        super.updateValuesOnMove(e);
+
         if (!this.initialXY) {
-           this.initialXY = this.mouseEventService.getNormalisedPosition(e);
+            this.initialXY = this.mouseEventService.getNormalisedPosition(e);
         }
 
         const { x, y } = this.initialXY;
@@ -67,8 +69,11 @@ export class FillHandle extends AbstractSelectionHandle {
 
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
+            this.changedCalculatedValues = true;
         }
+    }
 
+    protected onDrag(e: MouseEvent) {
         if (!this.initialPosition) {
             const cellComp = this.getCellComp();
             if (!cellComp) { return; }
@@ -78,13 +83,13 @@ export class FillHandle extends AbstractSelectionHandle {
 
         const lastCellHovered = this.getLastCellHovered();
 
-        if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
-            this.lastCellMarked = lastCellHovered;
+        if (lastCellHovered) {
             this.markPathFrom(this.initialPosition, lastCellHovered);
         }
     }
 
     protected onDragEnd(e: MouseEvent) {
+        this.initialXY = null;
         if (!this.markedCellComps.length) { return; }
 
         const isX = this.dragAxis === 'x';
@@ -385,7 +390,6 @@ export class FillHandle extends AbstractSelectionHandle {
             const currentColumn = currentPosition.column;
 
             if (initialColumn === currentColumn) { return; }
-
             const displayedColumns = this.columnController.getAllDisplayedColumns();
             const initialIndex = displayedColumns.indexOf(initialColumn);
             const currentIndex = displayedColumns.indexOf(currentColumn);
@@ -398,6 +402,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 this.isReduce = false;
             }
         }
+        this.lastCellMarked = currentPosition;
     }
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
