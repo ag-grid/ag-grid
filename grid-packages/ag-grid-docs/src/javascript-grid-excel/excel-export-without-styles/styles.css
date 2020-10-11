@@ -22,8 +22,7 @@
 }
 .grid-wrapper {
     display: flex;
-    flex: 1 1 auto;
-    flex-grow: 1;
+    flex: 1 1 0px;
 }
 .grid-wrapper > div {
     width: 100%;
