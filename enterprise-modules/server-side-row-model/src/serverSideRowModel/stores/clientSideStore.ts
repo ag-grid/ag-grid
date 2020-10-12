@@ -1,13 +1,11 @@
 import {
     _,
     Autowired,
-    StoreUpdatedEvent,
     Column,
     ColumnController,
     Events,
     GridOptionsWrapper,
     IServerSideChildStore,
-    LoadCompleteEvent,
     NumberSequence,
     PostConstruct,
     PreDestroy,
@@ -18,6 +16,7 @@ import {
     RowNodeBlockLoader,
     RowNodeTransaction,
     RowRenderer,
+    StoreUpdatedEvent,
 } from "@ag-grid-community/core";
 import {ChildStoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -74,8 +73,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
             this.groupField = groupColVo.field;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
-
-        this.addManagedListener(this, RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
         this.initialiseRowNodes();
 
@@ -136,6 +133,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
     }
 
     protected processServerResult(rowData: any[] = []): void {
+        if (!this.isAlive()) { return; }
+
         this.rowNodes = [];
         rowData.forEach( (item: any, index: number) => {
             const rowNode = this.blockUtils.createRowNode(
@@ -145,6 +144,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
             this.rowNodes.push(rowNode)
             this.blockUtils.setDataIntoRowNode(rowNode, item, index, this.nodeIdPrefix);
         });
+
+        this.fireCacheUpdatedEvent();
     }
 
     public clearDisplayIndexes(): void {
@@ -275,15 +276,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
     public getRowCount(): number {
         return this.rowNodes.length;
-    }
-
-    // listener on EVENT_LOAD_COMPLETE
-    private onPageLoaded(event: LoadCompleteEvent): void {
-        // if we are not active, then we ignore all events, otherwise we could end up getting the
-        // grid to refresh even though we are no longer the active cache
-        if (!this.isAlive()) { return; }
-        if (!event.success) { return; }
-        this.fireCacheUpdatedEvent();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {

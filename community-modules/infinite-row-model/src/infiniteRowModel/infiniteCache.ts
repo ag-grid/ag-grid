@@ -7,7 +7,6 @@ import {
     Events,
     GridApi,
     IDatasource,
-    LoadCompleteEvent,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -84,9 +83,8 @@ export class InfiniteCache extends BeanStub {
     }
 
     private createBlock(blockNumber: number): InfiniteBlock {
-        const newBlock = this.createBean(new InfiniteBlock(blockNumber, this.params));
+        const newBlock = this.createBean(new InfiniteBlock(blockNumber, this, this.params));
 
-        newBlock.addEventListener(InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
         this.blocks[newBlock.getId()] = newBlock;
         this.blockCount++;
 
@@ -119,20 +117,18 @@ export class InfiniteCache extends BeanStub {
         return this.lastRowIndexKnown;
     }
 
-    // listener on EVENT_LOAD_COMPLETE
-    private onPageLoaded(event: LoadCompleteEvent): void {
+    // block calls this, when page loaded
+    public pageLoaded(block: InfiniteBlock, lastRow: number): void {
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) {
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.block.getId()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
 
-        if (event.success) {
-            this.checkRowCount(event.block as InfiniteBlock, event.lastRow);
-            this.onCacheUpdated();
-        }
+        this.checkRowCount(block, lastRow);
+        this.onCacheUpdated();
     }
 
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
