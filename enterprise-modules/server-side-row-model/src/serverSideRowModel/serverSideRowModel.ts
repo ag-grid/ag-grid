@@ -31,11 +31,11 @@ import {
 } from "@ag-grid-community/core";
 import {SortService} from "./sortService";
 import {ClientSideStore} from "./stores/clientSideStore";
-import {InfiniteStore} from "./stores/infiniteStore";
+import {CacheStore} from "./stores/cacheStore";
 
 export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? ClientSideStore : InfiniteStore;
+    const CacheClass = oneBlockCache ? ClientSideStore : CacheStore;
     return new CacheClass(params, parentNode);
 }
 
