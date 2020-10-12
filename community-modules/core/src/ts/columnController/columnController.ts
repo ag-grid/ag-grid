@@ -2048,7 +2048,7 @@ export class ColumnController extends BeanStub {
             const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide == c.isVisible();
             this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
-            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort();
+            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             if (getChangedColumns(sortChangePredicate).length > 0) {
                 this.sortController.dispatchSortChangedEvents();
             }
