@@ -76,7 +76,7 @@ export class SetFilterListItem extends Component {
         if (typeof value === 'function') {
             value = value();
         } else {
-            formattedValue = this.getFormattedValue(colDef, column, value);
+            formattedValue = this.getFormattedValue(this.params, column, value);
         }
 
         if (this.params.showTooltips) {
@@ -106,11 +106,10 @@ export class SetFilterListItem extends Component {
             location: 'setFilterValue',
             colDef: this.getComponentHolder(),
             value: this.tooltipText
-        }
+        };
     }
 
-    private getFormattedValue(colDef: ColDef, column: Column, value: any) {
-        const filterParams = colDef.filterParams as ISetFilterParams;
+    private getFormattedValue(filterParams: ISetFilterParams, column: Column, value: any) {
         const formatter = filterParams == null ? null : filterParams.valueFormatter;
 
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);

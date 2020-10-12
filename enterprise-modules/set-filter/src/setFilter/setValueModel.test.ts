@@ -7,7 +7,7 @@ function createSetValueModel(
     filterParams?: any,
     doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
     suppressSorting = false) {
-    const colDef = { filterParams } as ColDef;
+    const colDef = {} as ColDef;
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
         forEachLeafNode: (callback: (node: RowNode) => void) => {
@@ -22,6 +22,7 @@ function createSetValueModel(
     return new SetValueModel(
         rowModel,
         node => node.data.value,
+        filterParams,
         colDef,
         null,
         doesRowPassOtherFilters,
