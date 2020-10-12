@@ -4,6 +4,10 @@ var columnDefs = [
   { field: 'portfolioName', rowGroup: true, hide: true },
   { field: 'bookId', rowGroup: true, hide: true },
 
+  {field: 'productId'},
+  {field: 'portfolioId'},
+  {field: 'bookId'},
+
   // all the other columns (visible and not grouped)
   {headerName: 'Current', field: 'current', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
   {headerName: 'Previous', field: 'previous', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
@@ -53,26 +57,24 @@ var productNames = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','T
 
 var portfolioNames = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
 
-var products;
-var portfoliosMap;
-var booksMap;
-var tradesMap;
+var products = [];
+var productsMap = {};
 
 var tradeIdSequence = 0;
 
 function createServerSideData() {
-  products = [];
-  portfoliosMap = {};
-  booksMap = {};
-  tradesMap = {};
   for (var i = 0; i<productNames.length; i++) {
 
     var productName = productNames[i];
     var productId = 'PRD_' + i;
-    var product = {productName: productName, productId: productId};
+    var product = {
+      productName: productName,
+      productId: productId,
+      children: [],
+      childrenMap: {}
+    };
     products.push(product);
-    var portfoliosThisProduct = [];
-    portfoliosMap[productId] = portfoliosThisProduct;
+    productsMap[productId] = product;
 
     for (var j = 0; j<portfolioNames.length; j++) {
 
@@ -82,29 +84,30 @@ function createServerSideData() {
         portfolioId: portfolioId,
         portfolioName: portfolioName,
         productName: productName,
-        productId: productId
+        productId: productId,
+        children: [],
+        childrenMap: {}
       };
-      portfoliosThisProduct.push(portfolio);
-      var booksThisPortfolio = [];
-      booksMap[portfolioId] = booksThisPortfolio;
+      product.children.push(portfolio);
+      product.childrenMap[portfolioId] = portfolio;
 
       for (var k = 0; k<5; k++) {
-        var bookId = 'LB-'+ i + '.' + j + '.' + k;
+        var bookId = 'LB-'+ i + '-' + j + '-' + k;
         var book = {
           portfolioId: portfolioId,
           portfolioName: portfolioName,
           productName: productName,
           productId: productId,
-          bookId: bookId
+          bookId: bookId,
+          children: [],
+          childrenMap: {}
         };
-        booksThisPortfolio.push(book);
-
-        var tradesThisBook = [];
-        tradesMap[bookId] = tradesThisBook;
+        portfolio.children.push(book);
+        portfolio.childrenMap[bookId] = book;
 
         for (var l = 0; l<5; l++) {
           var trade = createTradeRecord(portfolioId, portfolioName, productId, productName, bookId);
-          tradesThisBook.push(trade);
+          book.children.push(trade);
         }
       }
     }
@@ -253,21 +256,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var result;
         var groupKeys = params.request.groupKeys;
+        var parentData = params.parentNode.data;
+
+        var productId = parentData ? parentData.productId : null;
+        var portfolioId = parentData ? parentData.portfolioId : null;
+        var bookId = parentData ? parentData.bookId : null;
         switch (groupKeys.length) {
           case 0:
             result = products;
             break;
           case 1:
-            var productId = params.parentNode.data.productId;
-            result = portfoliosMap[productId];
+            result = productsMap[productId].children;
             break;
           case 2:
-            var portfolioId = params.parentNode.data.portfolioId;
-            result = booksMap[portfolioId];
+            result = productsMap[productId].childrenMap[portfolioId].children;
             break;
           case 3:
-            var bookId = params.parentNode.data.bookId;
-            result = tradesMap[bookId];
+            result = productsMap[productId].childrenMap[portfolioId].childrenMap[bookId].children;
             break;
         }
 
