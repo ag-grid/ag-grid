@@ -8,6 +8,9 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
+  getRowNodeId: function(data) {return data.product; },
+  rowSelection: 'multiple',
+  enableCellChangeFlash: true,
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
@@ -17,29 +20,91 @@ var gridOptions = {
 
 var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
 
+var newProductSequence = 0;
+
 var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
   'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
   'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
-function onUpdate() {
+function onRemoveSelected() {
+  var rowsToRemove = gridOptions.api.getSelectedRows();
+
   var tx = {
-    update: []
+    remove: rowsToRemove
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onRemoveRandom() {
+  var rowsToRemove = [];
+  var firstRow;
+
+  gridOptions.api.forEachNode(function(node) {
+    if (firstRow==null) {
+      firstRow = node.data;
+    }
+    // skip half the nodes at random
+    if (Math.random()<0.75) { return; }
+    rowsToRemove.push(node.data);
+  });
+
+  if (rowsToRemove.length==0 && firstRow!=null) {
+    rowsToRemove.push(firstRow);
+  }
+
+  var tx = {
+    remove: rowsToRemove
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onUpdateSelected() {
+  var rowsToUpdate = gridOptions.api.getSelectedRows();
+  rowsToUpdate.forEach(function(data) {
+    data.value = getNextValue();
+  });
+
+  var tx = {
+    update: rowsToUpdate
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onUpdateRandom() {
+  var rowsToUpdate = [];
+
+  gridOptions.api.forEachNode(function(node) {
+    // skip half the nodes at random
+    if (Math.random()>0.5) { return; }
+    var data = node.data;
+    data.value = getNextValue();
+    rowsToUpdate.push(data);
+  });
+
+  var tx = {
+    update: rowsToUpdate
   };
 
   gridOptions.api.applyServerSideTransaction(tx);
 }
 
 function onAdd(index) {
-  const newProductName = all_products[Math.floor(all_products.length*Math.random())];
+  var newProductName = all_products[Math.floor(all_products.length*Math.random())];
+  var itemsToAdd = [];
+  for (var i = 0; i<5; i++) {
+    itemsToAdd.push(      {
+          product: newProductName + ' ' + newProductSequence++,
+          value: getNextValue()
+        }
+    );
+  }
   var tx = {
     addIndex: index,
-    add: [
-      {
-        product: newProductName + ' ' + Math.floor(Math.random()*1000),
-        value: getNextValue()
-      }
-    ]
+    add: itemsToAdd
   };
   gridOptions.api.applyServerSideTransaction(tx);
 }
