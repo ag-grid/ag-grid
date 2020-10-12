@@ -590,23 +590,8 @@ export class CacheStore extends BeanStub implements IServerSideChildStore {
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null {
-        // if (this.isMaxRowFound() || this.getBlock()) {
-        //     return null;
-        // }
-
-        const res: RowNodeTransaction = {
-            add: [],
-            remove: [],
-            update: []
-        };
-
-        if (rowDataTransaction.add) {
-            rowDataTransaction.add.forEach( item => {
-
-            });
-        }
-
-        return res;
+        console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
+        return null;
     }
 
     public getChildStore(keys: string[]): IServerSideChildStore | null {

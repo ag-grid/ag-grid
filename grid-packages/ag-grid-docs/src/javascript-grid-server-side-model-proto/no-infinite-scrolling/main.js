@@ -20,8 +20,8 @@ var gridOptions = {
         minWidth: 280,
     },
 
-    rowBuffer: 0,
-    cacheBlockSize: 100,
+    // rowBuffer: 0,
+    // cacheBlockSize: 100,
     maxBlocksInCache: 5,
 
     // use the server-side row model

@@ -11,7 +11,7 @@ var gridOptions = {
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
+  // cacheBlockSize: 100,
   animateRows: true
 };
 
