@@ -5,7 +5,7 @@
 }
 
 #myGrid {
-    height: 58px !important;
+    flex-grow: 1;
 }
 
  .my-chart {
