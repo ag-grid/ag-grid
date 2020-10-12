@@ -4,9 +4,9 @@ var columnDefs = [
   { field: 'portfolioName', rowGroup: true, hide: true },
   { field: 'bookId', rowGroup: true, hide: true },
 
-  {field: 'productId'},
-  {field: 'portfolioId'},
-  {field: 'bookId'},
+  // {field: 'productId'},
+  // {field: 'portfolioId'},
+  // {field: 'bookId'},
 
   // all the other columns (visible and not grouped)
   {headerName: 'Current', field: 'current', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
@@ -106,7 +106,7 @@ function createServerSideData() {
         portfolio.childrenMap[bookId] = book;
 
         for (var l = 0; l<5; l++) {
-          var trade = createTradeRecord(portfolioId, portfolioName, productId, productName, bookId);
+          var trade = createTradeRecord(productId, productName, portfolioId, portfolioName, bookId);
           book.children.push(trade);
         }
       }
@@ -119,7 +119,7 @@ function randomBetween(min,max) {
   return Math.floor(Math.random()*(max - min + 1)) + min;
 }
 
-function createTradeRecord(portfolioId, portfolioName, productId, productName, bookId) {
+function createTradeRecord(productId, productName, portfolioId, portfolioName, bookId) {
   var current = Math.floor(Math.random()*100000) + 100;
   var previous = current + Math.floor(Math.random()*10000) - 2000;
   var trade = {
@@ -148,6 +148,40 @@ function numberCellFormatter(params) {
   return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
+var intervalId;
+
+function onBtStart() {
+  if (intervalId!=null) { return; }
+  intervalId = setInterval(doBatch, 500);
+}
+
+function onBtStop() {
+  clearInterval(intervalId);
+  intervalId = undefined;
+}
+
+function doBatch() {
+  // pick book at random
+
+  // var product = products[Math.floor(Math.random()*product.length)];
+  // var portfolio = product.children[Math.floor(Math.random()*product.children.length)];
+  // var book = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
+
+  var product = products[0];
+  var portfolio = product.children[0];
+  var book = portfolio.children[0];
+
+  var newTrade = createTradeRecord(product.productId, product.productName, portfolio.portfolioId, portfolio.portfolioName, book.bookId);
+
+  book.children.push(newTrade);
+  book.childrenMap[newTrade.tradeId] = newTrade;
+
+  var tx = {
+    add: [newTrade]
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx, [product.productName, portfolio.portfolioName, book.bookId]);
+}
 
 /*
 
@@ -240,6 +274,77 @@ function getNextValue() {
   return (Math.floor((valueCounter*987654321)/7)) % 10000;
 }
 
+function getProducts() {
+  var res = products.map(mapProduct);
+  return res;
+}
+
+function mapProduct(item) {
+  return {
+    productName: item.productName,
+    productId: item.productId
+  };
+}
+
+function getPortfolios(productId) {
+  var portfolios = productsMap[productId].children;
+  var res = portfolios.map(mapPortfolio);
+  return res;
+}
+
+function mapPortfolio(item) {
+  return {
+    portfolioId: item.portfolioId,
+    portfolioName: item.portfolioName,
+    productName: item.productName,
+    productId: item.productId
+  };
+}
+
+function getBooks(productId, portfolioId) {
+  var books = productsMap[productId].childrenMap[portfolioId].children;
+  var res = books.map(mapBook);
+  return res;
+}
+
+function mapBook(item) {
+  return {
+    portfolioId: item.portfolioId,
+    portfolioName: item.portfolioName,
+    productName: item.productName,
+    productId: item.productId,
+    bookId: item.bookId
+  };
+}
+
+function getTrades(productId, portfolioId, bookId) {
+  var trades = productsMap[productId].childrenMap[portfolioId].childrenMap[bookId].children;
+  var res = trades.map(mapTrade);
+  return res;
+}
+
+function mapTrade(item) {
+  return {
+    portfolioId: item.portfolioId,
+    portfolioName: item.portfolioName,
+    productName: item.productName,
+    productId: item.productId,
+    bookId: item.bookId,
+    tradeId: item.tradeId,
+    submitterID: item.submitterID,
+    submitterDealID: item.submitterDealID,
+    dealType: item.dealType,
+    bidFlag: item.bidFlag,
+    current: item.current,
+    previous: item.previous,
+    pl1: item.pl1,
+    pl2: item.pl2,
+    gainDx: item.gainDx,
+    sxPx: item.sxPx,
+    _99Out: item._99Out
+  };
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
@@ -261,18 +366,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var productId = parentData ? parentData.productId : null;
         var portfolioId = parentData ? parentData.portfolioId : null;
         var bookId = parentData ? parentData.bookId : null;
+
         switch (groupKeys.length) {
           case 0:
-            result = products;
+            result = getProducts();
             break;
           case 1:
-            result = productsMap[productId].children;
+            result = getPortfolios(productId);
             break;
           case 2:
-            result = productsMap[productId].childrenMap[portfolioId].children;
+            result = getBooks(productId, portfolioId);
             break;
           case 3:
-            result = productsMap[productId].childrenMap[portfolioId].childrenMap[bookId].children;
+            result = getTrades(productId, portfolioId, bookId);
             break;
         }
 

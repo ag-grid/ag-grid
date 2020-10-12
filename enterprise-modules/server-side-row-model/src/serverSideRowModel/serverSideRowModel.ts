@@ -367,13 +367,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private executeOnStore(route: string[], callback: (cache: IServerSideChildStore) => void) {
-        const store = this.getRootStore();
-        if (!store) { return; }
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
 
-        const storeToPurge = store.getChildStore(route);
+        const storeToExecuteOn = rootStore.getChildStore(route);
 
-        if (storeToPurge) {
-            callback(storeToPurge);
+        if (storeToExecuteOn) {
+            callback(storeToExecuteOn);
         }
     }
 
