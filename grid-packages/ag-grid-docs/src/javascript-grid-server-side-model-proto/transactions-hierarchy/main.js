@@ -27,7 +27,9 @@ var gridOptions = {
     field: 'tradeId'
   },
   getRowNodeId: function(data) {
-    if (data.bookId) {
+    if (data.tradeId) {
+      return data.tradeId;
+    } else if (data.bookId) {
       return data.bookId;
     } else if (data.portfolioId) {
       return data.portfolioId;
