@@ -10,7 +10,7 @@ import {
     RowNodeBlock,
     RowRenderer
 } from "@ag-grid-community/core";
-import {InfiniteCacheParams} from "./infiniteCache";
+import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
 
@@ -19,6 +19,7 @@ export class InfiniteBlock extends RowNodeBlock {
 
     private readonly startRow: number;
     private readonly endRow: number;
+    private readonly parentCache: InfiniteCache;
 
     private params: InfiniteCacheParams;
 
@@ -26,9 +27,10 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public rowNodes: RowNode[];
 
-    constructor(id: number, params: InfiniteCacheParams) {
+    constructor(id: number, parentCache: InfiniteCache, params: InfiniteCacheParams) {
         super(id);
 
+        this.parentCache = parentCache;
         this.params = params;
 
         // we don't need to calculate these now, as the inputs don't change,
@@ -144,7 +146,7 @@ export class InfiniteBlock extends RowNodeBlock {
         }
     }
 
-    protected processServerResult(rows: any[]): void {
+    protected processServerResult(rows: any[], lastRow: number): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
@@ -158,6 +160,8 @@ export class InfiniteBlock extends RowNodeBlock {
         if (rowNodesToRefresh.length > 0) {
             this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
+
+        this.parentCache.pageLoaded(this, lastRow);
     }
 
     @PreDestroy
