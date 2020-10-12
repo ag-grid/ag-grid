@@ -15,20 +15,28 @@ var gridOptions = {
   animateRows: true
 };
 
-var products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
+var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
+
+var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
   'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
   'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
-function onButton() {
-  console.log('Remove Selected');
+function onUpdate() {
+  var tx = {
+    update: []
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
 }
 
-function onAdd() {
+function onAdd(index) {
+  const newProductName = all_products[Math.floor(all_products.length*Math.random())];
   var tx = {
+    addIndex: index,
     add: [
       {
-        product: 'New Product ' + Math.random(),
+        product: newProductName + ' ' + Math.floor(Math.random()*1000),
         value: getNextValue()
       }
     ]

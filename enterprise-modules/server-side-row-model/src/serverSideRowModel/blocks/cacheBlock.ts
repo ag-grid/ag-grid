@@ -207,7 +207,8 @@ export class CacheBlock extends RowNodeBlock {
             const applicationProvidedRowForThisIndex = i < rows.length;
             if (applicationProvidedRowForThisIndex) {
                 const data = rows[i];
-                this.blockUtils.setDataIntoRowNode(rowNode, data, this.startRow + i, this.nodeIdPrefix);
+                const defaultId = this.nodeIdPrefix + (this.startRow + i);
+                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
             }
             this.rowNodes.push(rowNode);
         }
