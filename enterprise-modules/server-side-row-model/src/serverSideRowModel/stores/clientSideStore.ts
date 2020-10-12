@@ -23,7 +23,7 @@ import {ChildStoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
 import {BlockUtils} from "../blocks/blockUtils";
 
-export class FiniteStore extends RowNodeBlock implements IServerSideChildStore {
+export class ClientSideStore extends RowNodeBlock implements IServerSideChildStore {
 
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -85,16 +85,18 @@ export class FiniteStore extends RowNodeBlock implements IServerSideChildStore {
 
     @PreDestroy
     private destroyRowNodes(): void {
-        this.rowNodes.forEach(rowNode => {
-            if (rowNode.childrenCache) {
-                this.destroyBean(rowNode.childrenCache);
-                rowNode.childrenCache = null;
-            }
-            // this is needed, so row render knows to fade out the row, otherwise it
-            // sees row top is present, and thinks the row should be shown. maybe
-            // rowNode should have a flag on whether it is visible???
-            rowNode.clearRowTop();
-        });
+        if (this.rowNodes) {
+            this.rowNodes.forEach(rowNode => {
+                if (rowNode.childrenCache) {
+                    this.destroyBean(rowNode.childrenCache);
+                    rowNode.childrenCache = null;
+                }
+                // this is needed, so row render knows to fade out the row, otherwise it
+                // sees row top is present, and thinks the row should be shown. maybe
+                // rowNode should have a flag on whether it is visible???
+                rowNode.clearRowTop();
+            });
+        }
         this.rowNodes = [];
     }
 

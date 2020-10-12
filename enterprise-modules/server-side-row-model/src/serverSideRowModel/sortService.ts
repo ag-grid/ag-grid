@@ -108,7 +108,7 @@ export class SortService extends BeanStub {
 
         const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
         if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.serverSideRowModel.resetRootCache();
+            this.serverSideRowModel.resetRootStore();
         } else {
             cache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
         }

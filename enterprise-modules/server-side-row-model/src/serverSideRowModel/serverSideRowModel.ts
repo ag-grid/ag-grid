@@ -30,12 +30,12 @@ import {
     IServerSideChildStore
 } from "@ag-grid-community/core";
 import {SortService} from "./sortService";
-import {FiniteStore} from "./stores/finiteStore";
-import {CacheStore} from "./stores/cacheStore";
+import {ClientSideStore} from "./stores/clientSideStore";
+import {InfiniteStore} from "./stores/infiniteStore";
 
 export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? FiniteStore : CacheStore;
+    const CacheClass = oneBlockCache ? ClientSideStore : InfiniteStore;
     return new CacheClass(params, parentNode);
 }
 
@@ -110,7 +110,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
 
-        const resetListener = this.resetRootCache.bind(this);
+        const resetListener = this.resetRootStore.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, resetListener);
@@ -121,7 +121,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public setDatasource(datasource: IServerSideDatasource): void {
         this.destroyDatasource();
         this.datasource = datasource;
-        this.resetRootCache();
+        this.resetRootStore();
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -142,7 +142,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // if first time, alwasy reset
         if (!this.storeParams) {
-            this.resetRootCache();
+            this.resetRootStore();
             return;
         }
 
@@ -160,18 +160,18 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
 
         if (resetRequired) {
-            this.resetRootCache();
+            this.resetRootStore();
         }
     }
 
     @PreDestroy
-    private destroyCache(): void {
+    private destroyRootStore(): void {
         if (!this.rootNode || !this.rootNode.childrenCache) { return; }
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
     }
 
-    public resetRootCache(): void {
-        this.destroyCache();
+    public resetRootStore(): void {
+        this.destroyRootStore();
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
@@ -251,7 +251,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize == null ? 100 : blockSize,
+            blockSize: blockSize,
+            // blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight
         };
 
