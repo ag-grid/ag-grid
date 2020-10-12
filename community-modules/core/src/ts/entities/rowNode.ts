@@ -287,7 +287,6 @@ export class RowNode implements IEventEmitter {
         this.data = data;
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
-        this.updateDataOnDetailNode();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
 

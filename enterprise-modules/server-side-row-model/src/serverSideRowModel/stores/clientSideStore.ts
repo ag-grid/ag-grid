@@ -39,10 +39,13 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
     private nodeIdSequence: NumberSequence = new NumberSequence()
 
+
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
     private rowNodes: RowNode[];
+    // when user is provide the id's, we also keep a map of ids to row nodes for convenience
+    private allNodesMap: {[id:string]: RowNode};
 
     private groupField: string;
     private rowGroupColumn: Column;
@@ -97,6 +100,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
             });
         }
         this.rowNodes = [];
+        this.allNodesMap = {};
     }
 
     private initialiseRowNodes(): void {
@@ -134,7 +138,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         return this.rowNodes.length;
     }
 
-    private addDataNode(data: any, index?: number): RowNode {
+    private createDataNode(data: any, index?: number): RowNode {
         const rowNode = this.blockUtils.createRowNode(
             {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
@@ -148,6 +152,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
         const defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+
+        this.allNodesMap[rowNode.id] = rowNode;
+
         return rowNode;
     }
 
@@ -155,7 +162,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         if (!this.isAlive()) { return; }
 
         this.destroyRowNodes();
-        rowData.forEach(this.addDataNode.bind(this));
+        rowData.forEach(this.createDataNode.bind(this));
 
         this.fireCacheUpdatedEvent();
     }
@@ -212,7 +219,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
             if (res) { return res; }
         }
 
-        console.error(` ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
         return null;
     }
 
@@ -279,8 +285,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         const nodesToUnselect: RowNode[] = [];
 
         this.executeAdd(rowDataTran, res);
-        // this.executeRemove(rowDataTran, res, nodesToUnselect);
-        // this.executeUpdate(rowDataTran, res, nodesToUnselect);
+        this.executeRemove(rowDataTran, res, nodesToUnselect);
+        this.executeUpdate(rowDataTran, res, nodesToUnselect);
 
         // this.updateSelection(nodesToUnselect);
 
@@ -297,70 +303,53 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         if (useIndex) {
             // items get inserted in reverse order for index insertion
             add.reverse().forEach(item => {
-                const newRowNode: RowNode = this.addDataNode(item, addIndex);
+                const newRowNode: RowNode = this.createDataNode(item, addIndex);
                 rowNodeTransaction.add.push(newRowNode);
             });
         } else {
             add.forEach(item => {
-                const newRowNode: RowNode = this.addDataNode(item);
+                const newRowNode: RowNode = this.createDataNode(item);
                 rowNodeTransaction.add.push(newRowNode);
             });
         }
     }
 
-/*
-    private addRowNode(data: any, index?: number): RowNode {
-        const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
+    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+        const {remove} = rowDataTran;
 
-        if (_.exists(index)) {
-            _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
-        } else {
-            this.rootNode.allLeafChildren.push(newNode);
-        }
+        if (remove==null) { return; }
 
-        return newNode;
+        const rowIdsRemoved: {[key: string]: boolean} = {};
+
+        remove.forEach(item => {
+            const rowNode = this.lookupRowNode(item);
+
+            if (!rowNode) { return; }
+
+            // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+
+            // so row renderer knows to fade row out (and not reposition it)
+            rowNode.clearRowTop();
+
+            // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+            // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
+            rowIdsRemoved[rowNode.id] = true;
+            // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            delete this.allNodesMap[rowNode.id];
+
+            rowNodeTransaction.remove.push(rowNode);
+        });
+
+        this.rowNodes = this.rowNodes.filter(rowNode => !rowIdsRemoved[rowNode.id]);
     }
-*/
 
-    /*
-        private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
-            const {remove} = rowDataTran;
-
-            if (_.missingOrEmpty(remove)) { return; }
-
-            const rowIdsRemoved: {[key: string]: boolean} = {};
-
-            remove.forEach(item => {
-                const rowNode = this.lookupRowNode(item);
-
-                if (!rowNode) { return; }
-
-                // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
-                // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
-                if (rowNode.isSelected()) {
-                    nodesToUnselect.push(rowNode);
-                }
-
-                // so row renderer knows to fade row out (and not reposition it)
-                rowNode.clearRowTop();
-
-                // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
-                // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
-                rowIdsRemoved[rowNode.id] = true;
-                // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-                delete this.allNodesMap[rowNode.id];
-
-                rowNodeTransaction.remove.push(rowNode);
-            });
-
-            this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
-        }
-    */
-
-/*
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
-        if (_.missingOrEmpty(update)) { return; }
+        if (update==null) { return; }
 
         update.forEach(item => {
             const rowNode = this.lookupRowNode(item);
@@ -372,12 +361,33 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
-
             rowNodeTransaction.update.push(rowNode);
         });
     }
-*/
+
+    private lookupRowNode(data: any): RowNode {
+        const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+
+        let rowNode: RowNode;
+        if (_.exists(rowNodeIdFunc)) {
+            // find rowNode using id
+            const id: string = rowNodeIdFunc(data);
+            rowNode = this.allNodesMap[id];
+            if (!rowNode) {
+                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                return null;
+            }
+        } else {
+            // find rowNode using object references
+            rowNode = _.find(this.rowNodes, rowNode => rowNode.data === data);
+            if (!rowNode) {
+                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                return null;
+            }
+        }
+
+        return rowNode;
+    }
 
     public purgeStore(): void {
         this.initialiseRowNodes();
