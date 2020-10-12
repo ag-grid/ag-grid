@@ -57,23 +57,10 @@ export class BlockUtils extends BeanStub {
         return rowNode;
     }
 
-    public setDataIntoRowNode(rowNode: RowNode, data: any,  index: number, nodeIdPrefix: string): void {
+    public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string): void {
         rowNode.stub = false;
 
         if (_.exists(data)) {
-            // if the user is not providing id's, then we build an id based on the index.
-            // we combine the index with the level and group key, so that the id is
-            // unique across the set.
-            //
-            // unique id is needed for selection (so selection can be maintained when
-            // doing server side sorting / filtering) - if user is not providing id's
-            // (and we use the indexes) then selection will not work between sorting &
-            // filtering.
-            //
-            // id's are also used by the row renderer for updating the dom as it identifies
-            // rowNodes by id
-            const defaultId = nodeIdPrefix + index.toString();
-
             rowNode.setDataAndId(data, defaultId);
 
             if (this.usingTreeData) {

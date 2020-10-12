@@ -37,7 +37,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
     private readonly storeParams: ChildStoreParams;
     private readonly parentRowNode: RowNode;
 
-    // private nodeIdSequence: NumberSequence = new NumberSequence()
+    private nodeIdSequence: NumberSequence = new NumberSequence()
 
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
@@ -134,7 +134,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         return this.rowNodes.length;
     }
 
-/*    private addDataNode(data: any, index?: number): RowNode {
+    private addDataNode(data: any, index?: number): RowNode {
         const rowNode = this.blockUtils.createRowNode(
             {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
@@ -147,23 +147,15 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         }
 
         const defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
-        console.log('setting id ' + defaultId);
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
         return rowNode;
-    }*/
+    }
 
     protected processServerResult(rowData: any[] = []): void {
         if (!this.isAlive()) { return; }
 
-        this.rowNodes = [];
-        rowData.forEach( (item: any, index: number) => {
-            const rowNode = this.blockUtils.createRowNode(
-                {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
-                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
-            );
-            this.rowNodes.push(rowNode)
-            this.blockUtils.setDataIntoRowNode(rowNode, item, index, this.nodeIdPrefix);
-        });
+        this.destroyRowNodes();
+        rowData.forEach(this.addDataNode.bind(this));
 
         this.fireCacheUpdatedEvent();
     }
@@ -286,16 +278,18 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
         const nodesToUnselect: RowNode[] = [];
 
-        // this.executeAdd(rowDataTran, res);
+        this.executeAdd(rowDataTran, res);
         // this.executeRemove(rowDataTran, res, nodesToUnselect);
         // this.executeUpdate(rowDataTran, res, nodesToUnselect);
 
         // this.updateSelection(nodesToUnselect);
 
+        this.fireCacheUpdatedEvent();
+
         return res;
     }
 
-/*    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
         const {add, addIndex} = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
@@ -312,7 +306,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
                 rowNodeTransaction.add.push(newRowNode);
             });
         }
-    }*/
+    }
 
 /*
     private addRowNode(data: any, index?: number): RowNode {
