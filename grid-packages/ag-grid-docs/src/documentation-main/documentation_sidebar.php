@@ -3,6 +3,19 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=24.1.0">Version 24.1.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Oct 12</h6>
+        <p class="card-text">
+            Minor release with bug fixes.
+        </p>
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=24.1.0">Change Log</a>
+        </p>
+    </div>
+</div>
+
+<div class="card card-highlight mb-4">
+    <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=24.0.0">Version 24.0.0</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Sep 9</h6>
         <p class="card-text">

@@ -67,7 +67,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
 
-    private params:IHeaderParams;
+    private params: IHeaderParams;
 
     private lastMovingChanged = 0;
 

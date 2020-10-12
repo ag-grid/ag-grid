@@ -37,7 +37,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     private cellHoverListener: (() => void) | undefined;
     private lastCellHovered: CellPosition | undefined;
-    private changedCell: boolean = false;
+    protected changedCalculatedValues: boolean = false;
     private dragging: boolean = false;
 
     protected abstract type: SelectionHandleType;
@@ -53,8 +53,9 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 this.dragging = true;
                 this.rangeController.autoScrollService.check(e as MouseEvent);
 
-                if (this.changedCell) {
+                if (this.changedCalculatedValues) {
                     this.onDrag(e);
+                    this.changedCalculatedValues = false;
                 }
             },
             onDragStop: (e: MouseEvent | Touch) => {
@@ -132,7 +133,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.cellHoverListener = this.addManagedListener(
             this.rowRenderer.getGridCore().getRootGui(),
             'mousemove',
-            this.updateLastCellPositionHovered.bind(this)
+            this.updateValuesOnMove.bind(this)
         );
 
         _.addCssClass(document.body, this.getDraggingCssClass());
@@ -142,14 +143,13 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
     }
 
-    private updateLastCellPositionHovered(e: MouseEvent) {
+    protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-        if (cell === this.lastCellHovered) {
-            this.changedCell = false;
-            return;
-        }
+        
+        if (cell === this.lastCellHovered) { return; }
+
         this.lastCellHovered = cell;
-        this.changedCell = true;
+        this.changedCalculatedValues = true;
     }
 
     public getType(): SelectionHandleType {

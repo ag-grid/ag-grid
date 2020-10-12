@@ -52,6 +52,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     render() {
         return React.createElement('div', {
             style: this.createStyleForDiv(),
+            className: this.props.className,
             ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
@@ -148,13 +149,18 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         if (propKey === 'rowData') {
             if (this.props.rowDataChangeDetectionStrategy) {
                 return this.props.rowDataChangeDetectionStrategy;
-            } else if (this.props.deltaRowDataMode || this.props.immutableData) {
+            } else if (this.isImmutableDataActive()) {
                 return ChangeDetectionStrategyType.IdentityCheck;
             }
         }
 
         // all other cases will default to DeepValueCheck
         return ChangeDetectionStrategyType.DeepValueCheck;
+    }
+
+    private isImmutableDataActive() {
+        return (this.props.deltaRowDataMode || this.props.immutableData) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
     }
 
     shouldComponentUpdate(nextProps: any) {

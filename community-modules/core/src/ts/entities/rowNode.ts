@@ -625,7 +625,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     }
 
     public isSelected(): boolean {
@@ -692,9 +692,9 @@ export class RowNode implements IEventEmitter {
 
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({
-            newValue: newValue,
-            clearSelection: clearSelection,
-            suppressFinishActions: suppressFinishActions,
+            newValue,
+            clearSelection,
+            suppressFinishActions,
             rangeSelect: false
         });
     }

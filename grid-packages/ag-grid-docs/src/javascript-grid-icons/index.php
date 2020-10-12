@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Custom Icons: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -290,7 +290,7 @@ sortUnSort
     and the header icons use a mix of Font Awesome and strings.
 </p>
 
-<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping', 'sidebar', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>SVG Icons</h2>
 

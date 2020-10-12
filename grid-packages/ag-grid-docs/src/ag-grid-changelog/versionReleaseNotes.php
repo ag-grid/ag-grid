@@ -1,3 +1,17 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_24_1_0">
+    <p><b>Release 24.1.0 (12th Sep 2020)</b></p>
+
+    <p>Minor release with bug fixes and small improvements.</p>
+
+    <p><b>Deprecations:</b></p>
+
+    <ul>
+        <li>
+            <code>colDef.suppressHeaderKeyboardEvent</code> should now be used instead of <code>gridOptions.suppressKeyboardEvent</code>. Note the methods: <code>navigateToNextHeader</code> and <code>tabToNextHeader</code> have been added to the grid options to allow custom header navigation. For more details see <a href="/javascript-grid-keyboard-navigation/#custom-navigation">Custom Navigation</a>.
+        </li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_24_0_0">
     <p><b>Release 24.0.0 (9th Sep 2020)</b></p>
 

@@ -11,10 +11,10 @@ include '../documentation-main/documentation_header.php';
 <p>
     There are four ways of enabling the tooltips in ag-Charts by using:
     <ul>
-        <li>default tooltips</li>
-        <li>default tooltips with custom styling</li>
-        <li>custom title / content (with default or custom styling)</li>
-        <li>completely custom markup for tooltips</li>
+        <li><a href="#default-tooltip">default tooltips</a></li>
+        <li><a href="#styling-the-default-tooltip">custom styled tooltips</a> via CSS classes</li>
+        <li><a href="#modifying-content-title">custom title / content</a> via a renderer function</li>
+        <li><a href="#using-custom-tooltips">completely custom template and markup</a> via a renderer function</li>
     </ul>
 </p>
 
@@ -205,7 +205,7 @@ SNIPPET
     The example below demonstrates the above tooltip renderer in action:
 </p>
 
-<?= chart_example("Modifying Tooltips's Content", 'tooltip-content-title', 'generated'); ?>
+<?= chart_example('Modifying Tooltips Content', 'tooltip-content-title', 'generated'); ?>
 
 <h2>Using Custom Tooltips</h2>
 

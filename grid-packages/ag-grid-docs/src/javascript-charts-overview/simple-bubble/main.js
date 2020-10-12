@@ -20,7 +20,7 @@ var options = {
             sizeName: 'Minimum Distance',
             marker: {
                 size: 5,
-                size: 100,
+                maxSize: 100,
             },
             fill: '#41874b',
             stroke: '#41874b',

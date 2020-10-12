@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Custom Filter: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Custom Filter. Create your own Custom Filter to match your own business requirements. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Custom Filter. Create your own Custom Filter to match your own business requirements. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Custom Filter";
 $pageGroup = "feature";
 define('skipInPageNav', true);

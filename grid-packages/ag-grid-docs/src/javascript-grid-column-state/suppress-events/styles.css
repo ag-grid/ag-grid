@@ -24,9 +24,6 @@
     margin: 4px;
 }
 
-.test-button-row {
-}
-
 #myGrid {
-    flex: 1 1 auto;
+    flex: 1 1 0px;
 }

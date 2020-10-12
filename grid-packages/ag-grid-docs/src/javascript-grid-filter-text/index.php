@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Text Filter: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Text Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -154,8 +154,7 @@ SNIPPET
         searching the string <code>'Bjo'</code>.
     </li>
     <li>
-        The <strong>Athlete</strong> column has a debounce of 200ms (<code>debounceMs = 200</code>). This is used by both the parent and
-        floating filter components.
+        The <strong>Athlete</strong> column has a debounce of 200ms (<code>debounceMs = 200</code>).
     </li>
     <li>The <strong>Athlete</strong> column filter has the AND/OR additional filter suppressed (<code>suppressAndOrCondition = true</code>)</li>
     <li>The <strong>Country</strong> column has only one filter option: <code>filterOptions = ['contains']</code></li>

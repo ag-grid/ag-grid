@@ -89,12 +89,10 @@ export class Environment extends BeanStub {
         if (SASS_PROPERTY_BUILDER[key]) {
             const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
+            addCssClass(div, theme);
             div.style.position = 'absolute';
-            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
-                if (idx === 0) {
-                    addCssClass(el, theme);
-                }
 
+            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string) => {
                 const div = document.createElement('div');
                 div.style.position = 'static';
                 addCssClass(div, currentClass);
@@ -126,7 +124,7 @@ export class Environment extends BeanStub {
         return this.getSassVariable(theme, 'chartMenuPanelWidth');
     }
 
-    public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
+    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; } {
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;

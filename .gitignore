@@ -12,6 +12,7 @@
 lerna-debug.log
 npm-debug.log
 node_modules
+.scannerwork
 
 package-lock.json
 docs_are_running

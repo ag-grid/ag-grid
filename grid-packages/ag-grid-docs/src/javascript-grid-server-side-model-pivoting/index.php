@@ -222,7 +222,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
 <h2>Next Up</h2>
 

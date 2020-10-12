@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Change Detection: A Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Change Detection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

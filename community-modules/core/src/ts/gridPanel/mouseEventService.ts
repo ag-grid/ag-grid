@@ -67,15 +67,25 @@ export class MouseEventService extends BeanStub {
         return cellComp ? cellComp.getCellPosition() : null;
     }
 
-    getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
+    public getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number; } {
         const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-        const { x, y } = event;
+        const e = event as MouseEvent;
+        let x: number;
+        let y: number;
+
+        if (e.clientX != null || e.clientY != null) {
+            x = e.clientX;
+            y = e.clientY;
+        } else {
+            x = e.x;
+            y = e.y;
+        }
 
         if (gridPanelHasScrolls) {
             const vRange = this.gridPanel.getVScrollPosition();
             const hRange = this.gridPanel.getHScrollPosition();
-
-            return { x: x + hRange.left, y: y + vRange.top };
+            x += hRange.left;
+            y += vRange.top;
         }
 
         return { x, y };

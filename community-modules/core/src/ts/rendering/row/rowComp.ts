@@ -565,7 +565,7 @@ export class RowComp extends Component {
     private updateExpandedCss(): void {
 
         const expandable = this.rowNode.isExpandable();
-        const expanded = this.rowNode.expanded;
+        const expanded = this.rowNode.expanded == true;
 
         this.eAllRowContainers.forEach(eRow => {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
