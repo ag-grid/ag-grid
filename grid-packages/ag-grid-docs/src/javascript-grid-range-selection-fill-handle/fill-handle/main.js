@@ -21,7 +21,9 @@ var gridOptions = {
 };
 
 function fillHandleAxis(direction) {
-    var buttons = document.querySelectorAll('.ag-fill-direction');
+    // call Array slice because IE querySelectorAll returns an 
+    // Array like object that doesn't support forEach
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.ag-fill-direction'));
     var button = document.querySelector('.ag-fill-direction.' + direction);
 
     buttons.forEach(function(btn) {

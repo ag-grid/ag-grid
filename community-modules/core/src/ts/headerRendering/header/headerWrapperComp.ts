@@ -236,6 +236,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         if (e.keyCode === KeyCode.SPACE) {
             const checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                e.preventDefault();
                 checkbox.setValue(!checkbox.getValue());
             }
         }

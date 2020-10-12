@@ -27,6 +27,7 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     constructor(props: any);
     render(): React.DetailedReactHTMLElement<{
         style: any;
+        className: any;
         ref: (e: HTMLElement) => void;
     }, HTMLElement>;
     createStyleForDiv(): any;

@@ -27,7 +27,7 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     setName(name: string): this;
     protected isSelected(): boolean;
     private setSelected;
-    protected dispatchChange(selected?: boolean, event?: MouseEvent): void;
+    private dispatchChange;
     private onCheckboxClick;
     private refreshSelectedClass;
 }

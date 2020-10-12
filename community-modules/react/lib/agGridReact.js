@@ -55,6 +55,7 @@ var AgGridReact = /** @class */ (function (_super) {
         var _this = this;
         return React.createElement('div', {
             style: this.createStyleForDiv(),
+            className: this.props.className,
             ref: function (e) {
                 _this.eGridDiv = e;
             }

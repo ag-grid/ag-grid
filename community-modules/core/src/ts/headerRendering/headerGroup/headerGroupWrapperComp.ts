@@ -12,8 +12,7 @@ import {
     DragAndDropService,
     DragItem,
     DragSource,
-    DragSourceType,
-    DropTarget
+    DragSourceType
 } from "../../dragAndDrop/dragAndDropService";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";

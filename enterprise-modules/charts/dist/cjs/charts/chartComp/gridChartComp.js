@@ -255,6 +255,7 @@ var GridChartComp = /** @class */ (function (_super) {
             fields: fields
         };
         chartProxy.update(chartUpdateParams);
+        this.titleEdit.setChartProxy(this.chartProxy);
     };
     GridChartComp.prototype.getChartDataType = function (colId) {
         var column = this.columnController.getPrimaryColumn(colId);

@@ -692,9 +692,9 @@ export class RowNode implements IEventEmitter {
 
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({
-            newValue: newValue,
-            clearSelection: clearSelection,
-            suppressFinishActions: suppressFinishActions,
+            newValue,
+            clearSelection,
+            suppressFinishActions,
             rangeSelect: false
         });
     }

@@ -8267,11 +8267,9 @@ var Environment = /** @class */ (function (_super) {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            Object(_utils_dom__WEBPACK_IMPORTED_MODULE_2__["addCssClass"])(div, theme);
             div.style.position = 'absolute';
-            var el = classList.reduce(function (el, currentClass, idx) {
-                if (idx === 0) {
-                    Object(_utils_dom__WEBPACK_IMPORTED_MODULE_2__["addCssClass"])(el, theme);
-                }
+            var el = classList.reduce(function (el, currentClass) {
                 var div = document.createElement('div');
                 div.style.position = 'static';
                 Object(_utils_dom__WEBPACK_IMPORTED_MODULE_2__["addCssClass"])(div, currentClass);
@@ -15457,9 +15455,10 @@ var AgCheckbox = /** @class */ (function (_super) {
         return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
+        var previousValue = this.isSelected();
         var nextValue = this.getNextValue();
         if (this.passive) {
-            this.dispatchChange(nextValue);
+            this.dispatchChange(nextValue, previousValue);
         }
         else {
             this.setValue(nextValue);
@@ -15485,28 +15484,34 @@ var AgCheckbox = /** @class */ (function (_super) {
         if (this.isSelected() === selected) {
             return;
         }
-        this.selected = typeof selected === 'boolean' ? selected : undefined;
-        this.eInput.checked = this.selected;
-        this.eInput.indeterminate = this.selected === undefined;
+        var previousValue = this.isSelected();
+        selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
+        this.eInput.checked = selected;
+        this.eInput.indeterminate = selected === undefined;
         if (!silent) {
-            this.dispatchChange(this.selected);
+            this.dispatchChange(this.selected, previousValue);
         }
     };
-    AgCheckbox.prototype.dispatchChange = function (selected, event) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
+    AgCheckbox.prototype.dispatchChange = function (selected, previousValue, event) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, previousValue: previousValue, event: event });
         var input = this.getInputElement();
         var checkboxChangedEvent = {
             type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_CHECKBOX_CHANGED,
             id: input.id,
             name: input.name,
-            selected: selected
+            selected: selected,
+            previousValue: previousValue
         };
         this.eventService.dispatchEvent(checkboxChangedEvent);
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
-        this.selected = e.target.checked;
-        this.refreshSelectedClass(this.selected);
-        this.dispatchChange(this.selected, e);
+        if (this.passive) {
+            return;
+        }
+        var previousValue = this.isSelected();
+        var selected = this.selected = e.target.checked;
+        this.refreshSelectedClass(selected);
+        this.dispatchChange(selected, previousValue, e);
     };
     AgCheckbox.prototype.refreshSelectedClass = function (value) {
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_3__["addOrRemoveCssClass"])(this.eWrapper, 'ag-checked', value === true);
@@ -18314,9 +18319,22 @@ var cellComp_CellComp = /** @class */ (function (_super) {
     CellComp.prototype.onSpaceKeyPressed = function (event) {
         var gridOptionsWrapper = this.beans.gridOptionsWrapper;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
-            var newSelection = !this.rowNode.isSelected();
+            var currentSelection = this.rowNode.isSelected();
+            var newSelection = !currentSelection;
             if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
-                this.rowNode.setSelected(newSelection);
+                var groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                var updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
             }
         }
         // prevent default as space key, by default, moves browser scroll down
@@ -41523,6 +41541,7 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
         if (e.keyCode === keyCode["a" /* KeyCode */].SPACE) {
             var checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                e.preventDefault();
                 checkbox.setValue(!checkbox.getValue());
             }
         }
@@ -42415,13 +42434,12 @@ var FilterManager = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CheckboxSelectionComponent; });
-/* harmony import */ var _widgets_agCheckbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7cc4");
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
-/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6045");
-/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1284");
-/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f737");
-/* harmony import */ var _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("19f7");
-/* harmony import */ var _utils_event__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("313e");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
+/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6045");
+/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1284");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f737");
+/* harmony import */ var _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("19f7");
+/* harmony import */ var _utils_event__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("313e");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v24.1.0
@@ -42453,12 +42471,14 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
         return _super.call(this, /* html*/ "\n            <div class=\"ag-selection-checkbox\">\n                <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n            </div>") || this;
     }
+    CheckboxSelectionComponent.prototype.postConstruct = function () {
+        this.eCheckbox.setPassive(true);
+    };
     CheckboxSelectionComponent.prototype.onDataChanged = function () {
         // when rows are loaded for the second time, this can impact the selection, as a row
         // could be loaded as already selected (if user scrolls down, and then up again).
@@ -42469,8 +42489,9 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
+        var stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + (state ? 'checked' : 'unchecked') + ")");
+        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + stateName + ")");
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
@@ -42489,24 +42510,30 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', function (event) { return Object(_utils_event__WEBPACK_IMPORTED_MODULE_6__["stopPropagationForAgGrid"])(event); });
+        this.addGuiEventListener('click', function (event) { return Object(_utils_event__WEBPACK_IMPORTED_MODULE_5__["stopPropagationForAgGrid"])(event); });
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', function (event) { return Object(_utils_event__WEBPACK_IMPORTED_MODULE_6__["stopPropagationForAgGrid"])(event); });
-        this.addManagedListener(this.eCheckbox, _widgets_agCheckbox__WEBPACK_IMPORTED_MODULE_0__[/* AgCheckbox */ "a"].EVENT_CHANGED, function (params) {
-            if (params.selected) {
+        this.addGuiEventListener('dblclick', function (event) { return Object(_utils_event__WEBPACK_IMPORTED_MODULE_5__["stopPropagationForAgGrid"])(event); });
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (params) {
+            if (params.previousValue === undefined) { // indeterminate
+                var result = _this.onUncheckedClicked(params.event || {});
+                if (result === 0) {
+                    _this.onCheckedClicked();
+                }
+            }
+            else if (params.selected) {
                 _this.onUncheckedClicked(params.event || {});
             }
             else {
                 _this.onCheckedClicked();
             }
         });
-        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__[/* RowNode */ "a"].EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
+        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__[/* RowNode */ "a"].EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
+        this.addManagedListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__[/* RowNode */ "a"].EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         var checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
         if (checkboxVisibleIsDynamic) {
-            this.addManagedListener(this.eventService, _events__WEBPACK_IMPORTED_MODULE_3__[/* Events */ "a"].EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
+            this.addManagedListener(this.eventService, _events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
@@ -42529,13 +42556,16 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         return colDef && typeof colDef.checkboxSelection === 'function';
     };
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('gridOptionsWrapper')
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_4__[/* RefSelector */ "a"])('eCheckbox')
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eCheckbox')
     ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PostConstruct */ "e"]
+    ], CheckboxSelectionComponent.prototype, "postConstruct", null);
     return CheckboxSelectionComponent;
-}(_widgets_component__WEBPACK_IMPORTED_MODULE_2__[/* Component */ "a"]));
+}(_widgets_component__WEBPACK_IMPORTED_MODULE_1__[/* Component */ "a"]));
 
 
 

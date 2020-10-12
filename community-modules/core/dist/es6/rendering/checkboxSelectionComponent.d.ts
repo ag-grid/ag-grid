@@ -9,6 +9,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private column;
     private isRowSelectableFunc;
     constructor();
+    private postConstruct;
     private onDataChanged;
     private onSelectableChanged;
     private onSelectionChanged;

@@ -53,10 +53,11 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public toggle(): void {
+        const previousValue = this.isSelected();
         const nextValue = this.getNextValue();
 
         if (this.passive) {
-            this.dispatchChange(nextValue);
+            this.dispatchChange(nextValue, previousValue);
         } else {
             this.setValue(nextValue);
         }
@@ -89,33 +90,38 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
             return;
         }
 
-        this.selected = typeof selected === 'boolean' ? selected : undefined;
-        (this.eInput as HTMLInputElement).checked = this.selected;
-        (this.eInput as HTMLInputElement).indeterminate = this.selected === undefined;
+        const previousValue = this.isSelected();
+
+        selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
+        (this.eInput as HTMLInputElement).checked = selected;
+        (this.eInput as HTMLInputElement).indeterminate = selected === undefined;
 
         if (!silent) {
-            this.dispatchChange(this.selected);
+            this.dispatchChange(this.selected, previousValue);
         }
     }
 
-    protected dispatchChange(selected?: boolean, event?: MouseEvent) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, event });
+    private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, previousValue, event });
 
         const input = this.getInputElement() as HTMLInputElement;
         const checkboxChangedEvent: CheckboxChangedEvent = {
             type: Events.EVENT_CHECKBOX_CHANGED,
             id: input.id,
             name: input.name,
-            selected
+            selected,
+            previousValue
         };
 
         this.eventService.dispatchEvent(checkboxChangedEvent);
     }
 
     private onCheckboxClick(e: MouseEvent) {
-        this.selected = (e.target as HTMLInputElement).checked;
-        this.refreshSelectedClass(this.selected);
-        this.dispatchChange(this.selected, e);
+        if (this.passive) { return; }
+        const previousValue = this.isSelected();
+        const selected = this.selected = (e.target as HTMLInputElement).checked;
+        this.refreshSelectedClass(selected);
+        this.dispatchChange(selected, previousValue, e);
     }
 
     private refreshSelectedClass(value?: boolean | null) {

@@ -1515,10 +1515,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
         const { gridOptionsWrapper } = this.beans;
+
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
-            const newSelection = !this.rowNode.isSelected();
+            const currentSelection = this.rowNode.isSelected();
+            const newSelection = !currentSelection;
             if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
-                this.rowNode.setSelected(newSelection);
+                const groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                const updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
             }
         }
 

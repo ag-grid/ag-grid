@@ -173,6 +173,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         if (e.keyCode === KeyCode.SPACE) {
             var checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                e.preventDefault();
                 checkbox.setValue(!checkbox.getValue());
             }
         }

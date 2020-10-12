@@ -93,6 +93,7 @@ export interface CheckboxChangedEvent extends AgEvent {
     id: string;
     name: string;
     selected?: boolean;
+    previousValue: boolean | undefined;
 }
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
