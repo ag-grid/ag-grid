@@ -22,7 +22,7 @@ import {
 import {StoreUtils} from "../stores/storeUtils";
 import {BlockUtils} from "./blockUtils";
 import {ChildStoreParams} from "../serverSideRowModel";
-import {InfiniteStore} from "../stores/infiniteStore";
+import {CacheStore} from "../stores/cacheStore";
 
 
 export class CacheBlock extends RowNodeBlock {
@@ -45,7 +45,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentStore: InfiniteStore;
+    private readonly parentStore: CacheStore;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -66,7 +66,7 @@ export class CacheBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: InfiniteStore) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: CacheStore) {
         super(blockNumber);
 
         this.storeParams = storeParams;
