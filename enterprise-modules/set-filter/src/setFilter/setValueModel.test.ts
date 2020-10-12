@@ -4,7 +4,7 @@ import { mock } from '../test-utils/mock';
 
 function createSetValueModel(
     gridValues: any[] = ['A', 'B', 'C'],
-    filterParams?: any,
+    filterParams: any = {},
     doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
     suppressSorting = false) {
     const colDef = {} as ColDef;
