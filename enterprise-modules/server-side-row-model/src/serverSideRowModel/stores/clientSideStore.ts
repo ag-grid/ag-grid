@@ -37,6 +37,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
     private readonly storeParams: ChildStoreParams;
     private readonly parentRowNode: RowNode;
 
+    // private nodeIdSequence: NumberSequence = new NumberSequence()
+
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
@@ -132,6 +134,24 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         return this.rowNodes.length;
     }
 
+/*    private addDataNode(data: any, index?: number): RowNode {
+        const rowNode = this.blockUtils.createRowNode(
+            {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+        );
+
+        if (index!=null) {
+            _.insertIntoArray(this.rowNodes, rowNode, index);
+        } else {
+            this.rowNodes.push(rowNode);
+        }
+
+        const defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
+        console.log('setting id ' + defaultId);
+        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        return rowNode;
+    }*/
+
     protected processServerResult(rowData: any[] = []): void {
         if (!this.isAlive()) { return; }
 
@@ -209,6 +229,10 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
     }
 
     public getRowIndexAtPixel(pixel: number): number {
+
+        if (pixel<=this.topPx) { return this.rowNodes[0].rowIndex; }
+        if (pixel>=(this.topPx + this.heightPx)) { return this.rowNodes[this.rowNodes.length-1].rowIndex; }
+
         let res: number = undefined;
         this.rowNodes.forEach( rowNode => {
             const res2 = this.blockUtils.getIndexAtPixel(rowNode, pixel);
@@ -253,9 +277,113 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         }
     }
 
-    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null {
-        return null;
+    public applyTransaction(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
+        const res: RowNodeTransaction = {
+            remove: [],
+            update: [],
+            add: []
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        // this.executeAdd(rowDataTran, res);
+        // this.executeRemove(rowDataTran, res, nodesToUnselect);
+        // this.executeUpdate(rowDataTran, res, nodesToUnselect);
+
+        // this.updateSelection(nodesToUnselect);
+
+        return res;
     }
+
+/*    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+        const {add, addIndex} = rowDataTran;
+        if (_.missingOrEmpty(add)) { return; }
+
+        const useIndex = typeof addIndex === 'number' && addIndex >= 0;
+        if (useIndex) {
+            // items get inserted in reverse order for index insertion
+            add.reverse().forEach(item => {
+                const newRowNode: RowNode = this.addDataNode(item, addIndex);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        } else {
+            add.forEach(item => {
+                const newRowNode: RowNode = this.addDataNode(item);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+    }*/
+
+/*
+    private addRowNode(data: any, index?: number): RowNode {
+        const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
+
+        if (_.exists(index)) {
+            _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
+        } else {
+            this.rootNode.allLeafChildren.push(newNode);
+        }
+
+        return newNode;
+    }
+*/
+
+    /*
+        private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+            const {remove} = rowDataTran;
+
+            if (_.missingOrEmpty(remove)) { return; }
+
+            const rowIdsRemoved: {[key: string]: boolean} = {};
+
+            remove.forEach(item => {
+                const rowNode = this.lookupRowNode(item);
+
+                if (!rowNode) { return; }
+
+                // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+                // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+                if (rowNode.isSelected()) {
+                    nodesToUnselect.push(rowNode);
+                }
+
+                // so row renderer knows to fade row out (and not reposition it)
+                rowNode.clearRowTop();
+
+                // NOTE: were we could remove from allLeaveChildren, however _.removeFromArray() is expensive, especially
+                // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
+                rowIdsRemoved[rowNode.id] = true;
+                // _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+                delete this.allNodesMap[rowNode.id];
+
+                rowNodeTransaction.remove.push(rowNode);
+            });
+
+            this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
+        }
+    */
+
+/*
+    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+        const {update} = rowDataTran;
+        if (_.missingOrEmpty(update)) { return; }
+
+        update.forEach(item => {
+            const rowNode = this.lookupRowNode(item);
+
+            if (!rowNode) { return; }
+
+            rowNode.updateData(item);
+            if (!rowNode.selectable && rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+
+            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
+
+            rowNodeTransaction.update.push(rowNode);
+        });
+    }
+*/
 
     public purgeStore(): void {
         this.initialiseRowNodes();

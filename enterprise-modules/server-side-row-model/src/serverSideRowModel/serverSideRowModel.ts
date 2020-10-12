@@ -344,7 +344,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowIndexAtPixel(pixel: number): number {
         const cache = this.getRootStore();
-        if (pixel===0 || !cache) { return 0; }
+        if (pixel<=0 || !cache) { return 0; }
         return cache.getRowIndexAtPixel(pixel);
     }
 
