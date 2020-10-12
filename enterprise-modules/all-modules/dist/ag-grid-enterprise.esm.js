@@ -33149,11 +33149,22 @@ var MouseEventService = /** @class */ (function (_super) {
     };
     MouseEventService.prototype.getNormalisedPosition = function (event) {
         var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-        var x = event.x, y = event.y;
+        var e = event;
+        var x;
+        var y;
+        if (e.clientX != null || e.clientY != null) {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        else {
+            x = e.x;
+            y = e.y;
+        }
         if (gridPanelHasScrolls) {
             var vRange = this.gridPanel.getVScrollPosition();
             var hRange = this.gridPanel.getHScrollPosition();
-            return { x: x + hRange.left, y: y + vRange.top };
+            x += hRange.left;
+            y += vRange.top;
         }
         return { x: x, y: y };
     };
@@ -79356,7 +79367,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     __extends$4E(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.changedCell = false;
+        _this.changedCalculatedValues = false;
         _this.dragging = false;
         _this.shouldDestroyOnEndDragging = false;
         return _this;
@@ -79370,8 +79381,9 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             onDragging: function (e) {
                 _this.dragging = true;
                 _this.rangeController.autoScrollService.check(e);
-                if (_this.changedCell) {
+                if (_this.changedCalculatedValues) {
                     _this.onDrag(e);
+                    _this.changedCalculatedValues = false;
                 }
             },
             onDragStop: function (e) {
@@ -79424,20 +79436,19 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         e.stopPropagation();
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
-        this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
+        this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateValuesOnMove.bind(this));
         _.addCssClass(document.body, this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
         return "ag-dragging-" + (this.type === SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
-    AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
+    AbstractSelectionHandle.prototype.updateValuesOnMove = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
         if (cell === this.lastCellHovered) {
-            this.changedCell = false;
             return;
         }
         this.lastCellHovered = cell;
-        this.changedCell = true;
+        this.changedCalculatedValues = true;
     };
     AbstractSelectionHandle.prototype.getType = function () {
         return this.type;
@@ -79570,7 +79581,8 @@ var FillHandle = /** @class */ (function (_super) {
         _this.type = SelectionHandleType.FILL;
         return _this;
     }
-    FillHandle.prototype.onDrag = function (e) {
+    FillHandle.prototype.updateValuesOnMove = function (e) {
+        _super.prototype.updateValuesOnMove.call(this, e);
         if (!this.initialXY) {
             this.initialXY = this.mouseEventService.getNormalisedPosition(e);
         }
@@ -79588,7 +79600,10 @@ var FillHandle = /** @class */ (function (_super) {
         }
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
+            this.changedCalculatedValues = true;
         }
+    };
+    FillHandle.prototype.onDrag = function (e) {
         if (!this.initialPosition) {
             var cellComp = this.getCellComp();
             if (!cellComp) {
@@ -79597,12 +79612,12 @@ var FillHandle = /** @class */ (function (_super) {
             this.initialPosition = cellComp.getCellPosition();
         }
         var lastCellHovered = this.getLastCellHovered();
-        if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
-            this.lastCellMarked = lastCellHovered;
+        if (lastCellHovered) {
             this.markPathFrom(this.initialPosition, lastCellHovered);
         }
     };
     FillHandle.prototype.onDragEnd = function (e) {
+        this.initialXY = null;
         if (!this.markedCellComps.length) {
             return;
         }
@@ -79879,6 +79894,7 @@ var FillHandle = /** @class */ (function (_super) {
                 this.isReduce = false;
             }
         }
+        this.lastCellMarked = currentPosition;
     };
     FillHandle.prototype.extendVertical = function (initialPosition, endPosition, isMovingUp) {
         var _a = this, rowRenderer = _a.rowRenderer, rangeController = _a.rangeController;

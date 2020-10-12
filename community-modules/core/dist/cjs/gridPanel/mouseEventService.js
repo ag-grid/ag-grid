@@ -76,11 +76,22 @@ var MouseEventService = /** @class */ (function (_super) {
     };
     MouseEventService.prototype.getNormalisedPosition = function (event) {
         var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_NORMAL;
-        var x = event.x, y = event.y;
+        var e = event;
+        var x;
+        var y;
+        if (e.clientX != null || e.clientY != null) {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        else {
+            x = e.x;
+            y = e.y;
+        }
         if (gridPanelHasScrolls) {
             var vRange = this.gridPanel.getVScrollPosition();
             var hRange = this.gridPanel.getHScrollPosition();
-            return { x: x + hRange.left, y: y + vRange.top };
+            x += hRange.left;
+            y += vRange.top;
         }
         return { x: x, y: y };
     };

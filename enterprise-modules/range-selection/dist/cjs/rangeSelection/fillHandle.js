@@ -51,7 +51,8 @@ var FillHandle = /** @class */ (function (_super) {
         _this.type = core_1.SelectionHandleType.FILL;
         return _this;
     }
-    FillHandle.prototype.onDrag = function (e) {
+    FillHandle.prototype.updateValuesOnMove = function (e) {
+        _super.prototype.updateValuesOnMove.call(this, e);
         if (!this.initialXY) {
             this.initialXY = this.mouseEventService.getNormalisedPosition(e);
         }
@@ -69,7 +70,10 @@ var FillHandle = /** @class */ (function (_super) {
         }
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
+            this.changedCalculatedValues = true;
         }
+    };
+    FillHandle.prototype.onDrag = function (e) {
         if (!this.initialPosition) {
             var cellComp = this.getCellComp();
             if (!cellComp) {
@@ -78,12 +82,12 @@ var FillHandle = /** @class */ (function (_super) {
             this.initialPosition = cellComp.getCellPosition();
         }
         var lastCellHovered = this.getLastCellHovered();
-        if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
-            this.lastCellMarked = lastCellHovered;
+        if (lastCellHovered) {
             this.markPathFrom(this.initialPosition, lastCellHovered);
         }
     };
     FillHandle.prototype.onDragEnd = function (e) {
+        this.initialXY = null;
         if (!this.markedCellComps.length) {
             return;
         }
@@ -360,6 +364,7 @@ var FillHandle = /** @class */ (function (_super) {
                 this.isReduce = false;
             }
         }
+        this.lastCellMarked = currentPosition;
     };
     FillHandle.prototype.extendVertical = function (initialPosition, endPosition, isMovingUp) {
         var _a = this, rowRenderer = _a.rowRenderer, rangeController = _a.rangeController;

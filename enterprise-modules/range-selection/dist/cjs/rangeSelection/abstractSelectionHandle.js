@@ -24,7 +24,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     __extends(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.changedCell = false;
+        _this.changedCalculatedValues = false;
         _this.dragging = false;
         _this.shouldDestroyOnEndDragging = false;
         return _this;
@@ -38,8 +38,9 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             onDragging: function (e) {
                 _this.dragging = true;
                 _this.rangeController.autoScrollService.check(e);
-                if (_this.changedCell) {
+                if (_this.changedCalculatedValues) {
                     _this.onDrag(e);
+                    _this.changedCalculatedValues = false;
                 }
             },
             onDragStop: function (e) {
@@ -92,20 +93,19 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         e.stopPropagation();
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
-        this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
+        this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateValuesOnMove.bind(this));
         core_1._.addCssClass(document.body, this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
         return "ag-dragging-" + (this.type === core_1.SelectionHandleType.FILL ? 'fill' : 'range') + "-handle";
     };
-    AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
+    AbstractSelectionHandle.prototype.updateValuesOnMove = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
         if (cell === this.lastCellHovered) {
-            this.changedCell = false;
             return;
         }
         this.lastCellHovered = cell;
-        this.changedCell = true;
+        this.changedCalculatedValues = true;
     };
     AbstractSelectionHandle.prototype.getType = function () {
         return this.type;
