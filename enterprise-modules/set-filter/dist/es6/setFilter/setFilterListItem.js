@@ -53,7 +53,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             value = value();
         }
         else {
-            formattedValue = this.getFormattedValue(colDef, column, value);
+            formattedValue = this.getFormattedValue(this.params, column, value);
         }
         if (this.params.showTooltips) {
             this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
@@ -81,8 +81,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             value: this.tooltipText
         };
     };
-    SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
-        var filterParams = colDef.filterParams;
+    SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };

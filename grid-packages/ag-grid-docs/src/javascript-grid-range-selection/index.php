@@ -223,7 +223,7 @@ interface AddCellRangeParams {
         copying from the clipboard.
     </p>
 
-    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules'=>['clientside', 'range']]) ?>
+    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules'=>['clientside', 'range', 'clipboard']]) ?>
 
 
 </div>

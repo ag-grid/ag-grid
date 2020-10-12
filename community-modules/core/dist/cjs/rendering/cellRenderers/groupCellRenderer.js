@@ -358,7 +358,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (cellEditable) {
             return;
         }
-        event.preventDefault();
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.setupDragOpenParents = function () {

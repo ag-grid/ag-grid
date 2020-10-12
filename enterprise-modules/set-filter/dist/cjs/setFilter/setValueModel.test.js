@@ -12,9 +12,10 @@ var core_1 = require("@ag-grid-community/core");
 var mock_1 = require("../test-utils/mock");
 function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, suppressSorting) {
     if (gridValues === void 0) { gridValues = ['A', 'B', 'C']; }
+    if (filterParams === void 0) { filterParams = {}; }
     if (doesRowPassOtherFilters === void 0) { doesRowPassOtherFilters = function (_) { return true; }; }
     if (suppressSorting === void 0) { suppressSorting = false; }
-    var colDef = { filterParams: filterParams };
+    var colDef = {};
     var rowModel = {
         getType: function () { return core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE; },
         forEachLeafNode: function (callback) {
@@ -24,7 +25,7 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     };
     var valueFormatterService = mock_1.mock('formatValue');
     valueFormatterService.formatValue.mockImplementation(function (_1, _2, _3, value) { return value; });
-    return new setValueModel_1.SetValueModel(rowModel, function (node) { return node.data.value; }, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
+    return new setValueModel_1.SetValueModel(rowModel, function (node) { return node.data.value; }, filterParams, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
 }
 function getDisplayedValues(model) {
     var values = [];

@@ -238,13 +238,12 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.createParams = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        var enableSorting = colDef.sortable;
-        var enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         var params = {
             column: this.column,
             displayName: this.displayName,
-            enableSorting: enableSorting,
-            enableMenu: enableMenu,
+            enableSorting: colDef.sortable,
+            enableMenu: this.menuEnabled,
             showColumnMenu: function (source) {
                 _this.gridApi.showColumnMenuAfterButtonClick(_this.column, source);
             },

@@ -461,7 +461,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (cellEditable) { return; }
 
-        event.preventDefault();
         this.onExpandOrContract();
     }
 

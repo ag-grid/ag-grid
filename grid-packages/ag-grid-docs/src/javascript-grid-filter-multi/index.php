@@ -52,7 +52,13 @@ SNIPPET
         <a href="../javascript-grid-filter-date/">Date</a> Simple Filters respectively.
     </li>
     <li>
-        Different <code>filterParams</code> can be supplied to each child filter.
+        Different <code>filterParams</code> can be supplied to each child filter:<br /><br />
+
+        <ul>
+            <li>The Text Filter in the Country column has a different default option (<code>'startsWith'</code>)</li>
+            <li>The Date Filter in the Date column has a custom comparator to compare dates correctly</li>
+            <li>The Set Filter in the Date column has a custom comparator, so the values are displayed in ascending order</li>
+        </ul>
     </li>
 </ul>
 

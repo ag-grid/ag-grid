@@ -50,7 +50,12 @@ function deepCloneDefinition(object, keysToSkip) {
             return;
         }
         var value = obj[key];
-        if (typeof value === 'object') {
+        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
+        // NOT include the following:
+        // 1) arrays
+        // 2) functions or classes (eg ColumnAPI instance)
+        var sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
         }
         else {

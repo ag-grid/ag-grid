@@ -533,7 +533,12 @@ function deepCloneDefinition(object, keysToSkip) {
             return;
         }
         var value = obj[key];
-        if (typeof value === 'object') {
+        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
+        // NOT include the following:
+        // 1) arrays
+        // 2) functions or classes (eg ColumnAPI instance)
+        var sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
         }
         else {
@@ -4973,7 +4978,7 @@ var ColumnController = /** @class */ (function (_super) {
             _this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
             var visibilityChangePredicate = function (cs, c) { return cs.hide == c.isVisible(); };
             _this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
-            var sortChangePredicate = function (cs, c) { return cs.sort != c.getSort(); };
+            var sortChangePredicate = function (cs, c) { return cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex(); };
             if (getChangedColumns(sortChangePredicate).length > 0) {
                 _this.sortController.dispatchSortChangedEvents();
             }
@@ -13511,7 +13516,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (cellEditable) {
             return;
         }
-        event.preventDefault();
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.setupDragOpenParents = function () {
@@ -23983,13 +23987,12 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.createParams = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        var enableSorting = colDef.sortable;
-        var enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         var params = {
             column: this.column,
             displayName: this.displayName,
-            enableSorting: enableSorting,
-            enableMenu: enableMenu,
+            enableSorting: colDef.sortable,
+            enableMenu: this.menuEnabled,
             showColumnMenu: function (source) {
                 _this.gridApi.showColumnMenuAfterButtonClick(_this.column, source);
             },
@@ -41534,8 +41537,9 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType || (SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(rowModel, valueGetter, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
+    function SetValueModel(rowModel, valueGetter, filterParams, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
         var _this = this;
+        this.filterParams = filterParams;
         this.colDef = colDef;
         this.column = column;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
@@ -41560,7 +41564,6 @@ var SetValueModel = /** @class */ (function () {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, colDef, valueGetter);
         }
-        this.filterParams = this.colDef.filterParams || {};
         this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
         var values = this.filterParams.values;
         if (values == null) {
@@ -41730,7 +41733,7 @@ var SetValueModel = /** @class */ (function () {
             else {
                 var textFormatterValue = _this.formatter(value);
                 // TODO: should this be applying the text formatter *after* the value formatter?
-                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue);
+                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue, _this.filterParams.valueFormatter, false);
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     _this.displayedValues.push(value);
                 }
@@ -41891,7 +41894,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             value = value();
         }
         else {
-            formattedValue = this.getFormattedValue(colDef, column, value);
+            formattedValue = this.getFormattedValue(this.params, column, value);
         }
         if (this.params.showTooltips) {
             this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
@@ -41919,8 +41922,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             value: this.tooltipText
         };
     };
-    SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
-        var filterParams = colDef.filterParams;
+    SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
@@ -42096,7 +42098,7 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
-        this.valueModel = new SetValueModel(params.rowModel, params.valueGetter, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
+        this.valueModel = new SetValueModel(params.rowModel, params.valueGetter, params, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
         this.initialiseFilterBodyUi();
         if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
             !params.values &&

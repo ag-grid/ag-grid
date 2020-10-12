@@ -7,8 +7,9 @@ export var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType || (SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(rowModel, valueGetter, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
+    function SetValueModel(rowModel, valueGetter, filterParams, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
         var _this = this;
+        this.filterParams = filterParams;
         this.colDef = colDef;
         this.column = column;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
@@ -33,7 +34,6 @@ var SetValueModel = /** @class */ (function () {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, colDef, valueGetter);
         }
-        this.filterParams = this.colDef.filterParams || {};
         this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
         var values = this.filterParams.values;
         if (values == null) {
@@ -203,7 +203,7 @@ var SetValueModel = /** @class */ (function () {
             else {
                 var textFormatterValue = _this.formatter(value);
                 // TODO: should this be applying the text formatter *after* the value formatter?
-                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue);
+                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue, _this.filterParams.valueFormatter, false);
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     _this.displayedValues.push(value);
                 }

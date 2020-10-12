@@ -170,6 +170,7 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel = new SetValueModel(
             params.rowModel,
             params.valueGetter,
+            params,
             params.colDef,
             params.column,
             params.doesRowPassOtherFilter,
