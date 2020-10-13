@@ -23,6 +23,7 @@ import {
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
 import {BlockUtils} from "../blocks/blockUtils";
+import {NodeManager} from "../nodeManager";
 
 export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
@@ -34,6 +35,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -102,6 +104,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
                 // sees row top is present, and thinks the row should be shown. maybe
                 // rowNode should have a flag on whether it is visible???
                 rowNode.clearRowTop();
+                if (rowNode.id!=null) {
+                    this.nodeManager.removeNode(rowNode);
+                }
             });
         }
         this.allRowNodes = [];
@@ -159,6 +164,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
         const defaultId = this.nodeIdPrefix + this.nodeIdSequence.next();
         this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        this.nodeManager.addRowNode(rowNode);
 
         this.allNodesMap[rowNode.id] = rowNode;
 

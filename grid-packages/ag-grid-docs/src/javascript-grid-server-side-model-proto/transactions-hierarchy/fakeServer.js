@@ -33,7 +33,7 @@ FakeServer.prototype.createData = function() {
         for (var j = 0; j<PORTFOLIO_NAMES.length; j++) {
 
             var portfolioName = PORTFOLIO_NAMES[j];
-            var portfolioId = 'PFO_' + j;
+            var portfolioId = 'PFO_' + i + '_' + j;
             var portfolio = {
                 portfolioId: portfolioId,
                 portfolioName: portfolioName,

@@ -23,6 +23,7 @@ import {StoreUtils} from "../stores/storeUtils";
 import {BlockUtils} from "./blockUtils";
 import {StoreParams} from "../serverSideRowModel";
 import {InfiniteStore} from "../stores/infiniteStore";
+import {NodeManager} from "../nodeManager";
 
 
 export class CacheBlock extends RowNodeBlock {
@@ -35,6 +36,7 @@ export class CacheBlock extends RowNodeBlock {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
+    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private logger: Logger;
 
@@ -201,14 +203,12 @@ export class CacheBlock extends RowNodeBlock {
                 {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
-            // application user should ALWAYS provide a for this index. if they did not, it means the we
-            // asked from eg 100 rows but application returned less than 100 and didn't update lastRow
-            // accordingly, eg they returned less data than how much they say should be returned.
-            const applicationProvidedRowForThisIndex = i < rows.length;
-            if (applicationProvidedRowForThisIndex) {
+            const dataLoadedForThisRow = i < rows.length;
+            if (dataLoadedForThisRow) {
                 const data = rows[i];
                 const defaultId = this.nodeIdPrefix + (this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                this.nodeManager.addRowNode(rowNode);
             }
             this.rowNodes.push(rowNode);
         }
@@ -226,6 +226,9 @@ export class CacheBlock extends RowNodeBlock {
                 // sees row top is present, and thinks the row should be shown. maybe
                 // rowNode should have a flag on whether it is visible???
                 rowNode.clearRowTop();
+                if (rowNode.id!=null) {
+                    this.nodeManager.removeNode(rowNode);
+                }
             });
         }
         this.rowNodes = [];
