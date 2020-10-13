@@ -90,8 +90,8 @@ export class SortListener extends BeanStub {
     }
 
     private onSortChanged(): void {
-        const cache = this.serverSideRowModel.getRootStore();
-        if (!cache) { return; }
+        const rootStore = this.serverSideRowModel.getRootStore();
+        if (!rootStore) { return; }
 
         const storeParams = this.serverSideRowModel.getParams();
 
@@ -110,7 +110,7 @@ export class SortListener extends BeanStub {
         if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.serverSideRowModel.resetRootStore();
         } else {
-            cache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+            rootStore.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     }
 

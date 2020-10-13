@@ -14,7 +14,7 @@ import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
-import {IServerSideChildStore} from "../interfaces/iServerSideChildStore";
+import {IServerSideStore} from "../interfaces/IServerSideStore";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -183,7 +183,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: IServerSideChildStore | null;
+    public childrenCache: IServerSideStore | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;

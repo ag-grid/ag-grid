@@ -1,6 +1,6 @@
 import {
     _,
-    IServerSideChildStore,
+    IServerSideStore,
     Autowired,
     Bean,
     BeanStub,
@@ -80,7 +80,7 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideChildStore, findNodeFunc: (key: string)=>RowNode ): IServerSideChildStore {
+    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string)=>RowNode ): IServerSideStore {
         if (_.missingOrEmpty(keys)) {
             return currentCache;
         }
@@ -90,7 +90,7 @@ export class StoreUtils extends BeanStub {
 
         if (nextNode) {
             const keyListForNextLevel = keys.slice(1, keys.length);
-            const nextStore = nextNode.childrenCache as IServerSideChildStore;
+            const nextStore = nextNode.childrenCache as IServerSideStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
         } else {
             return null;

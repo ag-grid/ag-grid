@@ -6,7 +6,7 @@ import {
     ColumnController,
     GridApi,
     GridOptionsWrapper,
-    IServerSideChildStore,
+    IServerSideStore,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -157,7 +157,7 @@ export class CacheBlock extends RowNodeBlock {
             // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
             if (includeChildren && rowNode.childrenCache) {
-                const childStore = rowNode.childrenCache as IServerSideChildStore;
+                const childStore = rowNode.childrenCache as IServerSideStore;
                 childStore.forEachNodeDeep(callback, sequence);
             }
         });
