@@ -148,6 +148,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.onStoreUpdated();
     }
 
+    public flushAsyncTransactions(): void {
+        if (this.asyncTransactionsTimeout!=null) {
+            clearTimeout(this.asyncTransactionsTimeout);
+            this.executeAsyncTransactions();
+        }
+    }
+
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         let res: ServerSideTransactionResult = undefined;
 
