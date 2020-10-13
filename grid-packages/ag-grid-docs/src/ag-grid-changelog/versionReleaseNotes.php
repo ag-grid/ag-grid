@@ -3,6 +3,13 @@
 
     <p>Minor release with bug fixes and small improvements.</p>
 
+    <p><b>Feature Highlights:</b></p>
+    <ul>
+        <li>
+            <code>Vue 3</code> Support.
+        </li>
+    </ul>
+
     <p><b>Deprecations:</b></p>
 
     <ul>
