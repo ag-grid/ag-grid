@@ -65,6 +65,7 @@ import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import {_} from "./utils";
 import {RowNodeBlockLoader} from "./rowNodeCache/rowNodeBlockLoader";
+import {ServerSideTransaction, ServerSideTransactionResult} from "./interfaces/serverSideTransaction";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -1250,10 +1251,12 @@ export class GridApi {
         }
     }
 
-    public applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route: string[] = []): void {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+    public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            return undefined;
         }
+        return this.serverSideRowModel.applyTransaction(transaction);
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {

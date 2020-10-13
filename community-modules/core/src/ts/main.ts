@@ -174,6 +174,7 @@ export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/ce
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
+export { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock, LoadCompleteEvent } from "./rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";

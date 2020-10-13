@@ -23,11 +23,12 @@ import {
     Qualifier,
     RowBounds,
     RowDataChangedEvent,
-    RowDataTransaction,
     RowNode,
     RowRenderer,
     SortController,
-    IServerSideChildStore
+    IServerSideChildStore,
+    ServerSideTransaction,
+    ServerSideTransactionResult
 } from "@ag-grid-community/core";
 import {SortService} from "./sortService";
 import {ClientSideStore} from "./stores/clientSideStore";
@@ -99,10 +100,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.logger = loggerFactory.create('ServerSideRowModel');
     }
 
-    public applyTransaction(rowDataTransaction: RowDataTransaction, route: string[]): void {
-        this.executeOnStore( route, cache => {
-            cache.applyTransaction(rowDataTransaction);
+    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        let res: ServerSideTransactionResult = undefined;
+
+        this.executeOnStore(transaction.route, cache => {
+            res = cache.applyTransaction(transaction);
         });
+
+        return res ? res : {routeFound: false};
     }
 
     @PostConstruct

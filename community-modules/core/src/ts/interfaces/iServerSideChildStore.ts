@@ -1,8 +1,7 @@
 import {NumberSequence} from "../utils";
 import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
-import {RowDataTransaction} from "./rowDataTransaction";
-import {RowNodeTransaction} from "./rowNodeTransaction";
+import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
 
 export interface IServerSideChildStore {
 
@@ -18,7 +17,7 @@ export interface IServerSideChildStore {
     getRowIndexAtPixel(pixel: number): number;
     getChildStore(keys: string[]): IServerSideChildStore | null;
     refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
-    applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null
+    applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     purgeStore(): void;
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;

@@ -12,11 +12,11 @@ import {
     PreDestroy,
     Qualifier,
     RowBounds,
-    RowDataTransaction,
     RowNode,
     RowNodeBlockLoader,
-    RowNodeTransaction,
     RowRenderer,
+    ServerSideTransaction,
+    ServerSideTransactionResult,
     StoreUpdatedEvent
 } from "@ag-grid-community/core";
 import {ChildStoreParams} from "../serverSideRowModel";
@@ -589,9 +589,14 @@ export class CacheStore extends BeanStub implements IServerSideChildStore {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
 
-    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null {
-        console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
-        return null;
+    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        _.doOnce(()=> {
+            console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
+        }, 'cacheStore.applyTransaction');
+
+        const res = {routeFound: false};
+
+        return res;
     }
 
     public getChildStore(keys: string[]): IServerSideChildStore | null {
