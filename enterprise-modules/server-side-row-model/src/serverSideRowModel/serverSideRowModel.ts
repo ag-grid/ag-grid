@@ -34,6 +34,7 @@ import {
 import {ClientSideStore} from "./stores/clientSideStore";
 import {SortListener} from "./sortListener";
 import {InfiniteStore} from "./stores/infiniteStore";
+import {NodeManager} from "./nodeManager";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
     const oneBlockCache = params.blockSize == null;
@@ -72,6 +73,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
+    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -233,6 +235,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private destroyRootStore(): void {
         if (!this.rootNode || !this.rootNode.childrenCache) { return; }
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
+        this.nodeManager.clear();
     }
 
     public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
