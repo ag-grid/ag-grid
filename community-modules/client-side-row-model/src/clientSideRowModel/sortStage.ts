@@ -8,10 +8,11 @@ import {
     RowNodeTransaction,
     SortController,
     StageExecuteParams,
-    BeanStub
+    BeanStub,
+    SortOption
 } from "@ag-grid-community/core";
 
-import {SortOption, SortService} from "./sortService";
+import {SortService} from "./sortService";
 
 @Bean('sortStage')
 export class SortStage extends BeanStub {
