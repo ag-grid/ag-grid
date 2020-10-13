@@ -9,7 +9,8 @@ export interface ServerSideTransaction {
 }
 
 export interface ServerSideTransactionResult {
-    routeFound: boolean,
+    routeFound: boolean;
+    applied: boolean;
     add?: RowNode[];
     remove?: RowNode[];
     update?: RowNode[];

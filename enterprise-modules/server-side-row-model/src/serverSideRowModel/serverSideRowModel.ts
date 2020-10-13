@@ -14,6 +14,7 @@ import {
     GridOptionsWrapper,
     IServerSideDatasource,
     IServerSideRowModel,
+    IServerSideStore,
     Logger,
     LoggerFactory,
     ModelUpdatedEvent,
@@ -25,11 +26,7 @@ import {
     RowDataChangedEvent,
     RowNode,
     RowRenderer,
-    SortController,
-    IServerSideStore,
-    ServerSideTransaction,
-    ServerSideTransactionResult,
-    ValueCache
+    SortController
 } from "@ag-grid-community/core";
 import {ClientSideStore} from "./stores/clientSideStore";
 import {SortListener} from "./sortListener";
@@ -56,16 +53,9 @@ export interface StoreParams {
     datasource?: IServerSideDatasource;
 }
 
-interface AsyncTransactionWrapper {
-    transaction: ServerSideTransaction;
-    callback?: (result: ServerSideTransactionResult) => void;
-}
-
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -74,14 +64,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: StoreParams;
-
-    private asyncTransactionsTimeout: number;
-    private asyncTransactions: AsyncTransactionWrapper[];
 
     private logger: Logger;
 
@@ -110,66 +98,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
-    }
-
-    public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
-        if (this.asyncTransactionsTimeout==null) {
-            this.asyncTransactions = [];
-            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
-            this.asyncTransactionsTimeout = window.setTimeout(() => {
-                this.executeAsyncTransactions();
-            }, waitMillis);
-        }
-        this.asyncTransactions.push({ transaction: transaction, callback: callback });
-    }
-
-    private executeAsyncTransactions(): void {
-
-        const resultFuncs: (()=>void)[] = [];
-
-        this.asyncTransactions.forEach(txWrapper => {
-            this.executeOnStore(txWrapper.transaction.route, cache => {
-                const result = cache.applyTransaction(txWrapper.transaction);
-                if (txWrapper.callback) {
-                    resultFuncs.push(()=>txWrapper.callback(result));
-                }
-            });
-        });
-
-        // do callbacks in next VM turn so it's async
-        if (resultFuncs.length > 0) {
-            window.setTimeout(() => {
-                resultFuncs.forEach(func => func());
-            }, 0);
-        }
-
-        this.asyncTransactions = null;
-        this.asyncTransactionsTimeout = undefined;
-
-        this.valueCache.onDataChanged();
-        this.onStoreUpdated();
-    }
-
-    public flushAsyncTransactions(): void {
-        if (this.asyncTransactionsTimeout!=null) {
-            clearTimeout(this.asyncTransactionsTimeout);
-            this.executeAsyncTransactions();
-        }
-    }
-
-    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        let res: ServerSideTransactionResult = undefined;
-
-        this.executeOnStore(transaction.route, cache => {
-            res = cache.applyTransaction(transaction);
-        });
-
-        if (res) {
-            this.valueCache.onDataChanged();
-            this.onStoreUpdated();
-        } else {
-            return {routeFound: false};
-        }
     }
 
     @PostConstruct
@@ -441,7 +369,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         rootStore.forEachNodeDeep(callback);
     }
 
-    private executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {
+    public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 

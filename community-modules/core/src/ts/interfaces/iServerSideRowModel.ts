@@ -5,6 +5,9 @@ import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTr
 export interface IServerSideRowModel extends IRowModel {
     purgeStore(route?: string[]): void;
     onRowHeightChanged(): void;
+}
+
+export interface IServerSideTransactionManager {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
     flushAsyncTransactions(): void;

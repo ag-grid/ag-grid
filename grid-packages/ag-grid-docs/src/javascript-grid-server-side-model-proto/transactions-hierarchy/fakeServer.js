@@ -12,6 +12,7 @@ function FakeServer() {
     this.valueCounter = 0;
     this.updateListeners = [];
     this.updateIntervalId = undefined;
+    this.versionCounter = 0;
 
     this.createData();
 }
@@ -164,10 +165,12 @@ FakeServer.prototype.getData = function(request, parentData, callback) {
             break;
     }
 
+    const serverVersion = this.versionCounter;
+
     // To make the demo look real, wait for 500ms before returning
     setTimeout(function() {
         // call the success callback
-        callback(result);
+        callback(result, serverVersion);
     }, 500);
 
 };
@@ -241,8 +244,14 @@ FakeServer.prototype.stopUpdates = function() {
     this.intervalId = undefined;
 };
 
+FakeServer.prototype.touchVersion = function() {
+    this.versionCounter++;
+};
+
 FakeServer.prototype.doBatch = function() {
     var transactions = [];
+
+    this.touchVersion();
 
     // pick book at random
     var product = this.products[Math.floor(Math.random()*this.products.length)];
@@ -256,7 +265,9 @@ FakeServer.prototype.doBatch = function() {
         this.createOneTrade(transactions, product, portfolio, book2);
     }
 
-    return transactions;
+    this.updateListeners.forEach(function(listener) {
+        listener(transactions);
+    });
 };
 
 FakeServer.prototype.createOneTrade = function(transactions, product, portfolio, book) {
@@ -269,26 +280,26 @@ FakeServer.prototype.createOneTrade = function(transactions, product, portfolio,
     this.aggregateBottomUp(newTrade);
 
     transactions.push({
+        serverVersion: this.versionCounter,
         route: [product.productName, portfolio.portfolioName, book.bookId],
         add: [newTrade]
     });
 
     transactions.push({
+        serverVersion: this.versionCounter,
         route: [product.productName, portfolio.portfolioName],
         update: [book]
     });
 
     transactions.push({
+        serverVersion: this.versionCounter,
         route: [product.productName],
         update: [portfolio]
     });
 
     transactions.push({
+        serverVersion: this.versionCounter,
         route: [],
         update: [product]
-    });
-
-    this.updateListeners.forEach(function(listener) {
-        listener(transactions);
     });
 };

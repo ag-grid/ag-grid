@@ -44,6 +44,8 @@ export class StoreUtils extends BeanStub {
         parentNode: RowNode,
         successCallback: ()=>void,
         failCallback: ()=>void,
+        success: ()=>void,
+        fail: ()=>void,
         startRow?: number,
         endRow?: number}
     ): void {
@@ -66,7 +68,9 @@ export class StoreUtils extends BeanStub {
 
         const getRowsParams = {
             successCallback: p.successCallback,
+            success: p.success,
             failCallback: p.failCallback,
+            fail: p.fail,
             request: request,
             parentNode: p.parentNode,
             api: this.gridApi,

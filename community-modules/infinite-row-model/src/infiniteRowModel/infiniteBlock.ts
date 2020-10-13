@@ -8,7 +8,8 @@ import {
     PreDestroy,
     RowNode,
     RowNodeBlock,
-    RowRenderer
+    RowRenderer,
+    LoadSuccessParams
 } from "@ag-grid-community/core";
 import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 
@@ -146,11 +147,11 @@ export class InfiniteBlock extends RowNodeBlock {
         }
     }
 
-    protected processServerResult(rows: any[], lastRow: number): void {
+    protected processServerResult(params: LoadSuccessParams): void {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
-            const data = rows[index];
+            const data = params.data ? params.data[index] : undefined;
             if (rowNode.stub) {
                 rowNodesToRefresh.push(rowNode);
             }
@@ -161,7 +162,9 @@ export class InfiniteBlock extends RowNodeBlock {
             this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
 
-        this.parentCache.pageLoaded(this, lastRow);
+        const finalRowCount = params.finalRowCount!=null && params.finalRowCount >=0 ? params.finalRowCount : undefined;
+
+        this.parentCache.pageLoaded(this, finalRowCount);
     }
 
     @PreDestroy

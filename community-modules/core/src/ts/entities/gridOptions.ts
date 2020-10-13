@@ -88,8 +88,9 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -402,6 +403,7 @@ export interface GridOptions {
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
@@ -605,6 +607,13 @@ export interface GetDataPath {
 
 export interface IsServerSideGroup {
     (dataItem: any): boolean;
+}
+
+export interface IsApplyServerSideTransaction {
+    (params: {
+        transaction: ServerSideTransaction,
+        parentNode: RowNode
+    }): boolean;
 }
 
 export interface GetServerSideGroupKey {

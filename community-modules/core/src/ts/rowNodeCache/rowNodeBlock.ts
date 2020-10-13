@@ -7,6 +7,12 @@ export interface LoadCompleteEvent extends AgEvent {
     block: RowNodeBlock;
 }
 
+export interface LoadSuccessParams {
+    data: any[];
+    finalRowCount?: number;
+    info?: any;
+}
+
 export abstract class RowNodeBlock extends BeanStub {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
@@ -26,7 +32,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected abstract loadFromDatasource(): void;
 
-    protected abstract processServerResult(rows: any[], lastRow: number): void;
+    protected abstract processServerResult(params: LoadSuccessParams): void;
 
     protected constructor(id: number) {
         super();
@@ -66,16 +72,22 @@ export abstract class RowNodeBlock extends BeanStub {
         this.dispatchEvent(event);
     }
 
+    protected success(version: number, params: LoadSuccessParams): void {
+        this.successCommon(version, params);
+    }
+
     protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        lastRow = _.cleanNumber(lastRow);
-        if (lastRow<0) { lastRow = undefined; }
+        this.successCommon(version, {data: rows, finalRowCount: lastRow} );
+    }
+
+    protected successCommon(version: number, params: LoadSuccessParams) {
 
         // we need to check the version, in case there was an old request
         // from the server that was sent before we refreshed the cache,
         // if the load was done as a result of a cache refresh
         if (version === this.version) {
             this.state = RowNodeBlock.STATE_LOADED;
-            this.processServerResult(rows, lastRow);
+            this.processServerResult(params);
         }
 
         // check here if lastRow should be set
