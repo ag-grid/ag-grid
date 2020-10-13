@@ -6,4 +6,5 @@ export interface IServerSideRowModel extends IRowModel {
     purgeStore(route?: string[]): void;
     onRowHeightChanged(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
+    applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
 }

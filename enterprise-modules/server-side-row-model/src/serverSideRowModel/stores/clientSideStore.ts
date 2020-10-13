@@ -39,7 +39,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
     private nodeIdSequence: NumberSequence = new NumberSequence()
 
-
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
@@ -290,8 +289,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         this.executeUpdate(transaction, res, nodesToUnselect);
 
         // this.updateSelection(nodesToUnselect);
-
-        this.fireCacheUpdatedEvent();
 
         return res;
     }
