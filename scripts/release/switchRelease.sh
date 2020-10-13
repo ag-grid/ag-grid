@@ -34,9 +34,9 @@ while true; do
 done
 
 # move file from the archives dir to the root
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html public_html_20200909"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html public_html_$TIMESTAMP"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html_tmp public_html"
 
 # we don't copy the archives - it's too big
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html_20200909/archive public_html/"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html_$TIMESTAMP/archive public_html/"
 

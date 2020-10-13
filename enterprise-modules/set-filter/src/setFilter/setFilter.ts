@@ -168,13 +168,7 @@ export class SetFilter extends ProvidedFilter {
         this.setFilterParams = params;
 
         this.valueModel = new SetValueModel(
-            params.rowModel,
-            params.valueGetter,
             params,
-            params.colDef,
-            params.column,
-            params.doesRowPassOtherFilter,
-            params.suppressSorting,
             loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
             key => this.translateForSetFilter(key),

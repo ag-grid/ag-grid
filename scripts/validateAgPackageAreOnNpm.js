@@ -16,14 +16,16 @@ if (process.argv.length < 4) {
 }
 const [exec, scriptPath, gridNewVersion, chartNewVersion] = process.argv;
 
+const exclude = ['@ag-grid-community/vue-legacy', 'ag-grid-vue-legacy']
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);
 packageNames
     .forEach(packageName => {
         const agPackage = allPackages[packageName];
         const {isGridPackage, publicPackage} = agPackage;
+        const excludePackage = exclude.includes(packageName);
 
-        if(publicPackage) {
+        if(publicPackage && !excludePackage) {
             const result = spawnSync(npm, ['show', packageName, 'version'],
                 {
                     cwd: process.cwd(),
@@ -36,7 +38,9 @@ packageNames
             const publishedVersion = result.stdout;
             const expectedVersion = isGridPackage ? gridNewVersion : chartNewVersion;
             if(expectedVersion.trim() !== publishedVersion.trim()) {
-                console.log(`Published version of ${packageName} is ${publishedVersion}, but expected version is ${expectedVersion}`);
+                console.error('******************************************************************');
+                console.error(`Published version of ${packageName} is ${publishedVersion}, but expected version is ${expectedVersion}`);
+                console.error('******************************************************************');
             } else {
                 console.log(`Published version of ${packageName} is ${publishedVersion}`);
             }
