@@ -19,7 +19,7 @@ import {
     ServerSideTransactionResult,
     StoreUpdatedEvent
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
 import {CacheBlock} from "../blocks/cacheBlock";
 
@@ -40,7 +40,7 @@ export class CacheStore extends BeanStub implements IServerSideStore {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
 
-    private readonly storeParams: ChildStoreParams;
+    private readonly storeParams: StoreParams;
     private readonly parentRowNode: RowNode;
     private readonly blocks: { [blockNumber: string]: CacheBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
@@ -62,7 +62,7 @@ export class CacheStore extends BeanStub implements IServerSideStore {
     private cacheTopPixel = 0;
     private cacheHeightPixels: number;
 
-    constructor(storeParams: ChildStoreParams, parentRowNode: RowNode) {
+    constructor(storeParams: StoreParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
         this.rowCount = CacheStore.INITIAL_ROW_COUNT;

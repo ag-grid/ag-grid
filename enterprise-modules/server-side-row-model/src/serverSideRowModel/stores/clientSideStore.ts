@@ -18,7 +18,7 @@ import {
     ServerSideTransactionResult,
     StoreUpdatedEvent,
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
 import {BlockUtils} from "../blocks/blockUtils";
 
@@ -34,7 +34,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
-    private readonly storeParams: ChildStoreParams;
+    private readonly storeParams: StoreParams;
     private readonly parentRowNode: RowNode;
 
     private nodeIdSequence: NumberSequence = new NumberSequence()
@@ -56,7 +56,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private topPx: number;
     private heightPx: number;
 
-    constructor(storeParams: ChildStoreParams, parentRowNode: RowNode) {
+    constructor(storeParams: StoreParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.storeParams = storeParams;
