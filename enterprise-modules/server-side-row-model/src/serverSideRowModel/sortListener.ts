@@ -13,7 +13,7 @@ import {
 import {ServerSideRowModel} from "./serverSideRowModel";
 
 @Bean('ssrmSortService')
-export class SortService extends BeanStub {
+export class SortListener extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
