@@ -5,7 +5,7 @@ import {
     ColumnController,
     Events,
     GridOptionsWrapper,
-    IServerSideChildStore,
+    IServerSideStore,
     NumberSequence,
     PostConstruct,
     PreDestroy,
@@ -22,7 +22,7 @@ import {ChildStoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
 import {BlockUtils} from "../blocks/blockUtils";
 
-export class ClientSideStore extends RowNodeBlock implements IServerSideChildStore {
+export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -198,7 +198,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.rowNodes.forEach( rowNode => {
             callback(rowNode, sequence.next());
-            const childCache = rowNode.childrenCache as IServerSideChildStore;
+            const childCache = rowNode.childrenCache as IServerSideStore;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -247,7 +247,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         }
     }
 
-    public getChildStore(keys: string[]): IServerSideChildStore | null {
+    public getChildStore(keys: string[]): IServerSideStore | null {
         return this.cacheUtils.getChildStore(keys, this, (key: string) => {
             const rowNode = _.find(this.rowNodes, rowNode => rowNode.key === key);
             return rowNode;
@@ -266,7 +266,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
             this.purgeStore();
         } else {
             this.rowNodes.forEach(rowNode => {
-                const nextCache = (rowNode.childrenCache as IServerSideChildStore);
+                const nextCache = (rowNode.childrenCache as IServerSideStore);
                 if (nextCache) {
                     nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
                 }

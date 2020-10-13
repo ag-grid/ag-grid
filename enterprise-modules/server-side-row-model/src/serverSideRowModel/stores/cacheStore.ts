@@ -4,7 +4,7 @@ import {
     BeanStub,
     Events,
     GridOptionsWrapper,
-    IServerSideChildStore,
+    IServerSideStore,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -25,7 +25,7 @@ import {CacheBlock} from "../blocks/cacheBlock";
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
-export class CacheStore extends BeanStub implements IServerSideChildStore {
+export class CacheStore extends BeanStub implements IServerSideStore {
 
     // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
@@ -546,7 +546,7 @@ export class CacheStore extends BeanStub implements IServerSideChildStore {
             // is open, we get the index of the last displayed child node.
             let lastDisplayedNodeIndexInBlockBefore: number;
             if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                const serverSideCache = lastRowNode.childrenCache as IServerSideChildStore;
+                const serverSideCache = lastRowNode.childrenCache as IServerSideStore;
                 lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
             } else if (lastRowNode.expanded && lastRowNode.detailNode) {
                 lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
@@ -599,7 +599,7 @@ export class CacheStore extends BeanStub implements IServerSideChildStore {
         return res;
     }
 
-    public getChildStore(keys: string[]): IServerSideChildStore | null {
+    public getChildStore(keys: string[]): IServerSideStore | null {
 
         const findNodeCallback = (key: string) => {
             let nextNode: RowNode = null;
@@ -637,7 +637,7 @@ export class CacheStore extends BeanStub implements IServerSideChildStore {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
-                        const nextCache = (rowNode.childrenCache as IServerSideChildStore);
+                        const nextCache = (rowNode.childrenCache as IServerSideStore);
                         if (nextCache) {
                             nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
                         }

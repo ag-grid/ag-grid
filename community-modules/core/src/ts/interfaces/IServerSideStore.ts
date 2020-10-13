@@ -3,7 +3,7 @@ import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
 import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
 
-export interface IServerSideChildStore {
+export interface IServerSideStore {
 
     clearDisplayIndexes(): void;
     getDisplayIndexEnd(): number;
@@ -15,7 +15,7 @@ export interface IServerSideChildStore {
     getRowBounds(index: number): RowBounds;
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number;
-    getChildStore(keys: string[]): IServerSideChildStore | null;
+    getChildStore(keys: string[]): IServerSideStore | null;
     refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     purgeStore(): void;

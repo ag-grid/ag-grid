@@ -26,7 +26,7 @@ import {
     RowNode,
     RowRenderer,
     SortController,
-    IServerSideChildStore,
+    IServerSideStore,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache
@@ -35,7 +35,7 @@ import {ClientSideStore} from "./stores/clientSideStore";
 import {CacheStore} from "./stores/cacheStore";
 import {SortListener} from "./sortListener";
 
-export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
+export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideStore {
     const oneBlockCache = params.blockSize == null;
     const CacheClass = oneBlockCache ? ClientSideStore : CacheStore;
     return new CacheClass(params, parentNode);
@@ -369,9 +369,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.storeParams.sortModel = newSortModel;
     }
 
-    public getRootStore(): IServerSideChildStore {
+    public getRootStore(): IServerSideStore {
         if (this.rootNode && this.rootNode.childrenCache) {
-            return (this.rootNode.childrenCache as IServerSideChildStore);
+            return (this.rootNode.childrenCache as IServerSideStore);
         } else {
             return undefined;
         }
@@ -431,7 +431,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         cache.forEachNodeDeep(callback);
     }
 
-    private executeOnStore(route: string[], callback: (cache: IServerSideChildStore) => void) {
+    private executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
@@ -450,7 +450,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return (firstInRange.parent!.childrenCache as IServerSideChildStore)!.getRowNodesInRange(lastInRange, firstInRange);
+        return (firstInRange.parent!.childrenCache as IServerSideStore)!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {

@@ -10,7 +10,7 @@ import {
     PostConstruct,
     RowNode,
     ValueService,
-    IServerSideChildStore,
+    IServerSideStore,
     NumberSequence
 } from "@ag-grid-community/core";
 
@@ -142,7 +142,7 @@ export class BlockUtils extends BeanStub {
 
         const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            const childStore = rowNode.childrenCache as IServerSideStore;
             childStore.clearDisplayIndexes();
         }
 
@@ -175,7 +175,7 @@ export class BlockUtils extends BeanStub {
         // set children for SSRM child rows
         const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            const childStore = rowNode.childrenCache as IServerSideStore;
             if (rowNode.expanded) {
                 childStore.setDisplayIndexes(displayIndexSeq, nextRowTop);
             } else {
@@ -212,7 +212,7 @@ export class BlockUtils extends BeanStub {
             }
 
             // then check if child cache contains index
-            const childStore = currentRowNode.childrenCache as IServerSideChildStore;
+            const childStore = currentRowNode.childrenCache as IServerSideStore;
             if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
                 return childStore.getRowUsingDisplayIndex(displayRowIndex);
             }
@@ -243,7 +243,7 @@ export class BlockUtils extends BeanStub {
         }
 
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            const childStore = rowNode.childrenCache as IServerSideStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index);
             }
@@ -268,7 +268,7 @@ export class BlockUtils extends BeanStub {
 
         // then check if it's a group row with a child cache with pixel in range
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache as IServerSideChildStore;
+            const childStore = rowNode.childrenCache as IServerSideStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);
             }
