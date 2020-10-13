@@ -39,6 +39,7 @@ FakeServer.prototype.createData = function() {
                 portfolioName: portfolioName,
                 productName: productName,
                 productId: productId,
+                parent: product,
                 children: [],
                 childrenMap: {}
             };
@@ -53,6 +54,7 @@ FakeServer.prototype.createData = function() {
                     productName: productName,
                     productId: productId,
                     bookId: bookId,
+                    parent: portfolio,
                     children: [],
                     childrenMap: {}
                 };
@@ -60,7 +62,7 @@ FakeServer.prototype.createData = function() {
                 portfolio.childrenMap[bookId] = book;
 
                 for (var l = 0; l<5; l++) {
-                    var trade = this.createTradeRecord(productId, productName, portfolioId, portfolioName, bookId);
+                    var trade = this.createTradeRecord(productId, productName, portfolioId, portfolioName, bookId, book);
                     book.children.push(trade);
                 }
             }
@@ -79,6 +81,19 @@ FakeServer.prototype.aggregateTopDown = function() {
     this.products.forEach(recursiveAgg);
 };
 
+FakeServer.prototype.aggregateBottomUp = function(item) {
+    var that = this;
+    function recursiveAgg(item) {
+        if (item.children) {
+            that.sumValuesFromChildren(item);
+        }
+        if (item.parent) {
+            recursiveAgg(item.parent);
+        }
+    }
+    recursiveAgg(item);
+};
+
 FakeServer.prototype.sumValuesFromChildren = function(item) {
     item.current = 0;
     item.previous = 0;
@@ -89,12 +104,11 @@ FakeServer.prototype.sumValuesFromChildren = function(item) {
     });
 };
 
-
 FakeServer.prototype.randomBetween = function(min,max) {
     return Math.floor(Math.random()*(max - min + 1)) + min;
 };
 
-FakeServer.prototype.createTradeRecord = function(productId, productName, portfolioId, portfolioName, bookId) {
+FakeServer.prototype.createTradeRecord = function(productId, productName, portfolioId, portfolioName, bookId, book) {
     var current = Math.floor(Math.random()*100000) + 100;
     var previous = current + Math.floor(Math.random()*10000) - 2000;
     var trade = {
@@ -103,6 +117,7 @@ FakeServer.prototype.createTradeRecord = function(productId, productName, portfo
         productName: productName,
         productId: productId,
         bookId: bookId,
+        parent: book,
         tradeId: 'TRD_' + this.tradeIdSequence++,
         submitterID: this.randomBetween(10,1000),
         submitterDealID: this.randomBetween(10,1000),
@@ -217,7 +232,7 @@ FakeServer.prototype.addUpdateListener = function(listener) {
 
 FakeServer.prototype.startUpdates = function() {
     if (this.intervalId!=undefined) { return; }
-    this.intervalId = setInterval(this.doBatch.bind(this), 500);
+    this.intervalId = setInterval(this.doBatch.bind(this), 50);
 };
 
 FakeServer.prototype.stopUpdates = function() {
@@ -226,28 +241,54 @@ FakeServer.prototype.stopUpdates = function() {
     this.intervalId = undefined;
 };
 
-FakeServer.prototype.doBatch = function(listener) {
+FakeServer.prototype.doBatch = function() {
+    var transactions = [];
+
     // pick book at random
+    var product = this.products[Math.floor(Math.random()*this.products.length)];
+    var portfolio = product.children[Math.floor(Math.random()*product.children.length)];
+    var book1 = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
+    var book2 = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
 
-    // var product = this.products[Math.floor(Math.random()*product.length)];
-    // var portfolio = product.children[Math.floor(Math.random()*product.children.length)];
-    // var book = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
+    // create 10 trades in book 1 and 10 trades in book 2
+    for (var i = 0; i<10; i++) {
+        this.createOneTrade(transactions, product, portfolio, book1);
+        this.createOneTrade(transactions, product, portfolio, book2);
+    }
 
-    var product = this.products[0];
-    var portfolio = product.children[0];
-    var book = portfolio.children[0];
+    return transactions;
+};
 
-    var newTrade = this.createTradeRecord(product.productId, product.productName, portfolio.portfolioId, portfolio.portfolioName, book.bookId);
+FakeServer.prototype.createOneTrade = function(transactions, product, portfolio, book) {
+
+    var newTrade = this.createTradeRecord(product.productId, product.productName, portfolio.portfolioId, portfolio.portfolioName, book.bookId, book);
 
     book.children.push(newTrade);
     book.childrenMap[newTrade.tradeId] = newTrade;
 
-    var tx = {
+    this.aggregateBottomUp(newTrade);
+
+    transactions.push({
         route: [product.productName, portfolio.portfolioName, book.bookId],
         add: [newTrade]
-    };
+    });
+
+    transactions.push({
+        route: [product.productName, portfolio.portfolioName],
+        update: [book]
+    });
+
+    transactions.push({
+        route: [product.productName],
+        update: [portfolio]
+    });
+
+    transactions.push({
+        route: [],
+        update: [product]
+    });
 
     this.updateListeners.forEach(function(listener) {
-        listener(tx);
+        listener(transactions);
     });
 };
