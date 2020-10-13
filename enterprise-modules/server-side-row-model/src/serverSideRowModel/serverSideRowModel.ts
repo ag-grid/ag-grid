@@ -32,12 +32,12 @@ import {
     ValueCache
 } from "@ag-grid-community/core";
 import {ClientSideStore} from "./stores/clientSideStore";
-import {CacheStore} from "./stores/cacheStore";
 import {SortListener} from "./sortListener";
+import {InfiniteStore} from "./stores/infiniteStore";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
     const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? ClientSideStore : CacheStore;
+    const CacheClass = oneBlockCache ? ClientSideStore : InfiniteStore;
     return new CacheClass(params, parentNode);
 }
 
