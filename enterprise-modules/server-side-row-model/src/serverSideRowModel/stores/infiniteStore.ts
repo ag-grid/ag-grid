@@ -17,7 +17,8 @@ import {
     RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    StoreUpdatedEvent
+    StoreUpdatedEvent,
+    LoadSuccessParams
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -62,6 +63,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     private cacheTopPixel = 0;
     private cacheHeightPixels: number;
 
+    private info: any = {};
+
     constructor(storeParams: StoreParams, parentRowNode: RowNode) {
         super();
         this.parentRowNode = parentRowNode;
@@ -91,16 +94,23 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return this.lastRowIndexKnown;
     }
 
-    public onBlockLoaded(block: CacheBlock, rows: any[], newLastRow: number): void {
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${newLastRow}`);
+    public onBlockLoaded(block: CacheBlock, params: LoadSuccessParams): void {
+
+        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.finalRowCount}`);
+
+        if (params.info) {
+            _.assign(this.info, params.info);
+        }
+
+        const finalRowCount = params.finalRowCount!=null && params.finalRowCount >=0 ? params.finalRowCount : undefined;
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) { return; }
 
-        this.checkRowCount(block, newLastRow);
+        this.checkRowCount(block, finalRowCount);
 
-        block.setData(rows);
+        block.setData(params.data);
 
         // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
         // in the valid range. so we must remove these. this can happen if the datasource returns a
@@ -596,7 +606,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
         }, 'cacheStore.applyTransaction');
 
-        const res = {routeFound: false};
+        const res = {routeFound: true, applied: false};
 
         return res;
     }

@@ -176,7 +176,7 @@ export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock, LoadCompleteEvent } from "./rowNodeCache/rowNodeBlock";
+export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
 export { RefreshModelParams } from "./interfaces/refreshModelParams";
@@ -186,7 +186,7 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
+export { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";

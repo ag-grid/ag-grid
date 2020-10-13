@@ -38,7 +38,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
+import {IServerSideRowModel, IServerSideTransactionManager} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -158,6 +158,7 @@ export class GridApi {
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    @Optional('serverSideTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -1252,27 +1253,27 @@ export class GridApi {
     }
 
     public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        if (!this.serverSideRowModel) {
+        if (!this.serverSideTransactionManager) {
             console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
             return undefined;
         }
-        return this.serverSideRowModel.applyTransaction(transaction);
+        return this.serverSideTransactionManager.applyTransaction(transaction);
     }
 
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
-        if (!this.serverSideRowModel) {
+        if (!this.serverSideTransactionManager) {
             console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
             return;
         }
-        return this.serverSideRowModel.applyTransactionAsync(transaction, callback);
+        return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
     }
 
     public flushServerSideAsyncTransactions(): void {
-        if (!this.serverSideRowModel) {
+        if (!this.serverSideTransactionManager) {
             console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
             return;
         }
-        return this.serverSideRowModel.flushAsyncTransactions();
+        return this.serverSideTransactionManager.flushAsyncTransactions();
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {

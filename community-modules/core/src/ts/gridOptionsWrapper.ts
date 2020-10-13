@@ -6,7 +6,7 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions,
+    GridOptions, IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
@@ -655,6 +655,10 @@ export class GridOptionsWrapper {
 
     public getChildCountFunc() {
         return this.gridOptions.getChildCount;
+    }
+
+    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction {
+        return this.gridOptions.isApplyServerSideTransaction;
     }
 
     public getDefaultGroupSortComparator() {

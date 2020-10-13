@@ -18,7 +18,8 @@ import {
     ServerSideTransactionResult,
     StoreUpdatedEvent,
     RowNodeSorter,
-    SortController
+    SortController,
+    LoadSuccessParams
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -63,6 +64,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     private topPx: number;
     private heightPx: number;
+
+    private info: any = {};
 
     constructor(storeParams: StoreParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
@@ -138,7 +141,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             parentNode: this.parentRowNode,
             storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this)
+            success: this.success.bind(this, this.getVersion()),
+            failCallback: this.pageLoadFailed.bind(this),
+            fail: this.pageLoadFailed.bind(this)
         });
     }
 
@@ -171,10 +176,15 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
-    protected processServerResult(rowData: any[] = []): void {
+    protected processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
+        if (params.info) {
+            _.assign(this.info, params.info);
+        }
+
         this.destroyRowNodes();
+        const rowData = params.data ? params.data : [];
         rowData.forEach(this.createDataNode.bind(this));
 
         this.sortRowNodes();
@@ -306,8 +316,23 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+
+        const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
+        if (applyCallback) {
+            const params = {
+                transaction: transaction,
+                parentNode: this.parentRowNode,
+                info: this.info
+            };
+            const apply = applyCallback(params);
+            if (!apply) {
+                return {routeFound: true, applied: false};
+            }
+        }
+
         const res: ServerSideTransactionResult = {
             routeFound: true,
+            applied: true,
             remove: [],
             update: [],
             add: []

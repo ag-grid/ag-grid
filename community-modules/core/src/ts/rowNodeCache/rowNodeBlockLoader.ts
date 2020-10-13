@@ -8,6 +8,8 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
 
+    public static BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private maxConcurrentRequests: number;
@@ -54,6 +56,9 @@ export class RowNodeBlockLoader extends BeanStub {
     private loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
+        if (this.activeBlockLoadsCount==0) {
+            this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT});
+        }
     }
 
     public checkBlockToLoad(): void {

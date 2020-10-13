@@ -1,5 +1,6 @@
 import {
     _,
+    LoadSuccessParams,
     Autowired,
     Column,
     ColumnApi,
@@ -185,11 +186,11 @@ export class CacheBlock extends RowNodeBlock {
         this.lastAccessed = this.storeParams.lastAccessedSequence.next();
     }
 
-    protected processServerResult(rows: any[], newLastRow: number): void {
-        this.parentStore.onBlockLoaded(this, rows, newLastRow);
+    protected processServerResult(params: LoadSuccessParams): void {
+        this.parentStore.onBlockLoaded(this, params);
     }
 
-    public setData(rows: any[]): void {
+    public setData(rows: any[] = []): void {
 
         this.destroyRowNodes();
 
@@ -251,7 +252,9 @@ export class CacheBlock extends RowNodeBlock {
             parentNode: this.parentRowNode,
             storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this)
+            success: this.success.bind(this, this.getVersion()),
+            failCallback: this.pageLoadFailed.bind(this),
+            fail: this.pageLoadFailed.bind(this)
         });
     }
 

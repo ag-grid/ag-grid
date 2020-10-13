@@ -44,6 +44,15 @@ var gridOptions = {
       return data.productId;
     }
   },
+  isApplyServerSideTransaction: function(params) {
+    var transactionVersion = params.transaction.serverVersion;
+    var dataLoadedVersion = params.info.serverVersion;
+    var transactionCreatedSinceInitialLoad = transactionVersion > dataLoadedVersion;
+    if (!transactionCreatedSinceInitialLoad) {
+      console.log('transactionCreatedSinceInitialLoad');
+    }
+    return transactionCreatedSinceInitialLoad;
+  },
   purgeClosedRowNodes: true,
   rowBuffer: 0,
   rowSelection: 'multiple',
@@ -83,8 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var dataSource = {
       getRows: function(params) {
-        fakeServer.getData(params.request, params.parentNode.data, function(result) {
-          params.successCallback(result);
+        fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
+          params.success({
+            data: result,
+            info: {serverVersion: serverVersion}
+          });
         });
       }
     };
