@@ -235,6 +235,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
     }
 
+    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+
+        rootStore.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+
+        this.onStoreUpdated();
+    }
+
     public resetRootStore(): void {
         this.destroyRootStore();
 
@@ -352,17 +361,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public updateRowIndexesAndBounds(): void {
-        const cache = this.getRootStore();
-        if (!cache) { return; }
-
-        cache.forEachNodeDeep(rowNode => { rowNode.clearRowTop() }, new NumberSequence());
-        cache.setDisplayIndexes(new NumberSequence(), {value: 0});
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.setDisplayIndexes(new NumberSequence(), {value: 0});
     }
 
     public getRow(index: number): RowNode | null {
-        const cache = this.getRootStore();
-        if (!cache) { return null; }
-        return cache.getRowUsingDisplayIndex(index);
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return null; }
+        return rootStore.getRowUsingDisplayIndex(index);
     }
 
     public updateSortModel(newSortModel: any): void {
@@ -378,39 +385,39 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowCount(): number {
-        const cache = this.getRootStore();
-        if (!cache) { return 1; }
-        return cache.getDisplayIndexEnd();
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return 1; }
+        return rootStore.getDisplayIndexEnd();
     }
 
     public getTopLevelRowCount(): number {
-        const cache = this.getRootStore();
-        if (!cache) { return 1; }
-        return cache.getRowCount();
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return 1; }
+        return rootStore.getRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        const cache = this.getRootStore();
-        if (!cache) { return topLevelIndex; }
-        return cache.getTopLevelRowDisplayedIndex(topLevelIndex);
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return topLevelIndex; }
+        return rootStore.getTopLevelRowDisplayedIndex(topLevelIndex);
     }
 
     public getRowBounds(index: number): RowBounds {
-        const cache = this.getRootStore();
-        if (!cache) {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
             const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
             return {
                 rowTop: 0,
                 rowHeight: rowHeight
             };
         }
-        return cache.getRowBounds(index);
+        return rootStore.getRowBounds(index);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        const cache = this.getRootStore();
-        if (pixel<=0 || !cache) { return 0; }
-        return cache.getRowIndexAtPixel(pixel);
+        const rootStore = this.getRootStore();
+        if (pixel<=0 || !rootStore) { return 0; }
+        return rootStore.getRowIndexAtPixel(pixel);
     }
 
     public isEmpty(): boolean {
@@ -426,9 +433,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        const cache = this.getRootStore();
-        if (!cache) { return; }
-        cache.forEachNodeDeep(callback);
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.forEachNodeDeep(callback);
     }
 
     private executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {

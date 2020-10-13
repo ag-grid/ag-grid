@@ -105,6 +105,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             });
         }
         this.allRowNodes = [];
+        this.nodesAfterSort = [];
         this.allNodesMap = {};
     }
 
@@ -114,7 +115,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
         );
-        this.allRowNodes.push(loadingRowNode)
+        this.allRowNodes.push(loadingRowNode);
+        this.nodesAfterSort.push(loadingRowNode);
     }
 
     public getBlockStateJson(): { id: string, state: any } {
@@ -140,7 +142,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getEndRow(): number {
-        return this.allRowNodes.length;
+        return this.nodesAfterSort.length;
     }
 
     private createDataNode(data: any, index?: number): RowNode {
@@ -209,9 +211,20 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.displayIndexStart = displayIndexSeq.peek();
         this.topPx = nextRowTop.value;
 
-        this.allRowNodes.forEach(rowNode =>
-            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop)
-        );
+        const visibleNodeIds: {[id: string]: boolean} = {};
+
+        // set on all visible nodes
+        this.nodesAfterSort.forEach(rowNode => {
+            this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop);
+            visibleNodeIds[rowNode.id] = true;
+        });
+
+        // and clear on all non-visible nodes
+        this.allRowNodes.forEach(rowNode => {
+            if (!visibleNodeIds[rowNode.id]) {
+                this.blockUtils.clearDisplayIndex(rowNode);
+            }
+        });
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
@@ -228,14 +241,14 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
-        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.allRowNodes);
+        const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.nodesAfterSort);
         return res;
     }
 
     public getRowBounds(index: number): RowBounds {
 
-        for (let i=0; i<this.allRowNodes.length; i++) {
-            const rowNode = this.allRowNodes[i];
+        for (let i=0; i<this.nodesAfterSort.length; i++) {
+            const rowNode = this.nodesAfterSort[i];
             const res = this.blockUtils.extractRowBounds(rowNode, index);
             if (res) { return res; }
         }
@@ -249,11 +262,11 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     public getRowIndexAtPixel(pixel: number): number {
 
-        if (pixel<=this.topPx) { return this.allRowNodes[0].rowIndex; }
-        if (pixel>=(this.topPx + this.heightPx)) { return this.allRowNodes[this.allRowNodes.length-1].rowIndex; }
+        if (pixel<=this.topPx) { return this.nodesAfterSort[0].rowIndex; }
+        if (pixel>=(this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length-1].rowIndex; }
 
         let res: number = undefined;
-        this.allRowNodes.forEach( rowNode => {
+        this.nodesAfterSort.forEach( rowNode => {
             const res2 = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             if (res2!=null) {
                 res = res2;
@@ -277,23 +290,13 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
-        const shouldPurgeCache = this.cacheUtils.shouldPurgeStoreAfterSort({
-            parentRowNode: this.parentRowNode,
-            storeParams: this.storeParams,
-            changedColumnsInSort: changedColumnsInSort,
-            rowGroupColIds: rowGroupColIds
+        this.sortRowNodes();
+        this.allRowNodes.forEach(rowNode => {
+            const nextCache = (rowNode.childrenCache as IServerSideStore);
+            if (nextCache) {
+                nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+            }
         });
-
-        if (shouldPurgeCache) {
-            this.purgeStore();
-        } else {
-            this.allRowNodes.forEach(rowNode => {
-                const nextCache = (rowNode.childrenCache as IServerSideStore);
-                if (nextCache) {
-                    nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
-                }
-            });
-        }
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
@@ -427,11 +430,11 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowCount(): number {
-        return this.allRowNodes.length;
+        return this.nodesAfterSort.length;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        const rowNode = this.allRowNodes[topLevelIndex];
+        const rowNode = this.nodesAfterSort[topLevelIndex];
         return rowNode.rowIndex;
     }
 
@@ -449,7 +452,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             inActiveRange = true;
         }
 
-        this.allRowNodes.forEach(rowNode => {
+        this.nodesAfterSort.forEach(rowNode => {
             const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
             if (inActiveRange || hitFirstOrLast) {
                 result.push(rowNode);
