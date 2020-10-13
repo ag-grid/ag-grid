@@ -31,9 +31,9 @@ import {
     ServerSideTransactionResult,
     ValueCache
 } from "@ag-grid-community/core";
-import {SortService} from "./sortService";
 import {ClientSideStore} from "./stores/clientSideStore";
 import {CacheStore} from "./stores/cacheStore";
+import {SortListener} from "./sortListener";
 
 export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideChildStore {
     const oneBlockCache = params.blockSize == null;
@@ -71,7 +71,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmSortService') private sortService: SortService;
+    @Autowired('ssrmSortService') private sortListener: SortListener;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -311,7 +311,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortService.extractSortModel(),
+            sortModel: this.sortListener.extractSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
