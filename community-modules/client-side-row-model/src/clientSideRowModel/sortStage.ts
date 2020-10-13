@@ -23,7 +23,7 @@ export class SortStage extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): void {
-        const sortOptions: SortOption[] = this.sortController.getSortForRowController();
+        const sortOptions: SortOption[] = this.sortController.getSortOptions();
 
         const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive
