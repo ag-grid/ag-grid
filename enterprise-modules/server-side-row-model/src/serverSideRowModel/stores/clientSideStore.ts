@@ -17,6 +17,8 @@ import {
     ServerSideTransaction,
     ServerSideTransactionResult,
     StoreUpdatedEvent,
+    RowNodeSorter,
+    SortController
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -30,6 +32,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -165,15 +169,19 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.destroyRowNodes();
         rowData.forEach(this.createDataNode.bind(this));
 
+        this.sortRowNodes();
+
         this.fireStoreUpdatedEvent();
     }
 
     private sortRowNodes(): void {
-        if (!this.storeParams.sortModel) {
+        const sortOptions = this.sortController.getSortOptions();
+        const noSort = !sortOptions || sortOptions.length==0;
+        if (noSort) {
             this.nodesAfterSort = this.allRowNodes;
             return;
         }
-        this.nodesAfterSort = this.allRowNodes.slice();
+        this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.allRowNodes, sortOptions);
     }
 
     private filterRowNodes(): void {

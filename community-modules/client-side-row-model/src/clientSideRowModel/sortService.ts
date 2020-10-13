@@ -51,10 +51,9 @@ export class SortService extends BeanStub {
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             if (sortActive) {
-                const sortedRowNodes: SortedRowNode[] = deltaSort ?
+                rowNode.childrenAfterSort = deltaSort ?
                     this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
                     : this.rowNodeSorter.doFullSort(rowNode.childrenAfterFilter, sortOptions);
-                rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
             } else {
                 rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
             }
@@ -71,15 +70,6 @@ export class SortService extends BeanStub {
         this.updateGroupDataForHiddenOpenParents(changedPath);
     }
 
-/*    private doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): SortedRowNode[] {
-        const sortedRowNodes: SortedRowNode[] = rowNodes
-            .map(this.mapNodeToSortedNode.bind(this));
-
-        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
-
-        return sortedRowNodes;
-    }*/
-
     private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
         return {currentPos: pos, rowNode: rowNode};
     }
@@ -88,7 +78,7 @@ export class SortService extends BeanStub {
                         sortOptions: SortOption[],
                         dirtyLeafNodes: { [nodeId: string]: boolean },
                         changedPath: ChangedPath,
-                        noAggregations: boolean): SortedRowNode[] {
+                        noAggregations: boolean): RowNode[] {
 
         // clean nodes will be a list of all row nodes that remain in the set
         // and ordered. we start with the old sorted set and take out any nodes
@@ -125,13 +115,16 @@ export class SortService extends BeanStub {
         // already sorted from last time.
         changedNodes.sort(this.rowNodeSorter.compareRowNodes.bind(this, sortOptions));
 
+        let result: SortedRowNode[];
         if (changedNodes.length === 0) {
-            return cleanNodes;
+            result = cleanNodes;
         } else if (cleanNodes.length === 0) {
-            return changedNodes;
+            result = changedNodes;
         } else {
-            return this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
+            result = this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
         }
+
+        return result.map( item => item.rowNode );
     }
 
     // Merge two sorted arrays into each other

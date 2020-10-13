@@ -11,23 +11,24 @@ var columnDefs = [
   // {field: 'bookId'},
 
   // all the other columns (visible and not grouped)
-  {headerName: 'Current', field: 'current', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'Previous', field: 'previous', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'Current', field: 'current', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'Previous', field: 'previous', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
   {headerName: 'Deal Type', field: 'dealType'},
   {headerName: 'Bid', field: 'bidFlag', width: 100 },
-  {headerName: 'PL 1', field: 'pl1', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'PL 2', field: 'pl2', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'Gain-DX', field: 'gainDx', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'SX / PX', field: 'sxPx', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: '99 Out', field: '_99Out', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'Submitter ID', field: 'submitterID', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
+  {headerName: 'PL 1', field: 'pl1', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'PL 2', field: 'pl2', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'Gain-DX', field: 'gainDx', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'SX / PX', field: 'sxPx', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: '99 Out', field: '_99Out', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'Submitter ID', field: 'submitterID', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+  {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
 ];
 
 var gridOptions = {
   defaultColDef: {
     width: 250,
-    resizable: true
+    resizable: true,
+    sortable: true
   },
   autoGroupColumnDef: {
     field: 'tradeId'
@@ -43,6 +44,7 @@ var gridOptions = {
       return data.productId;
     }
   },
+  purgeClosedRowNodes: true,
   rowBuffer: 0,
   rowSelection: 'multiple',
   columnDefs: columnDefs,

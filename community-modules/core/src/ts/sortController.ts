@@ -7,6 +7,7 @@ import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import {SortOption} from "./rowNodes/rowNodeSorter";
 
 @Bean('sortController')
 export class SortController extends BeanStub {
@@ -70,14 +71,6 @@ export class SortController extends BeanStub {
     // working out the sort order again of the rows.
     public onSortChanged(): void {
         this.dispatchSortChangedEvents();
-    }
-
-    // used by server side row models, to send sorting to server
-    public getSortModel = () => {
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            colId: column.getColId(),
-            sort: column.getSort()
-        }));
     }
 
     public isSortActive(): boolean {
@@ -153,13 +146,20 @@ export class SortController extends BeanStub {
         return columnsWithSorting;
     }
 
-    // used by row controller, when doing the sorting
-    public getSortForRowController(): any[] {
+    // used by server side row models, to sent sort to server
+    public getSortModel(): any[] {
         return this.getColumnsWithSortingOrdered().map(column => {
-            const isAscending = column.getSort() === Constants.SORT_ASC;
-
             return {
-                inverter: isAscending ? 1 : -1,
+                sort: column.getSort(),
+                colId: column.getId()
+            };
+        });
+    }
+
+    public getSortOptions(): SortOption[] {
+        return this.getColumnsWithSortingOrdered().map(column => {
+            return {
+                sort: column.getSort(),
                 column
             };
         });

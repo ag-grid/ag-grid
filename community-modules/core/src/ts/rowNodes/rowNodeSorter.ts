@@ -4,9 +4,10 @@ import {Autowired, Bean} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ValueService} from "../valueService/valueService";
 import {_} from "../utils";
+import {Constants} from "../constants/constants";
 
 export interface SortOption {
-    inverter: number;
+    sort: string;
     column: Column;
 }
 
@@ -23,17 +24,17 @@ export class RowNodeSorter {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
 
-    public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): SortedRowNode[] {
+    public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
 
         const mapper = (rowNode: RowNode, pos: number) => {return {currentPos: pos, rowNode: rowNode} };
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
         sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
 
-        return sortedRowNodes;
+        return sortedRowNodes.map( item => item.rowNode );
     }
 
-    public compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
+    public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
         const nodeA: RowNode = sortedNodeA.rowNode;
         const nodeB: RowNode = sortedNodeB.rowNode;
 
@@ -42,7 +43,7 @@ export class RowNodeSorter {
             const sortOption = sortOptions[i];
             // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
 
-            const isInverted = sortOption.inverter === -1;
+            const isInverted = sortOption.sort === Constants.SORT_DESC;
             const valueA: any = this.getValue(nodeA, sortOption.column);
             const valueB: any = this.getValue(nodeB, sortOption.column);
             let comparatorResult: number;
@@ -56,7 +57,7 @@ export class RowNodeSorter {
             }
 
             if (comparatorResult !== 0) {
-                return comparatorResult * sortOption.inverter;
+                return sortOption.sort === Constants.SORT_ASC ? comparatorResult : comparatorResult * -1;
             }
         }
         // All matched, we make is so that the original sort order is kept:
