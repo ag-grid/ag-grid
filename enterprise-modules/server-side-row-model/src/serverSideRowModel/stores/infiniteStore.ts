@@ -214,7 +214,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public purgeStore(): void {
+    public purgeStore(suppressEvent = false): void {
         this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
@@ -225,7 +225,9 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
         }
 
-        this.fireCacheUpdatedEvent();
+        if (!suppressEvent) {
+            this.fireCacheUpdatedEvent();
+        }
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
@@ -632,7 +634,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         });
 
         if (shouldPurgeCache) {
-            this.purgeStore();
+            this.purgeStore(true);
         } else {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {

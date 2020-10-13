@@ -110,7 +110,7 @@ export class SortListener extends BeanStub {
         if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.serverSideRowModel.resetRootStore();
         } else {
-            rootStore.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+            this.serverSideRowModel.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     }
 
