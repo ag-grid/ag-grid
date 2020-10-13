@@ -128,7 +128,7 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
-        this.valueModel = new SetValueModel(params.rowModel, params.valueGetter, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
+        this.valueModel = new SetValueModel(params.rowModel, params.valueGetter, params, params.colDef, params.column, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.showOrHideLoadingScreen(loading); }, this.valueFormatterService, function (key) { return _this.translateForSetFilter(key); });
         this.initialiseFilterBodyUi();
         if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
             !params.values &&
@@ -525,11 +525,23 @@ var SetFilter = /** @class */ (function (_super) {
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     };
     SetFilter.prototype.isSelectAllSelected = function () {
-        if (this.valueModel.isEverythingVisibleSelected()) {
-            return true;
+        if (!this.setFilterParams.defaultToNothingSelected) {
+            // everything selected by default
+            if (this.valueModel.hasSelections() && this.valueModel.isNothingVisibleSelected()) {
+                return false;
+            }
+            if (this.valueModel.isEverythingVisibleSelected()) {
+                return true;
+            }
         }
-        if (this.valueModel.isNothingVisibleSelected()) {
-            return false;
+        else {
+            // nothing selected by default
+            if (this.valueModel.hasSelections() && this.valueModel.isEverythingVisibleSelected()) {
+                return true;
+            }
+            if (this.valueModel.isNothingVisibleSelected()) {
+                return false;
+            }
         }
         return undefined;
     };

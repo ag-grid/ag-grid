@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Full Width Rows: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Full Width Rows. Full Width Rows allow you to have one cell that spans the entire width of the tables. This allows a card layout to work alongside the normal cells. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Full Width Rows. Full Width Rows allow you to have one cell that spans the entire width of the tables. This allows a card layout to work alongside the normal cells. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "JavaScript Grid Full Width";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
 
 <h2>Understanding Full Width</h2>
 
@@ -117,6 +117,6 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-<?= grid_example('Basic Full Width', 'basic-full-width', 'mixed', ['exampleHeight' => 595, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Basic Full Width', 'basic-full-width', 'mixed', ['exampleHeight' => 595, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

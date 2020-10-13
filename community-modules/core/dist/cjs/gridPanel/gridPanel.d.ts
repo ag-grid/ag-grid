@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from '../rendering/row/rowContainerComponent';
 import { RowDragFeature } from './rowDragFeature';
 import { Component } from '../widgets/component';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
+import { PopupService } from "../widgets/popupService";
 export declare type RowContainerComponentNames = 'fullWidth' | 'body' | 'pinnedLeft' | 'pinnedRight' | 'floatingTop' | 'floatingTopPinnedLeft' | 'floatingTopPinnedRight' | 'floatingTopFullWidth' | 'floatingBottom' | 'floatingBottomPinnedLeft' | 'floatingBottomPinnedRight' | 'floatingBottomFullWidth';
 export declare type RowContainerComponents = {
     [K in RowContainerComponentNames]: RowContainerComponent;
@@ -35,8 +36,10 @@ export declare class GridPanel extends Component {
     private undoRedoService;
     private columnController;
     private headerNavigationService;
+    popupService: PopupService;
     private rangeController;
     private contextMenuFactory;
+    private menuFactory;
     private clipboardService;
     private eBodyViewport;
     private eCenterContainer;
@@ -68,11 +71,11 @@ export declare class GridPanel extends Component {
     private eAllCellContainers;
     private scrollLeft;
     private scrollTop;
+    private centerWidth;
     private lastHorizontalScrollElement;
     private readonly resetLastHorizontalScrollElementDebounced;
     private bodyHeight;
     private enableRtl;
-    private scrollWidth;
     private pinningRight;
     private pinningLeft;
     private printLayout;
@@ -123,6 +126,7 @@ export declare class GridPanel extends Component {
     getCenterWidth(): number;
     isVerticalScrollShowing(): boolean;
     isHorizontalScrollShowing(): boolean;
+    private onScrollbarWidthChanged;
     checkViewportAndScrolls(): void;
     private updateScrollVisibleService;
     private updateScrollVisibleServiceImpl;
@@ -161,6 +165,7 @@ export declare class GridPanel extends Component {
     scrollVertically(pixels: number): number;
     private addScrollListener;
     private onVerticalScroll;
+    private shouldBlockScrollUpdate;
     private isControllingScroll;
     private onFakeHorizontalScroll;
     private onCenterViewportScroll;

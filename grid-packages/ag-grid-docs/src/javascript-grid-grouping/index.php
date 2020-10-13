@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Grouping by Row: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -54,7 +54,7 @@ SNIPPET
     by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
 </ul>
 
-<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
+<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
 
@@ -74,7 +74,7 @@ SNIPPET
         This is done by setting <code>colDef.hide = true</code>.</li>
 </ul>
 
-<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -125,7 +125,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Filtering on Group Columns</h2>
 
@@ -167,7 +167,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
+<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2>Group Cell Rendering</h2>
 
@@ -236,7 +236,7 @@ SNIPPET
     Year is grouped first and Country is grouped second.
 </p>
 
-<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Hide Open Parents</h2>
 
@@ -273,7 +273,7 @@ SNIPPET
     the grouped column - eg for Country, it will filter on Country.
 </p>
 
-<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
+<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
@@ -323,7 +323,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
@@ -340,7 +340,7 @@ SNIPPET
     Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
 </p>
 
-<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Configuring Full Width Group Rows</h2>
 
@@ -451,7 +451,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome'], 'reactFunctional' => true]) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome']]) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 
@@ -494,7 +494,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
@@ -512,7 +512,7 @@ SNIPPET
     <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
 </ul>
 
-<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>
     If you do not want rows with null or undefined to be left out of groups, but want
@@ -585,7 +585,7 @@ colDef = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="grouping-footers">Grouping Footers</h2>
 
@@ -641,7 +641,7 @@ SNIPPET
     <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
 </ul>
 
-<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <note>
     Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
@@ -651,6 +651,11 @@ SNIPPET
         <li>It is not possible to select footer nodes. Footer rows appear selected when the group is selected.</li>
         <li>Footer rows are not parted of the iterated set when the api method <code>api.forEachNode()</code> is called.</li>
         <li>Footer nodes are not exported to CSV or Excel.</li>
+        <li>
+            If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the
+            group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because
+            the word "Total" is not actually part of the data, it's something the grid rendering puts in.
+        </li>
     </ul>
 </note>
 
@@ -696,7 +701,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
+<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <note>
     Filtering does not impact what groups get removed. For example if you have a group with two
@@ -777,18 +782,18 @@ SNIPPET
 
 <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>The following example shows how to display all the groups in a single column</p>
 
-<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>
     The last example of explicitly setting groups shows an alternative for Hide Open Parents.
     The example below demonstrates hiding open parents using explicit group columns.
 </p>
 
-<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'rowgrouping'], 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
@@ -814,7 +819,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter'], 'reactFunctional' => true]) ?>
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2>Grid Grouping Properties</h2>
 

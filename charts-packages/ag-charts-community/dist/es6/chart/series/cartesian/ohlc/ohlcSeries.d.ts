@@ -4,6 +4,7 @@ import { OHLC } from "./marker/ohlc";
 import { CartesianSeries } from "../cartesianSeries";
 import { Observable } from "../../../../util/observable";
 import { ChartAxisDirection } from "../../../chartAxis";
+import { TooltipRendererResult } from "../../../chart";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     date: number;
     open: number;
@@ -76,7 +77,7 @@ export declare class OHLCSeries extends CartesianSeries {
     update(): void;
     private dateFormatter;
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string;
-    tooltipRenderer?: (params: OHLCTooltipRendererParams) => string;
+    tooltipRenderer?: (params: OHLCTooltipRendererParams) => string | TooltipRendererResult;
     listSeriesItems(legendData: LegendDatum[]): void;
 }
 export declare class OHLCSeriesMarker extends Observable {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -334,7 +334,7 @@ var RowNode = /** @class */ (function () {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        var newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        var newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
         if (newValue !== this.__hasChildren) {
             this.__hasChildren = newValue;
             if (this.eventService) {
@@ -365,7 +365,7 @@ var RowNode = /** @class */ (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
@@ -460,7 +460,7 @@ var RowNode = /** @class */ (function () {
         if (this.footer) {
             return this.sibling.setSelectedParams(params);
         }
-        if (rangeSelect) {
+        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {

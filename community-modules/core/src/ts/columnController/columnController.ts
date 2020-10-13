@@ -47,6 +47,8 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -84,6 +86,7 @@ export class ColumnController extends BeanStub {
     @Optional('valueCache') private valueCache: ValueCache;
     @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('sortController') private sortController: SortController;
@@ -182,6 +185,8 @@ export class ColumnController extends BeanStub {
     private columnDefs: (ColDef | ColGroupDef)[];
 
     private colDefVersion = 0;
+
+    private flexColsCalculatedAtLestOnce = false;
 
     @PostConstruct
     public init(): void {
@@ -1172,7 +1177,10 @@ export class ColumnController extends BeanStub {
         }
     }
 
-    public setColumnAggFunc(column: Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
+    public setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
+        if (!key) { return; }
+
+        const column = this.getPrimaryColumn(key);
         if (!column) { return; }
 
         column.setAggFunc(aggFunc);
@@ -1257,12 +1265,12 @@ export class ColumnController extends BeanStub {
     // returns the provided cols sorted in same order as they appear in grid columns. eg if grid columns
     // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
     public sortColumnsLikeGridColumns(cols: Column[]): void {
-        if (!cols || cols.length<=1) { return; }
+        if (!cols || cols.length <= 1) { return; }
 
-        const notAllColsInGridColumns = cols.filter( c => this.gridColumns.indexOf(c) < 0).length > 0;
+        const notAllColsInGridColumns = cols.filter(c => this.gridColumns.indexOf(c) < 0).length > 0;
         if (notAllColsInGridColumns) { return; }
 
-        cols.sort( (a: Column, b: Column) => {
+        cols.sort((a: Column, b: Column) => {
             const indexA = this.gridColumns.indexOf(a);
             const indexB = this.gridColumns.indexOf(b);
             return indexA - indexB;
@@ -1698,7 +1706,7 @@ export class ColumnController extends BeanStub {
     }
 
     public getColumnState(): ColumnState[] {
-        if (missing(this.primaryColumns)) { return []; }
+        if (missing(this.primaryColumns) || !this.isAlive()) { return []; }
 
         const primaryColumnState: ColumnState[]
             = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
@@ -1806,6 +1814,13 @@ export class ColumnController extends BeanStub {
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType = "api"): boolean {
         if (missingOrEmpty(this.primaryColumns)) { return false; }
 
+        if (params && params.state && !params.state.forEach) {
+            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
+            return;
+        }
+
+        this.columnAnimationService.start();
+
         const raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
 
         this.autoGroupsNeedBuilding = true;
@@ -1823,10 +1838,6 @@ export class ColumnController extends BeanStub {
         const previousPivotCols = this.pivotColumns.slice();
 
         if (params.state) {
-            if (!params.state.forEach) {
-                console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.')
-                return;
-            }
             params.state.forEach((state: ColumnState) => {
                 const groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
                 const colId = state.colId;
@@ -1941,6 +1952,8 @@ export class ColumnController extends BeanStub {
 
         raiseEventsFunc();
 
+        this.columnAnimationService.finish();
+
         return success;
     }
 
@@ -2035,7 +2048,7 @@ export class ColumnController extends BeanStub {
             const visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide == c.isVisible();
             this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
-            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort();
+            const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             if (getChangedColumns(sortChangePredicate).length > 0) {
                 this.sortController.dispatchSortChangedEvents();
             }
@@ -3346,6 +3359,19 @@ export class ColumnController extends BeanStub {
             this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
+        // if the user sets rowData directly into GridOptions, then the row data is set before
+        // grid is attached to the DOM. this means the columns are not flexed, and then the rows
+        // have the wrong height (as they depend on column widths). so once the columns have
+        // been flexed for the first time (only happens once grid is attached to DOM, as dependency
+        // on getting the grid width, which only happens after attached after ResizeObserver fires)
+        // we get get rows to re-calc their heights.
+        if (!this.flexColsCalculatedAtLestOnce) {
+            if (this.gridOptionsWrapper.isRowModelDefault()) {
+                (this.rowModel as IClientSideRowModel).resetRowHeights();
+            }
+            this.flexColsCalculatedAtLestOnce = true;
+        }
+
         return flexingColumns;
     }
 
@@ -3381,7 +3407,10 @@ export class ColumnController extends BeanStub {
         // immediately after grid is created, so will make no difference. however if application is calling
         // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
         // the columns to start shrinking / growing over time.
-        colsToSpread.forEach(column => column.resetActualWidth());
+        //
+        // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
+        // for this reason we need to manually fire resize events after the resize has been done for each column.
+        colsToSpread.forEach(column => column.resetActualWidth(source));
 
         while (!finishedResizing) {
             finishedResizing = true;
@@ -3399,27 +3428,32 @@ export class ColumnController extends BeanStub {
                 // backwards through loop, as we are removing items as we go
                 for (let i = colsToSpread.length - 1; i >= 0; i--) {
                     const column = colsToSpread[i];
-                    const newWidth = Math.round(column.getActualWidth() * scale);
-                    if (newWidth < column.getMinWidth()) {
-                        column.setMinimum(source);
+                    const minWidth = column.getMinWidth();
+                    const maxWidth = column.getMaxWidth();
+                    let newWidth = Math.round(column.getActualWidth() * scale);
+
+                    if (newWidth < minWidth) {
+                        newWidth = column.getMinWidth();
                         moveToNotSpread(column);
                         finishedResizing = false;
                     } else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getMaxWidth(), source);
+                        newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
-                    } else {
-                        const onLastCol = i === 0;
-                        if (onLastCol) {
-                            column.setActualWidth(pixelsForLastCol, source);
-                        } else {
-                            column.setActualWidth(newWidth, source);
-                        }
+                    } else if (i === 0) { // if this is the last column
+                        newWidth = pixelsForLastCol;
                     }
+
+                    column.setActualWidth(newWidth, source, true);
                     pixelsForLastCol -= newWidth;
                 }
             }
         }
+
+        // see notes above
+        colsToFireEventFor.forEach(col => {
+            col.fireColumnWidthChangedEvent(source);
+        });
 
         this.setLeftValues(source);
         this.updateBodyWidths();

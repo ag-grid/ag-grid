@@ -91,6 +91,7 @@ interface AgNavigatorHandleOptions {
 export interface AgNavigatorOptions {
     enabled?: boolean;
     height?: number;
+    margin?: number;
     min?: number;
     max?: number;
     mask?: AgNavigatorMaskOptions;
@@ -204,10 +205,10 @@ interface AgAxisTickOptions {
     count?: any;
 }
 interface AgAxisLabelFormatterParams {
-    value: any;
-    index: number;
-    fractionDigits?: number;
-    formatter?: (x: any) => string;
+    readonly value: any;
+    readonly index: number;
+    readonly fractionDigits?: number;
+    readonly formatter?: (x: any) => string;
 }
 interface AgAxisLabelOptions {
     fontStyle?: FontStyle;
@@ -261,28 +262,36 @@ interface AgBaseSeriesOptions {
         [key in string]: Function;
     };
 }
-interface AgSeriesTooltipRendererParams {
-    datum: any;
+export interface AgTooltipRendererResult {
     title?: string;
-    color?: string;
+    content?: string;
+}
+interface AgSeriesTooltipRendererParams {
+    readonly datum: any;
+    readonly title?: string;
+    readonly color?: string;
 }
 interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
-    xKey: string;
-    xName?: string;
-    yKey: string;
-    yName?: string;
+    readonly xKey: string;
+    readonly xValue?: any;
+    readonly xName?: string;
+    readonly yKey: string;
+    readonly yValue?: any;
+    readonly yName?: string;
 }
 export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
-    angleKey: string;
-    angleName?: string;
-    radiusKey?: string;
-    radiusName?: string;
+    readonly angleKey: string;
+    readonly angleValue?: any;
+    readonly angleName?: string;
+    readonly radiusKey?: string;
+    readonly radiusValue?: any;
+    readonly radiusName?: string;
 }
 interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
-    sizeKey?: string;
-    sizeName?: string;
-    labelKey?: string;
-    labelName?: string;
+    readonly sizeKey?: string;
+    readonly sizeName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 interface AgSeriesMarker {
     enabled?: boolean;
@@ -323,7 +332,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
-    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     type?: 'scatter';
@@ -332,7 +341,6 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     xName?: string;
     yName?: string;
-    paired?: boolean;
     title?: string;
     fill?: string;
     stroke?: string;
@@ -343,7 +351,7 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
-    tooltipRenderer?: (params: AgScatterSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
@@ -357,17 +365,33 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
     highlightStyle?: {
         fill?: string;
         stroke?: string;
     };
-    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: {
         value: number;
     }) => string;
+}
+export interface AgBarSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly xKey: string;
+    readonly yKey: string;
+}
+export interface AgBarSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     type?: 'bar' | 'column';
@@ -382,13 +406,16 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
     highlightStyle?: {
         fill?: string;
         stroke?: string;
     };
     label?: AgBarSeriesLabelOptions;
-    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    formatter?: (params: AgBarSeriesFormatterParams) => AgBarSeriesFormat;
 }
 interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: {
@@ -402,6 +429,8 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     xKey?: string;
     xName?: string;
     yKey?: string;
@@ -416,11 +445,25 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
         stroke?: string;
     };
     label?: AgHistogramSeriesLabelOptions;
-    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     offset?: number;
     minAngle?: number;
+}
+export interface AgPieSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
+}
+export interface AgPieSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
@@ -442,6 +485,8 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    lineDash?: number[];
+    lineDashOffset?: number;
     rotation?: number;
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
@@ -450,7 +495,8 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
-    tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
 }
 interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
     labelKey?: string;
@@ -459,7 +505,7 @@ interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererP
 declare type AgCartesianSeriesOptions = AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions;
 declare type AgPolarSeriesOptions = AgPieSeriesOptions;
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
-    type?: 'cartesian' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter';
     axes?: TAxisOptions;
     series?: TSeriesOptions;
 }

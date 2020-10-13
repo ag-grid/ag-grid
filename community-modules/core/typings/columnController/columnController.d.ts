@@ -39,6 +39,7 @@ export declare class ColumnController extends BeanStub {
     private aggFuncService;
     private valueCache;
     private animationFrameService;
+    private rowModel;
     private columnApi;
     private gridApi;
     private sortController;
@@ -93,6 +94,7 @@ export declare class ColumnController extends BeanStub {
     private flexViewportWidth;
     private columnDefs;
     private colDefVersion;
+    private flexColsCalculatedAtLestOnce;
     init(): void;
     onAutoGroupColumnDefChanged(): void;
     getColDefVersion(): number;
@@ -162,7 +164,7 @@ export declare class ColumnController extends BeanStub {
     source?: ColumnEventType): void;
     private checkMinAndMaxWidthsForSet;
     resizeColumnSets(resizeSets: ColumnResizeSet[], finished: boolean, source: ColumnEventType): void;
-    setColumnAggFunc(column: Column | null | undefined, aggFunc: string, source?: ColumnEventType): void;
+    setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string, source?: ColumnEventType): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number, source?: ColumnEventType): void;
     moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source?: ColumnEventType): void;
     doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean;

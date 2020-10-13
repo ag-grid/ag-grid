@@ -9,32 +9,32 @@ import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    size: number;
+    readonly size: number;
 }
 
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: ScatterSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-    sizeKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: ScatterSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
+    readonly sizeKey?: string;
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    sizeKey?: string;
-    sizeName?: string;
+    readonly sizeKey?: string;
+    readonly sizeName?: string;
 
-    labelKey?: string;
-    labelName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 
 export class ScatterSeries extends CartesianSeries {
@@ -54,24 +54,26 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string | undefined = undefined;
+    private _fill: string | undefined = '#c16068';
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
             this.scheduleData();
         }
     }
+
     get fill(): string | undefined {
         return this._fill;
     }
 
-    private _stroke: string | undefined = undefined;
+    private _stroke: string | undefined = '#874349';
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
             this.scheduleData();
         }
     }
+
     get stroke(): string | undefined {
         return this._stroke;
     }
@@ -83,6 +85,7 @@ export class ScatterSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -94,6 +97,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
+
     get fillOpacity(): number {
         return this._fillOpacity;
     }
@@ -105,6 +109,7 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
+
     get strokeOpacity(): number {
         return this._strokeOpacity;
     }
@@ -126,7 +131,7 @@ export class ScatterSeries extends CartesianSeries {
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
 
     constructor() {
         super();
@@ -337,41 +342,47 @@ export class ScatterSeries extends CartesianSeries {
         } = this;
 
         const color = fill || 'gray';
+        const title = this.title || yName;
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
+
+        let content = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
+            + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
+
+        if (sizeKey) {
+            content += `<br><b>${sizeName}</b>: ${datum[sizeKey]}`;
+        }
+
+        if (labelKey) {
+            content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
+        }
+
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return toTooltipHtml(tooltipRenderer({
+                datum,
                 xKey,
-                yKey,
-                sizeKey,
-                labelKey,
+                xValue,
                 xName,
+                yKey,
+                yValue,
                 yName,
+                sizeKey,
                 sizeName,
+                labelKey,
                 labelName,
-                title: this.title,
+                title,
                 color
-            });
-        } else {
-            const title = this.title || yName;
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
-            const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xKey];
-            const yValue = seriesDatum[yKey];
-            let contentHtml = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
-                + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
-
-            if (sizeKey) {
-                contentHtml += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
-            }
-
-            if (labelKey) {
-                contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
-            }
-
-            return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${contentHtml}</div>`;
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

@@ -169,20 +169,10 @@ export class RowCssClassCalculator {
     public calculateRowLevel(rowNode: RowNode): number {
         if (rowNode.group) {
             return rowNode.level;
-        } else {
-            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            return rowNode.parent ? (rowNode.parent.level + 1) : 0;
         }
-    }
 
-    public isExpandable(rowNode: RowNode): boolean {
-        const isTreeData = this.gridOptionsWrapper.isTreeData();
-        const res = isTreeData ?
-            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
-            rowNode.childrenAfterGroup!=null && rowNode.childrenAfterGroup.length > 0:
-            // if normal row grouping, we add expanded classes to groups only
-            rowNode.group && !rowNode.footer;
-        return res;
+        // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+        return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     }
 
 }

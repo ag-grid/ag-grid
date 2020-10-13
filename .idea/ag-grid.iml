@@ -19,6 +19,11 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue-legacy/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue-legacy/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/all-modules/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts/node_modules" />
@@ -26,6 +31,8 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/clipboard/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/column-tool-panel/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/date-time-cell-editor/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/filter-tool-panel/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/master-detail/node_modules.nosync" />

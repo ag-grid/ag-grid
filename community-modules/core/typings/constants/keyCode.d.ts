@@ -1,7 +1,6 @@
 export declare class KeyCode {
     static BACKSPACE: number;
     static TAB: number;
-    static NEW_LINE: number;
     static ENTER: number;
     static SHIFT: number;
     static ESCAPE: number;

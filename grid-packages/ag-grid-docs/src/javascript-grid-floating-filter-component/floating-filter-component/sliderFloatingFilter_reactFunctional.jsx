@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 export default forwardRef((props, ref) => {
     const [currentValue, setCurrentValue] = useState(0);
@@ -15,7 +15,7 @@ export default forwardRef((props, ref) => {
                 // so just read off the value and use that
                 setCurrentValue(!parentModel ? 0 : parentModel.filter);
             }
-        }
+        };
     });
 
     const valueChanged = event => {
@@ -32,11 +32,11 @@ export default forwardRef((props, ref) => {
 
     return (
         <input type="range"
-               value={currentValue}
-               min={0}
-               max={props.maxValue}
-               step={1}
-               onChange={valueChanged}/>
+            value={currentValue}
+            min={0}
+            max={props.maxValue}
+            step={1}
+            onChange={valueChanged} />
     );
 });
 

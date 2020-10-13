@@ -14,28 +14,28 @@ import {
     PostConstruct,
     RefSelector,
     TouchListener,
-    ManagedFocusComponent,
     KeyCode,
-    ColumnEventType
+    ColumnEventType, Component
 } from "@ag-grid-community/core";
-import { BaseColumnItem } from "./primaryColsPanel";
-import { ColumnFilterResults } from "./primaryColsListPanel";
+import { ColumnModelItem } from "./columnModelItem";
+import {ModelItemUtils} from "./modelItemUtils";
 
-export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
+export class ToolPanelColumnGroupComp extends Component {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group" tabindex="-1" role="treeitem">
+        `<div class="ag-column-select-column-group" aria-hidden="true">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;
@@ -48,32 +48,21 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
 
     private readonly columnGroup: OriginalColumnGroup;
     private readonly columnDept: number;
-    private readonly expandedCallback: () => void;
-    private readonly allowDragging: boolean;
 
-    private expanded: boolean;
     private displayName: string | null;
     private processingColumnStateChange = false;
-    private getFilterResultsCallback: () => ColumnFilterResults;
-    private eventType: ColumnEventType;
 
     constructor(
-        columnGroup: OriginalColumnGroup,
-        columnDept: number,
-        allowDragging: boolean,
-        expandByDefault: boolean,
-        expandedCallback: () => void,
-        getFilterResults: () => ColumnFilterResults,
-        eventType: ColumnEventType
+        private readonly modelItem: ColumnModelItem,
+        private readonly allowDragging: boolean,
+        private readonly eventType: ColumnEventType,
+        private readonly focusWrapper: HTMLElement
     ) {
         super();
-        this.columnGroup = columnGroup;
-        this.columnDept = columnDept;
+        this.modelItem = modelItem;
+        this.columnGroup = modelItem.getColumnGroup();
+        this.columnDept = modelItem.getDept();
         this.allowDragging = allowDragging;
-        this.expanded = expandByDefault;
-        this.expandedCallback = expandedCallback;
-        this.getFilterResultsCallback = getFilterResults;
-        this.eventType = eventType;
     }
 
     @PostConstruct
@@ -100,6 +89,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
 
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.modelItem, ColumnModelItem.EVENT_EXPANDED_CHANGED, this.onExpandChanged.bind(this));
+        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
 
         this.setOpenClosedIcons();
         this.setupDragging();
@@ -111,20 +102,22 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    private handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case KeyCode.LEFT:
+                e.preventDefault();
+                this.modelItem.setExpanded(false);
+                break;
             case KeyCode.RIGHT:
                 e.preventDefault();
-                if (this.isExpandable()) {
-                    this.toggleExpandOrContract(e.keyCode === KeyCode.RIGHT);
-                }
+                this.modelItem.setExpanded(true);
                 break;
             case KeyCode.SPACE:
                 e.preventDefault();
                 if (this.isSelectable()) {
                     this.onSelectAllChanged(!this.isSelected());
                 }
+                break;
         }
     }
 
@@ -187,6 +180,25 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         this.onChangeCommon(event.selected);
     }
 
+    private getVisibleLeafColumns(): Column[] {
+        const childColumns: Column[] = [];
+
+        const extractCols = (children: ColumnModelItem[]) => {
+            children.forEach( child => {
+                if (!child.isPassesFilter()) { return; }
+                if (child.isGroup()) {
+                    extractCols(child.getChildren());
+                } else {
+                    childColumns.push(child.getColumn());
+                }
+            })
+        };
+
+        extractCols(this.modelItem.getChildren());
+
+        return childColumns;
+    }
+
     private onChangeCommon(nextState: boolean): void {
         this.refreshAriaLabel();
 
@@ -194,94 +206,12 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             return;
         }
 
-        const childColumns = this.columnGroup.getLeafColumns();
-
-        if (this.columnController.isPivotMode()) {
-            if (nextState) {
-                this.actionCheckedReduce(childColumns);
-            } else {
-                this.actionUnCheckedReduce(childColumns);
-            }
-        } else {
-            const isAllowedColumn = (c: Column) => !c.getColDef().lockVisible && !c.getColDef().suppressColumnsToolPanel;
-            const allowedColumns = childColumns.filter(isAllowedColumn);
-
-            const filterResults = this.getFilterResultsCallback();
-            const passesFilter = (c: Column) => !filterResults || filterResults[c.getColId()];
-            const visibleColumns = allowedColumns.filter(passesFilter);
-
-            // only columns that are 'allowed' and pass filter should be visible
-            this.columnController.setColumnsVisible(visibleColumns, nextState, this.eventType);
-        }
+        this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     }
 
     private refreshAriaLabel(): void {
         const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.getGui(), `${this.displayName} column group toggle visibility (${state})`);
-    }
-
-    private actionUnCheckedReduce(columns: Column[]): void {
-
-        const columnsToUnPivot: Column[] = [];
-        const columnsToUnValue: Column[] = [];
-        const columnsToUnGroup: Column[] = [];
-
-        columns.forEach(column => {
-            if (column.isPivotActive()) {
-                columnsToUnPivot.push(column);
-            }
-            if (column.isRowGroupActive()) {
-                columnsToUnGroup.push(column);
-            }
-            if (column.isValueActive()) {
-                columnsToUnValue.push(column);
-            }
-        });
-
-        if (columnsToUnPivot.length > 0) {
-            this.columnController.removePivotColumns(columnsToUnPivot, this.eventType);
-        }
-        if (columnsToUnGroup.length > 0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup, this.eventType);
-        }
-        if (columnsToUnValue.length > 0) {
-            this.columnController.removeValueColumns(columnsToUnValue, this.eventType);
-        }
-    }
-
-    private actionCheckedReduce(columns: Column[]): void {
-
-        const columnsToAggregate: Column[] = [];
-        const columnsToGroup: Column[] = [];
-        const columnsToPivot: Column[] = [];
-
-        columns.forEach(column => {
-            // don't change any column that's already got a function active
-            if (column.isAnyFunctionActive()) {
-                return;
-            }
-
-            if (column.isAllowValue()) {
-                columnsToAggregate.push(column);
-                return;
-            }
-
-            if (column.isAllowRowGroup()) {
-                columnsToGroup.push(column);
-                columnsToPivot.push(column);
-                return;
-            }
-        });
-
-        if (columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(columnsToAggregate, this.eventType);
-        }
-        if (columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(columnsToGroup, this.eventType);
-        }
-        if (columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(columnsToPivot, this.eventType);
-        }
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} column group toggle visibility (${state})`);
     }
 
     public onColumnStateChanged(): void {
@@ -296,50 +226,27 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
 
     private workOutSelectedValue(): boolean | undefined {
         const pivotMode = this.columnController.isPivotMode();
-        const leafColumns = this.columnGroup.getLeafColumns();
-        const filterResults = this.getFilterResultsCallback();
 
-        const len = leafColumns.length;
-        const count = { visible: 0, hidden: 0 };
-        const ignoredChildCount = { visible: 0, hidden: 0 };
+        const visibleLeafColumns = this.getVisibleLeafColumns();
 
-        for (let i = 0; i < len; i++) {
-            const column = leafColumns[i];
+        let checkedCount = 0;
+        let uncheckedCount = 0;
 
-            // ignore lock visible columns and columns set to 'suppressColumnsToolPanel'
-            let ignore = column.getColDef().lockVisible || column.getColDef().suppressColumnsToolPanel;
-            const type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
+        visibleLeafColumns.forEach( column => {
+            if (!pivotMode && column.getColDef().lockVisible) { return; }
 
-            count[type]++;
-
-            // also ignore columns that have been removed by the filter
-            if (filterResults) {
-                const columnPassesFilter = filterResults[column.getColId()];
-                if (!columnPassesFilter) {
-                    ignore = true;
-                }
+            if (this.isColumnChecked(column, pivotMode)) {
+                checkedCount++;
+            } else {
+                uncheckedCount++;
             }
+        });
 
-            if (!ignore) { continue; }
-
-            ignoredChildCount[type]++;
-        }
-
-        // if all columns are ignored we use the regular count, if not
-        // we only consider the columns that were not ignored
-        if (ignoredChildCount.visible + ignoredChildCount.hidden !== len) {
-            count.visible -= ignoredChildCount.visible;
-            count.hidden -= ignoredChildCount.hidden;
-        }
-
-        let selectedValue: boolean | null;
-        if (count.visible > 0 && count.hidden > 0) {
-            selectedValue = null;
+        if (checkedCount > 0 && uncheckedCount > 0) {
+            return undefined;
         } else {
-            selectedValue = count.visible > 0;
+            return checkedCount > 0;
         }
-
-        return selectedValue == null ? undefined : selectedValue;
     }
 
     private workOutReadOnlyValue(): boolean {
@@ -362,7 +269,7 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
         return colsThatCanAction === 0;
     }
 
-    private isColumnVisible(column: Column, pivotMode: boolean): boolean {
+    private isColumnChecked(column: Column, pivotMode: boolean): boolean {
         if (pivotMode) {
             const pivoted = column.isPivotActive();
             const grouped = column.isRowGroupActive();
@@ -374,30 +281,23 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
     }
 
     private onExpandOrContractClicked(): void {
-        this.toggleExpandOrContract();
+        const oldState = this.modelItem.isExpanded();
+        this.modelItem.setExpanded(!oldState);
     }
 
-    private toggleExpandOrContract(expanded?: boolean) {
-        if (expanded === undefined) { expanded = !this.expanded; }
-
-        this.expanded = expanded;
+    private onExpandChanged() {
         this.setOpenClosedIcons();
-        this.expandedCallback();
         this.refreshAriaExpanded();
     }
 
     private setOpenClosedIcons(): void {
-        const folderOpen = this.expanded;
+        const folderOpen = this.modelItem.isExpanded();
         _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
         _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.getGui(), this.expanded);
-    }
-
-    public isExpanded(): boolean {
-        return this.expanded;
+        _.setAriaExpanded(this.focusWrapper, this.modelItem.isExpanded());
     }
 
     public getDisplayName(): string | null {
@@ -419,16 +319,6 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
 
     public isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
-    }
-
-    public isExpandable(): boolean {
-        return true;
-    }
-
-    public setExpanded(value: boolean): void {
-        if (this.expanded !== value) {
-            this.onExpandOrContractClicked();
-        }
     }
 
     public setSelected(selected: boolean) {

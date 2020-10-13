@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -319,8 +319,13 @@ var FilterManager = /** @class */ (function (_super) {
         var _this = this;
         return function (node) { return _this.valueService.getValue(column, node, true); };
     };
-    FilterManager.prototype.getFilterComponent = function (column, source) {
-        return this.getOrCreateFilterWrapper(column, source).filterPromise;
+    FilterManager.prototype.getFilterComponent = function (column, source, createIfDoesNotExist) {
+        if (createIfDoesNotExist === void 0) { createIfDoesNotExist = true; }
+        if (createIfDoesNotExist) {
+            return this.getOrCreateFilterWrapper(column, source).filterPromise;
+        }
+        var filterWrapper = this.cachedFilter(column);
+        return filterWrapper ? filterWrapper.filterPromise : null;
     };
     FilterManager.prototype.isFilterActive = function (column) {
         var filterWrapper = this.cachedFilter(column);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -124,6 +124,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
+export { KeyName } from "./constants/keyName";
 export { Grid } from "./grid";
 export { GridApi } from "./gridApi";
 export { Events } from "./eventKeys";

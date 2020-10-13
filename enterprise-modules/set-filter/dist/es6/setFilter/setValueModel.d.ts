@@ -1,4 +1,4 @@
-import { ColDef, Column, IRowModel, Promise, ValueFormatterService, IEventEmitter, RowNode } from '@ag-grid-community/core';
+import { ColDef, Column, IRowModel, ISetFilterParams, Promise, ValueFormatterService, IEventEmitter, RowNode } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -6,6 +6,7 @@ export declare enum SetFilterModelValuesType {
     TAKEN_FROM_GRID_VALUES = 2
 }
 export declare class SetValueModel implements IEventEmitter {
+    private readonly filterParams;
     private readonly colDef;
     private readonly column;
     private readonly doesRowPassOtherFilters;
@@ -15,7 +16,6 @@ export declare class SetValueModel implements IEventEmitter {
     private readonly translate;
     static EVENT_AVAILABLE_VALUES_CHANGED: string;
     private readonly localEventService;
-    private readonly filterParams;
     private readonly formatter;
     private readonly clientSideValuesExtractor;
     private valuesType;
@@ -32,7 +32,7 @@ export declare class SetValueModel implements IEventEmitter {
     private displayedValues;
     /** Values that have been selected for this filter. */
     private selectedValues;
-    constructor(rowModel: IRowModel, valueGetter: (node: RowNode) => any, colDef: ColDef, column: Column, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
+    constructor(rowModel: IRowModel, valueGetter: (node: RowNode) => any, filterParams: ISetFilterParams, colDef: ColDef, column: Column, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     /**
@@ -62,7 +62,7 @@ export declare class SetValueModel implements IEventEmitter {
     private updateDisplayedValues;
     getDisplayedValueCount(): number;
     getDisplayedValue(index: any): string;
-    isFilterActive(): boolean;
+    hasSelections(): boolean;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string | null;
     getValues(): string[];

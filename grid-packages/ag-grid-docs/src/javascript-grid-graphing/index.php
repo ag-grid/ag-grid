@@ -15,10 +15,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        This page pre-dates the introduction of the grid's own
-        <a href="../javascript-grid-charts-integrated-overview/">integrated charting library</a> in v21.
-        It is our plan in the future to add support to our charting library
-        to achieve the below, but for now we will leave these examples using D3 and Sparklines.
+        This section pre-dates <a href="../javascript-grid-charts-integrated-overview/">Integrated Charts</a>.
+        It is our plan to add support to our charting library to achieve the below, but for now we will leave these examples using D3 and Sparklines.
     </note>
 
     <h2>External Graphs using D3</h2>

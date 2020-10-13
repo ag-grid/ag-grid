@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Working with Data: View Refresh";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is View Refresh. If the data changes outside of the grid, get the grid to do a View Refresh to update the UI to the latest values. The grid will use change detection to only refresh values that have changed. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is View Refresh. If the data changes outside of the grid, get the grid to do a View Refresh to update the UI to the latest values. The grid will use change detection to only refresh values that have changed. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Refresh";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     </p>
         <ul class="content">
             <li>
-                <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will 
+                <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will
                 be used to refresh only cells whose display cell values are out of sync with the actual value.
                 If using a <a href="../javascript-grid-cell-rendering-components/">cellRenderer</a> with a refresh
                 method, the refresh method will get called.
@@ -63,8 +63,8 @@ interface RefreshCellsParams {
 }</snippet>
 
     <p>
-        Each parameter is optional. The simplest is to call with no parameters which will 
-        refresh all cells using <a href="../javascript-grid-change-detection/">change detection</a> 
+        Each parameter is optional. The simplest is to call with no parameters which will
+        refresh all cells using <a href="../javascript-grid-change-detection/">change detection</a>
         (change detection means it will only refresh cells whose values have changed).
     </p>
 
@@ -119,7 +119,7 @@ interface RefreshCellsParams {
         </li>
     </ul>
 
-    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated', ['reactFunctional' => true]) ?>
+    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated') ?>
 
     <note>
         You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
@@ -185,7 +185,7 @@ interface RedrawRowsParams {
 
     </ul>
 
-    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', ['exampleHeight' => 615, 'reactFunctional' => true]) ?>
+    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', ['exampleHeight' => 615]) ?>
 
 
 

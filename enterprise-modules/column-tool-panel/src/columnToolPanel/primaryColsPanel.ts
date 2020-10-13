@@ -10,15 +10,6 @@ import {
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 
-export interface BaseColumnItem {
-    getDisplayName(): string | null;
-    onSelectAllChanged(value: boolean): void;
-    isSelected(): boolean;
-    isSelectable(): boolean;
-    isExpandable(): boolean;
-    setExpanded(value: boolean): void;
-}
-
 export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
 
     private static TEMPLATE = /* html */
@@ -91,7 +82,7 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
     }
 
     public syncLayoutWithGrid(): void {
-        this.primaryColsListPanel.syncColumnLayout();
+        this.primaryColsListPanel.onColumnsChanged();
     }
 
     private onSelectAll(): void {

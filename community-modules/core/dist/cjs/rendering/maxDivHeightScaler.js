@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,6 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
     }
     MaxDivHeightScaler.prototype.postConstruct = function () {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.maxDivHeight = browser_1.getMaxDivHeight();
     };
     MaxDivHeightScaler.prototype.registerGridComp = function (gridPanel) {
@@ -120,9 +119,6 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
         var scrollPixel = this.maxScrollY * scrollPercent;
         return scrollPixel;
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], MaxDivHeightScaler.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.PostConstruct
     ], MaxDivHeightScaler.prototype, "postConstruct", null);

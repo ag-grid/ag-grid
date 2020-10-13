@@ -461,7 +461,8 @@ export class UserComponentFactory extends BeanStub {
 
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                mergeDeep(params, userParams(paramsFromGrid));
+                const userParamsFromFunc = userParams(paramsFromGrid);
+                mergeDeep(params, userParamsFromFunc);
             } else if (typeof userParams === 'object') {
                 mergeDeep(params, userParams);
             }

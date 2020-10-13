@@ -1,14 +1,8 @@
 import { BeanStub } from "../context/beanStub";
 import { Component } from "./component";
-import { ColDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { CellPosition } from "../entities/cellPosition";
+import { ITooltipParams } from "../rendering/tooltipComponent";
 export interface TooltipParentComp extends Component {
-    getTooltipText(): string;
-    getComponentHolder(): ColDef | undefined;
-    getColumn?(): Column | ColumnGroup;
-    getCellPosition?(): CellPosition;
+    getTooltipParams(): ITooltipParams;
 }
 export declare class TooltipFeature extends BeanStub {
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT;
@@ -20,7 +14,6 @@ export declare class TooltipFeature extends BeanStub {
     private columnApi;
     private gridApi;
     private gridOptionsWrapper;
-    private readonly location;
     private tooltipShowDelay;
     private parentComp;
     private showTooltipTimeoutId;
@@ -31,11 +24,12 @@ export declare class TooltipFeature extends BeanStub {
     private tooltipPopupDestroyFunc;
     private tooltipInstanceCount;
     private tooltipMouseTrack;
-    constructor(parentComp: TooltipParentComp, location: string);
+    constructor(parentComp: TooltipParentComp);
     private postConstruct;
     protected destroy(): void;
     onMouseEnter(e: MouseEvent): void;
     onMouseLeave(): void;
+    private onKeyDown;
     private setToDoNothing;
     onMouseMove(e: MouseEvent): void;
     onMouseDown(): void;

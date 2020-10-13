@@ -153,8 +153,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private setupSyncWithFilter(): void {
         const syncWithFilter = (filterChangedEvent: FilterChangedEvent) => {
-            const parentModel = this.getFilterComponent().resolveNow(null, filter => filter.getModel());
-            this.onParentModelChanged(parentModel, filterChangedEvent);
+            this.onParentModelChanged(this.currentParentModel(), filterChangedEvent);
         };
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
@@ -222,8 +221,8 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.getFilterComponent().then(callback);
     }
 
-    private getFilterComponent(): Promise<IFilterComp> {
-        return this.filterManager.getFilterComponent(this.column, 'NO_UI');
+    private getFilterComponent(createIfDoesNotExist = true): Promise<IFilterComp> {
+        return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
     }
 
     public static getDefaultFloatingFilterType(def: IFilterDef): string {
@@ -301,7 +300,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     private currentParentModel(): any {
-        return this.getFilterComponent().resolveNow(null, filter => filter.getModel());
+        const filterComponent = this.getFilterComponent(false);
+
+        return filterComponent ? filterComponent.resolveNow(null, filter => filter.getModel()) : null;
     }
 
     private onParentModelChanged(model: any, filterChangedEvent: FilterChangedEvent): void {

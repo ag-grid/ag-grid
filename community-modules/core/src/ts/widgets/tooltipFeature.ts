@@ -2,22 +2,16 @@ import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { ColumnApi } from "../columnController/columnApi";
 import { Component } from "./component";
-import { ColDef } from "../entities/colDef";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
-import { CellPosition } from "../entities/cellPosition";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { addCssClass, containsClass } from "../utils/dom";
+import { exists } from "../utils/generic";
 
 export interface TooltipParentComp extends Component {
-    getTooltipText(): string;
-    getComponentHolder(): ColDef | undefined;
-    getColumn?(): Column | ColumnGroup;
-    getCellPosition?(): CellPosition;
+    getTooltipParams(): ITooltipParams;
 }
 
 enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
@@ -37,8 +31,6 @@ export class TooltipFeature extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-    private readonly location: string;
 
     private tooltipShowDelay: number;
 
@@ -60,10 +52,9 @@ export class TooltipFeature extends BeanStub {
 
     private tooltipMouseTrack: boolean = false;
 
-    constructor(parentComp: TooltipParentComp, location: string) {
+    constructor(parentComp: TooltipParentComp) {
         super();
         this.parentComp = parentComp;
-        this.location = location;
     }
 
     @PostConstruct
@@ -77,6 +68,7 @@ export class TooltipFeature extends BeanStub {
         this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
         this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
     }
 
     protected destroy(): void {
@@ -102,6 +94,10 @@ export class TooltipFeature extends BeanStub {
     }
 
     public onMouseLeave(): void {
+        this.setToDoNothing();
+    }
+
+    private onKeyDown(): void {
         this.setToDoNothing();
     }
 
@@ -172,28 +168,20 @@ export class TooltipFeature extends BeanStub {
     }
 
     private showTooltip(): void {
-        const tooltipText = this.parentComp.getTooltipText();
+        const params: ITooltipParams = {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext(),
+            ...this.parentComp.getTooltipParams()
+        };
 
-        if (!tooltipText) {
+        if (!exists(params.value)) {
             this.setToDoNothing();
             return;
         }
 
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
-
-        const hasColumn = !!this.parentComp.getColumn;
-
-        const params: ITooltipParams = {
-            location: this.location,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            colDef: this.parentComp.getComponentHolder(),
-            column: hasColumn ? this.parentComp.getColumn() : undefined,
-            context: this.gridOptionsWrapper.getContext(),
-            rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
-            value: tooltipText
-        };
 
         // we pass in tooltipInstanceCount so the callback knows what the count was when
         // we requested the tooltip, so if another tooltip was requested in the mean time

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,7 @@ var object_1 = require("./utils/object");
 var generic_1 = require("./utils/generic");
 var string_1 = require("./utils/string");
 var function_1 = require("./utils/function");
+var utils_1 = require("./utils");
 var GridApi = /** @class */ (function () {
     function GridApi() {
         this.detailGridInfoMap = {};
@@ -773,7 +774,25 @@ var GridApi = /** @class */ (function () {
         // destroy the services
         this.context.destroy();
     };
+    GridApi.prototype.cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid = function () {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in teh API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(utils_1._.removeAllReferences.bind(window, this, 'Grid API'), 100);
+    };
+    GridApi.prototype.warnIfDestroyed = function (methodName) {
+        if (this.destroyCalled) {
+            console.warn("ag-Grid: Grid API method " + methodName + " was called on a grid that was destroyed.");
+        }
+        return this.destroyCalled;
+    };
     GridApi.prototype.resetQuickFilter = function () {
+        if (this.warnIfDestroyed('resetQuickFilter')) {
+            return;
+        }
         this.rowModel.forEachNode(function (node) { return node.quickFilterAggregateText = null; });
     };
     GridApi.prototype.getRangeSelections = function () {
@@ -934,22 +953,24 @@ var GridApi = /** @class */ (function () {
             this.aggFuncService.clear();
         }
     };
+    GridApi.prototype.applyServerSideTransaction = function (rowDataTransaction, route) {
+        if (route === void 0) { route = []; }
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+        }
+    };
     GridApi.prototype.applyTransaction = function (rowDataTransaction) {
         var res = null;
         if (this.clientSideRowModel) {
-            if (rowDataTransaction && rowDataTransaction.addIndex != null) {
-                var message_1 = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
-                function_1.doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
-            }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
         else if (this.infiniteRowModel) {
-            var message_2 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            function_1.doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
+            var message_1 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            function_1.doOnce(function () { return console.warn(message_1); }, 'applyTransaction infiniteRowModel deprecated');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         }
         else {
-            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
             return;
         }
         // refresh all the full width rows
@@ -1244,6 +1265,9 @@ var GridApi = /** @class */ (function () {
     __decorate([
         context_1.PostConstruct
     ], GridApi.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy
+    ], GridApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
     GridApi = __decorate([
         context_1.Bean('gridApi')
     ], GridApi);

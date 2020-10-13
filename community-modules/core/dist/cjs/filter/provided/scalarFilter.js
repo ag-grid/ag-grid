@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,25 +40,6 @@ var ScalarFilter = /** @class */ (function (_super) {
             this.scalarFilterParams.includeBlanksInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
         }
     };
-    ScalarFilter.prototype.nullComparator = function (selectedOption, filterValue, gridValue) {
-        if (gridValue == null) {
-            switch (selectedOption) {
-                case ScalarFilter.EMPTY:
-                    return 0;
-                case ScalarFilter.EQUALS:
-                    return this.scalarFilterParams.includeBlanksInEquals ? 0 : 1;
-                case ScalarFilter.NOT_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInEquals ? 1 : 0;
-                case ScalarFilter.GREATER_THAN:
-                case ScalarFilter.GREATER_THAN_OR_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInGreaterThan ? 1 : -1;
-                case ScalarFilter.LESS_THAN:
-                case ScalarFilter.LESS_THAN_OR_EQUAL:
-                    return this.scalarFilterParams.includeBlanksInLessThan ? -1 : 1;
-            }
-        }
-        return this.comparator()(filterValue, gridValue);
-    };
     ScalarFilter.prototype.individualConditionPasses = function (params, filterModel) {
         var cellValue = this.scalarFilterParams.valueGetter(params.node);
         var range = this.mapRangeFromModel(filterModel);
@@ -72,7 +53,36 @@ var ScalarFilter = /** @class */ (function (_super) {
                 return customFilterOption.test(filterValue, cellValue);
             }
         }
-        var compareResult = this.nullComparator(filterType, filterValue, cellValue);
+        if (cellValue == null) {
+            switch (filterType) {
+                case ScalarFilter.EQUALS:
+                case ScalarFilter.NOT_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInEquals) {
+                        return true;
+                    }
+                    break;
+                case ScalarFilter.GREATER_THAN:
+                case ScalarFilter.GREATER_THAN_OR_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInGreaterThan) {
+                        return true;
+                    }
+                    break;
+                case ScalarFilter.LESS_THAN:
+                case ScalarFilter.LESS_THAN_OR_EQUAL:
+                    if (this.scalarFilterParams.includeBlanksInLessThan) {
+                        return true;
+                    }
+                    break;
+                case ScalarFilter.IN_RANGE:
+                    if (this.scalarFilterParams.includeBlanksInRange) {
+                        return true;
+                    }
+                    break;
+            }
+            return false;
+        }
+        var comparator = this.comparator();
+        var compareResult = comparator(filterValue, cellValue);
         switch (filterType) {
             case ScalarFilter.EQUALS:
                 return compareResult === 0;
@@ -87,7 +97,7 @@ var ScalarFilter = /** @class */ (function (_super) {
             case ScalarFilter.LESS_THAN_OR_EQUAL:
                 return compareResult <= 0;
             case ScalarFilter.IN_RANGE: {
-                var compareToResult = this.nullComparator(filterType, filterValueTo, cellValue);
+                var compareToResult = comparator(filterValueTo, cellValue);
                 return this.scalarFilterParams.inRangeInclusive ?
                     compareResult >= 0 && compareToResult <= 0 :
                     compareResult > 0 && compareToResult < 0;

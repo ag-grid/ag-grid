@@ -62,7 +62,8 @@ function onChart2() {
                     enabled: false
                 }
             }
-        }
+        },
+        unlinkChart: true,
     };
 
     gridOptions.api.createRangeChart(params);

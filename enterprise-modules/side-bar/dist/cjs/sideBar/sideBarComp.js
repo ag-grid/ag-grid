@@ -53,16 +53,17 @@ var SideBarComp = /** @class */ (function (_super) {
         this.setDisplayed(false);
         var sideBar = this.gridOptionsWrapper.getSideBar();
         var sideBarExists = !!sideBar && !!sideBar.toolPanels;
-        if (sideBarExists) {
-            var shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
-            this.setDisplayed(shouldDisplaySideBar);
-            var toolPanelDefs = sideBar.toolPanels;
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
-            this.setSideBarPosition(sideBar.position);
-            if (!sideBar.hiddenByDefault) {
-                this.openToolPanel(sideBar.defaultToolPanel);
-            }
+        if (!sideBarExists) {
+            return;
+        }
+        var shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
+        this.setDisplayed(shouldDisplaySideBar);
+        var toolPanelDefs = sideBar.toolPanels;
+        this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
+        this.setupToolPanels(toolPanelDefs);
+        this.setSideBarPosition(sideBar.position);
+        if (!sideBar.hiddenByDefault) {
+            this.openToolPanel(sideBar.defaultToolPanel);
         }
     };
     SideBarComp.prototype.setSideBarPosition = function (position) {

@@ -50,15 +50,16 @@ var gridOptions = {
                     fill: 'black',
                     stroke: 'yellow',
                 },
-                tooltipRenderer: function(params) {
+                tooltipRenderer: function (params) {
                     var bin = params.datum;
                     var binSize = bin.frequency;
-                    var binMin = bin.domain[0];
-                    var binMax = bin.domain[1];
                     var medalColour = params.xKey;
 
-                    return '<span style="color: ' + params.color + '">' + binSize + (binSize >= 2 ? ' countries' : ' country') +
-                        ' got between ' + binMin + ' and ' + binMax + ' ' + medalColour + ' medals</span>';
+                    return {
+                        content: binSize + (binSize >= 2 ? ' countries' : ' country') +
+                            ' got between ' + params.xValue[0] + ' and ' +
+                            params.xValue[1] + ' ' + medalColour + ' medals'
+                    };
                 },
             }
         }

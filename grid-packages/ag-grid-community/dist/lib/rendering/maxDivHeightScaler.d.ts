@@ -5,7 +5,6 @@ import { GridPanel } from "../gridPanel/gridPanel";
  * the max div height actually allows.
  */
 export declare class MaxDivHeightScaler extends BeanStub {
-    private gridOptionsWrapper;
     private gridPanel;
     private maxDivHeight;
     private scaling;
@@ -16,7 +15,6 @@ export declare class MaxDivHeightScaler extends BeanStub {
     private scrollY;
     private uiBodyHeight;
     private maxScrollY;
-    private scrollBarWidth;
     private postConstruct;
     registerGridComp(gridPanel: GridPanel): void;
     isScaling(): boolean;

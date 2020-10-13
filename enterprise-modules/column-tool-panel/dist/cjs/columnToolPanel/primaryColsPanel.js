@@ -65,7 +65,7 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         this.primaryColsListPanel.setFilterText(event.filterText);
     };
     PrimaryColsPanel.prototype.syncLayoutWithGrid = function () {
-        this.primaryColsListPanel.syncColumnLayout();
+        this.primaryColsListPanel.onColumnsChanged();
     };
     PrimaryColsPanel.prototype.onSelectAll = function () {
         this.primaryColsListPanel.doSetSelectedAll(true);

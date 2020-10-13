@@ -20,10 +20,10 @@ var options = {
         yNames: ['Sweaters made', 'Hats made'],
         tooltipRenderer: function (params) {
             return '<div class="ag-chart-tooltip-title" style="background-color:' + params.color + '">' +
-                params.datum[params.xKey] +
+                params.xValue +
             '</div>' +
             '<div class="ag-chart-tooltip-content">' +
-                params.datum[params.yKey].toFixed(0) +
+                params.yValue.toFixed(0) +
             '</div>';
         }
     }]

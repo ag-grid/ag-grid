@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./simpleFilter";
@@ -14,6 +14,7 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     includeBlanksInEquals?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
+    includeBlanksInRange?: boolean;
     /** @deprecated in v21*/
     nullComparator?: NullComparator;
 }
@@ -29,6 +30,5 @@ export declare abstract class ScalarFilter<M extends ISimpleFilterModel, T> exte
     };
     protected setParams(params: IScalarFilterParams): void;
     private checkDeprecatedParams;
-    private nullComparator;
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel): boolean;
 }

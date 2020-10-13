@@ -255,6 +255,9 @@ var RangeController = /** @class */ (function (_super) {
     };
     RangeController.prototype.setCellRanges = function (cellRanges) {
         var _this = this;
+        if (_.shallowCompare(this.cellRanges, cellRanges)) {
+            return;
+        }
         this.removeAllCellRanges(true);
         cellRanges.forEach(function (newRange) {
             if (newRange.columns && newRange.startRow) {
@@ -411,18 +414,19 @@ var RangeController = /** @class */ (function (_super) {
         var allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
         var mouseCell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
+        var extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
         if (_.missing(mouseCell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
-        if (!multiSelectKeyPressed && (!shiftKey || _.exists(_.last(this.cellRanges).type))) {
+        if (!multiSelectKeyPressed && (!extendRange || _.exists(_.last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
         this.dragging = true;
         this.draggingCell = mouseCell;
         this.lastMouseEvent = mouseEvent;
-        if (!shiftKey) {
+        if (!extendRange) {
             this.newestRangeStartCell = mouseCell;
         }
         // if we didn't clear the ranges, then dragging means the user clicked, and when the

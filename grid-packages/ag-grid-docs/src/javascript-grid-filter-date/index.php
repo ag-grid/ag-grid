@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Date Filter: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Date Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -123,5 +123,21 @@ SNIPPET
     pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone
     issues.
 </p>
+
+<h2>Example: Date Filter</h2>
+
+<p>The example below shows the date filter in action, using some of the configuration options discussed above:</p>
+
+<ul>
+    <li>The <strong>Date</strong> column is using a Date Filter.</li>
+    <li>A custom <code>comparator</code> is provided to parse the data and allow date comparisons to be made.</li>
+    <li>The native date picker is forced to be used in every browser.</li>
+    <li>
+        The minimum valid year is set to <code>2000</code>, so dates entered into the filter with a year less than
+        2000 will not be recognised.
+    </li>
+</ul>
+
+<?= grid_example('Date Picker', 'date-filter', 'generated', ['exampleHeight' => 520, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

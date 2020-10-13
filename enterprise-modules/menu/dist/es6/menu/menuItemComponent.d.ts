@@ -1,4 +1,4 @@
-import { AgEvent, Component, MenuItemDef, IComponent } from "@ag-grid-community/core";
+import { AgEvent, Component, MenuItemDef, IComponent, ITooltipParams } from "@ag-grid-community/core";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
     disabled?: boolean;
@@ -33,8 +33,6 @@ export declare class MenuItemComponent extends Component {
     private deactivateTimeoutId;
     constructor(params: MenuItemComponentParams);
     private init;
-    getTooltipText(): string;
-    getComponentHolder(): undefined;
     isDisabled(): boolean;
     openSubMenu(activateFirstItem?: boolean): void;
     closeSubMenu(): void;
@@ -44,6 +42,7 @@ export declare class MenuItemComponent extends Component {
     private addIcon;
     private addName;
     private addTooltip;
+    getTooltipParams(): ITooltipParams;
     private addShortcut;
     private addSubMenu;
     private onItemSelected;

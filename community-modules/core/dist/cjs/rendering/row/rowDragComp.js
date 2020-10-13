@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,11 +35,11 @@ var icon_1 = require("../../utils/icon");
 var function_1 = require("../../utils/function");
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
-    function RowDragComp(rowNode, column, cellValue, beans) {
+    function RowDragComp(rowNode, column, cellValueFn, beans) {
         var _this = _super.call(this, /* html */ "<div class=\"ag-drag-handle ag-row-drag\" aria-hidden=\"true\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
-        _this.cellValue = cellValue;
+        _this.cellValueFn = cellValueFn;
         _this.beans = beans;
         return _this;
     }
@@ -76,7 +76,7 @@ var RowDragComp = /** @class */ (function (_super) {
         var dragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
-            defaultTextValue: this.cellValue,
+            defaultTextValue: this.cellValueFn(),
         };
         var rowDragText = this.column.getColDef().rowDragText;
         var dragSource = {
@@ -87,10 +87,11 @@ var RowDragComp = /** @class */ (function (_super) {
                 if (rowDragText) {
                     return rowDragText(dragItem, dragItemCount);
                 }
-                return dragItemCount === 1 ? _this.cellValue : dragItemCount + " rows";
+                return dragItemCount === 1 ? _this.cellValueFn() : dragItemCount + " rows";
             },
             getDragItem: function () { return dragItem; },
-            dragStartPixels: 0
+            dragStartPixels: 0,
+            dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });

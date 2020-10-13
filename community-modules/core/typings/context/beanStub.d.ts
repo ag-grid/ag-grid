@@ -10,6 +10,7 @@ export declare class BeanStub implements IEventEmitter {
     protected localEventService: EventService;
     private destroyFunctions;
     private destroyed;
+    __v_skip: boolean;
     private readonly frameworkOverrides;
     protected readonly context: Context;
     protected readonly eventService: EventService;

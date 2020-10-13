@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IAgLabel } from './agAbstractLabel';
@@ -9,6 +9,7 @@ export interface IInputField extends IAgLabel {
 }
 export declare abstract class AgAbstractInputField<TElement extends FieldElement, TValue, TConfig extends IInputField = IInputField> extends AgAbstractField<TValue, TConfig> {
     private readonly inputType;
+    private readonly displayFieldTag;
     protected readonly eLabel: HTMLElement;
     protected readonly eWrapper: HTMLElement;
     protected readonly eInput: TElement;

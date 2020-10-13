@@ -6,33 +6,48 @@ import { Caption } from "../../../caption";
 import { Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TooltipRendererResult } from "../../chart";
 export interface PieSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: PieSeries;
-    datum: any;
-    angleKey: string;
-    radiusKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: PieSeries;
+    readonly datum: any;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
 }
 interface PieNodeDatum extends SeriesNodeDatum {
-    index: number;
-    radius: number;
-    startAngle: number;
-    endAngle: number;
-    midAngle: number;
-    midCos: number;
-    midSin: number;
-    label?: {
-        text: string;
-        textAlign: CanvasTextAlign;
-        textBaseline: CanvasTextBaseline;
+    readonly index: number;
+    readonly radius: number;
+    readonly startAngle: number;
+    readonly endAngle: number;
+    readonly midAngle: number;
+    readonly midCos: number;
+    readonly midSin: number;
+    readonly label?: {
+        readonly text: string;
+        readonly textAlign: CanvasTextAlign;
+        readonly textBaseline: CanvasTextBaseline;
     };
 }
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
-    labelKey?: string;
-    labelName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 interface PieHighlightStyle extends HighlightStyle {
     centerOffset?: number;
+}
+export interface PieSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
+}
+export interface PieSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 declare class PieSeriesLabel extends Label {
     offset: number;
@@ -81,6 +96,9 @@ export declare class PieSeries extends PolarSeries {
     strokes: string[];
     fillOpacity: number;
     strokeOpacity: number;
+    lineDash?: number[];
+    lineDashOffset: number;
+    formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
     /**
      * The series rotation in degrees.
      */
@@ -99,7 +117,7 @@ export declare class PieSeries extends PolarSeries {
     private updateNodes;
     fireNodeClickEvent(datum: PieNodeDatum): void;
     getTooltipHtml(nodeDatum: PieNodeDatum): string;
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
     listSeriesItems(legendData: LegendDatum[]): void;
     toggleSeriesItem(itemId: number, enabled: boolean): void;
 }

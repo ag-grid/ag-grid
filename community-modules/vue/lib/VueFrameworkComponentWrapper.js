@@ -68,11 +68,7 @@ var VueFrameworkComponentWrapper = /** @class */ (function (_super) {
         return wrapper;
     };
     VueFrameworkComponentWrapper.prototype.createComponent = function (component, params) {
-        var componentType = VueComponentFactory.getComponentType(this.parent, component);
-        if (!componentType) {
-            return;
-        }
-        return VueComponentFactory.createAndMountComponent(params, componentType, this.parent);
+        return VueComponentFactory.createAndMountComponent(component, params, this.parent);
     };
     VueFrameworkComponentWrapper.prototype.createMethodProxy = function (wrapper, methodName, mandatory) {
         return function () {
@@ -101,16 +97,18 @@ var VueComponent = /** @class */ (function () {
     function VueComponent() {
     }
     VueComponent.prototype.getGui = function () {
-        return this.component.$el;
+        return this.componentInstance.$el;
     };
     VueComponent.prototype.destroy = function () {
-        this.component.$destroy();
+        this.mountedComponent.unmount();
     };
     VueComponent.prototype.getFrameworkComponentInstance = function () {
-        return this.component;
+        return this.componentInstance;
     };
     VueComponent.prototype.init = function (params) {
-        this.component = this.createComponent(params);
+        var _a = this.createComponent(params), mountedComponent = _a.mountedComponent, componentInstance = _a.componentInstance;
+        this.mountedComponent = mountedComponent;
+        this.componentInstance = componentInstance;
     };
     return VueComponent;
 }());

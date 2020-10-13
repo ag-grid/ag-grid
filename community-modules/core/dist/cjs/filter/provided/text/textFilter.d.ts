@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams } from '../../../interfaces/iFilter';
@@ -30,8 +30,9 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     private formatter;
     private textFilterParams;
     constructor();
+    static cleanInput(value: string): string;
     protected getDefaultDebounceMs(): number;
-    private getValue;
+    private getCleanValue;
     private addValueChangedListeners;
     protected setParams(params: ITextFilterParams): void;
     protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void;

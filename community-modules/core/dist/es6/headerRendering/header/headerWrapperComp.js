@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,12 +41,11 @@ import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "
 import { KeyCode } from '../../constants/keyCode';
 var HeaderWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderWrapperComp, _super);
-    function HeaderWrapperComp(column, dragSourceDropTarget, pinned) {
+    function HeaderWrapperComp(column, pinned) {
         var _this = _super.call(this, HeaderWrapperComp.TEMPLATE) || this;
         _this.headerCompVersion = 0;
         _this.refreshFunctions = [];
         _this.column = column;
-        _this.dragSourceDropTarget = dragSourceDropTarget;
         _this.pinned = pinned;
         return _this;
     }
@@ -139,7 +138,9 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         }
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         var params = this.createParams();
-        var res = this.headerComp.refresh(params);
+        // take any custom params off of the user
+        var finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+        var res = this.headerComp.refresh(finalParams);
         return res;
     };
     HeaderWrapperComp.prototype.addActiveHeaderMouseListeners = function () {
@@ -172,6 +173,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         if (e.keyCode === KeyCode.SPACE) {
             var checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                e.preventDefault();
                 checkbox.setValue(!checkbox.getValue());
             }
         }
@@ -236,13 +238,12 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.createParams = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        var enableSorting = colDef.sortable;
-        var enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         var params = {
             column: this.column,
             displayName: this.displayName,
-            enableSorting: enableSorting,
-            enableMenu: enableMenu,
+            enableSorting: colDef.sortable,
+            enableMenu: this.menuEnabled,
             showColumnMenu: function (source) {
                 _this.gridApi.showColumnMenuAfterButtonClick(_this.column, source);
             },
@@ -300,7 +301,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
             onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); }
         };
@@ -379,8 +379,17 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.resizeWithShiftKey = shiftKey;
         addCssClass(this.getGui(), 'ag-column-resizing');
     };
+    HeaderWrapperComp.prototype.getTooltipParams = function () {
+        var colDef = this.getComponentHolder();
+        return {
+            location: 'header',
+            colDef: colDef,
+            column: this.getColumn(),
+            value: this.getTooltipText(),
+        };
+    };
     HeaderWrapperComp.prototype.getTooltipText = function () {
-        return this.column.getColDef().headerTooltip;
+        return this.getComponentHolder().headerTooltip;
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var _this = this;
@@ -402,7 +411,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
                 _this.getGui().setAttribute('title', tooltipText);
             }
             else {
-                tooltipFeature = _this.createBean(new TooltipFeature(_this, 'header'));
+                tooltipFeature = _this.createBean(new TooltipFeature(_this));
             }
         };
         var refresh = function () {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -117,18 +117,17 @@ var RowDragFeature = /** @class */ (function (_super) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent(eventKeys_1.Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
-        if (this.gridOptionsWrapper.isRowDragManaged()) {
-            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-                rowNode.setDragging(true);
-            });
-        }
+        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+            rowNode.setDragging(true);
+        });
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.onDragging = function (draggingEvent) {
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.isFromThisGrid = function (draggingEvent) {
-        return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
+        var dragSourceDomDataKey = draggingEvent.dragSource.dragSourceDomDataKey;
+        return dragSourceDomDataKey === this.gridOptionsWrapper.getDomDataKey();
     };
     RowDragFeature.prototype.isDropZoneWithinThisGrid = function (draggingEvent) {
         var gridGui = this.gridPanel.getGui();
@@ -408,11 +407,9 @@ var RowDragFeature = /** @class */ (function (_super) {
     };
     RowDragFeature.prototype.stopDragging = function (draggingEvent) {
         this.ensureIntervalCleared();
-        if (this.gridOptionsWrapper.isRowDragManaged()) {
-            this.getRowNodes(draggingEvent).forEach(function (rowNode) {
-                rowNode.setDragging(false);
-            });
-        }
+        this.getRowNodes(draggingEvent).forEach(function (rowNode) {
+            rowNode.setDragging(false);
+        });
     };
     __decorate([
         context_1.Autowired('dragAndDropService')

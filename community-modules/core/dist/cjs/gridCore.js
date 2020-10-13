@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -137,10 +137,7 @@ var GridCore = /** @class */ (function (_super) {
         if (firstColumn.getParent()) {
             firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
         }
-        this.focusController.focusHeaderPosition({
-            headerRowIndex: 0,
-            column: firstColumn
-        });
+        this.focusController.focusHeaderPosition({ headerRowIndex: 0, column: firstColumn });
         return true;
     };
     GridCore.prototype.onGridSizeChanged = function () {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,9 @@ var StandardMenuFactory = /** @class */ (function (_super) {
     function StandardMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    StandardMenuFactory.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     StandardMenuFactory.prototype.hideActiveMenu = function () {
         if (this.hidePopup) {
             this.hidePopup();
@@ -92,17 +95,16 @@ var StandardMenuFactory = /** @class */ (function (_super) {
                 }
             }
         };
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        // hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         hidePopup = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
             closedCallback: closedCallback
         });
-        positionCallback(eMenu);
         filterWrapper.filterPromise.then(function (filter) {
+            // need to make sure the filter is present before positioning, as only
+            // after filter it is visible can we find out what the width of it is
+            positionCallback(eMenu);
             if (filter.afterGuiAttached) {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup: hidePopup });
             }

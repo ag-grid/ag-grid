@@ -4,7 +4,11 @@
     height: 100%;
 }
 
+.grid-wrapper { 
+    flex: 1 1 0px;
+}
+
 #myGrid {
-    flex: 1 1 auto;
+    height: 100%;
     width: 100%;
 }

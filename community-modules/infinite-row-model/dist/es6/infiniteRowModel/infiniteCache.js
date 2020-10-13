@@ -110,8 +110,7 @@ var InfiniteCache = /** @class */ (function (_super) {
         return block.getRow(rowIndex);
     };
     InfiniteCache.prototype.createBlock = function (blockNumber) {
-        var newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
-        this.getContext().createBean(newBlock);
+        var newBlock = this.createBean(new InfiniteBlock(blockNumber, this.cacheParams));
         this.postCreateBlock(newBlock);
         return newBlock;
     };

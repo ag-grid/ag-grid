@@ -93,17 +93,19 @@ function getTypes($dir)
     return $types;
 }
 
-function get_common_properties($type, $dir, $title, $options)
+function get_common_properties($type, $dir, $title, $options, $includeFunctionalReact = true)
 {
     $multi = $type === 'multi';
     $generated = $type === 'generated' || $type === 'mixed';
 
     if ($generated) {
-        $types = array('vanilla', 'angular', 'react');
-        if($options['reactFunctional']) {
-            array_push($types, 'reactFunctional');
+        $types = ['vanilla', 'angular', 'react'];
+
+        if ($includeFunctionalReact && $options['reactFunctional'] !== false) {
+            $types[]= 'reactFunctional';
         }
-        array_push($types, 'vue');
+
+        $types[]= 'vue';
     } else if ($multi) {
         $types = getTypes($dir);
     } else {
@@ -258,7 +260,7 @@ function chart_example($title, $dir, $type = 'vanilla', $options = array())
 {
     // $type can be: angular | vanilla | react | vue | multi | as-is | generated
 
-    $common_properties = get_common_properties($type, $dir, $title, $options);
+    $common_properties = get_common_properties($type, $dir, $title, $options, false);
     $multi = $common_properties['multi'];
     $generated = $common_properties['generated'];
     $types = $common_properties['types'];
@@ -407,6 +409,9 @@ function renderExampleExtras($config)
         ),
         'lodash' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
+        ),
+        'momentjs' => array(
+            'scripts' => array('https://momentjs.com/downloads/moment-with-locales.min.js')
         ),
         'alasql' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js')

@@ -34,9 +34,10 @@ include '../documentation-main/documentation_header.php';
     <p>You can configure the grid in the following ways through VueJS:</p>
     <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            VueJS event bindings eg <code>@modelUpdated="onModelUpdated"</code>.
+            VueJS event bindings eg <code>@model-updated="onModelUpdated"</code>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
+            Note: Event binding must use the kebab style naming (i.e. <code>@model-updated</code>.
         </li>
         <li><b>Properties:</b> All the data is provided to the grid as VueJS
             bindings. These are bound onto the ag-Grid properties bypassing the
@@ -219,8 +220,8 @@ components: {
     :isScrollLag="myIsScrollLagFunction"
 
     // these are registering events
-    @modelUpdated="onModelUpdated"
-    @cellClicked="onCellClicked"
+    @model-updated="onModelUpdated"
+    @cell-clicked="onCellClicked"
 &lt;/ag-grid-vue&gt;</snippet>
 
     <p>

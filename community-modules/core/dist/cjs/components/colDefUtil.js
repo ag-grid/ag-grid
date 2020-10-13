@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -149,6 +149,7 @@ var ColDefUtil = /** @class */ (function () {
         'equals',
         'pivotComparator',
         'suppressKeyboardEvent',
+        'suppressHeaderKeyboardEvent',
         'colSpan',
         'rowSpan',
         'getQuickFilterText',
@@ -167,7 +168,7 @@ var ColDefUtil = /** @class */ (function () {
     ColDefUtil.ALL_PROPERTIES = __spreadArrays(ColDefUtil.ARRAY_PROPERTIES, ColDefUtil.OBJECT_PROPERTIES, ColDefUtil.STRING_PROPERTIES, ColDefUtil.NUMBER_PROPERTIES, ColDefUtil.FUNCTION_PROPERTIES, ColDefUtil.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc
-    ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+    ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__v_skip', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
         'toColDef', 'createColDefFromGridColumn'];
     return ColDefUtil;
 }());

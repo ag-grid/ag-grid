@@ -87,7 +87,6 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
     // dropped into the grid's body.
     private getDropType(draggingEvent: DraggingEvent): DropType {
-
         if (this.columnController.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
             // a standard column move, however if it came from the toolpanel, then we are introducing

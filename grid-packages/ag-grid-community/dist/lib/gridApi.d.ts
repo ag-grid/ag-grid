@@ -62,6 +62,7 @@ export interface CreateRangeChartParams {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface CreatePivotChartParams {
@@ -69,6 +70,7 @@ export interface CreatePivotChartParams {
     chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface DetailGridInfo {
@@ -289,6 +291,8 @@ export declare class GridApi {
     removeGlobalListener(listener: Function): void;
     dispatchEvent(event: AgEvent): void;
     destroy(): void;
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
+    private warnIfDestroyed;
     resetQuickFilter(): void;
     getRangeSelections(): any;
     getCellRanges(): CellRange[];
@@ -322,6 +326,7 @@ export declare class GridApi {
         [key: string]: IAggFunc;
     }): void;
     clearAggFuncs(): void;
+    applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route?: string[]): void;
     applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
     /** @deprecated */
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;

@@ -5,40 +5,55 @@ import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TooltipRendererResult } from "../../chart";
 import { TypedEvent } from "../../../util/observable";
 export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: BarSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 export { BarTooltipRendererParams };
 interface BarNodeDatum extends SeriesNodeDatum {
-    yKey: string;
-    yValue: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string;
-        fontStyle?: FontStyle;
-        fontWeight?: FontWeight;
-        fontSize: number;
-        fontFamily: string;
-        fill: string;
-        x: number;
-        y: number;
+    readonly yKey: string;
+    readonly yValue: number;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
+        readonly x: number;
+        readonly y: number;
     };
 }
 declare class BarSeriesLabel extends Label {
     formatter?: (params: {
         value: number;
     }) => string;
+}
+export interface BarSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly xKey: string;
+    readonly yKey: string;
+}
+export interface BarSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 export declare class BarSeries extends CartesianSeries {
     static className: string;
@@ -56,12 +71,15 @@ export declare class BarSeries extends CartesianSeries {
      * in the {@link yKeys} setter.
      */
     private readonly seriesItemEnabled;
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
     flipXY: boolean;
     fills: string[];
     strokes: string[];
     fillOpacity: number;
     strokeOpacity: number;
+    lineDash?: number[];
+    lineDashOffset: number;
+    formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
     constructor();
     /**
      * Used to get the position of bars within each group.

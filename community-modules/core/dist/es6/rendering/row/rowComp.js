@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,6 +38,7 @@ var RowComp = /** @class */ (function (_super) {
     function RowComp(parentScope, bodyContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, fullWidthContainerComp, rowNode, beans, animateIn, useAnimationFrameForCreate, printLayout, embedFullWidth) {
         var _this = _super.call(this) || this;
         _this.eAllRowContainers = [];
+        _this.fullWidthRowDestroyFuncs = [];
         _this.active = true;
         _this.rowContainerReadyCount = 0;
         _this.refreshNeeded = false;
@@ -226,16 +227,16 @@ var RowComp = /** @class */ (function (_super) {
         var isGroupRow = this.rowNode.group && !this.rowNode.footer;
         var isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
         if (this.rowNode.stub) {
-            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
         }
         else if (isDetailCell) {
-            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
         }
         else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null);
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
         }
         else if (isFullWidthGroup) {
-            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
         }
         else {
             this.setupNormalRowContainers();
@@ -258,7 +259,7 @@ var RowComp = /** @class */ (function (_super) {
         this.createRowContainer(this.pinnedRightContainerComp, rightCols, function (eRow) { return _this.ePinnedRightRow = eRow; });
         this.createRowContainer(this.pinnedLeftContainerComp, leftCols, function (eRow) { return _this.ePinnedLeftRow = eRow; });
     };
-    RowComp.prototype.createFullWidthRows = function (type, name) {
+    RowComp.prototype.createFullWidthRows = function (type, name, detailRow) {
         var _this = this;
         this.fullWidthRow = true;
         if (this.embedFullWidth) {
@@ -266,7 +267,7 @@ var RowComp = /** @class */ (function (_super) {
                 _this.eFullWidthRowBody = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentBody = cellRenderer;
-            });
+            }, detailRow);
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) {
                 return;
@@ -275,12 +276,12 @@ var RowComp = /** @class */ (function (_super) {
                 _this.eFullWidthRowLeft = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentLeft = cellRenderer;
-            });
+            }, detailRow);
             this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
                 _this.eFullWidthRowRight = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentRight = cellRenderer;
-            });
+            }, detailRow);
         }
         else {
             // otherwise we add to the fullWidth container as normal
@@ -289,7 +290,7 @@ var RowComp = /** @class */ (function (_super) {
                 _this.eFullWidthRow = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponent = cellRenderer;
-            });
+            }, detailRow);
         }
     };
     RowComp.prototype.setAnimateFlags = function (animateIn) {
@@ -317,16 +318,16 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.refreshFullWidth = function () {
         var _this = this;
         // returns 'true' if refresh succeeded
-        var tryRefresh = function (eRow, eCellComp, pinned) {
-            if (!eRow || !eCellComp) {
+        var tryRefresh = function (eRow, cellComp, pinned) {
+            if (!eRow || !cellComp) {
                 return true;
             } // no refresh needed
             // no refresh method present, so can't refresh, hard refresh needed
-            if (!eCellComp.refresh) {
+            if (!cellComp.refresh) {
                 return false;
             }
             var params = _this.createFullWidthParams(eRow, pinned);
-            var refreshSucceeded = eCellComp.refresh(params);
+            var refreshSucceeded = cellComp.refresh(params);
             return refreshSucceeded;
         };
         var normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
@@ -416,8 +417,8 @@ var RowComp = /** @class */ (function (_super) {
         this.eAllRowContainers.forEach(function (row) { return addOrRemoveCssClass(row, 'ag-row-dragging', dragging); });
     };
     RowComp.prototype.updateExpandedCss = function () {
-        var expandable = this.beans.rowCssClassCalculator.isExpandable(this.rowNode);
-        var expanded = this.rowNode.expanded;
+        var expandable = this.rowNode.isExpandable();
+        var expanded = this.rowNode.expanded == true;
         this.eAllRowContainers.forEach(function (eRow) {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
             addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
@@ -432,13 +433,15 @@ var RowComp = /** @class */ (function (_super) {
         this.refreshCells();
     };
     RowComp.prototype.destroyFullWidthComponents = function () {
+        this.fullWidthRowDestroyFuncs.forEach(function (f) { return f(); });
+        this.fullWidthRowDestroyFuncs = [];
         if (this.fullWidthRowComponent) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponent);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentBody) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponentBody);
-            this.fullWidthRowComponent = null;
+            this.fullWidthRowComponentBody = null;
         }
         if (this.fullWidthRowComponentLeft) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_LEFT, this.fullWidthRowComponentLeft);
@@ -446,7 +449,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         if (this.fullWidthRowComponentRight) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_RIGHT, this.fullWidthRowComponentRight);
-            this.fullWidthRowComponent = null;
+            this.fullWidthRowComponentRight = null;
         }
     };
     RowComp.prototype.getContainerForCell = function (pinnedType) {
@@ -730,7 +733,7 @@ var RowComp = /** @class */ (function (_super) {
             this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed });
         }
     };
-    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, cellRendererName, eRowCallback, cellRendererCallback) {
+    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, cellRendererName, eRowCallback, cellRendererCallback, detailRow) {
         var _this = this;
         var rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
@@ -738,8 +741,11 @@ var RowComp = /** @class */ (function (_super) {
             var params = _this.createFullWidthParams(eRow, pinned);
             var callback = function (cellRenderer) {
                 if (_this.isAlive()) {
-                    var gui = cellRenderer.getGui();
-                    eRow.appendChild(gui);
+                    var eGui = cellRenderer.getGui();
+                    eRow.appendChild(eGui);
+                    if (detailRow) {
+                        _this.setupDetailRowAutoHeight(eGui);
+                    }
                     cellRendererCallback(cellRenderer);
                 }
                 else {
@@ -769,6 +775,36 @@ var RowComp = /** @class */ (function (_super) {
             eRowCallback(eRow);
             _this.angular1Compile(eRow);
         });
+    };
+    RowComp.prototype.setupDetailRowAutoHeight = function (eDetailGui) {
+        var _this = this;
+        if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) {
+            return;
+        }
+        var checkRowSizeFunc = function () {
+            var clientHeight = eDetailGui.clientHeight;
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight != null && clientHeight > 0) {
+                // we do the update in a timeout, to make sure we are not calling from inside the grid
+                // doing another update
+                var updateRowHeightFunc = function () {
+                    _this.rowNode.setRowHeight(clientHeight);
+                    if (_this.beans.clientSideRowModel) {
+                        _this.beans.clientSideRowModel.onRowHeightChanged();
+                    }
+                    else if (_this.beans.serverSideRowModel) {
+                        _this.beans.serverSideRowModel.onRowHeightChanged();
+                    }
+                };
+                _this.beans.frameworkOverrides.setTimeout(updateRowHeightFunc, 0);
+            }
+        };
+        var resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(eDetailGui, checkRowSizeFunc);
+        this.fullWidthRowDestroyFuncs.push(resizeObserverDestroyFunc);
+        checkRowSizeFunc();
     };
     RowComp.prototype.angular1Compile = function (element) {
         if (!this.scope) {
@@ -808,7 +844,7 @@ var RowComp = /** @class */ (function (_super) {
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
-            expandable: this.beans.rowCssClassCalculator.isExpandable(this.rowNode),
+            expandable: this.rowNode.isExpandable(),
             scope: this.scope
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
@@ -1108,7 +1144,6 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.destroyContainingCells = function () {
         var cellsToDestroy = Object.keys(this.cellComps);
         this.destroyCells(cellsToDestroy);
-        this.destroyFullWidthComponents();
     };
     // we clear so that the functions are never executed twice
     RowComp.prototype.getAndClearDelayedDestroyFunctions = function () {

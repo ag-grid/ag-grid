@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Pagination: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Pagination";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
 </p>
 
-<?= grid_example('Client Paging', 'client-paging', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Client Paging', 'client-paging', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="clientPagination">Supported Row Models</h2>
 
@@ -48,7 +48,7 @@ other row models check the relevant documentation for <a href="../javascript-gri
     automatically changes. To view this, open the example up in a new tab and resize your browser.
 </p>
 
-<?= grid_example('Auto Page Size', 'auto-page-size', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Auto Page Size', 'auto-page-size', 'generated', ['enterprise' => true]) ?>
 
 <note>
     Each pagination page must have the same number of rows.
@@ -70,7 +70,7 @@ other row models check the relevant documentation for <a href="../javascript-gri
         <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
 </ul>
 
-<?= grid_example('Custom Paging', 'custom-paging', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Paging', 'custom-paging', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
@@ -86,7 +86,7 @@ the pagination state.</p>
 <p>The example also sets property <code>suppressScrollOnNewData=true</code>, which tells the grid to NOT
 scroll to the top when the page changes.</p>
 
-<?= grid_example('Custom Controls', 'custom-controls', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Controls', 'custom-controls', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="childRows">Pagination & Child Rows</h2>
 
@@ -124,7 +124,7 @@ scroll to the top when the page changes.</p>
     </li>
 </ul>
 
-<?= grid_example('Grouping Normal', 'grouping-normal', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Grouping Normal', 'grouping-normal', 'generated', ['enterprise' => true]) ?>
 
 <h3>Mode 2: Paginate All Rows, Including Children</h3>
 
@@ -159,7 +159,7 @@ scroll to the top when the page changes.</p>
     </li>
 </ul>
 
-<?= grid_example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', ['enterprise' => true]) ?>
 
 <h3>Fallback to Mode 2</h3>
 

@@ -336,6 +336,8 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
+        if (_.shallowCompare(this.cellRanges, cellRanges)) { return; }
+
         this.removeAllCellRanges(true);
 
         cellRanges.forEach(newRange => {
@@ -528,6 +530,7 @@ export class RangeController extends BeanStub implements IRangeController {
         const allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
         const mouseCell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
+        const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
 
         if (_.missing(mouseCell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
@@ -535,7 +538,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return;
         }
 
-        if (!multiSelectKeyPressed && (!shiftKey || _.exists(_.last(this.cellRanges)!.type))) {
+        if (!multiSelectKeyPressed && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 
@@ -543,7 +546,7 @@ export class RangeController extends BeanStub implements IRangeController {
         this.draggingCell = mouseCell;
         this.lastMouseEvent = mouseEvent;
 
-        if (!shiftKey) {
+        if (!extendRange) {
             this.newestRangeStartCell = mouseCell;
         }
 

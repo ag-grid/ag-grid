@@ -11,6 +11,7 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     includeBlanksInEquals?: boolean;
     includeBlanksInLessThan?: boolean;
     includeBlanksInGreaterThan?: boolean;
+    includeBlanksInRange?: boolean;
     /** @deprecated in v21*/
     nullComparator?: NullComparator;
 }
@@ -26,6 +27,5 @@ export declare abstract class ScalarFilter<M extends ISimpleFilterModel, T> exte
     };
     protected setParams(params: IScalarFilterParams): void;
     private checkDeprecatedParams;
-    private nullComparator;
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel): boolean;
 }

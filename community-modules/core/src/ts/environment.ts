@@ -28,21 +28,21 @@ const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         headerCellMinWidth: 48,
-        listItemHeight: MAT_GRID_SIZE * 5,
+        listItemHeight: MAT_GRID_SIZE * 4,
         rowHeight: MAT_GRID_SIZE * 6,
         chartMenuPanelWidth: 240
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
         headerCellMinWidth: 24,
-        listItemHeight: BALHAM_GRID_SIZE * 7,
+        listItemHeight: BALHAM_GRID_SIZE * 6,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
         headerCellMinWidth: 36,
-        listItemHeight: ALPINE_GRID_SIZE * 5,
+        listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
@@ -89,12 +89,10 @@ export class Environment extends BeanStub {
         if (SASS_PROPERTY_BUILDER[key]) {
             const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
+            addCssClass(div, theme);
             div.style.position = 'absolute';
-            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
-                if (idx === 0) {
-                    addCssClass(el, theme);
-                }
 
+            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string) => {
                 const div = document.createElement('div');
                 div.style.position = 'static';
                 addCssClass(div, currentClass);
@@ -126,7 +124,7 @@ export class Environment extends BeanStub {
         return this.getSassVariable(theme, 'chartMenuPanelWidth');
     }
 
-    public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
+    public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; } {
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;

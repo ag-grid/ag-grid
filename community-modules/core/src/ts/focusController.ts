@@ -81,11 +81,15 @@ export class FocusController extends BeanStub {
     }
 
     private activateMouseMode(): void {
+        if (!this.keyboardFocusActive) { return; }
+
         this.keyboardFocusActive = false;
         this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS });
     }
 
     private activateKeyboardMode(): void {
+        if (this.keyboardFocusActive) { return; }
+
         this.keyboardFocusActive = true;
         this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS });
     }
@@ -188,7 +192,50 @@ export class FocusController extends BeanStub {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
-    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean {
+    public focusHeaderPosition(
+        headerPosition: HeaderPosition,
+        direction: 'Before' | 'After' = null,
+        fromTab: boolean = false,
+        allowUserOverride: boolean = false,
+        event?: KeyboardEvent
+    ): boolean {
+        if (allowUserOverride) {
+            const { gridOptionsWrapper } = this;
+            const currentPosition = this.getFocusedHeader();
+            const headerRowCount = this.headerNavigationService.getHeaderRowCount();
+
+            if (fromTab) {
+                const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
+                if (userFunc) {
+                    const params = {
+                        backwards: direction === 'Before',
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition,
+                        headerRowCount
+                    };
+                    headerPosition = userFunc(params);
+                }
+            } else {
+                const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
+                if (userFunc) {
+                    const params = {
+                        key: event.key,
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition,
+                        headerRowCount,
+                        event
+                    };
+                    headerPosition = userFunc(params);
+                }
+            }
+        }
+
+        if (!headerPosition) { return false; }
+
+        if (headerPosition.headerRowIndex === -1) {
+            return this.focusGridView(headerPosition.column as Column);
+        }
+
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
         const childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());

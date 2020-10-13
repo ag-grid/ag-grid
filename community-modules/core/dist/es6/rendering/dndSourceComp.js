@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,10 @@ var DndSourceComp = /** @class */ (function (_super) {
     DndSourceComp.prototype.postConstruct = function () {
         var eGui = this.getGui();
         eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        // we need to stop the event propagation here to avoid starting a range selection while dragging
+        this.addGuiEventListener('mousedown', function (e) {
+            e.stopPropagation();
+        });
         this.addDragSource();
         this.checkVisibility();
     };

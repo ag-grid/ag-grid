@@ -47,6 +47,8 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             axis.update();
         });
     };
+    GroupedCategoryChart.className = 'GroupedCategoryChart';
+    GroupedCategoryChart.type = 'groupedCategory';
     return GroupedCategoryChart;
 }(CartesianChart));
 export { GroupedCategoryChart };

@@ -1,12 +1,4 @@
 import { ColDef, ColGroupDef, ToolPanelColumnCompParams, IPrimaryColsPanel, ManagedFocusComponent, ColumnEventType } from "@ag-grid-community/core";
-export interface BaseColumnItem {
-    getDisplayName(): string | null;
-    onSelectAllChanged(value: boolean): void;
-    isSelected(): boolean;
-    isSelectable(): boolean;
-    isExpandable(): boolean;
-    setExpanded(value: boolean): void;
-}
 export declare class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
     private static TEMPLATE;
     private readonly primaryColsHeaderPanel;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -133,8 +133,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     FloatingFilterWrapper.prototype.setupSyncWithFilter = function () {
         var _this = this;
         var syncWithFilter = function (filterChangedEvent) {
-            var parentModel = _this.getFilterComponent().resolveNow(null, function (filter) { return filter.getModel(); });
-            _this.onParentModelChanged(parentModel, filterChangedEvent);
+            _this.onParentModelChanged(_this.currentParentModel(), filterChangedEvent);
         };
         this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, syncWithFilter);
         if (this.filterManager.isFilterActive(this.column)) {
@@ -184,8 +183,9 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     FloatingFilterWrapper.prototype.parentFilterInstance = function (callback) {
         this.getFilterComponent().then(callback);
     };
-    FloatingFilterWrapper.prototype.getFilterComponent = function () {
-        return this.filterManager.getFilterComponent(this.column, 'NO_UI');
+    FloatingFilterWrapper.prototype.getFilterComponent = function (createIfDoesNotExist) {
+        if (createIfDoesNotExist === void 0) { createIfDoesNotExist = true; }
+        return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
     };
     FloatingFilterWrapper.getDefaultFloatingFilterType = function (def) {
         if (def == null) {
@@ -249,7 +249,8 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         return resolvedComponent ? resolvedComponent.component : null;
     };
     FloatingFilterWrapper.prototype.currentParentModel = function () {
-        return this.getFilterComponent().resolveNow(null, function (filter) { return filter.getModel(); });
+        var filterComponent = this.getFilterComponent(false);
+        return filterComponent ? filterComponent.resolveNow(null, function (filter) { return filter.getModel(); }) : null;
     };
     FloatingFilterWrapper.prototype.onParentModelChanged = function (model, filterChangedEvent) {
         if (!this.floatingFilterCompPromise) {

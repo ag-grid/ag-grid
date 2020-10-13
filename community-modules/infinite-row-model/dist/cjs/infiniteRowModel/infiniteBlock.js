@@ -37,7 +37,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         return this.getDisplayIndexStart() + this.cacheParams.blockSize;
     };
     InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
+        var rowNode = _super.prototype.createBlankRowNode.call(this);
         rowNode.uiLevel = 0;
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
         return rowNode;
@@ -58,11 +58,9 @@ var InfiniteBlock = /** @class */ (function (_super) {
         _super.prototype.setRowNode.call(this, rowIndex, rowNode);
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
     };
+    // no need for @postConstruct, as attached to parent
     InfiniteBlock.prototype.init = function () {
-        _super.prototype.init.call(this, {
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        _super.prototype.init.call(this);
     };
     InfiniteBlock.prototype.getNodeIdPrefix = function () {
         return null;
@@ -101,12 +99,6 @@ var InfiniteBlock = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        core_1.Autowired('rowRenderer')
-    ], InfiniteBlock.prototype, "rowRenderer", void 0);
-    __decorate([
-        core_1.PostConstruct
-    ], InfiniteBlock.prototype, "init", null);
     return InfiniteBlock;
 }(core_1.RowNodeBlock));
 exports.InfiniteBlock = InfiniteBlock;

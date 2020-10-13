@@ -7,6 +7,7 @@ import { PopupService } from '../widgets/popupService';
 import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
+import { GridPanel } from "../gridPanel/gridPanel";
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -17,6 +18,12 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     private hidePopup: () => void;
     private tabListener: () => null;
+
+    private gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public hideActiveMenu(): void {
         if (this.hidePopup) {
@@ -85,9 +92,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
-        // need to show filter before positioning, as only after filter
-        // is visible can we find out what the width of it is
-        // hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         hidePopup = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
@@ -95,9 +99,11 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: closedCallback
         });
 
-        positionCallback(eMenu);
-
         filterWrapper.filterPromise.then(filter => {
+            // need to make sure the filter is present before positioning, as only
+            // after filter it is visible can we find out what the width of it is
+            positionCallback(eMenu);
+
             if (filter.afterGuiAttached) {
                 filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }

@@ -3,18 +3,19 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { PropertyChangeEvent, TypedEvent } from "../../../util/observable";
+import { TooltipRendererResult } from "../../chart";
 interface LineNodeDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
 }
 export interface LineSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: LineSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: LineSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 export { LineTooltipRendererParams };
 export declare class LineSeries extends CartesianSeries {
@@ -34,7 +35,7 @@ export declare class LineSeries extends CartesianSeries {
     lineDashOffset: number;
     strokeWidth: number;
     strokeOpacity: number;
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
     constructor();
     onMarkerShapeChange(): void;
     protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>): void;
@@ -50,6 +51,7 @@ export declare class LineSeries extends CartesianSeries {
     highlightStyle: HighlightStyle;
     onHighlightChange(): void;
     update(): void;
+    private getXYDatums;
     private updateLinePath;
     private updateNodeSelection;
     private updateNodes;

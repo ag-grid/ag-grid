@@ -11,7 +11,7 @@
 
 <h3>Example: Rendering using Angular Components</h3>
 
-<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'angular', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'angular', 'extras' => ['fontawesome', 'bootstrap']]) ?>
 
 <h3>Angular Methods / Lifecycle</h3>
 

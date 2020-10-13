@@ -65,7 +65,7 @@ function getNumberFloatingFilterComponent() {
 
     NumberFloatingFilter.prototype.init = function(params) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>';
+        this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
         this.currentValue = null;
         this.eFilterInput = this.eGui.querySelector('input');
         this.eFilterInput.style.color = params.color;

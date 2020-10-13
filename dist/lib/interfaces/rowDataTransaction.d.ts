@@ -1,5 +1,5 @@
 export interface RowDataTransaction {
-    /** deprecated */ addIndex?: number;
+    addIndex?: number;
     add?: any[];
     remove?: any[];
     update?: any[];

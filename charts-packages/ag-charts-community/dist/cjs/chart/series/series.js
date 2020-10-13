@@ -96,8 +96,9 @@ var Series = /** @class */ (function (_super) {
         }
         var min = extent[0], max = extent[1];
         if (min === max) {
-            min -= 1;
-            max += 1;
+            var padding = Math.abs(min * 0.01);
+            min -= padding;
+            max += padding;
             // if (type) {
             //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
             //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);

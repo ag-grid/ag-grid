@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -13,6 +13,7 @@ import { CellPosition } from "../entities/cellPosition";
 import { RowComp } from "./row/rowComp";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { TooltipParentComp } from '../widgets/tooltipFeature';
+import { ITooltipParams } from "./tooltipComponent";
 export declare class CellComp extends Component implements TooltipParentComp {
     static DOM_DATA_KEY_CELL_COMP: string;
     private static CELL_RENDERER_TYPE_NORMAL;
@@ -102,7 +103,8 @@ export declare class CellComp extends Component implements TooltipParentComp {
     private refreshToolTip;
     private valuesAreEqual;
     private getToolTip;
-    getTooltipText(escape?: boolean): any;
+    getTooltipParams(): ITooltipParams;
+    private getTooltipText;
     private processCellClassRules;
     private postProcessCellClassRules;
     private preProcessCellClassRules;

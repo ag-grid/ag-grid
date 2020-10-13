@@ -32,13 +32,16 @@ var rowData = [
     { make: 'frd', exteriorColour: 'bw', interiorColour: 'cb', price: 32000 }
 ];
 
+var carBrands = extractValues(carMappings);
+var colours = extractValues(colourMappings);
+
 var gridOptions = {
     columnDefs: [
         {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: extractValues(carMappings)
+                values: carBrands
             },
             filterParams: {
                 valueFormatter: function(params) {
@@ -54,12 +57,12 @@ var gridOptions = {
             minWidth: 150,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
-                values: extractValues(colourMappings),
+                values: colours,
                 cellRenderer: colourCellRenderer,
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: extractValues(colourMappings),
+                values: colours,
                 valueFormatter: function(params) {
                     return lookupValue(colourMappings, params.value);
                 },
@@ -82,7 +85,7 @@ var gridOptions = {
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: extractValues(colourMappings),
+                values: colours,
                 valueFormatter: function(params) {
                     return lookupValue(colourMappings, params.value);
                 },
@@ -124,11 +127,13 @@ var gridOptions = {
         editable: true
     },
     rowData: rowData,
-    onCellValueChanged: function(params) {
-        // notice that the data always contains the keys rather than values after editing
-        console.log('onCellValueChanged: ', params);
-    }
+    onCellValueChanged: onCellValueChanged
 };
+
+function onCellValueChanged(params) {
+    // notice that the data always contains the keys rather than values after editing
+    console.log('onCellValueChanged: ', params);
+}
 
 function extractValues(mappings) {
     return Object.keys(mappings);

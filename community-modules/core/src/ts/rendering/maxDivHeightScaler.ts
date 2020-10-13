@@ -13,8 +13,6 @@ import { getMaxDivHeight } from "../utils/browser";
 @Bean('maxDivHeightScaler')
 export class MaxDivHeightScaler extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private gridPanel: GridPanel;
 
     private maxDivHeight: number;
@@ -39,13 +37,9 @@ export class MaxDivHeightScaler extends BeanStub {
     // the max scroll position
     private maxScrollY: number;
 
-    // we need this for the maths, as it impacts the grid height
-    private scrollBarWidth: number;
-
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.maxDivHeight = getMaxDivHeight();
     }
 

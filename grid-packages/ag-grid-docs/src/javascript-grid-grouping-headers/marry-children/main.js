@@ -1,27 +1,25 @@
-function createNormalColDefs() {
-    return [
-        {
-            headerName: 'Athlete Details',
-            marryChildren: true,
-            children: [
-                { field: 'athlete', colId: 'athlete' },
-                { field: 'country', colId: 'country' }
-            ]
-        },
-        { field: 'age', colId: 'age' },
-        {
-            headerName: 'Sports Results',
-            marryChildren: true,
-            children: [
-                { field: 'sport', colId: 'sport' },
-                { field: 'total', colId: 'total' },
-                { field: 'gold', colId: 'gold' },
-                { field: 'silver', colId: 'silver' },
-                { field: 'bronze', colId: 'bronze' }
-            ]
-        }
-    ];
-}
+var columnDefs = [
+    {
+        headerName: 'Athlete Details',
+        marryChildren: true,
+        children: [
+            { field: 'athlete', colId: 'athlete' },
+            { field: 'country', colId: 'country' }
+        ]
+    },
+    { field: 'age', colId: 'age' },
+    {
+        headerName: 'Sports Results',
+        marryChildren: true,
+        children: [
+            { field: 'sport', colId: 'sport' },
+            { field: 'total', colId: 'total' },
+            { field: 'gold', colId: 'gold' },
+            { field: 'silver', colId: 'silver' },
+            { field: 'bronze', colId: 'bronze' }
+        ]
+    }
+];
 
 var gridOptions = {
     defaultColDef: {
@@ -29,7 +27,7 @@ var gridOptions = {
         width: 160
     },
     debug: true,
-    columnDefs: createNormalColDefs(),
+    columnDefs: columnDefs,
     rowData: null
 };
 

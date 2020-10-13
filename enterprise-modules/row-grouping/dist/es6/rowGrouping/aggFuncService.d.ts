@@ -1,4 +1,4 @@
-import { BeanStub, Column, IAggFunc, IAggFuncService } from "@ag-grid-community/core";
+import { BeanStub, Column, IAggFunc, IAggFuncService } from '@ag-grid-community/core';
 export declare class AggFuncService extends BeanStub implements IAggFuncService {
     private static AGG_SUM;
     private static AGG_FIRST;
@@ -7,7 +7,7 @@ export declare class AggFuncService extends BeanStub implements IAggFuncService 
     private static AGG_MAX;
     private static AGG_COUNT;
     private static AGG_AVG;
-    private gridOptionsWrapper;
+    private readonly gridOptionsWrapper;
     private aggFuncsMap;
     private initialised;
     private init;

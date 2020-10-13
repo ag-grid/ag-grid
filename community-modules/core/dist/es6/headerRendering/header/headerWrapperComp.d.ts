@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
-import { DropTarget } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
     private gridOptionsWrapper;
@@ -21,7 +21,6 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     protected beans: Beans;
     private eResize;
     private cbSelectAll;
-    private readonly dragSourceDropTarget;
     protected readonly column: Column;
     protected readonly pinned: string;
     private headerComp;
@@ -38,7 +37,7 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private draggable;
     private colDefHeaderComponent?;
     private colDefHeaderComponentFramework?;
-    constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string);
+    constructor(column: Column, pinned: string);
     protected postConstruct(): void;
     private onColumnValueChanged;
     private updateState;
@@ -69,7 +68,8 @@ export declare class HeaderWrapperComp extends AbstractHeaderWrapper {
     private setupResize;
     onResizing(finished: boolean, resizeAmount: number): void;
     onResizeStart(shiftKey: boolean): void;
-    getTooltipText(): string | undefined;
+    getTooltipParams(): ITooltipParams;
+    private getTooltipText;
     private setupTooltip;
     private setupMovingCss;
     private addAttributes;

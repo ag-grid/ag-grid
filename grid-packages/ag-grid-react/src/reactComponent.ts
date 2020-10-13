@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { ReactPortal } from 'react';
-import * as ReactDOM from 'react-dom';
+import { ReactPortal, createElement } from 'react';
+import { createPortal } from 'react-dom';
 import { _, ComponentType, Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from './baseReactComponent';
@@ -18,7 +17,6 @@ export class ReactComponent extends BaseReactComponent {
     private componentType: ComponentType;
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
-    private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
@@ -46,7 +44,6 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
-
         this.renderStaticMarkup(params);
 
         return new Promise<void>(resolve => this.createReactComponent(params, resolve));
@@ -65,7 +62,6 @@ export class ReactComponent extends BaseReactComponent {
             // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
-
                 this.addParentContainerStyleAndClasses();
 
                 // regular components (ie not functional)
@@ -73,16 +69,16 @@ export class ReactComponent extends BaseReactComponent {
             };
         }
 
-        const reactComponent = React.createElement(this.reactComponent, params);
-        const portal: ReactPortal = ReactDOM.createPortal(
+        const reactComponent = createElement(this.reactComponent, params);
+        const portal: ReactPortal = createPortal(
             reactComponent,
             this.eParentElement as any,
             generateNewKey() // fixed deltaRowModeRefreshCompRenderer
         );
+
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
-
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
@@ -96,9 +92,7 @@ export class ReactComponent extends BaseReactComponent {
                         this.removeStaticMarkup();
                     }, false);
                 } else {
-                    setTimeout(() => {
-                        this.removeStaticMarkup();
-                    });
+                    setTimeout(() => this.removeStaticMarkup());
                 }
             }
         });
@@ -112,6 +106,7 @@ export class ReactComponent extends BaseReactComponent {
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
             assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
+
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
             parentContainerClasses.forEach(className => _.addCssClass(this.eParentElement as HTMLElement, className));
@@ -145,7 +140,7 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public isNullRender(): boolean {
-        return this.staticMarkup === "";
+        return this.staticMarkup === '';
     }
 
     /*
@@ -160,12 +155,14 @@ export class ReactComponent extends BaseReactComponent {
         }
 
         const originalConsoleError = console.error;
-        const reactComponent = React.createElement(this.reactComponent, params);
+        const reactComponent = createElement(this.reactComponent, params);
+
         try {
-            // if a user is using anything that uses useLayoutEffect (like material ui) then
-            // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
-            // this is just a warning and has no effect on anything so just suppress it for this single operation
+            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
+            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
+            // for this single operation
             const originalConsoleError = console.error;
+
             console.error = () => {
             };
 
@@ -176,7 +173,7 @@ export class ReactComponent extends BaseReactComponent {
             console.error = originalConsoleError;
 
             // if the render method returns null the result will be an empty string
-            if (staticMarkup === "") {
+            if (staticMarkup === '') {
                 this.staticMarkup = staticMarkup;
             } else {
                 if (staticMarkup) {
@@ -212,10 +209,10 @@ export class ReactComponent extends BaseReactComponent {
         }
     }
 
-    rendered() {
+    rendered(): boolean {
         return this.isNullRender() ||
-            this.staticMarkup ||
-            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
-            (!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+            !!this.staticMarkup ||
+            !!(this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 }

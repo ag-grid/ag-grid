@@ -40,6 +40,7 @@ import { isEventFromPrintableCharacter } from "../utils/keyboard";
 import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../utils/browser";
 import { doOnce } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import { ITooltipParams } from "./tooltipComponent";
 
 const CSS_CELL = 'ag-cell';
 const CSS_CELL_VALUE = 'ag-cell-value';
@@ -269,7 +270,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.tooltipFeatureEnabled
         ) { return; }
 
-        this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
+        this.createManagedBean(new TooltipFeature(this), this.beans.context);
         this.tooltipFeatureEnabled = true;
     }
 
@@ -768,21 +769,29 @@ export class CellComp extends Component implements TooltipParentComp {
             return valueGetter({
                 api: this.beans.gridOptionsWrapper.getApi(),
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                colDef: colDef,
-                column: this.getColumn(),
                 context: this.beans.gridOptionsWrapper.getContext(),
-                value: this.value,
-                valueFormatted: this.valueFormatted,
-                rowIndex: this.cellPosition.rowIndex,
-                node: this.rowNode,
-                data: this.rowNode.data
+                ...this.getTooltipParams(),
+                value: this.value
             });
         }
 
         return null;
     }
 
-    public getTooltipText(escape: boolean = true) {
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'cell',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            rowIndex: this.cellPosition.rowIndex,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            value: this.getTooltipText(),
+            valueFormatted: this.valueFormatted,
+        };
+    }
+
+    private getTooltipText(escape: boolean = true) {
         return escape ? escapeString(this.tooltip) : this.tooltip;
     }
 
@@ -863,13 +872,12 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const params = this.createCellRendererParams();
-        const cellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params);
-        const pinnedRowCellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
 
-        if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
+        if (this.rowNode.rowPinned &&
+            this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
-        } else if (cellRenderer) {
+        } else if (this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
             this.usingCellRenderer = true;
         } else {
@@ -893,8 +901,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
-        const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
+        const callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
         const cellRendererTypeNormal = this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL;
 
         this.createCellRendererFunc = () => {
@@ -917,7 +925,8 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
-        const cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
+        const cellRendererNotRequired = !this.isAlive() || cellRendererVersion !== this.cellRendererVersion;
+
         if (cellRendererNotRequired) {
             this.beans.context.destroyBean(cellRenderer);
             return;
@@ -1506,10 +1515,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
         const { gridOptionsWrapper } = this.beans;
+
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
-            const newSelection = !this.rowNode.isSelected();
+            const currentSelection = this.rowNode.isSelected();
+            const newSelection = !currentSelection;
             if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
-                this.rowNode.setSelected(newSelection);
+                const groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                const updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
             }
         }
 
@@ -1534,7 +1557,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
 
             this.focusCell(forceBrowserFocus);
-        } else {
+        } else if (rangeController) {
             // if a range is being changed, we need to make sure the focused cell does not change.
             mouseEvent.preventDefault();
         }
@@ -2010,7 +2033,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
 
-        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
+        const rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans);
         this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value

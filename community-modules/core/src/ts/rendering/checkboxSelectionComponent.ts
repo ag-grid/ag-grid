@@ -1,5 +1,5 @@
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { Autowired } from '../context/context';
+import { Autowired, PostConstruct } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
@@ -27,6 +27,11 @@ export class CheckboxSelectionComponent extends Component {
         );
     }
 
+    @PostConstruct
+    private postConstruct(): void {
+        this.eCheckbox.setPassive(true);
+    }
+
     private onDataChanged(): void {
         // when rows are loaded for the second time, this can impact the selection, as a row
         // could be loaded as already selected (if user scrolls down, and then up again).
@@ -39,9 +44,10 @@ export class CheckboxSelectionComponent extends Component {
 
     private onSelectionChanged(): void {
         const state = this.rowNode.isSelected();
+        const stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
 
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${state ? 'checked' : 'unchecked'})`);
+        this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${stateName})`);
     }
 
     private onCheckedClicked(): number {
@@ -68,8 +74,13 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
 
-        this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (params) => {
-            if (params.selected) {
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (params) => {
+            if (params.previousValue === undefined) { // indeterminate
+                const result = this.onUncheckedClicked(params.event || {});
+                if (result === 0) {
+                    this.onCheckedClicked();
+                }
+            } else if (params.selected) {
                 this.onUncheckedClicked(params.event || {});
             } else {
                 this.onCheckedClicked();

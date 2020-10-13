@@ -1,60 +1,49 @@
 import {
+    _,
     AgCheckbox,
     Autowired,
     Column,
-    ColumnApi,
     ColumnController,
-    ColumnPivotChangeRequestEvent,
-    ColumnRowGroupChangeRequestEvent,
-    ColumnValueChangeRequestEvent,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    GridApi,
     GridOptionsWrapper,
+    KeyCode,
     PostConstruct,
-    RefSelector,
-    ManagedFocusComponent,
-    _,
-    KeyCode
+    RefSelector, Component
 } from "@ag-grid-community/core";
-import { BaseColumnItem } from "./primaryColsPanel";
+import {ModelItemUtils} from "./modelItemUtils";
 
-export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
+export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column" tabindex="-1" role="treeitem">
-            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" aria-hidden="true"></ag-checkbox>
-            <span class="ag-column-select-column-label" ref="eLabel" role="presentation"></span>
+        `<div class="ag-column-select-column" aria-hidden="true">
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
+
     private eDragHandle: HTMLElement;
-
-    private column: Column;
-    private columnDept: number;
-
-    private allowDragging: boolean;
     private displayName: string | null;
-
     private processingColumnStateChange = false;
-    private groupsExist: boolean;
 
-    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean) {
+    constructor(
+        private readonly column: Column,
+        private readonly columnDept: number,
+        private readonly allowDragging: boolean,
+        private readonly groupsExist: boolean,
+        private readonly focusWrapper: HTMLElement
+    ) {
         super();
-        this.column = column;
-        this.columnDept = columnDept;
-        this.allowDragging = allowDragging;
-        this.groupsExist = groupsExist;
     }
 
     @PostConstruct
@@ -84,6 +73,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
@@ -120,9 +110,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
 
     private onChangeCommon(nextState: boolean): void {
         // ignore lock visible columns
-        if (this.column.getColDef().lockVisible) {
-            return;
-        }
+        if (this.cbSelect.isReadOnly()) { return; }
 
         this.refreshAriaLabel();
 
@@ -132,133 +120,12 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
             return;
         }
 
-        // action in a timeout, as the action takes some time, we want to update the icons first
-        // so the user gets nice feedback when they click. otherwise there would be a lag and the
-        // user would think the checkboxes were clunky
-        if (this.columnController.isPivotMode()) {
-            if (nextState) {
-                this.actionCheckedPivotMode();
-            } else {
-                this.actionUnCheckedPivotMode();
-            }
-        } else {
-            this.columnController.setColumnVisible(this.column, nextState, "toolPanelUi");
-        }
+        this.modelItemUtils.setColumn(this.column, nextState, 'toolPanelUi');
     }
 
     private refreshAriaLabel(): void {
         const state = this.cbSelect.getValue() ? 'visible' : 'hidden';
-        _.setAriaLabel(this.getGui(), `${this.displayName} column toggle visibility (${state})`);
-    }
-
-    private actionUnCheckedPivotMode(): void {
-        const functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
-        const column = this.column;
-        const columnController = this.columnController;
-
-        // remove pivot if column is pivoted
-        if (column.isPivotActive()) {
-            if (functionPassive) {
-                const copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-                copyOfPivotColumns.push(column);
-                const event: ColumnPivotChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                    columns: copyOfPivotColumns,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                columnController.removePivotColumn(column, "toolPanelUi");
-            }
-        }
-        // remove value if column is value
-        if (column.isValueActive()) {
-            if (functionPassive) {
-                const copyOfValueColumns = this.columnController.getValueColumns().slice();
-                copyOfValueColumns.push(column);
-                const event: ColumnValueChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                    columns: copyOfValueColumns,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                columnController.removeValueColumn(column, "toolPanelUi");
-            }
-        }
-        // remove group if column is grouped
-        if (column.isRowGroupActive()) {
-            if (functionPassive) {
-                const copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
-                copyOfRowGroupColumns.push(column);
-                const event: ColumnRowGroupChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                    columns: copyOfRowGroupColumns,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                columnController.removeRowGroupColumn(column, "toolPanelUi");
-            }
-        }
-    }
-
-    private actionCheckedPivotMode(): void {
-        const column = this.column;
-
-        // function already active, so do nothing
-        if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) {
-            return;
-        }
-
-        const functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
-
-        if (column.isAllowValue()) {
-            if (functionPassive) {
-                const copyOfValueColumns = this.columnController.getValueColumns().slice();
-                _.removeFromArray(copyOfValueColumns, column);
-                const event: ColumnValueChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
-                    columns: copyOfValueColumns
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                this.columnController.addValueColumn(column, "toolPanelUi");
-            }
-        } else if (column.isAllowRowGroup()) {
-            if (functionPassive) {
-                const copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
-                _.removeFromArray(copyOfRowGroupColumns, column);
-                const event: ColumnRowGroupChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
-                    columns: copyOfRowGroupColumns
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                this.columnController.addRowGroupColumn(column, "toolPanelUi");
-            }
-        } else if (column.isAllowPivot()) {
-            if (functionPassive) {
-                const copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-                _.removeFromArray(copyOfPivotColumns, column);
-                const event: ColumnPivotChangeRequestEvent = {
-                    type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
-                    api: this.gridApi,
-                    columnApi: this.columnApi,
-                    columns: copyOfPivotColumns
-                };
-                this.eventService.dispatchEvent(event);
-            } else {
-                this.columnController.addPivotColumn(column, "toolPanelUi");
-            }
-        }
+        _.setAriaLabel(this.focusWrapper, `${this.displayName} column toggle visibility (${state})`);
     }
 
     private setupDragging(): void {

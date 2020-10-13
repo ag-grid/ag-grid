@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Autowired, PostConstruct, Qualifier, RowNodeBlock, _ } from "@ag-grid-community/core";
+import { Autowired, Qualifier, RowNodeBlock, _ } from "@ag-grid-community/core";
 var ServerSideBlock = /** @class */ (function (_super) {
     __extends(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
@@ -33,6 +33,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
         _this.leafGroup = params.rowGroupCols ? _this.level === params.rowGroupCols.length - 1 : false;
         return _this;
     }
+    // no need for @postConstruct, as attached to parent
     ServerSideBlock.prototype.init = function () {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
@@ -42,10 +43,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
         this.createNodeIdPrefix();
-        _super.prototype.init.call(this, {
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        _super.prototype.init.call(this);
     };
     ServerSideBlock.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideBlock');
@@ -431,9 +429,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
     };
     ServerSideBlock.DefaultBlockSize = 100;
     __decorate([
-        Autowired('rowRenderer')
-    ], ServerSideBlock.prototype, "rowRenderer", void 0);
-    __decorate([
         Autowired('columnController')
     ], ServerSideBlock.prototype, "columnController", void 0);
     __decorate([
@@ -448,9 +443,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridApi')
     ], ServerSideBlock.prototype, "gridApi", void 0);
-    __decorate([
-        PostConstruct
-    ], ServerSideBlock.prototype, "init", null);
     __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);

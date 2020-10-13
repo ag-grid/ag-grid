@@ -1,4 +1,4 @@
-import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCacheParams, RowNodeCache } from "@ag-grid-community/core";
+import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCacheParams, RowNodeCache, RowDataTransaction, RowNodeTransaction } from "@ag-grid-community/core";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -30,6 +30,7 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     private createBlock;
     getDisplayIndexEnd(): number;
     isDisplayIndexInCache(displayIndex: number): boolean;
+    applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction | null;
     getChildCache(keys: string[]): ServerSideCache | null;
     isPixelInRange(pixel: number): boolean;
     refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;

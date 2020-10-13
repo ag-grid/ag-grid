@@ -4,9 +4,9 @@ import { ISimpleFilterModel } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 export declare class DateFloatingFilter extends SimpleFloatingFilter {
-    private userComponentFactory;
-    private eReadOnlyText;
-    private eDateWrapper;
+    private readonly userComponentFactory;
+    private readonly eReadOnlyText;
+    private readonly eDateWrapper;
     private dateComp;
     private params;
     constructor();

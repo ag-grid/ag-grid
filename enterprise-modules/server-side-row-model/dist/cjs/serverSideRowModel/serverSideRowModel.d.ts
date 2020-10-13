@@ -1,4 +1,4 @@
-import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "@ag-grid-community/core";
+import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode, RowDataTransaction } from "@ag-grid-community/core";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
     private columnController;
@@ -18,6 +18,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     start(): void;
     private destroyDatasource;
     private setBeans;
+    applyTransaction(rowDataTransaction: RowDataTransaction, route: string[]): void;
     private addEventListeners;
     setDatasource(datasource: IServerSideDatasource): void;
     isLastRowFound(): boolean;

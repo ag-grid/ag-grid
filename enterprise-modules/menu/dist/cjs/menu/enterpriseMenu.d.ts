@@ -1,4 +1,4 @@
-import { AgEvent, BeanStub, Column, IMenuFactory } from "@ag-grid-community/core";
+import { AgEvent, BeanStub, Column, IMenuFactory, GridPanel } from "@ag-grid-community/core";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
@@ -8,6 +8,8 @@ export declare class EnterpriseMenuFactory extends BeanStub implements IMenuFact
     private focusController;
     private lastSelectedTab;
     private activeMenu;
+    private gridPanel;
+    registerGridComp(gridPanel: GridPanel): void;
     hideActiveMenu(): void;
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void;
     showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void;

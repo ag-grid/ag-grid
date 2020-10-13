@@ -174,7 +174,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
 
         if (data && data.callback.indexOf('api.setRowData') >= 0) {
             if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                stateProperties.push('rowData: []');
+                stateProperties.push('rowData: null');
             }
 
             if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {

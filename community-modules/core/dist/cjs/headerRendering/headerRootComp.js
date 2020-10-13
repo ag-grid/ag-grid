@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,8 @@ var dom_1 = require("../utils/dom");
 var managedFocusComponent_1 = require("../widgets/managedFocusComponent");
 var headerNavigationService_1 = require("./header/headerNavigationService");
 var generic_1 = require("../utils/generic");
-var keyCode_1 = require("../constants/keyCode");
+var keyboard_1 = require("../utils/keyboard");
+var keyName_1 = require("../constants/keyName");
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
@@ -76,29 +77,37 @@ var HeaderRootComp = /** @class */ (function (_super) {
         var direction = e.shiftKey !== isRtl
             ? headerNavigationService_1.HeaderNavigationDirection.LEFT
             : headerNavigationService_1.HeaderNavigationDirection.RIGHT;
-        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
+        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
+        if (keyboard_1.isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
+            return;
+        }
+        if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }
     };
     HeaderRootComp.prototype.handleKeyDown = function (e) {
         var direction;
-        switch (e.keyCode) {
-            case keyCode_1.KeyCode.LEFT:
+        var _a = this.focusController.getFocusedHeader(), headerRowIndex = _a.headerRowIndex, column = _a.column;
+        if (keyboard_1.isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
+            return;
+        }
+        switch (e.key) {
+            case keyName_1.KeyName.LEFT:
                 direction = headerNavigationService_1.HeaderNavigationDirection.LEFT;
-            case keyCode_1.KeyCode.RIGHT:
+            case keyName_1.KeyName.RIGHT:
                 if (!generic_1.exists(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.RIGHT;
                 }
-                this.headerNavigationService.navigateHorizontally(direction);
+                this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
-            case keyCode_1.KeyCode.UP:
+            case keyName_1.KeyName.UP:
                 direction = headerNavigationService_1.HeaderNavigationDirection.UP;
-            case keyCode_1.KeyCode.DOWN:
+            case keyName_1.KeyName.DOWN:
                 if (!generic_1.exists(direction)) {
                     direction = headerNavigationService_1.HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerNavigationService.navigateVertically(direction)) {
+                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
                     e.preventDefault();
                 }
                 break;

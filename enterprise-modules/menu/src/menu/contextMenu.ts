@@ -21,7 +21,8 @@ import {
     Optional,
     IRangeController,
     CellPositionUtils,
-    _
+    _,
+    GridPanel
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -36,6 +37,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
+    private gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public hideActiveMenu(): void {
         this.destroyBean(this.activeMenu);
@@ -126,7 +132,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            anchorToElement: mouseEvent.target as HTMLElement
+            // so when browser is scrolled down, the context menu stays on the grid
+            anchorToElement: this.gridPanel.getGui()
         });
 
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup });

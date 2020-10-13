@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Set Filter - Data Updates";
-$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -100,7 +100,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Transaction Updates</h2>
 
@@ -180,7 +180,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Setting New Data</h2>
 
@@ -232,7 +232,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Next Up</h2>
 

@@ -1,7 +1,7 @@
 import { ModuleNames } from "@ag-grid-community/core";
 import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
-import { ChartService } from "./chartAdaptor/chartService";
-import { ChartTranslator } from "./chartAdaptor/chartComp/chartTranslator";
+import { ChartService } from "./charts/chartService";
+import { ChartTranslator } from "./charts/chartComp/chartTranslator";
 import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 export var GridChartsModule = {
     moduleName: ModuleNames.GridChartsModule,

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,7 +76,7 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
             return;
         }
         this.printCacheStatus();
-        if (this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
+        if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
             this.logger.log("checkBlockToLoad: max loads exceeded");
             return;
         }

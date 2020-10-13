@@ -14,41 +14,41 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: BarSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: BarSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 
 export { BarTooltipRendererParams };
 
 interface BarNodeDatum extends SeriesNodeDatum {
-    yKey: string;
-    yValue: number;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string,
-        fontStyle?: FontStyle,
-        fontWeight?: FontWeight,
-        fontSize: number,
-        fontFamily: string,
-        fill: string,
-        x: number,
-        y: number
+    readonly yKey: string;
+    readonly yValue: number;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
+        readonly x: number;
+        readonly y: number;
     };
 }
 
@@ -59,6 +59,22 @@ enum BarSeriesNodeTag {
 
 class BarSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: number }) => string;
+}
+
+export interface BarSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly xKey: string;
+    readonly yKey: string;
+}
+
+export interface BarSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 
 export class BarSeries extends CartesianSeries {
@@ -73,8 +89,8 @@ export class BarSeries extends CartesianSeries {
     private rectGroup = this.group.appendChild(new Group);
     private textGroup = this.group.appendChild(new Group);
 
-    private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
+    private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
+    private textSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
 
     private xData: string[] = [];
     private yData: number[][] = [];
@@ -88,18 +104,40 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
 
     @reactive('layoutChange') flipXY = false;
 
-    @reactive('dataChange') fills: string[] = [];
-    @reactive('dataChange') strokes: string[] = [];
+    @reactive('dataChange') fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
+
+    @reactive('dataChange') strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
 
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
+    @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;
+
     constructor() {
         super();
+
+        this.addEventListener('update', this.update);
 
         this.label.enabled = false;
         this.label.addEventListener('change', this.update, this);
@@ -145,6 +183,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -156,6 +195,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get xName(): string {
         return this._xName;
     }
@@ -184,6 +224,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get yKeys(): string[] {
         return this._yKeys;
     }
@@ -193,6 +234,7 @@ export class BarSeries extends CartesianSeries {
         this._yNames = values;
         this.scheduleData();
     }
+
     get yNames(): string[] {
         return this._yNames;
     }
@@ -218,6 +260,7 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
@@ -229,6 +272,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -240,6 +284,7 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get shadow(): DropShadow | undefined {
         return this._shadow;
     }
@@ -495,23 +540,47 @@ export class BarSeries extends CartesianSeries {
             return;
         }
 
-        const { fillOpacity, strokeOpacity, shadow, highlightStyle: { fill, stroke } } = this;
+        const {
+            fillOpacity, strokeOpacity,
+            highlightStyle: { fill, stroke },
+            shadow,
+            formatter,
+            xKey,
+            flipXY
+        } = this;
         const { highlightedDatum } = this.chart;
 
         this.rectSelection.each((rect, datum) => {
             const highlighted = datum === highlightedDatum;
+            const rectFill = highlighted && fill !== undefined ? fill : datum.fill;
+            const rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            let format: BarSeriesFormat | undefined = undefined;
 
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: rectFill,
+                    stroke: rectStroke,
+                    strokeWidth: datum.strokeWidth,
+                    highlighted,
+                    xKey,
+                    yKey: datum.yKey
+                });
+            }
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
-            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = format && format.fill || rectFill;
+            rect.stroke = format && format.stroke || rectStroke;
+            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = this.lineDash;
+            rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
+            // Prevent stroke from rendering for zero height columns and zero width bars.
+            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
         });
     }
 
@@ -561,30 +630,36 @@ export class BarSeries extends CartesianSeries {
         }
 
         const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
-        const { seriesDatum: datum } = nodeDatum;
+        const datum = nodeDatum.seriesDatum;
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
+        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const title = yName;
+        const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum,
                 xKey,
+                xValue,
                 xName,
                 yKey,
+                yValue,
                 yName,
                 color
-            });
-        } else {
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';
-            const xValue = datum[xKey];
-            const yValue = datum[yKey];
-            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

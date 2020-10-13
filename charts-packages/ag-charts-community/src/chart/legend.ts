@@ -229,7 +229,7 @@ export class Legend extends Observable {
         this.addPropertyListener('data', this.onDataChange);
         this.addPropertyListener('enabled', this.onEnabledChange);
         this.addPropertyListener('position', this.onPositionChange);
-        this.addPropertyListener('markerShape', this.onMarkerShapeChange);
+        this.item.marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
 
         this.addEventListener('change', this.update);
 
@@ -281,15 +281,16 @@ export class Legend extends Observable {
      * @param height
      */
     performLayout(width: number, height: number) {
-        const { markerShape, layoutHorizontalSpacing, layoutVerticalSpacing } = this;
+        const { item } = this;
+        const { marker, paddingX, paddingY } = item;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
-            const MarkerShape = getMarker(markerShape || datum.marker.shape);
+            const MarkerShape = getMarker(marker.shape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
         });
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
-            const MarkerShape = getMarker(markerShape || datum.marker.shape);
+            const MarkerShape = getMarker(marker.shape || datum.marker.shape);
             node.marker = new MarkerShape();
         });
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
@@ -297,15 +298,17 @@ export class Legend extends Observable {
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
+        const itemMarker = this.item.marker;
+        const itemLabel = this.item.label;
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            markerLabel.markerSize = this.markerSize;
-            markerLabel.fontStyle = this.fontStyle;
-            markerLabel.fontWeight = this.fontWeight;
-            markerLabel.fontSize = this.fontSize;
-            markerLabel.fontFamily = this.fontFamily;
+            markerLabel.markerSize = itemMarker.size;
+            markerLabel.spacing = itemMarker.padding;
+            markerLabel.fontStyle = itemLabel.fontStyle;
+            markerLabel.fontWeight = itemLabel.fontWeight;
+            markerLabel.fontSize = itemLabel.fontSize;
+            markerLabel.fontFamily = itemLabel.fontFamily;
             markerLabel.text = datum.label.text;
-            markerLabel.spacing = this.itemSpacing;
 
             bboxes.push(markerLabel.computeBBox());
         });
@@ -352,11 +355,11 @@ export class Legend extends Observable {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * layoutHorizontalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
 
                 } while (paddedItemsWidth > width && columnCount > 1);
 
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * layoutVerticalSpacing;
+                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
 
                 break;
 
@@ -397,8 +400,8 @@ export class Legend extends Observable {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * layoutHorizontalSpacing;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * layoutVerticalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
+                    paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
 
                 } while (paddedItemsHeight > height && rowCount > 1);
 
@@ -424,11 +427,11 @@ export class Legend extends Observable {
                 columnWidth = bbox.width;
             }
             if ((i + 1) % rowCount === 0) {
-                x += columnWidth + layoutHorizontalSpacing;
+                x += columnWidth + paddingX;
                 y = 0;
                 columnWidth = 0;
             } else {
-                y += bbox.height + layoutVerticalSpacing;
+                y += bbox.height + paddingY;
             }
         });
 
@@ -451,7 +454,7 @@ export class Legend extends Observable {
             const marker = datum.marker;
             markerLabel.markerFill = marker.fill;
             markerLabel.markerStroke = marker.stroke;
-            markerLabel.markerStrokeWidth = this.strokeWidth;
+            markerLabel.markerStrokeWidth = this.item.marker.strokeWidth;
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;

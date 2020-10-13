@@ -29,17 +29,40 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     It is possible to have the Detail Grid sit within the same container as the Master Grid's cells and hence move
-    with the Master Grid's horizontall scrolling. To do this set the grid property <code>embedFullWidthRows=true</code>
-    inside the Master Grid.
+    with the Master Grid's horizontal scrolling.
+    This is achieved by 'Embedding the Full Width Row' and is set via the grid property <code>embedFullWidthRows=true</code>
+    for the Master Grid. This tells the grid to layout (embed) the Detail Panel with the other rows.
 </p>
 
 <p>
-    In the example below, notice that horizontal scrolling is combined for both Master Grid and Detail Grid.
+    In the example below, notice that horizontal scrolling is combined for both Master Grid and Detail Grid using
+    the Embed Full Width Rows feature.
 </p>
 
 <?= grid_example('Detail scrolls with Master', 'detail-scrolls-with-master', 'generated', ['enterprise' => true, 'exampleHeight' => 525, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
+<p>
+    If you are mixing Embed Full Width Rows and
+    <a href="../javascript-grid-master-detail-custom-detail/">Custom Detail</a>, then be aware the Detail Panel
+    will get rendered three times as follows:
+</p>
+<ul>
+    <li>Pinned Left Columns</li>
+    <li>Pinned Right Columns</li>
+    <li>Pinned Centre Columns</li>
+</ul>
 
+<p>
+    This is because the Columns, and thus the Detail Panel, are appearing in three separate scrollable sections.
+    The example below demonstrates this. Note the custom Detail Panel appears in all three sections.
+</p>
+
+<?= grid_example('Embed Custom Detail', 'embed-custom-detail', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
+
+<p>
+    If you want your custom Detail Panel to only show content in one section, have logic that inspects the components
+    <code>params.pinned</code> property and renders content relevant for the section.
+</p>
 
 <h2>Filtering and Sorting</h2>
 

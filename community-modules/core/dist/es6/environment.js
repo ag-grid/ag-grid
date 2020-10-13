@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,21 +43,21 @@ var HARD_CODED_SIZES = {
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         headerCellMinWidth: 48,
-        listItemHeight: MAT_GRID_SIZE * 5,
+        listItemHeight: MAT_GRID_SIZE * 4,
         rowHeight: MAT_GRID_SIZE * 6,
         chartMenuPanelWidth: 240
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
         headerCellMinWidth: 24,
-        listItemHeight: BALHAM_GRID_SIZE * 7,
+        listItemHeight: BALHAM_GRID_SIZE * 6,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
         headerCellMinWidth: 36,
-        listItemHeight: ALPINE_GRID_SIZE * 5,
+        listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
@@ -98,11 +98,9 @@ var Environment = /** @class */ (function (_super) {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            addCssClass(div, theme);
             div.style.position = 'absolute';
-            var el = classList.reduce(function (el, currentClass, idx) {
-                if (idx === 0) {
-                    addCssClass(el, theme);
-                }
+            var el = classList.reduce(function (el, currentClass) {
                 var div = document.createElement('div');
                 div.style.position = 'static';
                 addCssClass(div, currentClass);

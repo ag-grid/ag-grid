@@ -13,7 +13,7 @@ import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
-import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FillEndEvent, FillStartEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ToolPanelVisibleChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
+import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartCreated, ChartDestroyed, ChartOptionsChanged, ChartRangeSelectionChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, ComponentStateChangedEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FillEndEvent, FillStartEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ToolPanelVisibleChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -22,6 +22,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { HeaderPosition } from "../headerRendering/header/headerPosition";
 export interface GridOptions {
     /*******************************************************************************************************
      * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
@@ -73,7 +74,7 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
-    /** Allows user to suppress certain keyboard events */
+    /** @deprecated Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
     stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
@@ -204,9 +205,9 @@ export interface GridOptions {
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
     alignedGrids?: GridOptions[];
-    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowSelection?: string;
     suppressRowDeselection?: boolean;
+    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
     rowDeselection?: boolean;
     rowMultiSelectWithClick?: boolean;
     isRowSelectable?: IsRowSelectable;
@@ -224,6 +225,7 @@ export interface GridOptions {
     } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
+    detailRowAutoHeight?: boolean;
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
@@ -280,6 +282,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
+    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
     getDocument?: () => Document;
@@ -402,6 +406,7 @@ export interface GridOptions {
     onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
     onChartDestroyed?(event: ChartDestroyed): void;
+    onComponentStateChanged?(event: ComponentStateChangedEvent): void;
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
     api?: GridApi | null;
@@ -498,6 +503,19 @@ export interface ProcessRowParams {
     columnApi: ColumnApi;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
     context: any;
+}
+export interface NavigateToNextHeaderParams {
+    key: string;
+    previousHeaderPosition: HeaderPosition;
+    nextHeaderPosition: HeaderPosition;
+    event: KeyboardEvent;
+    headerRowCount: number;
+}
+export interface TabToNextHeaderParams {
+    backwards: boolean;
+    previousHeaderPosition: HeaderPosition;
+    nextHeaderPosition: HeaderPosition;
+    headerRowCount: number;
 }
 export interface NavigateToNextCellParams {
     key: number;

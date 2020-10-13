@@ -1,11 +1,12 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 import { isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
+import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
 var rtlNegativeScroll;
 export function addCssClass(element, className) {
@@ -400,7 +401,7 @@ export function isNode(o) {
 export function isElement(o) {
     return (typeof HTMLElement === 'function'
         ? o instanceof HTMLElement //DOM2
-        : o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string');
+        : o && isNonNullObject(o) && o.nodeType === 1 && typeof o.nodeName === 'string');
 }
 export function isNodeOrElement(o) {
     return isNode(o) || isElement(o);

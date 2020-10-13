@@ -3,26 +3,27 @@ import { LegendDatum } from "../../legend";
 import { TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TooltipRendererResult } from "../../chart";
 interface ScatterNodeDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    size: number;
+    readonly size: number;
 }
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: ScatterSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
-    sizeKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: ScatterSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
+    readonly sizeKey?: string;
 }
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    sizeKey?: string;
-    sizeName?: string;
-    labelKey?: string;
-    labelName?: string;
+    readonly sizeKey?: string;
+    readonly sizeName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 export declare class ScatterSeries extends CartesianSeries {
     static className: string;
@@ -57,7 +58,7 @@ export declare class ScatterSeries extends CartesianSeries {
     yName: string;
     sizeName?: string;
     labelName?: string;
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
     constructor();
     onMarkerShapeChange(): void;
     setColors(fills: string[], strokes: string[]): void;

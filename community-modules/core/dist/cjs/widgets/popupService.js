@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -261,8 +261,8 @@ var PopupService = /** @class */ (function (_super) {
         var initialDiffTop = parentRect.top - sourceRect.top;
         var lastDiffTop = initialDiffTop;
         var topPx = params.ePopup.style.top;
-        var top = parseInt(topPx.substring(0, topPx.length - 1));
-        var intervalId = setInterval(function () {
+        var top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        var intervalId = window.setInterval(function () {
             var parentRect = eParent.getBoundingClientRect();
             var sourceRect = params.element.getBoundingClientRect();
             var currentDiffTop = parentRect.top - sourceRect.top;
@@ -273,7 +273,7 @@ var PopupService = /** @class */ (function (_super) {
             lastDiffTop = currentDiffTop;
         }, 200);
         var res = function () {
-            clearInterval(intervalId);
+            window.clearInterval(intervalId);
         };
         return res;
     };

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -190,9 +190,7 @@ var RowNodeCache = /** @class */ (function (_super) {
     RowNodeCache.prototype.forEachNodeDeep = function (callback, sequence) {
         var _this = this;
         if (sequence === void 0) { sequence = new utils_1.NumberSequence(); }
-        this.forEachBlockInOrder(function (block) {
-            block.forEachNodeDeep(callback, sequence, _this.virtualRowCount);
-        });
+        this.forEachBlockInOrder(function (block) { return block.forEachNodeDeep(callback, sequence, _this.virtualRowCount); });
     };
     RowNodeCache.prototype.forEachBlockInOrder = function (callback) {
         var ids = this.getBlockIdsSorted();
@@ -264,8 +262,8 @@ var RowNodeCache = /** @class */ (function (_super) {
         this.maxRowFound = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
-        // the purge there will still be zero rows, meaning the SRRM won't request any rows.
-        // to kick things off, at lest one row needs to be asked for.
+        // the purge there will still be zero rows, meaning the SSRM won't request any rows.
+        // to kick things off, at least one row needs to be asked for.
         if (this.virtualRowCount === 0) {
             this.virtualRowCount = this.cacheParams.initialRowCount;
         }

@@ -35,12 +35,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             return;
         }
         this.params = params;
+        var autoHeight = this.gridOptionsWrapper.isDetailRowAutoHeight();
         this.checkForDeprecations();
         this.ensureValidRefreshStrategy();
-        this.selectAndSetTemplate();
+        this.selectAndSetTemplate(autoHeight);
         if (_.exists(this.eDetailGrid)) {
             this.addThemeToDetailGrid();
-            this.createDetailsGrid();
+            this.createDetailsGrid(autoHeight);
             this.registerDetailWithMaster();
             this.loadRowData();
             window.setTimeout(function () {
@@ -57,7 +58,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         this.addManagedListener(params.node.parent, RowNode.EVENT_DATA_CHANGED, function () {
             _this.needRefresh = true;
         });
-        this.setupAutoGridHeight();
+        // this.setupAutoGridHeight();
     };
     DetailCellRenderer.prototype.refresh = function () {
         var GET_GRID_TO_REFRESH = false;
@@ -107,26 +108,6 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         // use default strategy
         this.params.refreshStrategy = 'rows';
     };
-    DetailCellRenderer.prototype.setupAutoGridHeight = function () {
-        var _this = this;
-        if (!this.params.autoHeight) {
-            return;
-        }
-        var checkRowSizeFunc = function () {
-            var clientHeight = _this.getGui().clientHeight;
-            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
-            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
-            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
-            // empty detail grid would still have some styling around it giving at least a few pixels.
-            if (clientHeight != null && clientHeight > 0) {
-                _this.params.node.setRowHeight(clientHeight);
-                _this.params.api.onRowHeightChanged();
-            }
-        };
-        var resizeObserverDestroyFunc = this.resizeObserverService.observeResize(this.getGui(), checkRowSizeFunc);
-        this.addDestroyFunc(resizeObserverDestroyFunc);
-        checkRowSizeFunc();
-    };
     DetailCellRenderer.prototype.addThemeToDetailGrid = function () {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
@@ -153,11 +134,10 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             rowNode.detailGridInfo = null; // unregister from node
         });
     };
-    DetailCellRenderer.prototype.selectAndSetTemplate = function () {
+    DetailCellRenderer.prototype.selectAndSetTemplate = function (autoHeight) {
         var _this = this;
         var setDefaultTemplate = function () {
             _this.setTemplate(DetailCellRenderer.TEMPLATE);
-            var autoHeight = _this.params.autoHeight;
             _this.addCssClass(autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height');
             _.addCssClass(_this.eDetailGrid, autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height');
         };
@@ -181,7 +161,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             }
         }
     };
-    DetailCellRenderer.prototype.createDetailsGrid = function () {
+    DetailCellRenderer.prototype.createDetailsGrid = function (autoHeight) {
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
@@ -193,7 +173,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         }
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
-        if (this.params.autoHeight) {
+        if (autoHeight) {
             this.detailGridOptions.domLayout = 'autoHeight';
         }
         // tslint:disable-next-line

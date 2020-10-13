@@ -1,26 +1,26 @@
 'use strict';
 
-import React, {useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import { AllModules } from "@ag-grid-enterprise/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [columns, setColumns] = useState([
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'sport'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'},
-        {field: 'total'}
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'sport' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
     ]);
 
     const onGridReady = (params) => {
@@ -35,129 +35,129 @@ const GridExample = () => {
     };
 
     const onBtSortAthlete = () => {
-        const defaultState = {sort: null};
+        const defaultState = { sort: null };
         setColumns([
-            {...defaultState, field: 'athlete', sort: 'asc' },
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country'},
-            {...defaultState, field: 'sport'},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete', sort: 'asc' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country' },
+            { ...defaultState, field: 'sport' },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
     const onBtSortCountryThenSportClearOthers = () => {
-        const defaultState = {sort: null};
+        const defaultState = { sort: null };
         setColumns([
-            {...defaultState, field: 'athlete'},
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country', sort: 'asc', sortIndex: 0},
-            {...defaultState, field: 'sport', sort: 'asc', sortIndex: 1},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country', sort: 'asc', sortIndex: 0 },
+            { ...defaultState, field: 'sport', sort: 'asc', sortIndex: 1 },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
 
     const onBtClearAllSorting = () => {
-        const defaultState = {sort: null};
+        const defaultState = { sort: null };
         setColumns([
-            {...defaultState, field: 'athlete'},
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country'},
-            {...defaultState, field: 'sport'},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country' },
+            { ...defaultState, field: 'sport' },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
 
     const onBtRowGroupCountryThenSport = () => {
-        const defaultState = {rowGroup: false};
+        const defaultState = { rowGroup: false };
         setColumns([
-            {...defaultState, field: 'athlete'},
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country', rowGroup: true, rowGroupIndex: 0},
-            {...defaultState, field: 'sport', rowGroup: true, rowGroupIndex: 1},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country', rowGroup: true, rowGroupIndex: 0 },
+            { ...defaultState, field: 'sport', rowGroup: true, rowGroupIndex: 1 },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
 
     const onBtRemoveCountryRowGroup = () => {
         const defaultState = {};
         setColumns([
-            {...defaultState, field: 'athlete'},
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country', rowGroup: false},
-            {...defaultState, field: 'sport'},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country', rowGroup: false },
+            { ...defaultState, field: 'sport' },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
 
     const onBtClearAllRowGroups = () => {
-        const defaultState = {rowGroup: false};
+        const defaultState = { rowGroup: false };
         setColumns([
-            {...defaultState, field: 'athlete'},
-            {...defaultState, field: 'age'},
-            {...defaultState, field: 'country', rowGroup: false},
-            {...defaultState, field: 'sport'},
-            {...defaultState, field: 'year'},
-            {...defaultState, field: 'date'},
-            {...defaultState, field: 'gold'},
-            {...defaultState, field: 'silver'},
-            {...defaultState, field: 'bronze'},
-            {...defaultState, field: 'total'}
+            { ...defaultState, field: 'athlete' },
+            { ...defaultState, field: 'age' },
+            { ...defaultState, field: 'country', rowGroup: false },
+            { ...defaultState, field: 'sport' },
+            { ...defaultState, field: 'year' },
+            { ...defaultState, field: 'date' },
+            { ...defaultState, field: 'gold' },
+            { ...defaultState, field: 'silver' },
+            { ...defaultState, field: 'bronze' },
+            { ...defaultState, field: 'total' }
         ]);
     };
 
     const onBtOrderColsMedalsFirst = () => {
         setColumns([
-            {field: 'gold'},
-            {field: 'silver'},
-            {field: 'bronze'},
-            {field: 'total'},
-            {field: 'athlete'},
-            {field: 'age'},
-            {field: 'country'},
-            {field: 'sport'},
-            {field: 'year'},
-            {field: 'date'}
+            { field: 'gold' },
+            { field: 'silver' },
+            { field: 'bronze' },
+            { field: 'total' },
+            { field: 'athlete' },
+            { field: 'age' },
+            { field: 'country' },
+            { field: 'sport' },
+            { field: 'year' },
+            { field: 'date' }
         ]);
     };
 
     const onBtOrderColsMedalsLast = () => {
         setColumns([
-            {field: 'athlete'},
-            {field: 'age'},
-            {field: 'country'},
-            {field: 'sport'},
-            {field: 'year'},
-            {field: 'date'},
-            {field: 'gold'},
-            {field: 'silver'},
-            {field: 'bronze'},
-            {field: 'total'}
+            { field: 'athlete' },
+            { field: 'age' },
+            { field: 'country' },
+            { field: 'sport' },
+            { field: 'year' },
+            { field: 'date' },
+            { field: 'gold' },
+            { field: 'silver' },
+            { field: 'bronze' },
+            { field: 'total' }
         ]);
-    };    
+    };
 
     const onBtHideMedals = () => {
         const newColumns = [...columns];
@@ -182,7 +182,7 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="test-container">
                 <div className="test-header">
                     <table>
@@ -192,9 +192,7 @@ const GridExample = () => {
                             </td>
                             <td>
                                 <button onClick={onBtSortAthlete}>Sort Athlete</button>
-                                <button onClick={onBtSortCountryThenSportClearOthers}>Sort Athlete - Clear
-                                    Others
-                                </button>
+                                <button onClick={onBtSortCountryThenSportClearOthers}>Sort Country, then Sport - Clear Others</button>
                                 <button onClick={onBtClearAllSorting}>Clear All Sorting</button>
                             </td>
                         </tr>
@@ -252,7 +250,7 @@ const GridExample = () => {
                         rowGroupPanelShow="always"
                         pivotPanelShow="always"
                         applyColumnDefOrder={true}>
-                        {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
+                        {columns.map(column => (<AgGridColumn {...column} key={column.field} />))}
                     </AgGridReact>
                 </div>
             </div>
@@ -261,6 +259,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

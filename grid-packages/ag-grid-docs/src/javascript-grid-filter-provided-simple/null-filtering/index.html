@@ -1,31 +1,56 @@
 <div class="test-container">
     <div class="test-header">
-        <div style="margin-right: 30px; float: left;">Include NULL in age/date:</div>
-        <div style="margin-left: 30px; float: left;">
-            <div style="float: left;">equals</div>
-            <div style="float: left;">
-                <input type="radio" name="equals" value="false" checked="checked" onclick="changeNull('equals', false)"> False<br>
-                <input type="radio" name="equals" value="true" onclick="changeNull('equals', true)"> True<br>
+        <div>Include NULL<br />in age/date:</div>
+        <div class="configuration-option">
+            <div><strong>equals</strong></div>
+            <div>
+                <label>
+                    <input type="radio" name="equals" value="false" checked="checked"
+                        onclick="changeNull('equals', false)"> false
+                </label>
+                <label>
+                    <input type="radio" name="equals" value="true" onclick="changeNull('equals', true)"> true
+                </label>
             </div>
-            <div style="clear: both"></div>
         </div>
-    
-        <div style="margin-left: 30px; float: left;">
-            <div style="float: left;">lessThan</div>
-            <div style="float: left;">
-                <input type="radio" name="lessThan" value="false" checked="checked" onclick="changeNull('lessThan', false)"> False<br>
-                <input type="radio" name="lessThan" value="true" onclick="changeNull('lessThan', true)"> True<br>
+
+        <div class="configuration-option">
+            <div><strong>lessThan</strong></div>
+            <div>
+                <label>
+                    <input type="radio" name="lessThan" value="false" checked="checked"
+                        onclick="changeNull('lessThan', false)"> false
+                </label>
+                <label>
+                    <input type="radio" name="lessThan" value="true" onclick="changeNull('lessThan', true)"> true
+                </label>
             </div>
-            <div style="clear: both"></div>
         </div>
-    
-        <div style="margin-left: 30px; float: left;">
-            <div style="float: left;">greaterThan</div>
-            <div style="float: left;">
-                <input type="radio" name="greaterThan" value="false" checked="checked" onclick="changeNull('greaterThan', false)"> False<br>
-                <input type="radio" name="greaterThan" value="true" onclick="changeNull('greaterThan', true)"> True<br>
+
+        <div class="configuration-option">
+            <div><strong>greaterThan</strong></div>
+            <div>
+                <label>
+                    <input type="radio" name="greaterThan" value="false" checked="checked"
+                        onclick="changeNull('greaterThan', false)"> false
+                </label>
+                <label>
+                    <input type="radio" name="greaterThan" value="true" onclick="changeNull('greaterThan', true)"> true
+                </label>
             </div>
-            <div style="clear: both"></div>
+        </div>
+
+        <div class="configuration-option">
+            <div><strong>inRange</strong></div>
+            <div>
+                <label>
+                    <input type="radio" name="inRange" value="false" checked="checked"
+                        onclick="changeNull('inRange', false)"> false
+                </label>
+                <label>
+                    <input type="radio" name="inRange" value="true" onclick="changeNull('inRange', true)"> true
+                </label>
+            </div>
         </div>
     </div>
     <div id="myGrid" class="ag-theme-alpine" style="height: 88%;"></div>

@@ -3,29 +3,31 @@ import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererP
 import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TooltipRendererResult } from "../../chart";
 import { TypedEvent } from "../../../util/observable";
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: AreaSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: AreaSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    fill?: string;
-    stroke?: string;
-    yKey: string;
-    yValue: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly yKey: string;
+    readonly yValue: number;
 }
 export { AreaTooltipRendererParams };
 export declare class AreaSeries extends CartesianSeries {
     static className: string;
     static type: string;
-    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    tooltipFormat?: string;
     private areaGroup;
     private strokeGroup;
     private markerGroup;
@@ -50,6 +52,8 @@ export declare class AreaSeries extends CartesianSeries {
     strokes: string[];
     fillOpacity: number;
     strokeOpacity: number;
+    lineDash?: number[];
+    lineDashOffset: number;
     constructor();
     onMarkerShapeChange(): void;
     protected _xKey: string;

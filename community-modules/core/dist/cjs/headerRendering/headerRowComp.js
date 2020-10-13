@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,13 +46,12 @@ var HeaderRowType;
 })(HeaderRowType = exports.HeaderRowType || (exports.HeaderRowType = {}));
 var HeaderRowComp = /** @class */ (function (_super) {
     __extends(HeaderRowComp, _super);
-    function HeaderRowComp(dept, type, pinned, dropTarget) {
+    function HeaderRowComp(dept, type, pinned) {
         var _this = _super.call(this, /* html */ "<div class=\"ag-header-row\" role=\"row\"></div>") || this;
         _this.headerComps = {};
         _this.setRowIndex(dept);
         _this.type = type;
         _this.pinned = pinned;
-        _this.dropTarget = dropTarget;
         var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, '-');
         _this.addCssClass("ag-header-row-" + niceClassName);
         if (browser_1.isBrowserSafari()) {
@@ -251,10 +250,10 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var result;
         switch (this.type) {
             case HeaderRowType.COLUMN:
-                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
+                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP:
-                result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
+                result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 result = new floatingFilterWrapper_1.FloatingFilterWrapper(columnGroupChild, this.pinned);

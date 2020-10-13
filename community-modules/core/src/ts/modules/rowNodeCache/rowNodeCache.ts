@@ -19,7 +19,6 @@ export interface RowNodeCacheParams {
     maxBlocksInCache?: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests?: number;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }
@@ -46,7 +45,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
     private active: boolean;
 
-    public blocks: {[blockNumber: string]: T} = {};
+    public blocks: { [blockNumber: string]: T; } = {};
     private blockCount = 0;
 
     protected logger: Logger;
@@ -197,7 +196,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.cacheParams.rowNodeBlockLoader.checkBlockToLoad();
     }
 
-    protected checkVirtualRowCount(block: T, lastRow: any): void {
+    protected checkVirtualRowCount(block: T, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -235,9 +234,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.forEachBlockInOrder(block => {
-            block.forEachNodeDeep(callback, sequence, this.virtualRowCount);
-        });
+        this.forEachBlockInOrder(block => block.forEachNodeDeep(callback, sequence, this.virtualRowCount));
     }
 
     public forEachBlockInOrder(callback: (block: T, id: number) => void): void {
@@ -318,11 +315,12 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.maxRowFound = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
-        // the purge there will still be zero rows, meaning the SRRM won't request any rows.
-        // to kick things off, at lest one row needs to be asked for.
+        // the purge there will still be zero rows, meaning the SSRM won't request any rows.
+        // to kick things off, at least one row needs to be asked for.
         if (this.virtualRowCount === 0) {
             this.virtualRowCount = this.cacheParams.initialRowCount;
         }
+
         this.onCacheUpdated();
     }
 

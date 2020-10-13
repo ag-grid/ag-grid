@@ -25,9 +25,15 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     function FiltersToolPanel() {
         var _this = _super.call(this, FiltersToolPanel.TEMPLATE) || this;
         _this.initialised = false;
+        _this.listenerDestroyFuncs = [];
         return _this;
     }
     FiltersToolPanel.prototype.init = function (params) {
+        // if initialised is true, means this is a refresh
+        if (this.initialised) {
+            this.listenerDestroyFuncs.forEach(function (func) { return func(); });
+            this.listenerDestroyFuncs = [];
+        }
         this.initialised = true;
         var defaultParams = {
             suppressExpandAll: false,
@@ -45,10 +51,8 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         if (hideExpand && hideSearch) {
             this.filtersToolPanelHeaderPanel.setDisplayed(false);
         }
-        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this));
-        this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        // this is necessary to prevent a memory leak while refreshing the tool panel
+        this.listenerDestroyFuncs.push(this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this)), this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this)), this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this)));
     };
     // lazy initialise the panel
     FiltersToolPanel.prototype.setVisible = function (visible) {

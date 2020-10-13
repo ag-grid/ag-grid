@@ -11,6 +11,7 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
 export declare class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
 }
 
+export {ChangeDetectionStrategyType} from './lib/changeDetectionService'
 export {ICellEditorReactComp} from './lib/interfaces';
 export {AgReactFrameworkComponent}  from './lib/interfaces';
 export {IHeaderGroupReactComp}  from './lib/interfaces';

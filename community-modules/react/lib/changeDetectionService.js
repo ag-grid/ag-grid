@@ -1,4 +1,4 @@
-// @ag-grid-community/react v24.0.0
+// @ag-grid-community/react v24.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChangeDetectionStrategyType;
@@ -99,7 +99,8 @@ var DeepValueStrategy = /** @class */ (function () {
         if (typeof a === "function") {
             return a.toString() === b.toString();
         }
-        if (typeof a !== "object") {
+        if (typeof a !== "object" ||
+            (a.$$typeof && a.$$typeof.toString() === "Symbol(react.element)")) {
             return a == b; //for boolean, number, string, function, xml
         }
         var newA = a.areEquivPropertyTracking === undefined, newB = b.areEquivPropertyTracking === undefined;

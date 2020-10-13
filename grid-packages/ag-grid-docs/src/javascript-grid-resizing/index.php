@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Resizing: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -218,7 +218,7 @@ SNIPPET
         by its <code>minWidth</code>/<code>maxWidth</code> rules, in which case it should take up the remaining available space.</li>
 </ul>
 
-<?= grid_example('Column Flex', 'flex-columns', 'generated', ['reactFunctional' => true]) ?>
+<?= grid_example('Column Flex', 'flex-columns', 'generated') ?>
 
 <h2 id="shift-resizing">Shift Resizing</h2>
 

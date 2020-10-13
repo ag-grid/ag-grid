@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -88,6 +88,7 @@ export declare class Events {
     static EVENT_GRID_SIZE_CHANGED: string;
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     static EVENT_VIEWPORT_CHANGED: string;
+    static EVENT_SCROLLBAR_WIDTH_CHANGED: string;
     /** Rows were rendered for the first time (ie on async data load). */
     static EVENT_FIRST_DATA_RENDERED: string;
     /** A column drag has started, either resizing a column or moving a column. */

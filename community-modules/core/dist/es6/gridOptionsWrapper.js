@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,6 +44,14 @@ var DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 function isTrue(value) {
     return value === true || value === 'true';
 }
+function toNumber(value) {
+    if (typeof value == 'number') {
+        return value;
+    }
+    if (typeof value == 'string') {
+        return parseInt(value, 10);
+    }
+}
 function zeroOrGreater(value, defaultValue) {
     if (value >= 0) {
         return value;
@@ -63,6 +71,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.propertyEventService = new EventService();
         this.domDataKey = '__AG_' + Math.random().toString();
         this.layoutElements = [];
+        this.destroyed = false;
     }
     GridOptionsWrapper_1 = GridOptionsWrapper;
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
@@ -78,6 +87,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
         this.removeEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+        this.destroyed = true;
     };
     GridOptionsWrapper.prototype.init = function () {
         var _this = this;
@@ -137,6 +147,8 @@ var GridOptionsWrapper = /** @class */ (function () {
         warnOfDeprecaredIcon('checkboxIndeterminate');
         this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
         this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
         var _this = this;
@@ -164,16 +176,20 @@ var GridOptionsWrapper = /** @class */ (function () {
             console.warn("ag-grid: to see all the valid " + containerName + " properties please check: " + docsUrl);
         }
     };
+    GridOptionsWrapper.prototype.getDomDataKey = function () {
+        return this.domDataKey;
+    };
     // returns the dom data, or undefined if not found
     GridOptionsWrapper.prototype.getDomData = function (element, key) {
-        var domData = element[this.domDataKey];
+        var domData = element[this.getDomDataKey()];
         return domData ? domData[key] : undefined;
     };
     GridOptionsWrapper.prototype.setDomData = function (element, key, value) {
-        var domData = element[this.domDataKey];
+        var domDataKey = this.getDomDataKey();
+        var domData = element[domDataKey];
         if (missing(domData)) {
             domData = {};
-            element[this.domDataKey] = domData;
+            element[domDataKey] = domData;
         }
         domData[key] = value;
     };
@@ -461,6 +477,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
         return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     };
+    GridOptionsWrapper.prototype.isDetailRowAutoHeight = function () {
+        return isTrue(this.gridOptions.detailRowAutoHeight);
+    };
     GridOptionsWrapper.prototype.getSuppressKeyboardEventFunc = function () {
         return this.gridOptions.suppressKeyboardEvent;
     };
@@ -510,7 +529,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         return this.gridOptions.cacheOverflowSize;
     };
     GridOptionsWrapper.prototype.getPaginationPageSize = function () {
-        return this.gridOptions.paginationPageSize;
+        return toNumber(this.gridOptions.paginationPageSize);
     };
     GridOptionsWrapper.prototype.isPaginateChildRows = function () {
         var shouldPaginate = this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
@@ -788,6 +807,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getRowNodeIdFunc = function () {
         return this.gridOptions.getRowNodeId;
     };
+    GridOptionsWrapper.prototype.getNavigateToNextHeaderFunc = function () {
+        return this.gridOptions.navigateToNextHeader;
+    };
+    GridOptionsWrapper.prototype.getTabToNextHeaderFunc = function () {
+        return this.gridOptions.tabToNextHeader;
+    };
     GridOptionsWrapper.prototype.getNavigateToNextCellFunc = function () {
         return this.gridOptions.navigateToNextCell;
     };
@@ -1020,11 +1045,17 @@ var GridOptionsWrapper = /** @class */ (function () {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     GridOptionsWrapper.prototype.getScrollbarWidth = function () {
-        if (this.scrollWidth == null) {
+        if (this.scrollbarWidth == null) {
             var useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            var scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                });
+            }
         }
-        return this.scrollWidth;
+        return this.scrollbarWidth;
     };
     GridOptionsWrapper.prototype.checkForDeprecated = function () {
         // casting to generic object, so typescript compiles even though
@@ -1091,6 +1122,13 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (options.rememberGroupStateWhenNewData) {
             console.warn('ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
         }
+        if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
+            console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
+            options.detailRowAutoHeight = true;
+        }
+        if (options.suppressKeyboardEvent) {
+            console.warn("ag-Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in\n                 future versions of ag-Grid. If you need this to be set for every column use the defaultColDef property.");
+        }
     };
     GridOptionsWrapper.prototype.checkForViolations = function () {
         if (this.isTreeData()) {
@@ -1126,6 +1164,10 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     // responsible for calling the onXXX functions on gridOptions
     GridOptionsWrapper.prototype.globalEventHandler = function (eventName, event) {
+        // prevent events from being fired _after_ the grid has been destroyed
+        if (this.destroyed) {
+            return;
+        }
         var callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof this.gridOptions[callbackMethodName] === 'function') {
             this.gridOptions[callbackMethodName](event);
@@ -1158,7 +1200,7 @@ var GridOptionsWrapper = /** @class */ (function () {
                 context: this.gridOptions.context
             };
             var height = this.gridOptions.getRowHeight(params);
-            if (height != null) {
+            if (this.isNumeric(height)) {
                 return { height: height, estimated: false };
             }
         }
@@ -1192,7 +1234,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         return this.environment.chartMenuPanelWidth();
     };
     GridOptionsWrapper.prototype.isNumeric = function (value) {
-        return !isNaN(value) && typeof value === 'number';
+        return !isNaN(value) && typeof value === 'number' && isFinite(value);
     };
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box

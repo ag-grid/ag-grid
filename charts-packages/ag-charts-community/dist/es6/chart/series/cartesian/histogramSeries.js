@@ -32,7 +32,7 @@ import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive } from "../../../util/observable";
@@ -125,6 +125,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.stroke = undefined;
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         _this.directionKeys = (_a = {},
             _a[ChartAxisDirection.X] = ['xKey'],
             _a[ChartAxisDirection.Y] = ['yKey'],
@@ -441,6 +443,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     HistogramSeries.prototype.updateRectNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
@@ -457,6 +460,8 @@ var HistogramSeries = /** @class */ (function (_super) {
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = _this.lineDash;
+            rect.lineDashOffset = _this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
@@ -497,28 +502,32 @@ var HistogramSeries = /** @class */ (function (_super) {
         if (!xKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, fill = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
+        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var content = yKey ?
+            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
+            '';
+        content += "<b>Frequency</b>: " + frequency;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: bin,
                 xKey: xKey,
+                xValue: bin.domain,
                 xName: xName,
                 yKey: yKey,
+                yValue: bin.aggregatedValue,
                 yName: yName,
-                color: fill
-            });
+                color: color
+            }), defaults);
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + fill + "\"";
-            var titleString = "\n                <div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">\n                    " + (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax) + "\n                </div>";
-            var contentHtml = yKey ?
-                "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
-                '';
-            contentHtml += "<b>Frequency</b>: " + frequency;
-            return "\n                " + titleString + "\n                <div class=\"" + Chart.defaultTooltipClass + "-content\">\n                    " + contentHtml + "\n                </div>";
-        }
+        return toTooltipHtml(defaults);
     };
     HistogramSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, yKey = _a.yKey, yName = _a.yName, seriesItemEnabled = _a.seriesItemEnabled, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -559,6 +568,12 @@ var HistogramSeries = /** @class */ (function (_super) {
     __decorate([
         reactive('layoutChange')
     ], HistogramSeries.prototype, "strokeOpacity", void 0);
+    __decorate([
+        reactive('update')
+    ], HistogramSeries.prototype, "lineDash", void 0);
+    __decorate([
+        reactive('update')
+    ], HistogramSeries.prototype, "lineDashOffset", void 0);
     return HistogramSeries;
 }(CartesianSeries));
 export { HistogramSeries };

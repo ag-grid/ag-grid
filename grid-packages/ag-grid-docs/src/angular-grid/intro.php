@@ -23,9 +23,9 @@ import { Component } from '@angular/core';
 export class AppComponent  {
 
     columnDefs = [
-        {field: 'make' },
-        {field: 'model' },
-        {field: 'price'}
+        { field: 'make' },
+        { field: 'model' },
+        { field: 'price' }
     ];
 
     rowData = [

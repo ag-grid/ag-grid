@@ -8,29 +8,33 @@ import { Chart } from "../chart";
  * contains information used to render pie sectors, bars, markers, etc.
  */
 export interface SeriesNodeDatum {
-    series: Series;
-    seriesDatum: any;
-    point?: {
-        x: number;
-        y: number;
+    readonly series: Series;
+    readonly seriesDatum: any;
+    readonly point?: {
+        readonly x: number;
+        readonly y: number;
     };
 }
 export interface TooltipRendererParams {
-    datum: any;
-    title?: string;
-    color?: string;
+    readonly datum: any;
+    readonly title?: string;
+    readonly color?: string;
 }
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
-    xKey: string;
-    xName?: string;
-    yKey: string;
-    yName?: string;
+    readonly xKey: string;
+    readonly xValue: any;
+    readonly xName?: string;
+    readonly yKey: string;
+    readonly yValue: any;
+    readonly yName?: string;
 }
 export interface PolarTooltipRendererParams extends TooltipRendererParams {
-    angleKey: string;
-    angleName?: string;
-    radiusKey?: string;
-    radiusName?: string;
+    readonly angleKey: string;
+    readonly angleValue: any;
+    readonly angleName?: string;
+    readonly radiusKey?: string;
+    readonly radiusValue?: any;
+    readonly radiusName?: string;
 }
 export interface HighlightStyle {
     fill?: string;

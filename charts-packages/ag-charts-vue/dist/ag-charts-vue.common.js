@@ -397,7 +397,7 @@ var external_commonjs_vue_commonjs2_vue_root_Vue_default = /*#__PURE__*/__webpac
 
 // CONCATENATED MODULE: ./node_modules/vue-class-component/dist/vue-class-component.esm.js
 /**
-  * vue-class-component v7.2.5
+  * vue-class-component v7.2.6
   * (c) 2015-present Evan You
   * @license MIT
   */

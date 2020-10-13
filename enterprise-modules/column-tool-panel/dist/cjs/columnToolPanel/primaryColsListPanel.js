@@ -23,23 +23,31 @@ var core_1 = require("@ag-grid-community/core");
 var toolPanelColumnGroupComp_1 = require("./toolPanelColumnGroupComp");
 var toolPanelColumnComp_1 = require("./toolPanelColumnComp");
 var primaryColsHeaderPanel_1 = require("./primaryColsHeaderPanel");
+var columnModelItem_1 = require("./columnModelItem");
+var ColumnModel = /** @class */ (function () {
+    function ColumnModel(items) {
+        this.items = items;
+    }
+    ColumnModel.prototype.getRowCount = function () {
+        return this.items.length;
+    };
+    ColumnModel.prototype.getRow = function (index) {
+        return this.items[index];
+    };
+    return ColumnModel;
+}());
 var PrimaryColsListPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsListPanel, _super);
     function PrimaryColsListPanel() {
         var _this = _super.call(this, PrimaryColsListPanel.TEMPLATE) || this;
-        _this.selectAllChecked = true;
-        _this.columnComps = new Map();
-        _this.getColumnCompId = function (columnGroupChild) {
-            if (columnGroupChild instanceof core_1.OriginalColumnGroup) {
-                // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
-                // to distinguish individual column groups after they have been split by user
-                var childIds = columnGroupChild.getLeafColumns().map(function (child) { return child.getId(); }).join('-');
-                return columnGroupChild.getId() + '-' + childIds;
-            }
-            return columnGroupChild.getId();
-        };
+        _this.destroyColumnItemFuncs = [];
         return _this;
     }
+    PrimaryColsListPanel.prototype.destroyColumnTree = function () {
+        this.allColsTree = [];
+        this.destroyColumnItemFuncs.forEach(function (f) { return f(); });
+        this.destroyColumnItemFuncs = [];
+    };
     PrimaryColsListPanel.prototype.init = function (params, allowDragging, eventType) {
         var _this = this;
         this.params = params;
@@ -63,132 +71,162 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             _this.addManagedListener(_this.eventService, event, _this.fireSelectionChangedEvent.bind(_this));
         });
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
+        this.virtualList = this.createManagedBean(new core_1.VirtualList('column-select', 'tree'));
+        this.appendChild(this.virtualList.getGui());
+        this.virtualList.setComponentCreator(function (item, listItemElement) { return _this.createComponentFromItem(item, listItemElement); });
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
     };
-    PrimaryColsListPanel.prototype.handleKeyDown = function (e) {
-        switch (e.keyCode) {
-            case core_1.KeyCode.UP:
-            case core_1.KeyCode.DOWN:
-                e.preventDefault();
-                this.navigateToNextItem(e.keyCode === core_1.KeyCode.UP);
-                break;
+    PrimaryColsListPanel.prototype.createComponentFromItem = function (item, listItemElement) {
+        if (item.isGroup()) {
+            var renderedGroup = new toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp(item, this.allowDragging, this.eventType, listItemElement);
+            this.getContext().createBean(renderedGroup);
+            return renderedGroup;
         }
-    };
-    PrimaryColsListPanel.prototype.navigateToNextItem = function (up) {
-        var nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), true, up);
-        if (nextEl) {
-            nextEl.focus();
-        }
+        var columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(item.getColumn(), item.getDept(), this.allowDragging, this.groupsExist, listItemElement);
+        this.getContext().createBean(columnComp);
+        return columnComp;
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
         var pivotModeActive = this.columnController.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
-        shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
-        this.setFilterText(this.filterText);
+        if (shouldSyncColumnLayoutWithGrid) {
+            this.buildTreeFromWhatGridIsDisplaying();
+        }
+        else {
+            this.buildTreeFromProvidedColumnDefs();
+        }
+        this.markFilteredColumns();
+        this.flattenAndFilterModel();
     };
-    PrimaryColsListPanel.prototype.syncColumnLayout = function () {
+    PrimaryColsListPanel.prototype.buildTreeFromWhatGridIsDisplaying = function () {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
     };
     PrimaryColsListPanel.prototype.setColumnLayout = function (colDefs) {
-        this.destroyColumnComps();
-        // create column tree using supplied colDef's
-        this.columnTree = this.colDefService.createColumnTree(colDefs);
+        var columnTree = this.colDefService.createColumnTree(colDefs);
+        this.buildListModel(columnTree);
         // using col defs to check if groups exist as it could be a custom layout
-        var groupsExist = colDefs.some(function (colDef) {
+        this.groupsExist = colDefs.some(function (colDef) {
             return colDef && typeof colDef.children !== 'undefined';
         });
-        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.recursivelySetVisibility(this.columnTree, true);
-        // notify header
-        this.notifyListeners();
+        this.markFilteredColumns();
+        this.flattenAndFilterModel();
     };
     PrimaryColsListPanel.prototype.buildTreeFromProvidedColumnDefs = function () {
-        this.destroyColumnComps();
         // add column / group comps to tool panel
-        this.columnTree = this.columnController.getPrimaryColumnTree();
-        var groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
-        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.recursivelySetVisibility(this.columnTree, true);
-        // notify header
+        this.buildListModel(this.columnController.getPrimaryColumnTree());
+        this.groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+    };
+    PrimaryColsListPanel.prototype.buildListModel = function (columnTree) {
+        var _this = this;
+        var columnExpandedListener = this.onColumnExpanded.bind(this);
+        var addListeners = function (item) {
+            item.addEventListener(columnModelItem_1.ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
+            var removeFunc = item.removeEventListener.bind(item, columnModelItem_1.ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
+            _this.destroyColumnItemFuncs.push(removeFunc);
+        };
+        var recursivelyBuild = function (tree, dept, parentList) {
+            tree.forEach(function (child) {
+                if (child instanceof core_1.OriginalColumnGroup) {
+                    createGroupItem(child, dept, parentList);
+                }
+                else {
+                    createColumnItem(child, dept, parentList);
+                }
+            });
+        };
+        var createGroupItem = function (columnGroup, dept, parentList) {
+            var skipThisGroup = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel;
+            if (skipThisGroup) {
+                return;
+            }
+            if (columnGroup.isPadding()) {
+                recursivelyBuild(columnGroup.getChildren(), dept, parentList);
+                return;
+            }
+            var displayName = _this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, _this.eventType);
+            var item = new columnModelItem_1.ColumnModelItem(displayName, columnGroup, dept, true, _this.expandGroupsByDefault);
+            parentList.push(item);
+            addListeners(item);
+            recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
+        };
+        var createColumnItem = function (column, dept, parentList) {
+            var skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
+            if (skipThisColumn) {
+                return;
+            }
+            var displayName = _this.columnController.getDisplayNameForColumn(column, 'toolPanel');
+            parentList.push(new columnModelItem_1.ColumnModelItem(displayName, column, dept));
+        };
+        this.destroyColumnTree();
+        recursivelyBuild(columnTree, 0, this.allColsTree);
+    };
+    PrimaryColsListPanel.prototype.onColumnExpanded = function () {
+        this.flattenAndFilterModel();
+    };
+    PrimaryColsListPanel.prototype.flattenAndFilterModel = function () {
+        var _this = this;
+        this.displayedColsList = [];
+        var recursiveFunc = function (item) {
+            if (!item.isPassesFilter()) {
+                return;
+            }
+            _this.displayedColsList.push(item);
+            if (item.isGroup() && item.isExpanded()) {
+                item.getChildren().forEach(recursiveFunc);
+            }
+        };
+        this.allColsTree.forEach(recursiveFunc);
+        this.virtualList.setModel(new ColumnModel(this.displayedColsList));
+        var focusedRow = this.virtualList.getLastFocusedRow();
+        this.virtualList.refresh();
+        if (focusedRow != null) {
+            this.focusRowIfAlive(focusedRow);
+        }
         this.notifyListeners();
     };
-    PrimaryColsListPanel.prototype.recursivelyAddComps = function (tree, dept, groupsExist) {
+    PrimaryColsListPanel.prototype.focusRowIfAlive = function (rowIndex) {
         var _this = this;
-        tree.forEach(function (child) {
-            if (child instanceof core_1.OriginalColumnGroup) {
-                _this.recursivelyAddGroupComps(child, dept, groupsExist);
+        window.setTimeout(function () {
+            if (_this.isAlive()) {
+                _this.virtualList.focusRow(rowIndex);
             }
-            else {
-                _this.addColumnComps(child, dept, groupsExist);
-            }
-        });
+        }, 0);
     };
-    PrimaryColsListPanel.prototype.recursivelyAddGroupComps = function (columnGroup, dept, groupsExist) {
-        var _this = this;
-        // only render group if user provided the definition
-        var newDept;
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel) {
-            return;
-        }
-        if (!columnGroup.isPadding()) {
-            var renderedGroup = new toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp(columnGroup, dept, this.allowDragging, this.expandGroupsByDefault, this.onGroupExpanded.bind(this), function () { return _this.filterResults; }, this.eventType);
-            this.getContext().createBean(renderedGroup);
-            var renderedGroupGui = renderedGroup.getGui();
-            this.appendChild(renderedGroupGui);
-            // we want to indent on the gui for the children
-            newDept = dept + 1;
-            // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
-            // to distinguish individual column groups after they have been split by user
-            var key = this.getColumnCompId(columnGroup);
-            this.columnComps.set(key, renderedGroup);
-        }
-        else {
-            // no children, so no indent
-            newDept = dept;
-        }
-        this.recursivelyAddComps(columnGroup.getChildren(), newDept, groupsExist);
-    };
-    PrimaryColsListPanel.prototype.addColumnComps = function (column, dept, groupsExist) {
-        if (column.getColDef() && column.getColDef().suppressColumnsToolPanel) {
-            return;
-        }
-        var columnComp = new toolPanelColumnComp_1.ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
-        this.getContext().createBean(columnComp);
-        var columnCompGui = columnComp.getGui();
-        this.appendChild(columnCompGui);
-        this.columnComps.set(column.getId(), columnComp);
-    };
-    PrimaryColsListPanel.prototype.onGroupExpanded = function () {
-        this.recursivelySetVisibility(this.columnTree, true);
-        this.fireGroupExpandedEvent();
+    PrimaryColsListPanel.prototype.forEachItem = function (callback) {
+        var recursiveFunc = function (items) {
+            items.forEach(function (item) {
+                callback(item);
+                if (item.isGroup()) {
+                    recursiveFunc(item.getChildren());
+                }
+            });
+        };
+        recursiveFunc(this.allColsTree);
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
-        this.columnComps.forEach(function (renderedItem) {
-            if (renderedItem.isExpandable()) {
-                renderedItem.setExpanded(value);
+        this.forEachItem(function (item) {
+            if (item.isGroup()) {
+                item.setExpanded(value);
             }
         });
     };
     PrimaryColsListPanel.prototype.setGroupsExpanded = function (expand, groupIds) {
-        var _this = this;
-        var expandedGroupIds = [];
         if (!groupIds) {
             this.doSetExpandedAll(expand);
             return;
         }
-        groupIds.forEach(function (suppliedGroupId) {
-            // we need to search through all comps to handle the case when groups are split
-            _this.columnComps.forEach(function (comp, key) {
-                // check if group comp starts with supplied group id as the tool panel keys contain
-                // groupId + childIds concatenated
-                var foundMatchingGroupComp = key.indexOf(suppliedGroupId) === 0;
-                if (foundMatchingGroupComp) {
-                    comp.setExpanded(expand);
-                    expandedGroupIds.push(suppliedGroupId);
-                }
-            });
+        var expandedGroupIds = [];
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            var groupId = item.getColumnGroup().getId();
+            if (groupIds.indexOf(groupId) >= 0) {
+                item.setExpanded(expand);
+                expandedGroupIds.push(groupId);
+            }
         });
         var unrecognisedGroupIds = groupIds.filter(function (groupId) { return !core_1._.includes(expandedGroupIds, groupId); });
         if (unrecognisedGroupIds.length > 0) {
@@ -196,30 +234,19 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsListPanel.prototype.getExpandState = function () {
-        var _this = this;
         var expandedCount = 0;
         var notExpandedCount = 0;
-        var recursiveFunc = function (items) {
-            items.forEach(function (item) {
-                // only interested in groups
-                if (item instanceof core_1.OriginalColumnGroup) {
-                    var compId = _this.getColumnCompId(item);
-                    var comp = _this.columnComps.get(compId);
-                    if (comp) {
-                        if (comp.isExpanded()) {
-                            expandedCount++;
-                        }
-                        else {
-                            notExpandedCount++;
-                        }
-                    }
-                    var columnGroup = item;
-                    var groupChildren = columnGroup.getChildren();
-                    recursiveFunc(groupChildren);
-                }
-            });
-        };
-        recursiveFunc(this.columnTree);
+        this.forEachItem(function (item) {
+            if (!item.isGroup()) {
+                return;
+            }
+            if (item.isExpanded()) {
+                expandedCount++;
+            }
+            else {
+                notExpandedCount++;
+            }
+        });
         if (expandedCount > 0 && notExpandedCount > 0) {
             return primaryColsHeaderPanel_1.ExpandState.INDETERMINATE;
         }
@@ -229,78 +256,34 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         return primaryColsHeaderPanel_1.ExpandState.EXPANDED;
     };
     PrimaryColsListPanel.prototype.doSetSelectedAll = function (selectAllChecked) {
-        this.selectAllChecked = selectAllChecked;
-        this.updateSelections();
-    };
-    PrimaryColsListPanel.prototype.updateSelections = function () {
-        var _this = this;
-        if (this.columnApi.isPivotMode()) {
-            // if pivot mode is on, then selecting columns has special meaning (eg group, aggregate, pivot etc),
-            // so there is no bulk operation we can do.
-            this.columnComps.forEach(function (column) { return column.onSelectAllChanged(_this.selectAllChecked); });
-        }
-        else {
-            // we don't want to change visibility on lock visible columns
-            var primaryCols = this.columnApi.getPrimaryColumns();
-            var filterColsToChange = function (col) {
-                return !col.getColDef().lockVisible && !col.getColDef().suppressColumnsToolPanel;
-            };
-            var colsToChange = primaryCols.filter(filterColsToChange);
-            // however if pivot mode is off, then it's all about column visibility so we can do a bulk
-            // operation directly with the column controller. we could column.onSelectAllChanged(checked)
-            // as above, however this would work on each column independently and take longer.
-            if (!core_1._.exists(this.filterText)) {
-                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, this.eventType);
-                return;
-            }
-            // obtain list of columns currently filtered
-            var filteredCols_1 = [];
-            core_1._.iterateObject(this.filterResults, function (key, passesFilter) {
-                if (passesFilter)
-                    filteredCols_1.push(key);
-            });
-            if (filteredCols_1.length > 0) {
-                var filteredColsToChange = colsToChange.filter(function (col) { return core_1._.includes(filteredCols_1, col.getColId()); });
-                // update visibility of columns currently filtered
-                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, this.eventType);
-                // update select all header with new state
-                this.dispatchEvent({ type: 'selectionChanged', state: this.selectAllChecked });
-            }
-        }
+        this.modelItemUtils.selectAllChildren(this.allColsTree, selectAllChecked, this.eventType);
     };
     PrimaryColsListPanel.prototype.getSelectionState = function () {
-        var _this = this;
-        var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
-        var columns = [];
-        if (allPrimaryColumns !== null) {
-            columns = allPrimaryColumns.filter(function (col) { return !col.getColDef().lockVisible; });
-        }
-        var pivotMode = this.columnController.isPivotMode();
         var checkedCount = 0;
         var uncheckedCount = 0;
-        columns.forEach(function (col) {
-            // ignore lock visible columns
-            if (col.getColDef().lockVisible) {
+        var pivotMode = this.columnController.isPivotMode();
+        this.forEachItem(function (item) {
+            if (item.isGroup()) {
                 return;
             }
-            // not not count columns not in tool panel
-            var colDef = col.getColDef();
-            if (colDef && colDef.suppressColumnsToolPanel) {
+            if (!item.isPassesFilter()) {
                 return;
             }
-            // ignore columns that have been removed from panel by filter
-            if (_this.filterResults && !_this.filterResults[col.getColId()])
-                return;
+            var column = item.getColumn();
+            var colDef = column.getColDef();
             var checked;
             if (pivotMode) {
-                var noPivotModeOptionsAllowed = !col.isAllowPivot() && !col.isAllowRowGroup() && !col.isAllowValue();
+                var noPivotModeOptionsAllowed = !column.isAllowPivot() && !column.isAllowRowGroup() && !column.isAllowValue();
                 if (noPivotModeOptionsAllowed) {
                     return;
                 }
-                checked = col.isValueActive() || col.isPivotActive() || col.isRowGroupActive();
+                checked = column.isValueActive() || column.isPivotActive() || column.isRowGroupActive();
             }
             else {
-                checked = col.isVisible();
+                if (colDef.lockVisible) {
+                    return;
+                }
+                checked = column.isVisible();
             }
             checked ? checkedCount++ : uncheckedCount++;
         });
@@ -310,37 +293,19 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
         this.filterText = core_1._.exists(filterText) ? filterText.toLowerCase() : null;
-        this.filterColumns();
-        this.recursivelySetVisibility(this.columnTree, true);
-        // groups selection state may need to be updated when filter is present
-        this.columnComps.forEach(function (columnComp) {
-            if (columnComp instanceof toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp) {
-                columnComp.onColumnStateChanged();
-            }
-        });
-        // update header panel with current selection and expanded state
-        this.fireSelectionChangedEvent();
-        this.fireGroupExpandedEvent();
+        this.markFilteredColumns();
+        this.flattenAndFilterModel();
     };
-    PrimaryColsListPanel.prototype.filterColumns = function () {
+    PrimaryColsListPanel.prototype.markFilteredColumns = function () {
         var _this = this;
-        var filterResults = {};
         var passesFilter = function (item) {
             if (!core_1._.exists(_this.filterText))
                 return true;
-            var columnCompId = _this.getColumnCompId(item);
-            var comp = _this.columnComps.get(columnCompId);
-            if (!comp)
-                return false;
-            var isPaddingGroup = item instanceof core_1.OriginalColumnGroup && item.isPadding();
-            if (isPaddingGroup)
-                return false;
-            var displayName = comp.getDisplayName();
-            return displayName !== null ? displayName.toLowerCase().indexOf(_this.filterText) >= 0 : true;
+            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(_this.filterText) >= 0 : true;
         };
         var recursivelyCheckFilter = function (item, parentPasses) {
             var atLeastOneChildPassed = false;
-            if (item instanceof core_1.OriginalColumnGroup) {
+            if (item.isGroup()) {
                 var groupPasses_1 = passesFilter(item);
                 item.getChildren().forEach(function (child) {
                     var childPasses = recursivelyCheckFilter(child, groupPasses_1 || parentPasses);
@@ -350,37 +315,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 });
             }
             var filterPasses = (parentPasses || atLeastOneChildPassed) ? true : passesFilter(item);
-            var columnCompId = _this.getColumnCompId(item);
-            filterResults[columnCompId] = filterPasses;
+            item.setPassesFilter(filterPasses);
             return filterPasses;
         };
-        this.columnTree.forEach(function (item) { return recursivelyCheckFilter(item, false); });
-        this.filterResults = filterResults;
-    };
-    PrimaryColsListPanel.prototype.recursivelySetVisibility = function (columnTree, parentGroupsOpen) {
-        var _this = this;
-        columnTree.forEach(function (child) {
-            var compId = _this.getColumnCompId(child);
-            var comp = _this.columnComps.get(compId);
-            if (comp) {
-                var filterResultExists = _this.filterResults && core_1._.exists(_this.filterResults[compId]);
-                var passesFilter = filterResultExists ? _this.filterResults[compId] : true;
-                comp.setDisplayed(parentGroupsOpen && passesFilter);
-            }
-            if (child instanceof core_1.OriginalColumnGroup) {
-                var columnGroup = child;
-                var childrenOpen = void 0;
-                if (comp) {
-                    var expanded = comp.isExpanded();
-                    childrenOpen = parentGroupsOpen ? expanded : false;
-                }
-                else {
-                    childrenOpen = parentGroupsOpen;
-                }
-                var children = columnGroup.getChildren();
-                _this.recursivelySetVisibility(children, childrenOpen);
-            }
-        });
+        this.allColsTree.forEach(function (item) { return recursivelyCheckFilter(item, false); });
     };
     PrimaryColsListPanel.prototype.notifyListeners = function () {
         this.fireGroupExpandedEvent();
@@ -394,21 +332,6 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     };
-    PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        var _this = this;
-        var eGui = this.getGui();
-        if (this.columnComps) {
-            this.columnComps.forEach(function (renderedItem) {
-                eGui.removeChild(renderedItem.getGui());
-                _this.destroyBean(renderedItem);
-            });
-        }
-        this.columnComps = new Map();
-    };
-    PrimaryColsListPanel.prototype.destroy = function () {
-        this.destroyColumnComps();
-        _super.prototype.destroy.call(this);
-    };
     PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-column-select-list\" role=\"tree\"></div>";
     __decorate([
         core_1.Autowired('columnController')
@@ -419,7 +342,13 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnApi')
     ], PrimaryColsListPanel.prototype, "columnApi", void 0);
+    __decorate([
+        core_1.Autowired('modelItemUtils')
+    ], PrimaryColsListPanel.prototype, "modelItemUtils", void 0);
+    __decorate([
+        core_1.PreDestroy
+    ], PrimaryColsListPanel.prototype, "destroyColumnTree", null);
     return PrimaryColsListPanel;
-}(core_1.ManagedFocusComponent));
+}(core_1.Component));
 exports.PrimaryColsListPanel = PrimaryColsListPanel;
 //# sourceMappingURL=primaryColsListPanel.js.map

@@ -19,6 +19,7 @@ export interface DateFilterModel extends ISimpleFilterModel {
 export interface IDateFilterParams extends IScalarFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
+    minValidYear?: number;
 }
 
 export interface IDateComparatorFunc {
@@ -34,17 +35,17 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         ScalarFilter.IN_RANGE
     ];
 
-    @RefSelector('eCondition1PanelFrom') private eCondition1PanelFrom: HTMLElement;
-    @RefSelector('eCondition1PanelTo') private eCondition1PanelTo: HTMLElement;
-    @RefSelector('eCondition2PanelFrom') private eCondition2PanelFrom: HTMLElement;
-    @RefSelector('eCondition2PanelTo') private eCondition2PanelTo: HTMLElement;
+    @RefSelector('eCondition1PanelFrom') private readonly eCondition1PanelFrom: HTMLElement;
+    @RefSelector('eCondition1PanelTo') private readonly eCondition1PanelTo: HTMLElement;
+    @RefSelector('eCondition2PanelFrom') private readonly eCondition2PanelFrom: HTMLElement;
+    @RefSelector('eCondition2PanelTo') private readonly eCondition2PanelTo: HTMLElement;
 
     private dateCondition1FromComp: DateCompWrapper;
     private dateCondition1ToComp: DateCompWrapper;
     private dateCondition2FromComp: DateCompWrapper;
     private dateCondition2ToComp: DateCompWrapper;
 
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private dateFilterParams: IDateFilterParams;
 
@@ -68,13 +69,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     }
 
     protected setValueFromFloatingFilter(value: string): void {
-        if (value != null) {
-            const dateFrom = parseDateTimeFromString(value);
-            this.dateCondition1FromComp.setDate(dateFrom);
-        } else {
-            this.dateCondition1FromComp.setDate(null);
-        }
-
+        this.dateCondition1FromComp.setDate(value == null ? null : parseDateTimeFromString(value));
         this.dateCondition1ToComp.setDate(null);
         this.dateCondition2FromComp.setDate(null);
         this.dateCondition2ToComp.setDate(null);
@@ -167,8 +162,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         }
 
         const [compFrom, compTo] = this.getFromToComponents(position);
+        const minValidYear = this.dateFilterParams.minValidYear == null ? 1000 : this.dateFilterParams.minValidYear;
+        const isValidDate = (value: Date) => value != null && value.getUTCFullYear() > minValidYear;
 
-        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
+        return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {

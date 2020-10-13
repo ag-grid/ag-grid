@@ -84,6 +84,7 @@ export declare class AgGridColumn {
     equals: any;
     pivotComparator: any;
     suppressKeyboardEvent: any;
+    suppressHeaderKeyboardEvent: any;
     colSpan: any;
     rowSpan: any;
     getQuickFilterText: any;

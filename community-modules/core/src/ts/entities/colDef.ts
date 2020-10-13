@@ -10,17 +10,11 @@ import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
+import { ColumnGroup } from "./columnGroup";
 
 /***********************************************************************
  * Don't forget to update PropertyKeys if changing this class. PLEASE! *
  ***********************************************************************/
-
-// when merging columns (eg column types, defaultColDef and the colDef) we give special treatment to param
-// objects, as we want param objects to be merged.
-export const COL_DEF_PARAM_OBJECTS = [
-    'tooltipComponentParams', 'headerGroupComponentParams', 'cellRendererParams',
-    'cellEditorParams', 'pinnedRowCellRendererParams', 'columnsMenuParams',
-    'headerComponentParams'];
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -49,6 +43,9 @@ export interface AbstractColDef {
     tooltipComponent?: { new(): ITooltipComp; } | string;
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
+
+    /** Allows the user to suppress certain keyboard events in the grid header */
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -291,7 +288,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
-    /** Allows user to suppress certain keyboard events */
+    /** Allows the user to suppress certain keyboard events in the grid cell */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     /** If true, GUI will allow adding this columns as a row group */
@@ -378,8 +375,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     refData?: { [key: string]: string; };
 
-    /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
-    chartDataType?: string;
+    /** Defines the column data type used when charting */
+    chartDataType?: 'category' | 'series' | 'time' | 'excluded' | undefined;
 
     /** Params to customise the columns menu behaviour and appearance */
     columnsMenuParams?: ColumnsMenuParams;
@@ -409,10 +406,10 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface ColumnsMenuParams {
-    suppressSyncLayoutWithGrid?: boolean,
-    suppressColumnFilter?: boolean,
-    suppressColumnSelectAll?: boolean,
-    suppressColumnExpandAll?: boolean,
+    suppressSyncLayoutWithGrid?: boolean;
+    suppressColumnFilter?: boolean;
+    suppressColumnSelectAll?: boolean;
+    suppressColumnExpandAll?: boolean;
     contractColumnSelection?: boolean;
 }
 
@@ -459,6 +456,16 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     event: KeyboardEvent;
     // whether the cell is editing or not
     editing: boolean;
+}
+
+export interface SuppressHeaderKeyboardEventParams {
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    column: Column | ColumnGroup;
+    colDef: ColDef | ColGroupDef;
+    context: any;
+    headerRowIndex: number;
+    event: KeyboardEvent;
 }
 
 export interface CellClassParams {

@@ -26,24 +26,48 @@ export declare enum DragSourceType {
     ChartPanel = 3
 }
 export interface DragSource {
-    /** The type of the drag source, used by the drop target to know where the drag originated from. */
+    /**
+     * The type of the drag source, used by the drop target to know where the
+     * drag originated from.
+     */
     type: DragSourceType;
-    /** Element which, when dragged, will kick off the DnD process */
+    /**
+     * Element which, when dragged, will kick off the DnD process
+     */
     eElement: HTMLElement;
-    /** If eElement is dragged, then the dragItem is the object that gets passed around. */
+    /**
+     * If eElement is dragged, then the dragItem is the object that gets passed around.
+     */
     getDragItem: () => DragItem;
-    /** This name appears in the ghost icon when dragging */
+    /**
+     * This name appears in the ghost icon when dragging.
+     */
     dragItemName: string | (() => string) | null;
-    /** Icon to show when not over a drop zone */
+    /**
+     * Icon to show when not over a drop zone
+     */
     defaultIconName?: string;
-    /** The drop target associated with this dragSource. When dragging starts, this target does not get an
-     * onDragEnter event. */
+    /**
+     * The drop target associated with this dragSource. When dragging starts, this
+     * target does not get an onDragEnter event.
+     */
     dragSourceDropTarget?: DropTarget;
-    /** After how many pixels of dragging should the drag operation start. Default is 4. */
+    /**
+     * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
+     * as the target grid.
+     */
+    dragSourceDomDataKey?: string;
+    /**
+     * After how many pixels of dragging should the drag operation start. Default is 4.
+     */
     dragStartPixels?: number;
-    /** Callback for drag started */
+    /**
+     * Callback for drag started
+     */
     onDragStarted?: () => void;
-    /** Callback for drag stopped */
+    /**
+     * Callback for drag stopped
+     */
     onDragStopped?: () => void;
 }
 export interface DropTarget {

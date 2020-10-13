@@ -10,7 +10,7 @@ import { locale } from "../../../../util/time/format/defaultLocale";
 import { CartesianSeries } from "../cartesianSeries";
 import { reactive, Observable } from "../../../../util/observable";
 import { ChartAxisDirection } from "../../../chartAxis";
-import { Chart } from "../../../chart";
+import {Chart, TooltipRendererResult, toTooltipHtml} from "../../../chart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     date: number;
@@ -346,7 +346,7 @@ export class OHLCSeries extends CartesianSeries {
         const color = nodeDatum.fill || 'gray';
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 dateKey,
                 openKey,
@@ -362,7 +362,7 @@ export class OHLCSeries extends CartesianSeries {
 
                 title,
                 color
-            });
+            }));
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
@@ -386,7 +386,7 @@ export class OHLCSeries extends CartesianSeries {
         }
     }
 
-    tooltipRenderer?: (params: OHLCTooltipRendererParams) => string;
+    tooltipRenderer?: (params: OHLCTooltipRendererParams) => string | TooltipRendererResult;
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const {

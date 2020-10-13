@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, BeanStub, PostConstruct, _ } from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, PostConstruct, _ } from '@ag-grid-community/core';
 var AggFuncService = /** @class */ (function (_super) {
     __extends(AggFuncService, _super);
     function AggFuncService() {
@@ -68,10 +68,7 @@ var AggFuncService = /** @class */ (function (_super) {
     };
     AggFuncService.prototype.getFuncNames = function (column) {
         var userAllowedFuncs = column.getColDef().allowedAggFuncs;
-        if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
-            return userAllowedFuncs;
-        }
-        return Object.keys(this.aggFuncsMap).sort();
+        return userAllowedFuncs == null ? Object.keys(this.aggFuncsMap).sort() : userAllowedFuncs;
     };
     AggFuncService.prototype.clear = function () {
         this.aggFuncsMap = {};
@@ -97,9 +94,29 @@ var AggFuncService = /** @class */ (function (_super) {
 }(BeanStub));
 export { AggFuncService };
 function aggSum(params) {
-    return params.values
-        .filter(function (value) { return typeof value === 'number'; })
-        .reduce(function (sum, value) { return sum === null ? value : sum + value; }, null);
+    var values = params.values;
+    var result = null; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (var i = 0; i < values.length; i++) {
+        var value = values[i];
+        if (typeof value === 'number') {
+            if (result === null) {
+                result = value;
+            }
+            else {
+                result += typeof result === 'number' ? value : BigInt(value);
+            }
+        }
+        else if (typeof value === 'bigint') {
+            if (result === null) {
+                result = value;
+            }
+            else {
+                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
+            }
+        }
+    }
+    return result;
 }
 function aggFirst(params) {
     return params.values.length > 0 ? params.values[0] : null;
@@ -108,22 +125,40 @@ function aggLast(params) {
     return params.values.length > 0 ? _.last(params.values) : null;
 }
 function aggMin(params) {
-    return params.values
-        .filter(function (value) { return typeof value === 'number'; })
-        .reduce(function (min, value) { return min === null || value < min ? value : min; }, null);
+    var values = params.values;
+    var result = null;
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (var i = 0; i < values.length; i++) {
+        var value = values[i];
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
+            result = value;
+        }
+    }
+    return result;
 }
 function aggMax(params) {
-    return params.values
-        .filter(function (value) { return typeof value === 'number'; })
-        .reduce(function (max, value) { return max === null || value > max ? value : max; }, null);
+    var values = params.values;
+    var result = null;
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (var i = 0; i < values.length; i++) {
+        var value = values[i];
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
+            result = value;
+        }
+    }
+    return result;
 }
 function aggCount(params) {
-    var value = params.values.reduce(function (count, item) {
-        var isGroupAgg = _.exists(item) && typeof item.value === 'number';
-        return count + (isGroupAgg ? item.value : 1);
-    }, 0);
+    var values = params.values;
+    var result = 0;
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (var i = 0; i < values.length; i++) {
+        var value = values[i];
+        // check if the value is from a group, in which case use the group's count
+        result += value != null && typeof value.value === 'number' ? value.value : 1;
+    }
     return {
-        value: value,
+        value: result,
         toString: function () {
             return this.value.toString();
         },
@@ -136,27 +171,34 @@ function aggCount(params) {
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
 function aggAvg(params) {
-    // the average will be the sum / count
-    var _a = params.values.reduce(function (_a, item) {
-        var sum = _a.sum, count = _a.count;
-        var itemIsGroupResult = _.exists(item) &&
-            typeof item.value === 'number' &&
-            typeof item.count === 'number';
-        if (typeof item === 'number') {
-            return { sum: sum + item, count: count + 1 };
+    var values = params.values;
+    var sum = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    var count = 0;
+    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
+    for (var i = 0; i < values.length; i++) {
+        var value_1 = values[i];
+        var valueToAdd = null;
+        if (typeof value_1 === 'number' || typeof value_1 === 'bigint') {
+            valueToAdd = value_1;
+            count++;
         }
-        if (itemIsGroupResult) {
-            // we are aggregating groups, so we take the
-            // aggregated values to calculated a weighted average
-            return {
-                sum: sum + item.value * item.count,
-                count: count + item.count
-            };
+        else if (value_1 != null && (typeof value_1.value === 'number' || typeof value_1.value === 'bigint') && typeof value_1.count === 'number') {
+            // we are aggregating groups, so we take the aggregated values to calculated a weighted average
+            valueToAdd = value_1.value * (typeof value_1.value === 'number' ? value_1.count : BigInt(value_1.count));
+            count += value_1.count;
         }
-        return { sum: sum, count: count };
-    }, { sum: 0, count: 0 }), sum = _a.sum, count = _a.count;
+        if (typeof valueToAdd === 'number') {
+            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
+        }
+        else if (typeof valueToAdd === 'bigint') {
+            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
+        }
+    }
+    var value = null;
     // avoid divide by zero error
-    var value = count > 0 ? sum / count : null;
+    if (count > 0) {
+        value = sum / (typeof sum === 'number' ? count : BigInt(count));
+    }
     // the result will be an object. when this cell is rendered, only the avg is shown.
     // however when this cell is part of another aggregation, the count is also needed
     // to create a weighted average for the next level.
@@ -166,10 +208,7 @@ function aggAvg(params) {
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
         toString: function () {
-            if (typeof this.value === 'number') {
-                return this.value.toString();
-            }
-            return '';
+            return typeof this.value === 'number' || typeof this.value === 'bigint' ? this.value.toString() : '';
         },
         // used for sorting
         toNumber: function () {

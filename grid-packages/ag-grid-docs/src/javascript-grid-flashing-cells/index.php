@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Updating Data: Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Insert Remove";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', ['enterprise' => true]) ?>
 
     <h2>How Flashing Works</h2>
 
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            The <code>cellFlashDelay</code> value has been changed to 2000ms, so cells will remain in 
+            The <code>cellFlashDelay</code> value has been changed to 2000ms, so cells will remain in
             their "flashed" state for 2 seconds.
         </li>
         <li>
@@ -86,12 +86,12 @@ include '../documentation-main/documentation_header.php';
             Clicking <b>Update Some Data</b> will update some data to demonstrate the changes mentioned above.
         </li>
         <li>
-            Clicking <strong>Flash Two Rows</strong> will pass a custom <code>flashDelay</code> of 3000ms and a 
+            Clicking <strong>Flash Two Rows</strong> will pass a custom <code>flashDelay</code> of 3000ms and a
             custom <code>fadeDelay</code> delay of 2000ms to demonstrate default values can be overridden.
         </li>
     </ul>
 
-    <?= grid_example('Changing Flashing Delay', 'flashing-delay-changes', 'generated', ['enterprise' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Changing Flashing Delay', 'flashing-delay-changes', 'generated', ['enterprise' => true]) ?>
 
     <h2>Filtering & Aggregations</h2>
 

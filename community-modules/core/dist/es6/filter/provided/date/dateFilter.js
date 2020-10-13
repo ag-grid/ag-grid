@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,13 +50,7 @@ var DateFilter = /** @class */ (function (_super) {
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
-        if (value != null) {
-            var dateFrom = parseDateTimeFromString(value);
-            this.dateCondition1FromComp.setDate(dateFrom);
-        }
-        else {
-            this.dateCondition1FromComp.setDate(null);
-        }
+        this.dateCondition1FromComp.setDate(value == null ? null : parseDateTimeFromString(value));
         this.dateCondition1ToComp.setDate(null);
         this.dateCondition2FromComp.setDate(null);
         this.dateCondition2ToComp.setDate(null);
@@ -132,7 +126,9 @@ var DateFilter = /** @class */ (function (_super) {
             return true;
         }
         var _a = this.getFromToComponents(position), compFrom = _a[0], compTo = _a[1];
-        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
+        var minValidYear = this.dateFilterParams.minValidYear == null ? 1000 : this.dateFilterParams.minValidYear;
+        var isValidDate = function (value) { return value != null && value.getUTCFullYear() > minValidYear; };
+        return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
     };
     DateFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.dateFrom === bSimple.dateFrom

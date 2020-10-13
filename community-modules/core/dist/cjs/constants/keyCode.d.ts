@@ -1,10 +1,9 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class KeyCode {
     static BACKSPACE: number;
     static TAB: number;
-    static NEW_LINE: number;
     static ENTER: number;
     static SHIFT: number;
     static ESCAPE: number;

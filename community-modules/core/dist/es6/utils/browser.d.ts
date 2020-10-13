@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function isBrowserIE(): boolean;
@@ -9,7 +9,7 @@ export declare function isBrowserFirefox(): boolean;
 export declare function isIOSUserAgent(): boolean;
 export declare function getTabIndex(el: HTMLElement): string | null;
 export declare function getMaxDivHeight(): number;
-export declare function getScrollbarWidth(): number;
+export declare function getScrollbarWidth(): number | null;
 /** @deprecated */
 export declare function hasOverflowScrolling(): boolean;
 /**

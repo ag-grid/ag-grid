@@ -53,7 +53,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
             value = value();
         }
         else {
-            formattedValue = this.getFormattedValue(colDef, column, value);
+            formattedValue = this.getFormattedValue(this.params, column, value);
         }
         if (this.params.showTooltips) {
             this.tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
@@ -62,7 +62,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
                     this.getGui().setAttribute('title', this.tooltipText);
                 }
                 else {
-                    this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
+                    this.createManagedBean(new TooltipFeature(this));
                 }
             }
         }
@@ -74,8 +74,14 @@ var SetFilterListItem = /** @class */ (function (_super) {
         };
         this.renderCell(colDef, params);
     };
-    SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
-        var filterParams = colDef.filterParams;
+    SetFilterListItem.prototype.getTooltipParams = function () {
+        return {
+            location: 'setFilterValue',
+            colDef: this.getComponentHolder(),
+            value: this.tooltipText
+        };
+    };
+    SetFilterListItem.prototype.getFormattedValue = function (filterParams, column, value) {
         var formatter = filterParams == null ? null : filterParams.valueFormatter;
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     };
@@ -95,9 +101,6 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.prototype.getComponentHolder = function () {
         return this.params.column.getColDef();
-    };
-    SetFilterListItem.prototype.getTooltipText = function () {
-        return this.tooltipText;
     };
     SetFilterListItem.EVENT_SELECTION_CHANGED = 'selectionChanged';
     SetFilterListItem.TEMPLATE = "\n        <div class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n        </div>";

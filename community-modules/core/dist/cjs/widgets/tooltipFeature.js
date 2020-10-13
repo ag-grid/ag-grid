@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -28,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
 var dom_1 = require("../utils/dom");
+var generic_1 = require("../utils/generic");
 var TooltipStates;
 (function (TooltipStates) {
     TooltipStates[TooltipStates["NOTHING"] = 0] = "NOTHING";
@@ -36,7 +48,7 @@ var TooltipStates;
 })(TooltipStates || (TooltipStates = {}));
 var TooltipFeature = /** @class */ (function (_super) {
     __extends(TooltipFeature, _super);
-    function TooltipFeature(parentComp, location) {
+    function TooltipFeature(parentComp) {
         var _this = _super.call(this) || this;
         _this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
         _this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
@@ -48,7 +60,6 @@ var TooltipFeature = /** @class */ (function (_super) {
         _this.tooltipInstanceCount = 0;
         _this.tooltipMouseTrack = false;
         _this.parentComp = parentComp;
-        _this.location = location;
         return _this;
     }
     TooltipFeature.prototype.postConstruct = function () {
@@ -59,6 +70,7 @@ var TooltipFeature = /** @class */ (function (_super) {
         this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
         this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
     };
     TooltipFeature.prototype.destroy = function () {
         // if this component gets destroyed while tooltip is showing, need to make sure
@@ -81,6 +93,9 @@ var TooltipFeature = /** @class */ (function (_super) {
         this.state = TooltipStates.WAITING_TO_SHOW;
     };
     TooltipFeature.prototype.onMouseLeave = function () {
+        this.setToDoNothing();
+    };
+    TooltipFeature.prototype.onKeyDown = function () {
         this.setToDoNothing();
     };
     TooltipFeature.prototype.setToDoNothing = function () {
@@ -135,24 +150,13 @@ var TooltipFeature = /** @class */ (function (_super) {
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
     };
     TooltipFeature.prototype.showTooltip = function () {
-        var tooltipText = this.parentComp.getTooltipText();
-        if (!tooltipText) {
+        var params = __assign({ api: this.gridApi, columnApi: this.columnApi, context: this.gridOptionsWrapper.getContext() }, this.parentComp.getTooltipParams());
+        if (!generic_1.exists(params.value)) {
             this.setToDoNothing();
             return;
         }
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
-        var hasColumn = !!this.parentComp.getColumn;
-        var params = {
-            location: this.location,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            colDef: this.parentComp.getComponentHolder(),
-            column: hasColumn ? this.parentComp.getColumn() : undefined,
-            context: this.gridOptionsWrapper.getContext(),
-            rowIndex: this.parentComp.getCellPosition && this.parentComp.getCellPosition().rowIndex,
-            value: tooltipText
-        };
         // we pass in tooltipInstanceCount so the callback knows what the count was when
         // we requested the tooltip, so if another tooltip was requested in the mean time
         // we disregard it

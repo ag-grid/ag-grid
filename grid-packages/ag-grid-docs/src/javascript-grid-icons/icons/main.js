@@ -53,7 +53,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    showToolPanel: true,
+    sideBar: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',

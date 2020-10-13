@@ -14,7 +14,7 @@ export declare abstract class AbstractSelectionHandle extends Component implemen
     private rangeEndRow;
     private cellHoverListener;
     private lastCellHovered;
-    private changedCell;
+    protected changedCalculatedValues: boolean;
     private dragging;
     protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean;
@@ -34,7 +34,7 @@ export declare abstract class AbstractSelectionHandle extends Component implemen
     private preventRangeExtension;
     protected onDragStart(e: MouseEvent): void;
     private getDraggingCssClass;
-    private updateLastCellPositionHovered;
+    protected updateValuesOnMove(e: MouseEvent): void;
     getType(): SelectionHandleType;
     refresh(cellComp: CellComp): void;
     protected clearValues(): void;

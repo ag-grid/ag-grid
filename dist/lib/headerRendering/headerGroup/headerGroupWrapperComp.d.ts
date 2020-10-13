@@ -1,8 +1,9 @@
 import { ColGroupDef } from "../../entities/colDef";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { DragItem, DropTarget } from "../../dragAndDrop/dragAndDropService";
+import { DragItem } from "../../dragAndDrop/dragAndDropService";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
 import { Beans } from "../../rendering/beans";
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
     private gridOptionsWrapper;
@@ -13,7 +14,6 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     protected beans: Beans;
     private gridApi;
     private columnApi;
-    private readonly dragSourceDropTarget;
     protected readonly column: ColumnGroup;
     protected readonly pinned: string;
     private eHeaderCellResize;
@@ -25,7 +25,7 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private resizeTakeFromRatios;
     private expandable;
     private removeChildListenersFuncs;
-    constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
+    constructor(columnGroup: ColumnGroup, pinned: string);
     protected postConstruct(): void;
     protected onFocusIn(e: FocusEvent): void;
     protected handleKeyDown(e: KeyboardEvent): void;
@@ -34,7 +34,8 @@ export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private refreshExpanded;
     private setupMovingCss;
     getComponentHolder(): ColGroupDef;
-    getTooltipText(): string | undefined;
+    private getTooltipText;
+    getTooltipParams(): ITooltipParams;
     private setupTooltip;
     private onColumnMovingChanged;
     private addAttributes;

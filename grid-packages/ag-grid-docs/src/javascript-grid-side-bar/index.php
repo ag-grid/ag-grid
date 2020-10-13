@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Tool Panel: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Show Hide Column Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Boolean Configuration', 'boolean-configuration', 'generated', ['enterprise' => true]) ?>
 
 <h3>String Configuration</h3>
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Side Bar - Only Filters', 'only-filters', 'generated', ['enterprise' => true]) ?>
 
 <h3>SideBarDef Configuration</h3>
 
@@ -240,7 +240,7 @@ SNIPPET
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Side Bar Fine Tuning', 'fine-tuning', 'generated', ['enterprise' => true]) ?>
 
 <h2>Providing Parameters to Tool Panels</h2>
 
@@ -303,6 +303,7 @@ SNIPPET
         <b>Position Buttons:</b> These change the position of the side bar relative to the grid.
     </li>
 </ul>
+
 
 <?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
 

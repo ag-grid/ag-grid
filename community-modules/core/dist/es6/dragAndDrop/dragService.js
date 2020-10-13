@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -206,6 +206,14 @@ var DragService = /** @class */ (function (_super) {
             };
             this.eventService.dispatchEvent(event_1);
             this.currentDragParams.onDragStart(startEvent);
+            // we need ONE drag action at the startEvent, so that we are guaranteed the drop target
+            // at the start gets notified. this is because the drag can start outside of the element
+            // that started it, as the mouse is allowed drag away from the mouse down before it's
+            // considered a drag (the isEventNearStartEvent() above). if we didn't do this, then
+            // it would be possible to click a column by the edge, then drag outside of the drop zone
+            // in less than 4 pixels and the drag officially starts outside of the header but the header
+            // wouldn't be notified of the dragging.
+            this.currentDragParams.onDragging(startEvent);
         }
         this.currentDragParams.onDragging(currentEvent);
     };

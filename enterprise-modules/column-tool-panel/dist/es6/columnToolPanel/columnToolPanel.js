@@ -37,6 +37,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         }
     };
     ColumnToolPanel.prototype.init = function (params) {
+        var _this = this;
         var defaultParams = {
             suppressSideButtons: false,
             suppressColumnSelectAll: false,
@@ -54,28 +55,34 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
-            this.pivotModePanel = this.createManagedBean(new PivotModePanel());
+            this.pivotModePanel = this.createBean(new PivotModePanel()); // DO NOT CHANGE TO createManagedBean
+            this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.pivotModePanel); });
             this.appendChild(this.pivotModePanel);
         }
-        this.primaryColsPanel = this.createManagedBean(new PrimaryColsPanel());
+        this.primaryColsPanel = this.createBean(new PrimaryColsPanel()); // DO NOT CHANGE TO createManagedBean
+        this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.primaryColsPanel); });
         this.primaryColsPanel.init(true, this.params, "toolPanelUi");
         _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
         this.appendChild(this.primaryColsPanel);
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
+                this.rowGroupDropZonePanel = this.createBean(new RowGroupDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
+                this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.rowGroupDropZonePanel); });
                 this.appendChild(this.rowGroupDropZonePanel);
             }
             if (!this.params.suppressValues) {
-                this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
+                this.valuesDropZonePanel = this.createBean(new ValuesDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
+                this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.valuesDropZonePanel); });
                 this.appendChild(this.valuesDropZonePanel);
             }
             if (!this.params.suppressPivots) {
-                this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
+                this.pivotDropZonePanel = this.createBean(new PivotDropZonePanel(false)); // DO NOT CHANGE TO createManagedBean
+                this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.pivotDropZonePanel); });
                 this.appendChild(this.pivotDropZonePanel);
             }
             this.setLastVisible();
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            var pivotModeListener_1 = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            this.childDestroyFuncs.push(function () { return pivotModeListener_1(); });
         }
         this.initialised = true;
     };

@@ -1,4 +1,4 @@
-// ag-charts-react v2.0.0
+// ag-charts-react v2.1.0
 import { Component, RefObject } from "react";
 import { AgChartOptions } from "ag-charts-community";
 export interface AgChartProps {

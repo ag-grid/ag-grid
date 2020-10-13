@@ -12,8 +12,7 @@ import {
     DragAndDropService,
     DragItem,
     DragSource,
-    DragSourceType,
-    DropTarget
+    DragSourceType
 } from "../../dragAndDrop/dragAndDropService";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
@@ -29,6 +28,7 @@ import { setAriaExpanded } from "../../utils/aria";
 import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -46,7 +46,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
-    private readonly dragSourceDropTarget: DropTarget;
     protected readonly column: ColumnGroup;
     protected readonly pinned: string;
 
@@ -64,10 +63,9 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(columnGroup: ColumnGroup, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
         this.column = columnGroup;
-        this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
 
@@ -160,9 +158,18 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         return this.column.getColGroupDef();
     }
 
-    public getTooltipText(): string | undefined {
+    private getTooltipText(): string {
         const colGroupDef = this.getComponentHolder();
         return colGroupDef && colGroupDef.headerTooltip;
+    }
+
+    public getTooltipParams(): ITooltipParams {
+        return {
+            location: 'headerGroup',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            value: this.getTooltipText()
+        };
     }
 
     private setupTooltip(): void {
@@ -173,7 +180,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.createManagedBean(new TooltipFeature(this, 'headerGroup'));
+            this.createManagedBean(new TooltipFeature(this));
         }
     }
 
@@ -259,7 +266,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
         };

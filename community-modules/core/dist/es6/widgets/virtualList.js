@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,10 +31,12 @@ import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setA
 import { KeyCode } from '../constants/keyCode';
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
-    function VirtualList(cssIdentifier) {
+    function VirtualList(cssIdentifier, ariaRole) {
         if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
+        if (ariaRole === void 0) { ariaRole = 'listbox'; }
         var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier), true) || this;
         _this.cssIdentifier = cssIdentifier;
+        _this.ariaRole = ariaRole;
         _this.renderedRows = new Map();
         _this.rowHeight = 20;
         _this.isDestroyed = false;
@@ -43,7 +45,13 @@ var VirtualList = /** @class */ (function (_super) {
     VirtualList.prototype.postConstruct = function () {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
+        this.addResizeObserver();
         _super.prototype.postConstruct.call(this);
+    };
+    VirtualList.prototype.addResizeObserver = function () {
+        var listener = this.drawVirtualRows.bind(this);
+        var destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
+        this.addDestroyFunc(destroyObserver);
     };
     VirtualList.prototype.focusInnerElement = function (fromBottom) {
         this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
@@ -204,7 +212,7 @@ var VirtualList = /** @class */ (function (_super) {
         var eDiv = document.createElement('div');
         addCssClass(eDiv, 'ag-virtual-list-item');
         addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
-        eDiv.setAttribute('role', 'option');
+        eDiv.setAttribute('role', this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
@@ -215,7 +223,7 @@ var VirtualList = /** @class */ (function (_super) {
         }
         eDiv.style.height = this.rowHeight + "px";
         eDiv.style.top = this.rowHeight * rowIndex + "px";
-        var rowComponent = this.componentCreator(value);
+        var rowComponent = this.componentCreator(value, eDiv);
         rowComponent.addGuiEventListener('focusin', function () { return _this.lastFocusedRowIndex = rowIndex; });
         eDiv.appendChild(rowComponent.getGui());
         // keep the DOM order consistent with the order of the rows
@@ -254,6 +262,9 @@ var VirtualList = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], VirtualList.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        Autowired('resizeObserverService')
+    ], VirtualList.prototype, "resizeObserverService", void 0);
     __decorate([
         RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);

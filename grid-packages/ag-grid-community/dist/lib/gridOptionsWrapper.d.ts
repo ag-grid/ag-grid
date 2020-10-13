@@ -1,5 +1,5 @@
 import { RowNode } from './entities/rowNode';
-import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams } from './entities/gridOptions';
+import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams, TabToNextHeaderParams } from './entities/gridOptions';
 import { GridApi } from './gridApi';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { ColumnApi } from './columnController/columnApi';
@@ -12,6 +12,7 @@ import { AgEvent } from './events';
 import { SideBarDef } from './entities/sideBar';
 import { ChartOptions } from './interfaces/iChartOptions';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import { HeaderPosition } from './headerRendering/header/headerPosition';
 export interface PropertyChangedEvent extends AgEvent {
     currentValue: any;
     previousValue: any;
@@ -40,14 +41,16 @@ export declare class GridOptionsWrapper {
     private propertyEventService;
     private domDataKey;
     private layoutElements;
-    private scrollWidth;
+    private scrollbarWidth;
     private updateLayoutClassesListener;
+    private destroyed;
     private agWire;
     private destroy;
     init(): void;
     private checkColumnDefProperties;
     private checkGridOptionsProperties;
     private checkProperties;
+    getDomDataKey(): string;
     getDomData(element: Node, key: string): any;
     setDomData(element: Element, key: string, value: any): any;
     isRowSelection(): boolean;
@@ -140,6 +143,7 @@ export declare class GridOptionsWrapper {
     getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
+    isDetailRowAutoHeight(): boolean;
     getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
@@ -243,6 +247,8 @@ export declare class GridOptionsWrapper {
     getContextMenuItemsFunc(): GetContextMenuItems | undefined;
     getMainMenuItemsFunc(): GetMainMenuItems | undefined;
     getRowNodeIdFunc(): GetRowNodeIdFunc | undefined;
+    getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined;
+    getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined;
     getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined;
     getTabToNextCellFunc(): ((params: TabToNextCellParams) => CellPosition) | undefined;
     isTreeData(): boolean;

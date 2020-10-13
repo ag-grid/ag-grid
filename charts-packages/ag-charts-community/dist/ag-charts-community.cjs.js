@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v2.0.0
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v2.1.0
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -4621,7 +4621,7 @@ var AxisLabel = /** @class */ (function () {
         /**
          * Custom label rotation in degrees.
          * Labels are rendered perpendicular to the axis line by default.
-         * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
+         * Or parallel to the axis line, if the {@link parallel} is set to `true`.
          * The value of this config is used as the angular offset/deflection
          * from the default rotation.
          */
@@ -4734,8 +4734,19 @@ var Axis = /** @class */ (function () {
     Axis.prototype.inRange = function (x, width, tolerance) {
         if (width === void 0) { width = 0; }
         if (tolerance === void 0) { tolerance = 0; }
+        return this.inRangeEx(x, width, tolerance) === 0;
+    };
+    Axis.prototype.inRangeEx = function (x, width, tolerance) {
+        if (width === void 0) { width = 0; }
+        if (tolerance === void 0) { tolerance = 0; }
         var range = this.range;
-        return (x + width) >= (range[0] - tolerance) && x <= (range[1] + tolerance);
+        if ((x + width) < (range[0] - tolerance)) {
+            return -1; // left or range
+        }
+        if (x > (range[1] + tolerance)) {
+            return 1; // right of range
+        }
+        return 0; // in range
     };
     Object.defineProperty(Axis.prototype, "range", {
         get: function () {
@@ -8698,7 +8709,7 @@ var Legend = /** @class */ (function (_super) {
         _this.addPropertyListener('data', _this.onDataChange);
         _this.addPropertyListener('enabled', _this.onEnabledChange);
         _this.addPropertyListener('position', _this.onPositionChange);
-        _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
+        _this.item.marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         _this.addEventListener('change', _this.update);
         _this.item.addEventListener('change', function () { return _this.fireEvent({ type: 'change' }); });
         _this.item.addEventListener('layoutChange', function () { return _this.fireEvent({ type: 'layoutChange' }); });
@@ -8889,30 +8900,32 @@ var Legend = /** @class */ (function (_super) {
      * @param height
      */
     Legend.prototype.performLayout = function (width, height) {
-        var _this = this;
-        var _a = this, markerShape = _a.markerShape, layoutHorizontalSpacing = _a.layoutHorizontalSpacing, layoutVerticalSpacing = _a.layoutVerticalSpacing;
+        var item = this.item;
+        var marker = item.marker, paddingX = item.paddingX, paddingY = item.paddingY;
         var updateSelection = this.itemSelection.setData(this.data, function (_, datum) {
-            var MarkerShape = getMarker(markerShape || datum.marker.shape);
+            var MarkerShape = getMarker(marker.shape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
         });
         updateSelection.exit.remove();
         var enterSelection = updateSelection.enter.append(MarkerLabel).each(function (node, datum) {
-            var MarkerShape = getMarker(markerShape || datum.marker.shape);
+            var MarkerShape = getMarker(marker.shape || datum.marker.shape);
             node.marker = new MarkerShape();
         });
         var itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
         var itemCount = itemSelection.size;
         // Update properties that affect the size of the legend items and measure them.
         var bboxes = [];
+        var itemMarker = this.item.marker;
+        var itemLabel = this.item.label;
         itemSelection.each(function (markerLabel, datum) {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            markerLabel.markerSize = _this.markerSize;
-            markerLabel.fontStyle = _this.fontStyle;
-            markerLabel.fontWeight = _this.fontWeight;
-            markerLabel.fontSize = _this.fontSize;
-            markerLabel.fontFamily = _this.fontFamily;
+            markerLabel.markerSize = itemMarker.size;
+            markerLabel.spacing = itemMarker.padding;
+            markerLabel.fontStyle = itemLabel.fontStyle;
+            markerLabel.fontWeight = itemLabel.fontWeight;
+            markerLabel.fontSize = itemLabel.fontSize;
+            markerLabel.fontFamily = itemLabel.fontFamily;
             markerLabel.text = datum.label.text;
-            markerLabel.spacing = _this.itemSpacing;
             bboxes.push(markerLabel.computeBBox());
         });
         var itemHeight = bboxes.length && bboxes[0].height;
@@ -8950,9 +8963,9 @@ var Legend = /** @class */ (function (_super) {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * layoutHorizontalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
                 } while (paddedItemsWidth > width && columnCount > 1);
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * layoutVerticalSpacing;
+                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
                 break;
             case LegendOrientation.Vertical:
                 if (!(isFinite(height) && height > 0)) {
@@ -8986,8 +8999,8 @@ var Legend = /** @class */ (function (_super) {
                         itemsWidth += columnWidth;
                         columnCount_1++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount_1 - 1) * layoutHorizontalSpacing;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * layoutVerticalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount_1 - 1) * paddingX;
+                    paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
                 } while (paddedItemsHeight > height && rowCount > 1);
                 break;
         }
@@ -9007,12 +9020,12 @@ var Legend = /** @class */ (function (_super) {
                 columnWidth = bbox.width;
             }
             if ((i + 1) % rowCount === 0) {
-                x += columnWidth + layoutHorizontalSpacing;
+                x += columnWidth + paddingX;
                 y = 0;
                 columnWidth = 0;
             }
             else {
-                y += bbox.height + layoutVerticalSpacing;
+                y += bbox.height + paddingY;
             }
         });
         // Update legend item properties that don't affect the layout.
@@ -9032,7 +9045,7 @@ var Legend = /** @class */ (function (_super) {
             var marker = datum.marker;
             markerLabel.markerFill = marker.fill;
             markerLabel.markerStroke = marker.stroke;
-            markerLabel.markerStrokeWidth = _this.strokeWidth;
+            markerLabel.markerStrokeWidth = _this.item.marker.strokeWidth;
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
@@ -9214,8 +9227,9 @@ var Series = /** @class */ (function (_super) {
         }
         var min = extent[0], max = extent[1];
         if (min === max) {
-            min -= 1;
-            max += 1;
+            var padding = Math.abs(min * 0.01);
+            min -= padding;
+            max += padding;
             // if (type) {
             //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
             //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
@@ -9371,9 +9385,13 @@ var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
-function toTooltipHtml(content, title, color) {
-    if (color === void 0) { color = '#888'; }
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n            style=\"color: white; background-color: " + color + "\">" + title + "</div>" : '';
+function toTooltipHtml(input, defaults) {
+    if (typeof input === 'string') {
+        return input;
+    }
+    defaults = defaults || {};
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
 var Chart = /** @class */ (function (_super) {
@@ -11374,6 +11392,8 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             axis.update();
         });
     };
+    GroupedCategoryChart.className = 'GroupedCategoryChart';
+    GroupedCategoryChart.type = 'groupedCategory';
     return GroupedCategoryChart;
 }(CartesianChart));
 
@@ -11580,6 +11600,35 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 
+var interpolatePattern = /(#\{(.*?)\})/g;
+function interpolate(input, values, formats) {
+    return input.replace(interpolatePattern, function () {
+        var name = arguments[2];
+        var _a = name.split(':'), valueName = _a[0], formatName = _a[1];
+        var value = values[valueName];
+        if (typeof value === 'number') {
+            var format = formatName && formats && formats[formatName];
+            if (format) {
+                var _b = format, locales = _b.locales, options = _b.options;
+                return value.toLocaleString(locales, options);
+            }
+            return String(value);
+        }
+        if (value instanceof Date) {
+            var format = formatName && formats && formats[formatName];
+            if (typeof format === 'string') {
+                var formatter = locale.format(format);
+                return formatter(value);
+            }
+            return value.toDateString();
+        }
+        if (typeof value === 'string' || (value && value.toString)) {
+            return String(value);
+        }
+        return '';
+    });
+}
+
 var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11623,10 +11672,26 @@ var AreaSeries = /** @class */ (function (_super) {
             y: ['yKeys']
         };
         _this.marker = new CartesianSeriesMarker();
-        _this.fills = [];
-        _this.strokes = [];
+        _this.fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this.strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         _this._xKey = '';
         _this.xName = '';
         _this._yKeys = [];
@@ -11840,6 +11905,7 @@ var AreaSeries = /** @class */ (function (_super) {
         return { areaSelectionData: areaSelectionData, markerSelectionData: markerSelectionData };
     };
     AreaSeries.prototype.updateAreaSelection = function (areaSelectionData) {
+        var _this = this;
         var _a = this, fills = _a.fills, fillOpacity = _a.fillOpacity, strokes = _a.strokes, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, shadow = _a.shadow;
         var updateAreas = this.areaSelection.setData(areaSelectionData);
         updateAreas.exit.remove();
@@ -11857,6 +11923,8 @@ var AreaSeries = /** @class */ (function (_super) {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
+            shape.lineDash = _this.lineDash;
+            shape.lineDashOffset = _this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             path.clear();
@@ -11875,6 +11943,7 @@ var AreaSeries = /** @class */ (function (_super) {
         this.areaSelection = areaSelection;
     };
     AreaSeries.prototype.updateStrokeSelection = function (areaSelectionData) {
+        var _this = this;
         if (!this.data) {
             return;
         }
@@ -11894,6 +11963,8 @@ var AreaSeries = /** @class */ (function (_super) {
             shape.strokeWidth = strokeWidth;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
+            shape.lineDash = _this.lineDash;
+            shape.lineDashOffset = _this.lineDashOffset;
             path.clear();
             var points = datum.points;
             // The stroke doesn't go all the way around the fill, only on top,
@@ -11978,30 +12049,43 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipFormat = _a.tooltipFormat, tooltipRenderer = _a.tooltipRenderer;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
         var yKeyIndex = yKeys.indexOf(yKey);
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
-        if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
+        if (tooltipFormat || tooltipRenderer) {
+            var params = {
+                datum: datum,
                 xKey: xKey,
                 xName: xName,
+                xValue: xValue,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
                 color: color
-            });
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = yName ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + yName + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     AreaSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, data = _a.data, id = _a.id, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -12043,6 +12127,12 @@ var AreaSeries = /** @class */ (function (_super) {
     __decorate$6([
         reactive('update')
     ], AreaSeries.prototype, "strokeOpacity", void 0);
+    __decorate$6([
+        reactive('update')
+    ], AreaSeries.prototype, "lineDash", void 0);
+    __decorate$6([
+        reactive('update')
+    ], AreaSeries.prototype, "lineDashOffset", void 0);
     __decorate$6([
         reactive('update')
     ], AreaSeries.prototype, "xName", void 0);
@@ -12172,10 +12262,26 @@ var BarSeries = /** @class */ (function (_super) {
          */
         _this.seriesItemEnabled = new Map();
         _this.flipXY = false;
-        _this.fills = [];
-        _this.strokes = [];
+        _this.fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this.strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         /**
          * Used to get the position of bars within each group.
          */
@@ -12197,6 +12303,7 @@ var BarSeries = /** @class */ (function (_super) {
         _this.grouped = false;
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update);
         _this.label.enabled = false;
         _this.label.addEventListener('change', _this.update, _this);
         return _this;
@@ -12526,24 +12633,42 @@ var BarSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     BarSeries.prototype.updateRectNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
-        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY;
         var highlightedDatum = this.chart.highlightedDatum;
         this.rectSelection.each(function (rect, datum) {
             var highlighted = datum === highlightedDatum;
+            var rectFill = highlighted && fill !== undefined ? fill : datum.fill;
+            var rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            var format = undefined;
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: rectFill,
+                    stroke: rectStroke,
+                    strokeWidth: datum.strokeWidth,
+                    highlighted: highlighted,
+                    xKey: xKey,
+                    yKey: datum.yKey
+                });
+            }
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
-            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = format && format.fill || rectFill;
+            rect.stroke = format && format.stroke || rectStroke;
+            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = _this.lineDash;
+            rect.lineDashOffset = _this.lineDashOffset;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
+            // Prevent stroke from rendering for zero height columns and zero width bars.
+            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
         });
     };
     BarSeries.prototype.updateTextSelection = function (selectionData) {
@@ -12588,25 +12713,30 @@ var BarSeries = /** @class */ (function (_super) {
         var yKeyIndex = yKeys.indexOf(yKey);
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: datum,
                 xKey: xKey,
+                xValue: xValue,
                 xName: xName,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = yName ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + yName + "</div>" : '';
-            var xValue = datum[xKey];
-            var yValue = datum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -12659,6 +12789,15 @@ var BarSeries = /** @class */ (function (_super) {
         reactive('layoutChange')
     ], BarSeries.prototype, "strokeOpacity", void 0);
     __decorate$8([
+        reactive('update')
+    ], BarSeries.prototype, "lineDash", void 0);
+    __decorate$8([
+        reactive('update')
+    ], BarSeries.prototype, "lineDashOffset", void 0);
+    __decorate$8([
+        reactive('update')
+    ], BarSeries.prototype, "formatter", void 0);
+    __decorate$8([
         reactive('dataChange')
     ], BarSeries.prototype, "grouped", void 0);
     return BarSeries;
@@ -12697,7 +12836,7 @@ var LineSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this.stroke = undefined;
+        _this.stroke = '#874349';
         _this.lineDash = undefined;
         _this.lineDashOffset = 0;
         _this.strokeWidth = 2;
@@ -12714,8 +12853,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.group.append(lineNode);
         _this.addEventListener('update', _this.update);
         var marker = _this.marker;
-        marker.fill = undefined;
-        marker.stroke = undefined;
+        marker.fill = '#c16068';
+        marker.stroke = '#874349';
         marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
         marker.addEventListener('change', _this.update, _this);
@@ -12806,6 +12945,15 @@ var LineSeries = /** @class */ (function (_super) {
         this.updateNodeSelection();
         this.updateNodes();
     };
+    LineSeries.prototype.getXYDatums = function (i, xData, yData, xScale, yScale) {
+        var isContinuousX = xScale instanceof ContinuousScale;
+        var isContinuousY = yScale instanceof ContinuousScale;
+        var xDatum = xData[i];
+        var yDatum = yData[i];
+        var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+        return noDatum ? undefined : [xDatum, yDatum];
+    };
     LineSeries.prototype.updateLinePath = function () {
         if (!this.data) {
             return;
@@ -12815,25 +12963,34 @@ var LineSeries = /** @class */ (function (_super) {
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var isContinuousX = xScale instanceof ContinuousScale;
-        var isContinuousY = yScale instanceof ContinuousScale;
         var linePath = lineNode.path;
         var nodeData = [];
         linePath.clear();
         var moveTo = true;
+        var prevXInRange = undefined;
+        var nextXYDatums = undefined;
         for (var i = 0; i < xData.length; i++) {
-            var xDatum = xData[i];
-            var yDatum = yData[i];
-            var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
-            if (isGap) {
+            var xyDatums = nextXYDatums || this.getXYDatums(i, xData, yData, xScale, yScale);
+            if (!xyDatums) {
+                prevXInRange = undefined;
                 moveTo = true;
             }
             else {
+                var xDatum = xyDatums[0], yDatum = xyDatums[1];
                 var x = xScale.convert(xDatum) + xOffset;
-                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                var tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
+                nextXYDatums = this.getXYDatums(i + 1, xData, yData, xScale, yScale);
+                var xInRange = xAxis.inRangeEx(x, 0, tolerance);
+                var nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
+                if (xInRange === -1 && nextXInRange === -1) {
+                    moveTo = true;
                     continue;
                 }
+                if (xInRange === 1 && prevXInRange === 1) {
+                    moveTo = true;
+                    continue;
+                }
+                prevXInRange = xInRange;
                 var y = yScale.convert(yDatum) + yOffset;
                 if (moveTo) {
                     linePath.moveTo(x, y);
@@ -12928,28 +13085,33 @@ var LineSeries = /** @class */ (function (_super) {
             return '';
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltipRenderer = _b.tooltipRenderer;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = this.title || yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            var datum_1 = nodeDatum.seriesDatum;
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum_1,
                 xKey: xKey,
+                xValue: xValue,
                 xName: xName,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
-                title: this.title,
+                title: title,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var title = this.title || yName;
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + title + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     LineSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKey = _a.yKey, yName = _a.yName, visible = _a.visible, title = _a.title, marker = _a.marker, stroke = _a.stroke, strokeOpacity = _a.strokeOpacity;
@@ -13032,8 +13194,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this._fill = undefined;
-        _this._stroke = undefined;
+        _this._fill = '#c16068';
+        _this._stroke = '#874349';
         _this._strokeWidth = 2;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
@@ -13277,38 +13439,41 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var _b = this, tooltipRenderer = _b.tooltipRenderer, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
         var color = fill || 'gray';
+        var title = this.title || yName;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var content = "<b>" + (xName || xKey) + "</b>: " + (typeof xValue === 'number' ? toFixed(xValue) : xValue)
+            + ("<br><b>" + (yName || yKey) + "</b>: " + (typeof yValue === 'number' ? toFixed(yValue) : yValue));
+        if (sizeKey) {
+            content += "<br><b>" + sizeName + "</b>: " + datum[sizeKey];
+        }
+        if (labelKey) {
+            content = "<b>" + labelName + "</b>: " + datum[labelKey] + "<br>" + content;
+        }
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum,
                 xKey: xKey,
-                yKey: yKey,
-                sizeKey: sizeKey,
-                labelKey: labelKey,
+                xValue: xValue,
                 xName: xName,
+                yKey: yKey,
+                yValue: yValue,
                 yName: yName,
+                sizeKey: sizeKey,
                 sizeName: sizeName,
+                labelKey: labelKey,
                 labelName: labelName,
-                title: this.title,
+                title: title,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var title = this.title || yName;
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + title + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var contentHtml = "<b>" + (xName || xKey) + "</b>: " + (typeof xValue === 'number' ? toFixed(xValue) : xValue)
-                + ("<br><b>" + (yName || yKey) + "</b>: " + (typeof yValue === 'number' ? toFixed(yValue) : yValue));
-            if (sizeKey) {
-                contentHtml += "<br><b>" + sizeName + "</b>: " + seriesDatum[sizeKey];
-            }
-            if (labelKey) {
-                contentHtml = "<b>" + labelName + "</b>: " + seriesDatum[labelKey] + "<br>" + contentHtml;
-            }
-            return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + contentHtml + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     ScatterSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKey = _a.yKey, yName = _a.yName, title = _a.title, visible = _a.visible, marker = _a.marker, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -13459,6 +13624,8 @@ var HistogramSeries = /** @class */ (function (_super) {
         _this.stroke = undefined;
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         _this.directionKeys = (_a = {},
             _a[exports.ChartAxisDirection.X] = ['xKey'],
             _a[exports.ChartAxisDirection.Y] = ['yKey'],
@@ -13775,6 +13942,7 @@ var HistogramSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     HistogramSeries.prototype.updateRectNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
@@ -13791,6 +13959,8 @@ var HistogramSeries = /** @class */ (function (_super) {
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = _this.lineDash;
+            rect.lineDashOffset = _this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
@@ -13831,28 +14001,32 @@ var HistogramSeries = /** @class */ (function (_super) {
         if (!xKey) {
             return '';
         }
-        var _b = this, xName = _b.xName, yName = _b.yName, fill = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var _b = this, xName = _b.xName, yName = _b.yName, color = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
+        var title = (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax);
+        var content = yKey ?
+            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
+            '';
+        content += "<b>Frequency</b>: " + frequency;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: bin,
                 xKey: xKey,
+                xValue: bin.domain,
                 xName: xName,
                 yKey: yKey,
+                yValue: bin.aggregatedValue,
                 yName: yName,
-                color: fill
-            });
+                color: color
+            }), defaults);
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + fill + "\"";
-            var titleString = "\n                <div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">\n                    " + (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax) + "\n                </div>";
-            var contentHtml = yKey ?
-                "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
-                '';
-            contentHtml += "<b>Frequency</b>: " + frequency;
-            return "\n                " + titleString + "\n                <div class=\"" + Chart.defaultTooltipClass + "-content\">\n                    " + contentHtml + "\n                </div>";
-        }
+        return toTooltipHtml(defaults);
     };
     HistogramSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, yKey = _a.yKey, yName = _a.yName, seriesItemEnabled = _a.seriesItemEnabled, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -13893,6 +14067,12 @@ var HistogramSeries = /** @class */ (function (_super) {
     __decorate$b([
         reactive('layoutChange')
     ], HistogramSeries.prototype, "strokeOpacity", void 0);
+    __decorate$b([
+        reactive('update')
+    ], HistogramSeries.prototype, "lineDash", void 0);
+    __decorate$b([
+        reactive('update')
+    ], HistogramSeries.prototype, "lineDashOffset", void 0);
     return HistogramSeries;
 }(CartesianSeries));
 
@@ -14623,10 +14803,26 @@ var PieSeries = /** @class */ (function (_super) {
          */
         _this.angleKey = '';
         _this.angleName = '';
-        _this._fills = [];
-        _this._strokes = [];
+        _this._fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this._strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         /**
          * The series rotation in degrees.
          */
@@ -14820,28 +15016,45 @@ var PieSeries = /** @class */ (function (_super) {
         this.groupSelection = updateGroups.merge(enterGroups);
     };
     PieSeries.prototype.updateNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
         var outerRadii = [];
         var centerOffsets = [];
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
+            var highlighted = datum === highlightedDatum;
+            var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            var format = undefined;
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: sectorFill,
+                    stroke: sectorStroke,
+                    strokeWidth: strokeWidth,
+                    highlighted: highlighted,
+                    angleKey: angleKey,
+                    radiusKey: radiusKey
+                });
+            }
             sector.outerRadius = outerRadius;
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            var highlighted = datum === highlightedDatum;
-            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            sector.fill = format && format.fill || sectorFill;
+            sector.stroke = format && format.stroke || sectorStroke;
+            sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
+            sector.lineDash = _this.lineDash;
+            sector.lineDashOffset = _this.lineDashOffset;
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
-            sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
             outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
@@ -14900,27 +15113,34 @@ var PieSeries = /** @class */ (function (_super) {
             return '';
         }
         var _a = this, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
-        var title = this.title ? this.title.text : undefined;
         var color = fills[nodeDatum.index % fills.length];
+        var datum = nodeDatum.seriesDatum;
+        var label = labelKey ? datum[labelKey] + ": " : '';
+        var angleValue = datum[angleKey];
+        var formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
+        var title = this.title ? this.title.text : undefined;
+        var content = label + formattedAngleValue;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum,
                 angleKey: angleKey,
+                angleValue: angleValue,
                 angleName: angleName,
                 radiusKey: radiusKey,
+                radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: radiusName,
                 labelKey: labelKey,
                 labelName: labelName,
                 title: title,
                 color: color,
-            });
+            }), defaults);
         }
-        else {
-            var label = labelKey ? nodeDatum.seriesDatum[labelKey] + ": " : '';
-            var value = nodeDatum.seriesDatum[angleKey];
-            var formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-            return toTooltipHtml(label + formattedValue, title, color);
-        }
+        return toTooltipHtml(defaults);
     };
     PieSeries.prototype.listSeriesItems = function (legendData) {
         var _this = this;
@@ -14975,6 +15195,15 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
+    __decorate$c([
+        reactive('update')
+    ], PieSeries.prototype, "lineDash", void 0);
+    __decorate$c([
+        reactive('update')
+    ], PieSeries.prototype, "lineDashOffset", void 0);
+    __decorate$c([
+        reactive('update')
+    ], PieSeries.prototype, "formatter", void 0);
     __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);
@@ -15211,7 +15440,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.getBarSeriesDefaults = function () {
-        return __assign$2(__assign$2({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: [], grouped: false, normalizedTo: undefined, strokeWidth: 1, tooltipRenderer: undefined, highlightStyle: {
+        return __assign$2(__assign$2({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: [], grouped: false, normalizedTo: undefined, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
                 fill: 'yellow'
             }, label: {
                 enabled: false,
@@ -15384,71 +15613,73 @@ var ChartTheme = /** @class */ (function () {
         }
     };
     ChartTheme.fontFamily = 'Verdana, sans-serif';
+    ChartTheme.cartesianDefaults = __assign$2(__assign$2({}, ChartTheme.getChartDefaults()), { axes: {
+            number: __assign$2({}, ChartTheme.getAxisDefaults()),
+            category: __assign$2({}, ChartTheme.getAxisDefaults()),
+            groupedCategory: __assign$2({}, ChartTheme.getAxisDefaults()),
+            time: __assign$2({}, ChartTheme.getAxisDefaults())
+        }, series: {
+            column: __assign$2(__assign$2({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
+            bar: __assign$2(__assign$2({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
+            line: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
+            scatter: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
+            area: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: {
+                    enabled: false,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 3,
+                    yOffset: 3,
+                    blur: 5
+                }, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign$2(__assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
+            histogram: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
+                } })
+        }, navigator: {
+            enabled: false,
+            height: 30,
+            min: 0,
+            max: 1,
+            mask: {
+                fill: '#999999',
+                stroke: '#999999',
+                strokeWidth: 1,
+                fillOpacity: 0.2
+            },
+            minHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            },
+            maxHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            }
+        } });
     ChartTheme.defaults = {
-        cartesian: __assign$2(__assign$2({}, ChartTheme.getChartDefaults()), { axes: {
-                number: __assign$2({}, ChartTheme.getAxisDefaults()),
-                category: __assign$2({}, ChartTheme.getAxisDefaults()),
-                groupedCategory: __assign$2({}, ChartTheme.getAxisDefaults()),
-                time: __assign$2({}, ChartTheme.getAxisDefaults())
-            }, series: {
-                column: __assign$2(__assign$2({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
-                bar: __assign$2(__assign$2({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-                line: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
-                scatter: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
-                area: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    }, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign$2(__assign$2({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
-                histogram: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, label: {
-                        enabled: false,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: ChartTheme.fontFamily,
-                        color: 'rgb(70, 70, 70)',
-                        formatter: undefined
-                    } })
-            }, navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            } }),
+        cartesian: ChartTheme.cartesianDefaults,
+        groupedCategory: ChartTheme.cartesianDefaults,
         polar: __assign$2(__assign$2({}, ChartTheme.getChartDefaults()), { series: {
                 pie: __assign$2(__assign$2({}, ChartTheme.getSeriesDefaults()), { title: {
                         enabled: true,
@@ -15471,7 +15702,7 @@ var ChartTheme = /** @class */ (function () {
                     }, callout: {
                         length: 10,
                         strokeWidth: 2
-                    }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {
+                    }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {
                         fill: 'yellow'
                     }, shadow: {
                         enabled: false,
@@ -16161,6 +16392,8 @@ var columnSeriesDefaults = {
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,
+    lineDash: undefined,
+    lineDashOffset: 0,
     shadow: undefined,
     highlightStyle: {
         fill: 'yellow'
@@ -16281,7 +16514,7 @@ var mappings = (_a = {},
             _c[LineSeries.type] = {
                 meta: {
                     constructor: LineSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 },
@@ -16324,7 +16557,7 @@ var mappings = (_a = {},
             },
             _c[AreaSeries.type] = __assign$4({ meta: {
                     constructor: AreaSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, marker: {
@@ -16342,7 +16575,7 @@ var mappings = (_a = {},
                 } }, shadowMapping),
             _c[HistogramSeries.type] = __assign$4({ meta: {
                     constructor: HistogramSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, label: {
@@ -16413,7 +16646,7 @@ var mappings = (_a = {},
                 } }) }) }, commonChartMappings), { series: (_d = {},
             _d[PieSeries.type] = __assign$4({ meta: {
                     constructor: PieSeries,
-                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
+                    defaults: __assign$4(__assign$4({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined })
                 }, highlightStyle: {}, title: {
                     meta: {
                         constructor: Caption,
@@ -16476,6 +16709,11 @@ mappings['scatter'] =
                         type: 'number',
                         position: 'left'
                     }] }) }) });
+var groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
+var groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
+groupedCategoryChartMeta.constructor = GroupedCategoryChart;
+groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
+mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;
 
 var __assign$5 = (undefined && undefined.__assign) || function () {
     __assign$5 = Object.assign || function(t) {

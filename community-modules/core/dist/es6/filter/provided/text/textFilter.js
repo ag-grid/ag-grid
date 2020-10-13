@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,16 +33,16 @@ var TextFilter = /** @class */ (function (_super) {
     function TextFilter() {
         return _super.call(this, 'textFilter') || this;
     }
+    TextFilter.cleanInput = function (value) {
+        var trimmedInput = value && value.trim();
+        // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
+        return trimmedInput === '' ? value : trimmedInput;
+    };
     TextFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
-    TextFilter.prototype.getValue = function (inputField) {
-        var val = inputField.getValue();
-        val = makeNull(val);
-        if (val && val.trim() === '') {
-            val = null;
-        }
-        return val;
+    TextFilter.prototype.getCleanValue = function (inputField) {
+        return TextFilter.cleanInput(makeNull(inputField.getValue()));
     };
     TextFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
@@ -69,7 +69,8 @@ var TextFilter = /** @class */ (function (_super) {
         var positionOne = position === ConditionPosition.One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var eValue = positionOne ? this.eValue1 : this.eValue2;
-        var value = this.getValue(eValue);
+        var value = this.getCleanValue(eValue);
+        eValue.setValue(value, true); // ensure clean value is visible
         var model = {
             filterType: this.getFilterType(),
             type: type
@@ -134,7 +135,7 @@ var TextFilter = /** @class */ (function (_super) {
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
-        return this.getValue(positionOne ? this.eValue1 : this.eValue2) != null;
+        return this.getCleanValue(positionOne ? this.eValue1 : this.eValue2) != null;
     };
     TextFilter.prototype.individualConditionPasses = function (params, filterModel) {
         var filterText = filterModel.filter;
@@ -171,7 +172,7 @@ var TextFilter = /** @class */ (function (_super) {
             case TextFilter.CONTAINS:
                 return value.indexOf(filterText) >= 0;
             case TextFilter.NOT_CONTAINS:
-                return value.indexOf(filterText) === -1;
+                return value.indexOf(filterText) < 0;
             case TextFilter.EQUALS:
                 return value === filterText;
             case TextFilter.NOT_EQUAL:

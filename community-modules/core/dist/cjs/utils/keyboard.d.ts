@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
+import { ColumnGroup } from '../entities/columnGroup';
 export declare function isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
-export declare function isCharacterKey(event: KeyboardEvent): boolean;
 export declare function isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
 /**
  * Allows user to tell the grid to skip specific keyboard events
@@ -17,3 +17,4 @@ export declare function isEventFromPrintableCharacter(event: KeyboardEvent): boo
  * @returns {boolean}
  */
 export declare function isUserSuppressingKeyboardEvent(gridOptionsWrapper: GridOptionsWrapper, keyboardEvent: KeyboardEvent, rowNode: RowNode, column: Column, editing: boolean): boolean;
+export declare function isUserSuppressingHeaderKeyboardEvent(gridOptionsWrapper: GridOptionsWrapper, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: Column | ColumnGroup): boolean;

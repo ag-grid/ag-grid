@@ -15,7 +15,7 @@ export declare enum ChartType {
     NormalizedArea = "normalizedArea",
     Histogram = "histogram"
 }
-export declare type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
+export declare type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload';
 export interface SeriesOptions {
     fill: FillOptions;
     stroke: StrokeOptions;
@@ -179,9 +179,13 @@ export interface DropShadowOptions {
 export interface SeriesLabelOptions extends FontOptions {
     enabled: boolean;
 }
+interface TooltipRendererResult {
+    content: string;
+    title?: string;
+}
 export interface TooltipOptions<TParams> {
     enabled: boolean;
-    renderer?: (params: TParams) => string;
+    renderer?: (params: TParams) => string | TooltipRendererResult;
 }
 export interface TooltipRendererParams {
     datum: any;
@@ -190,8 +194,10 @@ export interface TooltipRendererParams {
 }
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     xKey: string;
+    xValue: any;
     xName: string;
     yKey: string;
+    yValue: any;
     yName: string;
 }
 export interface BarSeriesOptions extends SeriesOptions {
@@ -260,6 +266,7 @@ export interface PieSeriesCalloutOptions {
 }
 export interface PieTooltipRendererParams extends TooltipRendererParams {
     angleKey: string;
+    angleValue: any;
     angleName?: string;
     labelKey?: string;
     labelName?: string;

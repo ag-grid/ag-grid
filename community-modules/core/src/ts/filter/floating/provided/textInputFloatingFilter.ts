@@ -11,10 +11,11 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnController } from '../../../columnController/columnController';
 import { KeyCode } from '../../../constants/keyCode';
+import { TextFilter } from '../../provided/text/textFilter';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
-    @Autowired('columnController') private columnController: ColumnController;
-    @RefSelector('eFloatingFilterInput') private eFloatingFilterInput: AgInputTextField;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+    @RefSelector('eFloatingFilterInput') private readonly eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
 
@@ -33,25 +34,23 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     }
 
     public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
-        // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sync. if we didn't do this, the UI
-        // would behave strange as it would be updating as the user is typing
-        if (this.isEventFromFloatingFilter(event)) { return; }
+        if (this.isEventFromFloatingFilter(event)) {
+            // if the floating filter triggered the change, it is already in sync
+            return;
+        }
 
         this.setLastTypeFromModel(model);
-        const modelString = this.getTextFromModel(model);
-        this.eFloatingFilterInput.setValue(modelString);
-        const editable = this.canWeEditAfterModelFromParentFilter(model);
-        this.setEditable(editable);
+        this.eFloatingFilterInput.setValue(this.getTextFromModel(model));
+        this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
     }
 
     public init(params: IFloatingFilterParams): void {
         super.init(params);
+
         this.params = params;
-
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
-        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
 
+        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         const filterGui = this.eFloatingFilterInput.getGui();
 
@@ -73,10 +72,12 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const value = this.eFloatingFilterInput.getValue();
         const enterKeyPressed = isKeyPressed(e, KeyCode.ENTER);
 
         if (this.applyActive && !enterKeyPressed) { return; }
+
+        const value = TextFilter.cleanInput(this.eFloatingFilterInput.getValue());
+        this.eFloatingFilterInput.setValue(value, true); // ensure visible value is clean
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {

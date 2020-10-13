@@ -32,6 +32,10 @@ import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
 import {RowCssClassCalculator} from "./row/rowCssClassCalculator";
+import {IRowModel} from "../interfaces/iRowModel";
+import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
+import {IServerSideRowModel} from "../interfaces/iServerSideRowModel";
+import {ResizeObserverService} from "../misc/resizeObserverService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -41,6 +45,7 @@ import {RowCssClassCalculator} from "./row/rowCssClassCalculator";
 @Bean('beans')
 export class Beans {
 
+    @Autowired('resizeObserverService') public resizeObserverService: ResizeObserverService;
     @Autowired('paginationProxy') public paginationProxy: PaginationProxy;
     @Autowired('context') public context: Context;
     @Autowired('columnApi') public columnApi: ColumnApi;
@@ -76,9 +81,13 @@ export class Beans {
     @Autowired('selectionController') public selectionController: SelectionController;
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
+    @Autowired('rowModel') public rowModel: IRowModel;
 
     public doingMasterDetail: boolean;
     public gridPanel: GridPanel;
+
+    public clientSideRowModel: IClientSideRowModel;
+    public serverSideRowModel: IServerSideRowModel;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
@@ -87,5 +96,12 @@ export class Beans {
     @PostConstruct
     private postConstruct(): void {
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        }
+        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+            this.serverSideRowModel = this.rowModel as IServerSideRowModel;
+        }
     }
 }

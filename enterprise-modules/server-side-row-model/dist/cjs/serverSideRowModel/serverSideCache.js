@@ -322,6 +322,21 @@ var ServerSideCache = /** @class */ (function (_super) {
         }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
+    ServerSideCache.prototype.applyTransaction = function (rowDataTransaction) {
+        // if (this.isMaxRowFound() || this.getBlock()) {
+        //     return null;
+        // }
+        var res = {
+            add: [],
+            remove: [],
+            update: []
+        };
+        if (rowDataTransaction.add) {
+            rowDataTransaction.add.forEach(function (item) {
+            });
+        }
+        return res;
+    };
     ServerSideCache.prototype.getChildCache = function (keys) {
         var _this = this;
         if (core_1._.missingOrEmpty(keys)) {

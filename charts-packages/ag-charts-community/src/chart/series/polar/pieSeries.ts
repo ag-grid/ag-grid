@@ -16,35 +16,35 @@ import { Caption } from "../../../caption";
 import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart, toTooltipHtml } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: PieSeries;
-    datum: any;
-    angleKey: string;
-    radiusKey?: string;
+    readonly type: 'nodeClick';
+    readonly series: PieSeries;
+    readonly datum: any;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
 }
 
 interface PieNodeDatum extends SeriesNodeDatum {
-    index: number;
-    radius: number; // in the [0, 1] range
-    startAngle: number;
-    endAngle: number;
-    midAngle: number;
-    midCos: number;
-    midSin: number;
+    readonly index: number;
+    readonly radius: number; // in the [0, 1] range
+    readonly startAngle: number;
+    readonly endAngle: number;
+    readonly midAngle: number;
+    readonly midCos: number;
+    readonly midSin: number;
 
-    label?: {
-        text: string,
-        textAlign: CanvasTextAlign,
-        textBaseline: CanvasTextBaseline
+    readonly label?: {
+        readonly text: string;
+        readonly textAlign: CanvasTextAlign;
+        readonly textBaseline: CanvasTextBaseline;
     };
 }
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
-    labelKey?: string;
-    labelName?: string;
+    readonly labelKey?: string;
+    readonly labelName?: string;
 }
 
 interface PieHighlightStyle extends HighlightStyle {
@@ -55,6 +55,22 @@ enum PieNodeTag {
     Sector,
     Callout,
     Label
+}
+
+export interface PieSeriesFormatterParams {
+    readonly datum: any;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly highlighted: boolean;
+    readonly angleKey: string;
+    readonly radiusKey?: string;
+}
+
+export interface PieSeriesFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
 }
 
 class PieSeriesLabel extends Label {
@@ -154,7 +170,14 @@ export class PieSeries extends PolarSeries {
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
 
-    private _fills: string[] = [];
+    private _fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -164,7 +187,14 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = [];
+    private _strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
     set strokes(values: string[]) {
         this._strokes = values;
         this.callout.colors = values;
@@ -176,6 +206,11 @@ export class PieSeries extends PolarSeries {
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
+
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
+
+    @reactive('update') formatter?: (params: PieSeriesFormatterParams) => PieSeriesFormat;
 
     /**
      * The series rotation in degrees.
@@ -353,7 +388,8 @@ export class PieSeries extends PolarSeries {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
             outerRadiusOffset, innerRadiusOffset,
             radiusScale, callout, shadow,
-            highlightStyle: { fill, stroke, centerOffset }
+            highlightStyle: { fill, stroke, centerOffset },
+            angleKey, radiusKey, formatter
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -364,9 +400,25 @@ export class PieSeries extends PolarSeries {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius + outerRadiusOffset);
+            const highlighted = datum === highlightedDatum;
+            const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            let format: PieSeriesFormat | undefined = undefined;
 
             if (minOuterRadius > outerRadius) {
                 minOuterRadius = outerRadius;
+            }
+
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: sectorFill,
+                    stroke: sectorStroke,
+                    strokeWidth,
+                    highlighted,
+                    angleKey,
+                    radiusKey
+                });
             }
 
             sector.outerRadius = outerRadius;
@@ -374,14 +426,15 @@ export class PieSeries extends PolarSeries {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            const highlighted = datum === highlightedDatum;
-            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            sector.fill = format && format.fill || sectorFill;
+            sector.stroke = format && format.stroke || sectorStroke;
+            sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
+            sector.lineDash = this.lineDash;
+            sector.lineDashOffset = this.lineDashOffset;
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
-            sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
 
             outerRadii.push(outerRadius);
@@ -459,30 +512,39 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const title = this.title ? this.title.text : undefined;
         const color = fills[nodeDatum.index % fills.length];
+        const datum = nodeDatum.seriesDatum;
+        const label = labelKey ? `${datum[labelKey]}: ` : '';
+        const angleValue = datum[angleKey];
+        const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();
+        const title = this.title ? this.title.text : undefined;
+        const content = label + formattedAngleValue;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return toTooltipHtml(tooltipRenderer({
+                datum,
                 angleKey,
+                angleValue,
                 angleName,
                 radiusKey,
+                radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName,
                 labelKey,
                 labelName,
                 title,
                 color,
-            });
-        } else {
-            const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
-            const value = nodeDatum.seriesDatum[angleKey];
-            const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
-            return toTooltipHtml(label + formattedValue, title, color);
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const { labelKey, data } = this;

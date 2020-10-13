@@ -104,10 +104,26 @@ var PieSeries = /** @class */ (function (_super) {
          */
         _this.angleKey = '';
         _this.angleName = '';
-        _this._fills = [];
-        _this._strokes = [];
+        _this._fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this._strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         /**
          * The series rotation in degrees.
          */
@@ -301,10 +317,11 @@ var PieSeries = /** @class */ (function (_super) {
         this.groupSelection = updateGroups.merge(enterGroups);
     };
     PieSeries.prototype.updateNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
         var minOuterRadius = Infinity;
         var outerRadii = [];
@@ -312,21 +329,37 @@ var PieSeries = /** @class */ (function (_super) {
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
+            var highlighted = datum === highlightedDatum;
+            var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            var format = undefined;
             if (minOuterRadius > outerRadius) {
                 minOuterRadius = outerRadius;
+            }
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: sectorFill,
+                    stroke: sectorStroke,
+                    strokeWidth: strokeWidth,
+                    highlighted: highlighted,
+                    angleKey: angleKey,
+                    radiusKey: radiusKey
+                });
             }
             sector.outerRadius = outerRadius;
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            var highlighted = datum === highlightedDatum;
-            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            sector.fill = format && format.fill || sectorFill;
+            sector.stroke = format && format.stroke || sectorStroke;
+            sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
+            sector.lineDash = _this.lineDash;
+            sector.lineDashOffset = _this.lineDashOffset;
             sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
-            sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
             outerRadii.push(outerRadius);
             centerOffsets.push(sector.centerOffset);
@@ -385,27 +418,34 @@ var PieSeries = /** @class */ (function (_super) {
             return '';
         }
         var _a = this, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer, angleName = _a.angleName, radiusKey = _a.radiusKey, radiusName = _a.radiusName, labelKey = _a.labelKey, labelName = _a.labelName;
-        var title = this.title ? this.title.text : undefined;
         var color = fills[nodeDatum.index % fills.length];
+        var datum = nodeDatum.seriesDatum;
+        var label = labelKey ? datum[labelKey] + ": " : '';
+        var angleValue = datum[angleKey];
+        var formattedAngleValue = typeof angleValue === 'number' ? number_1.toFixed(angleValue) : angleValue.toString();
+        var title = this.title ? this.title.text : undefined;
+        var content = label + formattedAngleValue;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return chart_1.toTooltipHtml(tooltipRenderer({
+                datum: datum,
                 angleKey: angleKey,
+                angleValue: angleValue,
                 angleName: angleName,
                 radiusKey: radiusKey,
+                radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: radiusName,
                 labelKey: labelKey,
                 labelName: labelName,
                 title: title,
                 color: color,
-            });
+            }), defaults);
         }
-        else {
-            var label = labelKey ? nodeDatum.seriesDatum[labelKey] + ": " : '';
-            var value = nodeDatum.seriesDatum[angleKey];
-            var formattedValue = typeof value === 'number' ? number_1.toFixed(value) : value.toString();
-            return chart_1.toTooltipHtml(label + formattedValue, title, color);
-        }
+        return chart_1.toTooltipHtml(defaults);
     };
     PieSeries.prototype.listSeriesItems = function (legendData) {
         var _this = this;
@@ -460,6 +500,15 @@ var PieSeries = /** @class */ (function (_super) {
     __decorate([
         observable_1.reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
+    __decorate([
+        observable_1.reactive('update')
+    ], PieSeries.prototype, "lineDash", void 0);
+    __decorate([
+        observable_1.reactive('update')
+    ], PieSeries.prototype, "lineDashOffset", void 0);
+    __decorate([
+        observable_1.reactive('update')
+    ], PieSeries.prototype, "formatter", void 0);
     __decorate([
         observable_1.reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);

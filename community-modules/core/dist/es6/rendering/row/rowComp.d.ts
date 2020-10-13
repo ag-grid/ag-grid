@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "../beans";
@@ -35,6 +35,7 @@ export declare class RowComp extends Component {
     private fullWidthRowComponentBody;
     private fullWidthRowComponentLeft;
     private fullWidthRowComponentRight;
+    private fullWidthRowDestroyFuncs;
     private firstRowOnPage;
     private lastRowOnPage;
     private active;
@@ -112,6 +113,7 @@ export declare class RowComp extends Component {
     private onRowMouseDown;
     onRowClick(mouseEvent: MouseEvent): void;
     private createFullWidthRowContainer;
+    private setupDetailRowAutoHeight;
     private angular1Compile;
     private createFullWidthParams;
     private getInitialRowClasses;

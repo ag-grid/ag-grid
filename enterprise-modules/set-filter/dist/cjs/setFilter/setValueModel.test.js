@@ -12,9 +12,10 @@ var core_1 = require("@ag-grid-community/core");
 var mock_1 = require("../test-utils/mock");
 function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, suppressSorting) {
     if (gridValues === void 0) { gridValues = ['A', 'B', 'C']; }
+    if (filterParams === void 0) { filterParams = {}; }
     if (doesRowPassOtherFilters === void 0) { doesRowPassOtherFilters = function (_) { return true; }; }
     if (suppressSorting === void 0) { suppressSorting = false; }
-    var colDef = { filterParams: filterParams };
+    var colDef = {};
     var rowModel = {
         getType: function () { return core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE; },
         forEachLeafNode: function (callback) {
@@ -24,7 +25,7 @@ function createSetValueModel(gridValues, filterParams, doesRowPassOtherFilters, 
     };
     var valueFormatterService = mock_1.mock('formatValue');
     valueFormatterService.formatValue.mockImplementation(function (_1, _2, _3, value) { return value; });
-    return new setValueModel_1.SetValueModel(rowModel, function (node) { return node.data.value; }, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
+    return new setValueModel_1.SetValueModel(rowModel, function (node) { return node.data.value; }, filterParams, colDef, null, doesRowPassOtherFilters, suppressSorting, function (_) { }, valueFormatterService, function (key) { return key === 'blanks' ? '(Blanks)' : null; });
 }
 function getDisplayedValues(model) {
     var values = [];
@@ -53,27 +54,52 @@ function asyncAssert(done) {
         done(error);
     }
 }
-describe('isFilterActive', function () {
-    it('returns false by default', function () {
-        var model = createSetValueModel();
-        expect(model.isFilterActive()).toBe(false);
+describe('hasSelections', function () {
+    describe('everything selected is the default', function () {
+        it('returns false by default', function () {
+            var model = createSetValueModel();
+            expect(model.hasSelections()).toBe(false);
+        });
+        it('returns true if any value is deselected', function () {
+            var model = createSetValueModel();
+            model.deselectValue('B');
+            expect(model.hasSelections()).toBe(true);
+        });
+        it('returns true if all values are deselected', function () {
+            var model = createSetValueModel();
+            model.deselectAllMatchingMiniFilter();
+            expect(model.hasSelections()).toBe(true);
+        });
+        it('returns false if value is deselected then selected again', function () {
+            var model = createSetValueModel();
+            var value = 'B';
+            model.deselectValue(value);
+            model.selectValue(value);
+            expect(model.hasSelections()).toBe(false);
+        });
     });
-    it('returns true if any value is deselected', function () {
-        var model = createSetValueModel();
-        model.deselectValue('B');
-        expect(model.isFilterActive()).toBe(true);
-    });
-    it('returns true if all values are deselected', function () {
-        var model = createSetValueModel();
-        model.deselectAllMatchingMiniFilter();
-        expect(model.isFilterActive()).toBe(true);
-    });
-    it('returns false if value is deselected then selected again', function () {
-        var model = createSetValueModel();
-        var value = 'B';
-        model.deselectValue(value);
-        model.selectValue(value);
-        expect(model.isFilterActive()).toBe(false);
+    describe('nothing selected is the default', function () {
+        it('returns false by default', function () {
+            var model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+            expect(model.hasSelections()).toBe(false);
+        });
+        it('returns true if any value is selected', function () {
+            var model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+            model.selectValue('B');
+            expect(model.hasSelections()).toBe(true);
+        });
+        it('returns true if all values are selected', function () {
+            var model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+            model.selectAllMatchingMiniFilter();
+            expect(model.hasSelections()).toBe(true);
+        });
+        it('returns false if value is selected then deselected again', function () {
+            var model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+            var value = 'B';
+            model.selectValue(value);
+            model.deselectValue(value);
+            expect(model.hasSelections()).toBe(false);
+        });
     });
 });
 describe('value selection', function () {

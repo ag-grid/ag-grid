@@ -17,7 +17,7 @@ export function doOnce(func: () => void, key: string) {
 export function getFunctionName(funcConstructor: any) {
     // for every other browser in the world
     if (funcConstructor.name) {
-        return funcConstructor.name
+        return funcConstructor.name;
     }
 
     // for the pestilence that is ie11

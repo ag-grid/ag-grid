@@ -36,7 +36,7 @@ $ag-theme-material-default-params: (
     header-height: ag-derived(grid-size, $times: 7),
     row-height: ag-derived(grid-size, $times: 6),
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
-    list-item-height: ag-derived(grid-size, $times: 5),
+    list-item-height: ag-derived(grid-size, $times: 4),
     row-group-indent-size: ag-derived(grid-size, $times: 3, $plus: icon-size),
     filter-tool-panel-sub-level-row-height: ag-derived(grid-size, $times: 4),
     checkbox-border-radius: 2px,

@@ -10,8 +10,6 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
                     [max]="max"
                     [min]="min"
                     [step]="step"
-                    [thumb-label]="thumbLabel"
-                    [tick-interval]="tickInterval"
                     [value]="value"
                     [(ngModel)]="value"
             >

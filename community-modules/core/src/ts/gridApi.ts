@@ -11,7 +11,7 @@ import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants/constants";
 import { Column } from "./entities/column";
-import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "./context/context";
 import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
@@ -63,6 +63,7 @@ import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
+import {_} from "./utils";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -103,6 +104,7 @@ export interface CreateRangeChartParams {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -111,6 +113,7 @@ export interface CreatePivotChartParams {
     chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartThemeOverrides;
+    unlinkChart?: boolean;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
@@ -1041,7 +1044,26 @@ export class GridApi {
         this.context.destroy();
     }
 
+    @PreDestroy
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in teh API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(_.removeAllReferences.bind(window, this, 'Grid API'), 100);
+    }
+
+    private warnIfDestroyed(methodName: string): boolean {
+        if (this.destroyCalled) {
+            console.warn(`ag-Grid: Grid API method ${methodName} was called on a grid that was destroyed.`);
+        }
+        return this.destroyCalled;
+    }
+
     public resetQuickFilter(): void {
+        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
         this.rowModel.forEachNode(node => node.quickFilterAggregateText = null);
     }
 
@@ -1226,13 +1248,15 @@ export class GridApi {
         }
     }
 
+    public applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route: string[] = []): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+        }
+    }
+
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
-            if (rowDataTransaction && rowDataTransaction.addIndex != null) {
-                const message = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
-                doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
-            }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
             const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
@@ -1240,7 +1264,7 @@ export class GridApi {
 
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
-            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
             return;
         }
 

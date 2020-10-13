@@ -28,6 +28,9 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
     function EnterpriseMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    EnterpriseMenuFactory.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     EnterpriseMenuFactory.prototype.hideActiveMenu = function () {
         this.destroyBean(this.activeMenu);
     };
@@ -95,10 +98,11 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                         focusableEl.focus();
                     }
                 }
-            }
+            },
+            positionCallback: function () { positionCallback(menu); },
+            anchorToElement: this.gridPanel.getGui()
         });
         menu.afterGuiAttached({ hidePopup: hidePopup });
-        positionCallback(menu);
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }
@@ -341,18 +345,20 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createFilterPanel = function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
-        var afterFilterAttachedCallback = null;
-        // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
-        // async (_unless_ in react or similar, but if so why not encountered before now?).
-        // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
-        // async and is confusing if you don't have this context
-        if (filterWrapper.filterPromise) {
+        var afterFilterAttachedCallback = function (params) {
+            if (!filterWrapper.filterPromise) {
+                return;
+            }
+            // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
+            // async (_unless_ in react or similar, but if so why not encountered before now?).
+            // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
+            // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(function (filter) {
                 if (filter.afterGuiAttached) {
-                    afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
+                    filter.afterGuiAttached(params);
                 }
             });
-        }
+        };
         this.tabItemFilter = {
             title: core_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),

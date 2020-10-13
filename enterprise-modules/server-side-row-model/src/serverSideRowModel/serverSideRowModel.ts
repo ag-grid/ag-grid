@@ -27,7 +27,8 @@ import {
     SortController,
     RowRenderer,
     RowNodeBlockLoader,
-    RowNodeCache
+    RowNodeCache,
+    RowDataTransaction
 } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
@@ -83,6 +84,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
+    }
+
+    public applyTransaction(rowDataTransaction: RowDataTransaction, route: string[]): void {
+        this.executeOnCache( route, cache => {
+            cache.applyTransaction(rowDataTransaction);
+        });
     }
 
     private addEventListeners(): void {
@@ -342,6 +349,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             maxBlocksInCache = undefined;
         }
 
+        const userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
+        let blockSize: number;
+        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize>0) {
+            blockSize = userProvidedBlockSize;
+        } else {
+            blockSize = ServerSideBlock.DefaultBlockSize;
+        }
+
         const params: ServerSideCacheParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -359,31 +374,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             lastAccessedSequence: new NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
-            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests() || 0,
             maxBlocksInCache: maxBlocksInCache,
-            blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
+            blockSize: blockSize,
             rowHeight: this.rowHeight,
             dynamicRowHeight: dynamicRowHeight
         };
-
-        // set defaults
-        if (!(params.maxConcurrentRequests as number >= 1)) {
-            params.maxConcurrentRequests = 2;
-        }
-        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
-        // server for one page at a time. so the default if not specified is 100.
-        if (!(params.blockSize as number >= 1)) {
-            params.blockSize = ServerSideBlock.DefaultBlockSize;
-        }
-        // if user doesn't give initial rows to display, we assume zero
-        if (!(params.initialRowCount >= 1)) {
-            params.initialRowCount = 0;
-        }
-        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
-        // the current page and request first row of next page
-        if (!(params.overflowSize >= 1)) {
-            params.overflowSize = 1;
-        }
 
         return params;
     }

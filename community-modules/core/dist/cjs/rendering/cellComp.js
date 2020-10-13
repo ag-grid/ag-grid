@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -184,7 +184,7 @@ var CellComp = /** @class */ (function (_super) {
             this.tooltipFeatureEnabled) {
             return;
         }
-        this.createManagedBean(new tooltipFeature_1.TooltipFeature(this, 'cell'), this.beans.context);
+        this.createManagedBean(new tooltipFeature_1.TooltipFeature(this), this.beans.context);
         this.tooltipFeatureEnabled = true;
     };
     CellComp.prototype.onColumnHover = function () {
@@ -592,20 +592,21 @@ var CellComp = /** @class */ (function (_super) {
         }
         var valueGetter = colDef.tooltipValueGetter;
         if (valueGetter) {
-            return valueGetter({
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                colDef: colDef,
-                column: this.getColumn(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                value: this.value,
-                valueFormatted: this.valueFormatted,
-                rowIndex: this.cellPosition.rowIndex,
-                node: this.rowNode,
-                data: this.rowNode.data
-            });
+            return valueGetter(__assign(__assign({ api: this.beans.gridOptionsWrapper.getApi(), columnApi: this.beans.gridOptionsWrapper.getColumnApi(), context: this.beans.gridOptionsWrapper.getContext() }, this.getTooltipParams()), { value: this.value }));
         }
         return null;
+    };
+    CellComp.prototype.getTooltipParams = function () {
+        return {
+            location: 'cell',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            rowIndex: this.cellPosition.rowIndex,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            value: this.getTooltipText(),
+            valueFormatted: this.valueFormatted,
+        };
     };
     CellComp.prototype.getTooltipText = function (escape) {
         if (escape === void 0) { escape = true; }
@@ -667,13 +668,12 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         var params = this.createCellRendererParams();
-        var cellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params);
-        var pinnedRowCellRenderer = this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params);
-        if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
+        if (this.rowNode.rowPinned &&
+            this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'pinnedRowCellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_PINNED;
             this.usingCellRenderer = true;
         }
-        else if (cellRenderer) {
+        else if (this.beans.userComponentFactory.lookupComponentClassDef(colDef, 'cellRenderer', params)) {
             this.cellRendererType = CellComp.CELL_RENDERER_TYPE_NORMAL;
             this.usingCellRenderer = true;
         }
@@ -718,7 +718,7 @@ var CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
-        var cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
+        var cellRendererNotRequired = !this.isAlive() || cellRendererVersion !== this.cellRendererVersion;
         if (cellRendererNotRequired) {
             this.beans.context.destroyBean(cellRenderer);
             return;
@@ -1238,9 +1238,22 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.onSpaceKeyPressed = function (event) {
         var gridOptionsWrapper = this.beans.gridOptionsWrapper;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
-            var newSelection = !this.rowNode.isSelected();
+            var currentSelection = this.rowNode.isSelected();
+            var newSelection = !currentSelection;
             if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
-                this.rowNode.setSelected(newSelection);
+                var groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                var updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
             }
         }
         // prevent default as space key, by default, moves browser scroll down
@@ -1261,7 +1274,7 @@ var CellComp = /** @class */ (function (_super) {
             var forceBrowserFocus = (browser_1.isBrowserIE() || browser_1.isBrowserEdge()) && !this.editingCell;
             this.focusCell(forceBrowserFocus);
         }
-        else {
+        else if (rangeController) {
             // if a range is being changed, we need to make sure the focused cell does not change.
             mouseEvent.preventDefault();
         }
@@ -1619,6 +1632,7 @@ var CellComp = /** @class */ (function (_super) {
         return this.beans.frameworkOverrides;
     };
     CellComp.prototype.addRowDragging = function () {
+        var _this = this;
         var pagination = this.beans.gridOptionsWrapper.isPagination();
         var rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
         var clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
@@ -1633,7 +1647,7 @@ var CellComp = /** @class */ (function (_super) {
                 return;
             }
         }
-        var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
+        var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, function () { return _this.value; }, this.beans);
         this.createManagedBean(rowDraggingComp, this.beans.context);
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eCellValue);

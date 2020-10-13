@@ -24,11 +24,12 @@ import { Path } from "../../../scene/shape/path";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive } from "../../../util/observable";
+import { interpolate } from "../../../util/string";
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
     function AreaSeries() {
@@ -53,10 +54,26 @@ var AreaSeries = /** @class */ (function (_super) {
             y: ['yKeys']
         };
         _this.marker = new CartesianSeriesMarker();
-        _this.fills = [];
-        _this.strokes = [];
+        _this.fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this.strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         _this._xKey = '';
         _this.xName = '';
         _this._yKeys = [];
@@ -270,6 +287,7 @@ var AreaSeries = /** @class */ (function (_super) {
         return { areaSelectionData: areaSelectionData, markerSelectionData: markerSelectionData };
     };
     AreaSeries.prototype.updateAreaSelection = function (areaSelectionData) {
+        var _this = this;
         var _a = this, fills = _a.fills, fillOpacity = _a.fillOpacity, strokes = _a.strokes, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, shadow = _a.shadow;
         var updateAreas = this.areaSelection.setData(areaSelectionData);
         updateAreas.exit.remove();
@@ -287,6 +305,8 @@ var AreaSeries = /** @class */ (function (_super) {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
+            shape.lineDash = _this.lineDash;
+            shape.lineDashOffset = _this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             path.clear();
@@ -305,6 +325,7 @@ var AreaSeries = /** @class */ (function (_super) {
         this.areaSelection = areaSelection;
     };
     AreaSeries.prototype.updateStrokeSelection = function (areaSelectionData) {
+        var _this = this;
         if (!this.data) {
             return;
         }
@@ -324,6 +345,8 @@ var AreaSeries = /** @class */ (function (_super) {
             shape.strokeWidth = strokeWidth;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
+            shape.lineDash = _this.lineDash;
+            shape.lineDashOffset = _this.lineDashOffset;
             path.clear();
             var points = datum.points;
             // The stroke doesn't go all the way around the fill, only on top,
@@ -408,30 +431,43 @@ var AreaSeries = /** @class */ (function (_super) {
         if (!xKey || !yKey) {
             return '';
         }
-        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipRenderer = _a.tooltipRenderer;
+        var _a = this, xName = _a.xName, yKeys = _a.yKeys, yNames = _a.yNames, fills = _a.fills, tooltipFormat = _a.tooltipFormat, tooltipRenderer = _a.tooltipRenderer;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
         var yKeyIndex = yKeys.indexOf(yKey);
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
-        if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
+        if (tooltipFormat || tooltipRenderer) {
+            var params = {
+                datum: datum,
                 xKey: xKey,
                 xName: xName,
+                xValue: xValue,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
                 color: color
-            });
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = yName ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + yName + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     AreaSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, data = _a.data, id = _a.id, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -473,6 +509,12 @@ var AreaSeries = /** @class */ (function (_super) {
     __decorate([
         reactive('update')
     ], AreaSeries.prototype, "strokeOpacity", void 0);
+    __decorate([
+        reactive('update')
+    ], AreaSeries.prototype, "lineDash", void 0);
+    __decorate([
+        reactive('update')
+    ], AreaSeries.prototype, "lineDashOffset", void 0);
     __decorate([
         reactive('update')
     ], AreaSeries.prototype, "xName", void 0);

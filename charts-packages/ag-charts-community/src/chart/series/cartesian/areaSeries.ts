@@ -1,7 +1,11 @@
 import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams, HighlightStyle } from "../series";
+import {
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams as AreaTooltipRendererParams,
+    HighlightStyle
+} from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Path } from "../../../scene/shape/path";
@@ -9,34 +13,35 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
+import { interpolate } from "../../../util/string";
 
 interface AreaSelectionDatum {
-    yKey: string;
-    points: { x: number, y: number }[];
+    readonly yKey: string;
+    readonly points: { x: number, y: number }[];
 }
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: AreaSeries;
-    datum: any;
-    xKey: string;
-    yKey: string;
+    readonly type: 'nodeClick';
+    readonly series: AreaSeries;
+    readonly datum: any;
+    readonly xKey: string;
+    readonly yKey: string;
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    point: {
-        x: number;
-        y: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
     };
-    fill?: string;
-    stroke?: string;
-    yKey: string;
-    yValue: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly yKey: string;
+    readonly yValue: number;
 }
 
 export { AreaTooltipRendererParams };
@@ -46,7 +51,8 @@ export class AreaSeries extends CartesianSeries {
     static className = 'AreaSeries';
     static type = 'area';
 
-    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
+    tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    tooltipFormat?: string;
 
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
@@ -74,11 +80,29 @@ export class AreaSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive('dataChange') fills: string[] = [];
-    @reactive('dataChange') strokes: string[] = [];
+    @reactive('dataChange') fills: string[] = [
+        '#c16068',
+        '#a2bf8a',
+        '#ebcc87',
+        '#80a0c3',
+        '#b58dae',
+        '#85c0d1'
+    ];
+
+    @reactive('dataChange') strokes: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
 
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
+
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
 
     constructor() {
         super();
@@ -95,7 +119,7 @@ export class AreaSeries extends CartesianSeries {
         this.markerSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
     }
 
     protected _xKey: string = '';
@@ -106,6 +130,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -125,6 +150,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get yKeys(): string[] {
         return this._yKeys;
     }
@@ -145,6 +171,7 @@ export class AreaSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
@@ -238,7 +265,7 @@ export class AreaSeries extends CartesianSeries {
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
-        this.fireEvent({type: 'dataProcessed'});
+        this.fireEvent({ type: 'dataProcessed' });
 
         return true;
     }
@@ -360,6 +387,8 @@ export class AreaSeries extends CartesianSeries {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeOpacity = strokeOpacity;
             shape.strokeWidth = strokeWidth;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
 
@@ -407,6 +436,8 @@ export class AreaSeries extends CartesianSeries {
             shape.strokeWidth = strokeWidth;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
+            shape.lineDash = this.lineDash;
+            shape.lineDashOffset = this.lineDashOffset;
 
             path.clear();
 
@@ -507,31 +538,45 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltipFormat, tooltipRenderer } = this;
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
+        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const title = yName;
+        const content = xString + ': ' + yString;
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
-        if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+        if (tooltipFormat || tooltipRenderer) {
+            const params = {
+                datum,
                 xKey,
                 xName,
+                xValue,
                 yKey,
+                yValue,
                 yName,
                 color
-            });
-        } else {
-            const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';
-            const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xKey];
-            const yValue = seriesDatum[yKey];
-            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-
-            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

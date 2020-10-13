@@ -70,6 +70,11 @@ const tscSrcEs6Task = () => {
             .pipe(gulp.dest('dist/es6'))
     ]);
 };
+
+const watch = () => {
+    return gulp.watch(['./src/ts/**/*.ts'], tscSrcEs6Task);
+};
+
 // End of Typescript related tasks
 
 // Start of scss/css related tasks
@@ -183,6 +188,7 @@ gulp.task('scss', series('clean', 'scss-no-clean'));
 gulp.task('copy-styles-for-dist', copyGridCoreStyles);
 
 // tsc & scss/css related tasks
+gulp.task('tsc-es6-watch', series('tsc-no-clean-es6', watch));
 gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 

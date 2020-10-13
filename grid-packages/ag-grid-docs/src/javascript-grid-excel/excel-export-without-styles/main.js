@@ -6,9 +6,9 @@ var columnDefs = [
                 headerName: 'Group A',
                 children: [
                     { field: 'athlete', minWidth: 200 },
-                    { 
+                    {
                         field: 'age',
-                        cellClassRules:{
+                        cellClassRules: {
                             greenBackground: function(params) { return params.value < 30; },
                             blueBackground: function(params) { return params.value < 20; }
                         }
@@ -21,8 +21,8 @@ var columnDefs = [
             {
                 headerName: 'Group B',
                 children: [
-                    { 
-                        field: 'date', 
+                    {
+                        field: 'date',
                         minWidth: 150,
                         valueGetter: function(params) {
                             var val = params.data.date;

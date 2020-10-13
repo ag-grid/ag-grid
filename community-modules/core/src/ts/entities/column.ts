@@ -203,7 +203,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     private initialise(): void {
-
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
@@ -219,7 +218,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.maxWidth = maxColWidth;
         }
 
-        this.resetActualWidth();
+        this.resetActualWidth('gridInitializing');
 
         const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
@@ -228,8 +227,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
-    public resetActualWidth(): void {
-        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+    public resetActualWidth(source: ColumnEventType = 'api'): void {
+        const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        this.setActualWidth(initialWidth, source, true);
     }
 
     public isEmptyGroup(): boolean {
@@ -640,7 +640,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return Math.max(rowSpan, 1);
     }
 
-    public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
+    public setActualWidth(actualWidth: number, source: ColumnEventType = "api", silent: boolean = false): void {
         if (this.minWidth != null) {
             actualWidth = Math.max(actualWidth, this.minWidth);
         }
@@ -650,11 +650,18 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
-            if (this.flex && source !== 'flex') {
+            if (this.flex && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
             }
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
+
+            if (!silent) {
+                this.fireColumnWidthChangedEvent(source);
+            }
         }
+    }
+
+    public fireColumnWidthChangedEvent(source: ColumnEventType): void {
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
     }
 
     public isGreaterThanMax(width: number): boolean {

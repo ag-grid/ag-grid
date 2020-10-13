@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,8 +23,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgCheckbox } from '../widgets/agCheckbox';
-import { Autowired } from '../context/context';
+import { Autowired, PostConstruct } from '../context/context';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
@@ -35,6 +34,9 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     function CheckboxSelectionComponent() {
         return _super.call(this, /* html*/ "\n            <div class=\"ag-selection-checkbox\">\n                <ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox>\n            </div>") || this;
     }
+    CheckboxSelectionComponent.prototype.postConstruct = function () {
+        this.eCheckbox.setPassive(true);
+    };
     CheckboxSelectionComponent.prototype.onDataChanged = function () {
         // when rows are loaded for the second time, this can impact the selection, as a row
         // could be loaded as already selected (if user scrolls down, and then up again).
@@ -45,8 +47,9 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
+        var stateName = state === undefined ? 'indeterminate' : (state === true ? 'checked' : 'unchecked');
         this.eCheckbox.setValue(state, true);
-        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + (state ? 'checked' : 'unchecked') + ")");
+        this.eCheckbox.setInputAriaLabel("Press Space to toggle row selection (" + stateName + ")");
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
@@ -68,8 +71,14 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         this.addGuiEventListener('click', function (event) { return stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', function (event) { return stopPropagationForAgGrid(event); });
-        this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, function (params) {
-            if (params.selected) {
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', function (params) {
+            if (params.previousValue === undefined) { // indeterminate
+                var result = _this.onUncheckedClicked(params.event || {});
+                if (result === 0) {
+                    _this.onCheckedClicked();
+                }
+            }
+            else if (params.selected) {
                 _this.onUncheckedClicked(params.event || {});
             }
             else {
@@ -110,6 +119,9 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __decorate([
         RefSelector('eCheckbox')
     ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
+    __decorate([
+        PostConstruct
+    ], CheckboxSelectionComponent.prototype, "postConstruct", null);
     return CheckboxSelectionComponent;
 }(Component));
 export { CheckboxSelectionComponent };

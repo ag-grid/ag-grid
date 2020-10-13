@@ -181,6 +181,12 @@
         @include ag-color-property(background-color, background-color);
     }
 
+    .ag-layout-auto-height, .ag-layout-print {
+        .ag-center-cols-clipper, .ag-center-cols-container {
+            min-height: 50px;
+        }
+    }
+
     .ag-overlay-loading-wrapper {
         @include ag-color-property(background-color, modal-overlay-background-color);
     }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -240,6 +240,8 @@ var constants_1 = require("./constants/constants");
 exports.Constants = constants_1.Constants;
 var keyCode_1 = require("./constants/keyCode");
 exports.KeyCode = keyCode_1.KeyCode;
+var keyName_1 = require("./constants/keyName");
+exports.KeyName = keyName_1.KeyName;
 var grid_1 = require("./grid");
 exports.Grid = grid_1.Grid;
 var gridApi_1 = require("./gridApi");

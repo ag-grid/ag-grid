@@ -93,6 +93,7 @@ export interface CheckboxChangedEvent extends AgEvent {
     id: string;
     name: string;
     selected?: boolean;
+    previousValue: boolean | undefined;
 }
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
@@ -164,8 +165,9 @@ export interface ColumnGroupOpenedEvent extends AgGridEvent {
 export interface ItemsAddedEvent extends AgGridEvent {
     items: RowNode[];
 }
+export declare type ScrollDirection = 'horizontal' | 'vertical';
 export interface BodyScrollEvent extends AgGridEvent {
-    direction: string;
+    direction: ScrollDirection;
     left: number;
     top: number;
 }

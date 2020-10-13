@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         if (displayFieldTag === void 0) { displayFieldTag = 'input'; }
         var _this = _super.call(this, config, /* html */ "\n            <div role=\"presentation\">\n                <div ref=\"eLabel\" class=\"ag-input-field-label\"></div>\n                <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                    <" + displayFieldTag + " ref=\"eInput\" class=\"ag-input-field-input\"></" + displayFieldTag + ">\n                </div>\n            </div>", className) || this;
         _this.inputType = inputType;
+        _this.displayFieldTag = displayFieldTag;
         return _this;
     }
     AgAbstractInputField.prototype.postConstruct = function () {
@@ -68,7 +69,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         this.addManagedListener(this.eInput, 'input', function (e) { return _this.setValue(e.target.value); });
     };
     AgAbstractInputField.prototype.setInputType = function () {
-        if (this.inputType) {
+        if (this.displayFieldTag === 'input') {
             this.eInput.setAttribute('type', this.inputType);
         }
     };

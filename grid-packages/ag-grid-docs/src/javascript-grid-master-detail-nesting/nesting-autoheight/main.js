@@ -38,9 +38,8 @@ var gridOptions = {
     },
     groupDefaultExpanded: 1,
     masterDetail: true,
+    detailRowAutoHeight: true,
     detailCellRendererParams: {
-
-        autoHeight: true,
 
         // level 2 grid options
         detailGridOptions: {
@@ -54,9 +53,8 @@ var gridOptions = {
             groupDefaultExpanded: 1,
             masterDetail: true,
             detailRowHeight: 240,
+            detailRowAutoHeight: true,
             detailCellRendererParams: {
-
-                autoHeight: true,
 
                 // level 3 grid options
                 detailGridOptions: {

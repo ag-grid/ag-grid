@@ -1,12 +1,12 @@
 import { BeanStub, IDatasource, RowBounds, RowDataTransaction, RowNode, IInfiniteRowModel } from "@ag-grid-community/core";
 export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
-    private gridOptionsWrapper;
-    private filterManager;
-    private sortController;
-    private selectionController;
-    private gridApi;
-    private columnApi;
-    private rowRenderer;
+    private readonly gridOptionsWrapper;
+    private readonly filterManager;
+    private readonly sortController;
+    private readonly selectionController;
+    private readonly gridApi;
+    private readonly columnApi;
+    private readonly rowRenderer;
     private infiniteCache;
     private rowNodeBlockLoader;
     private datasource;
@@ -31,6 +31,7 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     private reset;
     private createModelUpdatedEvent;
     private resetCache;
+    private defaultIfInvalid;
     private destroyCache;
     private onCacheUpdated;
     getRow(rowIndex: number): RowNode | null;

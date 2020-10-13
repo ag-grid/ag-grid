@@ -1,4 +1,4 @@
-// @ag-grid-community/react v24.0.0
+// @ag-grid-community/react v24.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -13,6 +13,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -30,10 +41,9 @@ var reactComponent_1 = require("./reactComponent");
 var changeDetectionService_1 = require("./changeDetectionService");
 var AgGridReact = /** @class */ (function (_super) {
     __extends(AgGridReact, _super);
-    function AgGridReact(props, state) {
-        var _this = _super.call(this, props, state) || this;
+    function AgGridReact(props) {
+        var _this = _super.call(this, props) || this;
         _this.props = props;
-        _this.state = state;
         _this.changeDetectionService = new changeDetectionService_1.ChangeDetectionService();
         _this.api = null;
         _this.portals = [];
@@ -43,23 +53,16 @@ var AgGridReact = /** @class */ (function (_super) {
     }
     AgGridReact.prototype.render = function () {
         var _this = this;
-        return React.createElement("div", {
+        return React.createElement('div', {
             style: this.createStyleForDiv(),
+            className: this.props.className,
             ref: function (e) {
                 _this.eGridDiv = e;
             }
         }, this.portals);
     };
     AgGridReact.prototype.createStyleForDiv = function () {
-        var style = { height: "100%" };
-        // allow user to override styles
-        var containerStyle = this.props.containerStyle;
-        if (containerStyle) {
-            Object.keys(containerStyle).forEach(function (key) {
-                style[key] = containerStyle[key];
-            });
-        }
-        return style;
+        return __assign({ height: '100%' }, (this.props.containerStyle || {}));
     };
     AgGridReact.prototype.componentDidMount = function () {
         var modules = this.props.modules || [];
@@ -71,8 +74,9 @@ var AgGridReact = /** @class */ (function (_super) {
             modules: modules
         };
         var gridOptions = this.props.gridOptions || {};
-        if (agGridColumn_1.AgGridColumn.hasChildColumns(this.props)) {
-            gridOptions.columnDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(this.props);
+        var children = this.props.children;
+        if (agGridColumn_1.AgGridColumn.hasChildColumns(children)) {
+            gridOptions.columnDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(children);
         }
         this.gridOptions = core_1.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
         // don't need the return value
@@ -80,23 +84,23 @@ var AgGridReact = /** @class */ (function (_super) {
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
     };
-    AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
+    AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, startTime) {
         var _this = this;
-        if (runningTime === void 0) { runningTime = 0; }
+        if (startTime === void 0) { startTime = Date.now(); }
         // if the grid has been destroyed in the meantime just resolve
         if (this.destroyed) {
             resolve(null);
             return;
         }
         if (reactComponent.rendered()) {
-            resolve(null);
+            resolve(reactComponent);
         }
         else {
-            if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
-                console.error("ag-Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME + "ms");
+            if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+                console.error("ag-Grid: React Component '" + reactComponent.getReactComponentName() + "' not created within " + AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS + "ms");
                 return;
             }
-            window.setTimeout(function () { return _this.waitForInstance(reactComponent, resolve, runningTime + 5); }, 5);
+            window.setTimeout(function () { return _this.batchUpdate(function () { return _this.waitForInstance(reactComponent, resolve, startTime); }); });
         }
     };
     /**
@@ -105,13 +109,15 @@ var AgGridReact = /** @class */ (function (_super) {
      * Context to work properly.
      */
     AgGridReact.prototype.mountReactPortal = function (portal, reactComponent, resolve) {
+        var _this = this;
         this.portals = __spreadArrays(this.portals, [portal]);
-        this.batchUpdate(this.waitForInstance(reactComponent, resolve));
+        this.batchUpdate(function () { return _this.waitForInstance(reactComponent, resolve); });
     };
     AgGridReact.prototype.batchUpdate = function (callback) {
         var _this = this;
         if (this.hasPendingPortalUpdate) {
-            return callback && callback();
+            callback && callback();
+            return;
         }
         setTimeout(function () {
             if (_this.api) { // destroyed?
@@ -128,24 +134,20 @@ var AgGridReact = /** @class */ (function (_super) {
         this.batchUpdate();
     };
     AgGridReact.prototype.getStrategyTypeForProp = function (propKey) {
-        switch (propKey) {
-            case 'rowData': {
-                // for row data we either return the supplied strategy, or:
-                // if deltaRowDataMode/immutableData we default to IdentityChecks,
-                // if not we default to DeepValueChecks (with the rest of the properties)
-                if (!!this.props.rowDataChangeDetectionStrategy) {
-                    return this.props.rowDataChangeDetectionStrategy;
-                }
-                else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
-                    return changeDetectionService_1.ChangeDetectionStrategyType.IdentityCheck;
-                }
-                return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
+        if (propKey === 'rowData') {
+            if (this.props.rowDataChangeDetectionStrategy) {
+                return this.props.rowDataChangeDetectionStrategy;
             }
-            default: {
-                // all other data properties will default to DeepValueCheck
-                return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
+            else if (this.isImmutableDataActive()) {
+                return changeDetectionService_1.ChangeDetectionStrategyType.IdentityCheck;
             }
         }
+        // all other cases will default to DeepValueCheck
+        return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
+    };
+    AgGridReact.prototype.isImmutableDataActive = function () {
+        return (this.props.deltaRowDataMode || this.props.immutableData) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
     };
     AgGridReact.prototype.shouldComponentUpdate = function (nextProps) {
         this.processPropsChanges(this.props, nextProps);
@@ -172,25 +174,26 @@ var AgGridReact = /** @class */ (function (_super) {
             return;
         }
         var debugLogging = !!nextProps.debug;
-        if (agGridColumn_1.AgGridColumn.hasChildColumns(nextProps)) {
-            var detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
-            var currentColDefs = this.gridOptions.columnDefs;
-            var newColDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps);
+        var propKey = 'columnDefs';
+        var currentColDefs = this.gridOptions.columnDefs;
+        if (agGridColumn_1.AgGridColumn.hasChildColumns(nextProps.children)) {
+            var detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
+            var newColDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps.children);
             if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
                 if (debugLogging) {
                     console.log("agGridReact: colDefs definitions changed");
                 }
-                changes['columnDefs'] =
+                changes[propKey] =
                     {
-                        previousValue: this.gridOptions.columnDefs,
-                        currentValue: agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps)
+                        previousValue: currentColDefs,
+                        currentValue: newColDefs
                     };
             }
         }
-        else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
-            changes['columnDefs'] =
+        else if (currentColDefs && currentColDefs.length > 0) {
+            changes[propKey] =
                 {
-                    previousValue: this.gridOptions.columnDefs,
+                    previousValue: currentColDefs,
                     currentValue: []
                 };
         }
@@ -198,9 +201,8 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.extractGridPropertyChanges = function (prevProps, nextProps, changes) {
         var _this = this;
         var debugLogging = !!nextProps.debug;
-        var changedKeys = Object.keys(nextProps);
-        changedKeys.forEach(function (propKey) {
-            if (core_1.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+        Object.keys(nextProps).forEach(function (propKey) {
+            if (core_1._.includes(core_1.ComponentUtil.ALL_PROPERTIES, propKey)) {
                 var changeDetectionStrategy = _this.changeDetectionService.getStrategy(_this.getStrategyTypeForProp(propKey));
                 if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
@@ -235,7 +237,7 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.isDisableStaticMarkup = function () {
         return !!this.props.disableStaticMarkup;
     };
-    AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
+    AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;
 }(react_1.Component));
 exports.AgGridReact = AgGridReact;

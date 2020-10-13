@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { HeaderRowComp } from './headerRowComp';
@@ -12,19 +12,16 @@ export declare class HeaderContainer extends BeanStub {
     private eContainer;
     private eViewport;
     private pinned;
-    private scrollWidth;
-    private dropTarget;
     private filtersRowComp;
     private columnsRowComp;
     private groupsRowComps;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init;
-    private onColumnRowGroupChanged;
-    private onColumnValueChanged;
     private onColumnResized;
     private onDisplayedColumnsChanged;
     private onScrollVisibilityChanged;
+    private onScrollbarWidthChanged;
     private setWidthOfPinnedContainer;
     getRowComps(): HeaderRowComp[];
     private onGridColumnsChanged;
@@ -33,5 +30,4 @@ export declare class HeaderContainer extends BeanStub {
     private destroyRowComps;
     private destroyRowComp;
     private refreshRowComps;
-    private createRowComps;
 }

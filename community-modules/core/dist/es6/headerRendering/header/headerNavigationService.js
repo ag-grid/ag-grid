@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,7 @@ var HeaderNavigationService = /** @class */ (function (_super) {
      * This method navigates grid header vertically
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
-    HeaderNavigationService.prototype.navigateVertically = function (direction, fromHeader) {
+    HeaderNavigationService.prototype.navigateVertically = function (direction, fromHeader, event) {
         if (!fromHeader) {
             fromHeader = this.focusController.getFocusedHeader();
         }
@@ -77,40 +77,41 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         var rowLen = this.getHeaderRowCount();
         var isUp = direction === HeaderNavigationDirection.UP;
         var nextRow = isUp ? headerRowIndex - 1 : headerRowIndex + 1;
+        var nextFocusColumn;
+        var skipColumn = false;
         if (nextRow < 0) {
-            return false;
+            nextRow = 0;
+            nextFocusColumn = column;
+            skipColumn = true;
         }
         if (nextRow >= rowLen) {
-            // focusGridView returns false when the grid has no cells rendered.
-            return this.focusController.focusGridView();
+            nextRow = -1; // -1 indicates the focus should move to grid rows.
         }
         var currentRowType = this.getHeaderRowType(headerRowIndex);
-        var nextFocusColumn;
-        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            var currentColumn = column;
-            nextFocusColumn = isUp ? column.getParent() : currentColumn.getDisplayedChildren()[0];
+        if (!skipColumn) {
+            if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+                var currentColumn = column;
+                nextFocusColumn = isUp ? column.getParent() : currentColumn.getDisplayedChildren()[0];
+            }
+            else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
+                nextFocusColumn = column;
+            }
+            else {
+                var currentColumn = column;
+                nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
+            }
+            if (!nextFocusColumn) {
+                return false;
+            }
         }
-        else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
-            nextFocusColumn = column;
-        }
-        else {
-            var currentColumn = column;
-            nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
-        }
-        if (!nextFocusColumn) {
-            return false;
-        }
-        this.focusController.focusHeaderPosition({
-            headerRowIndex: nextRow,
-            column: nextFocusColumn
-        });
-        return true;
+        return this.focusController.focusHeaderPosition({ headerRowIndex: nextRow, column: nextFocusColumn }, undefined, false, true, event);
     };
     /*
      * This method navigates grid header horizontally
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
-    HeaderNavigationService.prototype.navigateHorizontally = function (direction, fromTab) {
+    HeaderNavigationService.prototype.navigateHorizontally = function (direction, fromTab, event) {
+        if (fromTab === void 0) { fromTab = false; }
         var focusedHeader = this.focusController.getFocusedHeader();
         var isLeft = direction === HeaderNavigationDirection.LEFT;
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -126,36 +127,28 @@ var HeaderNavigationService = /** @class */ (function (_super) {
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
         }
         if (nextHeader) {
-            this.focusController.focusHeaderPosition(nextHeader, normalisedDirection);
-            return true;
+            return this.focusController.focusHeaderPosition(nextHeader, normalisedDirection, fromTab, true, event);
         }
         if (!fromTab) {
             return true;
         }
-        return this.focusNextHeaderRow(focusedHeader, normalisedDirection);
+        return this.focusNextHeaderRow(focusedHeader, normalisedDirection, event);
     };
-    HeaderNavigationService.prototype.focusNextHeaderRow = function (focusedHeader, direction) {
+    HeaderNavigationService.prototype.focusNextHeaderRow = function (focusedHeader, direction, event) {
         var currentIndex = focusedHeader.headerRowIndex;
         var nextPosition;
         var nextRowIndex;
         if (direction === 'Before') {
-            if (currentIndex === 0) {
-                return false;
+            if (currentIndex > 0) {
+                nextRowIndex = currentIndex - 1;
+                nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
             }
-            nextRowIndex = currentIndex - 1;
-            nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end');
         }
         else {
             nextRowIndex = currentIndex + 1;
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start');
         }
-        if (nextPosition) {
-            if (nextPosition.headerRowIndex === -1) {
-                return this.focusController.focusGridView(nextPosition.column);
-            }
-            return this.focusController.focusHeaderPosition(nextPosition, direction);
-        }
-        return false;
+        return this.focusController.focusHeaderPosition(nextPosition, direction, true, true, event);
     };
     HeaderNavigationService.prototype.scrollToColumn = function (column, direction) {
         if (direction === void 0) { direction = 'After'; }

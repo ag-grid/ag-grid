@@ -5,14 +5,19 @@ $pageKeywords = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
     <h1 class="heading-enterprise">Chart Container</h1>
 
     <p class="lead">
-        Displaying the generated chart within the grid-provided popup window will suit most needs. However
-        you may wish to display the chart in a different location. For example,
-        your application may already have popup windows and you wish to use the same library for consistency.
+        This section describes how to specify an alternative chart container to the default grid-provided popup window.
     </p>
+
+    <p>
+        Displaying the generated chart within the grid-provided popup window will suit most needs. However you may wish
+        to display the chart in a different location. For example, your application may already have popup windows and
+        you wish to use the same library for consistency.
+    </p>
+
+    <h2>Specifying Chart Container</h2>
 
     <p>
         To provide an alternative container for popup windows use the grid callback
@@ -55,7 +60,7 @@ interface ChartRef {
     </note>
 
     <p>
-        From the example, the following can be noted:
+        From the example below, the following can be noted:
     </p>
 
     <ul class="content">
@@ -72,12 +77,12 @@ interface ChartRef {
         </li>
     </ul>
 
-    <?= grid_example('Provided Container', 'provided-container', 'generated', ['exampleHeight' => 650, 'enterprise' => true]) ?>
+    <?= grid_example('Provided Container', 'provided-container', 'generated', ['exampleHeight' => 750, 'enterprise' => true]) ?>
 
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn how to: <a href="../javascript-grid-charts-integrated-customisation/">Customise Charts</a>.
+        Continue to the next section to learn how to: <a href="../javascript-grid-charts-integrated-chart-events/">Chart Events</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

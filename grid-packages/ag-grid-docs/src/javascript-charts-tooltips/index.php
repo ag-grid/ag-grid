@@ -8,6 +8,16 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Tooltips</h1>
 
+<p>
+    There are four ways of enabling the tooltips in ag-Charts by using:
+    <ul>
+        <li><a href="#default-tooltip">default tooltips</a></li>
+        <li><a href="#styling-the-default-tooltip">custom styled tooltips</a> via CSS classes</li>
+        <li><a href="#modifying-content-title">custom title / content</a> via a renderer function</li>
+        <li><a href="#using-custom-tooltips">completely custom template and markup</a> via a renderer function</li>
+    </ul>
+</p>
+
 <h2>Default Tooltip</h2>
 
 <p>
@@ -85,10 +95,10 @@ SNIPPET
 
 <p>
     The default tooltip already uses <code>ag-chart-tooltip</code>, <code>ag-chart-tooltip-title</code>
-    and <code>ag-chart-tooltip-content</code> CSS classes, but these classes are not meant to be used
-    directly, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting
-    library should provide their own tooltip class name via the <code>chart.tooltipClass</code> config. This class name
-    will be added to the class list of the tooltip element for only that particular chart instance.
+    and <code>ag-chart-tooltip-content</code> CSS classes, but these classes are not meant to be used directly
+    to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead,
+    users of the charting library should provide their own tooltip class name via the <code>chart.tooltipClass</code> config.
+    This class name will be added to the class list of the tooltip element for only that particular chart instance.
 </p>
 
 <p>
@@ -118,19 +128,91 @@ SNIPPET
 
 <h3>Example: Tooltip Styling</h3>
 
+<p>In this example we show how to change the content's background color and the color of the tooltip's arrow to gold.</p>
+
 <?= chart_example('Default Tooltip with Custom Styling', 'default-tooltip-styling', 'generated'); ?>
 
-<h2>Using Tooltip Renderer</h2>
+<h2>Modifying Content / Title</h2>
 
 <p>
-    <code>chart.tooltipClass</code> allows you to style the tooltip, but not to change its
-    template or its content. If you need to do either, you have to use the series
-    <code>tooltipRenderer</code>.
+    To control what goes into the title and content divs of the tooltip one can set up a tooltip renderer function
+    (one per series) that receives values associated with the highlighted data point and returns an object with
+    the <code>title</code> and <code>content</code> fields containing plain text or inner HTML that goes into
+    the corresponding divs:
 </p>
 
+<?= createSnippet(<<<SNIPPET
+tooltipRenderer?: (params: AgTooltipRendererParams) => AgTooltipRendererResult;
+
+interface AgTooltipRendererResult {
+    title?: string;
+    content?: string;
+}
+SNIPPET
+) ?>
+
 <p>
-    The <code>tooltipRenderer</code> is a function that receives a config object and returns an HTML
-    string representing the tooltip.
+The actual type of the <code>params</code> object passed into the tooltip renderer will
+depend on the series type being used. For example, bar series' tooltip renderer params
+object will have the following structure:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+interface AgTooltipRendererParams {
+    // the element of the series' data represented by the highlighted item
+    datum: any;
+    // the title of the series, if any
+    title?: string;
+    // the color of the series
+    color?: string;
+
+    // the xKey used to fetch the xValue from the datum, same as series xKey
+    xKey: string;
+    // the actual xValue used
+    xValue?: any;
+    // same as series.xName
+    xName?: string;
+
+    // the yKey used to fetch the yValue from the datum,
+    // equals to one of the elements in the series.yKeys array,
+    // depending on which bar inside a stack/group is highlighted
+    yKey: string;
+    // the actuall yValue used
+    yValue?: any;
+    // equals to one of the elements in the series.yNames array
+    yName?: string;
+}
+SNIPPET
+) ?>
+
+<p>
+    Let's say we wanted to remove the digits after the decimal point from the values shown in
+    tooltips (by default the tooltips show two digits after the decimal point for numeric values).
+    We could use the following <code>tooltipRenderer</code> to achieve that:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+tooltipRenderer: function (params) {
+    return {
+        content: params.yValue.toFixed(0),
+        title: params.xValue // optional, same as default
+    };
+}
+SNIPPET
+) ?>
+
+<p>
+    The example below demonstrates the above tooltip renderer in action:
+</p>
+
+<?= chart_example('Modifying Tooltips Content', 'tooltip-content-title', 'generated'); ?>
+
+<h2>Using Custom Tooltips</h2>
+
+<p>
+    Intead of having the tooltip renderer return an object with title and content strings
+    to be used in the default tooltip template, you can return a string with completely
+    custom markup that will override not just the title and content but the template as well.
 </p>
 
 <p>
@@ -142,13 +224,8 @@ SNIPPET
 <?= createSnippet(<<<SNIPPET
 series: [{
     type: 'column',
-    tooltipRenderer: function(params) {
-        return '<div class="ag-chart-tooltip-title" style="background-color:' + params.color + '">' +
-            params.datum[params.xKey] +
-        '</div>' +
-        '<div class="ag-chart-tooltip-content">' +
-            params.datum[params.yKey].toFixed(0) +
-        '</div>';
+    tooltipRenderer: function (params) {
+        return '<div class="ag-chart-tooltip-title" ' + 'style="background-color:' + params.color + '">' + params.xValue + '</div>' + '<div class="ag-chart-tooltip-content">' + params.yValue + '</div>';
     }
 }]
 SNIPPET
@@ -156,11 +233,10 @@ SNIPPET
 
 <p>
     The tooltip renderer function receives the <code>params</code> object as a single parameter.
-    Inside that object you get a reference to the raw <code>datum</code> element (from the <code>chart.data</code>
-    or <code>series.data</code> array) that corresponds to the highlighted series item.
-    You also get a reference to the series' <code>xKey</code> and <code>yKey</code>, so that you could fetch
-    the actual values like so: <code>params.datum[params.yKey]</code>. You can then process the raw
-    values however you like before using them as a part of the returned HTML string.
+    Inside that object you get the <code>xValue</code> and <code>yValue</code> for the highlighted data point
+    as well as the reference to the raw <code>datum</code> element from the <code>chart.data</code>
+    or <code>series.data</code> array.
+    You can then process the raw values however you like before using them as a part of the returned HTML string.
 </p>
 
 <p>
@@ -186,14 +262,14 @@ SNIPPET
             Returns two <code>div</code> elements, one for the tooltip's title and another for its content.
         </li>
         <li>
-            The value of the title comes from <code>params.datum[params.xKey]</code> which is the name of the month.
+            The value of the title comes from <code>params.xValue</code> which is the name of the month.
         </li>
         <li>
             The title element gets its background color from the <code>params</code> object.
             The provided color matches the color of the series.
         </li>
         <li>
-            The <code>'Sweaters Made'</code> value comes from the <code>params.datum[params.yKey]</code>, which we then
+            The <code>'Sweaters Made'</code> value comes from the <code>params.yValue</code>, which we then
             stringify as an integer via <code>toFixed(0)</code>.
         </li>
         <li>

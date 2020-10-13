@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "./context/beanStub";
@@ -41,7 +41,7 @@ export declare class FocusController extends BeanStub {
     clearFocusedHeader(): void;
     getFocusedHeader(): HeaderPosition;
     setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void;
-    focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean;
+    focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After', fromTab?: boolean, allowUserOverride?: boolean, event?: KeyboardEvent): boolean;
     isAnyCellFocused(): boolean;
     isRowFocused(rowIndex: number, floating: string): boolean;
     findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[];

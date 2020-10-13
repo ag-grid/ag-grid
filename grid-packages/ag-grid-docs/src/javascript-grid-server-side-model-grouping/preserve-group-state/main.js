@@ -1,3 +1,6 @@
+// This example is initialised with these expanded groups
+var expandedGroupIds = ["Russia", "Russia-2002", "Ireland", "Ireland-2008"];
+
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
@@ -26,16 +29,7 @@ var gridOptions = {
     },
 
     // cache expanded group ids when groups opened
-    onRowGroupOpened: function(params) {
-        var id = params.data.id;
-        if (params.expanded) {
-            expandedGroupIds.push(id);
-        } else {
-            expandedGroupIds = expandedGroupIds.filter(function(grpId) {
-                return !grpId.startsWith(id);
-            });
-        }
-    },
+    onRowGroupOpened: onRowGroupOpened,
 
     animateRows: true,
     suppressAggFuncInHeader: true,
@@ -46,8 +40,16 @@ function purgeCache() {
     gridOptions.api.purgeServerSideCache([]);
 }
 
-// This example is initialised with these expanded groups
-var expandedGroupIds = ["Russia", "Russia-2002", "Ireland", "Ireland-2008"];
+function onRowGroupOpened(params) {
+    var id = params.data.id;
+    if (params.expanded) {
+        expandedGroupIds.push(id);
+    } else {
+        expandedGroupIds = expandedGroupIds.filter(function(grpId) {
+            return !grpId.startsWith(id);
+        });
+    }
+}
 
 function ServerSideDatasource(server) {
     return {

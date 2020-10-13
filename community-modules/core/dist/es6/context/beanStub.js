@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,9 @@ var BeanStub = /** @class */ (function () {
         var _this = this;
         this.destroyFunctions = [];
         this.destroyed = false;
+        // for vue 3 - prevents Vue from trying to make this (and obviously any sub classes) from being reactive
+        // prevents vue from creating proxies for created objects and prevents identity related issues
+        this.__v_skip = true;
         this.getContext = function () { return _this.context; };
         this.isAlive = function () { return !_this.destroyed; };
     }

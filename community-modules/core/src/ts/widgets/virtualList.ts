@@ -6,6 +6,7 @@ import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
+import {ResizeObserverService} from "../misc/resizeObserverService";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -16,23 +17,31 @@ export interface VirtualListModel {
 export class VirtualList extends ManagedFocusComponent {
     private model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
-    private componentCreator: (value: any) => Component;
+    private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
     private rowHeight = 20;
     private lastFocusedRowIndex: number;
     private isDestroyed = false;
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
-    constructor(private readonly cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
         super(VirtualList.getTemplate(cssIdentifier), true);
     }
 
     protected postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
+        this.addResizeObserver();
 
         super.postConstruct();
+    }
+
+    private addResizeObserver(): void {
+        const listener = this.drawVirtualRows.bind(this);
+        const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
+        this.addDestroyFunc(destroyObserver);
     }
 
     protected focusInnerElement(fromBottom: boolean): void {
@@ -151,7 +160,7 @@ export class VirtualList extends ManagedFocusComponent {
         }
     }
 
-    public setComponentCreator(componentCreator: (value: any) => Component): void {
+    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
         this.componentCreator = componentCreator;
     }
 
@@ -224,7 +233,7 @@ export class VirtualList extends ManagedFocusComponent {
         addCssClass(eDiv, 'ag-virtual-list-item');
         addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
-        eDiv.setAttribute('role', 'option');
+        eDiv.setAttribute('role', this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
@@ -239,7 +248,7 @@ export class VirtualList extends ManagedFocusComponent {
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
 
-        const rowComponent = this.componentCreator(value);
+        const rowComponent = this.componentCreator(value, eDiv);
 
         rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
 

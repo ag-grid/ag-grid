@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,6 @@ var number_1 = require("../utils/number");
 var array_1 = require("../utils/array");
 var function_1 = require("../utils/function");
 var keyCode_1 = require("../constants/keyCode");
-var utils_1 = require("../utils");
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -320,14 +319,11 @@ var RowRenderer = /** @class */ (function (_super) {
         var animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
         var rowsToRecycle = this.binRowComps(recycleRows);
         var isFocusedCellGettingRecycled = function () {
-            if (focusedCell == null) {
-                return false;
-            }
-            if (rowsToRecycle == null) {
+            if (focusedCell == null || rowsToRecycle == null) {
                 return false;
             }
             var res = false;
-            utils_1._.iterateObject(rowsToRecycle, function (key, rowComp) {
+            object_1.iterateObject(rowsToRecycle, function (key, rowComp) {
                 var rowNode = rowComp.getRowNode();
                 var rowIndexEqual = rowNode.rowIndex == focusedCell.rowIndex;
                 var pinnedEqual = rowNode.rowPinned == focusedCell.rowPinned;
@@ -384,8 +380,8 @@ var RowRenderer = /** @class */ (function (_super) {
         if (this.refreshInProgress) {
             throw new Error("ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
                 "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
-                "this, put the API call into a timeout, eg instead of api.refreshView(), " +
-                "call setTimeout(function(){api.refreshView(),0}). To see what part of your code " +
+                "this, put the API call into a timeout, e.g. instead of api.refreshView(), " +
+                "call setTimeout(function() { api.refreshView(); }, 0). To see what part of your code " +
                 "that caused the refresh check this stacktrace.");
         }
         this.refreshInProgress = true;
@@ -986,9 +982,7 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         if (nextCell.rowIndex < 0) {
             var headerLen = this.beans.headerNavigationService.getHeaderRowCount();
-            this.focusController.focusHeaderPosition({
-                headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column
-            });
+            this.focusController.focusHeaderPosition({ headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column });
             return;
         }
         // in case we have col spanning we get the cellComp and use it to
@@ -1101,15 +1095,23 @@ var RowRenderer = /** @class */ (function (_super) {
         if (success) {
             keyboardEvent.preventDefault();
         }
-        else if (keyboardEvent.shiftKey) {
+        else if (backwards) {
             var _a = previousRenderedCell.getCellPosition(), rowIndex = _a.rowIndex, rowPinned = _a.rowPinned;
             var firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
                 keyboardEvent.preventDefault();
-                this.focusController.focusHeaderPosition({
-                    headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1,
-                    column: array_1.last(this.columnController.getAllDisplayedColumns())
-                });
+                var headerRowIndex = this.beans.headerNavigationService.getHeaderRowCount() - 1;
+                var column = array_1.last(this.columnController.getAllDisplayedColumns());
+                this.focusController.focusHeaderPosition({ headerRowIndex: headerRowIndex, column: column });
+            }
+        }
+        else {
+            // if the case it's a popup editor, the focus is on the editor and not the previous cell.
+            // in order for the tab navigation to work, we need to focus the browser back onto the
+            // previous cell.
+            previousRenderedCell.focusCell(true);
+            if (this.focusController.focusNextGridCoreContainer(false)) {
+                keyboardEvent.preventDefault();
             }
         }
     };
@@ -1141,7 +1143,8 @@ var RowRenderer = /** @class */ (function (_super) {
         else {
             res = this.moveToNextCellNotEditing(previousRenderedCell, backwards);
         }
-        return res;
+        // if a cell wasn't found, it's possible that focus was moved to the header
+        return res || !!this.focusController.getFocusedHeader();
     };
     RowRenderer.prototype.moveToNextEditingCell = function (previousRenderedCell, backwards) {
         var gridCell = previousRenderedCell.getCellPosition();
@@ -1241,6 +1244,11 @@ var RowRenderer = /** @class */ (function (_super) {
             // if no 'next cell', means we have got to last cell of grid, so nothing to move to,
             // so bottom right cell going forwards, or top left going backwards
             if (!nextCell) {
+                return null;
+            }
+            if (nextCell.rowIndex < 0) {
+                var headerLen = this.beans.headerNavigationService.getHeaderRowCount();
+                this.focusController.focusHeaderPosition({ headerRowIndex: headerLen + (nextCell.rowIndex), column: nextCell.column });
                 return null;
             }
             // if editing, but cell not editable, skip cell. we do this before we do all of

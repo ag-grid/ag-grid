@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Master Detail: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid full width master detail javascript datagrid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -91,7 +91,7 @@ SNIPPET
     <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a> section.
 </note>
 
-<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
 <h2>Row Models</h2>

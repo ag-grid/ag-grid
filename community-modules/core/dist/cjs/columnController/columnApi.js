@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
+var utils_1 = require("../utils");
 var ColumnApi = /** @class */ (function () {
     function ColumnApi() {
     }
@@ -65,7 +66,7 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this.columnController.moveColumnByIndex(fromIndex, toIndex, 'api'); };
     ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this.columnController.moveColumns(columnsToMoveKeys, toIndex, 'api'); };
     ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this.columnController.moveRowGroupColumn(fromIndex, toIndex); };
-    ColumnApi.prototype.setColumnAggFunc = function (column, aggFunc) { this.columnController.setColumnAggFunc(column, aggFunc); };
+    ColumnApi.prototype.setColumnAggFunc = function (key, aggFunc) { this.columnController.setColumnAggFunc(key, aggFunc); };
     ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished) {
         if (finished === void 0) { finished = true; }
         this.columnController.setColumnWidths([{ key: key, newWidth: newWidth }], false, finished);
@@ -105,6 +106,15 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.setSecondaryColumns = function (colDefs) { this.columnController.setSecondaryColumns(colDefs, 'api'); };
     ColumnApi.prototype.getSecondaryColumns = function () { return this.columnController.getSecondaryColumns(); };
     ColumnApi.prototype.getPrimaryColumns = function () { return this.columnController.getAllPrimaryColumns(); };
+    ColumnApi.prototype.cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid = function () {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in teh API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(utils_1._.removeAllReferences.bind(window, this, 'Column API'), 100);
+    };
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
     // public getColumnDefs(): (ColDef | ColGroupDef)[] {
     //     this.setColumnGroupOpened(group, newValue);
@@ -168,6 +178,9 @@ var ColumnApi = /** @class */ (function () {
     __decorate([
         context_1.Autowired('columnController')
     ], ColumnApi.prototype, "columnController", void 0);
+    __decorate([
+        context_1.PreDestroy
+    ], ColumnApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
     ColumnApi = __decorate([
         context_1.Bean('columnApi')
     ], ColumnApi);

@@ -131,11 +131,11 @@ export const chart = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart into.'
+        description: 'The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the <code>autoSize</code> config description for information on how the container element affects the chart size (by default).'
     },
     autoSize: {
         default: true,
-        description: 'By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.',
+        description: 'By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.<br/><strong>Important:</strong> if this config is set to <code>true</code>, make sure to give the chart\'s <code>container</code> element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.',
         editor: BooleanEditor,
     },
     width: {
@@ -294,6 +294,14 @@ export const chart = Object.freeze({
             max: 100,
             unit: 'px',
         },
+        margin: {
+            default: 10,
+            description: 'The distance between the navigator and the bottom axis.',
+            editor: NumberEditor,
+            min: 0,
+            max: 100,
+            unit: 'px',
+        },
         min: {
             default: 0,
             description: 'The start of the visible range in the <code>[0, 1]</code> interval.',
@@ -444,12 +452,11 @@ export const axis = Object.freeze({
         },
         rotation: {
             default: 0,
-            description: 'The rotation of the axis labels in degrees.',
+            description: 'The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.',
             editor: NumberEditor,
             min: -359,
             max: 359,
             unit: '&deg;',
-            description: 'Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line.'
         },
         format: {
             type: 'string',
@@ -511,12 +518,14 @@ const series = {
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
-                xKey: 'string',
+                'xKey': 'string',
+                'xValue': 'any',
                 'xName?': 'string',
-                yKey: 'string',
+                'yKey': 'string',
+                'yValue': 'any',
                 'yName?': 'string',
             },
             returnType: 'string',
@@ -524,6 +533,27 @@ const series = {
         description: 'Function used to create the content for tooltips.',
     },
 };
+
+const getLineDashConfig = (description = '') => ({
+    lineDash: {
+        default: [],
+        type: 'number[]',
+        description: description + ' Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
+        editor: ArrayEditor,
+    },
+});
+
+const getLineDashOffsetConfig = () => ({
+    lineDashOffset: {
+        default: 0,
+        type: 'number',
+        description: 'The initial offset of the dashed line in pixels.',
+        editor: NumberEditor,
+        min: 0,
+        max: 200,
+        unit: 'px',
+    },
+});
 
 const getMarkerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) => ({
     marker: {
@@ -814,6 +844,8 @@ export const bar = Object.freeze({
     ...getColourConfig('bars', true),
     ...getHighlightConfig('bars'),
     ...shadowConfig,
+    ...getLineDashConfig('Defines how the bar/column strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     label: {
         meta: {
             description: 'Configuration for the labels shown on bars.',
@@ -829,6 +861,28 @@ export const bar = Object.freeze({
             editor: ColourEditor,
         },
         ...getFontOptions('labels'),
+    },
+    formatter: {
+        type: {
+            parameters: {
+                datum: 'any',
+                fill: 'string',
+                stroke: 'string',
+                strokeWidth: 'number',
+                highlighted: 'boolean',
+                xKey: 'string',
+                yKey: 'string',
+            },
+            returnType: {
+                fill: 'string',
+                stroke: 'string',
+                strokeWidth: 'number',
+            },
+        },
+        description:
+            `Function used to return formatting for individual bars/columns, based on the given parameters. If the
+            current bar/column is highlighted, the <code>highlighted</code> property will be set to <code>true</code>;
+            make sure to check this if you want to differentiate between the highlighted and un-highlighted states.`,
     },
     listeners: {
         meta: {
@@ -865,6 +919,8 @@ export const line = Object.freeze({
     ...getColourConfig('lines', false, false),
     ...getMarkerConfig(),
     ...getHighlightConfig(),
+    ...getLineDashConfig('Defines how the line stroke is rendered.'),
+    ...getLineDashOffsetConfig(),
     listeners: {
         meta: {
             description: "A map of event names to event listeners."
@@ -904,6 +960,8 @@ export const area = Object.freeze({
     ...getColourConfig('areas', true),
     ...getMarkerConfig({ enabledByDefault: false }),
     ...getHighlightConfig(),
+    ...getLineDashConfig('Defines how the area strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     ...shadowConfig,
 });
 
@@ -933,12 +991,14 @@ export const scatter = Object.freeze({
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
-                xKey: 'string',
+                'xKey': 'string',
+                'xValue': 'any',
                 'xName?': 'string',
-                yKey: 'string',
+                'yKey': 'string',
+                'yValue': 'any',
                 'yName?': 'string',
                 'sizeKey?': 'string',
                 'sizeName?': 'string',
@@ -1010,15 +1070,19 @@ export const pie = Object.freeze({
         description: 'A human-readable description of the radius values.',
     },
     ...series,
+    ...getLineDashConfig('Defines how the pie sector strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     tooltipRenderer: {
         type: {
             parameters: {
-                datum: 'any',
+                'datum': 'any',
                 'title?': 'string',
                 'color?': 'string',
                 'angleKey': 'string',
+                'angleValue': 'any',
                 'angleName?': 'string',
                 'radiusKey?': 'string',
+                'radiusValue?': 'any',
                 'radiusName?': 'string',
                 'labelKey?': 'string',
                 'labelName?': 'string'
@@ -1163,20 +1227,24 @@ export const histogram = Object.freeze({
         "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
         "default": "false"
     },
+    ...getLineDashConfig('Defines how the column strokes are rendered.'),
+    ...getLineDashOffsetConfig(),
     tooltipRenderer: {
         type: {
             parameters: {
-                "datum": "any",
-                "title?": "string",
-                "color?": "string",
-                "xKey": "string",
-                "xName?": "string",
-                "yKey": "string",
-                "yName?": "string",
-                "sizeKey?": "string",
-                "sizeName?": "string",
-                "labelKey?": "string",
-                "labelName?": "string"
+                'datum': 'any',
+                'title?': 'string',
+                'color?': 'string',
+                'xKey': 'string',
+                'xValue': 'any',
+                'xName?': 'string',
+                'yKey': 'string',
+                'yValue': 'any',
+                'yName?': 'string',
+                'sizeKey?': 'string',
+                'sizeName?': 'string',
+                'labelKey?': 'string',
+                'labelName?': 'string'
             },
             returnType: "string"
         },

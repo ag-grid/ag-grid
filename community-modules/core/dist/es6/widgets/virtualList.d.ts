@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from './component';
@@ -10,6 +10,7 @@ export interface VirtualListModel {
 }
 export declare class VirtualList extends ManagedFocusComponent {
     private readonly cssIdentifier;
+    private readonly ariaRole;
     private model;
     private renderedRows;
     private componentCreator;
@@ -17,9 +18,11 @@ export declare class VirtualList extends ManagedFocusComponent {
     private lastFocusedRowIndex;
     private isDestroyed;
     private readonly gridOptionsWrapper;
+    private readonly resizeObserverService;
     private readonly eContainer;
-    constructor(cssIdentifier?: string);
+    constructor(cssIdentifier?: string, ariaRole?: string);
     protected postConstruct(): void;
+    private addResizeObserver;
     protected focusInnerElement(fromBottom: boolean): void;
     protected onFocusIn(e: FocusEvent): void;
     protected onFocusOut(e: FocusEvent): void;
@@ -32,7 +35,7 @@ export declare class VirtualList extends ManagedFocusComponent {
     private static getTemplate;
     private getItemHeight;
     ensureIndexVisible(index: number): void;
-    setComponentCreator(componentCreator: (value: any) => Component): void;
+    setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void;
     getRowHeight(): number;
     getScrollTop(): number;
     setRowHeight(rowHeight: number): void;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,10 +70,16 @@ var FocusController = /** @class */ (function (_super) {
         return this.keyboardFocusActive;
     };
     FocusController.prototype.activateMouseMode = function () {
+        if (!this.keyboardFocusActive) {
+            return;
+        }
         this.keyboardFocusActive = false;
         this.eventService.dispatchEvent({ type: events_1.Events.EVENT_MOUSE_FOCUS });
     };
     FocusController.prototype.activateKeyboardMode = function () {
+        if (this.keyboardFocusActive) {
+            return;
+        }
         this.keyboardFocusActive = true;
         this.eventService.dispatchEvent({ type: events_1.Events.EVENT_KEYBOARD_FOCUS });
     };
@@ -157,7 +163,46 @@ var FocusController = /** @class */ (function (_super) {
     FocusController.prototype.setFocusedHeader = function (headerRowIndex, column) {
         this.focusedHeaderPosition = { headerRowIndex: headerRowIndex, column: column };
     };
-    FocusController.prototype.focusHeaderPosition = function (headerPosition, direction) {
+    FocusController.prototype.focusHeaderPosition = function (headerPosition, direction, fromTab, allowUserOverride, event) {
+        if (direction === void 0) { direction = null; }
+        if (fromTab === void 0) { fromTab = false; }
+        if (allowUserOverride === void 0) { allowUserOverride = false; }
+        if (allowUserOverride) {
+            var gridOptionsWrapper = this.gridOptionsWrapper;
+            var currentPosition = this.getFocusedHeader();
+            var headerRowCount = this.headerNavigationService.getHeaderRowCount();
+            if (fromTab) {
+                var userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
+                if (userFunc) {
+                    var params = {
+                        backwards: direction === 'Before',
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition,
+                        headerRowCount: headerRowCount
+                    };
+                    headerPosition = userFunc(params);
+                }
+            }
+            else {
+                var userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
+                if (userFunc) {
+                    var params = {
+                        key: event.key,
+                        previousHeaderPosition: currentPosition,
+                        nextHeaderPosition: headerPosition,
+                        headerRowCount: headerRowCount,
+                        event: event
+                    };
+                    headerPosition = userFunc(params);
+                }
+            }
+        }
+        if (!headerPosition) {
+            return false;
+        }
+        if (headerPosition.headerRowIndex === -1) {
+            return this.focusGridView(headerPosition.column);
+        }
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
         var childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());
         var rowComps = childContainer.getRowComps();

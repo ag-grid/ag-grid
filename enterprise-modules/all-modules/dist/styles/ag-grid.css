@@ -217,9 +217,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-layout-print .ag-center-cols-clipper {
   min-width: 100%; }
 
-.ag-layout-auto-height .ag-center-cols-clipper, .ag-layout-auto-height .ag-center-cols-container, .ag-layout-print .ag-center-cols-clipper, .ag-layout-print .ag-center-cols-container {
-  min-height: 150px; }
-
 .ag-pinned-right-cols-container {
   display: block; }
 
@@ -409,8 +406,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   width: 100%; }
 
 .ag-column-select-list {
-  flex: 1 1 auto;
-  overflow: auto; }
+  flex: 1 1 0px;
+  overflow: hidden; }
 
 .ag-column-drop {
   display: inline-flex;
@@ -441,7 +438,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-column-drop-vertical-title-bar {
   display: flex;
-  align-items: center; }
+  align-items: center;
+  flex: none; }
 
 .ag-column-drop-vertical-list {
   align-items: stretch;
@@ -539,7 +537,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   text-overflow: ellipsis; }
 
 .ag-cell-wrap-text {
-  white-space: normal; }
+  white-space: normal;
+  word-break: break-all; }
 
 .ag-cell-wrapper {
   display: flex;
@@ -983,7 +982,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   flex-direction: row;
   flex-wrap: nowrap;
   text-overflow: ellipsis;
-  white-space: nowrap; }
+  white-space: nowrap;
+  height: 100%; }
   .ag-column-select-column > *,
   .ag-column-select-column-group > * {
     flex: none; }

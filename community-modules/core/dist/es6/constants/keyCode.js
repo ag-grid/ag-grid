@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,7 +9,6 @@ var KeyCode = /** @class */ (function () {
     }
     KeyCode.BACKSPACE = 8;
     KeyCode.TAB = 9;
-    KeyCode.NEW_LINE = 10;
     KeyCode.ENTER = 13;
     KeyCode.SHIFT = 16;
     KeyCode.ESCAPE = 27;

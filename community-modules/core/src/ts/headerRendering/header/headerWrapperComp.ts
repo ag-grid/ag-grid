@@ -2,17 +2,14 @@ import { AgCheckbox } from "../../widgets/agCheckbox";
 import { Autowired, PreDestroy } from "../../context/context";
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
-import {
-    DragAndDropService, DragItem, DragSource, DragSourceType,
-    DropTarget
-} from "../../dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
 import { Constants } from "../../constants/constants";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
-import {ColumnValueChangedEvent, Events} from "../../events";
+import { Events } from "../../events";
 import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
@@ -31,6 +28,7 @@ import { HeaderRowComp } from "../headerRowComp";
 import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -55,7 +53,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private readonly dragSourceDropTarget: DropTarget;
     protected readonly column: Column;
     protected readonly pinned: string;
 
@@ -78,10 +75,9 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(column: Column, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
         this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
 
@@ -122,7 +118,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private onColumnValueChanged(): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
-        if (this.displayName!==this.calculateDisplayName()) {
+        if (this.displayName !== this.calculateDisplayName()) {
             this.refresh();
         }
     }
@@ -194,7 +190,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         const params = this.createParams();
-        const res = this.headerComp.refresh(params);
+
+        // take any custom params off of the user
+        const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+
+        const res = this.headerComp.refresh(finalParams);
 
         return res;
     }
@@ -236,6 +236,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         if (e.keyCode === KeyCode.SPACE) {
             const checkbox = this.cbSelectAll;
             if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                e.preventDefault();
                 checkbox.setValue(!checkbox.getValue());
             }
         }
@@ -315,14 +316,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const colDef = this.column.getColDef();
 
-        const enableSorting = colDef.sortable;
-        const enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
 
         const params = {
             column: this.column,
             displayName: this.displayName,
-            enableSorting: enableSorting,
-            enableMenu: enableMenu,
+            enableSorting: colDef.sortable,
+            enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
             },
@@ -389,7 +389,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
         };
@@ -486,12 +485,22 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
-    public getTooltipText(): string | undefined {
-        return this.column.getColDef().headerTooltip;
+    public getTooltipParams(): ITooltipParams {
+        const colDef = this.getComponentHolder();
+
+        return {
+            location: 'header',
+            colDef,
+            column: this.getColumn(),
+            value: this.getTooltipText(),
+        };
+    }
+
+    private getTooltipText(): string {
+        return this.getComponentHolder().headerTooltip;
     }
 
     private setupTooltip(): void {
-
         let tooltipFeature: TooltipFeature;
         let tooltipText: string;
 
@@ -511,16 +520,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             if (usingBrowserTooltips) {
                 this.getGui().setAttribute('title', tooltipText);
             } else {
-                tooltipFeature = this.createBean(new TooltipFeature(this, 'header'));
+                tooltipFeature = this.createBean(new TooltipFeature(this));
             }
         };
 
         const refresh = () => {
-
             const newTooltipText = this.getTooltipText();
 
             if (tooltipText != newTooltipText) {
-
                 if (tooltipText) {
                     removeTooltip();
                 }

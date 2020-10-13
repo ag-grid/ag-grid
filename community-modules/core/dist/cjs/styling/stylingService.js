@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
+var object_1 = require("../utils/object");
 var StylingService = /** @class */ (function (_super) {
     __extends(StylingService, _super);
     function StylingService() {
@@ -37,7 +38,7 @@ var StylingService = /** @class */ (function (_super) {
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     };
     StylingService.prototype.processClassRules = function (classRules, params, onApplicableClass, onNotApplicableClass) {
-        if (typeof classRules === 'object' && classRules !== null) {
+        if (object_1.isNonNullObject(classRules)) {
             var classNames = Object.keys(classRules);
             for (var i = 0; i < classNames.length; i++) {
                 var className = classNames[i];

@@ -38,7 +38,7 @@ export declare class FocusController extends BeanStub {
     clearFocusedHeader(): void;
     getFocusedHeader(): HeaderPosition;
     setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void;
-    focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean;
+    focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After', fromTab?: boolean, allowUserOverride?: boolean, event?: KeyboardEvent): boolean;
     isAnyCellFocused(): boolean;
     isRowFocused(rowIndex: number, floating: string): boolean;
     findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[];

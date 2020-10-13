@@ -352,6 +352,10 @@ __decorate([
 __decorate([
     Input(),
     __metadata("design:type", Object)
+], AgGridColumn.prototype, "suppressHeaderKeyboardEvent", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
 ], AgGridColumn.prototype, "colSpan", void 0);
 __decorate([
     Input(),
@@ -763,6 +767,8 @@ let AgGridAngular = class AgGridAngular {
         this.processSecondaryColGroupDef = undefined;
         this.getBusinessKeyForNode = undefined;
         this.sendToClipboard = undefined;
+        this.navigateToNextHeader = undefined;
+        this.tabToNextHeader = undefined;
         this.navigateToNextCell = undefined;
         this.tabToNextCell = undefined;
         this.getDetailRowData = undefined;
@@ -914,6 +920,7 @@ let AgGridAngular = class AgGridAngular {
         this.suppressExpandablePivotGroups = undefined;
         this.applyColumnDefOrder = undefined;
         this.debounceVerticalScrollbar = undefined;
+        this.detailRowAutoHeight = undefined;
         this.columnEverythingChanged = new EventEmitter();
         this.newColumnsLoaded = new EventEmitter();
         this.columnPivotModeChanged = new EventEmitter();
@@ -967,6 +974,7 @@ let AgGridAngular = class AgGridAngular {
         this.gridReady = new EventEmitter();
         this.gridSizeChanged = new EventEmitter();
         this.viewportChanged = new EventEmitter();
+        this.scrollbarWidthChanged = new EventEmitter();
         this.firstDataRendered = new EventEmitter();
         this.dragStarted = new EventEmitter();
         this.dragStopped = new EventEmitter();
@@ -1529,6 +1537,14 @@ __decorate([
     Input(),
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "sendToClipboard", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "navigateToNextHeader", void 0);
+__decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "tabToNextHeader", void 0);
 __decorate([
     Input(),
     __metadata("design:type", Object)
@@ -2134,6 +2150,10 @@ __decorate([
     __metadata("design:type", Object)
 ], AgGridAngular.prototype, "debounceVerticalScrollbar", void 0);
 __decorate([
+    Input(),
+    __metadata("design:type", Object)
+], AgGridAngular.prototype, "detailRowAutoHeight", void 0);
+__decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "columnEverythingChanged", void 0);
@@ -2345,6 +2365,10 @@ __decorate([
     Output(),
     __metadata("design:type", EventEmitter)
 ], AgGridAngular.prototype, "viewportChanged", void 0);
+__decorate([
+    Output(),
+    __metadata("design:type", EventEmitter)
+], AgGridAngular.prototype, "scrollbarWidthChanged", void 0);
 __decorate([
     Output(),
     __metadata("design:type", EventEmitter)

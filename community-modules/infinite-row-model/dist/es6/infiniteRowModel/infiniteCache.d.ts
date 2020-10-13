@@ -2,10 +2,11 @@ import { IDatasource, RowNode, RowNodeCache, RowNodeCacheParams } from "@ag-grid
 import { InfiniteBlock } from "./infiniteBlock";
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
+    maxConcurrentRequests: number;
 }
 export declare class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
-    private columnApi;
-    private gridApi;
+    private readonly columnApi;
+    private readonly gridApi;
     constructor(params: InfiniteCacheParams);
     private setBeans;
     private moveItemsDown;

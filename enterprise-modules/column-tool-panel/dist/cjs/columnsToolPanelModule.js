@@ -8,9 +8,10 @@ var columnToolPanel_1 = require("./columnToolPanel/columnToolPanel");
 var primaryColsPanel_1 = require("./columnToolPanel/primaryColsPanel");
 var row_grouping_1 = require("@ag-grid-enterprise/row-grouping");
 var side_bar_1 = require("@ag-grid-enterprise/side-bar");
+var modelItemUtils_1 = require("./columnToolPanel/modelItemUtils");
 exports.ColumnsToolPanelModule = {
     moduleName: core_1.ModuleNames.ColumnToolPanelModule,
-    beans: [],
+    beans: [modelItemUtils_1.ModelItemUtils],
     agStackComponents: [
         { componentName: 'AgPrimaryColsHeader', componentClass: primaryColsHeaderPanel_1.PrimaryColsHeaderPanel },
         { componentName: 'AgPrimaryColsList', componentClass: primaryColsListPanel_1.PrimaryColsListPanel },

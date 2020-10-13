@@ -1,10 +1,12 @@
-// @ag-grid-community/react v24.0.0
+// @ag-grid-community/react v24.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var agGridReact_1 = require("./agGridReact");
 exports.AgGridReact = agGridReact_1.AgGridReact;
 var agGridColumn_1 = require("./agGridColumn");
 exports.AgGridColumn = agGridColumn_1.AgGridColumn;
+var changeDetectionService_1 = require("./changeDetectionService");
+exports.ChangeDetectionStrategyType = changeDetectionService_1.ChangeDetectionStrategyType;
 // https://github.com/rollup/rollup-plugin-typescript/issues/109
 // export {ICellEditorReactComp} from './interfaces';
 // export {AgReactFrameworkComponent}  from './interfaces';

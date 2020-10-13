@@ -26,5 +26,4 @@ export declare class RowCssClassCalculator {
     private preProcessRowClassRules;
     processRowClassRules(rowNode: RowNode, scope: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     calculateRowLevel(rowNode: RowNode): number;
-    isExpandable(rowNode: RowNode): boolean;
 }

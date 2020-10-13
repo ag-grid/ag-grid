@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -128,19 +128,8 @@ var RowCssClassCalculator = /** @class */ (function () {
         if (rowNode.group) {
             return rowNode.level;
         }
-        else {
-            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
-            return rowNode.parent ? (rowNode.parent.level + 1) : 0;
-        }
-    };
-    RowCssClassCalculator.prototype.isExpandable = function (rowNode) {
-        var isTreeData = this.gridOptionsWrapper.isTreeData();
-        var res = isTreeData ?
-            // if doing tree data, we add the expanded classes if any children, as any node can be a parent
-            rowNode.childrenAfterGroup != null && rowNode.childrenAfterGroup.length > 0 :
-            // if normal row grouping, we add expanded classes to groups only
-            rowNode.group && !rowNode.footer;
-        return res;
+        // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+        return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     };
     __decorate([
         context_1.Autowired('stylingService')

@@ -145,9 +145,10 @@ var SortService = /** @class */ (function (_super) {
             var valueA = this.getValue(nodeA, sortOption.column);
             var valueB = this.getValue(nodeB, sortOption.column);
             var comparatorResult = void 0;
-            if (sortOption.column.getColDef().comparator) {
+            var providedComparator = sortOption.column.getColDef().comparator;
+            if (providedComparator) {
                 //if comparator provided, use it
-                comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
+                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
             }
             else {
                 //otherwise do our own comparison

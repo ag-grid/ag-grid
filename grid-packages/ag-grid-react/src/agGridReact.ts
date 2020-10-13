@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Component, ReactPortal} from "react";
+import { Component, ReactPortal } from "react";
 import * as PropTypes from "prop-types";
 import {
     BaseComponentWrapper,
@@ -11,11 +11,12 @@ import {
     GridApi,
     GridOptions,
     Module,
-    WrapableInterface
+    WrapableInterface,
+    _
 } from "ag-grid-community";
-import {AgGridColumn} from "./agGridColumn";
-import {ReactComponent} from "./reactComponent";
-import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
+import { AgGridColumn } from "./agGridColumn";
+import { ReactComponent } from "./reactComponent";
+import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -23,7 +24,7 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
     disableStaticMarkup?: boolean;
-    containerStyle? : any;
+    containerStyle?: any;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
@@ -42,15 +43,16 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     protected eGridDiv!: HTMLElement;
 
-    private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
+    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
-    constructor(public props: any, public state: any) {
-        super(props, state);
+    constructor(public props: any) {
+        super(props);
     }
 
     render() {
-        return React.createElement<any>("div", {
+        return React.createElement('div', {
             style: this.createStyleForDiv(),
+            className: this.props.className,
             ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
@@ -58,15 +60,10 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     createStyleForDiv() {
-        const style: any = {height: "100%"};
-        // allow user to override styles
-        const containerStyle = this.props.containerStyle;
-        if (containerStyle) {
-            Object.keys(containerStyle).forEach(key => {
-                style[key] = containerStyle[key];
-            });
-        }
-        return style;
+        return {
+            height: '100%',
+            ...(this.props.containerStyle || {})
+        };
     }
 
     componentDidMount() {
@@ -79,9 +76,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             modules
         };
 
-        let gridOptions = this.props.gridOptions || {};
-        if (AgGridColumn.hasChildColumns(this.props)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.props);
+        const gridOptions = this.props.gridOptions || {};
+        const { children } = this.props;
+
+        if (AgGridColumn.hasChildColumns(children)) {
+            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
         }
 
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
@@ -93,7 +92,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.columnApi = this.gridOptions.columnApi!;
     }
 
-    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
+    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, startTime = Date.now()): void {
         // if the grid has been destroyed in the meantime just resolve
         if (this.destroyed) {
             resolve(null);
@@ -101,13 +100,14 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
 
         if (reactComponent.rendered()) {
-            resolve(null);
+            resolve(reactComponent);
         } else {
-            if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
-                console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME}ms`);
+            if (Date.now() - startTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS) {
+                console.error(`ag-Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
                 return;
             }
-            window.setTimeout(() => this.waitForInstance(reactComponent, resolve, runningTime + 5), 5);
+
+            window.setTimeout(() => this.batchUpdate(() => this.waitForInstance(reactComponent, resolve, startTime)));
         }
     }
 
@@ -118,13 +118,15 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(this.waitForInstance(reactComponent, resolve));
+        this.batchUpdate(() => this.waitForInstance(reactComponent, resolve));
     }
 
-    batchUpdate(callback?: any) {
+    batchUpdate(callback?: () => void): void {
         if (this.hasPendingPortalUpdate) {
-            return callback && callback();
+            callback && callback();
+            return;
         }
+
         setTimeout(() => {
             if (this.api) { // destroyed?
                 this.forceUpdate(() => {
@@ -133,6 +135,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                 });
             }
         });
+
         this.hasPendingPortalUpdate = true;
     }
 
@@ -143,24 +146,21 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     private getStrategyTypeForProp(propKey: string) {
-        switch (propKey) {
-            case 'rowData': {
-                // for row data we either return the supplied strategy, or:
-                // if deltaRowDataMode/immutableData we default to IdentityChecks,
-                // if not we default to DeepValueChecks (with the rest of the properties)
-                if (!!this.props.rowDataChangeDetectionStrategy) {
-                    return this.props.rowDataChangeDetectionStrategy;
-                } else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
-                    return ChangeDetectionStrategyType.IdentityCheck;
-                }
-
-                return ChangeDetectionStrategyType.DeepValueCheck;
-            }
-            default: {
-                // all other data properties will default to DeepValueCheck
-                return ChangeDetectionStrategyType.DeepValueCheck;
+        if (propKey === 'rowData') {
+            if (this.props.rowDataChangeDetectionStrategy) {
+                return this.props.rowDataChangeDetectionStrategy;
+            } else if (this.isImmutableDataActive()) {
+                return ChangeDetectionStrategyType.IdentityCheck;
             }
         }
+
+        // all other cases will default to DeepValueCheck
+        return ChangeDetectionStrategyType.DeepValueCheck;
+    }
+
+    private isImmutableDataActive() {
+        return (this.props.deltaRowDataMode || this.props.immutableData) ||
+            (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
     }
 
     shouldComponentUpdate(nextProps: any) {
@@ -177,7 +177,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     processPropsChanges(prevProps: any, nextProps: any) {
-        const changes = <any>{};
+        const changes = {};
 
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
@@ -190,44 +190,45 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
         // if columnDefs are provided on gridOptions we use those - you can't combine both
         // we also skip if columnDefs are provided as a prop directly on AgGridReact
-        if((this.props.gridOptions && this.props.gridOptions.columnDefs) ||  this.props.columnDefs) {
+        if ((this.props.gridOptions && this.props.gridOptions.columnDefs) || this.props.columnDefs) {
             return;
         }
 
-        let debugLogging = !!nextProps.debug;
+        const debugLogging = !!nextProps.debug;
+        const propKey = 'columnDefs';
+        const currentColDefs = this.gridOptions.columnDefs;
 
-        if (AgGridColumn.hasChildColumns(nextProps)) {
-            const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp('columnDefs'));
+        if (AgGridColumn.hasChildColumns(nextProps.children)) {
+            const detectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
+            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps.children);
 
-            const currentColDefs = this.gridOptions.columnDefs;
-            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
             if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
                 if (debugLogging) {
                     console.log(`agGridReact: colDefs definitions changed`);
                 }
 
-                changes['columnDefs'] =
-                    {
-                        previousValue: this.gridOptions.columnDefs,
-                        currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
-                    }
-            }
-        } else if (this.gridOptions.columnDefs && this.gridOptions.columnDefs.length > 0) {
-            changes['columnDefs'] =
+                changes[propKey] =
                 {
-                    previousValue: this.gridOptions.columnDefs,
-                    currentValue: []
-                }
+                    previousValue: currentColDefs,
+                    currentValue: newColDefs
+                };
+            }
+        } else if (currentColDefs && currentColDefs.length > 0) {
+            changes[propKey] =
+            {
+                previousValue: currentColDefs,
+                currentValue: []
+            };
         }
     }
 
     private extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {
-        let debugLogging = !!nextProps.debug;
+        const debugLogging = !!nextProps.debug;
 
-        const changedKeys = Object.keys(nextProps);
-        changedKeys.forEach((propKey) => {
-            if (ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+        Object.keys(nextProps).forEach(propKey => {
+            if (_.includes(ComponentUtil.ALL_PROPERTIES, propKey)) {
                 const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
+
                 if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
@@ -240,11 +241,13 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                 }
             }
         });
-        ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
+
+        ComponentUtil.getEventCallbacks().forEach(funcName => {
             if (this.props[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
+
                 changes[funcName] = {
                     previousValue: prevProps[funcName],
                     currentValue: nextProps[funcName]
@@ -258,6 +261,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             this.api.destroy();
             this.api = null;
         }
+
         this.destroyed = true;
     }
 
@@ -279,13 +283,12 @@ addProperties(ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
 addProperties(ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
-    listOfProps.forEach((propKey: string) => {
+    listOfProps.forEach(propKey => {
         (AgGridReact as any)[propKey] = propType;
     });
 }
 
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
-
     private readonly agGridReact!: AgGridReact;
 
     constructor(agGridReact: AgGridReact) {
@@ -293,7 +296,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
         this.agGridReact = agGridReact;
     }
 
-    createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrapableInterface {
+    createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrapableInterface {
         return new ReactComponent(UserReactComponent, this.agGridReact, componentType);
     }
 }

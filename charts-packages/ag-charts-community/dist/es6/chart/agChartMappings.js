@@ -12,6 +12,7 @@ var __assign = (this && this.__assign) || function () {
 var _a, _b, _c, _d;
 import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
+import { GroupedCategoryChart } from "./groupedCategoryChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
@@ -209,6 +210,8 @@ var columnSeriesDefaults = {
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,
+    lineDash: undefined,
+    lineDashOffset: 0,
     shadow: undefined,
     highlightStyle: {
         fill: 'yellow'
@@ -329,7 +332,7 @@ var mappings = (_a = {},
             _c[LineSeries.type] = {
                 meta: {
                     constructor: LineSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 },
@@ -372,7 +375,7 @@ var mappings = (_a = {},
             },
             _c[AreaSeries.type] = __assign({ meta: {
                     constructor: AreaSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, marker: {
@@ -390,7 +393,7 @@ var mappings = (_a = {},
                 } }, shadowMapping),
             _c[HistogramSeries.type] = __assign({ meta: {
                     constructor: HistogramSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, label: {
@@ -461,7 +464,7 @@ var mappings = (_a = {},
                 } }) }) }, commonChartMappings), { series: (_d = {},
             _d[PieSeries.type] = __assign({ meta: {
                     constructor: PieSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
+                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined })
                 }, highlightStyle: {}, title: {
                     meta: {
                         constructor: Caption,
@@ -524,4 +527,9 @@ mappings['scatter'] =
                         type: 'number',
                         position: 'left'
                     }] }) }) });
+var groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
+var groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
+groupedCategoryChartMeta.constructor = GroupedCategoryChart;
+groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
+mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;
 export default mappings;

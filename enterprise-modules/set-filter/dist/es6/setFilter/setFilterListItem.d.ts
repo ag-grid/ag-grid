@@ -1,4 +1,4 @@
-import { AgEvent, ColDef, Component, ISetFilterParams } from '@ag-grid-community/core';
+import { AgEvent, ColDef, Component, ISetFilterParams, ITooltipParams } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 export interface SetFilterListItemSelectionChangedEvent extends AgEvent {
     isSelected: boolean;
@@ -19,8 +19,8 @@ export declare class SetFilterListItem extends Component {
     private init;
     toggleSelected(): void;
     render(): void;
+    getTooltipParams(): ITooltipParams;
     private getFormattedValue;
     private renderCell;
     getComponentHolder(): ColDef;
-    getTooltipText(): string;
 }

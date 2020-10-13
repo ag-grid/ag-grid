@@ -49,9 +49,9 @@ function clearData() {
     gridOptions.api.setRowData([]);
 }
 
-function addItems() {
+function addItems(addIndex) {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    var res = gridOptions.api.applyTransaction({add: newItems});
+    var res = gridOptions.api.applyTransaction({add: newItems, addIndex: addIndex});
     printResult(res);
 }
 

@@ -14,7 +14,6 @@ import { InfiniteCacheParams } from "./infiniteCache";
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private cacheParams: InfiniteCacheParams;
 
@@ -36,11 +35,12 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = super.createBlankRowNode(rowIndex);
+        const rowNode = super.createBlankRowNode();
 
         rowNode.uiLevel = 0;
 
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
+
         return rowNode;
     }
 
@@ -61,12 +61,9 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
     }
 
-    @PostConstruct
+    // no need for @postConstruct, as attached to parent
     protected init(): void {
-        super.init({
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        super.init();
     }
 
     public getNodeIdPrefix(): string {
@@ -106,6 +103,5 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         window.setTimeout(() => {
             this.cacheParams.datasource.getRows(params);
         }, 0);
-
     }
 }

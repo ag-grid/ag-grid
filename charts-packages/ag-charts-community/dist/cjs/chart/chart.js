@@ -42,9 +42,13 @@ var observable_1 = require("../util/observable");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 var id_1 = require("../util/id");
 var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
-function toTooltipHtml(content, title, color) {
-    if (color === void 0) { color = '#888'; }
-    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n            style=\"color: white; background-color: " + color + "\">" + title + "</div>" : '';
+function toTooltipHtml(input, defaults) {
+    if (typeof input === 'string') {
+        return input;
+    }
+    defaults = defaults || {};
+    var _a = input.content, content = _a === void 0 ? defaults.content || '' : _a, _b = input.title, title = _b === void 0 ? defaults.title || undefined : _b, _c = input.titleColor, titleColor = _c === void 0 ? defaults.titleColor || 'white' : _c, _d = input.titleBackgroundColor, titleBackgroundColor = _d === void 0 ? defaults.titleBackgroundColor || '#888' : _d;
+    var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\"\n        style=\"color: " + titleColor + "; background-color: " + titleBackgroundColor + "\">" + title + "</div>" : '';
     return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + content + "</div>";
 }
 exports.toTooltipHtml = toTooltipHtml;

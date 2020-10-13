@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { getMaxDivHeight } from "../utils/browser";
 /**
@@ -43,7 +43,6 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
     }
     MaxDivHeightScaler.prototype.postConstruct = function () {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
-        this.scrollBarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.maxDivHeight = getMaxDivHeight();
     };
     MaxDivHeightScaler.prototype.registerGridComp = function (gridPanel) {
@@ -118,9 +117,6 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
         var scrollPixel = this.maxScrollY * scrollPercent;
         return scrollPixel;
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], MaxDivHeightScaler.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         PostConstruct
     ], MaxDivHeightScaler.prototype, "postConstruct", null);

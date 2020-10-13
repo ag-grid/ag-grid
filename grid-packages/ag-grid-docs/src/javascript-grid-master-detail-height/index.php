@@ -61,30 +61,21 @@ masterGridOptions.detailRowHeight = 200;
     The following example sets a fixed row height for all detail rows.
 </p>
 
-<?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <h2 id="auto-height">Auto Height</h2>
 
 <p>
-    Set <code>detailCellRendererParams.autoHeight=true</code> to have the detail grid to dynamically change
+    Set grid property <code>detailRowAutoHeight=true</code> to have the detail grid to dynamically change
     it's height to fit it's rows.
 </p>
 
 <snippet>
-detailCellRendererParams: {
-    // enable auto-height
-    autoHeight: true
-
-    // define detail grid options as normal
-    detailGridOptions: {
-        ...
-    },
-
-    ...
-},
+    // statically fix row height for all detail grids
+    masterGridOptions.detailRowAutoHeight = true;
 </snippet>
 
-<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail'], 'reactFunctional' => true]) ?>
+<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
 
 <note>
     <p>
@@ -131,6 +122,6 @@ masterGridOptions.getRowHeight = function (params) {
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

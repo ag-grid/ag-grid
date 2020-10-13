@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -27,8 +27,8 @@ export declare class HeaderNavigationService extends BeanStub {
     getHeaderRowCount(): number;
     getHeaderRowType(idx: number): HeaderRowType;
     getHeaderContainer(position?: HeaderContainerPosition): HeaderContainer;
-    navigateVertically(direction: HeaderNavigationDirection, fromHeader?: HeaderPosition): boolean;
-    navigateHorizontally(direction: HeaderNavigationDirection, fromTab?: boolean): boolean;
+    navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean;
+    navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean, event: KeyboardEvent): boolean;
     private focusNextHeaderRow;
     scrollToColumn(column: Column | ColumnGroup, direction?: 'Before' | 'After'): void;
 }

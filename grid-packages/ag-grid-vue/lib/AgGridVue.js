@@ -17,11 +17,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Prop } from 'vue-property-decorator';
+import { h } from 'vue';
+import { Options, Vue } from 'vue-class-component';
 import { Bean, ComponentUtil, Grid } from 'ag-grid-community';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
-import { getAgGridProperties } from './Utils';
+import { getAgGridProperties, kebabNameToAttrEventName, kebabProperty } from './Utils';
 import { AgGridColumn } from './AgGridColumn';
+import { markRaw, toRaw } from '@vue/reactivity';
 var _a = getAgGridProperties(), props = _a[0], watch = _a[1], model = _a[2];
 var AgGridVue = /** @class */ (function (_super) {
     __extends(AgGridVue, _super);
@@ -34,11 +37,8 @@ var AgGridVue = /** @class */ (function (_super) {
         return _this;
     }
     AgGridVue_1 = AgGridVue;
-    AgGridVue.kebabProperty = function (property) {
-        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-    };
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
-    AgGridVue.prototype.render = function (h) {
+    AgGridVue.prototype.render = function () {
         return h('div');
     };
     AgGridVue.prototype.globalEventListener = function (eventType, event) {
@@ -49,15 +49,6 @@ var AgGridVue = /** @class */ (function (_super) {
             this.gridReadyFired = true;
         }
         this.updateModelIfUsed(eventType);
-        // only emit if someone is listening
-        // we allow both kebab and camelCase event listeners, so check for both
-        var kebabName = AgGridVue_1.kebabProperty(eventType);
-        if (this.$listeners[kebabName]) {
-            this.$emit(kebabName, event);
-        }
-        else if (this.$listeners[eventType]) {
-            this.$emit(eventType, event);
-        }
     };
     AgGridVue.prototype.processChanges = function (propertyName, currentValue, previousValue) {
         if (this.gridCreated) {
@@ -78,10 +69,12 @@ var AgGridVue = /** @class */ (function (_super) {
         // we debounce the model update to prevent a flood of updates in the event there are many individual
         // cell/row updates
         this.emitRowModel = this.debounce(function () {
-            _this.$emit('data-model-changed', Object.freeze(_this.getRowData()));
+            _this.$emit(AgGridVue_1.DATA_MODEL_ATTR_NAME, Object.freeze(_this.getRowData()));
         }, 20);
         var frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        var gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
+        // with mergeDeep for example
+        var gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
         if (AgGridColumn.hasChildColumns(this.$slots)) {
@@ -122,7 +115,7 @@ var AgGridVue = /** @class */ (function (_super) {
     };
     AgGridVue.prototype.updateModelIfUsed = function (eventType) {
         if (this.gridReadyFired &&
-            this.$listeners['data-model-changed'] &&
+            this.$attrs[AgGridVue_1.DATA_MODEL_ATTR_NAME] &&
             AgGridVue_1.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
             if (this.emitRowModel) {
                 this.emitRowModel();
@@ -141,7 +134,7 @@ var AgGridVue = /** @class */ (function (_super) {
     AgGridVue.prototype.skipChange = function (propertyName, currentValue, previousValue) {
         if (this.gridReadyFired &&
             propertyName === 'rowData' &&
-            this.$listeners['data-model-changed']) {
+            this.$attrs[AgGridVue_1.DATA_MODEL_ATTR_NAME]) {
             if (currentValue === previousValue) {
                 return true;
             }
@@ -171,7 +164,9 @@ var AgGridVue = /** @class */ (function (_super) {
         };
     };
     var AgGridVue_1;
+    AgGridVue.VERSION = 'Vue 3+';
     AgGridVue.ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+    AgGridVue.DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-changed'));
     __decorate([
         Prop(Boolean)
     ], AgGridVue.prototype, "autoParamsRefresh", void 0);
@@ -183,7 +178,7 @@ var AgGridVue = /** @class */ (function (_super) {
     ], AgGridVue.prototype, "modules", void 0);
     AgGridVue = AgGridVue_1 = __decorate([
         Bean('agGridVue'),
-        Component({
+        Options({
             props: props,
             watch: watch,
             model: model,

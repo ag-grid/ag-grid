@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Aggregation: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Aggregation. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Aggregation. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Grid Aggregation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -24,13 +24,19 @@ include '../documentation-main/documentation_header.php';
 
     <ol class="content">
     <li>
-        <b>Built In Functions: </b>Out of the box the grid provides <code>sum, min, max,
+        <b>Built-In Functions:</b> Out of the box the grid provides <code>sum, min, max,
             count, avg, first, last</code>. To use one of these, set <code>colDef.aggFunc</code> to the string
         of the function you require.
+
+        <note>
+            The built-in functions will support <code>bigint</code> values if you have them in your data, but the
+            <code>avg</code> function will lose precision as it can only use integer arithmetic if <code>bigint</code>
+            is used.
+        </note>
     </li>
     <li>
         <b>User Registered Functions: </b>You can install your own aggregation functions into the
-        grid and reference them as if they were grid provided functions by calling api.addAggFunc(key,func).
+        grid and reference them as if they were grid provided functions by calling <code>api.addAggFunc(key, func)</code>.
     </li>
     <li>
         <b>Direct Functions: </b>Lastly you can provide a
@@ -84,7 +90,7 @@ colDef = {
     // allow gui to set aggregations for this column
     enableValue: true,
     // restrict aggregations to sum, min and max
-    allowedAggFuncs: ['sum','min','max']
+    allowedAggFuncs: ['sum', 'min', 'max']
     ...
 }</snippet>
     </p>

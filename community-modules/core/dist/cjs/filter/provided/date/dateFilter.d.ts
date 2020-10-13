@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
@@ -11,21 +11,22 @@ export interface DateFilterModel extends ISimpleFilterModel {
 export interface IDateFilterParams extends IScalarFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
+    minValidYear?: number;
 }
 export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     static DEFAULT_FILTER_OPTIONS: string[];
-    private eCondition1PanelFrom;
-    private eCondition1PanelTo;
-    private eCondition2PanelFrom;
-    private eCondition2PanelTo;
+    private readonly eCondition1PanelFrom;
+    private readonly eCondition1PanelTo;
+    private readonly eCondition2PanelFrom;
+    private readonly eCondition2PanelTo;
     private dateCondition1FromComp;
     private dateCondition1ToComp;
     private dateCondition2FromComp;
     private dateCondition2ToComp;
-    private userComponentFactory;
+    private readonly userComponentFactory;
     private dateFilterParams;
     constructor();
     protected mapRangeFromModel(filterModel: DateFilterModel): {

@@ -343,14 +343,6 @@
                 "url": "../javascript-grid-grouping/#multi-auto-column-group"
             }
         },
-        "groupSuppressRow": {
-            "default": false,
-            "description": "If <code>true</code>, the group row won't be displayed and the groups will be expanded by default with no ability to expand / contract the groups. Useful when you want to just 'group' the rows, but not add a parent group row to each group.",
-            "more": {
-                "name": "Suppress Group Row",
-                "url": "../javascript-grid-grouping/#suppress-group-row"
-            }
-        },
         "groupSelectsChildren": {
             "default": false,
             "description": "When <code>true</code>, if you select a group, the children of the group will also be selected.",
@@ -825,10 +817,16 @@
             "description": "Provide a template for 'no rows' <a href='../javascript-grid-overlays/'>overlay</a>."
         },
         "loadingOverlayComponent<br />loadingOverlayComponentFramework ": {
-            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#loading-overlay-interface'>loading overlay component</a>."
+            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#loading-rows-overlay-interface'>loading overlay component</a>."
+        },
+        "loadingOverlayComponentParams": {
+            "description": "Customise the parameters provided to the loading overlay component."
         },
         "noRowsOverlayComponent<br />noRowsOverlayComponentFramework ": {
-            "description": "Provide a custom <a href='../javascript-grid-overlays/#no-rows-overlay-interface'>no rows overlay  component</a>."
+            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#no-rows-overlay-interface'>no rows overlay component</a>."
+        },
+        "noRowsOverlayComponentParams": {
+            "description": "Customise the parameters provided to the no rows overlay component."
         }
     },
     "charts": {
@@ -840,7 +838,13 @@
             "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
         },
         "chartThemes": {
-            "default": ["ag-default", "ag-material", "ag-pastel", "ag-vivid", "ag-solar"],
+            "default": [
+                "ag-default",
+                "ag-material",
+                "ag-pastel",
+                "ag-vivid",
+                "ag-solar"
+            ],
             "description": "The list of chart themes to be used, see <a href='../javascript-grid-charts-integrated-customisation/#chart-themes'>Chart Themes</a>."
         },
         "customChartThemes": {

@@ -18,8 +18,6 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("$scope") private $scope: any;
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
-    @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('$compile') public $compile: any;
 
     private gridPanel: GridPanel;
@@ -45,7 +43,7 @@ export class AutoHeightCalculator extends BeanStub {
         const cellComps: CellComp[] = [];
         const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
         const displayedCols = this.columnController.getAllDisplayedColumns();
-        const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col)>=0 );
+        const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col) >= 0);
 
         visibleAutoRowHeightCols.forEach(col => {
             const cellComp = new CellComp(
@@ -109,7 +107,7 @@ export class AutoHeightCalculator extends BeanStub {
             firstRowOnPage: rowIndex === this.beans.paginationProxy.getPageFirstRow(),
             lastRowOnPage: rowIndex === this.beans.paginationProxy.getPageLastRow(),
             printLayout: false,
-            expandable: this.rowCssClassCalculator.isExpandable(rowNode)
+            expandable: rowNode.isExpandable()
         };
         const classes = this.rowCssClassCalculator.getInitialRowClasses(params);
         addCssClass(eDummyContainer, classes.join(' '));

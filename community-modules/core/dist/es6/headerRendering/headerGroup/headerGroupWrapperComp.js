@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,12 +40,11 @@ import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } fr
 import { KeyCode } from '../../constants/keyCode';
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
-    function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
+    function HeaderGroupWrapperComp(columnGroup, pinned) {
         var _this = _super.call(this, HeaderGroupWrapperComp.TEMPLATE) || this;
         // the children can change, we keep destroy functions related to listening to the children here
         _this.removeChildListenersFuncs = [];
         _this.column = columnGroup;
-        _this.dragSourceDropTarget = dragSourceDropTarget;
         _this.pinned = pinned;
         return _this;
     }
@@ -120,6 +119,14 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         var colGroupDef = this.getComponentHolder();
         return colGroupDef && colGroupDef.headerTooltip;
     };
+    HeaderGroupWrapperComp.prototype.getTooltipParams = function () {
+        return {
+            location: 'headerGroup',
+            colDef: this.getComponentHolder(),
+            column: this.getColumn(),
+            value: this.getTooltipText()
+        };
+    };
     HeaderGroupWrapperComp.prototype.setupTooltip = function () {
         var tooltipText = this.getTooltipText();
         if (tooltipText == null) {
@@ -129,7 +136,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
-            this.createManagedBean(new TooltipFeature(this, 'headerGroup'));
+            this.createManagedBean(new TooltipFeature(this));
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
@@ -206,7 +213,6 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
-            dragSourceDropTarget: this.dragSourceDropTarget,
             onDragStarted: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(true, "uiColumnDragged"); }); },
             onDragStopped: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(false, "uiColumnDragged"); }); }
         };

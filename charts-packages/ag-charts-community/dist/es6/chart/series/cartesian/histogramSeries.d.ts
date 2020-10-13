@@ -5,6 +5,7 @@ import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TooltipRendererResult } from "../../chart";
 import { TypedEvent } from "../../../util/observable";
 declare class HistogramSeriesLabel extends Label {
     formatter?: (params: {
@@ -13,29 +14,29 @@ declare class HistogramSeriesLabel extends Label {
 }
 export { HistogramTooltipRendererParams };
 interface HistogramNodeDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string;
-        x: number;
-        y: number;
-        fontStyle?: FontStyle;
-        fontWeight?: FontWeight;
-        fontSize: number;
-        fontFamily: string;
-        fill: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly x: number;
+        readonly y: number;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
     };
 }
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: HistogramSeries;
-    datum: any;
-    xKey: string;
+    readonly type: 'nodeClick';
+    readonly series: HistogramSeries;
+    readonly datum: any;
+    readonly xKey: string;
 }
 export declare type HistogramAggregation = 'count' | 'sum' | 'mean';
 export declare class HistogramBin {
@@ -62,11 +63,13 @@ export declare class HistogramSeries extends CartesianSeries {
     private yDomain;
     readonly label: HistogramSeriesLabel;
     private seriesItemEnabled;
-    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
+    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
     fill: string | undefined;
     stroke: string | undefined;
     fillOpacity: number;
     strokeOpacity: number;
+    lineDash?: number[];
+    lineDashOffset: number;
     constructor();
     directionKeys: {
         x: string[];

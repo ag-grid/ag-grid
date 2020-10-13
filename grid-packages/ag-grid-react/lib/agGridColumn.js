@@ -1,4 +1,4 @@
-// ag-grid-react v24.0.0
+// ag-grid-react v24.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -13,6 +13,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var react_1 = require("react");
@@ -20,51 +31,26 @@ var PropTypes = require("prop-types");
 var AgGrid = require("ag-grid-community");
 var AgGridColumn = /** @class */ (function (_super) {
     __extends(AgGridColumn, _super);
-    function AgGridColumn(props, state) {
-        var _this = _super.call(this, props, state) || this;
+    function AgGridColumn(props) {
+        var _this = _super.call(this, props) || this;
         _this.props = props;
-        _this.state = state;
         return _this;
     }
     AgGridColumn.prototype.render = function () {
         return null;
     };
-    AgGridColumn.mapChildColumnDefs = function (columnProps) {
-        return React.Children.map(columnProps.children, function (child) {
-            return AgGridColumn.toColDef(child.props);
-        });
+    AgGridColumn.mapChildColumnDefs = function (children) {
+        return React.Children.map(children, function (child) { return AgGridColumn.toColDef(child.props); });
     };
     AgGridColumn.toColDef = function (columnProps) {
-        var colDef = AgGridColumn.createColDefFromGridColumn(columnProps);
-        if (AgGridColumn.hasChildColumns(columnProps)) {
-            colDef["children"] = AgGridColumn.getChildColDefs(columnProps.children);
+        var children = columnProps.children, colDef = __rest(columnProps, ["children"]);
+        if (AgGridColumn.hasChildColumns(children)) {
+            colDef.children = AgGridColumn.mapChildColumnDefs(children);
         }
         return colDef;
     };
-    AgGridColumn.hasChildColumns = function (columnProps) {
-        return React.Children.count(columnProps.children) > 0;
-    };
-    AgGridColumn.getChildColDefs = function (columnChildren) {
-        return React.Children.map(columnChildren, function (child) {
-            return AgGridColumn.createColDefFromGridColumn(child.props);
-        });
-    };
-    ;
-    AgGridColumn.createColDefFromGridColumn = function (columnProps) {
-        var colDef = {};
-        AgGridColumn.assign(colDef, columnProps);
-        delete colDef.children;
-        return colDef;
-    };
-    ;
-    AgGridColumn.assign = function (colDef, from) {
-        // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function (r, o) {
-            Object.keys(o).forEach(function (k) {
-                r[k] = o[k];
-            });
-            return r;
-        }, colDef);
+    AgGridColumn.hasChildColumns = function (children) {
+        return React.Children.count(children) > 0;
     };
     return AgGridColumn;
 }(react_1.Component));

@@ -340,7 +340,7 @@ export class Component extends BeanStub {
     }
 
     public addCssClass(className: string): void {
-        const updateNeeded = this.cssClassStates[className]!==true;
+        const updateNeeded = this.cssClassStates[className] !== true;
         if (updateNeeded) {
             addCssClass(this.eGui, className);
             this.cssClassStates[className] = true;
@@ -348,7 +348,7 @@ export class Component extends BeanStub {
     }
 
     public removeCssClass(className: string): void {
-        const updateNeeded = this.cssClassStates[className]!==false;
+        const updateNeeded = this.cssClassStates[className] !== false;
         if (updateNeeded) {
             removeCssClass(this.eGui, className);
             this.cssClassStates[className] = false;
@@ -356,7 +356,7 @@ export class Component extends BeanStub {
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        const updateNeeded = this.cssClassStates[className]!==addOrRemove;
+        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded) {
             addOrRemoveCssClass(this.eGui, className, addOrRemove);
             this.cssClassStates[className] = addOrRemove;

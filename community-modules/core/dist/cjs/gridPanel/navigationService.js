@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,9 +37,6 @@ var NavigationService = /** @class */ (function (_super) {
         _this.timeLastPageEventProcessed = 0;
         return _this;
     }
-    NavigationService.prototype.init = function () {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-    };
     NavigationService.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
     };
@@ -117,9 +114,10 @@ var NavigationService = /** @class */ (function (_super) {
             return;
         }
         var scrollPosition = this.gridPanel.getVScrollPosition();
+        var scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
         var currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
@@ -143,9 +141,10 @@ var NavigationService = /** @class */ (function (_super) {
             return;
         }
         var scrollPosition = this.gridPanel.getVScrollPosition();
+        var scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
         var currentPageTopPixel = scrollPosition.top;
@@ -229,9 +228,6 @@ var NavigationService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], NavigationService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.PostConstruct
-    ], NavigationService.prototype, "init", null);
     NavigationService = __decorate([
         context_1.Bean('navigationService')
     ], NavigationService);

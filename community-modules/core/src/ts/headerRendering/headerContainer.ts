@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { ColumnController } from '../columnController/columnController';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
@@ -23,8 +22,6 @@ export class HeaderContainer extends BeanStub {
     private eViewport: HTMLElement;
 
     private pinned: string;
-    private scrollWidth: number;
-    private dropTarget: DropTarget;
 
     private filtersRowComp: HeaderRowComp;
     private columnsRowComp: HeaderRowComp;
@@ -51,29 +48,13 @@ export class HeaderContainer extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-
-        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-    }
-
-    // if row group changes, that means we may need to add aggFuncs to the column headers,
-    // if the grid goes from no aggregation (ie no grouping) to grouping
-    private onColumnRowGroupChanged(): void {
-        this.refresh();
-    }
-
-    // if the agg func of a column changes, then we may need to update the agg func in columns header
-    private onColumnValueChanged(): void {
-        this.refresh();
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
     }
 
     private onColumnResized(): void {
@@ -88,11 +69,16 @@ export class HeaderContainer extends BeanStub {
         this.setWidthOfPinnedContainer();
     }
 
+    private onScrollbarWidthChanged(): void {
+        this.setWidthOfPinnedContainer();
+    }
+
     private setWidthOfPinnedContainer(): void {
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
         const controller = this.columnController;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (pinningLeft || pinningRight) {
             // size to fit all columns
@@ -104,7 +90,7 @@ export class HeaderContainer extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
 
             if (addPaddingForScrollbar) {
-                width += this.scrollWidth;
+                width += scrollbarWidth;
             }
 
             setFixedWidth(this.eContainer, width);
@@ -137,6 +123,7 @@ export class HeaderContainer extends BeanStub {
     }
 
     public setupDragAndDrop(gridComp: GridPanel): void {
+        // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
@@ -166,7 +153,6 @@ export class HeaderContainer extends BeanStub {
     }
 
     private refreshRowComps(keepColumns = false): void {
-
         const sequence = new NumberSequence();
 
         const refreshColumnGroups = () => {
@@ -177,7 +163,7 @@ export class HeaderContainer extends BeanStub {
 
             for (let i = 0; i < groupRowCount; i++) {
                 const rowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned, this.dropTarget));
+                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned));
                 this.groupsRowComps.push(rowComp);
             }
         };
@@ -195,7 +181,7 @@ export class HeaderContainer extends BeanStub {
 
             if (!this.columnsRowComp) {
                 this.columnsRowComp = this.createBean(
-                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned, this.dropTarget));
+                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned));
             }
         };
 
@@ -206,48 +192,13 @@ export class HeaderContainer extends BeanStub {
             const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
             if (includeFloatingFilter) {
                 this.filtersRowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget));
+                    new HeaderRowComp(sequence.next(), HeaderRowType.FLOATING_FILTER, this.pinned));
             }
         };
 
         refreshColumnGroups();
         refreshColumns();
         refreshFilters();
-
-        // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
-        // taking it out of the last position and re-inserting relative to the other rows.
-        this.getRowComps().forEach(rowComp => this.eContainer.appendChild(rowComp.getGui()));
-    }
-
-    private createRowComps(): void {
-
-        // if we are displaying header groups, then we have many rows here.
-        // go through each row of the header, one by one.
-        const rowsWithGroupsCount = this.columnController.getHeaderRowCount() - 1;
-        let rowIndex = 0;
-
-        const createHeaderRowComp = (type: HeaderRowType, index: number): HeaderRowComp => {
-            return this.createBean(new HeaderRowComp(index, type, this.pinned, this.dropTarget));
-        };
-
-        for (let i = 0; i < rowsWithGroupsCount; i++) {
-            const rowComp = createHeaderRowComp(HeaderRowType.COLUMN_GROUP, rowIndex++);
-            this.groupsRowComps.push(rowComp);
-        }
-
-        if (this.columnsRowComp && this.columnsRowComp.getRowIndex() !== rowIndex) {
-            this.destroyRowComp(this.columnsRowComp);
-            this.columnsRowComp = undefined;
-        }
-
-        if (!this.columnsRowComp) {
-            this.columnsRowComp = createHeaderRowComp(HeaderRowType.COLUMN, rowIndex++);
-        }
-
-        const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
-        if (includeFloatingFilter) {
-            this.filtersRowComp = createHeaderRowComp(HeaderRowType.FLOATING_FILTER, rowIndex++);
-        }
 
         // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
         // taking it out of the last position and re-inserting relative to the other rows.

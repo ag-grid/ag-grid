@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,16 @@ var Beans = /** @class */ (function () {
     };
     Beans.prototype.postConstruct = function () {
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            this.clientSideRowModel = this.rowModel;
+        }
+        if (this.gridOptionsWrapper.isRowModelServerSide()) {
+            this.serverSideRowModel = this.rowModel;
+        }
     };
+    __decorate([
+        Autowired('resizeObserverService')
+    ], Beans.prototype, "resizeObserverService", void 0);
     __decorate([
         Autowired('paginationProxy')
     ], Beans.prototype, "paginationProxy", void 0);
@@ -130,6 +139,9 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('rowCssClassCalculator')
     ], Beans.prototype, "rowCssClassCalculator", void 0);
+    __decorate([
+        Autowired('rowModel')
+    ], Beans.prototype, "rowModel", void 0);
     __decorate([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);

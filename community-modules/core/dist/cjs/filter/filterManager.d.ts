@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Promise } from '../utils';
@@ -55,7 +55,7 @@ export declare class FilterManager extends BeanStub {
     private aggregateRowForQuickFilter;
     private onNewRowsLoaded;
     private createValueGetter;
-    getFilterComponent(column: Column, source: FilterRequestSource): Promise<IFilterComp>;
+    getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): Promise<IFilterComp>;
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;

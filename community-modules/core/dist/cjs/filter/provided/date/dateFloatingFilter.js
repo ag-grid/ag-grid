@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,10 +48,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
             return condition.dateFrom + "-" + condition.dateTo;
         }
         // cater for when the type doesn't need a value
-        if (condition.dateFrom != null) {
-            return "" + condition.dateFrom;
-        }
-        return "" + condition.type;
+        return condition.dateFrom == null ? "" + condition.type : "" + condition.dateFrom;
     };
     DateFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);

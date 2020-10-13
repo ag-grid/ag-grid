@@ -260,6 +260,12 @@
         padding-bottom: ag-param(grid-size) / 2;
     }
 
+    .ag-layout-auto-height, .ag-layout-print {
+        .ag-center-cols-clipper, .ag-center-cols-container {
+            min-height: 150px;
+        }
+    }
+
     .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
         padding-top: 60px;
     }
@@ -267,5 +273,6 @@
     .ag-date-time-list-page-entry-is-current {
         @include ag-color-property(background-color, alpine-active-color);
     }
+
     @include ag-allow-color-param-access-with-ag-param(true);
 }

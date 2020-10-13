@@ -147,7 +147,7 @@ var Legend = /** @class */ (function (_super) {
         _this.addPropertyListener('data', _this.onDataChange);
         _this.addPropertyListener('enabled', _this.onEnabledChange);
         _this.addPropertyListener('position', _this.onPositionChange);
-        _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
+        _this.item.marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         _this.addEventListener('change', _this.update);
         _this.item.addEventListener('change', function () { return _this.fireEvent({ type: 'change' }); });
         _this.item.addEventListener('layoutChange', function () { return _this.fireEvent({ type: 'layoutChange' }); });
@@ -338,30 +338,32 @@ var Legend = /** @class */ (function (_super) {
      * @param height
      */
     Legend.prototype.performLayout = function (width, height) {
-        var _this = this;
-        var _a = this, markerShape = _a.markerShape, layoutHorizontalSpacing = _a.layoutHorizontalSpacing, layoutVerticalSpacing = _a.layoutVerticalSpacing;
+        var item = this.item;
+        var marker = item.marker, paddingX = item.paddingX, paddingY = item.paddingY;
         var updateSelection = this.itemSelection.setData(this.data, function (_, datum) {
-            var MarkerShape = util_1.getMarker(markerShape || datum.marker.shape);
+            var MarkerShape = util_1.getMarker(marker.shape || datum.marker.shape);
             return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
         });
         updateSelection.exit.remove();
         var enterSelection = updateSelection.enter.append(markerLabel_1.MarkerLabel).each(function (node, datum) {
-            var MarkerShape = util_1.getMarker(markerShape || datum.marker.shape);
+            var MarkerShape = util_1.getMarker(marker.shape || datum.marker.shape);
             node.marker = new MarkerShape();
         });
         var itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
         var itemCount = itemSelection.size;
         // Update properties that affect the size of the legend items and measure them.
         var bboxes = [];
+        var itemMarker = this.item.marker;
+        var itemLabel = this.item.label;
         itemSelection.each(function (markerLabel, datum) {
             // TODO: measure only when one of these properties or data change (in a separate routine)
-            markerLabel.markerSize = _this.markerSize;
-            markerLabel.fontStyle = _this.fontStyle;
-            markerLabel.fontWeight = _this.fontWeight;
-            markerLabel.fontSize = _this.fontSize;
-            markerLabel.fontFamily = _this.fontFamily;
+            markerLabel.markerSize = itemMarker.size;
+            markerLabel.spacing = itemMarker.padding;
+            markerLabel.fontStyle = itemLabel.fontStyle;
+            markerLabel.fontWeight = itemLabel.fontWeight;
+            markerLabel.fontSize = itemLabel.fontSize;
+            markerLabel.fontFamily = itemLabel.fontFamily;
             markerLabel.text = datum.label.text;
-            markerLabel.spacing = _this.itemSpacing;
             bboxes.push(markerLabel.computeBBox());
         });
         var itemHeight = bboxes.length && bboxes[0].height;
@@ -399,9 +401,9 @@ var Legend = /** @class */ (function (_super) {
                         itemsWidth += columnWidth;
                         columnCount++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount - 1) * layoutHorizontalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount - 1) * paddingX;
                 } while (paddedItemsWidth > width && columnCount > 1);
-                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * layoutVerticalSpacing;
+                paddedItemsHeight = itemHeight * rowCount + (rowCount - 1) * paddingY;
                 break;
             case LegendOrientation.Vertical:
                 if (!(isFinite(height) && height > 0)) {
@@ -435,8 +437,8 @@ var Legend = /** @class */ (function (_super) {
                         itemsWidth += columnWidth;
                         columnCount_1++;
                     }
-                    paddedItemsWidth = itemsWidth + (columnCount_1 - 1) * layoutHorizontalSpacing;
-                    paddedItemsHeight = itemsHeight + (rowCount - 1) * layoutVerticalSpacing;
+                    paddedItemsWidth = itemsWidth + (columnCount_1 - 1) * paddingX;
+                    paddedItemsHeight = itemsHeight + (rowCount - 1) * paddingY;
                 } while (paddedItemsHeight > height && rowCount > 1);
                 break;
         }
@@ -456,12 +458,12 @@ var Legend = /** @class */ (function (_super) {
                 columnWidth = bbox.width;
             }
             if ((i + 1) % rowCount === 0) {
-                x += columnWidth + layoutHorizontalSpacing;
+                x += columnWidth + paddingX;
                 y = 0;
                 columnWidth = 0;
             }
             else {
-                y += bbox.height + layoutVerticalSpacing;
+                y += bbox.height + paddingY;
             }
         });
         // Update legend item properties that don't affect the layout.
@@ -481,7 +483,7 @@ var Legend = /** @class */ (function (_super) {
             var marker = datum.marker;
             markerLabel.markerFill = marker.fill;
             markerLabel.markerStroke = marker.stroke;
-            markerLabel.markerStrokeWidth = _this.strokeWidth;
+            markerLabel.markerStrokeWidth = _this.item.marker.strokeWidth;
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;

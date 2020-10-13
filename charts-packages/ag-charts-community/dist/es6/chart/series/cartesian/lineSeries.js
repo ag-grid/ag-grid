@@ -28,7 +28,7 @@ import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive } from "../../../util/observable";
-import { Chart } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
     function LineSeries() {
@@ -43,7 +43,7 @@ var LineSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this.stroke = undefined;
+        _this.stroke = '#874349';
         _this.lineDash = undefined;
         _this.lineDashOffset = 0;
         _this.strokeWidth = 2;
@@ -60,8 +60,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.group.append(lineNode);
         _this.addEventListener('update', _this.update);
         var marker = _this.marker;
-        marker.fill = undefined;
-        marker.stroke = undefined;
+        marker.fill = '#c16068';
+        marker.stroke = '#874349';
         marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
         marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
         marker.addEventListener('change', _this.update, _this);
@@ -152,6 +152,15 @@ var LineSeries = /** @class */ (function (_super) {
         this.updateNodeSelection();
         this.updateNodes();
     };
+    LineSeries.prototype.getXYDatums = function (i, xData, yData, xScale, yScale) {
+        var isContinuousX = xScale instanceof ContinuousScale;
+        var isContinuousY = yScale instanceof ContinuousScale;
+        var xDatum = xData[i];
+        var yDatum = yData[i];
+        var noDatum = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+        return noDatum ? undefined : [xDatum, yDatum];
+    };
     LineSeries.prototype.updateLinePath = function () {
         if (!this.data) {
             return;
@@ -161,25 +170,34 @@ var LineSeries = /** @class */ (function (_super) {
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var isContinuousX = xScale instanceof ContinuousScale;
-        var isContinuousY = yScale instanceof ContinuousScale;
         var linePath = lineNode.path;
         var nodeData = [];
         linePath.clear();
         var moveTo = true;
+        var prevXInRange = undefined;
+        var nextXYDatums = undefined;
         for (var i = 0; i < xData.length; i++) {
-            var xDatum = xData[i];
-            var yDatum = yData[i];
-            var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
-            if (isGap) {
+            var xyDatums = nextXYDatums || this.getXYDatums(i, xData, yData, xScale, yScale);
+            if (!xyDatums) {
+                prevXInRange = undefined;
                 moveTo = true;
             }
             else {
+                var xDatum = xyDatums[0], yDatum = xyDatums[1];
                 var x = xScale.convert(xDatum) + xOffset;
-                if (!xAxis.inRange(x, 0, (xScale.bandwidth || 20) + 1)) {
+                var tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
+                nextXYDatums = this.getXYDatums(i + 1, xData, yData, xScale, yScale);
+                var xInRange = xAxis.inRangeEx(x, 0, tolerance);
+                var nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
+                if (xInRange === -1 && nextXInRange === -1) {
+                    moveTo = true;
                     continue;
                 }
+                if (xInRange === 1 && prevXInRange === 1) {
+                    moveTo = true;
+                    continue;
+                }
+                prevXInRange = xInRange;
                 var y = yScale.convert(yDatum) + yOffset;
                 if (moveTo) {
                     linePath.moveTo(x, y);
@@ -274,28 +292,33 @@ var LineSeries = /** @class */ (function (_super) {
             return '';
         }
         var _b = this, xName = _b.xName, yName = _b.yName, color = _b.stroke, tooltipRenderer = _b.tooltipRenderer;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = this.title || yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            var datum_1 = nodeDatum.seriesDatum;
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum_1,
                 xKey: xKey,
+                xValue: xValue,
                 xName: xName,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
-                title: this.title,
+                title: title,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var title = this.title || yName;
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + title + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     LineSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKey = _a.yKey, yName = _a.yName, visible = _a.visible, title = _a.title, marker = _a.marker, stroke = _a.stroke, strokeOpacity = _a.strokeOpacity;

@@ -12,6 +12,7 @@ export declare class FiltersToolPanel extends Component implements IFiltersToolP
     private columnApi;
     private initialised;
     private params;
+    private listenerDestroyFuncs;
     constructor();
     init(params: ToolPanelFiltersCompParams): void;
     setVisible(visible: boolean): void;

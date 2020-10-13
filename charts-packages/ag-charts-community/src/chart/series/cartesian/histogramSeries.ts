@@ -13,7 +13,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -33,30 +33,30 @@ const defaultBinCount = 10;
 export { HistogramTooltipRendererParams };
 
 interface HistogramNodeDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    label?: {
-        text: string;
-        x: number;
-        y: number;
-        fontStyle?: FontStyle;
-        fontWeight?: FontWeight;
-        fontSize: number;
-        fontFamily: string;
-        fill: string;
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
+    readonly label?: {
+        readonly text: string;
+        readonly x: number;
+        readonly y: number;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly fill: string;
     };
 }
 
 export interface HistogramSeriesNodeClickEvent extends TypedEvent {
-    type: 'nodeClick';
-    series: HistogramSeries;
-    datum: any;
-    xKey: string;
+    readonly type: 'nodeClick';
+    readonly series: HistogramSeries;
+    readonly datum: any;
+    readonly xKey: string;
 }
 
 export type HistogramAggregation = 'count' | 'sum' | 'mean';
@@ -131,13 +131,16 @@ export class HistogramSeries extends CartesianSeries {
 
     private seriesItemEnabled = true;
 
-    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
+    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
 
     @reactive('dataChange') fill: string | undefined = undefined;
     @reactive('dataChange') stroke: string | undefined = undefined;
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
+
+    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDashOffset: number = 0;
 
     constructor() {
         super();
@@ -180,6 +183,7 @@ export class HistogramSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
+
     get xKey(): string {
         return this._xKey;
     }
@@ -190,6 +194,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get areaPlot(): boolean {
         return this._areaPlot;
     }
@@ -200,6 +205,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get bins(): [number, number][] {
         return this._bins;
     }
@@ -210,6 +216,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get aggregation(): HistogramAggregation {
         return this._aggregation;
     }
@@ -220,6 +227,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.scheduleData();
     }
+
     get binCount(): number {
         return this._binCount;
     }
@@ -231,6 +239,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get xName(): string {
         return this._xName;
     }
@@ -241,6 +250,7 @@ export class HistogramSeries extends CartesianSeries {
         this.seriesItemEnabled = true;
         this.scheduleData();
     }
+
     get yKey(): string {
         return this._yKey;
     }
@@ -250,6 +260,7 @@ export class HistogramSeries extends CartesianSeries {
         this._yName = values;
         this.scheduleData();
     }
+
     get yName(): string {
         return this._yName;
     }
@@ -261,6 +272,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -272,6 +284,7 @@ export class HistogramSeries extends CartesianSeries {
             this.update();
         }
     }
+
     get shadow(): DropShadow | undefined {
         return this._shadow;
     }
@@ -520,6 +533,8 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = this.lineDash;
+            rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
@@ -569,38 +584,36 @@ export class HistogramSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill, tooltipRenderer, aggregation } = this;
+        const { xName, yName, fill: color, tooltipRenderer, aggregation } = this;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
+        const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        let content = yKey ?
+            `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
+            '';
+
+        content += `<b>Frequency</b>: ${frequency}`;
+
+        const defaults = {
+            title,
+            titleBackgroundColor: color,
+            content
+        };
 
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: bin,
                 xKey,
+                xValue: bin.domain,
                 xName,
                 yKey,
+                yValue: bin.aggregatedValue,
                 yName,
-                color: fill
-            });
-        } else {
-            const titleStyle = `style="color: white; background-color: ${fill}"`;
-            const titleString = `
-                <div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>
-                    ${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}
-                </div>`;
-
-            let contentHtml = yKey ?
-                `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
-                '';
-
-            contentHtml += `<b>Frequency</b>: ${frequency}`;
-
-            return `
-                ${titleString}
-                <div class="${Chart.defaultTooltipClass}-content">
-                    ${contentHtml}
-                </div>`;
+                color
+            }), defaults);
         }
+
+        return toTooltipHtml(defaults);
     }
 
     listSeriesItems(legendData: LegendDatum[]): void {

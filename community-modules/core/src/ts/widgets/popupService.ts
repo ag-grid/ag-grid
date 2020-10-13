@@ -45,7 +45,15 @@ interface AddPopupParams {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
-    positionCallback?: ()=>void;
+    // this gets called after the popup is created. the called could just call positionCallback themselves,
+    // however it needs to be called first before anchorToElement is called, so must provide this callback
+    // here if setting anchorToElement
+    positionCallback?: () => void;
+    // if the underlying anchorToElement moves, the popup will follow it. for example if context menu
+    // showing, and the whole grid moves (browser is scrolled down) then we want the popup to stay above
+    // the cell it appeared on. make sure though if setting, don't anchor to a temporary or moving element,
+    // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
+    // the grid, not the cell.
     anchorToElement?: HTMLElement;
 }
 
@@ -367,7 +375,7 @@ export class PopupService extends BeanStub {
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement,
         element: HTMLElement
-    }): ()=>void {
+    }): () => void {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
 
@@ -377,25 +385,25 @@ export class PopupService extends BeanStub {
         let lastDiffTop = initialDiffTop;
 
         const topPx = params.ePopup.style.top;
-        const top = parseInt(topPx.substring(0, topPx.length - 1));
+        const top = parseInt(topPx.substring(0, topPx.length - 1), 10);
 
-        const intervalId = setInterval( ()=> {
+        const intervalId = window.setInterval(() => {
 
             const parentRect = eParent.getBoundingClientRect();
             const sourceRect = params.element.getBoundingClientRect();
 
             const currentDiffTop = parentRect.top - sourceRect.top;
-            if (currentDiffTop!=lastDiffTop) {
+            if (currentDiffTop != lastDiffTop) {
                 const newTop = top + initialDiffTop - currentDiffTop;
-                params.ePopup.style.top = `${newTop}px`
+                params.ePopup.style.top = `${newTop}px`;
             }
 
             lastDiffTop = currentDiffTop;
 
         }, 200);
 
-        const res = ()=> {
-            clearInterval(intervalId);
+        const res = () => {
+            window.clearInterval(intervalId);
         };
 
         return res;
@@ -470,7 +478,7 @@ export class PopupService extends BeanStub {
         const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
         const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
-        let destroyPositionTracker: ()=>void;
+        let destroyPositionTracker: () => void;
 
         const hidePopup = (params: PopupEventParams = {}) => {
             const { mouseEvent, touchEvent, keyboardEvent } = params;

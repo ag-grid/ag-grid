@@ -25,6 +25,9 @@ var ContextMenuFactory = /** @class */ (function (_super) {
     function ContextMenuFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ContextMenuFactory.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     ContextMenuFactory.prototype.hideActiveMenu = function () {
         this.destroyBean(this.activeMenu);
     };
@@ -103,7 +106,8 @@ var ContextMenuFactory = /** @class */ (function (_super) {
             },
             click: mouseEvent,
             positionCallback: positionCallback,
-            anchorToElement: mouseEvent.target
+            // so when browser is scrolled down, the context menu stays on the grid
+            anchorToElement: this.gridPanel.getGui()
         });
         menu.afterGuiAttached({ container: 'contextMenu', hidePopup: hidePopup });
         // there should never be an active menu at this point, however it was found

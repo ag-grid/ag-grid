@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -162,7 +162,7 @@ export declare class RowNode implements IEventEmitter {
     /** Used by sorting service - to give deterministic sort to groups. Previously we
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     __objectId: number;
-    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+    /** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence
      * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
      * method, however that would be a breaking change. */
     private __hasChildren;

@@ -133,6 +133,8 @@ export declare class AgGridAngular implements AfterViewInit {
     processSecondaryColGroupDef: any;
     getBusinessKeyForNode: any;
     sendToClipboard: any;
+    navigateToNextHeader: any;
+    tabToNextHeader: any;
     navigateToNextCell: any;
     tabToNextCell: any;
     getDetailRowData: any;
@@ -284,6 +286,7 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressExpandablePivotGroups: any;
     applyColumnDefOrder: any;
     debounceVerticalScrollbar: any;
+    detailRowAutoHeight: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
@@ -337,6 +340,7 @@ export declare class AgGridAngular implements AfterViewInit {
     gridReady: EventEmitter<any>;
     gridSizeChanged: EventEmitter<any>;
     viewportChanged: EventEmitter<any>;
+    scrollbarWidthChanged: EventEmitter<any>;
     firstDataRendered: EventEmitter<any>;
     dragStarted: EventEmitter<any>;
     dragStopped: EventEmitter<any>;

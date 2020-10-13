@@ -53,6 +53,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideRowModel');
     };
+    ServerSideRowModel.prototype.applyTransaction = function (rowDataTransaction, route) {
+        this.executeOnCache(route, function (cache) {
+            cache.applyTransaction(rowDataTransaction);
+        });
+    };
     ServerSideRowModel.prototype.addEventListeners = function () {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
@@ -269,6 +274,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
+        var userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
+        var blockSize;
+        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize > 0) {
+            blockSize = userProvidedBlockSize;
+        }
+        else {
+            blockSize = ServerSideBlock.DefaultBlockSize;
+        }
         var params = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -283,30 +296,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             lastAccessedSequence: new NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
-            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests() || 0,
             maxBlocksInCache: maxBlocksInCache,
-            blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
+            blockSize: blockSize,
             rowHeight: this.rowHeight,
             dynamicRowHeight: dynamicRowHeight
         };
-        // set defaults
-        if (!(params.maxConcurrentRequests >= 1)) {
-            params.maxConcurrentRequests = 2;
-        }
-        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
-        // server for one page at a time. so the default if not specified is 100.
-        if (!(params.blockSize >= 1)) {
-            params.blockSize = ServerSideBlock.DefaultBlockSize;
-        }
-        // if user doesn't give initial rows to display, we assume zero
-        if (!(params.initialRowCount >= 1)) {
-            params.initialRowCount = 0;
-        }
-        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
-        // the current page and request first row of next page
-        if (!(params.overflowSize >= 1)) {
-            params.overflowSize = 1;
-        }
         return params;
     };
     ServerSideRowModel.prototype.createNodeCache = function (rowNode) {

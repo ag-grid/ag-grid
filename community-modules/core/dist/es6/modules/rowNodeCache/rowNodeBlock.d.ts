@@ -1,18 +1,12 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
-import { Context } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
-import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
-export interface RowNodeBlockBeans {
-    context: Context;
-    rowRenderer: RowRenderer;
-}
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;
     page: RowNodeBlock;
@@ -24,6 +18,7 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     static STATE_LOADING: string;
     static STATE_LOADED: string;
     static STATE_FAILED: string;
+    private rowRenderer;
     private version;
     private state;
     private lastAccessed;
@@ -31,7 +26,6 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     private readonly startRow;
     private readonly endRow;
     rowNodes: RowNode[];
-    private beans;
     private rowNodeCacheParams;
     protected abstract loadFromDatasource(): void;
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
@@ -48,7 +42,7 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     getVersion(): number;
     getLastAccessed(): number;
     getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed?: boolean): RowNode;
-    protected init(beans: RowNodeBlockBeans): void;
+    protected init(): void;
     getStartRow(): number;
     getEndRow(): number;
     getBlockNumber(): number;
@@ -58,7 +52,7 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     setRowNode(rowIndex: number, rowNode: RowNode): void;
     setBlankRowNode(rowIndex: number): RowNode;
     setNewData(rowIndex: number, dataItem: any): RowNode;
-    protected createBlankRowNode(rowIndex: number): RowNode;
+    protected createBlankRowNode(rowIndex?: number): RowNode;
     protected createRowNodes(): void;
     load(): void;
     protected pageLoadFailed(): void;

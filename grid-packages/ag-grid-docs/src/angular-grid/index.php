@@ -17,13 +17,6 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<note>
-<p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
-<code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
-    <p>If you experience this please set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
-    <p>Version 24.0.0 of <code>@ag-grid-community/angular</code> / <code>ag-grid-angular</code> will remove the need for this flag to be set.</p>
-</note>
-
 <note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <h2>Getting Started</h2>
@@ -81,8 +74,6 @@ ng serve
 </code>
 </snippet>
 
-npm install -g @angular/cling new my-app --style scss --routing false cd my-app ng serve
-
 <div class="note">We are passing <code>--style scss</code> to the app scaffolding command so that we may customise the grid theme look through Sass variables.</div>
 
 <p>If everything goes well, <code>ng serve</code> has started the web server. You can open your app at  <a href="http://localhost:4200" onclick="window.open(event.target.href); return false;">localhost:4200</a>.</p>
@@ -117,15 +108,11 @@ export class AppModule {}
 
 <div class="note">The <code>withComponents</code> call is necessary for the grid to be able to use Angular components as cells / headers - you can ignore it for now.</div>
 
-<p>The next step is to add the ag-Grid styles - replace the content of <code>styles.scss</code> with the following code:</p>
+<p>The next step is to add the ag-Grid styles - replace the content of <code>src/styles.scss</code> with the following code:</p>
 
 <snippet language="scss">
-@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
-
-.ag-theme-alpine {
-    @include ag-theme-alpine();
-}
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
@@ -142,12 +129,12 @@ import { Component } from '@angular/core';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-    title = 'app';
+    title = 'my-app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make' },
-        {headerName: 'Model', field: 'model' },
-        {headerName: 'Price', field: 'price'}
+        { field: 'make' },
+        { field: 'model' },
+        { field: 'price'}
     ];
 
     rowData = [
@@ -169,7 +156,7 @@ each column entry specifies the header label and the data field to be displayed 
     class="ag-theme-alpine"
     [rowData]="rowData"
     [columnDefs]="columnDefs"
-    &gt;
+&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 
@@ -191,9 +178,9 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <snippet language="ts">
 columnDefs = [
-    {headerName: 'Make', field: 'make', sortable: true},
-    {headerName: 'Model', field: 'model', sortable: true},
-    {headerName: 'Price', field: 'price', sortable: true}
+    { field: 'make', sortable: true },
+    { field: 'model', sortable: true },
+    { field: 'price', sortable: true }
 ];
 </snippet>
 
@@ -205,9 +192,9 @@ columnDefs = [
 
 <snippet language="ts">
 columnDefs = [
-    {headerName: 'Make', field: 'make', sortable: true, filter: true},
-    {headerName: 'Model', field: 'model', sortable: true, filter: true},
-    {headerName: 'Price', field: 'price', sortable: true, filter: true}
+    { field: 'make', sortable: true, filter: true },
+    { field: 'model', sortable: true, filter: true },
+    { field: 'price', sortable: true, filter: true }
 ];
 </snippet>
 
@@ -230,7 +217,11 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, HttpClientModule, AgGridModule.withComponents([])],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AgGridModule.withComponents([])
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
@@ -249,12 +240,12 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
+    title = 'my-app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', sortable: true, filter: true},
-        {headerName: 'Model', field: 'model', sortable: true, filter: true},
-        {headerName: 'Price', field: 'price', sortable: true, filter: true}
+        { field: 'make', sortable: true, filter: true },
+        { field: 'model', sortable: true, filter: true },
+        { field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -277,7 +268,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-alpine"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
-    &gt;
+&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 
@@ -301,12 +292,12 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
+    title = 'my-app';
 
     columnDefs = [
-        {headerName: 'make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
-        {headerName: 'model', field: 'model', sortable: true, filter: true },
-        {headerName: 'price', field: 'price', sortable: true, filter: true }
+        { field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        { field: 'model', sortable: true, filter: true },
+        { field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -331,18 +322,22 @@ export class AppComponent implements OnInit {
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
-    &gt;
+&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 
 <div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the
     assignment will pass the attribute value as a string, which is fine for our purposes.</div>
 
-<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add
+<p>
+    Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add
     is a button that gets the selected data and sends it to the server. To do this, we are going to use the
-    <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will access it through the component instance. </p>
+    <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will access it through the component instance.
+    To access to component instance we will need to add the </code>#agGrid</code> id to our component.
+</p>
 
 <snippet language="html">
+&lt;button (click)="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
 &lt;ag-grid-angular
     #agGrid
     style="width: 500px; height: 500px;"
@@ -350,7 +345,7 @@ export class AppComponent implements OnInit {
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
-    &gt;
+&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 
@@ -369,12 +364,12 @@ import { AgGridAngular } from 'ag-grid-angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
+    title = 'my-app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
-        {headerName: 'Model', field: 'model', sortable: true, filter: true },
-        {headerName: 'Price', field: 'price', sortable: true, filter: true }
+        { field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        { field: 'model', sortable: true, filter: true },
+        { field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -389,21 +384,9 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 
-<p>The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
-
-<snippet language="html">
-&lt;button (click)="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
-
-&lt;ag-grid-angular
-    #agGrid
-    style="width: 500px; height: 500px;"
-    class="ag-theme-alpine"
-    [rowData]="rowData | async"
-    [columnDefs]="columnDefs"
-    rowSelection="multiple"
-    &gt;
-&lt;/ag-grid-angular&gt;
-</snippet>
+<p>
+    The only thing we have to add is the <code>getSelectedRows</code> method to the component.
+</p>
 
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -418,12 +401,12 @@ import { AgGridAngular } from 'ag-grid-angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
+    title = 'my-app';
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
-        {headerName: 'Model', field: 'model', sortable: true, filter: true },
-        {headerName: 'Price', field: 'price', sortable: true, filter: true }
+        { field: 'make', sortable: true, filter: true, checkboxSelection: true },
+        { field: 'model', sortable: true, filter: true },
+        { field: 'price', sortable: true, filter: true }
     ];
 
     rowData: any;
@@ -433,13 +416,14 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
     }
 
     getSelectedRows() {
         const selectedNodes = this.agGrid.api.getSelectedNodes();
-        const selectedData = selectedNodes.map( node =&gt; node.data );
-        const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ');
+        const selectedData = selectedNodes.map(node =&gt; node.data );
+        const selectedDataStringPresentation = selectedData.map(node =&gt; node.make + ' ' + node.model).join(', ');
+
         alert(`Selected nodes: ${selectedDataStringPresentation}`);
     }
 }
@@ -461,10 +445,10 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <p>Our current data set is pretty small so let's switch to a larger one:</p>
 
 <snippet language="diff">
-    ngOnInit() {
-    -        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
-    +        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json');
-    }
+ngOnInit() {
+-     this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
++     this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json');
+}
 </snippet>
 
 <p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
@@ -478,8 +462,7 @@ npm install --save ag-grid-enterprise
 <snippet language="diff">
 import { AgGridModule } from 'ag-grid-angular';
 import { HttpClientModule } from '@angular/common/http';
-
-+import 'ag-grid-enterprise';
++ import 'ag-grid-enterprise';
 </snippet>
 
 <p>
@@ -497,11 +480,16 @@ import { HttpClientModule } from '@angular/common/http';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
+    title = 'my-app';
+
+    defaultColDef = {
+        sortable: true,
+        filter: true
+    };
 
     columnDefs = [
-        {headerName: 'Make', field: 'make', rowGroup: true },
-        {headerName: 'Price', field: 'price'}
+        { field: 'make', rowGroup: true },
+        { field: 'price' }
     ];
 
     autoGroupColumnDef = {
@@ -525,18 +513,25 @@ export class AppComponent implements OnInit {
 
     getSelectedRows() {
         const selectedNodes = this.agGrid.api.getSelectedNodes();
-        const selectedData = selectedNodes.map( node =&gt; node.data );
-        const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ');
+        const selectedData = selectedNodes.map(node =&gt; {
+          if (node.groupData) {
+            return { make: node.key, model: 'Group' };
+          }
+          return node.data;
+        });
+        const selectedDataStringPresentation = selectedData.map(node =&gt; node.make + ' ' + node.model).join(', ');
+
         alert(`Selected nodes: ${selectedDataStringPresentation}`);
     }
 }
 </snippet>
 
-<p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p>
+<p>Add the the <code>autoGroupColumnDef</code> and <code>defaultColDef</code> properties to the template too:</p>
 
 <snippet language="diff">
 class="ag-theme-alpine"
-+[autoGroupColumnDef]="autoGroupColumnDef"
++ [defaultColDef]="defaultColDef"
++ [autoGroupColumnDef]="autoGroupColumnDef"
 </snippet>
 
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded.
@@ -570,6 +565,12 @@ header background color and even the amount of spacing in the cells and columns.
 
 <h2 id="compatibility">ag-Grid & Angular Compatibility Chart</h2>
 
+<note>
+    <p>Due to a breaking change in Angular 10 you may experience the following error when building:</p>
+    <code>Generic type 'ModuleWithProviders<T>' requires 1 type argument(s)</code><br/><br/>
+    <p>If you wish to use Angular 10 with ag-Grid versions 18-23 then you need to set <code>"skipLibCheck": true</code> in <code>tsconfig.app.json</code></p>
+    <p>Please note however that this is a workaround and Angular 10 is only officially supported with ag-Grid 24+.</p>
+</note>
 <div>
     <table class="properties">
         <tr>
@@ -581,8 +582,12 @@ header background color and even the amount of spacing in the cells and columns.
             <td>18 - 22</td>
         </tr>
         <tr>
-            <td>7 - 9+</td>
-            <td>18 - 23+ (23+ recommended for Angular 9+)</td>
+            <td>7 - 9</td>
+            <td>18 - 23+ (23 recommended for Angular 9)</td>
+        </tr>
+        <tr>
+            <td>7 - 10+</td>
+            <td>24+ (24+ for Angular 10)</td>
         </tr>
     </table>
 </div>

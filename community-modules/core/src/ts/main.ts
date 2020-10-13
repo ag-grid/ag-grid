@@ -78,6 +78,7 @@ export {
     DraggingEvent
 } from "./dragAndDrop/dragAndDropService";
 export { DragService } from "./dragAndDrop/dragService";
+export { IRowDragItem } from "./rendering/row/rowDragComp";
 
 // entities
 export { Column } from "./entities/column";
@@ -238,6 +239,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
+export { KeyName } from "./constants/keyName";
 export { Grid, GridParams } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
@@ -277,6 +279,7 @@ export {
     ColSpanParams,
     RowSpanParams,
     SuppressKeyboardEventParams,
+    SuppressHeaderKeyboardEventParams,
     ValueGetterParams,
     NewValueParams,
     CellClassParams,
@@ -297,6 +300,8 @@ export {
     GetMainMenuItems,
     GetRowNodeIdFunc,
     ProcessRowParams,
+    NavigateToNextHeaderParams,
+    TabToNextHeaderParams,
     NavigateToNextCellParams,
     TabToNextCellParams,
     PostProcessPopupParams,

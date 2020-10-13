@@ -10,6 +10,7 @@ export declare class ChartTheme {
     private static getBarSeriesDefaults;
     private static getCartesianSeriesMarkerDefaults;
     private static getChartDefaults;
+    private static readonly cartesianDefaults;
     static readonly defaults: any;
     constructor(options?: AgChartThemeOptions);
     private static cartesianSeriesTypes;

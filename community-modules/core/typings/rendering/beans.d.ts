@@ -32,12 +32,17 @@ import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
  * with the IoC. Instead they get passed this object which is all the beans the RowComp
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
 export declare class Beans {
+    resizeObserverService: ResizeObserverService;
     paginationProxy: PaginationProxy;
     context: Context;
     columnApi: ColumnApi;
@@ -73,8 +78,11 @@ export declare class Beans {
     selectionController: SelectionController;
     selectionHandleFactory: ISelectionHandleFactory;
     rowCssClassCalculator: RowCssClassCalculator;
+    rowModel: IRowModel;
     doingMasterDetail: boolean;
     gridPanel: GridPanel;
+    clientSideRowModel: IClientSideRowModel;
+    serverSideRowModel: IServerSideRowModel;
     registerGridComp(gridPanel: GridPanel): void;
     private postConstruct;
 }

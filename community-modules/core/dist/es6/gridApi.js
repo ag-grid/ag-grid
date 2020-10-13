@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12,13 +12,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Constants } from "./constants/constants";
-import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
+import { Autowired, Bean, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { iterateObject } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
+import { _ } from "./utils";
 var GridApi = /** @class */ (function () {
     function GridApi() {
         this.detailGridInfoMap = {};
@@ -771,7 +772,25 @@ var GridApi = /** @class */ (function () {
         // destroy the services
         this.context.destroy();
     };
+    GridApi.prototype.cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid = function () {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in teh API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(_.removeAllReferences.bind(window, this, 'Grid API'), 100);
+    };
+    GridApi.prototype.warnIfDestroyed = function (methodName) {
+        if (this.destroyCalled) {
+            console.warn("ag-Grid: Grid API method " + methodName + " was called on a grid that was destroyed.");
+        }
+        return this.destroyCalled;
+    };
     GridApi.prototype.resetQuickFilter = function () {
+        if (this.warnIfDestroyed('resetQuickFilter')) {
+            return;
+        }
         this.rowModel.forEachNode(function (node) { return node.quickFilterAggregateText = null; });
     };
     GridApi.prototype.getRangeSelections = function () {
@@ -932,22 +951,24 @@ var GridApi = /** @class */ (function () {
             this.aggFuncService.clear();
         }
     };
+    GridApi.prototype.applyServerSideTransaction = function (rowDataTransaction, route) {
+        if (route === void 0) { route = []; }
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+        }
+    };
     GridApi.prototype.applyTransaction = function (rowDataTransaction) {
         var res = null;
         if (this.clientSideRowModel) {
-            if (rowDataTransaction && rowDataTransaction.addIndex != null) {
-                var message_1 = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
-                doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
-            }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
         else if (this.infiniteRowModel) {
-            var message_2 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
+            var message_1 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            doOnce(function () { return console.warn(message_1); }, 'applyTransaction infiniteRowModel deprecated');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         }
         else {
-            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
             return;
         }
         // refresh all the full width rows
@@ -1242,6 +1263,9 @@ var GridApi = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], GridApi.prototype, "init", null);
+    __decorate([
+        PreDestroy
+    ], GridApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
     GridApi = __decorate([
         Bean('gridApi')
     ], GridApi);

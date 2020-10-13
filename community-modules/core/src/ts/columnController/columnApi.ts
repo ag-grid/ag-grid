@@ -4,7 +4,8 @@ import { ColumnController, ColumnState } from "./columnController";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import { Autowired, Bean } from "../context/context";
+import {Autowired, Bean, PreDestroy} from "../context/context";
+import {_} from "../utils";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -65,7 +66,7 @@ export class ColumnApi {
     public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number) { this.columnController.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
-    public setColumnAggFunc(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunc(column, aggFunc); }
+    public setColumnAggFunc(key: string | Column, aggFunc: string): void { this.columnController.setColumnAggFunc(key, aggFunc); }
 
     public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true): void {
         this.columnController.setColumnWidths([{key, newWidth}], false, finished);
@@ -111,6 +112,17 @@ export class ColumnApi {
 
     public getSecondaryColumns(): Column[] { return this.columnController.getSecondaryColumns(); }
     public getPrimaryColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+
+    @PreDestroy
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
+        // some users were raising support issues with regards memory leaks. the problem was the customers applications
+        // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
+        // all references in teh API so at least the core grid can be garbage collected.
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(_.removeAllReferences.bind(window, this, 'Column API'), 100);
+    }
 
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 

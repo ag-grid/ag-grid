@@ -44,14 +44,14 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) =>
-        from == null ? null : from.toString().toLowerCase();
+        from == null ? null : from.toString().toLowerCase()
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
             case TextFilter.CONTAINS:
                 return value.indexOf(filterText) >= 0;
             case TextFilter.NOT_CONTAINS:
-                return value.indexOf(filterText) === -1;
+                return value.indexOf(filterText) < 0;
             case TextFilter.EQUALS:
                 return value === filterText;
             case TextFilter.NOT_EQUAL:
@@ -66,7 +66,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    };
+    }
 
     @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
     @RefSelector('eValue2') private readonly eValue2: AgInputTextField;
@@ -80,20 +80,19 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         super('textFilter');
     }
 
+    public static cleanInput(value: string): string {
+        const trimmedInput = value && value.trim();
+
+        // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
+        return trimmedInput === '' ? value : trimmedInput;
+    }
+
     protected getDefaultDebounceMs(): number {
         return 500;
     }
 
-    private getValue(inputField: AgInputTextField): string {
-        let val = inputField.getValue();
-
-        val = makeNull(val);
-
-        if (val && val.trim() === '') {
-            val = null;
-        }
-
-        return val;
+    private getCleanValue(inputField: AgInputTextField): string {
+        return TextFilter.cleanInput(makeNull(inputField.getValue()));
     }
 
     private addValueChangedListeners(): void {
@@ -126,7 +125,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         const positionOne = position === ConditionPosition.One;
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
-        const value = this.getValue(eValue);
+        const value = this.getCleanValue(eValue);
+        eValue.setValue(value, true); // ensure clean value is visible
 
         const model: TextFilterModel = {
             filterType: this.getFilterType(),
@@ -210,7 +210,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         if (option === SimpleFilter.EMPTY) { return false; }
         if (this.doesFilterHaveHiddenInput(option)) { return true; }
 
-        return this.getValue(positionOne ? this.eValue1 : this.eValue2) != null;
+        return this.getCleanValue(positionOne ? this.eValue1 : this.eValue2) != null;
     }
 
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {

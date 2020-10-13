@@ -28,7 +28,6 @@ export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
     private readonly localEventService = new EventService();
-    private readonly filterParams: ISetFilterParams;
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor;
 
@@ -59,6 +58,7 @@ export class SetValueModel implements IEventEmitter {
     constructor(
         rowModel: IRowModel,
         valueGetter: (node: RowNode) => any,
+        private readonly filterParams: ISetFilterParams,
         private readonly colDef: ColDef,
         private readonly column: Column,
         private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
@@ -75,7 +75,6 @@ export class SetValueModel implements IEventEmitter {
             );
         }
 
-        this.filterParams = this.colDef.filterParams || {};
         this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
 
         const { values } = this.filterParams;
@@ -284,7 +283,8 @@ export class SetValueModel implements IEventEmitter {
                 const textFormatterValue = this.formatter(value);
 
                 // TODO: should this be applying the text formatter *after* the value formatter?
-                const valueFormatterValue = this.valueFormatterService.formatValue(this.column, null, null, textFormatterValue);
+                const valueFormatterValue = this.valueFormatterService.formatValue(
+                    this.column, null, null, textFormatterValue, this.filterParams.valueFormatter, false);
 
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     this.displayedValues.push(value);
@@ -301,7 +301,7 @@ export class SetValueModel implements IEventEmitter {
         return this.displayedValues[index];
     }
 
-    public isFilterActive(): boolean {
+    public hasSelections(): boolean {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedValues.size > 0 :
             this.allValues.length !== this.selectedValues.size;
@@ -367,7 +367,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public getModel(): string[] | null {
-        return this.isFilterActive() ? _.values(this.selectedValues) : null;
+        return this.hasSelections() ? _.values(this.selectedValues) : null;
     }
 
     public setModel(model: string[]): Promise<void> {

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
 export default class SliderFloatingFilter extends Component {
     constructor(props) {
@@ -7,19 +7,19 @@ export default class SliderFloatingFilter extends Component {
         this.state = {
             maxValue: props.maxValue,
             currentValue: 0
-        }
+        };
     }
 
     valueChanged = (event) => {
         this.setState({
-                currentValue: event.target.value
-            },
+            currentValue: event.target.value
+        },
             () => {
                 let valueToUse = (this.state.currentValue === "0") ? null : this.state.currentValue;
-                this.props.parentFilterInstance( function(instance) {
+                this.props.parentFilterInstance(function(instance) {
                     instance.onFloatingFilterChanged('greaterThan', valueToUse);
                 });
-            })
+            });
 
     };
 
@@ -34,11 +34,11 @@ export default class SliderFloatingFilter extends Component {
     render() {
         return (
             <input type="range"
-                   value={this.state.currentValue}
-                   min={0}
-                   max={this.state.maxValue}
-                   step={1}
-                   onChange={this.valueChanged}/>
-        )
+                value={this.state.currentValue}
+                min={0}
+                max={this.state.maxValue}
+                step={1}
+                onChange={this.valueChanged} />
+        );
     }
 }

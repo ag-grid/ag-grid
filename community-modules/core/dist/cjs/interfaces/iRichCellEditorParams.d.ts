@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
@@ -10,5 +10,6 @@ export interface IRichCellEditorParams extends ICellEditorParams {
     cellRenderer: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
+    searchDebounceDelay?: number;
 }
 export {};

@@ -10,12 +10,13 @@ import {
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
+    NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessChartParams,
     ProcessDataFromClipboardParams,
-    TabToNextCellParams
+    TabToNextCellParams,
+    TabToNextHeaderParams
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -39,7 +40,7 @@ import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
-import {AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "./interfaces/iAgChartOptions";
+import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { exists, missing, values } from './utils/generic';
@@ -47,6 +48,7 @@ import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
 import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
+import { HeaderPosition } from './headerRendering/header/headerPosition';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -56,6 +58,16 @@ const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
+}
+
+function toNumber(value: any): number {
+    if (typeof value == 'number') {
+        return value;
+    }
+
+    if (typeof value == 'string') {
+        return parseInt(value, 10);
+    }
 }
 
 function zeroOrGreater(value: any, defaultValue: number): number {
@@ -114,8 +126,10 @@ export class GridOptionsWrapper {
     private layoutElements: HTMLElement[] = [];
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollWidth: number;
+    private scrollbarWidth: number;
     private updateLayoutClassesListener: any;
+
+    private destroyed = false;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -132,6 +146,8 @@ export class GridOptionsWrapper {
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
         this.removeEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+
+        this.destroyed = true;
     }
 
     @PostConstruct
@@ -207,6 +223,9 @@ export class GridOptionsWrapper {
         this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
+
+        // sets an initial calculation for the scrollbar width
+        this.getScrollbarWidth();
     }
 
     private checkColumnDefProperties() {
@@ -267,18 +286,24 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getDomDataKey(): string {
+        return this.domDataKey;
+    }
+
     // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
-        const domData = (element as any)[this.domDataKey];
+        const domData = (element as any)[this.getDomDataKey()];
 
         return domData ? domData[key] : undefined;
     }
 
     public setDomData(element: Element, key: string, value: any): any {
-        let domData = (element as any)[this.domDataKey];
+        const domDataKey = this.getDomDataKey();
+        let domData = (element as any)[domDataKey];
+
         if (missing(domData)) {
             domData = {};
-            (element as any)[this.domDataKey] = domData;
+            (element as any)[domDataKey] = domData;
         }
         domData[key] = value;
     }
@@ -663,6 +688,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
+    public isDetailRowAutoHeight() {
+        return isTrue(this.gridOptions.detailRowAutoHeight);
+    }
+
     public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
         return this.gridOptions.suppressKeyboardEvent;
     }
@@ -727,7 +756,7 @@ export class GridOptionsWrapper {
     }
 
     public getPaginationPageSize(): number | undefined {
-        return this.gridOptions.paginationPageSize;
+        return toNumber(this.gridOptions.paginationPageSize);
     }
 
     public isPaginateChildRows(): boolean {
@@ -1088,6 +1117,14 @@ export class GridOptionsWrapper {
         return this.gridOptions.getRowNodeId;
     }
 
+    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.navigateToNextHeader;
+    }
+
+    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
+        return this.gridOptions.tabToNextHeader;
+    }
+
     public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
         return this.gridOptions.navigateToNextCell;
     }
@@ -1382,11 +1419,20 @@ export class GridOptionsWrapper {
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        if (this.scrollWidth == null) {
+        if (this.scrollbarWidth == null) {
             const useGridOptions = typeof this.gridOptions.scrollbarWidth === 'number' && this.gridOptions.scrollbarWidth >= 0;
-            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+            const scrollbarWidth = useGridOptions ? this.gridOptions.scrollbarWidth : getScrollbarWidth();
+
+            if (scrollbarWidth != null) {
+                this.scrollbarWidth = scrollbarWidth;
+
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_SCROLLBAR_WIDTH_CHANGED
+                });
+            }
         }
-        return this.scrollWidth;
+
+        return this.scrollbarWidth;
     }
 
     private checkForDeprecated() {
@@ -1474,6 +1520,18 @@ export class GridOptionsWrapper {
         if (options.rememberGroupStateWhenNewData) {
             console.warn('ag-Grid: since v24.0, grid property rememberGroupStateWhenNewData is deprecated. This feature was provided before Transaction Updates worked (which keep group state). Now that transaction updates are possible and they keep group state, this feature is no longer needed.');
         }
+
+        if (options.detailCellRendererParams && options.detailCellRendererParams.autoHeight) {
+            console.warn('ag-Grid: since v24.1, grid property detailCellRendererParams.autoHeight is replaced with grid property detailRowAutoHeight. This allows this feature to work when you provide a custom DetailCellRenderer');
+            options.detailRowAutoHeight = true;
+        }
+
+        if (options.suppressKeyboardEvent) {
+            console.warn(
+                `ag-Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
+                 future versions of ag-Grid. If you need this to be set for every column use the defaultColDef property.`
+            );
+        }
     }
 
     private checkForViolations() {
@@ -1519,6 +1577,11 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
+        // prevent events from being fired _after_ the grid has been destroyed
+        if (this.destroyed) {
+            return;
+        }
+
         const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
             (this.gridOptions as any)[callbackMethodName](event);
@@ -1555,7 +1618,7 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
-            if (height != null) {
+            if (this.isNumeric(height)) {
                 return { height, estimated: false };
             }
         }
@@ -1600,7 +1663,7 @@ export class GridOptionsWrapper {
     }
 
     private isNumeric(value: any) {
-        return !isNaN(value) && typeof value === 'number';
+        return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones

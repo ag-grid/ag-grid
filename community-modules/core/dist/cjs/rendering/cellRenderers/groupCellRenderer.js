@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -153,9 +153,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             object_1.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
             object_1.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)) {
             this.createGroupCell();
-            if (rowNode.hasChildren()) {
-                this.addChildCount();
-            }
+            this.addChildCount();
         }
         else {
             this.createLeafCell();
@@ -285,7 +283,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.updateChildCount = function () {
         var allChildrenCount = this.displayedGroup.allChildrenCount;
-        this.eChildCount.innerHTML = allChildrenCount >= 0 ? "(" + allChildrenCount + ")" : "";
+        var showCount = allChildrenCount != null && allChildrenCount >= 0;
+        var countString = showCount ? "(" + allChildrenCount + ")" : "";
+        this.eChildCount.innerHTML = countString;
     };
     GroupCellRenderer.prototype.createLeafCell = function () {
         if (generic_1.exists(this.params.value)) {
@@ -358,7 +358,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (cellEditable) {
             return;
         }
-        event.preventDefault();
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.setupDragOpenParents = function () {

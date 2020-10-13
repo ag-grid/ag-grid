@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -98,7 +98,7 @@ var AutoHeightCalculator = /** @class */ (function (_super) {
             firstRowOnPage: rowIndex === this.beans.paginationProxy.getPageFirstRow(),
             lastRowOnPage: rowIndex === this.beans.paginationProxy.getPageLastRow(),
             printLayout: false,
-            expandable: this.rowCssClassCalculator.isExpandable(rowNode)
+            expandable: rowNode.isExpandable()
         };
         var classes = this.rowCssClassCalculator.getInitialRowClasses(params);
         dom_1.addCssClass(eDummyContainer, classes.join(' '));
@@ -115,12 +115,6 @@ var AutoHeightCalculator = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired("rowCssClassCalculator")
     ], AutoHeightCalculator.prototype, "rowCssClassCalculator", void 0);
-    __decorate([
-        context_1.Autowired("paginationProxy")
-    ], AutoHeightCalculator.prototype, "paginationProxy", void 0);
-    __decorate([
-        context_1.Autowired("gridOptionsWrapper")
-    ], AutoHeightCalculator.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('$compile')
     ], AutoHeightCalculator.prototype, "$compile", void 0);

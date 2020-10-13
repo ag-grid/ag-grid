@@ -18,19 +18,20 @@ var gridOptions = {
     },
     enableRangeSelection: true,
     onRangeSelectionChanged: onRangeSelectionChanged,
+
     processCellForClipboard: function(params) {
         if (params.column.getColId() === 'athlete' && params.value && params.value.toUpperCase) {
             return params.value.toUpperCase();
-        } else {
-            return params.value;
         }
+
+        return params.value;
     },
+
     processCellFromClipboard: function(params) {
         if (params.column.getColId() === 'athlete' && params.value && params.value.toLowerCase) {
             return params.value.toLowerCase();
-        } else {
-            return params.value;
         }
+        return params.value;
     }
 };
 
@@ -64,27 +65,28 @@ function onRangeSelectionChanged(event) {
     // set range count to the number of ranges selected
     lbRangeCount.innerHTML = cellRanges.length;
 
-    // consider the first range only. if doing multi select, disregard the others
-    var firstRange = cellRanges[0];
     var sum = 0;
-
-    // get starting and ending row, remember rowEnd could be before rowStart
-    var startRow = Math.min(firstRange.startRow.rowIndex, firstRange.endRow.rowIndex);
-    var endRow = Math.max(firstRange.startRow.rowIndex, firstRange.endRow.rowIndex);
-
     var api = gridOptions.api;
-    for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-        firstRange.columns.forEach(function(column) {
-            var rowModel = api.getModel();
-            var rowNode = rowModel.getRow(rowIndex);
-            var value = api.getValue(column, rowNode);
-            if (typeof value === 'number') {
-                sum += value;
-            }
-        });
-    }
+
+    cellRanges.forEach(function(range) {
+        // get starting and ending row, remember rowEnd could be before rowStart
+        var startRow = Math.min(range.startRow.rowIndex, range.endRow.rowIndex);
+        var endRow = Math.max(range.startRow.rowIndex, range.endRow.rowIndex);
+
+        for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
+            range.columns.forEach(function(column) {
+                var rowModel = api.getModel();
+                var rowNode = rowModel.getRow(rowIndex);
+                var value = api.getValue(column, rowNode);
+                if (typeof value === 'number') {
+                    sum += value;
+                }
+            });
+        }
+    });
 
     lbEagerSum.innerHTML = sum;
+
     if (event.started) {
         lbLazySum.innerHTML = '?';
     }

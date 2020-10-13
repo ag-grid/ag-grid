@@ -37,8 +37,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         var icon = core_1._.createIconNoSpan('smallDown', this.gridOptionsWrapper);
         core_1._.addCssClass(icon, 'ag-rich-select-value-icon');
         this.eValue.appendChild(icon);
-        this.virtualList = new core_1.VirtualList('rich-select');
-        this.getContext().createBean(this.virtualList);
+        this.virtualList = this.getContext().createBean(new core_1.VirtualList('rich-select'));
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
         if (core_1._.exists(this.params.cellHeight)) {
@@ -58,19 +57,20 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         var virtualListGui = this.virtualList.getGui();
         this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-        this.clearSearchString = core_1._.debounce(this.clearSearchString, 300);
+        var debounceDelay = core_1._.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
+        this.clearSearchString = core_1._.debounce(this.clearSearchString, debounceDelay);
         if (core_1._.exists(params.charPress)) {
             this.searchText(params.charPress);
         }
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
-        var key = event.which || event.keyCode;
+        var key = event.key;
         switch (key) {
-            case core_1.KeyCode.ENTER:
+            case core_1.KeyName.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case core_1.KeyCode.DOWN:
-            case core_1.KeyCode.UP:
+            case core_1.KeyName.DOWN:
+            case core_1.KeyName.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -85,7 +85,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key === core_1.KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
+        var newIndex = key === core_1.KeyName.UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             var valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
@@ -93,10 +93,16 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     RichSelectCellEditor.prototype.searchText = function (key) {
         if (typeof key !== 'string') {
-            if (!core_1._.isCharacterKey(key)) {
+            var keyName = key.key;
+            if (keyName === core_1.KeyName.BACKSPACE) {
+                this.searchString = this.searchString.slice(0, -1);
+                keyName = '';
+            }
+            else if (!core_1._.isEventFromPrintableCharacter(key)) {
                 return;
             }
-            key = key.key;
+            this.searchText(keyName);
+            return;
         }
         this.searchString += key;
         this.runSearch();
@@ -105,10 +111,10 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.runSearch = function () {
         var values = this.params.values;
         var searchStrings;
-        if (typeof values[0] === "number" || typeof values[0] === "string") {
+        if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(String);
         }
-        if (typeof values[0] === "object" && this.params.colDef.keyCreator) {
+        if (typeof values[0] === 'object' && this.params.colDef.keyCreator) {
             searchStrings = values.map(this.params.colDef.keyCreator);
         }
         if (!searchStrings) {
@@ -135,13 +141,8 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
             api: this.gridOptionsWrapper.getApi()
         };
         var promise = this.userComponentFactory.newCellRenderer(this.params, params);
-        if (promise != null) {
+        if (core_1._.exists(promise)) {
             core_1._.bindCellRendererToHtmlElement(promise, eValue);
-        }
-        else {
-            eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-        }
-        if (promise) {
             promise.then(function (renderer) {
                 _this.addDestroyFunc(function () { return _this.getContext().destroyBean(renderer); });
             });
@@ -160,11 +161,12 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
             return;
         }
         var index = this.params.values.indexOf(value);
-        if (index >= 0) {
-            this.selectedValue = value;
-            this.virtualList.ensureIndexVisible(index);
-            this.virtualList.refresh();
+        if (index === -1) {
+            return;
         }
+        this.selectedValue = value;
+        this.virtualList.ensureIndexVisible(index);
+        this.virtualList.refresh();
     };
     RichSelectCellEditor.prototype.createRowComponent = function (value) {
         var valueFormatted = this.params.formatValue(value);

@@ -52,7 +52,7 @@ export declare class FilterManager extends BeanStub {
     private aggregateRowForQuickFilter;
     private onNewRowsLoaded;
     private createValueGetter;
-    getFilterComponent(column: Column, source: FilterRequestSource): Promise<IFilterComp>;
+    getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): Promise<IFilterComp>;
     isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;

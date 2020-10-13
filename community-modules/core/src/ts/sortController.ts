@@ -78,7 +78,7 @@ export class SortController extends BeanStub {
             colId: column.getColId(),
             sort: column.getSort()
         }));
-    };
+    }
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set

@@ -7,5 +7,6 @@ export interface IRichCellEditorParams extends ICellEditorParams {
     cellRenderer: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
+    searchDebounceDelay?: number;
 }
 export {};

@@ -33,7 +33,7 @@ import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
-import { Chart } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
@@ -76,10 +76,26 @@ var BarSeries = /** @class */ (function (_super) {
          */
         _this.seriesItemEnabled = new Map();
         _this.flipXY = false;
-        _this.fills = [];
-        _this.strokes = [];
+        _this.fills = [
+            '#c16068',
+            '#a2bf8a',
+            '#ebcc87',
+            '#80a0c3',
+            '#b58dae',
+            '#85c0d1'
+        ];
+        _this.strokes = [
+            '#874349',
+            '#718661',
+            '#a48f5f',
+            '#5a7088',
+            '#7f637a',
+            '#5d8692'
+        ];
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
+        _this.lineDash = undefined;
+        _this.lineDashOffset = 0;
         /**
          * Used to get the position of bars within each group.
          */
@@ -101,6 +117,7 @@ var BarSeries = /** @class */ (function (_super) {
         _this.grouped = false;
         _this._strokeWidth = 1;
         _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update);
         _this.label.enabled = false;
         _this.label.addEventListener('change', _this.update, _this);
         return _this;
@@ -430,24 +447,42 @@ var BarSeries = /** @class */ (function (_super) {
         this.rectSelection = updateRects.merge(enterRects);
     };
     BarSeries.prototype.updateRectNodes = function () {
+        var _this = this;
         if (!this.chart) {
             return;
         }
-        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY;
         var highlightedDatum = this.chart.highlightedDatum;
         this.rectSelection.each(function (rect, datum) {
             var highlighted = datum === highlightedDatum;
+            var rectFill = highlighted && fill !== undefined ? fill : datum.fill;
+            var rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            var format = undefined;
+            if (formatter) {
+                format = formatter({
+                    datum: datum.seriesDatum,
+                    fill: rectFill,
+                    stroke: rectStroke,
+                    strokeWidth: datum.strokeWidth,
+                    highlighted: highlighted,
+                    xKey: xKey,
+                    yKey: datum.yKey
+                });
+            }
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
-            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = format && format.fill || rectFill;
+            rect.stroke = format && format.stroke || rectStroke;
+            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.strokeWidth = datum.strokeWidth;
+            rect.lineDash = _this.lineDash;
+            rect.lineDashOffset = _this.lineDashOffset;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
+            // Prevent stroke from rendering for zero height columns and zero width bars.
+            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
         });
     };
     BarSeries.prototype.updateTextSelection = function (selectionData) {
@@ -492,25 +527,30 @@ var BarSeries = /** @class */ (function (_super) {
         var yKeyIndex = yKeys.indexOf(yKey);
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+        var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        var title = yName;
+        var content = xString + ': ' + yString;
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return toTooltipHtml(tooltipRenderer({
                 datum: datum,
                 xKey: xKey,
+                xValue: xValue,
                 xName: xName,
                 yKey: yKey,
+                yValue: yValue,
                 yName: yName,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleString = yName ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + yName + "</div>" : '';
-            var xValue = datum[xKey];
-            var yValue = datum[yKey];
-            var xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-            var yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-            return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     BarSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
@@ -562,6 +602,15 @@ var BarSeries = /** @class */ (function (_super) {
     __decorate([
         reactive('layoutChange')
     ], BarSeries.prototype, "strokeOpacity", void 0);
+    __decorate([
+        reactive('update')
+    ], BarSeries.prototype, "lineDash", void 0);
+    __decorate([
+        reactive('update')
+    ], BarSeries.prototype, "lineDashOffset", void 0);
+    __decorate([
+        reactive('update')
+    ], BarSeries.prototype, "formatter", void 0);
     __decorate([
         reactive('dataChange')
     ], BarSeries.prototype, "grouped", void 0);

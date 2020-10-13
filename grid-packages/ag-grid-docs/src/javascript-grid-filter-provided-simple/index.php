@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     Remember Filtering works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
 
 <h2>Simple Filter Parts</h2>
 
@@ -143,7 +143,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Simple Filter Options', 'simple-filter-options', 'generated', ['exampleHeight' => 560, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Simple Filter Options', 'simple-filter-options', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
 
 <h2 id="filterOptions">Filter Options</h2>
 
@@ -525,30 +525,28 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true]) ?>
 
 <h2>Blank Cells (Date and Number Filters)</h2>
 
 <p>
-    If the row data contains blanks (i.e. <code>null</code> or <code>undefined</code>), by default the row won't be included in
-    filter results. To change this, use the filter params <code>includeBlanksInEquals</code>,
-    <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>.
+    If the row data contains blanks (i.e. <code>null</code> or <code>undefined</code>), by default the row won't be
+    included in filter results. To change this, use the filter params <code>includeBlanksInEquals</code>,
+    <code>includeBlanksInLessThan</code>, <code>includeBlanksInGreaterThan</code> and
+    <code>includeBlanksInRange</code>.
     For example, the code snippet below configures a filter to include <code>null</code> for equals,
-    but not for less than or great than:
+    but not for less than, greater than or in range:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 filterParams = {
     includeBlanksInEquals: true,
     includeBlanksInLessThan: false,
-    includeBlanksInGreaterThan: false
+    includeBlanksInGreaterThan: false,
+    includeBlanksInRange: false
 };
 SNIPPET
 ) ?>
-
-<p>
-    Only less than, greater than and equals allow <code>null</code> values; 'In Range' will never include them.
-</p>
 
 <p>
     In the following example you can filter by age or date and see how blank values are included.
@@ -562,12 +560,12 @@ SNIPPET
     </li>
     <li>
         Toggle the controls on the top to see how <code>includeBlanksInEquals</code>,
-        <code>includeBlanksInLessThan</code> and <code>includeBlanksInGreaterThan</code>
-        impact the search result.
+        <code>includeBlanksInLessThan</code>, <code>includeBlanksInGreaterThan</code> and
+        <code>includeBlanksInRange</code> impact the search result.
     </li>
 </ul>
 
-<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true]) ?>
 
 <h2>Style Header on Filter</h2>
 
@@ -581,6 +579,6 @@ SNIPPET
     when you filter a column you will notice the column header change.
 </p>
 
-<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

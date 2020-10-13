@@ -1,15 +1,15 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
 export interface ITooltipParams {
-    api: any;
-    columnApi: any;
-    colDef: any;
-    column: any;
-    context: any;
-    location?: string;
+    location: string;
+    api?: any;
+    columnApi?: any;
+    context?: any;
+    colDef?: any;
+    column?: any;
     value?: any;
     valueFormatted?: any;
     rowIndex?: number;

@@ -9,19 +9,16 @@ export declare class HeaderContainer extends BeanStub {
     private eContainer;
     private eViewport;
     private pinned;
-    private scrollWidth;
-    private dropTarget;
     private filtersRowComp;
     private columnsRowComp;
     private groupsRowComps;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init;
-    private onColumnRowGroupChanged;
-    private onColumnValueChanged;
     private onColumnResized;
     private onDisplayedColumnsChanged;
     private onScrollVisibilityChanged;
+    private onScrollbarWidthChanged;
     private setWidthOfPinnedContainer;
     getRowComps(): HeaderRowComp[];
     private onGridColumnsChanged;
@@ -30,5 +27,4 @@ export declare class HeaderContainer extends BeanStub {
     private destroyRowComps;
     private destroyRowComp;
     private refreshRowComps;
-    private createRowComps;
 }

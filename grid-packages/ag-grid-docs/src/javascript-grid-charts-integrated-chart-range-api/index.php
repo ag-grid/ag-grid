@@ -38,12 +38,15 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>
-        Clicking 'Gold & Silver, 5 Rows' will chart the first five rows of Gold and Silver by Country.
+        Clicking <b>'Top 5 Medal Winners'</b> will chart the first five rows of Gold and Silver medals by Country.
     </li>
     <li>
-        Clicking 'Bronze, All Rows' will chart Bronze by Country using all rows
+        Clicking <b>'Bronze Medals by Country'</b> will chart Bronze by Country using all rows
         (the provided cell range does not specify rows).
     </li>
+    <li>Note the <b>'Bronze Medals by Country'</b> chart is unlinked from the grid as <code>chartUnlinked=true</code>. Notice that sorting
+    in the grid does not affect the chart and there is no chart range in the grid.</li>
+
 </ul>
 
 <?= grid_example('Charts in Grid Popup Window', 'chart-api', 'generated', ['enterprise' => true]) ?>
@@ -87,10 +90,13 @@ interface CreatePivotChartParams {
     chartThemeName?: string;
     chartContainer?: HTMLElement;
     chartThemeOverrides?: AgChartTheme;
+    unlinkChart?: boolean;
 }
 </snippet>
 
-<p>The attributes have the same behaviour as described earlier.</p>
+<p>The pivot chart params share the same behaviour as the
+<a href="../javascript-grid-charts-integrated-chart-range-api/#reference-params">Range Chart Params</a> above.
+</p>
 
 <h3>Example: Pivot Chart</h3>
 
@@ -148,7 +154,7 @@ interface GetChartImageDataUrlParams {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-chart-events/">Chart Events</a>.
+    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

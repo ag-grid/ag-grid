@@ -45,7 +45,7 @@ export declare class ColumnApi {
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
     moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
-    setColumnAggFunc(column: Column, aggFunc: string): void;
+    setColumnAggFunc(key: string | Column, aggFunc: string): void;
     setColumnWidth(key: string | Column, newWidth: number, finished?: boolean): void;
     setColumnWidths(columnWidths: {
         key: string | Column;
@@ -82,6 +82,7 @@ export declare class ColumnApi {
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
     getSecondaryColumns(): Column[];
     getPrimaryColumns(): Column[];
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid;
     columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;

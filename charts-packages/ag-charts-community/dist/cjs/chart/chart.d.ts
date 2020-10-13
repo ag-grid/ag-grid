@@ -12,7 +12,13 @@ export interface TooltipMeta {
     pageX: number;
     pageY: number;
 }
-export declare function toTooltipHtml(content: string, title?: string, color?: string): string;
+export interface TooltipRendererResult {
+    content?: string;
+    title?: string;
+    titleColor?: string;
+    titleBackgroundColor?: string;
+}
+export declare function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string;
 export declare abstract class Chart extends Observable {
     readonly id: string;
     readonly scene: Scene;

@@ -147,7 +147,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             core_1._.removeFromArray(_this.rootNode.allLeafChildren, rowNode);
         });
         rowNodes.forEach(function (rowNode, idx) {
-            core_1._.insertIntoArray(_this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment + idx);
+            core_1._.insertIntoArray(_this.rootNode.allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
         });
         this.refreshModel({
             step: core_1.Constants.STEP_EVERYTHING,
@@ -665,8 +665,28 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         this.valueCache.onDataChanged();
         var rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        // if doing immutableData, addIndex is never present. however if doing standard transaction, and user
+        // provided addIndex, then this is used in updateRowData. However if doing Enterprise, then the rowGroup
+        // stage also uses the
+        if (typeof rowDataTran.addIndex === 'number') {
+            rowNodeOrder = this.createRowNodeOrder();
+        }
         this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
         return rowNodeTran;
+    };
+    ClientSideRowModel.prototype.createRowNodeOrder = function () {
+        var suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
+        if (suppressSortOrder) {
+            return;
+        }
+        var orderMap = suppressSortOrder ? null : {};
+        if (this.rootNode && this.rootNode.allLeafChildren) {
+            for (var index = 0; index < this.rootNode.allLeafChildren.length; index++) {
+                var node = this.rootNode.allLeafChildren[index];
+                orderMap[node.id] = index;
+            }
+        }
+        return orderMap;
     };
     // common to updateRowData and batchUpdateRowData
     ClientSideRowModel.prototype.commonUpdateRowData = function (rowNodeTrans, rowNodeOrder) {
@@ -692,6 +712,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.refreshModel({ step: core_1.Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
     };
     ClientSideRowModel.prototype.resetRowHeights = function () {
+        var atLeastOne = false;
         this.forEachNode(function (rowNode) {
             rowNode.setRowHeight(rowNode.rowHeight, true);
             // we keep the height each row is at, however we set estimated=true rather than clear the height.
@@ -701,8 +722,11 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             if (detailNode) {
                 detailNode.setRowHeight(detailNode.rowHeight, true);
             }
+            atLeastOne = true;
         });
-        this.onRowHeightChanged();
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
     };
     __decorate([
         core_1.Autowired('gridOptionsWrapper')

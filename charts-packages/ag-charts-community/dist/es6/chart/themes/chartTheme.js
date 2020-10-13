@@ -128,7 +128,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.getBarSeriesDefaults = function () {
-        return __assign(__assign({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: [], grouped: false, normalizedTo: undefined, strokeWidth: 1, tooltipRenderer: undefined, highlightStyle: {
+        return __assign(__assign({}, this.getSeriesDefaults()), { flipXY: false, fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: [], grouped: false, normalizedTo: undefined, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
                 fill: 'yellow'
             }, label: {
                 enabled: false,
@@ -301,71 +301,73 @@ var ChartTheme = /** @class */ (function () {
         }
     };
     ChartTheme.fontFamily = 'Verdana, sans-serif';
+    ChartTheme.cartesianDefaults = __assign(__assign({}, ChartTheme.getChartDefaults()), { axes: {
+            number: __assign({}, ChartTheme.getAxisDefaults()),
+            category: __assign({}, ChartTheme.getAxisDefaults()),
+            groupedCategory: __assign({}, ChartTheme.getAxisDefaults()),
+            time: __assign({}, ChartTheme.getAxisDefaults())
+        }, series: {
+            column: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
+            bar: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
+            line: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
+            scatter: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
+            area: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: {
+                    enabled: false,
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    xOffset: 3,
+                    yOffset: 3,
+                    blur: 5
+                }, tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, marker: __assign(__assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
+            histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                    fill: 'yellow'
+                }, label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
+                } })
+        }, navigator: {
+            enabled: false,
+            height: 30,
+            min: 0,
+            max: 1,
+            mask: {
+                fill: '#999999',
+                stroke: '#999999',
+                strokeWidth: 1,
+                fillOpacity: 0.2
+            },
+            minHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            },
+            maxHandle: {
+                fill: '#f2f2f2',
+                stroke: '#999999',
+                strokeWidth: 1,
+                width: 8,
+                height: 16,
+                gripLineGap: 2,
+                gripLineLength: 8
+            }
+        } });
     ChartTheme.defaults = {
-        cartesian: __assign(__assign({}, ChartTheme.getChartDefaults()), { axes: {
-                number: __assign({}, ChartTheme.getAxisDefaults()),
-                category: __assign({}, ChartTheme.getAxisDefaults()),
-                groupedCategory: __assign({}, ChartTheme.getAxisDefaults()),
-                time: __assign({}, ChartTheme.getAxisDefaults())
-            }, series: {
-                column: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: false }),
-                bar: __assign(__assign({}, ChartTheme.getBarSeriesDefaults()), { flipXY: true }),
-                line: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
-                scatter: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()) }),
-                area: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, shadow: {
-                        enabled: false,
-                        color: 'rgba(0, 0, 0, 0.5)',
-                        xOffset: 3,
-                        yOffset: 3,
-                        blur: 5
-                    }, tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, marker: __assign(__assign({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { enabled: false }) }),
-                histogram: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, areaPlot: false, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
-                        fill: 'yellow'
-                    }, label: {
-                        enabled: false,
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: ChartTheme.fontFamily,
-                        color: 'rgb(70, 70, 70)',
-                        formatter: undefined
-                    } })
-            }, navigator: {
-                enabled: false,
-                height: 30,
-                min: 0,
-                max: 1,
-                mask: {
-                    fill: '#999999',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    fillOpacity: 0.2
-                },
-                minHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                },
-                maxHandle: {
-                    fill: '#f2f2f2',
-                    stroke: '#999999',
-                    strokeWidth: 1,
-                    width: 8,
-                    height: 16,
-                    gripLineGap: 2,
-                    gripLineLength: 8
-                }
-            } }),
+        cartesian: ChartTheme.cartesianDefaults,
+        groupedCategory: ChartTheme.cartesianDefaults,
         polar: __assign(__assign({}, ChartTheme.getChartDefaults()), { series: {
                 pie: __assign(__assign({}, ChartTheme.getSeriesDefaults()), { title: {
                         enabled: true,
@@ -388,7 +390,7 @@ var ChartTheme = /** @class */ (function () {
                     }, callout: {
                         length: 10,
                         strokeWidth: 2
-                    }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {
+                    }, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, highlightStyle: {
                         fill: 'yellow'
                     }, shadow: {
                         enabled: false,

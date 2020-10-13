@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -269,6 +269,7 @@ var MoveColumnController = /** @class */ (function () {
             }
         }
         var validMoves = [firstValidMove];
+        var numberComparator = function (a, b) { return a - b; };
         // add in other valid moves due to hidden columns and married children. for example, a particular
         // move might break a group that has married children (so move isn't valid), however there could
         // be hidden columns (not displayed) that we could jump over to make the move valid. because
@@ -288,12 +289,14 @@ var MoveColumnController = /** @class */ (function () {
                 validMoves.push(pointer);
                 pointer++;
             }
+            // adding columns here means the order is now messed up
+            validMoves.sort(numberComparator);
         }
         else {
             // if dragging left we do the reverse of dragging right, we add in all the valid moves to the
             // left. however we also have to consider moves to the right for all hidden columns first.
             // (this logic is hard to reason with, it was worked out with trial and error,
-            // move observation rather than science).
+            // more observation rather than science).
             // add moves to the right
             var pointer = firstValidMove;
             var lastIndex = allGridCols.length - 1;
@@ -310,6 +313,8 @@ var MoveColumnController = /** @class */ (function () {
                 validMoves.push(pointer);
                 pointer--;
             }
+            // adding columns here means the order is now messed up
+            validMoves.sort(numberComparator).reverse();
         }
         return validMoves;
     };

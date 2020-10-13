@@ -56,7 +56,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         }
     };
     InfiniteRowModel.prototype.isLastRowFound = function () {
-        return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
+        return this.infiniteCache != null && this.infiniteCache.isMaxRowFound();
     };
     InfiniteRowModel.prototype.addEventListeners = function () {
         this.addManagedListener(this.eventService, core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
@@ -100,10 +100,10 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         }
     };
     InfiniteRowModel.prototype.isEmpty = function () {
-        return core_1._.missing(this.infiniteCache);
+        return !this.infiniteCache;
     };
     InfiniteRowModel.prototype.isRowsToRender = function () {
-        return core_1._.exists(this.infiniteCache);
+        return !!this.infiniteCache;
     };
     InfiniteRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
         return this.infiniteCache ? this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange) : [];
@@ -111,7 +111,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.reset = function () {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
-        if (core_1._.missing(this.datasource)) {
+        if (!this.datasource) {
             return;
         }
         // if user is providing id's, then this means we can keep the selection between datasource hits,
@@ -145,8 +145,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
-        this.rowNodeBlockLoader = new core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().createBean(this.rowNodeBlockLoader);
+        this.rowNodeBlockLoader = this.createBean(new core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis));
         this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
@@ -157,37 +156,25 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            maxConcurrentRequests: maxConcurrentRequests,
-            overflowSize: this.gridOptionsWrapper.getCacheOverflowSize(),
-            initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
+            maxConcurrentRequests: this.defaultIfInvalid(maxConcurrentRequests, 2),
+            initialRowCount: this.defaultIfInvalid(this.gridOptionsWrapper.getInfiniteInitialRowCount(), 1),
             maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
-            blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
+            // the current page and request first row of next page
+            overflowSize: this.defaultIfInvalid(this.gridOptionsWrapper.getCacheOverflowSize(), 1),
+            // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
+            // server for one page at a time. so the default if not specified is 100.
+            blockSize: this.defaultIfInvalid(this.gridOptionsWrapper.getCacheBlockSize(), 100),
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
             lastAccessedSequence: new core_1.NumberSequence()
         };
-        // set defaults
-        if (!this.cacheParams.maxConcurrentRequests || !(this.cacheParams.maxConcurrentRequests >= 1)) {
-            this.cacheParams.maxConcurrentRequests = 2;
-        }
-        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
-        // server for one page at a time. so the default if not specified is 100.
-        if (!this.cacheParams.blockSize || !(this.cacheParams.blockSize >= 1)) {
-            this.cacheParams.blockSize = 100;
-        }
-        // if user doesn't give initial rows to display, we assume one
-        if (!(this.cacheParams.initialRowCount >= 1)) {
-            this.cacheParams.initialRowCount = 1;
-        }
-        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
-        // the current page and request first row of next page
-        if (!(this.cacheParams.overflowSize >= 1)) {
-            this.cacheParams.overflowSize = 1;
-        }
-        this.infiniteCache = new infiniteCache_1.InfiniteCache(this.cacheParams);
-        this.getContext().createBean(this.infiniteCache);
+        this.infiniteCache = this.createBean(new infiniteCache_1.InfiniteCache(this.cacheParams));
         this.infiniteCache.addEventListener(core_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+    };
+    InfiniteRowModel.prototype.defaultIfInvalid = function (value, defaultValue) {
+        return value > 0 ? value : defaultValue;
     };
     InfiniteRowModel.prototype.destroyCache = function () {
         if (this.infiniteCache) {

@@ -14,7 +14,6 @@ export declare class DetailCellRenderer extends Component implements ICellRender
     destroy(): void;
     private checkForDeprecations;
     private ensureValidRefreshStrategy;
-    private setupAutoGridHeight;
     private addThemeToDetailGrid;
     private registerDetailWithMaster;
     private selectAndSetTemplate;
@@ -31,6 +30,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     $compile: any;
     pinned: string;
     template: string | TemplateFunc;
+    /** @deprecated */
     autoHeight: boolean;
     /** @deprecated */
     suppressRefresh: boolean;

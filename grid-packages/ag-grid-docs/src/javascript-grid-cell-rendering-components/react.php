@@ -11,7 +11,7 @@
 
 <p>Using React Components in the Cell Renderers </p>
 
-<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'react', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'react', 'extras' => ['fontawesome', 'bootstrap']]) ?>
 
 <h3 id="react-props">React Props</h3>
 
@@ -66,5 +66,5 @@ class NameCellRenderer extends React.Component {
 <p>Note that in this example we make use of <code>useImperativeHandle</code> for lifecycle methods - please see <a
             href="https://www.ag-grid.com/react-hooks/">here</a> for more information.</p>
 
-<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'reactFunctional', 'extras' => ['fontawesome', 'bootstrap'], 'reactFunctional' => true]) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'mixed', ['enterprise' => false, 'onlyShow' => 'reactFunctional', 'extras' => ['fontawesome', 'bootstrap']]) ?>
 

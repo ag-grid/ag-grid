@@ -85,13 +85,12 @@ export class UndoRedoService extends BeanStub {
         };
 
         this.cellValueChanges.push(cellValueChange);
-    };
+    }
 
     private clearStacks = () => {
         this.undoStack.clear();
         this.redoStack.clear();
-    };
-
+    }
 
     public getCurrentUndoStackSize(): number {
         return this.undoStack ? this.undoStack.getCurrentStackSize() : 0;

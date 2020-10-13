@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Status Bar: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Status Bar. The Status Bar appears on the bottom of the grid and shows aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what happens in Excel. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Status Bar. The Status Bar appears on the bottom of the grid and shows aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what happens in Excel. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Grid Status Bar";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -20,12 +20,13 @@ include '../documentation-main/documentation_header.php';
     status bar panels do not meet your requirements.
 </p>
 
-
 <h2>Grid Provided Status Bar Components</h2>
 
 <p>
     The status bar components provided by the grid are as follows:
-    <ul>
+</p>
+
+<ul>
     <li>
         <code>agTotalRowCountComponent</code>: Provides the total row count.
     </li>
@@ -42,7 +43,6 @@ include '../documentation-main/documentation_header.php';
         <code>agAggregationComponent</code>: Provides aggregations on the selected range.
     </li>
 </ul>
-</p>
 
 <h2>Configuring the Status Bar</h2>
 
@@ -61,7 +61,7 @@ for more information.</p>
     components.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     statusBar: {
         statusPanels: [
@@ -70,7 +70,8 @@ gridOptions: {
     }
     // ...other grid properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h3>Component Alignment</h3>
 
@@ -81,6 +82,8 @@ gridOptions: {
 
 <p>
     The example below shows a simply configured status bar. Note the following:
+</p>
+
 <ul>
     <li>
         The total and filtered row count is displayed using the <code>agTotalAndFilteredRowCountComponent</code> component (aligned to the left).
@@ -101,7 +104,6 @@ gridOptions: {
         no numeric data.
     </li>
 </ul>
-</p>
 
 <?= grid_example('Status Bar Simple', 'status-bar-simple', 'generated', ['enterprise' => true, 'exampleHeight' => 640]) ?>
 
@@ -123,7 +125,7 @@ gridOptions: {
 
 <p>In this code snippet we have configured the aggregation component to only show <code>min, max and average</code>:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     statusBar: {
         statusPanels: [
@@ -138,7 +140,8 @@ gridOptions: {
     }
     // ...other grid properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h3 id="accessing-status-panels">Accessing Status Panels</h3>
 
@@ -162,7 +165,7 @@ value provided in the component configuration (see above), but will default to t
     show average and sum functions.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     statusBar: {
         statusPanels: [
@@ -177,24 +180,25 @@ gridOptions: {
     }
     // ...other grid properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h3>Example Component Parameters</h3>
 
 <p>
-    The example below demonstrates providing parameters to the status bar components.
-    Note the following:a
-    <ul>
-        <li>
-            The component <code>agAggregationComponent</code> is provided with
-            parameters <code>aggFuncs: ['avg', 'sum']</code>.
-        </li>
-        <li>
-            When a range of numbers is selected, only <code>avg</code> and <code>sum</code>
-            functions are displayed.
-        </li>
-    </ul>
+    The example below demonstrates providing parameters to the status bar components. Note the following:
 </p>
+
+<ul>
+    <li>
+        The component <code>agAggregationComponent</code> is provided with
+        parameters <code>aggFuncs: ['avg', 'sum']</code>.
+    </li>
+    <li>
+        When a range of numbers is selected, only <code>avg</code> and <code>sum</code>
+        functions are displayed.
+    </li>
+</ul>
 
 <?= grid_example('Status Bar Params', 'status-bar-params', 'generated', ['enterprise' => true]) ?>
 
@@ -206,11 +210,11 @@ before any row data has been rendered.</p>
 <p>If you have a component that you wish to work on data once it's ready (calculate the sum of a column for example) then you'll
 need to hook into either the <code>gridReady</code> or the <code>firstDataRendered</code> events.</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 function ClickableStatusBarComponent() {
 }
 
-ClickableStatusBarComponent.prototype.init = function (params) {
+ClickableStatusBarComponent.prototype.init = function(params) {
     this.params = params;
 
     console.log(params.api.getModel().rowsToDisplay);       // No rows will be available yet
@@ -219,7 +223,8 @@ ClickableStatusBarComponent.prototype.init = function (params) {
         console.log(params.api.getModel().rowsToDisplay);   // Rows will now be available
     });
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Status Bar Height</h2>
 
@@ -232,12 +237,12 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     To force the the status bar to have a fixed height, add CSS to the status bar div as follows:
 </p>
 
-<code>
+<?= createSnippet(<<<SNIPPET
 .ag-status-bar {
     min-height: 35px;
 }
-</code>
-
+SNIPPET
+, 'css') ?>
 
 <h2>Custom Status Bar Components</h2>
 
@@ -248,7 +253,6 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 
 <p>For more details see the following section: <a href="../javascript-grid-status-bar-component">
         Status Bar Panels (Components)</a>.</p>
-
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

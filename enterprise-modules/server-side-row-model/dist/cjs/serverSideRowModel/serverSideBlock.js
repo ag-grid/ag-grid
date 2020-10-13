@@ -35,6 +35,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
         _this.leafGroup = params.rowGroupCols ? _this.level === params.rowGroupCols.length - 1 : false;
         return _this;
     }
+    // no need for @postConstruct, as attached to parent
     ServerSideBlock.prototype.init = function () {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
@@ -44,10 +45,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
         this.createNodeIdPrefix();
-        _super.prototype.init.call(this, {
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        _super.prototype.init.call(this);
     };
     ServerSideBlock.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideBlock');
@@ -433,9 +431,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
     };
     ServerSideBlock.DefaultBlockSize = 100;
     __decorate([
-        core_1.Autowired('rowRenderer')
-    ], ServerSideBlock.prototype, "rowRenderer", void 0);
-    __decorate([
         core_1.Autowired('columnController')
     ], ServerSideBlock.prototype, "columnController", void 0);
     __decorate([
@@ -450,9 +445,6 @@ var ServerSideBlock = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridApi')
     ], ServerSideBlock.prototype, "gridApi", void 0);
-    __decorate([
-        core_1.PostConstruct
-    ], ServerSideBlock.prototype, "init", null);
     __decorate([
         __param(0, core_1.Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);

@@ -18,6 +18,15 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered
 };
 
+function expandCollapseAll() {
+    gridOptions.api.forEachNode(function(node) {
+        node.expanded = !!window.collapsed;
+    });
+
+    window.collapsed = !window.collapsed;
+    gridOptions.api.onGroupExpandedOrCollapsed(); 
+}
+
 function onFirstDataRendered(params) {
     // arbitrarily expand a row for presentational purposes
     setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);

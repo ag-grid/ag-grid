@@ -39,7 +39,7 @@ export class BodyDropPivotTarget implements DropListener {
                 this.columnsToAggregate.push(column);
             } else if (column.isAllowRowGroup()) {
                 this.columnsToGroup.push(column);
-            } else if (column.isAllowRowGroup()) {
+            } else if (column.isAllowPivot()) {
                 this.columnsToPivot.push(column);
             }
 

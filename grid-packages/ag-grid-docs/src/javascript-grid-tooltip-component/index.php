@@ -33,14 +33,18 @@ interface ITooltipParams {
     location: string; // what part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc
     api: any; // the grid API
     columnApi: any; // the column API
-    colDef: any; // the grid colDef
     context: any; // the grid context
-    column?: any; // the column bound to this tooltip
+
     value?: any; // the value to be rendered by the tooltip
-    valueFormatted?: any; // the formatted value to be rendered by the tooltip
+
+    /* Column Params (N/A within some components like the Menu Item) */
+
+    colDef?: any; // the grid colDef
+    column?: any; // the column bound to this tooltip
 
     /* Row and Cell Params (N/A with headerTooltips) */
 
+    valueFormatted?: any; // the formatted value to be rendered by the tooltip
     rowIndex?: number; // the index of the row containing the cell rendering the tooltip
     node?: any; // the row node
     data?: any; // the row node data
@@ -83,7 +87,7 @@ SNIPPET
     <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to <code>0</code>.</li>
 </ul>
 
-<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', ['modules' => true]) ?>
 
 <h2>Showing Blank Values</h2>
 
@@ -118,7 +122,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Blank Values', 'blank-values', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Blank Values', 'blank-values', 'generated', ['modules' => true]) ?>
 
 <h2>Header Tooltip with Custom Tooltip</h2>
 
@@ -152,7 +156,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Header Custom Tooltip', 'header-tooltip', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Header Custom Tooltip', 'header-tooltip', 'generated', ['modules' => true]) ?>
 
 <h2>Example: Tooltips With Row Groups</h2>
 
@@ -161,7 +165,7 @@ SNIPPET
     no real field assigned to it, the <code>tooltipValueGetter</code> function must be used.
 </p>
 
-<?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel']]) ?>
 
 <h2>Mouse Tracking</h2>
 
@@ -170,7 +174,7 @@ SNIPPET
     To enable this feature, set the <code>tooltipMouseTrack</code> to true in the gridOptions.
 </p>
 
-<?= grid_example('Tooltip Mouse Tracking', 'tooltip-mouse-tracking', 'generated', ['extras' => ['bootstrap'], 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Tooltip Mouse Tracking', 'tooltip-mouse-tracking', 'generated', ['extras' => ['bootstrap'], 'modules' => true]) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 
@@ -178,6 +182,6 @@ SNIPPET
     The example below demonstrates how to use the default browser tooltips.
 </p>
 
-<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'generated', ['modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -329,7 +329,8 @@ var UserComponentFactory = /** @class */ (function (_super) {
         var userParams = definitionObject ? definitionObject[propertyName + "Params"] : null;
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                mergeDeep(params, userParams(paramsFromGrid));
+                var userParamsFromFunc = userParams(paramsFromGrid);
+                mergeDeep(params, userParamsFromFunc);
             }
             else if (typeof userParams === 'object') {
                 mergeDeep(params, userParams);

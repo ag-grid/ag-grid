@@ -1,8 +1,8 @@
 import * as React from "react";
-import {Component, ReactElement} from "react";
+import { Component, ReactElement } from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "@ag-grid-community/core";
-import {ColDef, ColGroupDef} from "@ag-grid-community/core";
+import { ColDef, ColGroupDef } from "@ag-grid-community/core";
 
 export interface AgGridColumnProps extends ColDef {
 }
@@ -11,55 +11,31 @@ export interface AgGridColumnGroupProps extends ColGroupDef {
 }
 
 export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
-    constructor(public props: any, public state: any) {
-        super(props, state);
+    constructor(public props: any) {
+        super(props);
     }
 
     render() {
         return null;
     }
 
-    public static mapChildColumnDefs(columnProps: any) {
-        return React.Children.map(columnProps.children, (child: ReactElement<any>) => {
-            return AgGridColumn.toColDef(child.props);
-        })
+    public static mapChildColumnDefs(children: any) {
+        return React.Children.map(children, child => AgGridColumn.toColDef(child.props));
     }
 
     public static toColDef(columnProps: any): ColDef {
-        let colDef: ColDef = AgGridColumn.createColDefFromGridColumn(columnProps);
-        if (AgGridColumn.hasChildColumns(columnProps)) {
-            (<any>colDef)["children"] = AgGridColumn.getChildColDefs(columnProps.children);
+        const { children, ...colDef } = columnProps;
+
+        if (AgGridColumn.hasChildColumns(children)) {
+            colDef.children = AgGridColumn.mapChildColumnDefs(children);
         }
+
         return colDef;
     }
 
-    public static hasChildColumns(columnProps: any): boolean {
-        return React.Children.count(columnProps.children) > 0;
+    public static hasChildColumns(children: any): boolean {
+        return React.Children.count(children) > 0;
     }
-
-    private static getChildColDefs(columnChildren: any) {
-        return React.Children.map(columnChildren, (child: ReactElement<any>) => {
-            return AgGridColumn.createColDefFromGridColumn(child.props)
-        });
-    };
-
-    private static createColDefFromGridColumn(columnProps: any): ColDef {
-        let colDef = {};
-        AgGridColumn.assign(colDef, columnProps);
-        delete (<any>colDef).children;
-        return colDef;
-    };
-
-    private static assign(colDef: any, from: AgGridColumn): ColDef {
-        // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function (r, o) {
-            Object.keys(o).forEach(function (k) {
-                r[k] = o[k];
-            });
-            return r;
-        }, colDef);
-    }
-
 }
 
 addProperties(AgGrid.ColDefUtil.BOOLEAN_PROPERTIES, PropTypes.bool);

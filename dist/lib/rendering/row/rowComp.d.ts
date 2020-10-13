@@ -32,6 +32,7 @@ export declare class RowComp extends Component {
     private fullWidthRowComponentBody;
     private fullWidthRowComponentLeft;
     private fullWidthRowComponentRight;
+    private fullWidthRowDestroyFuncs;
     private firstRowOnPage;
     private lastRowOnPage;
     private active;
@@ -109,6 +110,7 @@ export declare class RowComp extends Component {
     private onRowMouseDown;
     onRowClick(mouseEvent: MouseEvent): void;
     private createFullWidthRowContainer;
+    private setupDetailRowAutoHeight;
     private angular1Compile;
     private createFullWidthParams;
     private getInitialRowClasses;

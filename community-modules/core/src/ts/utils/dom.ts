@@ -1,5 +1,6 @@
 import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
+import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';
 
 let rtlNegativeScroll: boolean;
@@ -486,7 +487,7 @@ export function isElement(o: any): boolean {
     return (
         typeof HTMLElement === 'function'
             ? o instanceof HTMLElement //DOM2
-            : o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string'
+            : o && isNonNullObject(o) && o.nodeType === 1 && typeof o.nodeName === 'string'
     );
 }
 

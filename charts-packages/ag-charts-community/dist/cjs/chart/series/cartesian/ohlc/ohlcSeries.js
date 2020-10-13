@@ -284,7 +284,7 @@ var OHLCSeries = /** @class */ (function (_super) {
         var _b = this, title = _b.title, tooltipRenderer = _b.tooltipRenderer, dateName = _b.dateName, openName = _b.openName, highName = _b.highName, lowName = _b.lowName, closeName = _b.closeName, labelKey = _b.labelKey, labelName = _b.labelName;
         var color = nodeDatum.fill || 'gray';
         if (tooltipRenderer) {
-            return tooltipRenderer({
+            return chart_1.toTooltipHtml(tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 dateKey: dateKey,
                 openKey: openKey,
@@ -298,7 +298,7 @@ var OHLCSeries = /** @class */ (function (_super) {
                 closeName: closeName,
                 title: title,
                 color: color
-            });
+            }));
         }
         else {
             var titleStyle = "style=\"color: white; background-color: " + color + "\"";

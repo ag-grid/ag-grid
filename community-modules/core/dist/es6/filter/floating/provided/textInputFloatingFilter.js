@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { KeyCode } from '../../../constants/keyCode';
+import { TextFilter } from '../../provided/text/textFilter';
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
@@ -42,17 +43,13 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         return 500;
     };
     TextInputFloatingFilter.prototype.onParentModelChanged = function (model, event) {
-        // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sync. if we didn't do this, the UI
-        // would behave strange as it would be updating as the user is typing
         if (this.isEventFromFloatingFilter(event)) {
+            // if the floating filter triggered the change, it is already in sync
             return;
         }
         this.setLastTypeFromModel(model);
-        var modelString = this.getTextFromModel(model);
-        this.eFloatingFilterInput.setValue(modelString);
-        var editable = this.canWeEditAfterModelFromParentFilter(model);
-        this.setEditable(editable);
+        this.eFloatingFilterInput.setValue(this.getTextFromModel(model));
+        this.setEditable(this.canWeEditAfterModelFromParentFilter(model));
     };
     TextInputFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
@@ -76,11 +73,12 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
-        var value = this.eFloatingFilterInput.getValue();
         var enterKeyPressed = isKeyPressed(e, KeyCode.ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
         }
+        var value = TextFilter.cleanInput(this.eFloatingFilterInput.getValue());
+        this.eFloatingFilterInput.setValue(value, true); // ensure visible value is clean
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;

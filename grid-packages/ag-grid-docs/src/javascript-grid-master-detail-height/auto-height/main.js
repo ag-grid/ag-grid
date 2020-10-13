@@ -11,6 +11,7 @@ var gridOptions = {
     },
     animateRows: true,
     masterDetail: true,
+    detailRowAutoHeight: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
@@ -26,8 +27,7 @@ var gridOptions = {
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
-        },
-        autoHeight: true
+        }
     },
     onFirstDataRendered: onFirstDataRendered
 };

@@ -15,12 +15,13 @@ import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
+    maxConcurrentRequests: number;
 }
 
 export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
 
     constructor(params: InfiniteCacheParams) {
         super(params);
@@ -126,9 +127,10 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private createBlock(blockNumber: number): InfiniteBlock {
-        const newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
-        this.getContext().createBean(newBlock);
+        const newBlock = this.createBean(new InfiniteBlock(blockNumber, this.cacheParams));
+
         this.postCreateBlock(newBlock);
+
         return newBlock;
     }
 
@@ -140,5 +142,4 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         this.forEachBlockInOrder(block => block.setDirty());
         this.checkBlockToLoad();
     }
-
 }

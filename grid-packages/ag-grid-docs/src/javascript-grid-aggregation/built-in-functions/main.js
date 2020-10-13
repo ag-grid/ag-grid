@@ -33,7 +33,6 @@ var gridOptions = {
             footerValueGetter: '"Total (" + x + ")"'
         }
     },
-    groupIncludeFooter: true,
     sideBar: true,
 };
 

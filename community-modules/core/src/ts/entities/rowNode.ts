@@ -225,7 +225,7 @@ export class RowNode implements IEventEmitter {
      * just id for this, however id is a string and had slower sorting compared to numbers. */
     public __objectId: number = RowNode.OBJECT_ID_SEQUENCE++;
 
-    /** We cache the result of hasChildren() so taht we can be aware of when it has changed, and hence
+    /** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence
      * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
      * method, however that would be a breaking change. */
     private __hasChildren: boolean;
@@ -588,8 +588,9 @@ export class RowNode implements IEventEmitter {
         // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
-        const newValue = this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
-        if (newValue!==this.__hasChildren) {
+        const newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+
+        if (newValue !== this.__hasChildren) {
             this.__hasChildren = newValue;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
@@ -598,7 +599,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public hasChildren(): boolean {
-        if (this.__hasChildren==null) {
+        if (this.__hasChildren == null) {
             this.updateHasChildren();
         }
         return this.__hasChildren;
@@ -624,7 +625,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.hasChildren() || this.master;
+        return this.hasChildren() || this.master ? true : false;
     }
 
     public isSelected(): boolean {
@@ -691,9 +692,9 @@ export class RowNode implements IEventEmitter {
 
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({
-            newValue: newValue,
-            clearSelection: clearSelection,
-            suppressFinishActions: suppressFinishActions,
+            newValue,
+            clearSelection,
+            suppressFinishActions,
             rangeSelect: false
         });
     }
@@ -728,7 +729,7 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect) {
+        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
             const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {

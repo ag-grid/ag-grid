@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { Autowired, Bean, Optional } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
@@ -35,9 +35,6 @@ var NavigationService = /** @class */ (function (_super) {
         _this.timeLastPageEventProcessed = 0;
         return _this;
     }
-    NavigationService.prototype.init = function () {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-    };
     NavigationService.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
     };
@@ -115,9 +112,10 @@ var NavigationService = /** @class */ (function (_super) {
             return;
         }
         var scrollPosition = this.gridPanel.getVScrollPosition();
+        var scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
         var currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
@@ -141,9 +139,10 @@ var NavigationService = /** @class */ (function (_super) {
             return;
         }
         var scrollPosition = this.gridPanel.getVScrollPosition();
+        var scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
-            pixelsInOnePage -= this.scrollWidth;
+            pixelsInOnePage -= scrollbarWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
         var currentPageTopPixel = scrollPosition.top;
@@ -227,9 +226,6 @@ var NavigationService = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], NavigationService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        PostConstruct
-    ], NavigationService.prototype, "init", null);
     NavigationService = __decorate([
         Bean('navigationService')
     ], NavigationService);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare const _: {
@@ -25,7 +25,7 @@ export declare const _: {
     copyPropertiesIfPresent<S, T_7 extends S, K_2 extends keyof S>(source: S, target: T_7, ...properties: K_2[]): void;
     copyPropertyIfPresent<S_1, T_8 extends S_1, K_3 extends keyof S_1>(source: S_1, target: T_8, property: K_3, transform?: (value: S_1[K_3]) => any): void;
     getAllKeysInObjects(objects: any[]): string[];
-    mergeDeep(dest: any, source: any, copyUndefined?: boolean, objectsThatNeedCopy?: string[], iteration?: number): void;
+    mergeDeep(dest: any, source: any, copyUndefined?: boolean, makeCopyOfSimpleObjects?: boolean): void;
     assign<T_9, U>(target: T_9, source: U): T_9 & U;
     assign<T_10, U_1, V>(target: T_10, source1: U_1, source2: V): T_10 & U_1 & V;
     assign<T_11, U_2, V_1, W>(target: T_11, source1: U_2, source2: V_1, source3: W): T_11 & U_2 & V_1 & W;
@@ -34,6 +34,8 @@ export declare const _: {
     set(target: any, expression: string, value: any): void;
     deepFreeze(object: any): any;
     getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
+    removeAllReferences(obj: any, objectName: string): void;
+    isNonNullObject(value: any): boolean;
     padStart(value: number, totalStringSize: number): string;
     createArrayOfNumbers(first: number, last: number): number[];
     isNumeric(value: any): boolean;
@@ -48,9 +50,9 @@ export declare const _: {
     areEventsNear(e1: Touch | MouseEvent, e2: Touch | MouseEvent, pixelCount: number): boolean;
     keys<T_12>(map: Map<T_12, any>): T_12[];
     isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
-    isCharacterKey(event: KeyboardEvent): boolean;
     isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     isUserSuppressingKeyboardEvent(gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, keyboardEvent: KeyboardEvent, rowNode: import("../main").RowNode, column: import("../main").Column, editing: boolean): boolean;
+    isUserSuppressingHeaderKeyboardEvent(gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, keyboardEvent: KeyboardEvent, headerRowIndex: number, column: import("../main").Column | import("../main").ColumnGroup): boolean;
     createIcon(iconName: string, gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, column: import("../main").Column): HTMLElement;
     createIconNoSpan(iconName: string, gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper, column?: import("../main").Column, forceCreate?: boolean): HTMLElement;
     iconNameClassMap: {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { RowNode } from "../../entities/rowNode";
-import { PreDestroy } from "../../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { cleanNumber } from "../../utils/number";
 var RowNodeBlock = /** @class */ (function (_super) {
@@ -90,8 +90,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
         var localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     };
-    RowNodeBlock.prototype.init = function (beans) {
-        this.beans = beans;
+    RowNodeBlock.prototype.init = function () {
         this.createRowNodes();
     };
     RowNodeBlock.prototype.getStartRow = function () {
@@ -110,9 +109,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
     };
     RowNodeBlock.prototype.setDirtyAndPurge = function () {
         this.setDirty();
-        this.rowNodes.forEach(function (rowNode) {
-            rowNode.setData(null);
-        });
+        this.rowNodes.forEach(function (rowNode) { return rowNode.setData(null); });
     };
     RowNodeBlock.prototype.getState = function () {
         return this.state;
@@ -122,8 +119,8 @@ var RowNodeBlock = /** @class */ (function (_super) {
         this.rowNodes[localIndex] = rowNode;
     };
     RowNodeBlock.prototype.setBlankRowNode = function (rowIndex) {
-        var localIndex = rowIndex - this.startRow;
         var newRowNode = this.createBlankRowNode(rowIndex);
+        var localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
     };
@@ -133,8 +130,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
         return newRowNode;
     };
     RowNodeBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = new RowNode();
-        this.beans.context.createBean(rowNode);
+        var rowNode = this.getContext().createBean(new RowNode());
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
         return rowNode;
     };
@@ -172,7 +168,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             _this.setDataAndId(rowNode, data, _this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
+            this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     };
     RowNodeBlock.prototype.destroyRowNodes = function () {
@@ -211,6 +207,12 @@ var RowNodeBlock = /** @class */ (function (_super) {
     RowNodeBlock.STATE_LOADING = 'loading';
     RowNodeBlock.STATE_LOADED = 'loaded';
     RowNodeBlock.STATE_FAILED = 'failed';
+    __decorate([
+        Autowired('rowRenderer')
+    ], RowNodeBlock.prototype, "rowRenderer", void 0);
+    __decorate([
+        PostConstruct
+    ], RowNodeBlock.prototype, "init", null);
     __decorate([
         PreDestroy
     ], RowNodeBlock.prototype, "destroyRowNodes", null);

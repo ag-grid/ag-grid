@@ -25,7 +25,8 @@ import {
     TabbedItem,
     TabbedLayout,
     FocusController,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    GridPanel
 } from "@ag-grid-community/core";
 
 import { MenuList } from "./menuList";
@@ -46,6 +47,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
+
+    private gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public hideActiveMenu(): void {
         this.destroyBean(this.activeMenu);
@@ -128,12 +135,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
                     if (focusableEl) { focusableEl.focus(); }
                 }
-            }
+            },
+            positionCallback: () => { positionCallback(menu); },
+            anchorToElement: this.gridPanel.getGui()
         });
 
         menu.afterGuiAttached({ hidePopup });
-
-        positionCallback(menu);
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -435,19 +442,19 @@ export class EnterpriseMenu extends BeanStub {
     private createFilterPanel(): TabbedItem {
         const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
-        let afterFilterAttachedCallback: (params: IAfterGuiAttachedParams) => void = null;
+        const afterFilterAttachedCallback = (params: IAfterGuiAttachedParams) => {
+            if (!filterWrapper.filterPromise) { return; }
 
-        // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
-        // async (_unless_ in react or similar, but if so why not encountered before now?).
-        // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
-        // async and is confusing if you don't have this context
-        if (filterWrapper.filterPromise) {
+            // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
+            // async (_unless_ in react or similar, but if so why not encountered before now?).
+            // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
+            // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(filter => {
                 if (filter.afterGuiAttached) {
-                    afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
+                    filter.afterGuiAttached(params);
                 }
             });
-        }
+        };
 
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),

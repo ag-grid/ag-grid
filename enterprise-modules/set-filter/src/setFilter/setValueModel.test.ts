@@ -4,10 +4,10 @@ import { mock } from '../test-utils/mock';
 
 function createSetValueModel(
     gridValues: any[] = ['A', 'B', 'C'],
-    filterParams?: any,
+    filterParams: any = {},
     doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
     suppressSorting = false) {
-    const colDef = { filterParams } as ColDef;
+    const colDef = {} as ColDef;
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
         forEachLeafNode: (callback: (node: RowNode) => void) => {
@@ -22,6 +22,7 @@ function createSetValueModel(
     return new SetValueModel(
         rowModel,
         node => node.data.value,
+        filterParams,
         colDef,
         null,
         doesRowPassOtherFilters,
@@ -54,37 +55,73 @@ function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[
     }
 }
 
-describe('isFilterActive', () => {
-    it('returns false by default', () => {
-        const model = createSetValueModel();
+describe('hasSelections', () => {
+    describe('everything selected is the default', () => {
+        it('returns false by default', () => {
+            const model = createSetValueModel();
 
-        expect(model.isFilterActive()).toBe(false);
+            expect(model.hasSelections()).toBe(false);
+        });
+
+        it('returns true if any value is deselected', () => {
+            const model = createSetValueModel();
+
+            model.deselectValue('B');
+
+            expect(model.hasSelections()).toBe(true);
+        });
+
+        it('returns true if all values are deselected', () => {
+            const model = createSetValueModel();
+
+            model.deselectAllMatchingMiniFilter();
+
+            expect(model.hasSelections()).toBe(true);
+        });
+
+        it('returns false if value is deselected then selected again', () => {
+            const model = createSetValueModel();
+            const value = 'B';
+
+            model.deselectValue(value);
+            model.selectValue(value);
+
+            expect(model.hasSelections()).toBe(false);
+        });
     });
 
-    it('returns true if any value is deselected', () => {
-        const model = createSetValueModel();
+    describe('nothing selected is the default', () => {
+        it('returns false by default', () => {
+            const model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
 
-        model.deselectValue('B');
+            expect(model.hasSelections()).toBe(false);
+        });
 
-        expect(model.isFilterActive()).toBe(true);
-    });
+        it('returns true if any value is selected', () => {
+            const model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
 
-    it('returns true if all values are deselected', () => {
-        const model = createSetValueModel();
+            model.selectValue('B');
 
-        model.deselectAllMatchingMiniFilter();
+            expect(model.hasSelections()).toBe(true);
+        });
 
-        expect(model.isFilterActive()).toBe(true);
-    });
+        it('returns true if all values are selected', () => {
+            const model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
 
-    it('returns false if value is deselected then selected again', () => {
-        const model = createSetValueModel();
-        const value = 'B';
+            model.selectAllMatchingMiniFilter();
 
-        model.deselectValue(value);
-        model.selectValue(value);
+            expect(model.hasSelections()).toBe(true);
+        });
 
-        expect(model.isFilterActive()).toBe(false);
+        it('returns false if value is selected then deselected again', () => {
+            const model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+            const value = 'B';
+
+            model.selectValue(value);
+            model.deselectValue(value);
+
+            expect(model.hasSelections()).toBe(false);
+        });
     });
 });
 

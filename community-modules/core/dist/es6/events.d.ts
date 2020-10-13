@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -96,6 +96,7 @@ export interface CheckboxChangedEvent extends AgEvent {
     id: string;
     name: string;
     selected?: boolean;
+    previousValue: boolean | undefined;
 }
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
@@ -167,8 +168,9 @@ export interface ColumnGroupOpenedEvent extends AgGridEvent {
 export interface ItemsAddedEvent extends AgGridEvent {
     items: RowNode[];
 }
+export declare type ScrollDirection = 'horizontal' | 'vertical';
 export interface BodyScrollEvent extends AgGridEvent {
-    direction: string;
+    direction: ScrollDirection;
     left: number;
     top: number;
 }

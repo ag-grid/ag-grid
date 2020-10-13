@@ -26,7 +26,7 @@ import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { Chart } from "../../chart";
+import { toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
@@ -41,8 +41,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.nodeSelection = Selection.select(_this.group).selectAll();
         _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
-        _this._fill = undefined;
-        _this._stroke = undefined;
+        _this._fill = '#c16068';
+        _this._stroke = '#874349';
         _this._strokeWidth = 2;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
@@ -286,38 +286,41 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
         var _b = this, tooltipRenderer = _b.tooltipRenderer, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
         var color = fill || 'gray';
+        var title = this.title || yName;
+        var datum = nodeDatum.seriesDatum;
+        var xValue = datum[xKey];
+        var yValue = datum[yKey];
+        var content = "<b>" + (xName || xKey) + "</b>: " + (typeof xValue === 'number' ? toFixed(xValue) : xValue)
+            + ("<br><b>" + (yName || yKey) + "</b>: " + (typeof yValue === 'number' ? toFixed(yValue) : yValue));
+        if (sizeKey) {
+            content += "<br><b>" + sizeName + "</b>: " + datum[sizeKey];
+        }
+        if (labelKey) {
+            content = "<b>" + labelName + "</b>: " + datum[labelKey] + "<br>" + content;
+        }
+        var defaults = {
+            title: title,
+            titleBackgroundColor: color,
+            content: content
+        };
         if (tooltipRenderer) {
-            return tooltipRenderer({
-                datum: nodeDatum.seriesDatum,
+            return toTooltipHtml(tooltipRenderer({
+                datum: datum,
                 xKey: xKey,
-                yKey: yKey,
-                sizeKey: sizeKey,
-                labelKey: labelKey,
+                xValue: xValue,
                 xName: xName,
+                yKey: yKey,
+                yValue: yValue,
                 yName: yName,
+                sizeKey: sizeKey,
                 sizeName: sizeName,
+                labelKey: labelKey,
                 labelName: labelName,
-                title: this.title,
+                title: title,
                 color: color
-            });
+            }), defaults);
         }
-        else {
-            var title = this.title || yName;
-            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
-            var titleHtml = title ? "<div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">" + title + "</div>" : '';
-            var seriesDatum = nodeDatum.seriesDatum;
-            var xValue = seriesDatum[xKey];
-            var yValue = seriesDatum[yKey];
-            var contentHtml = "<b>" + (xName || xKey) + "</b>: " + (typeof xValue === 'number' ? toFixed(xValue) : xValue)
-                + ("<br><b>" + (yName || yKey) + "</b>: " + (typeof yValue === 'number' ? toFixed(yValue) : yValue));
-            if (sizeKey) {
-                contentHtml += "<br><b>" + sizeName + "</b>: " + seriesDatum[sizeKey];
-            }
-            if (labelKey) {
-                contentHtml = "<b>" + labelName + "</b>: " + seriesDatum[labelKey] + "<br>" + contentHtml;
-            }
-            return titleHtml + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + contentHtml + "</div>";
-        }
+        return toTooltipHtml(defaults);
     };
     ScatterSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKey = _a.yKey, yName = _a.yName, title = _a.title, visible = _a.visible, marker = _a.marker, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;

@@ -9,8 +9,9 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(rowModel, valueGetter, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
+    function SetValueModel(rowModel, valueGetter, filterParams, colDef, column, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
         var _this = this;
+        this.filterParams = filterParams;
         this.colDef = colDef;
         this.column = column;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
@@ -35,7 +36,6 @@ var SetValueModel = /** @class */ (function () {
         if (rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new clientSideValueExtractor_1.ClientSideValuesExtractor(rowModel, colDef, valueGetter);
         }
-        this.filterParams = this.colDef.filterParams || {};
         this.formatter = this.filterParams.textFormatter || core_1.TextFilter.DEFAULT_FORMATTER;
         var values = this.filterParams.values;
         if (values == null) {
@@ -205,7 +205,7 @@ var SetValueModel = /** @class */ (function () {
             else {
                 var textFormatterValue = _this.formatter(value);
                 // TODO: should this be applying the text formatter *after* the value formatter?
-                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue);
+                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue, _this.filterParams.valueFormatter, false);
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     _this.displayedValues.push(value);
                 }
@@ -218,7 +218,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getDisplayedValue = function (index) {
         return this.displayedValues[index];
     };
-    SetValueModel.prototype.isFilterActive = function () {
+    SetValueModel.prototype.hasSelections = function () {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedValues.size > 0 :
             this.allValues.length !== this.selectedValues.size;
@@ -280,7 +280,7 @@ var SetValueModel = /** @class */ (function () {
         return core_1._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === 0;
     };
     SetValueModel.prototype.getModel = function () {
-        return this.isFilterActive() ? core_1._.values(this.selectedValues) : null;
+        return this.hasSelections() ? core_1._.values(this.selectedValues) : null;
     };
     SetValueModel.prototype.setModel = function (model) {
         var _this = this;

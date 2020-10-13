@@ -1167,9 +1167,10 @@
             "showInCollapsed": true
           },
           {
-            "title": "Chart Events",
-            "url": "javascript-grid-charts-integrated-chart-events/",
-            "enterprise": true
+            "title": "Customisation",
+            "url": "javascript-grid-charts-integrated-customisation/",
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Chart Container",
@@ -1177,10 +1178,14 @@
             "enterprise": true
           },
           {
-            "title": "Customisation",
-            "url": "javascript-grid-charts-integrated-customisation/",
-            "enterprise": true,
-            "showInCollapsed": true
+            "title": "Chart Events",
+            "url": "javascript-grid-charts-integrated-chart-events/",
+            "enterprise": true
+          },
+          {
+            "title": "Time Series",
+            "url": "javascript-grid-charts-integrated-time-series/",
+            "enterprise": true
           },
           {
             "title": "Third-Party Charting",
@@ -1482,6 +1487,10 @@
               {
                 "title": "Markers",
                 "url": "javascript-charts-markers/"
+              },
+              {
+                "title": "Formatters",
+                "url": "javascript-charts-formatters/"
               },
               {
                 "title": "Tooltips",

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v24.0.0
+// @ag-grid-community/react v24.1.0
 import { ComponentType, Promise } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from './baseReactComponent';
@@ -10,7 +10,6 @@ export declare class ReactComponent extends BaseReactComponent {
     private componentType;
     private parentComponent;
     private portal;
-    private componentWrappingElement;
     private statelessComponent;
     private staticMarkup;
     private staticRenderTime;
@@ -30,5 +29,5 @@ export declare class ReactComponent extends BaseReactComponent {
     isNullRender(): boolean;
     private renderStaticMarkup;
     private removeStaticMarkup;
-    rendered(): any;
+    rendered(): boolean;
 }

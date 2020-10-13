@@ -85,6 +85,7 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;
     }): RowNodeTransaction | null;
+    private createRowNodeOrder;
     private commonUpdateRowData;
     private doRowsToDisplay;
     onRowHeightChanged(): void;

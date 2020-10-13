@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Pinning: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Pinning. Use Pinned Rows to pin one or more rows to the top or the bottom. Pinned rows are always present and not impacted by vertical scroll. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Pinning. Use Pinned Rows to pin one or more rows to the top or the bottom. Pinned rows are always present and not impacted by vertical scroll. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Pinned Rows";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 <p>In this example we're using Components to render custom pinned row values for Athlete and Age (colour blue and italics
 respectively).</p>
 
-<?= grid_example('Row Pinning', 'row-pinning', 'generated', ['exampleHeight' => 580, 'modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Pinning', 'row-pinning', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
 
 <h2>Non Supported Items</h2>
 

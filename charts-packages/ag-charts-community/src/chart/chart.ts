@@ -105,9 +105,30 @@ export interface TooltipMeta {
     pageY: number;
 }
 
-export function toTooltipHtml(content: string, title?: string, color: string = '#888'): string {
+export interface TooltipRendererResult {
+    content?: string;
+    title?: string;
+    titleColor?: string;
+    titleBackgroundColor?: string;
+}
+
+export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string {
+    if (typeof input === 'string') {
+        return input;
+    }
+
+    defaults = defaults || {};
+
+    const {
+        content = defaults.content || '',
+        title = defaults.title || undefined,
+        titleColor = defaults.titleColor || 'white',
+        titleBackgroundColor = defaults.titleBackgroundColor || '#888'
+    } = input;
+
     const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title"
-            style="color: white; background-color: ${color}">${title}</div>` : '';
+        style="color: ${titleColor}; background-color: ${titleBackgroundColor}">${title}</div>` : '';
+
     return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${content}</div>`;
 }
 

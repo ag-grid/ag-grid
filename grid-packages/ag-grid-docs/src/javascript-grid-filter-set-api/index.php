@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Set Filter - API";
-$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 24.1.0 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -68,6 +68,6 @@ SNIPPET
     end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
 </p>
 
-<?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel'], 'reactFunctional' => true]) ?>
+<?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

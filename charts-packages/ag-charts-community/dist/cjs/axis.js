@@ -59,7 +59,7 @@ var AxisLabel = /** @class */ (function () {
         /**
          * Custom label rotation in degrees.
          * Labels are rendered perpendicular to the axis line by default.
-         * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
+         * Or parallel to the axis line, if the {@link parallel} is set to `true`.
          * The value of this config is used as the angular offset/deflection
          * from the default rotation.
          */
@@ -173,8 +173,19 @@ var Axis = /** @class */ (function () {
     Axis.prototype.inRange = function (x, width, tolerance) {
         if (width === void 0) { width = 0; }
         if (tolerance === void 0) { tolerance = 0; }
+        return this.inRangeEx(x, width, tolerance) === 0;
+    };
+    Axis.prototype.inRangeEx = function (x, width, tolerance) {
+        if (width === void 0) { width = 0; }
+        if (tolerance === void 0) { tolerance = 0; }
         var range = this.range;
-        return (x + width) >= (range[0] - tolerance) && x <= (range[1] + tolerance);
+        if ((x + width) < (range[0] - tolerance)) {
+            return -1; // left or range
+        }
+        if (x > (range[1] + tolerance)) {
+            return 1; // right of range
+        }
+        return 0; // in range
     };
     Object.defineProperty(Axis.prototype, "range", {
         get: function () {

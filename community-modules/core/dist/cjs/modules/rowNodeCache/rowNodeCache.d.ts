@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -18,7 +18,6 @@ export interface RowNodeCacheParams {
     maxBlocksInCache?: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests?: number;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }
@@ -51,7 +50,7 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     protected postCreateBlock(newBlock: T): void;
     protected removeBlockFromCache(blockToRemove: T): void;
     protected checkBlockToLoad(): void;
-    protected checkVirtualRowCount(block: T, lastRow: any): void;
+    protected checkVirtualRowCount(block: T, lastRow?: number): void;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
     forEachBlockInOrder(callback: (block: T, id: number) => void): void;

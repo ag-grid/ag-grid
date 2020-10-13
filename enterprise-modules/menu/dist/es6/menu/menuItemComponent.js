@@ -56,12 +56,6 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.params.cssClasses.forEach(function (it) { return _.addCssClass(eGui, it); });
         }
     };
-    MenuItemComponent.prototype.getTooltipText = function () {
-        return this.tooltip;
-    };
-    MenuItemComponent.prototype.getComponentHolder = function () {
-        return undefined;
-    };
     MenuItemComponent.prototype.isDisabled = function () {
         return !!this.params.disabled;
     };
@@ -194,8 +188,14 @@ var MenuItemComponent = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', this.tooltip);
         }
         else {
-            this.createManagedBean(new TooltipFeature(this, 'menu'));
+            this.createManagedBean(new TooltipFeature(this));
         }
+    };
+    MenuItemComponent.prototype.getTooltipParams = function () {
+        return {
+            location: 'menu',
+            value: this.tooltip
+        };
     };
     MenuItemComponent.prototype.addShortcut = function () {
         if (!this.params.shortcut && this.params.isCompact) {

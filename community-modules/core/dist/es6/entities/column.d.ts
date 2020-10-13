@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -65,7 +65,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
     getOriginalParent(): OriginalColumnGroup | null;
     private initialise;
-    resetActualWidth(): void;
+    resetActualWidth(source?: ColumnEventType): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
     getUniqueId(): string;
@@ -126,7 +126,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private createBaseColDefParams;
     getColSpan(rowNode: RowNode): number;
     getRowSpan(rowNode: RowNode): number;
-    setActualWidth(actualWidth: number, source?: ColumnEventType): void;
+    setActualWidth(actualWidth: number, source?: ColumnEventType, silent?: boolean): void;
+    fireColumnWidthChangedEvent(source: ColumnEventType): void;
     isGreaterThanMax(width: number): boolean;
     getMinWidth(): number;
     getMaxWidth(): number;

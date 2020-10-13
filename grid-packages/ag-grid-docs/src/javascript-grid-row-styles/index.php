@@ -161,7 +161,7 @@ SNIPPET
         and <code>api.applyTransaction</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
 </ul>
 
-<?= grid_example('Row Class Rules', 'row-class-rules', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Row Class Rules', 'row-class-rules', 'generated', ['modules' => true]) ?>
 
 <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
 
@@ -188,6 +188,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', ['modules' => true, 'reactFunctional' => true]) ?>
+<?= grid_example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', ['modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

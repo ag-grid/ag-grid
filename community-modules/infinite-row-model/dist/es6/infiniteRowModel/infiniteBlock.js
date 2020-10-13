@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, PostConstruct, RowNodeBlock, _ } from "@ag-grid-community/core";
+import { Autowired, RowNodeBlock, _ } from "@ag-grid-community/core";
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
     function InfiniteBlock(pageNumber, params) {
@@ -35,7 +35,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         return this.getDisplayIndexStart() + this.cacheParams.blockSize;
     };
     InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
+        var rowNode = _super.prototype.createBlankRowNode.call(this);
         rowNode.uiLevel = 0;
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
         return rowNode;
@@ -56,11 +56,9 @@ var InfiniteBlock = /** @class */ (function (_super) {
         _super.prototype.setRowNode.call(this, rowIndex, rowNode);
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
     };
+    // no need for @postConstruct, as attached to parent
     InfiniteBlock.prototype.init = function () {
-        _super.prototype.init.call(this, {
-            context: this.getContext(),
-            rowRenderer: this.rowRenderer
-        });
+        _super.prototype.init.call(this);
     };
     InfiniteBlock.prototype.getNodeIdPrefix = function () {
         return null;
@@ -99,12 +97,6 @@ var InfiniteBlock = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        Autowired('rowRenderer')
-    ], InfiniteBlock.prototype, "rowRenderer", void 0);
-    __decorate([
-        PostConstruct
-    ], InfiniteBlock.prototype, "init", null);
     return InfiniteBlock;
 }(RowNodeBlock));
 export { InfiniteBlock };

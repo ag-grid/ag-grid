@@ -325,7 +325,7 @@ colDef = {
         <li>The header component uses additional parameters to allowing configuring the menu icon.</li>
     </ul>
 
-    <?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'vanilla', 'reactFunctional' => true]) ?>
+    <?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'vanilla']) ?>
 
     <?php include './angular.php'; ?>
 
@@ -448,6 +448,6 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
     <h3 id="example-header-group-cells">Example: Header Group Cells</h3>
 
-    <?= grid_example('Header Group', 'header-group-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'reactFunctional' => true]) ?>
+    <?= grid_example('Header Group', 'header-group-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

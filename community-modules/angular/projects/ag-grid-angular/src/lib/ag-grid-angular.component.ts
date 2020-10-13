@@ -260,6 +260,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processSecondaryColGroupDef : any = undefined;
     @Input() public getBusinessKeyForNode : any = undefined;
     @Input() public sendToClipboard : any = undefined;
+    @Input() public navigateToNextHeader : any = undefined;
+    @Input() public tabToNextHeader : any = undefined;
     @Input() public navigateToNextCell : any = undefined;
     @Input() public tabToNextCell : any = undefined;
     @Input() public getDetailRowData : any = undefined;
@@ -411,6 +413,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressExpandablePivotGroups : any = undefined;
     @Input() public applyColumnDefOrder : any = undefined;
     @Input() public debounceVerticalScrollbar : any = undefined;
+    @Input() public detailRowAutoHeight : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -465,6 +468,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public gridReady: EventEmitter<any> = new EventEmitter<any>();
     @Output() public gridSizeChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public viewportChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public scrollbarWidthChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public firstDataRendered: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStopped: EventEmitter<any> = new EventEmitter<any>();

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v24.0.0
+// Type definitions for @ag-grid-community/core v24.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFloatingFilterParams } from '../floatingFilter';
@@ -6,8 +6,8 @@ import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 export declare abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
-    private columnController;
-    private eFloatingFilterInput;
+    private readonly columnController;
+    private readonly eFloatingFilterInput;
     protected params: IFloatingFilterParams;
     private applyActive;
     private postConstruct;

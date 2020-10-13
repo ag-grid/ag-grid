@@ -6,8 +6,6 @@ export declare class AutoHeightCalculator extends BeanStub {
     private $scope;
     private columnController;
     private rowCssClassCalculator;
-    private paginationProxy;
-    private gridOptionsWrapper;
     $compile: any;
     private gridPanel;
     registerGridComp(gridPanel: GridPanel): void;

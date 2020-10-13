@@ -59,7 +59,9 @@ SNIPPET
     </li>
     <li>
         Columns with <code>buttons</code> containing <code>'apply'</code> require the user to press <code>Enter</code>
-        on the floating filter for the filter to take effect (Gold column)
+        on the floating filter for the filter to take effect (Gold column).
+        (<strong>Note:</strong> this does not apply to floating Date Filters, which are always applied as soon as a
+        valid date is entered.)
     </li>
     <li>
         Changes made directly to the main filter are reflected automatically in the floating filters
@@ -79,7 +81,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['clientside', 'setfilter', 'menu'], 'reactFunctional' => true]) ?>
+<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Provided Floating Filters</h2>
 

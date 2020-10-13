@@ -99,6 +99,14 @@
                 "returnType": "any"
             }
         },
+        "unlinkChart": {
+            "default": false,
+            "description": "When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart.",
+            "more": {
+                "name": "Unlinking Charts",
+                "url": "../javascript-grid-charts-integrated-chart-toolbar/#unlinking-charts"
+            }
+        },
         "chartThemeOverrides": {
             "type": "AgChartThemeOverrides",
             "description": "Allows specific chart options in the current theme to be overridden.",

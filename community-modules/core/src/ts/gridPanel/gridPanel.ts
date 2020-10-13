@@ -43,7 +43,7 @@ import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaMultiSelectable, setAriaRowCount, setAriaColCount } from '../utils/aria';
 import { debounce } from '../utils/function';
-import { addCssClass, removeCssClass, isVisible, addOrRemoveCssClass, isHorizontalScrollShowing, isVerticalScrollShowing, setFixedHeight, setDisplayed, setFixedWidth, getScrollLeft, setScrollLeft } from '../utils/dom';
+import { addCssClass, removeCssClass, isVisible, addOrRemoveCssClass, isHorizontalScrollShowing, isVerticalScrollShowing, setFixedHeight, setDisplayed, setFixedWidth, getScrollLeft, setScrollLeft, isRtlNegativeScroll } from '../utils/dom';
 import { getTabIndex, isBrowserIE, isIOSUserAgent } from '../utils/browser';
 import { missing, missingOrEmpty } from '../utils/generic';
 import { getTarget, getCellCompForEvent, isStopPropagationForAgGrid } from '../utils/event';
@@ -51,7 +51,8 @@ import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
 import { last } from '../utils/array';
 import { iterateObject } from '../utils/object';
 import { KeyCode } from '../constants/keyCode';
-import {_} from "../utils";
+import {PopupService} from "../widgets/popupService";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -110,6 +111,8 @@ export type RowContainerComponentNames =
 
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
+type ScrollDirection = 'horizontal' | 'vertical';
+
 export class GridPanel extends Component {
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -136,9 +139,11 @@ export class GridPanel extends Component {
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('popupService') public popupService: PopupService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Optional('menuFactory') private menuFactory: IMenuFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
@@ -180,6 +185,8 @@ export class GridPanel extends Component {
     private scrollLeft = -1;
     private scrollTop = -1;
 
+    private centerWidth: number;
+
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
 
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
@@ -188,7 +195,6 @@ export class GridPanel extends Component {
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
-    private scrollWidth: number;
 
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
@@ -236,14 +242,13 @@ export class GridPanel extends Component {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.beans.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
     }
 
     @PostConstruct
     private init() {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
@@ -295,6 +300,12 @@ export class GridPanel extends Component {
         this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+        if (this.contextMenuFactory) {
+            this.contextMenuFactory.registerGridComp(this);
+        }
+        if (this.menuFactory) {
+            this.menuFactory.registerGridComp(this);
+        }
 
         if (this.rangeController || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
@@ -336,9 +347,14 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
-            this.beans.columnController.refreshFlexedColumns(
-                { viewportWidth: this.getCenterWidth(), updateBodyWidths: true, fireResizedEvent: true }
-            );
+
+            const newWidth = this.getCenterWidth();
+            if (newWidth !== this.centerWidth) {
+                this.centerWidth = newWidth;
+                this.columnController.refreshFlexedColumns(
+                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
+                );
+            }
         } else {
             this.bodyHeight = 0;
         }
@@ -380,7 +396,7 @@ export class GridPanel extends Component {
             let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
 
             if (!clickInsideGrid) {
-                const popupService = this.beans.popupService;
+                const popupService = this.popupService;
 
                 clickInsideGrid =
                     popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
@@ -433,6 +449,7 @@ export class GridPanel extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
@@ -587,12 +604,12 @@ export class GridPanel extends Component {
 
         if (eventName === 'keydown') {
             const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
-            this.beans.eventService.dispatchEvent(cellKeyDownEvent);
+            this.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
         if (eventName === 'keypress') {
             const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
-            this.beans.eventService.dispatchEvent(cellKeyPressEvent);
+            this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
 
@@ -722,7 +739,7 @@ export class GridPanel extends Component {
 
     private onCtrlAndA(event: KeyboardEvent): void {
 
-        const { beans, pinnedRowModel, paginationProxy, rangeController } = this;
+        const { pinnedRowModel, paginationProxy, rangeController } = this;
         const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
         if (rangeController && paginationProxy.isRowsToRender()) {
@@ -743,7 +760,7 @@ export class GridPanel extends Component {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = beans.columnController.getAllDisplayedColumns();
+            const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeController.setCellRange({
@@ -881,6 +898,10 @@ export class GridPanel extends Component {
         return isHorizontalScrollShowing(this.eCenterViewport);
     }
 
+    private onScrollbarWidthChanged() {
+        this.checkViewportAndScrolls();
+    }
+
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
     // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
     public checkViewportAndScrolls(): void {
@@ -934,11 +955,11 @@ export class GridPanel extends Component {
 
     private setHorizontalScrollVisible(visible: boolean): void {
         const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
-        const scrollSize = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollSize : 0;
+        const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+        const scrollContainerSize = !isSuppressHorizontalScroll ? scrollbarWidth : 0;
         const addIEPadding = isBrowserIE() && visible;
 
-        this.eCenterViewport.style.height = `calc(100% + ${scrollSize}px)`;
+        this.eCenterViewport.style.height = `calc(100% + ${scrollbarWidth}px)`;
         setFixedHeight(this.eHorizontalScrollBody, scrollContainerSize);
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
@@ -1091,7 +1112,7 @@ export class GridPanel extends Component {
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eCenterViewport, this.eTopViewport, this.eBottomViewport];
+        return [this.eBodyViewport, this.eTopViewport, this.eBottomViewport];
     }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
@@ -1272,12 +1293,13 @@ export class GridPanel extends Component {
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnController.getPinnedRightContainerWidth();
         const scrollOnRight = !this.enableRtl && this.isVerticalScrollShowing();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (scrollOnRight) {
-            rightSpacing += this.scrollWidth;
+            rightSpacing += scrollbarWidth;
         }
         setFixedWidth(this.eHorizontalRightSpacer, rightSpacing);
-        addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= this.scrollWidth);
+        addOrRemoveCssClass(this.eHorizontalRightSpacer, 'ag-scroller-corner', rightSpacing <= scrollbarWidth);
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
@@ -1285,11 +1307,11 @@ export class GridPanel extends Component {
         const scrollOnLeft = this.enableRtl && this.isVerticalScrollShowing();
 
         if (scrollOnLeft) {
-            leftSpacing += this.scrollWidth;
+            leftSpacing += scrollbarWidth;
         }
 
         setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
-        addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= this.scrollWidth);
+        addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
     private checkBodyHeight(): void {
@@ -1370,6 +1392,13 @@ export class GridPanel extends Component {
 
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
+        const minScrollLeft = 0;
+        const maxScrollLeft = this.eCenterViewport.scrollWidth - this.eCenterViewport.clientWidth;
+
+        if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
+            hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
+        }
+
         this.eCenterViewport.scrollLeft = hScrollPosition;
 
         // we need to manually do the event handling (rather than wait for the event)
@@ -1404,7 +1433,7 @@ export class GridPanel extends Component {
         this.addManagedListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
 
         const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
-            _.debounce(this.onVerticalScroll.bind(this), 100)
+            debounce(this.onVerticalScroll.bind(this), 100)
             : this.onVerticalScroll.bind(this);
 
         this.addManagedListener(this.eBodyViewport, 'scroll', onVerticalScroll);
@@ -1412,10 +1441,49 @@ export class GridPanel extends Component {
 
     private onVerticalScroll(): void {
         const scrollTop: number = this.eBodyViewport.scrollTop;
+
+        if (this.shouldBlockScrollUpdate('vertical', scrollTop, true)) { return; }
+
         this.animationFrameService.setScrollTop(scrollTop);
 
         this.scrollTop = scrollTop;
         this.redrawRowsAfterScroll();
+    }
+
+    private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+
+        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
+        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
+        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
+        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
+        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
+
+        if (touchOnly && !isIOSUserAgent) { return false; }
+
+        if (direction === 'vertical') {
+            const { clientHeight, scrollHeight } = this.eBodyViewport;
+            if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
+                return true;
+            }
+        }
+
+        if (direction === 'horizontal') {
+            const { clientWidth, scrollWidth } = this.eCenterViewport;
+
+            if (this.enableRtl && isRtlNegativeScroll()) {
+                if (scrollTo > 0) { return true; }
+            } else if (scrollTo < 0) { return true; }
+
+            if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {
@@ -1438,32 +1506,13 @@ export class GridPanel extends Component {
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const { scrollWidth, clientWidth } = this.eCenterViewport;
+        const { scrollLeft } = this.eCenterViewport;
 
-        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
-        // formula. so we floor it to allow the formula to work.
-        let scrollLeft = Math.floor(getScrollLeft(eSource, this.enableRtl));
-
-        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
-        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
-        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
-        // as otherwise it was causing the rows and header to flicker.
-
-        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
-        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
-        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
-        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
-        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
-
-        const minScroll = 0;
-        const maxScroll = scrollWidth - clientWidth;
-        if (scrollLeft < minScroll) {
-            scrollLeft = minScroll;
-        } else if (scrollLeft > maxScroll) {
-            scrollLeft = maxScroll;
+        if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
+            return;
         }
 
-        this.doHorizontalScroll(scrollLeft);
+        this.doHorizontalScroll(Math.floor(getScrollLeft(eSource, this.enableRtl)));
         this.resetLastHorizontalScrollElementDebounced();
     }
 
@@ -1526,16 +1575,6 @@ export class GridPanel extends Component {
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const { clientWidth, scrollWidth } = this.eCenterViewport;
-        const scrollWentPastBounds = Math.abs(offset) + clientWidth > scrollWidth;
-
-        if (
-            scrollWentPastBounds ||
-            (this.enableRtl && offset < 0) ||
-            (!this.enableRtl && offset > 0)
-        ) {
-            return;
-        }
 
         this.headerRootComp.setHorizontalScroll(offset);
         this.eBottomContainer.style.transform = `translateX(${offset}px)`;

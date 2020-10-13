@@ -54,7 +54,7 @@ const GridExample = () => {
         <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
-                    <button onClick={onBtWithState}>Set Definitions with State</button>
+                    <button onClick={onBtWithState}>Set Columns with State</button>
                     <button onClick={onBtRemove}>Remove Columns</button>
                     <div
                         style={{

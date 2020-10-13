@@ -76,6 +76,8 @@ export class RowComp extends Component {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
+    private fullWidthRowDestroyFuncs: (() => void)[] = [];
+
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
 
@@ -336,13 +338,13 @@ export class RowComp extends Component {
         const isFullWidthGroup = isGroupRow && this.beans.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
 
         if (this.rowNode.stub) {
-            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME, false);
         } else if (isDetailCell) {
-            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME, true);
         } else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null);
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null, false);
         } else if (isFullWidthGroup) {
-            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME, false);
         } else {
             this.setupNormalRowContainers();
         }
@@ -366,7 +368,7 @@ export class RowComp extends Component {
         this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
-    private createFullWidthRows(type: string, name: string): void {
+    private createFullWidthRows(type: string, name: string, detailRow: boolean): void {
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
@@ -377,7 +379,8 @@ export class RowComp extends Component {
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentBody = cellRenderer;
-                });
+                },
+                detailRow);
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
@@ -389,7 +392,8 @@ export class RowComp extends Component {
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentLeft = cellRenderer;
-                });
+                },
+                detailRow);
             this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type, name,
                 (eRow: HTMLElement) => {
@@ -397,7 +401,8 @@ export class RowComp extends Component {
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentRight = cellRenderer;
-                });
+                },
+                detailRow);
         } else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
@@ -408,7 +413,8 @@ export class RowComp extends Component {
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
-                }
+                },
+                detailRow
             );
         }
     }
@@ -441,14 +447,14 @@ export class RowComp extends Component {
     public refreshFullWidth(): boolean {
 
         // returns 'true' if refresh succeeded
-        const tryRefresh = (eRow: HTMLElement, eCellComp: ICellRendererComp, pinned: string): boolean => {
-            if (!eRow || !eCellComp) { return true; } // no refresh needed
+        const tryRefresh = (eRow: HTMLElement, cellComp: ICellRendererComp, pinned: string): boolean => {
+            if (!eRow || !cellComp) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
-            if (!eCellComp.refresh) { return false; }
+            if (!cellComp.refresh) { return false; }
 
             const params = this.createFullWidthParams(eRow, pinned);
-            const refreshSucceeded = eCellComp.refresh(params);
+            const refreshSucceeded = cellComp.refresh(params);
 
             return refreshSucceeded;
         };
@@ -558,8 +564,8 @@ export class RowComp extends Component {
 
     private updateExpandedCss(): void {
 
-        const expandable = this.beans.rowCssClassCalculator.isExpandable(this.rowNode);
-        const expanded = this.rowNode.expanded;
+        const expandable = this.rowNode.isExpandable();
+        const expanded = this.rowNode.expanded == true;
 
         this.eAllRowContainers.forEach(eRow => {
             addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
@@ -576,13 +582,17 @@ export class RowComp extends Component {
     }
 
     private destroyFullWidthComponents(): void {
+
+        this.fullWidthRowDestroyFuncs.forEach(f => f());
+        this.fullWidthRowDestroyFuncs = [];
+
         if (this.fullWidthRowComponent) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponent);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentBody) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponentBody);
-            this.fullWidthRowComponent = null;
+            this.fullWidthRowComponentBody = null;
         }
         if (this.fullWidthRowComponentLeft) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_LEFT, this.fullWidthRowComponentLeft);
@@ -590,7 +600,7 @@ export class RowComp extends Component {
         }
         if (this.fullWidthRowComponentRight) {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_RIGHT, this.fullWidthRowComponentRight);
-            this.fullWidthRowComponent = null;
+            this.fullWidthRowComponentRight = null;
         }
     }
 
@@ -909,7 +919,8 @@ export class RowComp extends Component {
         pinned: string,
         extraCssClass: string, cellRendererType: string, cellRendererName: string,
         eRowCallback: (eRow: HTMLElement) => void,
-        cellRendererCallback: (comp: ICellRendererComp) => void
+        cellRendererCallback: (comp: ICellRendererComp) => void,
+        detailRow: boolean
     ): void {
         const rowTemplate = this.createTemplate('', extraCssClass);
 
@@ -919,8 +930,11 @@ export class RowComp extends Component {
 
             const callback = (cellRenderer: ICellRendererComp) => {
                 if (this.isAlive()) {
-                    const gui = cellRenderer.getGui();
-                    eRow.appendChild(gui);
+                    const eGui = cellRenderer.getGui();
+                    eRow.appendChild(eGui);
+                    if (detailRow) {
+                        this.setupDetailRowAutoHeight(eGui);
+                    }
                     cellRendererCallback(cellRenderer);
                 } else {
                     this.beans.context.destroyBean(cellRenderer);
@@ -950,6 +964,39 @@ export class RowComp extends Component {
 
             this.angular1Compile(eRow);
         });
+    }
+
+    private setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
+
+        if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
+
+        const checkRowSizeFunc = () => {
+            const clientHeight = eDetailGui.clientHeight;
+
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight != null && clientHeight > 0) {
+                // we do the update in a timeout, to make sure we are not calling from inside the grid
+                // doing another update
+                const updateRowHeightFunc = () => {
+                    this.rowNode.setRowHeight(clientHeight);
+                    if (this.beans.clientSideRowModel) {
+                        this.beans.clientSideRowModel.onRowHeightChanged();
+                    } else if (this.beans.serverSideRowModel) {
+                        this.beans.serverSideRowModel.onRowHeightChanged();
+                    }
+                };
+                this.beans.frameworkOverrides.setTimeout(updateRowHeightFunc, 0);
+            }
+        };
+
+        const resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(eDetailGui, checkRowSizeFunc);
+
+        this.fullWidthRowDestroyFuncs.push(resizeObserverDestroyFunc);
+
+        checkRowSizeFunc();
     }
 
     private angular1Compile(element: Element): void {
@@ -992,7 +1039,7 @@ export class RowComp extends Component {
             firstRowOnPage: this.isFirstRowOnPage(),
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
-            expandable: this.beans.rowCssClassCalculator.isExpandable(this.rowNode),
+            expandable: this.rowNode.isExpandable(),
             scope: this.scope
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
@@ -1334,7 +1381,6 @@ export class RowComp extends Component {
     private destroyContainingCells(): void {
         const cellsToDestroy = Object.keys(this.cellComps);
         this.destroyCells(cellsToDestroy);
-        this.destroyFullWidthComponents();
     }
 
     // we clear so that the functions are never executed twice

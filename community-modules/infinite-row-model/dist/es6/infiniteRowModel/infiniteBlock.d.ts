@@ -2,7 +2,6 @@ import { RowNode, IEventEmitter, RowNodeBlock } from "@ag-grid-community/core";
 import { InfiniteCacheParams } from "./infiniteCache";
 export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     private gridOptionsWrapper;
-    private rowRenderer;
     private cacheParams;
     constructor(pageNumber: number, params: InfiniteCacheParams);
     getDisplayIndexStart(): number;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,9 +64,10 @@ var AgCheckbox = /** @class */ (function (_super) {
         return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
+        var previousValue = this.isSelected();
         var nextValue = this.getNextValue();
         if (this.passive) {
-            this.dispatchChange(nextValue);
+            this.dispatchChange(nextValue, previousValue);
         }
         else {
             this.setValue(nextValue);
@@ -92,28 +93,34 @@ var AgCheckbox = /** @class */ (function (_super) {
         if (this.isSelected() === selected) {
             return;
         }
-        this.selected = typeof selected === 'boolean' ? selected : undefined;
-        this.eInput.checked = this.selected;
-        this.eInput.indeterminate = this.selected === undefined;
+        var previousValue = this.isSelected();
+        selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
+        this.eInput.checked = selected;
+        this.eInput.indeterminate = selected === undefined;
         if (!silent) {
-            this.dispatchChange(this.selected);
+            this.dispatchChange(this.selected, previousValue);
         }
     };
-    AgCheckbox.prototype.dispatchChange = function (selected, event) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
+    AgCheckbox.prototype.dispatchChange = function (selected, previousValue, event) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, previousValue: previousValue, event: event });
         var input = this.getInputElement();
         var checkboxChangedEvent = {
             type: events_1.Events.EVENT_CHECKBOX_CHANGED,
             id: input.id,
             name: input.name,
-            selected: selected
+            selected: selected,
+            previousValue: previousValue
         };
         this.eventService.dispatchEvent(checkboxChangedEvent);
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
-        this.selected = e.target.checked;
-        this.refreshSelectedClass(this.selected);
-        this.dispatchChange(this.selected, e);
+        if (this.passive) {
+            return;
+        }
+        var previousValue = this.isSelected();
+        var selected = this.selected = e.target.checked;
+        this.refreshSelectedClass(selected);
+        this.dispatchChange(selected, previousValue, e);
     };
     AgCheckbox.prototype.refreshSelectedClass = function (value) {
         dom_1.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);

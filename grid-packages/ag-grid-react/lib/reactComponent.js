@@ -1,4 +1,4 @@
-// ag-grid-react v24.0.0
+// ag-grid-react v24.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -14,8 +14,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var ReactDOM = require("react-dom");
+var react_1 = require("react");
+var react_dom_1 = require("react-dom");
 var ag_grid_community_1 = require("ag-grid-community");
 var baseReactComponent_1 = require("./baseReactComponent");
 var utils_1 = require("./utils");
@@ -26,7 +26,6 @@ var ReactComponent = /** @class */ (function (_super) {
     function ReactComponent(reactComponent, parentComponent, componentType) {
         var _this = _super.call(this) || this;
         _this.portal = null;
-        _this.componentWrappingElement = 'div';
         _this.staticMarkup = null;
         _this.staticRenderTime = 0;
         _this.reactComponent = reactComponent;
@@ -67,8 +66,8 @@ var ReactComponent = /** @class */ (function (_super) {
                 _this.removeStaticMarkup();
             };
         }
-        var reactComponent = React.createElement(this.reactComponent, params);
-        var portal = ReactDOM.createPortal(reactComponent, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
+        var reactComponent = react_1.createElement(this.reactComponent, params);
+        var portal = react_dom_1.createPortal(reactComponent, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal, this, function (value) {
@@ -86,9 +85,7 @@ var ReactComponent = /** @class */ (function (_super) {
                     }, false);
                 }
                 else {
-                    setTimeout(function () {
-                        _this.removeStaticMarkup();
-                    });
+                    setTimeout(function () { return _this.removeStaticMarkup(); });
                 }
             }
         });
@@ -126,7 +123,7 @@ var ReactComponent = /** @class */ (function (_super) {
             || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
     };
     ReactComponent.prototype.isNullRender = function () {
-        return this.staticMarkup === "";
+        return this.staticMarkup === '';
     };
     /*
      * Attempt to render the component as static markup if possible
@@ -139,11 +136,11 @@ var ReactComponent = /** @class */ (function (_super) {
             return;
         }
         var originalConsoleError = console.error;
-        var reactComponent = React.createElement(this.reactComponent, params);
+        var reactComponent = react_1.createElement(this.reactComponent, params);
         try {
-            // if a user is using anything that uses useLayoutEffect (like material ui) then
-            // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
-            // this is just a warning and has no effect on anything so just suppress it for this single operation
+            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
+            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
+            // for this single operation
             var originalConsoleError_1 = console.error;
             console.error = function () {
             };
@@ -152,7 +149,7 @@ var ReactComponent = /** @class */ (function (_super) {
             this.staticRenderTime = Date.now() - start;
             console.error = originalConsoleError_1;
             // if the render method returns null the result will be an empty string
-            if (staticMarkup === "") {
+            if (staticMarkup === '') {
                 this.staticMarkup = staticMarkup;
             }
             else {
@@ -191,9 +188,9 @@ var ReactComponent = /** @class */ (function (_super) {
     };
     ReactComponent.prototype.rendered = function () {
         return this.isNullRender() ||
-            this.staticMarkup ||
-            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
-            (!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+            !!this.staticMarkup ||
+            !!(this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     };
     ReactComponent.REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
     return ReactComponent;

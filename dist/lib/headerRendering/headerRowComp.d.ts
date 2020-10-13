@@ -1,5 +1,4 @@
 import { Component } from '../widgets/component';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
 export declare enum HeaderRowType {
     COLUMN_GROUP = 0,
@@ -11,11 +10,10 @@ export declare class HeaderRowComp extends Component {
     private columnController;
     private focusController;
     private readonly pinned;
-    private readonly dropTarget;
     private readonly type;
     private dept;
     private headerComps;
-    constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget);
+    constructor(dept: number, type: HeaderRowType, pinned: string);
     forEachHeaderElement(callback: (comp: Component) => void): void;
     private setRowIndex;
     getRowIndex(): number;

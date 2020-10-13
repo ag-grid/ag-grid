@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,12 @@ export function deepCloneDefinition(object, keysToSkip) {
             return;
         }
         var value = obj[key];
-        if (typeof value === 'object') {
+        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
+        // NOT include the following:
+        // 1) arrays
+        // 2) functions or classes (eg ColumnAPI instance)
+        var sourceIsSimpleObject = typeof value === 'object' && value.constructor === Object;
+        if (sourceIsSimpleObject) {
             res[key] = deepCloneDefinition(value);
         }
         else {
@@ -88,10 +93,9 @@ export function getAllKeysInObjects(objects) {
     });
     return Object.keys(allValues);
 }
-export function mergeDeep(dest, source, copyUndefined, objectsThatNeedCopy, iteration) {
+export function mergeDeep(dest, source, copyUndefined, makeCopyOfSimpleObjects) {
     if (copyUndefined === void 0) { copyUndefined = true; }
-    if (objectsThatNeedCopy === void 0) { objectsThatNeedCopy = []; }
-    if (iteration === void 0) { iteration = 0; }
+    if (makeCopyOfSimpleObjects === void 0) { makeCopyOfSimpleObjects = false; }
     if (!exists(source)) {
         return;
     }
@@ -100,15 +104,25 @@ export function mergeDeep(dest, source, copyUndefined, objectsThatNeedCopy, iter
         if (destValue === sourceValue) {
             return;
         }
-        var dontCopyOverSourceObject = iteration == 0 && destValue == null && sourceValue != null && objectsThatNeedCopy.indexOf(key) >= 0;
-        if (dontCopyOverSourceObject) {
-            // by putting an empty value into destValue first, it means we end up copying over values from
-            // the source object, rather than just copying in the source object in it's entirety.
-            destValue = {};
-            dest[key] = destValue;
+        // when creating params, we don't want to just copy objects over. otherwise merging ColDefs (eg DefaultColDef
+        // and Column Types) would result in params getting shared between objects.
+        // by putting an empty value into destValue first, it means we end up copying over values from
+        // the source object, rather than just copying in the source object in it's entirety.
+        if (makeCopyOfSimpleObjects) {
+            var objectIsDueToBeCopied = destValue == null && sourceValue != null;
+            if (objectIsDueToBeCopied) {
+                // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}, as opposed
+                // to a Class instance (such as ColumnAPI instance).
+                var sourceIsSimpleObject = typeof sourceValue === 'object' && sourceValue.constructor === Object;
+                var dontCopy = sourceIsSimpleObject;
+                if (dontCopy) {
+                    destValue = {};
+                    dest[key] = destValue;
+                }
+            }
         }
-        if (typeof destValue === 'object' && typeof sourceValue === 'object' && !Array.isArray(destValue)) {
-            mergeDeep(destValue, sourceValue, copyUndefined, objectsThatNeedCopy, iteration++);
+        if (isNonNullObject(sourceValue) && isNonNullObject(destValue) && !Array.isArray(destValue)) {
+            mergeDeep(destValue, sourceValue, copyUndefined, makeCopyOfSimpleObjects);
         }
         else if (copyUndefined || sourceValue !== undefined) {
             dest[key] = sourceValue;
@@ -158,7 +172,7 @@ export function set(target, expression, value) {
 export function deepFreeze(object) {
     Object.freeze(object);
     forEach(values(object), function (v) {
-        if (v != null && (typeof v === 'object' || typeof v === 'function')) {
+        if (isNonNullObject(v) || typeof v === 'function') {
             deepFreeze(v);
         }
     });
@@ -176,10 +190,38 @@ export function getValueUsingField(data, field, fieldContainsDots) {
     var fields = field.split('.');
     var currentObject = data;
     for (var i = 0; i < fields.length; i++) {
-        currentObject = currentObject[fields[i]];
         if (missing(currentObject)) {
             return null;
         }
+        currentObject = currentObject[fields[i]];
     }
     return currentObject;
+}
+// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI or ColumnApi references
+export function removeAllReferences(obj, objectName) {
+    Object.keys(obj).forEach(function (key) {
+        var value = obj[key];
+        // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
+        // we don't care about
+        if (typeof value === 'object') {
+            obj[key] = undefined;
+        }
+    });
+    var proto = Object.getPrototypeOf(obj);
+    var properties = {};
+    Object.keys(proto).forEach(function (key) {
+        var value = proto[key];
+        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
+        if (typeof value === 'function') {
+            var func = function () {
+                console.warn("ag-Grid: " + objectName + " function " + key + "() cannot be called as the grid has been \ndestroyed. Please don't call grid API functions on destroyed grids - as a matter of fact you \nshouldn't be keeping the API reference, your application has a memory leak! Remove the API reference \nwhen the grid is destroyed.");
+            };
+            properties[key] = { value: func, writable: true };
+        }
+    });
+    Object.defineProperties(obj, properties);
+}
+export function isNonNullObject(value) {
+    return typeof value === 'object' && value !== null;
 }

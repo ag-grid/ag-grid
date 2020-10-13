@@ -464,9 +464,8 @@
     }
 
     @include ag-keyboard-focus((
-        ag-column-select-column-group,
-        ag-column-select-column
-    ), ag-param(grid-size) / -2);
+        ag-column-select-virtual-list-item
+    ), 1px);
 
     .ag-column-select-column-group,
     .ag-column-select-column {
@@ -487,8 +486,8 @@
         @include ag-theme-rtl(( margin-left: ag-param(icon-size) + ag-param(grid-size) * 2 ));
     }
 
-    .ag-column-select-list {
-        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    .ag-column-select-virtual-list-viewport {
+        padding: (ag-param(widget-container-vertical-padding) / 2) ag-param(widget-container-horizontal-padding);
     }
 }
 

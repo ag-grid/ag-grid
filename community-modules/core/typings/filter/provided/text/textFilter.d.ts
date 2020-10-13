@@ -27,8 +27,9 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     private formatter;
     private textFilterParams;
     constructor();
+    static cleanInput(value: string): string;
     protected getDefaultDebounceMs(): number;
-    private getValue;
+    private getCleanValue;
     private addValueChangedListeners;
     protected setParams(params: ITextFilterParams): void;
     protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void;

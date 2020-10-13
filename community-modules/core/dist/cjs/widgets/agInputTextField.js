@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,7 @@ var AgInputTextField = /** @class */ (function (_super) {
         };
         this.addManagedListener(this.eInput, 'keypress', preventDisallowedCharacters);
         this.addManagedListener(this.eInput, 'paste', function (e) {
-            var text = (e.clipboardData || e.clipboardData).getData('text');
+            var text = e.clipboardData.getData('text');
             if (array_1.some(text, function (c) { return !pattern.test(c); })) {
                 e.preventDefault();
             }

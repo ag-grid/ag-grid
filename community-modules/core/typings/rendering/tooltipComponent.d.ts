@@ -1,12 +1,12 @@
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
 export interface ITooltipParams {
-    api: any;
-    columnApi: any;
-    colDef: any;
-    column: any;
-    context: any;
-    location?: string;
+    location: string;
+    api?: any;
+    columnApi?: any;
+    context?: any;
+    colDef?: any;
+    column?: any;
     value?: any;
     valueFormatted?: any;
     rowIndex?: number;

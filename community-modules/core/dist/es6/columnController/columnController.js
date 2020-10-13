@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,6 +69,7 @@ var ColumnController = /** @class */ (function (_super) {
         _this.rightWidth = 0;
         _this.bodyWidthDirty = true;
         _this.colDefVersion = 0;
+        _this.flexColsCalculatedAtLestOnce = false;
         return _this;
     }
     ColumnController.prototype.init = function () {
@@ -879,8 +880,12 @@ var ColumnController = /** @class */ (function (_super) {
             this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
         }
     };
-    ColumnController.prototype.setColumnAggFunc = function (column, aggFunc, source) {
+    ColumnController.prototype.setColumnAggFunc = function (key, aggFunc, source) {
         if (source === void 0) { source = "api"; }
+        if (!key) {
+            return;
+        }
+        var column = this.getPrimaryColumn(key);
         if (!column) {
             return;
         }
@@ -1342,7 +1347,7 @@ var ColumnController = /** @class */ (function (_super) {
         return res;
     };
     ColumnController.prototype.getColumnState = function () {
-        if (missing(this.primaryColumns)) {
+        if (missing(this.primaryColumns) || !this.isAlive()) {
             return [];
         }
         var primaryColumnState = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
@@ -1432,6 +1437,11 @@ var ColumnController = /** @class */ (function (_super) {
         if (missingOrEmpty(this.primaryColumns)) {
             return false;
         }
+        if (params && params.state && !params.state.forEach) {
+            console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
+            return;
+        }
+        this.columnAnimationService.start();
         var raiseEventsFunc = this.compareColumnStatesAndRaiseEvents(source);
         this.autoGroupsNeedBuilding = true;
         // at the end below, this list will have all columns we got no state for
@@ -1443,10 +1453,6 @@ var ColumnController = /** @class */ (function (_super) {
         var previousRowGroupCols = this.rowGroupColumns.slice();
         var previousPivotCols = this.pivotColumns.slice();
         if (params.state) {
-            if (!params.state.forEach) {
-                console.warn('ag-Grid: applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.');
-                return;
-            }
             params.state.forEach(function (state) {
                 var groupAutoColumnId = Constants.GROUP_AUTO_COLUMN_ID;
                 var colId = state.colId;
@@ -1545,6 +1551,7 @@ var ColumnController = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(event);
         raiseEventsFunc();
+        this.columnAnimationService.finish();
         return success;
     };
     ColumnController.prototype.compareColumnStatesAndRaiseEvents = function (source) {
@@ -1609,7 +1616,7 @@ var ColumnController = /** @class */ (function (_super) {
             _this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
             var visibilityChangePredicate = function (cs, c) { return cs.hide == c.isVisible(); };
             _this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
-            var sortChangePredicate = function (cs, c) { return cs.sort != c.getSort(); };
+            var sortChangePredicate = function (cs, c) { return cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex(); };
             if (getChangedColumns(sortChangePredicate).length > 0) {
                 _this.sortController.dispatchSortChangedEvents();
             }
@@ -2755,6 +2762,18 @@ var ColumnController = /** @class */ (function (_super) {
         if (params.fireResizedEvent) {
             this.fireColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
+        // if the user sets rowData directly into GridOptions, then the row data is set before
+        // grid is attached to the DOM. this means the columns are not flexed, and then the rows
+        // have the wrong height (as they depend on column widths). so once the columns have
+        // been flexed for the first time (only happens once grid is attached to DOM, as dependency
+        // on getting the grid width, which only happens after attached after ResizeObserver fires)
+        // we get get rows to re-calc their heights.
+        if (!this.flexColsCalculatedAtLestOnce) {
+            if (this.gridOptionsWrapper.isRowModelDefault()) {
+                this.rowModel.resetRowHeights();
+            }
+            this.flexColsCalculatedAtLestOnce = true;
+        }
         return flexingColumns;
     };
     // called from api
@@ -2787,7 +2806,10 @@ var ColumnController = /** @class */ (function (_super) {
         // immediately after grid is created, so will make no difference. however if application is calling
         // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
         // the columns to start shrinking / growing over time.
-        colsToSpread.forEach(function (column) { return column.resetActualWidth(); });
+        //
+        // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
+        // for this reason we need to manually fire resize events after the resize has been done for each column.
+        colsToSpread.forEach(function (column) { return column.resetActualWidth(source); });
         while (!finishedResizing) {
             finishedResizing = true;
             var availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
@@ -2805,30 +2827,31 @@ var ColumnController = /** @class */ (function (_super) {
                 // backwards through loop, as we are removing items as we go
                 for (var i = colsToSpread.length - 1; i >= 0; i--) {
                     var column = colsToSpread[i];
+                    var minWidth = column.getMinWidth();
+                    var maxWidth = column.getMaxWidth();
                     var newWidth = Math.round(column.getActualWidth() * scale);
-                    if (newWidth < column.getMinWidth()) {
-                        column.setMinimum(source);
+                    if (newWidth < minWidth) {
+                        newWidth = column.getMinWidth();
                         moveToNotSpread(column);
                         finishedResizing = false;
                     }
                     else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getMaxWidth(), source);
+                        newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
                     }
-                    else {
-                        var onLastCol = i === 0;
-                        if (onLastCol) {
-                            column.setActualWidth(pixelsForLastCol, source);
-                        }
-                        else {
-                            column.setActualWidth(newWidth, source);
-                        }
+                    else if (i === 0) { // if this is the last column
+                        newWidth = pixelsForLastCol;
                     }
+                    column.setActualWidth(newWidth, source, true);
                     pixelsForLastCol -= newWidth;
                 }
             }
         }
+        // see notes above
+        colsToFireEventFor.forEach(function (col) {
+            col.fireColumnWidthChangedEvent(source);
+        });
         this.setLeftValues(source);
         this.updateBodyWidths();
         if (silent) {
@@ -2964,6 +2987,9 @@ var ColumnController = /** @class */ (function (_super) {
     __decorate([
         Optional('animationFrameService')
     ], ColumnController.prototype, "animationFrameService", void 0);
+    __decorate([
+        Autowired('rowModel')
+    ], ColumnController.prototype, "rowModel", void 0);
     __decorate([
         Autowired('columnApi')
     ], ColumnController.prototype, "columnApi", void 0);

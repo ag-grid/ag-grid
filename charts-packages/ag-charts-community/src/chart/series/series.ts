@@ -15,34 +15,38 @@ export interface SeriesNodeDatum {
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
     // `seriesDatum` - raw series datum, an element from the `series.data` array
-    series: Series;
-    seriesDatum: any;
-    point?: { // in local (series) coordinates
-        x: number;
-        y: number;
+    readonly series: Series;
+    readonly seriesDatum: any;
+    readonly point?: { // in local (series) coordinates
+        readonly x: number;
+        readonly y: number;
     }
 }
 
 export interface TooltipRendererParams {
-    datum: any;
-    title?: string;
-    color?: string;
+    readonly datum: any;
+    readonly title?: string;
+    readonly color?: string;
 }
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
-    xKey: string;
-    xName?: string;
+    readonly xKey: string;
+    readonly xValue: any;
+    readonly xName?: string;
 
-    yKey: string;
-    yName?: string;
+    readonly yKey: string;
+    readonly yValue: any;
+    readonly yName?: string;
 }
 
 export interface PolarTooltipRendererParams extends TooltipRendererParams {
-    angleKey: string;
-    angleName?: string;
+    readonly angleKey: string;
+    readonly angleValue: any;
+    readonly angleName?: string;
 
-    radiusKey?: string;
-    radiusName?: string;
+    readonly radiusKey?: string;
+    readonly radiusValue?: any;
+    readonly radiusName?: string;
 }
 
 export interface HighlightStyle {
@@ -155,8 +159,9 @@ export abstract class Series extends Observable {
         let [min, max] = extent;
 
         if (min === max) {
-            min -= 1;
-            max += 1;
+            const padding = Math.abs(min * 0.01);
+            min -= padding;
+            max += padding;
             // if (type) {
             //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
             //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);

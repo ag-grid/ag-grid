@@ -4,7 +4,7 @@ function contains(target, lookingFor) {
 
 var athleteFilterParams = {
     filterOptions: ['contains', 'notContains'],
-    textFormatter: function (r) {
+    textFormatter: function(r) {
         if (r == null) return null;
 
         return r.toLowerCase()
@@ -21,13 +21,13 @@ var athleteFilterParams = {
             .replace(/[ýÿ]/g, 'y')
             .replace(/\W/g, '');
     },
-    debounceMs: 0,
+    debounceMs: 200,
     suppressAndOrCondition: true
 };
 
 var countryFilterParams = {
     filterOptions: ['contains'],
-    textCustomComparator: function (_, value, filterText) {
+    textCustomComparator: function(_, value, filterText) {
         var filterTextLowerCase = filterText.toLowerCase();
         var valueLowerCase = value.toString().toLowerCase();
         var aliases = {
@@ -79,7 +79,6 @@ var gridOptions = {
         flex: 1,
         sortable: true,
         filter: true,
-        floatingFilter: true,
     },
     columnDefs: columnDefs,
     rowData: null,

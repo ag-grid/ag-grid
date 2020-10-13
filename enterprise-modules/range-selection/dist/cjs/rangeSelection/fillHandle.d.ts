@@ -15,6 +15,7 @@ export declare class FillHandle extends AbstractSelectionHandle {
     private isReduce;
     protected type: SelectionHandleType;
     constructor();
+    protected updateValuesOnMove(e: MouseEvent): void;
     protected onDrag(e: MouseEvent): void;
     protected onDragEnd(e: MouseEvent): void;
     private raiseFillStartEvent;

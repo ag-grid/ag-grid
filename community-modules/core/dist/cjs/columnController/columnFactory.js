@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v24.0.0
+ * @version v24.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var colDef_1 = require("../entities/colDef");
 var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
@@ -39,7 +38,6 @@ var constants_1 = require("../constants/constants");
 var object_1 = require("../utils/object");
 var generic_1 = require("../utils/generic");
 var array_1 = require("../utils/array");
-var utils_1 = require("../utils");
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 var ColumnFactory = /** @class */ (function (_super) {
     __extends(ColumnFactory, _super);
@@ -296,7 +294,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         var colDefMerged = {};
         // merge properties from default column definitions
         var defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
-        utils_1._.mergeDeep(colDefMerged, defaultColDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
+        object_1.mergeDeep(colDefMerged, defaultColDef, true, true);
         // merge properties from column type properties
         if (colDef.type || (defaultColDef && defaultColDef.type)) {
             // if type of both colDef and defaultColDef, then colDef gets preference
@@ -304,7 +302,7 @@ var ColumnFactory = /** @class */ (function (_super) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
         // merge properties from column definitions
-        utils_1._.mergeDeep(colDefMerged, colDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
+        object_1.mergeDeep(colDefMerged, colDef, true, true);
         return colDefMerged;
     };
     ColumnFactory.prototype.assignColumnTypes = function (type, colDefMerged) {
@@ -339,7 +337,7 @@ var ColumnFactory = /** @class */ (function (_super) {
         typeKeys.forEach(function (t) {
             var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                utils_1._.mergeDeep(colDefMerged, typeColDef, true, colDef_1.COL_DEF_PARAM_OBJECTS);
+                object_1.mergeDeep(colDefMerged, typeColDef, true, true);
             }
             else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
