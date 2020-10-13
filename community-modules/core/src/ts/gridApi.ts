@@ -1272,7 +1272,7 @@ export class GridApi {
             console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
             return;
         }
-        return this.serverSideRowModel.applyTransactionAsync();
+        return this.serverSideRowModel.flushAsyncTransactions();
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
