@@ -66,8 +66,9 @@ function onBtStop() {
 
 function processUpdateFromFakeServer(transactions) {
   transactions.forEach(function(tx) {
-    const res = gridOptions.api.applyServerSideTransaction(tx);
-    console.log('Route [' + tx.route.join(',') + '], found = ' + res.routeFound);
+    const res = gridOptions.api.applyServerSideTransactionAsync(tx, function(res) {
+      console.log('Route [' + tx.route.join(',') + '], found = ' + res.routeFound);
+    });
   });
 }
 

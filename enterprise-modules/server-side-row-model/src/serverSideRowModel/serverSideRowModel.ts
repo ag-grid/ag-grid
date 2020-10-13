@@ -28,7 +28,8 @@ import {
     SortController,
     IServerSideChildStore,
     ServerSideTransaction,
-    ServerSideTransactionResult
+    ServerSideTransactionResult,
+    ValueCache
 } from "@ag-grid-community/core";
 import {SortService} from "./sortService";
 import {ClientSideStore} from "./stores/clientSideStore";
@@ -54,9 +55,15 @@ export interface ChildStoreParams {
     datasource?: IServerSideDatasource;
 }
 
+interface AsyncTransactionWrapper {
+    transaction: ServerSideTransaction;
+    callback?: (result: ServerSideTransactionResult) => void;
+}
+
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
+    @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -71,7 +78,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private storeParams: ChildStoreParams;
 
-    private logger: Logger;    
+    private asyncTransactionsTimeout: number;
+    private asyncTransactions: AsyncTransactionWrapper[];
+
+    private logger: Logger;
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean { return false; }
@@ -100,6 +110,44 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.logger = loggerFactory.create('ServerSideRowModel');
     }
 
+    public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
+        if (this.asyncTransactionsTimeout==null) {
+            this.asyncTransactions = [];
+            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
+            this.asyncTransactionsTimeout = window.setTimeout(() => {
+                this.executeAsyncTransactions();
+            }, waitMillis);
+        }
+        this.asyncTransactions.push({ transaction: transaction, callback: callback });
+    }
+
+    private executeAsyncTransactions(): void {
+
+        const resultFuncs: (()=>void)[] = [];
+
+        this.asyncTransactions.forEach(txWrapper => {
+            this.executeOnStore(txWrapper.transaction.route, cache => {
+                const result = cache.applyTransaction(txWrapper.transaction);
+                if (txWrapper.callback) {
+                    resultFuncs.push(()=>txWrapper.callback(result));
+                }
+            });
+        });
+
+        // do callbacks in next VM turn so it's async
+        if (resultFuncs.length > 0) {
+            window.setTimeout(() => {
+                resultFuncs.forEach(func => func());
+            }, 0);
+        }
+
+        this.asyncTransactions = null;
+        this.asyncTransactionsTimeout = undefined;
+
+        this.valueCache.onDataChanged();
+        this.onStoreUpdated();
+    }
+
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         let res: ServerSideTransactionResult = undefined;
 
@@ -107,13 +155,18 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             res = cache.applyTransaction(transaction);
         });
 
-        return res ? res : {routeFound: false};
+        if (res) {
+            this.valueCache.onDataChanged();
+            this.onStoreUpdated();
+        } else {
+            return {routeFound: false};
+        }
     }
 
     @PostConstruct
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onStoreUpdated.bind(this));
 
         const resetListener = this.resetRootStore.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
@@ -274,7 +327,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
-    private onCacheUpdated(): void {
+    private onStoreUpdated(): void {
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
     }
