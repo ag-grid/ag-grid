@@ -3,7 +3,6 @@ import {
     ColDef,
     Column,
     Constants,
-    IRowModel,
     ISetFilterParams,
     Promise,
     SetFilterValues,
@@ -28,9 +27,13 @@ export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
     private readonly localEventService = new EventService();
-    private readonly filterParams: ISetFilterParams;
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor;
+    private readonly column: Column;
+    private readonly colDef: ColDef;
+    private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
+    private readonly suppressSorting: boolean;
+    private readonly comparator: (a: any, b: any) => number;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string = null;
@@ -57,16 +60,30 @@ export class SetValueModel implements IEventEmitter {
     private selectedValues = new Set<string>();
 
     constructor(
-        rowModel: IRowModel,
-        valueGetter: (node: RowNode) => any,
-        private readonly colDef: ColDef,
-        private readonly column: Column,
-        private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
-        private readonly suppressSorting: boolean,
+        private readonly filterParams: ISetFilterParams,
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
     ) {
+        const {
+            column,
+            colDef,
+            textFormatter,
+            doesRowPassOtherFilter,
+            suppressSorting,
+            comparator,
+            rowModel,
+            valueGetter,
+            values
+        } = filterParams;
+
+        this.column = column;
+        this.colDef = colDef;
+        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+        this.doesRowPassOtherFilters = doesRowPassOtherFilter;
+        this.suppressSorting = suppressSorting;
+        this.comparator = comparator || colDef.comparator as (a: any, b: any) => number || _.defaultComparator;
+
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
@@ -74,11 +91,6 @@ export class SetValueModel implements IEventEmitter {
                 valueGetter
             );
         }
-
-        this.filterParams = this.colDef.filterParams || {};
-        this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
-
-        const { values } = this.filterParams;
 
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -217,16 +229,12 @@ export class SetValueModel implements IEventEmitter {
     private sortValues(values: string[]): string[] {
         if (this.suppressSorting) { return values; }
 
-        const comparator = this.filterParams.comparator ||
-            this.colDef.comparator as (a: any, b: any) => number ||
-            _.defaultComparator;
-
         if (!this.filterParams.excelMode || values.indexOf(null) < 0) {
-            return values.sort(comparator);
+            return values.sort(this.comparator);
         }
 
         // ensure the blank value always appears last
-        return _.filter(values, v => v != null).sort(comparator).concat(null);
+        return _.filter(values, v => v != null).sort(this.comparator).concat(null);
     }
 
     private getValuesFromRows(removeUnavailableValues = false): string[] {
@@ -284,7 +292,8 @@ export class SetValueModel implements IEventEmitter {
                 const textFormatterValue = this.formatter(value);
 
                 // TODO: should this be applying the text formatter *after* the value formatter?
-                const valueFormatterValue = this.valueFormatterService.formatValue(this.column, null, null, textFormatterValue);
+                const valueFormatterValue = this.valueFormatterService.formatValue(
+                    this.column, null, null, textFormatterValue, this.filterParams.valueFormatter, false);
 
                 if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
                     this.displayedValues.push(value);

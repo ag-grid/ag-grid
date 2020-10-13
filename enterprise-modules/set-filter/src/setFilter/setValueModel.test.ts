@@ -1,13 +1,12 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, ColDef, RowNode, IClientSideRowModel, ValueFormatterService } from '@ag-grid-community/core';
+import { Constants, ColDef, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 function createSetValueModel(
     gridValues: any[] = ['A', 'B', 'C'],
-    filterParams?: any,
+    filterParams: any = {},
     doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
     suppressSorting = false) {
-    const colDef = { filterParams } as ColDef;
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
         forEachLeafNode: (callback: (node: RowNode) => void) => {
@@ -19,13 +18,17 @@ function createSetValueModel(
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
     valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
 
-    return new SetValueModel(
+    const params: ISetFilterParams = {
         rowModel,
-        node => node.data.value,
-        colDef,
-        null,
-        doesRowPassOtherFilters,
+        valueGetter: (node: RowNode) => node.data.value,
+        colDef: {},
+        doesRowPassOtherFilter: doesRowPassOtherFilters,
         suppressSorting,
+        ...filterParams,
+    };
+
+    return new SetValueModel(
+        params,
         _ => { },
         valueFormatterService,
         key => key === 'blanks' ? '(Blanks)' : null);
