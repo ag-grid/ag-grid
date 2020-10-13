@@ -1262,8 +1262,17 @@ export class GridApi {
     public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (!this.serverSideRowModel) {
             console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            return;
         }
         return this.serverSideRowModel.applyTransactionAsync(transaction, callback);
+    }
+
+    public flushServerSideAsyncTransactions(): void {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            return;
+        }
+        return this.serverSideRowModel.applyTransactionAsync();
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {

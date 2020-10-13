@@ -7,4 +7,5 @@ export interface IServerSideRowModel extends IRowModel {
     onRowHeightChanged(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
+    flushAsyncTransactions(): void;
 }
