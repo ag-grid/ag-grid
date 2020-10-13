@@ -21,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 import {StoreUtils} from "../stores/storeUtils";
 import {BlockUtils} from "./blockUtils";
-import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreParams} from "../serverSideRowModel";
 import {CacheStore} from "../stores/cacheStore";
 
 
@@ -38,7 +38,7 @@ export class CacheBlock extends RowNodeBlock {
 
     private logger: Logger;
 
-    private readonly storeParams: ChildStoreParams;
+    private readonly storeParams: StoreParams;
     private readonly startRow: number;
 
     private readonly level: number;
@@ -66,7 +66,7 @@ export class CacheBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: ChildStoreParams, parentStore: CacheStore) {
+    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: StoreParams, parentStore: CacheStore) {
         super(blockNumber);
 
         this.storeParams = storeParams;

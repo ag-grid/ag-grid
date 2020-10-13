@@ -35,13 +35,13 @@ import {ClientSideStore} from "./stores/clientSideStore";
 import {CacheStore} from "./stores/cacheStore";
 import {SortListener} from "./sortListener";
 
-export function cacheFactory(params: ChildStoreParams, parentNode: RowNode): IServerSideStore {
+export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
     const oneBlockCache = params.blockSize == null;
     const CacheClass = oneBlockCache ? ClientSideStore : CacheStore;
     return new CacheClass(params, parentNode);
 }
 
-export interface ChildStoreParams {
+export interface StoreParams {
     blockSize?: number;
     sortModel: any;
     filterModel: any;
@@ -76,7 +76,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
-    private storeParams: ChildStoreParams;
+    private storeParams: StoreParams;
 
     private asyncTransactionsTimeout: number;
     private asyncTransactions: AsyncTransactionWrapper[];
@@ -272,7 +272,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }) as ColumnVO);
     }
 
-    private createStoreParams(): ChildStoreParams {
+    private createStoreParams(): StoreParams {
 
         const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
         const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
@@ -295,7 +295,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         const blockSize = this.gridOptionsWrapper.getCacheBlockSize();
 
-        const params: ChildStoreParams = {
+        const params: StoreParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
@@ -317,7 +317,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return params;
     }
 
-    public getParams(): ChildStoreParams {
+    public getParams(): StoreParams {
         return this.storeParams;
     }
 

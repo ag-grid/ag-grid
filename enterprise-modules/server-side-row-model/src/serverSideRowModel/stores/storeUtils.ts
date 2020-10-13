@@ -12,7 +12,7 @@ import {
     PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {ChildStoreParams} from "../serverSideRowModel";
+import {StoreParams} from "../serverSideRowModel";
 
 @Bean('ssrmCacheUtils')
 export class StoreUtils extends BeanStub {
@@ -40,7 +40,7 @@ export class StoreUtils extends BeanStub {
     }
 
     public loadFromDatasource(p: {
-        storeParams: ChildStoreParams,
+        storeParams: StoreParams,
         parentNode: RowNode,
         successCallback: ()=>void,
         failCallback: ()=>void,
@@ -101,7 +101,7 @@ export class StoreUtils extends BeanStub {
                                         changedColumnsInSort: string[],
                                         rowGroupColIds: string[],
                                         parentRowNode: RowNode,
-                                        storeParams: ChildStoreParams}): boolean {
+                                        storeParams: StoreParams}): boolean {
         const {changedColumnsInSort, rowGroupColIds, parentRowNode, storeParams} = params;
 
         const level = parentRowNode.level + 1;
