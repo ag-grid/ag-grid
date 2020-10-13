@@ -45,7 +45,6 @@ var gridOptions = {
   },
   rowBuffer: 0,
   rowSelection: 'multiple',
-  enableCellChangeFlash: true,
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
@@ -65,9 +64,11 @@ function onBtStop() {
   fakeServer.stopUpdates();
 }
 
-function processUpdateFromFakeServer(tx) {
-  const res = gridOptions.api.applyServerSideTransaction(tx);
-  console.log('Route [' + tx.route.join(',') + '], found = ' + res.routeFound);
+function processUpdateFromFakeServer(transactions) {
+  transactions.forEach(function(tx) {
+    const res = gridOptions.api.applyServerSideTransaction(tx);
+    console.log('Route [' + tx.route.join(',') + '], found = ' + res.routeFound);
+  });
 }
 
 // setup the grid after the page has finished loading
