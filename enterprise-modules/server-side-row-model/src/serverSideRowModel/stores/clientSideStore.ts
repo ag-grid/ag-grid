@@ -10,12 +10,12 @@ import {
     PostConstruct,
     PreDestroy,
     RowBounds,
-    RowDataTransaction,
     RowNode,
     RowNodeBlock,
     RowNodeBlockLoader,
-    RowNodeTransaction,
     RowRenderer,
+    ServerSideTransaction,
+    ServerSideTransactionResult,
     StoreUpdatedEvent,
 } from "@ag-grid-community/core";
 import {ChildStoreParams} from "../serverSideRowModel";
@@ -275,8 +275,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         }
     }
 
-    public applyTransaction(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
-        const res: RowNodeTransaction = {
+    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        const res: ServerSideTransactionResult = {
+            routeFound: true,
             remove: [],
             update: [],
             add: []
@@ -284,9 +285,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
 
         const nodesToUnselect: RowNode[] = [];
 
-        this.executeAdd(rowDataTran, res);
-        this.executeRemove(rowDataTran, res, nodesToUnselect);
-        this.executeUpdate(rowDataTran, res, nodesToUnselect);
+        this.executeAdd(transaction, res);
+        this.executeRemove(transaction, res, nodesToUnselect);
+        this.executeUpdate(transaction, res, nodesToUnselect);
 
         // this.updateSelection(nodesToUnselect);
 
@@ -295,7 +296,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         return res;
     }
 
-    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeAdd(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult): void {
         const {add, addIndex} = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
@@ -314,7 +315,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         }
     }
 
-    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+    private executeRemove(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
         const {remove} = rowDataTran;
 
         if (remove==null) { return; }
@@ -347,7 +348,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideChildSto
         this.rowNodes = this.rowNodes.filter(rowNode => !rowIdsRemoved[rowNode.id]);
     }
 
-    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+    private executeUpdate(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
         if (update==null) { return; }
 
