@@ -51,6 +51,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private usingMasterDetail: boolean;
 
     private allRowNodes: RowNode[];
+    private nodesAfterFilter: RowNode[];
     private nodesAfterSort: RowNode[];
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
@@ -115,6 +116,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         }
         this.allRowNodes = [];
         this.nodesAfterSort = [];
+        this.nodesAfterFilter = [];
         this.allNodesMap = {};
     }
 
@@ -126,6 +128,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         );
         this.allRowNodes.push(loadingRowNode);
         this.nodesAfterSort.push(loadingRowNode);
+        this.nodesAfterFilter.push(loadingRowNode);
     }
 
     public getBlockStateJson(): { id: string, state: any } {
@@ -188,6 +191,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         const rowData = params.data ? params.data : [];
         rowData.forEach(this.createDataNode.bind(this));
 
+        this.filterRowNodes();
         this.sortRowNodes();
 
         this.fireStoreUpdatedEvent();
@@ -197,14 +201,19 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         const sortOptions = this.sortController.getSortOptions();
         const noSort = !sortOptions || sortOptions.length==0;
         if (noSort) {
-            this.nodesAfterSort = this.allRowNodes;
+            this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
-        this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.allRowNodes, sortOptions);
+        this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+    }
+
+    public refreshStoreAfterFilter(): void {
+        this.filterRowNodes();
+        this.sortRowNodes();
     }
 
     private filterRowNodes(): void {
-
+        this.nodesAfterFilter = this.allRowNodes;
     }
 
     public clearDisplayIndexes(): void {

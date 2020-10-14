@@ -101,24 +101,4 @@ export class StoreUtils extends BeanStub {
         }
     }
 
-    public shouldPurgeStoreAfterSort(params: {
-                                        changedColumnsInSort: string[],
-                                        rowGroupColIds: string[],
-                                        parentRowNode: RowNode,
-                                        storeParams: StoreParams}): boolean {
-        const {changedColumnsInSort, rowGroupColIds, parentRowNode, storeParams} = params;
-
-        const level = parentRowNode.level + 1;
-        const grouping = level < storeParams.rowGroupCols.length;
-
-        if (grouping) {
-            const groupColVo = storeParams.rowGroupCols[level];
-            const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
-            const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
-
-            return rowGroupBlock && sortingByGroup;
-        } else {
-            return true;
-        }
-    }
 }

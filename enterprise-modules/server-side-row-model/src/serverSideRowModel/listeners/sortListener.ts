@@ -10,7 +10,7 @@ import {
     PostConstruct,
     SortController
 } from "@ag-grid-community/core";
-import {ServerSideRowModel} from "./serverSideRowModel";
+import {ServerSideRowModel} from "../serverSideRowModel";
 
 @Bean('ssrmSortService')
 export class SortListener extends BeanStub {
