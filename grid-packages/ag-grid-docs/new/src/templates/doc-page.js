@@ -4,12 +4,12 @@ import { graphql } from "gatsby";
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
 import FrameworkSpecificSection from '../components/FrameworkSpecificSection';
-import './doc-page.scss';
 import SideMenu from '../components/SideMenu';
+import './doc-page.scss';
 
-export default function DocPageTemplate({ path, data, pageContext: { framework } }) {
+const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
-  const pageName = path.replace(`/${framework}/`, '');
+  const pageName = location.pathname.replace(`/${framework}/`, '');
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
@@ -29,7 +29,7 @@ export default function DocPageTemplate({ path, data, pageContext: { framework }
       {page.headings && <SideMenu headings={page.headings} />}
     </div>
   );
-}
+};
 
 export const pageQuery = graphql`
   query DocPageByPath($srcPath: String!) {
@@ -46,3 +46,5 @@ export const pageQuery = graphql`
     }
   }
 `;
+
+export default DocPageTemplate;

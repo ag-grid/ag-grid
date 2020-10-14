@@ -1,11 +1,9 @@
-const path = require("path");
-const express = require(`express`);
-const { createFilePath } = require(`gatsby-source-filesystem`);
+const path = require('path');
+const express = require('express');
+const { createFilePath } = require('gatsby-source-filesystem');
 
-exports.onCreateNode = ({ node, getNode, actions }) => {
-    const { createNodeField } = actions;
-
-    if (node.internal.type === `MarkdownRemark`) {
+exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
+    if (node.internal.type === 'MarkdownRemark') {
         const filePath = createFilePath({ node, getNode });
 
         createNodeField({
@@ -16,8 +14,15 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     }
 };
 
-exports.createPages = async ({ actions, graphql, reporter }) => {
-    const { createPage } = actions;
+exports.onCreatePage = ({ page, actions: { createPage } }) => {
+    // this allows us to use different layouts for different pages
+    if (page.path.match(/example-runner/)) {
+        page.context.layout = 'bare';
+        createPage(page);
+    }
+};
+
+exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
     const docPageTemplate = path.resolve(`src/templates/doc-page.js`);
 
     const result = await graphql(`
@@ -53,4 +58,12 @@ exports.createPages = async ({ actions, graphql, reporter }) => {
 // Enable development support for serving HTML from `./static` folder
 exports.onCreateDevServer = ({ app }) => {
     app.use(express.static(`public`));
+};
+
+exports.onCreateWebpackConfig = ({ actions }) => {
+    actions.setWebpackConfig({
+        node: {
+            fs: 'empty'
+        }
+    });
 };

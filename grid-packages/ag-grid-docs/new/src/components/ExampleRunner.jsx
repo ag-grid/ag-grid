@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from 'react';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from './GlobalContext';
+import ExampleRunnerResult from './ExampleRunnerResult';
 import './example-runner.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
+    const [showCode, setShowCode] = useState(false);
     //const parsedOptions = JSON.parse(options);
 
     return <GlobalContextConsumer>
@@ -11,6 +13,8 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
             return <div className="example-runner">
                 <div className="example-runner__header">
                     <div className="example-runner__title">Example: {title}</div>
+                    <button onClick={() => setShowCode(false)}>Demo</button>&nbsp;
+                    <button onClick={() => setShowCode(true)}>Code</button>
                     {framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
@@ -22,12 +26,18 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                <CodeViewer
+                {!showCode && <ExampleRunnerResult
                     pageName={pageName}
                     framework={framework}
                     name={name}
                     importType={exampleImportType}
-                    useFunctionalReact={useFunctionalReact} />
+                    useFunctionalReact={useFunctionalReact} />}
+                {showCode && <CodeViewer
+                    pageName={pageName}
+                    framework={framework}
+                    name={name}
+                    importType={exampleImportType}
+                    useFunctionalReact={useFunctionalReact} />}
             </div >;
         }}
     </GlobalContextConsumer>;
