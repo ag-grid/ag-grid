@@ -365,6 +365,7 @@ const mappings: any = {
             column: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: false, // vertical bars
                         ...seriesDefaults,
@@ -378,6 +379,7 @@ const mappings: any = {
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: true, // horizontal bars
                         ...seriesDefaults,
@@ -465,6 +467,7 @@ const mappings: any = {
             [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         xKey: '',
@@ -503,6 +506,7 @@ const mappings: any = {
             [HistogramSeries.type]: {
                 meta: {
                     constructor: HistogramSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -610,6 +614,7 @@ const mappings: any = {
             [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
