@@ -16,6 +16,7 @@ import {
     RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
+    ServerSideTransactionResultStatus,
     StoreUpdatedEvent,
     RowNodeSorter,
     SortController,
@@ -317,6 +318,16 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
 
+        // we only apply transactions to loaded state
+        switch (this.getState()) {
+            case RowNodeBlock.STATE_FAILED:
+                return {status: ServerSideTransactionResultStatus.StoreLoadingFailed};
+            case RowNodeBlock.STATE_LOADING:
+                return {status: ServerSideTransactionResultStatus.StoreLoading};
+            case RowNodeBlock.STATE_WAITING_TO_LOAD:
+                return {status: ServerSideTransactionResultStatus.StoreWaitingToLoad};
+        }
+
         const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
         if (applyCallback) {
             const params = {
@@ -326,13 +337,12 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             };
             const apply = applyCallback(params);
             if (!apply) {
-                return {routeFound: true, applied: false};
+                return {status: ServerSideTransactionResultStatus.Cancelled};
             }
         }
 
         const res: ServerSideTransactionResult = {
-            routeFound: true,
-            applied: true,
+            status: ServerSideTransactionResultStatus.Applied,
             remove: [],
             update: [],
             add: []
