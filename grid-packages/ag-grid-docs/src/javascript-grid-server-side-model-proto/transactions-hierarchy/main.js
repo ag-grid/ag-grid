@@ -13,8 +13,18 @@ var columnDefs = [
   // all the other columns (visible and not grouped)
   {headerName: 'Current', field: 'current', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
   {headerName: 'Previous', field: 'previous', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-  {headerName: 'Deal Type', field: 'dealType'},
-  {headerName: 'Bid', field: 'bidFlag', width: 100 },
+  {headerName: 'Deal Type', field: 'dealType',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: ['Financial','Physical']
+    }
+  },
+  {headerName: 'Bid', field: 'bidFlag', width: 100,
+    filter: 'agSetColumnFilter',
+    filterParams: {
+      values: ['Buy','Sell']
+    }
+  },
   {headerName: 'PL 1', field: 'pl1', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
   {headerName: 'PL 2', field: 'pl2', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
   {headerName: 'Gain-DX', field: 'gainDx', width: 200, type: 'numericColumn', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},

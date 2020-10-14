@@ -29,9 +29,9 @@ import {
     SortController
 } from "@ag-grid-community/core";
 import {ClientSideStore} from "./stores/clientSideStore";
-import {SortListener} from "./sortListener";
 import {InfiniteStore} from "./stores/infiniteStore";
 import {NodeManager} from "./nodeManager";
+import {SortListener} from "./listeners/sortListener";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
     const oneBlockCache = params.blockSize == null;
@@ -108,7 +108,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const resetListener = this.resetRootStore.bind(this);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
     }
@@ -304,7 +303,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public updateSortModel(newSortModel: any): void {
-        this.storeParams.sortModel = newSortModel;
+        if (this.storeParams) {
+            this.storeParams.sortModel = newSortModel;
+        }
+    }
+
+    public refreshStoreAfterFilter(newFilterModel: any): void {
+        if (this.storeParams) {
+            this.storeParams.filterModel = newFilterModel;
+        }
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.refreshStoreAfterFilter();
+
+        this.onStoreUpdated();
     }
 
     public getRootStore(): IServerSideStore {

@@ -634,13 +634,24 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
     }
 
+    public refreshStoreAfterFilter(): void {
+        this.purgeStore(true);
+    }
+
     public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
-        const shouldPurgeCache = this.cacheUtils.shouldPurgeStoreAfterSort({
-            parentRowNode: this.parentRowNode,
-            storeParams: this.storeParams,
-            changedColumnsInSort: changedColumnsInSort,
-            rowGroupColIds: rowGroupColIds
-        });
+        const level = this.parentRowNode.level + 1;
+        const grouping = level < this.storeParams.rowGroupCols.length;
+
+        let shouldPurgeCache: boolean;
+        if (grouping) {
+            const groupColVo = this.storeParams.rowGroupCols[level];
+            const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
+            const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
+
+            shouldPurgeCache = rowGroupBlock && sortingByGroup;
+        } else {
+            shouldPurgeCache = true;
+        }
 
         if (shouldPurgeCache) {
             this.purgeStore(true);
@@ -658,4 +669,5 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             });
         }
     }
+
 }
