@@ -49,13 +49,13 @@ var gridOptions = {
     var dataLoadedVersion = params.info.serverVersion;
     var transactionCreatedSinceInitialLoad = transactionVersion > dataLoadedVersion;
     if (!transactionCreatedSinceInitialLoad) {
-      console.log('transactionCreatedSinceInitialLoad');
+      console.log('cancelling transaction');
     }
     return transactionCreatedSinceInitialLoad;
   },
   purgeClosedRowNodes: true,
-  rowBuffer: 0,
   rowSelection: 'multiple',
+  serverSideAsyncTransactionLoadingStrategy: 'ApplyAfterLoaded',
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
@@ -75,10 +75,14 @@ function onBtStop() {
   fakeServer.stopUpdates();
 }
 
+function onBtApplyOneTransaction() {
+  fakeServer.doBatch();
+}
+
 function processUpdateFromFakeServer(transactions) {
   transactions.forEach(function(tx) {
     gridOptions.api.applyServerSideTransactionAsync(tx, function(res) {
-      // console.log('Route [' + tx.route.join(',') + '], found = ' + res.routeFound);
+      // console.log('Route [' + tx.route.join(',') + '], status = ' + res.status);
     });
   });
 }

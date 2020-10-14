@@ -259,6 +259,7 @@ export interface GridOptions {
 
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
+    serverSideAsyncTransactionLoadingStrategy?: string;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];

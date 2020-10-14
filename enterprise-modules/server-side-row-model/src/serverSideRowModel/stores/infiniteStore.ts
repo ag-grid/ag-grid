@@ -10,6 +10,7 @@ import {
     NumberSequence,
     PostConstruct,
     PreDestroy,
+    ServerSideTransactionResultStatus,
     Qualifier,
     RowBounds,
     RowNode,
@@ -606,9 +607,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
         }, 'cacheStore.applyTransaction');
 
-        const res = {routeFound: true, applied: false};
-
-        return res;
+        return {status: ServerSideTransactionResultStatus.StoreWrongType};
     }
 
     public getChildStore(keys: string[]): IServerSideStore | null {

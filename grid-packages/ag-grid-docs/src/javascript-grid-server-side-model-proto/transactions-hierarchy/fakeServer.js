@@ -140,38 +140,53 @@ FakeServer.prototype.getNextValue = function() {
 };
 
 FakeServer.prototype.getData = function(request, parentData, callback) {
+
+    var that = this;
+    var serverVersion;
     var result;
-    var groupKeys = request.groupKeys;
 
-    var productId = parentData ? parentData.productId : null;
-    var portfolioId = parentData ? parentData.portfolioId : null;
-    var bookId = parentData ? parentData.bookId : null;
+    function getDataFromServer() {
+        var groupKeys = request.groupKeys;
 
-    switch (groupKeys.length) {
-        case 0:
-            result = this.products.map(this.mapProduct.bind(this));
-            break;
-        case 1:
-            var portfolios = this.productsMap[productId].children;
-            result = portfolios.map(this.mapPortfolio.bind(this));
-            break;
-        case 2:
-            var books = this.productsMap[productId].childrenMap[portfolioId].children;
-            result = books.map(this.mapBook.bind(this));
-            break;
-        case 3:
-            var trades = this.productsMap[productId].childrenMap[portfolioId].childrenMap[bookId].children;
-            result = trades.map(this.mapTrade.bind(this));
-            break;
+        var productId = parentData ? parentData.productId : null;
+        var portfolioId = parentData ? parentData.portfolioId : null;
+        var bookId = parentData ? parentData.bookId : null;
+
+        switch (groupKeys.length) {
+            case 0:
+                result = that.products.map(that.mapProduct.bind(this));
+                break;
+            case 1:
+                var portfolios = that.productsMap[productId].children;
+                result = portfolios.map(that.mapPortfolio.bind(this));
+                break;
+            case 2:
+                var books = that.productsMap[productId].childrenMap[portfolioId].children;
+                result = books.map(that.mapBook.bind(this));
+                break;
+            case 3:
+                var trades = that.productsMap[productId].childrenMap[portfolioId].childrenMap[bookId].children;
+                result = trades.map(that.mapTrade.bind(this));
+                break;
+        }
+
+        serverVersion = that.versionCounter;
     }
 
-    const serverVersion = this.versionCounter;
-
-    // To make the demo look real, wait for 500ms before returning
-    setTimeout(function() {
+    function returnResultToClient() {
         // call the success callback
         callback(result, serverVersion);
-    }, 500);
+    }
+
+    // To make the demo look real, we put in network time in both directions
+    // to give async behaviour
+    var timeToServer = 300;
+    var timeToClient = 300;
+    setTimeout(function() {
+        console.log('getFromServer');
+        getDataFromServer();
+        setTimeout(returnResultToClient, timeToClient);
+    }, timeToServer);
 
 };
 
@@ -259,8 +274,13 @@ FakeServer.prototype.doBatch = function() {
     var book1 = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
     var book2 = portfolio.children[Math.floor(Math.random()*portfolio.children.length)];
 
-    // create 10 trades in book 1 and 10 trades in book 2
-    for (var i = 0; i<10; i++) {
+    // product = this.products[0];
+    // portfolio = product.children[0];
+    // book1 = portfolio.children[0];
+    // book2 = portfolio.children[1];
+
+    // create 4 trades in book 1 and 4 trades in book 2
+    for (var i = 0; i<4; i++) {
         this.createOneTrade(transactions, product, portfolio, book1);
         this.createOneTrade(transactions, product, portfolio, book2);
     }

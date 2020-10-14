@@ -9,9 +9,18 @@ export interface ServerSideTransaction {
 }
 
 export interface ServerSideTransactionResult {
-    routeFound: boolean;
-    applied: boolean;
+    status: ServerSideTransactionResultStatus;
     add?: RowNode[];
     remove?: RowNode[];
     update?: RowNode[];
+}
+
+export enum ServerSideTransactionResultStatus {
+    StoreNotFound = 'StoreNotFound',
+    StoreLoading = 'StoreLoading',
+    StoreWaitingToLoad = 'StoreWaitingToLoad',
+    StoreLoadingFailed = 'StoreLoadingFailed',
+    StoreWrongType = 'StoreWrongType',
+    Applied = 'Applied',
+    Cancelled = 'Cancelled'
 }

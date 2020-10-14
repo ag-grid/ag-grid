@@ -9,13 +9,20 @@ import {
     RowNodeBlockLoader,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    ValueCache
+    ServerSideTransactionResultStatus,
+    ValueCache,
+    _
 } from "@ag-grid-community/core";
 import {ServerSideRowModel} from "./serverSideRowModel";
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
     callback?: (result: ServerSideTransactionResult) => void;
+}
+
+enum LoadingStrategy {
+    ApplyAfterLoaded = 'ApplyAfterLoaded',
+    DoNotApply = 'DoNotApply'
 }
 
 @Bean('serverSideTransactionManager')
@@ -29,37 +36,79 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private asyncTransactionsTimeout: number;
     private asyncTransactions: AsyncTransactionWrapper[];
 
+    private loadingStrategy: LoadingStrategy;
+
     @PostConstruct
     private addEventListeners(): void {
-        this.addManagedListener(this.rowNodeBlockLoader, RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT, this.onBlockLoaderFinished.bind(this));
+        this.setupLoadingStrategy();
+    }
+
+    private setupLoadingStrategy(): void {
+        const loadingStrategy = this.gridOptionsWrapper.getServerSideAsyncTransactionLoadingStrategy();
+
+        // default is 'Skip'
+        if (loadingStrategy==null) {
+            this.loadingStrategy = LoadingStrategy.DoNotApply;
+            return;
+        }
+
+        switch (loadingStrategy) {
+            case LoadingStrategy.ApplyAfterLoaded:
+            case LoadingStrategy.DoNotApply:
+                this.loadingStrategy = loadingStrategy;
+                break;
+            default:
+                const strategies = Object.keys(LoadingStrategy).join(', ')
+                console.warn(`ag-Grid: Invalid loading strategy: ${loadingStrategy}, should be one of [${strategies}]`);
+                this.loadingStrategy = LoadingStrategy.DoNotApply;
+                break;
+        }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (this.asyncTransactionsTimeout==null) {
             this.asyncTransactions = [];
-            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
-            this.asyncTransactionsTimeout = window.setTimeout(() => {
-                this.executeAsyncTransactions();
-            }, waitMillis);
+            this.scheduleExecuteAsync();
         }
         this.asyncTransactions.push({ transaction: transaction, callback: callback });
     }
 
-    private onBlockLoaderFinished(): void {
-
+    private scheduleExecuteAsync(): void {
+        const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
+        this.asyncTransactionsTimeout = window.setTimeout(() => {
+            this.executeAsyncTransactions();
+        }, waitMillis);
     }
 
     private executeAsyncTransactions(): void {
 
         const resultFuncs: (()=>void)[] = [];
 
+        const transactionsToRetry: AsyncTransactionWrapper[] = [];
+        let atLeastOneTransactionApplied = false;
+
         this.asyncTransactions.forEach(txWrapper => {
+            let result: ServerSideTransactionResult = undefined;
             this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, cache => {
-                const result = cache.applyTransaction(txWrapper.transaction);
-                if (txWrapper.callback) {
-                    resultFuncs.push(()=>txWrapper.callback(result));
-                }
+                result = cache.applyTransaction(txWrapper.transaction);
             });
+
+            if (result==undefined) {
+                result = {status: ServerSideTransactionResultStatus.StoreNotFound};
+            }
+
+            const retryTransaction = result.status==ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy==LoadingStrategy.ApplyAfterLoaded;
+            if (retryTransaction) {
+                transactionsToRetry.push(txWrapper);
+                return;
+            }
+
+            if (txWrapper.callback) {
+                resultFuncs.push(()=>txWrapper.callback(result));
+            }
+            if (result.status===ServerSideTransactionResultStatus.Applied) {
+                atLeastOneTransactionApplied = true;
+            }
         });
 
         // do callbacks in next VM turn so it's async
@@ -69,11 +118,18 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             }, 0);
         }
 
-        this.asyncTransactions = null;
-        this.asyncTransactionsTimeout = undefined;
+        if (transactionsToRetry.length>0) {
+            this.scheduleExecuteAsync();
+            this.asyncTransactions = transactionsToRetry;
+        } else {
+            this.asyncTransactions = null;
+            this.asyncTransactionsTimeout = undefined;
+        }
 
-        this.valueCache.onDataChanged();
-        this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+        if (atLeastOneTransactionApplied) {
+            this.valueCache.onDataChanged();
+            this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+        }
     }
 
     public flushAsyncTransactions(): void {
@@ -94,7 +150,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             this.valueCache.onDataChanged();
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
         } else {
-            return {routeFound: false, applied: false};
+            return {status: ServerSideTransactionResultStatus.StoreNotFound};
         }
     }
 }
