@@ -37,6 +37,8 @@ export class PieChartProxy extends PolarChartProxy {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
         } as PieSeriesOptions;
 

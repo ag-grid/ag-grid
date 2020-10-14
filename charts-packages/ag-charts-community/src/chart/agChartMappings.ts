@@ -391,6 +391,7 @@ const mappings: any = {
             [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
