@@ -127,7 +127,10 @@ var gridOptions = {
         createRowData();
         params.api.setRowData(globalRowData)
         startFeed(params.api);
-    }
+    },
+    onAsyncTransactionsApplied: function(e) {
+        console.log('========== onAsyncTransactionsApplied: applied ' + e.results.length + ' transactions');
+    },
 };
 
 function onFlushTransactions() {
