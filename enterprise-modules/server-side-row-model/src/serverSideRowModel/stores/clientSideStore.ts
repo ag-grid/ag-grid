@@ -214,16 +214,11 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
+        // filtering for ClientSideStore only words at lowest level details.
+        // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
             this.nodesAfterFilter = this.allRowNodes
             return;
-        }
-
-        // if a group level, then we only want to filter columns showing this group
-        const restrictToCols: Column[] = [];
-        if (this.groupLevel) {
-
-        } else {
         }
 
         this.nodesAfterFilter = this.allRowNodes.filter(
