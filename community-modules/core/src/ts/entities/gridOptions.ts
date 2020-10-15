@@ -326,7 +326,7 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    sideBar?: SideBarDef | string | boolean;
+    sideBar?: SideBarDef | string | boolean | null;
     columnDefs?: (ColDef | ColGroupDef)[];
     columnTypes?: { [key: string]: ColDef; };
     datasource?: IDatasource;
@@ -710,24 +710,24 @@ export interface ProcessRowParams {
 
 export interface NavigateToNextHeaderParams {
     key: string;
-    previousHeaderPosition: HeaderPosition;
-    nextHeaderPosition: HeaderPosition;
+    previousHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition: HeaderPosition | null;
     event: KeyboardEvent;
     headerRowCount: number;
 }
 
 export interface TabToNextHeaderParams {
     backwards: boolean;
-    previousHeaderPosition: HeaderPosition;
-    nextHeaderPosition: HeaderPosition;
+    previousHeaderPosition: HeaderPosition | null;
+    nextHeaderPosition: HeaderPosition | null;
     headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {
     key: number;
     previousCellPosition: CellPosition;
-    nextCellPosition: CellPosition;
-    event: KeyboardEvent;
+    nextCellPosition: CellPosition | null;
+    event: KeyboardEvent | null;
 }
 
 export interface TabToNextCellParams {

@@ -18,7 +18,7 @@ export class AgComponentUtils extends BeanStub {
         hardcodedJsFunction: AgGridComponentFunctionInput,
         componentFromFramework: boolean,
         source: ComponentSource
-    ): ComponentClassDef<A, B, TParams> {
+    ): ComponentClassDef<A, B, TParams> | null {
         if (hardcodedJsFunction == null) {
             return {
                 component: null,

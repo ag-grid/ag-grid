@@ -13,7 +13,7 @@ export interface RefreshModelParams {
     // if true, then rows we are editing will be kept
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
-    rowNodeTransactions?: (RowNodeTransaction | null)[];
+    rowNodeTransactions?: RowNodeTransaction[];
     // if doing delta updates, this has the order of the nodes
     rowNodeOrder?: { [id: string]: number };
     // true user called setRowData() (or a new page in pagination). the grid scrolls

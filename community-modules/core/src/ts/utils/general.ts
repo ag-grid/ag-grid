@@ -43,7 +43,7 @@ export function findLineByLeastSquares(values: number[]) {
     const m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
     const b = (sum_y / len) - (m * sum_x) / len;
 
-    const result = [];
+    const result: number[] = [];
 
     for (let x = 0; x <= len; x++) {
         result.push(parseFloat((x * m + b).toFixed(maxDecimals)));
@@ -104,7 +104,7 @@ export function message(msg: string): void {
  */
 export function bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
     cellRendererPromise.then(cellRenderer => {
-        const gui: HTMLElement | string = cellRenderer.getGui();
+        const gui: HTMLElement | string = cellRenderer!.getGui();
 
         if (gui != null) {
             if (typeof gui === 'object') {

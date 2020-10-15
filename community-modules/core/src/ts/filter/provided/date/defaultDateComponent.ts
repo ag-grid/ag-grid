@@ -42,7 +42,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
     }
 
-    public getDate(): Date {
+    public getDate(): Date | null {
         return parseDateTimeFromString(this.eDateInput.getValue());
     }
 

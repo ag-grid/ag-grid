@@ -35,7 +35,7 @@ export class FilterService extends BeanStub {
 
                 // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
                 if (filterActive && !includeChildNodes) {
-                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
+                    rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter(childNode => {
                         // a group is included in the result if it has any children of it's own.
                         // by this stage, the child groups are already filtered
                         const passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
@@ -97,7 +97,7 @@ export class FilterService extends BeanStub {
     private setAllChildrenCountTreeData(rowNode: RowNode) {
         // for tree data, we include all children, groups and leafs
         let allChildrenCount = 0;
-        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
+        rowNode.childrenAfterFilter!.forEach((child: RowNode) => {
             // include child itself
             allChildrenCount++;
             // include children of children
@@ -109,7 +109,7 @@ export class FilterService extends BeanStub {
     private setAllChildrenCountGridGrouping(rowNode: RowNode) {
         // for grid data, we only count the leafs
         let allChildrenCount = 0;
-        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
+        rowNode.childrenAfterFilter!.forEach((child: RowNode) => {
             if (child.group) {
                 allChildrenCount += child.allChildrenCount as any;
             } else {

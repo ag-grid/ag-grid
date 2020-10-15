@@ -8,13 +8,13 @@ import { setDisplayed } from '../../../utils/dom';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
-    filter?: number;
-    filterTo?: number;
+    filter?: number | null;
+    filterTo?: number | null;
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
     allowedCharPattern?: string;
-    numberParser?: (text: string) => number;
+    numberParser?: (text: string | null) => number;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
@@ -40,7 +40,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
-    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number, to: number; } {
+    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number | null | undefined, to: number | null | undefined; } {
         return {
             from: filterModel.filter,
             to: filterModel.filterTo
@@ -164,15 +164,15 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         if (option === SimpleFilter.EMPTY) { return false; }
 
-        if (this.doesFilterHaveHiddenInput(option)) {
+        if (this.doesFilterHaveHiddenInput(option!)) {
             return true;
         }
 
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        const value = this.stringToFloat(eValue.getValue());
+        const value = this.stringToFloat(eValue.getValue()!);
 
-        return value != null && (!this.showValueTo(option) || this.stringToFloat(eValueTo.getValue()) != null);
+        return value != null && (!this.showValueTo(option) || this.stringToFloat(eValueTo.getValue()!) != null);
     }
 
     protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
@@ -185,7 +185,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 'number';
     }
 
-    private stringToFloat(value: string | number): number {
+    private stringToFloat(value?: string | number | null): number | null {
         if (typeof value === 'number') {
             return value;
         }
@@ -207,14 +207,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const positionOne = position === ConditionPosition.One;
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        const value = this.stringToFloat(eValue.getValue());
+        const value = this.stringToFloat(eValue.getValue()!);
 
         const model: NumberFilterModel = {
             filterType: this.getFilterType(),
             type
         };
 
-        if (!this.doesFilterHaveHiddenInput(type)) {
+        if (!this.doesFilterHaveHiddenInput(type!)) {
             model.filter = value;
 
             if (this.showValueTo(type)) {

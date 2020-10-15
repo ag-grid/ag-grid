@@ -42,10 +42,10 @@ export class PaginationComp extends Component {
     protected postConstruct(): void {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper)!);
+        this.btPrevious.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper)!);
+        this.btNext.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper)!);
+        this.btLast.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper)!);
 
         const isPaging = this.gridOptionsWrapper.isPagination();
         const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
@@ -199,7 +199,7 @@ export class PaginationComp extends Component {
         } else {
             startRow = (pageSize * currentPage) + 1;
             endRow = startRow + pageSize - 1;
-            if (maxRowFound && endRow > rowCount) {
+            if (maxRowFound && endRow > rowCount!) {
                 endRow = rowCount;
             }
         }
@@ -226,7 +226,7 @@ export class PaginationComp extends Component {
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
         } else {
             const moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;

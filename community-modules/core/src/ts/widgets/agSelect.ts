@@ -8,7 +8,7 @@ import { IAgLabel } from './agAbstractLabel';
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
-    private hideList: (event?: any) => void;
+    private hideList: ((event?: any) => void) | null;
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -61,8 +61,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             closedCallback: () => {
                 this.hideList = null;
                 this.isPickerDisplayed = false;
-                destroyFocusOutFunc();
-                destroyMouseWheelFunc();
+                destroyFocusOutFunc!();
+                destroyMouseWheelFunc!();
 
                 if (this.isAlive()) {
                     this.getFocusableElement().focus();
@@ -101,7 +101,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return this;
     }
 
-    public setValue(value: string, silent?: boolean, fromPicker?: boolean): this {
+    public setValue(value?: string | null, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value) { return this; }
 
         if (!fromPicker) {
@@ -112,7 +112,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
         if (newValue === this.getValue()) { return this; }
 
-        this.eDisplayField.innerHTML = this.listComponent.getDisplayValue();
+        this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
 
         return super.setValue(value, silent);
     }

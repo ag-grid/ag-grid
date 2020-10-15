@@ -74,8 +74,8 @@ export class OverlayWrapperComponent extends Component {
         workItem.then(comp => {
             this.inProgress = false;
 
-            this.eOverlayWrapper.appendChild(comp.getGui());
-            this.activeOverlay = comp;
+            this.eOverlayWrapper.appendChild(comp!.getGui());
+            this.activeOverlay = comp!;
 
             if (this.destroyRequested) {
                 this.destroyRequested = false;
@@ -96,7 +96,7 @@ export class OverlayWrapperComponent extends Component {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
+        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
 
         clearElement(this.eOverlayWrapper);
     }

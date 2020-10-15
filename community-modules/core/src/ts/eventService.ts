@@ -35,7 +35,7 @@ export class EventService implements IEventEmitter {
     public setBeans(
         @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-        @Qualifier('globalEventListener') globalEventListener: Function = null) {
+        @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
         this.logger = loggerFactory.create('EventService');
 
         if (globalEventListener) {

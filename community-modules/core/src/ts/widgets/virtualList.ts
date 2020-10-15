@@ -19,7 +19,7 @@ export class VirtualList extends ManagedFocusComponent {
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
     private rowHeight = 20;
-    private lastFocusedRowIndex: number;
+    private lastFocusedRowIndex: number | null;
     private isDestroyed = false;
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
@@ -98,7 +98,7 @@ export class VirtualList extends ManagedFocusComponent {
         return true;
     }
 
-    public getLastFocusedRow(): number {
+    public getLastFocusedRow(): number | null {
         return this.lastFocusedRowIndex;
     }
 
@@ -114,7 +114,7 @@ export class VirtualList extends ManagedFocusComponent {
         }, 10);
     }
 
-    public getComponentAt(rowIndex: number): Component {
+    public getComponentAt(rowIndex: number): Component | undefined {
         const comp = this.renderedRows.get(rowIndex);
 
         return comp && comp.rowComponent;
@@ -256,9 +256,9 @@ export class VirtualList extends ManagedFocusComponent {
 
         // keep the DOM order consistent with the order of the rows
         if (this.renderedRows.has(rowIndex - 1)) {
-            this.renderedRows.get(rowIndex - 1).eDiv.insertAdjacentElement('afterend', eDiv);
+            this.renderedRows.get(rowIndex - 1)!.eDiv.insertAdjacentElement('afterend', eDiv);
         } else if (this.renderedRows.has(rowIndex + 1)) {
-            this.renderedRows.get(rowIndex + 1).eDiv.insertAdjacentElement('beforebegin', eDiv);
+            this.renderedRows.get(rowIndex + 1)!.eDiv.insertAdjacentElement('beforebegin', eDiv);
         } else {
             this.eContainer.appendChild(eDiv);
         }
@@ -267,7 +267,7 @@ export class VirtualList extends ManagedFocusComponent {
     }
 
     private removeRow(rowIndex: number) {
-        const component = this.renderedRows.get(rowIndex);
+        const component = this.renderedRows.get(rowIndex)!;
 
         this.eContainer.removeChild(component.eDiv);
         this.destroyBean(component.rowComponent);

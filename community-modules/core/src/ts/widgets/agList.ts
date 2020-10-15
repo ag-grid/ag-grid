@@ -18,7 +18,7 @@ export class AgList extends Component {
 
     private options: ListOption[] = [];
     private itemEls: HTMLElement[] = [];
-    private highlightedEl: HTMLElement;
+    private highlightedEl: HTMLElement | null;
     private value: string | null;
     private displayValue: string | null;
 
@@ -71,8 +71,8 @@ export class AgList extends Component {
         const { value, text } = listOption;
         const sanitisedText = escapeString(text || value);
 
-        this.options.push({ value, text: sanitisedText });
-        this.renderOption(value, sanitisedText);
+        this.options.push({ value, text: sanitisedText! });
+        this.renderOption(value, sanitisedText!);
 
         return this;
     }
@@ -96,7 +96,7 @@ export class AgList extends Component {
         this.getGui().appendChild(itemEl);
     }
 
-    public setValue(value?: string, silent?: boolean): this {
+    public setValue(value?: string | null, silent?: boolean): this {
         if (this.value === value) {
             this.fireItemSelected();
             return this;

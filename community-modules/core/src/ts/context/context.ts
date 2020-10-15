@@ -336,7 +336,7 @@ export function Optional(name?: string): Function {
     };
 }
 
-function autowiredFunc(target: any, name: string, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number) {
+function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
     if (name === null) {
         console.error("ag-Grid: Autowired name should not be null");
         return;

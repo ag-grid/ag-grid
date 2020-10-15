@@ -71,7 +71,7 @@ export function isIOSUserAgent(): boolean {
     return isIOS;
 }
 
-export function getTabIndex(el: HTMLElement): string | null {
+export function getTabIndex(el: HTMLElement | null): string | null {
     if (!el) { return null; }
 
     const numberTabIndex = el.tabIndex;

@@ -22,11 +22,11 @@ export class MoveColumnController implements DropListener {
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
-    private movingIntervalId: number;
+    private movingIntervalId: number | null;
     private intervalCount: number;
 
     private logger: Logger;
-    private pinned: string;
+    private pinned: string | null;
     private centerContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
@@ -38,7 +38,7 @@ export class MoveColumnController implements DropListener {
 
     private eContainer: HTMLElement;
 
-    constructor(pinned: string, eContainer: HTMLElement) {
+    constructor(pinned: string | null, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
         this.centerContainer = !exists(pinned);
@@ -72,7 +72,7 @@ export class MoveColumnController implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = draggingEvent.dragItem.visibleState;
-            const visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()]);
+            const visibleColumns: Column[] = (columns || []).filter(column => visibleState![column.getId()]);
             this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
         }
 
@@ -92,14 +92,14 @@ export class MoveColumnController implements DropListener {
         this.ensureIntervalCleared();
     }
 
-    public setColumnsVisible(columns: Column[], visible: boolean, source: ColumnEventType = "api") {
+    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType = "api") {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
             this.columnController.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
-    public setColumnsPinned(columns: Column[], pinned: string, source: ColumnEventType = "api") {
+    public setColumnsPinned(columns: Column[] | null | undefined, pinned: string | null, source: ColumnEventType = "api") {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
             this.columnController.setColumnsPinned(allowedCols, pinned, source);
@@ -171,21 +171,20 @@ export class MoveColumnController implements DropListener {
         const dragSourceType: DragSourceType = draggingEvent.dragSource.type;
         let columnsToMove = draggingEvent.dragSource.getDragItem().columns;
 
-        columnsToMove = columnsToMove.filter(col => {
+        columnsToMove = columnsToMove!.filter(col => {
             if (col.getColDef().lockPinned) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
                 return col.getPinned() == this.pinned;
-            } else {
-                // if not pin locked, then always allowed to be in this container
-                return true;
             }
+            // if not pin locked, then always allowed to be in this container
+            return true;
         });
 
         this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter);
     }
 
-    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
+    private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
         if (this.gridOptionsWrapper.isEnableRtl()) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
@@ -199,17 +198,18 @@ export class MoveColumnController implements DropListener {
 
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
-    private calculateOldIndex(movingCols: Column[]): number {
+    private calculateOldIndex(movingCols: Column[]): number | null {
         const gridCols: Column[] = this.columnController.getAllGridColumns();
         const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
+
         return gapsExist ? null : firstIndex;
     }
 
-    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection, mouseX: number, fromEnter: boolean): void {
+    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HorizontalDirection | undefined, mouseX: number, fromEnter: boolean): void {
         const draggingLeft = hDirection === HorizontalDirection.Left;
         const draggingRight = hDirection === HorizontalDirection.Right;
 
@@ -248,10 +248,10 @@ export class MoveColumnController implements DropListener {
 
         if (constrainDirection) {
             // only allow left drag if this column is moving left
-            if (draggingLeft && firstValidMove >= oldIndex) { return; }
+            if (draggingLeft && firstValidMove >= (oldIndex as number)) { return; }
 
             // only allow right drag if this column is moving right
-            if (draggingRight && firstValidMove <= oldIndex) { return; }
+            if (draggingRight && firstValidMove <= (oldIndex as number)) { return; }
         }
 
         for (let i = 0; i < validMoves.length; i++) {
@@ -399,7 +399,7 @@ export class MoveColumnController implements DropListener {
     }
 
     private ensureIntervalCleared(): void {
-        if (this.moveInterval) {
+        if (this.movingIntervalId) {
             window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
@@ -416,7 +416,7 @@ export class MoveColumnController implements DropListener {
             pixelsToMove = 100;
         }
 
-        let pixelsMoved: number;
+        let pixelsMoved: number | null = null;
         if (this.needToMoveLeft) {
             pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
@@ -432,7 +432,7 @@ export class MoveColumnController implements DropListener {
             this.failedMoveAttempts++;
 
             const columns = this.lastDraggingEvent.dragItem.columns;
-            const columnsThatCanPin = columns.filter(c => !c.getColDef().lockPinned);
+            const columnsThatCanPin = columns!.filter(c => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);

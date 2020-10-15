@@ -7,7 +7,7 @@ import {_} from "../utils";
 import {Constants} from "../constants/constants";
 
 export interface SortOption {
-    sort: string;
+    sort?: string | null;
     column: Column;
 }
 

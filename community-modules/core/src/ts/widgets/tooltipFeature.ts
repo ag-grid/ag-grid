@@ -36,15 +36,15 @@ export class TooltipFeature extends BeanStub {
 
     private parentComp: TooltipParentComp;
 
-    private showTooltipTimeoutId: number;
-    private hideTooltipTimeoutId: number;
+    private showTooltipTimeoutId: number | undefined;
+    private hideTooltipTimeoutId: number | undefined;
 
     private state = TooltipStates.NOTHING;
 
     private lastMouseEvent: MouseEvent;
 
-    private tooltipComp: ITooltipComp;
-    private tooltipPopupDestroyFunc: () => void;
+    private tooltipComp: ITooltipComp | undefined;
+    private tooltipPopupDestroyFunc: (() => void) | undefined;
     // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
     // async we could request two tooltips before the first instance returns, in which case we should
     // disregard the second instance.
@@ -143,7 +143,7 @@ export class TooltipFeature extends BeanStub {
 
     private destroyTooltipComp(): void {
         // add class to fade out the tooltip
-        addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
+        addCssClass(this.tooltipComp!.getGui(), 'ag-tooltip-hiding');
 
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
@@ -151,7 +151,7 @@ export class TooltipFeature extends BeanStub {
         const tooltipComp = this.tooltipComp;
 
         window.setTimeout(() => {
-            tooltipPopupDestroyFunc();
+            tooltipPopupDestroyFunc!();
             this.getContext().destroyBean(tooltipComp);
         }, this.FADE_OUT_TOOLTIP_TIMEOUT);
 
@@ -220,7 +220,7 @@ export class TooltipFeature extends BeanStub {
         this.popupService.positionPopupUnderMouseEvent({
             type: 'tooltip',
             mouseEvent: this.lastMouseEvent,
-            ePopup: this.tooltipComp.getGui(),
+            ePopup: this.tooltipComp!.getGui(),
             nudgeY: 18
         });
     }

@@ -24,10 +24,6 @@
         }
     }
 
-    .ag-cell {
-        -webkit-font-smoothing: subpixel-antialiased;
-    }
-
     .ag-value-change-delta {
         padding-right: 2px;
     }
@@ -141,6 +137,7 @@
         line-height: ag-param(row-height) - 2px;
         padding-left: ag-param(cell-horizontal-padding) - 1px;
         padding-right: ag-param(cell-horizontal-padding) - 1px;
+        -webkit-font-smoothing: subpixel-antialiased;
     }
 
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
@@ -152,9 +149,6 @@
 
     .ag-row-dragging {
         cursor: move;
-    }
-
-    .ag-row-dragging {
         opacity: 0.5;
     }
 

@@ -8,6 +8,7 @@ import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { GridPanel } from "../gridPanel/gridPanel";
+import { MouseEventService } from '../gridPanel/mouseEventService';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -61,9 +62,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         eMenu.setAttribute('role', 'presentation');
         addCssClass(eMenu, 'ag-menu');
 
-        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
-        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui));
+        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui!));
 
         let hidePopup: (() => void);
 
@@ -76,13 +77,13 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
 
-        const closedCallback = (e: Event) => {
+        const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (this.tabListener) {
-                this.tabListener = this.tabListener();
+                this.tabListener = this.tabListener()!;
             }
 
             if (isKeyboardEvent && eventSource && isVisible(eventSource)) {
@@ -96,16 +97,16 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
-            closedCallback: closedCallback
+            closedCallback
         });
 
-        filterWrapper.filterPromise.then(filter => {
+        filterWrapper.filterPromise!.then(filter => {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
 
-            if (filter.afterGuiAttached) {
-                filter.afterGuiAttached({ container: 'columnMenu', hidePopup });
+            if (filter!.afterGuiAttached) {
+                filter!.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
 

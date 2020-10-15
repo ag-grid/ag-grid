@@ -63,7 +63,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         }
     }
 
-    public getValue(): boolean {
+    public getValue(): boolean | undefined {
         return this.isSelected();
     }
 
@@ -81,7 +81,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         return this;
     }
 
-    protected isSelected(): boolean {
+    protected isSelected(): boolean | undefined {
         return this.selected;
     }
 
@@ -93,7 +93,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         const previousValue = this.isSelected();
 
         selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
-        (this.eInput as HTMLInputElement).checked = selected;
+        (this.eInput as HTMLInputElement).checked = selected!;
         (this.eInput as HTMLInputElement).indeterminate = selected === undefined;
 
         if (!silent) {

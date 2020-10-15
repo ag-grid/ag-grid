@@ -26,7 +26,7 @@ export class ColumnDefFactory {
 
                 const parent = child.getParent() as ColumnGroup;
 
-                let parentDef: ColGroupDef;
+                let parentDef: ColGroupDef | null | undefined = null;
 
                 // we don't include padding groups, as the column groups provided
                 // by application didn't have these. the whole point of padding groups
@@ -48,12 +48,13 @@ export class ColumnDefFactory {
                 }
 
                 parentDef = this.createDefFromGroup(parent);
-                parentDef.children = [childDef];
 
-                colGroupDefs[parentDef.groupId] = parentDef;
-
-                childDef = parentDef;
-                child = parent;
+                if (parentDef) {
+                    parentDef.children = [childDef];
+                    colGroupDefs[parentDef.groupId!] = parentDef;
+                    childDef = parentDef;
+                    child = parent;
+                }
             }
 
             if (addToResult) {
@@ -64,16 +65,18 @@ export class ColumnDefFactory {
         return res;
     }
 
-    private createDefFromGroup(group: ColumnGroup): ColGroupDef {
+    private createDefFromGroup(group: ColumnGroup): ColGroupDef | null | undefined {
         const defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
 
-        defCloned.groupId = group.getGroupId();
+        if (defCloned) {
+            defCloned.groupId = group.getGroupId();
+        }
 
         return defCloned;
     }
 
     private createDefFromColumn(col: Column, rowGroupColumns: Column[], pivotColumns: Column[]): ColDef {
-        const colDefCloned = deepCloneDefinition(col.getColDef());
+        const colDefCloned = deepCloneDefinition(col.getColDef())!;
 
         colDefCloned.colId = col.getColId();
 

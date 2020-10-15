@@ -78,7 +78,7 @@ export class RowCssClassCalculator {
             classes.push('ag-row-dragging');
         }
 
-        pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        pushAll(classes, this.processClassesFromGridOptions(params.rowNode)!);
         pushAll(classes, this.preProcessRowClassRules(params.rowNode, params.scope));
 
         // we use absolute position unless we are doing print layout
@@ -95,7 +95,7 @@ export class RowCssClassCalculator {
         return classes;
     }
 
-    public processClassesFromGridOptions(rowNode: RowNode): string[] {
+    public processClassesFromGridOptions(rowNode: RowNode): string[] | undefined {
         const res: string[] = [];
 
         const process = (rowCls: string | string[]) => {
@@ -159,8 +159,8 @@ export class RowCssClassCalculator {
                 data: rowNode.data,
                 node: rowNode,
                 rowIndex: rowNode.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 $scope: scope,
                 context: this.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);

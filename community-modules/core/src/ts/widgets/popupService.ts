@@ -5,7 +5,7 @@ import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
-import { Events } from '../events';
+import { BodyScrollEvent, Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { addCssClass, removeCssClass, getAbsoluteHeight, getAbsoluteWidth, containsClass, addOrRemoveCssClass } from '../utils/dom';
 import { forEach, findIndex, last } from '../utils/array';
@@ -13,7 +13,7 @@ import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 
 export interface PopupEventParams {
-    originalMouseEvent?: MouseEvent | Touch;
+    originalMouseEvent?: MouseEvent | Touch | null;
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
@@ -210,7 +210,7 @@ export class PopupService extends BeanStub {
     public positionPopupOverComponent(params: {
         type: string,
         eventSource: HTMLElement,
-        ePopup: HTMLElement | null,
+        ePopup: HTMLElement,
         column: Column,
         rowNode: RowNode,
         minWidth?: number,
@@ -236,10 +236,10 @@ export class PopupService extends BeanStub {
 
     private callPostProcessPopup(
         type: string,
-        ePopup?: HTMLElement,
-        eventSource?: HTMLElement,
-        mouseEvent?: MouseEvent | Touch,
-        column?: Column,
+        ePopup: HTMLElement,
+        eventSource?: HTMLElement | null,
+        mouseEvent?: MouseEvent | Touch | null,
+        column?: Column | null,
         rowNode?: RowNode
     ): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
@@ -257,7 +257,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopup(params: {
-        ePopup: HTMLElement | null,
+        ePopup: HTMLElement,
         minWidth?: number,
         minHeight?: number,
         nudgeX?: number,
@@ -283,8 +283,8 @@ export class PopupService extends BeanStub {
             y = this.keepYWithinBounds(params, y);
         }
 
-        params.ePopup!.style.left = `${x}px`;
-        params.ePopup!.style.top = `${y}px`;
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
     }
 
     public getActivePopups(): HTMLElement[] {
@@ -304,14 +304,14 @@ export class PopupService extends BeanStub {
         const style = getComputedStyle(popupParent);
         const bounds = popupParent.getBoundingClientRect();
         return {
-            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+            top: bounds.top + parseFloat(style.borderTopWidth!) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth!) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth!) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth!) || 0,
         };
     }
 
-    private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number; }, y: number): number {
+    private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number; }, y: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -384,7 +384,7 @@ export class PopupService extends BeanStub {
         let lastDiffTop = initialDiffTop;
 
         const topPx = params.ePopup.style.top;
-        const top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
 
         const intervalId = window.setInterval(() => {
 

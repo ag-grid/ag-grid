@@ -76,10 +76,10 @@ export interface ComponentSelectorResult {
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams> {
-    component: { new(): A; } | { new(): B; };
+    component: { new(): A; } | { new(): B; } | null;
     componentFromFramework: boolean; // true if component came from framework eg React or Angular
     source: ComponentSource; // [Default, Registered by Name, Hard Coded]
-    paramsFromSelector: TParams; // Params the selector function provided, if any
+    paramsFromSelector: TParams | null; // Params the selector function provided, if any
 }
 
 @Bean('userComponentFactory')
@@ -156,7 +156,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     public newFloatingFilterComponent(
-        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
+        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): Promise<IFloatingFilterComp> {
         return this.createAndInitUserComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
@@ -183,10 +183,10 @@ export class UserComponentFactory extends BeanStub {
      *      component found, it throws an error, by default all components are MANDATORY
      */
     public createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
-        definitionObject: DefinitionObject,
+        definitionObject: DefinitionObject | null,
         paramsFromGrid: TParams,
         componentType: ComponentType,
-        defaultComponentName?: string,
+        defaultComponentName?: string | null,
         // optional items are: FloatingFilter, CellComp (for cellRenderer)
         optional = false,
     ): Promise<A> {
@@ -195,11 +195,11 @@ export class UserComponentFactory extends BeanStub {
         }
 
         // Create the component instance
-        const componentAndParams: { componentInstance: A, paramsFromSelector: TParams; }
+        const componentAndParams: { componentInstance: A, paramsFromSelector: TParams; } | null
             = this.createComponentInstance(definitionObject, componentType, paramsFromGrid, defaultComponentName, optional);
 
         if (!componentAndParams) {
-            return null;
+            return Promise.resolve();
         }
 
         const componentInstance = componentAndParams.componentInstance;
@@ -214,9 +214,8 @@ export class UserComponentFactory extends BeanStub {
 
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);
-        } else {
-            return (deferredInit as Promise<void>).then(() => componentInstance);
         }
+        return (deferredInit as Promise<void>).then(() => componentInstance);
     }
 
     private addReactHacks(params: any): void {
@@ -274,9 +273,9 @@ export class UserComponentFactory extends BeanStub {
     public lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(
         definitionObject: DefinitionObject,
         propertyName: string,
-        params: TParams = null,
-        defaultComponentName?: string
-    ): ComponentClassDef<A, B, TParams> {
+        params: TParams | null = null,
+        defaultComponentName?: string | null
+    ): ComponentClassDef<A, B, TParams> | null {
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -285,11 +284,11 @@ export class UserComponentFactory extends BeanStub {
          *  d) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
          *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
          */
-        let hardcodedNameComponent: string = null;
-        let HardcodedJsComponent: { new(): A; } = null;
-        let hardcodedJsFunction: AgGridComponentFunctionInput = null;
-        let HardcodedFwComponent: { new(): B; } = null;
-        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult;
+        let hardcodedNameComponent: string | null = null;
+        let HardcodedJsComponent: { new(): A; } | null = null;
+        let hardcodedJsFunction: AgGridComponentFunctionInput | null = null;
+        let HardcodedFwComponent: { new(): B; } | null = null;
+        let componentSelectorFunc: ((params: TParams | null) => ComponentSelectorResult) | null = null;
 
         if (definitionObject != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
@@ -372,7 +371,7 @@ export class UserComponentFactory extends BeanStub {
 
         const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
 
-        let componentNameToUse: string;
+        let componentNameToUse: string | null | undefined;
         if (selectorResult && selectorResult.component) {
             componentNameToUse = selectorResult.component;
         } else if (hardcodedNameComponent) {
@@ -401,9 +400,10 @@ export class UserComponentFactory extends BeanStub {
 
     private lookupFromRegisteredComponents<A extends IComponent<TParams> & B, B, TParams>(
         propertyName: string,
-        componentNameOpt?: string): ComponentClassDef<A, B, TParams> {
+        componentNameOpt?: string
+    ): ComponentClassDef<A, B, TParams> | null {
         const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
-        const registeredComponent: RegisteredComponent<A, B> = this.userComponentRegistry.retrieve(componentName);
+        const registeredComponent: RegisteredComponent<A, B> | null = this.userComponentRegistry.retrieve(componentName);
 
         if (registeredComponent == null) {
             return null;
@@ -477,9 +477,9 @@ export class UserComponentFactory extends BeanStub {
         holder: DefinitionObject,
         componentType: ComponentType,
         paramsForSelector: TParams,
-        defaultComponentName: string,
+        defaultComponentName: string | null | undefined,
         optional: boolean
-    ): { componentInstance: A, paramsFromSelector: any; } {
+    ): { componentInstance: A, paramsFromSelector: any; } | null {
         const propertyName = componentType.propertyName;
         const componentToUse: ComponentClassDef<A, B, TParams> =
             this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B, TParams>;
@@ -500,16 +500,18 @@ export class UserComponentFactory extends BeanStub {
 
         if (componentToUse.componentFromFramework) {
             // Using framework component
-            const FrameworkComponentRaw: { new(): B; } = componentToUse.component;
+            const FrameworkComponentRaw: { new(): B; } | null = componentToUse.component;
             const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-            componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
+            componentInstance = this.frameworkComponentWrapper.wrap(
+                FrameworkComponentRaw,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
                 componentType,
-                defaultComponentName) as A;
+                defaultComponentName
+            ) as A;
         } else {
             // Using plain JavaScript component
-            componentInstance = new componentToUse.component() as A;
+            componentInstance = new componentToUse.component!() as A;
         }
 
         return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };

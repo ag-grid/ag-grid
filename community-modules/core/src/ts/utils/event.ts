@@ -58,7 +58,7 @@ export const isEventSupported = (() => {
     return isEventSupported;
 })();
 
-export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp {
+export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp | null {
     let sourceElement = getTarget(event);
 
     while (sourceElement) {
@@ -68,7 +68,7 @@ export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, even
             return renderedCell as CellComp;
         }
 
-        sourceElement = sourceElement.parentElement;
+        sourceElement = sourceElement.parentElement!;
     }
 
     return null;

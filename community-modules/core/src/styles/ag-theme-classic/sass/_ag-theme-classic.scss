@@ -18,6 +18,7 @@
 
     .ag-icon {
         color: $ag-icon-color;
+        margin: 1px 1px 2px 1px;
     }
 
     .ag-icon-tree-closed::before {
@@ -43,10 +44,6 @@
 
     .ag-tabs-body {
         margin: ag-param(grid-size) / 2 0;
-    }
-
-    .ag-icon {
-        margin: 1px 1px 2px 1px;
     }
 
     .ag-tab-selected {

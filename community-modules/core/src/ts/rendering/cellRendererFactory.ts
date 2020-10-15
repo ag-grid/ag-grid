@@ -1,8 +1,5 @@
-import { Bean, PostConstruct, Autowired } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { ICellRenderer, ICellRendererFunc } from "./cellRenderers/iCellRenderer";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { EventService } from "../eventService";
-import { ExpressionService } from "../valueService/expressionService";
 import { AnimateSlideCellRenderer } from "./cellRenderers/animateSlideCellRenderer";
 import { AnimateShowChangeCellRenderer } from "./cellRenderers/animateShowChangeCellRenderer";
 import { GroupCellRenderer } from "./cellRenderers/groupCellRenderer";
@@ -14,10 +11,6 @@ export class CellRendererFactory {
     public static ANIMATE_SLIDE = 'animateSlide';
     public static ANIMATE_SHOW_CHANGE = 'animateShowChange';
     public static GROUP = 'group';
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('eventService') private eventService: EventService;
 
     private cellRendererMap: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} = {};
 
@@ -41,7 +34,7 @@ export class CellRendererFactory {
         this.cellRendererMap[key] = cellRenderer;
     }
 
-    public getCellRenderer(key: string): {new(): ICellRenderer} | ICellRendererFunc {
+    public getCellRenderer(key: string): {new(): ICellRenderer} | ICellRendererFunc | null {
 
         const result = this.cellRendererMap[key];
         if (missing(result)) {

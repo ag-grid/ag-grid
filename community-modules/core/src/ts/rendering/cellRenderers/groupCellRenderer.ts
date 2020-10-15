@@ -249,7 +249,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             footerValue = 'Total ' + this.params.value;
         }
 
-        this.eValue.innerHTML = footerValue;
+        this.eValue.innerHTML = footerValue!;
     }
 
     private createGroupCell(): void {
@@ -298,11 +298,11 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-        let cellRendererPromise: Promise<ICellRendererComp> = null;
+        let cellRendererPromise: Promise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
-            .lookupComponentClassDef(groupCellRendererParams, "innerRenderer");
+            .lookupComponentClassDef(groupCellRendererParams, "innerRenderer")!;
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
             && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
@@ -311,7 +311,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
             const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
-                .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
+                .lookupComponentClassDef(groupedColumnDef, "cellRenderer")!;
 
             if (
                 groupColumnRendererClass &&
@@ -339,7 +339,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                     this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
                 }
-                bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
+                bindCellRendererToHtmlElement(cellRendererPromise!, this.eValue);
             });
         } else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -421,8 +421,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const eContractedIcon = createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 
         setAriaExpanded(eGroupCell, !!params.node.expanded);
-        this.eExpanded.appendChild(eExpandedIcon);
-        this.eContracted.appendChild(eContractedIcon);
+
+        if (eExpandedIcon) {
+            this.eExpanded.appendChild(eExpandedIcon);
+        }
+
+        if (eContractedIcon) {
+            this.eContracted.appendChild(eContractedIcon);
+        }
 
         this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));

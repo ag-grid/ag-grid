@@ -33,7 +33,9 @@ export class SelectableService extends BeanStub {
         }
     }
 
-    private recurseDown(children: RowNode[], nextChildrenFunc: (rowNode: RowNode) => RowNode[]): void {
+    private recurseDown(children: RowNode[] | null, nextChildrenFunc: ((rowNode: RowNode) => RowNode[] | null)): void {
+        if (!children) { return; }
+
         children.forEach((child: RowNode) => {
 
             if (!child.group) { return; } // only interested in groups

@@ -27,13 +27,13 @@ export class AgGroupComponent extends Component {
     public static EVENT_COLLAPSED = 'collapsed';
 
     private items: GroupItem[];
-    private title: string;
+    private title: string | undefined;
     private cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
     private suppressOpenCloseIcons: boolean = false;
-    private alignItems: Align;
+    private alignItems: Align | undefined;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

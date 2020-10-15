@@ -7,15 +7,18 @@ export function makeNull<T>(value?: T): T | null {
     return value == null || value as any === '' ? null : value;
 }
 
-export function exists<T>(value: T, allowEmptyString = false): boolean {
-    return value != null && (allowEmptyString || value as any !== '');
+export function exists(value: string | null | undefined, allowEmptyString?: boolean): value is string;
+export function exists<T>(value: T): value is NonNullable<T>;
+export function exists(value: any, allowEmptyString = false): boolean {
+    return value != null && (value !== '' || allowEmptyString);
 }
 
-export function missing<T>(value: T): boolean {
+export function missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;
+export function missing(value: any): boolean {
     return !exists(value);
 }
 
-export function missingOrEmpty<T>(value?: T[] | string): boolean {
+export function missingOrEmpty<T>(value?: T[] | string | null): boolean {
     return !value || missing(value) || value.length === 0;
 }
 
@@ -24,7 +27,7 @@ export function toStringOrNull(value: any): string | null {
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToNumber(value: number | string): number | undefined {
+export function attrToNumber(value?: number | string | null): number | null | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
         return;
@@ -45,7 +48,7 @@ export function attrToNumber(value: number | string): number | undefined {
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToBoolean(value: boolean | string): boolean | undefined {
+export function attrToBoolean(value?: boolean | string | null): boolean | undefined {
     if (value === undefined) {
         // undefined or empty means ignore the value
         return;
@@ -56,7 +59,7 @@ export function attrToBoolean(value: boolean | string): boolean | undefined {
         return false;
     }
 
-    if (value === true || value === false) {
+    if (typeof value === 'boolean') {
         // if simple boolean, return the boolean
         return value;
     }
@@ -66,7 +69,7 @@ export function attrToBoolean(value: boolean | string): boolean | undefined {
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function attrToString(value: string): string | undefined {
+export function attrToString(value?: string): string | undefined {
     if (value == null || value === '') { return; }
 
     return value;
@@ -146,7 +149,7 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
 
 }
 
-export function find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
+export function find<T>(collection: T[] | { [id: string]: T; } | null, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
     if (collection === null || collection === undefined) { return null; }
 
     if (!Array.isArray(collection)) {

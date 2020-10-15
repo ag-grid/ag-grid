@@ -85,7 +85,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
     column: Column | ColumnGroup
 ): boolean {
     const colDef = column.getDefinition();
-    const colDefFunc = colDef.suppressHeaderKeyboardEvent;
+    const colDefFunc = colDef!.suppressHeaderKeyboardEvent;
 
     if (!exists(colDefFunc)) { return false; }
 
@@ -93,7 +93,7 @@ export function isUserSuppressingHeaderKeyboardEvent(
         api: gridOptionsWrapper.getApi(),
         columnApi: gridOptionsWrapper.getColumnApi(),
         context: gridOptionsWrapper.getContext(),
-        colDef: colDef,
+        colDef: colDef!,
         column,
         headerRowIndex,
         event: keyboardEvent

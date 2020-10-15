@@ -61,7 +61,7 @@ function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
-function toNumber(value: any): number {
+function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
         return value;
     }
@@ -78,13 +78,14 @@ function zeroOrGreater(value: any, defaultValue: number): number {
     return defaultValue;
 }
 
-function oneOrGreater(value: any, defaultValue: number = undefined): number {
-    const valueNumber = parseInt(value);
+function oneOrGreater(value: any, defaultValue?: number): number | undefined {
+    const valueNumber = parseInt(value, 10);
+
     if (isNumeric(valueNumber) && valueNumber > 0) {
         return valueNumber;
-    } else {
-        return defaultValue;
     }
+
+    return defaultValue;
 }
 
 export interface PropertyChangedEvent extends AgEvent {
@@ -295,7 +296,7 @@ export class GridOptionsWrapper {
     }
 
     // returns the dom data, or undefined if not found
-    public getDomData(element: Node, key: string): any {
+    public getDomData(element: Node | null, key: string): any {
         const domData = (element as any)[this.getDomDataKey()];
 
         return domData ? domData[key] : undefined;
@@ -628,7 +629,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.undoRedoCellEditing);
     }
 
-    public getUndoRedoCellEditingLimit(): number {
+    public getUndoRedoCellEditingLimit(): number | undefined {
         return this.gridOptions.undoRedoCellEditingLimit;
     }
 
@@ -652,15 +653,15 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getServerSideAsyncTransactionLoadingStrategy(): string {
+    public getServerSideAsyncTransactionLoadingStrategy(): string | undefined {
         return this.gridOptions.serverSideAsyncTransactionLoadingStrategy;
     }
 
-    public getServerSideStoreType(): string {
+    public getServerSideStoreType(): string | undefined {
         return this.gridOptions.serverSideStoreType;
     }
 
-    public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
+    public getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined {
         return this.gridOptions.createChartContainer;
     }
 
@@ -684,7 +685,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getChildCount;
     }
 
-    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction {
+    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction | undefined {
         return this.gridOptions.isApplyServerSideTransaction;
     }
 
@@ -708,7 +709,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.detailRowAutoHeight);
     }
 
-    public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
+    public getSuppressKeyboardEventFunc(): ((params: SuppressKeyboardEventParams) => boolean) | undefined {
         return this.gridOptions.suppressKeyboardEvent;
     }
 
@@ -759,7 +760,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.groupDefaultExpanded;
     }
 
-    public getMaxConcurrentDatasourceRequests(): number {
+    public getMaxConcurrentDatasourceRequests(): number | undefined {
         return this.gridOptions.maxConcurrentDatasourceRequests;
     }
 
@@ -847,7 +848,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.datasource;
     }
 
-    public getViewportDatasource(): IViewportDatasource {
+    public getViewportDatasource(): IViewportDatasource | undefined {
         return this.gridOptions.viewportDatasource;
     }
 
@@ -919,7 +920,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns);
     }
 
-    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][]) | undefined {
+    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined {
         return this.gridOptions.processDataFromClipboard;
     }
 
@@ -1021,8 +1022,9 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.keepDetailRows);
     }
 
-    public getKeepDetailRowsCount(): number {
-        if (this.gridOptions.keepDetailRowsCount > 0) {
+    public getKeepDetailRowsCount(): number | undefined {
+        const keepDetailRowsCount = this.gridOptions.keepDetailRowsCount;
+        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
             return this.gridOptions.keepDetailRowsCount;
         }
 
@@ -1203,7 +1205,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.processCellFromClipboard;
     }
 
-    public getViewportRowModelPageSize(): number {
+    public getViewportRowModelPageSize(): number | undefined {
         return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
     }
 
@@ -1236,7 +1238,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
-    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
+    public getProcessChartOptionsFunc(): ((params: ProcessChartOptionsParams) => ChartOptions<any>) | undefined  {
         return this.gridOptions.processChartOptions;
     }
 
@@ -1297,7 +1299,7 @@ export class GridOptionsWrapper {
     }
 
     // properties
-    public getHeaderHeight(): number {
+    public getHeaderHeight(): number | null | undefined {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         }
@@ -1305,7 +1307,7 @@ export class GridOptionsWrapper {
         return this.getFromTheme(25, 'headerHeight');
     }
 
-    public getFloatingFiltersHeight(): number {
+    public getFloatingFiltersHeight(): number | null | undefined {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         }
@@ -1313,7 +1315,7 @@ export class GridOptionsWrapper {
         return this.getFromTheme(25, 'headerHeight');
     }
 
-    public getGroupHeaderHeight(): number {
+    public getGroupHeaderHeight(): number | null | undefined {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
             return this.gridOptions.groupHeaderHeight;
         }
@@ -1321,7 +1323,7 @@ export class GridOptionsWrapper {
         return this.getHeaderHeight();
     }
 
-    public getPivotHeaderHeight(): number {
+    public getPivotHeaderHeight(): number | null | undefined {
         if (typeof this.gridOptions.pivotHeaderHeight === 'number') {
             return this.gridOptions.pivotHeaderHeight;
         }
@@ -1329,7 +1331,7 @@ export class GridOptionsWrapper {
         return this.getHeaderHeight();
     }
 
-    public getPivotGroupHeaderHeight(): number {
+    public getPivotGroupHeaderHeight(): number | null | undefined {
         if (typeof this.gridOptions.pivotGroupHeaderHeight === 'number') {
             return this.gridOptions.pivotGroupHeaderHeight;
         }
@@ -1353,7 +1355,7 @@ export class GridOptionsWrapper {
         return false;
     }
 
-    public getTooltipShowDelay(): number {
+    public getTooltipShowDelay(): number | null {
         const { tooltipShowDelay } = this.gridOptions;
 
         if (exists(tooltipShowDelay)) {
@@ -1386,11 +1388,14 @@ export class GridOptionsWrapper {
     }
 
     public getMinColWidth() {
-        if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+        const minColWidth = this.gridOptions.minColWidth;
+
+        if (exists(minColWidth) && minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
+
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH);
+        return exists(measuredMin) ? Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH) : GridOptionsWrapper.MIN_COL_WIDTH;
     }
 
     public getMaxColWidth() {
@@ -1623,7 +1628,7 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean; } {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number | null | undefined; estimated: boolean; } {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
@@ -1655,7 +1660,7 @@ export class GridOptionsWrapper {
         const defaultRowHeight = this.getDefaultRowHeight();
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
-        const minRowHeight = Math.min(defaultRowHeight, rowHeight);
+        const minRowHeight = exists(rowHeight) ? Math.min(defaultRowHeight, rowHeight) : defaultRowHeight;
 
         if (this.columnController.isAutoRowHeightActive()) {
             if (allowEstimate) {
@@ -1689,7 +1694,9 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
+    private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
+    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number |  null | undefined;
+    private getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);

@@ -54,7 +54,7 @@ export class AutoGroupColService extends BeanStub {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
-        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         mergeDeep(defaultAutoColDef, userAutoColDef);
 
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
@@ -83,7 +83,7 @@ export class AutoGroupColService extends BeanStub {
     }
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
-        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         const defaultAutoColDef: ColDef = {

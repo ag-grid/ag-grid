@@ -73,7 +73,7 @@ export class Environment extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
+    public getSassVariable(theme: string, key: SASS_PROPERTIES): number | undefined {
         const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
@@ -82,8 +82,10 @@ export class Environment extends BeanStub {
             CALCULATED_SIZES[theme] = {};
         }
 
-        if (CALCULATED_SIZES[theme][key]) {
-            return CALCULATED_SIZES[theme][key];
+        const size = CALCULATED_SIZES[theme][key];
+
+        if (size != null) {
+            return size;
         }
 
         if (SASS_PROPERTY_BUILDER[key]) {
@@ -104,7 +106,7 @@ export class Environment extends BeanStub {
             if (document.body) {
                 document.body.appendChild(div);
                 const sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
-                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName]!, 10);
                 document.body.removeChild(div);
             }
         }
@@ -121,18 +123,18 @@ export class Environment extends BeanStub {
 
     public chartMenuPanelWidth() {
         const theme = this.getTheme().themeFamily;
-        return this.getSassVariable(theme, 'chartMenuPanelWidth');
+        return this.getSassVariable(theme!, 'chartMenuPanelWidth');
     }
 
     public getTheme(): { theme?: string; el?: HTMLElement; themeFamily?: string; } {
         const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
-        let el: HTMLElement = this.eGridDiv;
-        let themeMatch: RegExpMatchArray;
+        let el: HTMLElement | undefined = this.eGridDiv;
+        let themeMatch: RegExpMatchArray | null = null;
 
         while (el) {
             themeMatch = reg.exec(el.className);
             if (!themeMatch) {
-                el = el.parentElement;
+                el = el.parentElement || undefined;
             } else {
                 break;
             }

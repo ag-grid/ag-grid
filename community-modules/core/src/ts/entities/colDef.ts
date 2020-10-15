@@ -91,11 +91,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     colId?: string;
 
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
-    sort?: string;
+    sort?: string | null;
     initialSort?: string;
 
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
-    sortIndex?: number;
+    sortIndex?: number | null;
     initialSortIndex?: number;
 
     /** @deprecated since v24 - use sortOrder instead*/
@@ -119,7 +119,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     initialHide?: boolean;
 
     /** Whether this column is pinned or not. */
-    pinned?: boolean | string;
+    pinned?: boolean | string | null;
     initialPinned?: boolean | string;
 
     /** The field where we get the tooltip on the object */
@@ -197,7 +197,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     valueParser?: ((params: ValueParserParams) => any) | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunc;
+    aggFunc?: string | IAggFunc | null;
     initialAggFunc?: string | IAggFunc;
 
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
@@ -205,7 +205,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     allowedAggFuncs?: string[];
 
     /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
-    rowGroupIndex?: number;
+    rowGroupIndex?: number | null;
     rowGroup?: boolean;
 
     initialRowGroupIndex?: number;
@@ -215,7 +215,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     showRowGroup?: string | boolean;
 
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
-    pivotIndex?: number;
+    pivotIndex?: number | null;
     pivot?: boolean;
 
     initialPivotIndex?: number;
@@ -414,7 +414,7 @@ export interface ColumnsMenuParams {
 }
 
 export interface BaseColDefParams {
-    node: RowNode;
+    node: RowNode | null;
     data: any;
     colDef: ColDef;
     column: Column;
@@ -472,7 +472,7 @@ export interface CellClassParams {
     value: any;
     data: any;
     node: RowNode;
-    colDef: ColDef;
+    colDef?: ColDef;
     rowIndex: number;
     $scope: any;
     api: GridApi;

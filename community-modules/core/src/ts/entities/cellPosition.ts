@@ -16,7 +16,7 @@ export class CellPositionUtils extends BeanStub {
         return this.createIdFromValues(rowIndex, column, rowPinned);
     }
 
-    public createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined): string {
+    public createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined | null): string {
         return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
     }
 

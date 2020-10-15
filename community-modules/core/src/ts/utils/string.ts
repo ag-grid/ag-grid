@@ -20,8 +20,8 @@ const HTML_ESCAPES: { [id: string]: string; } = {
 export function utf8_encode(s: string): string {
     const stringFromCharCode = String.fromCharCode;
 
-    function ucs2decode(string: string) {
-        const output = [];
+    function ucs2decode(string: string): number[] {
+        const output: number[] = [];
         let counter = 0;
         const length = string.length;
         let value;

@@ -7,7 +7,7 @@ import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import {SortOption} from "./rowNodes/rowNodeSorter";
+import { SortOption } from "./rowNodes/rowNodeSorter";
 
 @Bean('sortController')
 export class SortController extends BeanStub {
@@ -25,7 +25,6 @@ export class SortController extends BeanStub {
     }
 
     public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
-
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
             sort = null;
@@ -101,8 +100,8 @@ export class SortController extends BeanStub {
     }
 
     private getNextSortDirection(column: Column): string | null {
-
         let sortingOrder: (string | null)[] | null | undefined;
+
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -116,10 +115,11 @@ export class SortController extends BeanStub {
             return null;
         }
 
-        const currentIndex = sortingOrder.indexOf(column.getSort());
+        const currentIndex = sortingOrder.indexOf(column.getSort()!);
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
         let result: string | null;
+
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -141,27 +141,23 @@ export class SortController extends BeanStub {
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex() - b.getSortIndex());
+        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex()! - b.getSortIndex()!);
 
         return columnsWithSorting;
     }
 
     // used by server side row models, to sent sort to server
     public getSortModel(): any[] {
-        return this.getColumnsWithSortingOrdered().map(column => {
-            return {
-                sort: column.getSort(),
-                colId: column.getId()
-            };
-        });
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            sort: column.getSort(),
+            colId: column.getId()
+        }));
     }
 
     public getSortOptions(): SortOption[] {
-        return this.getColumnsWithSortingOrdered().map(column => {
-            return {
-                sort: column.getSort(),
-                column
-            };
-        });
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            sort: column.getSort(),
+            column
+        }));
     }
 }

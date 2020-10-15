@@ -98,7 +98,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function | null;
 
-    private createCellRendererFunc: () => void;
+    private createCellRendererFunc: (() => void) | null;
 
     private lastIPadMouseClickEvent: number;
 
@@ -108,18 +108,18 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellRendererType: string;
 
     // instance of the cellRenderer class
-    private cellRenderer: ICellRendererComp | null;
+    private cellRenderer: ICellRendererComp | null | undefined;
     // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
-    private selectionHandle: ISelectionHandle | null;
+    private selectionHandle: ISelectionHandle | null | undefined;
 
     private autoHeightCell: boolean;
 
     private firstRightPinned: boolean;
     private lastLeftPinned: boolean;
 
-    private rowComp: RowComp;
+    private rowComp: RowComp | null;
 
     private rangeSelectionEnabled: boolean;
 
@@ -146,7 +146,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp,
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp | null,
         autoHeightCell: boolean, printLayout: boolean) {
         super();
         this.scope = scope;
@@ -286,7 +286,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private getCellLeft(): number {
+    private getCellLeft(): number | null {
         let mostLeftCol: Column;
 
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
@@ -443,7 +443,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.getValueToUse();
     }
 
-    public getRenderedRow(): RowComp {
+    public getRenderedRow(): RowComp | null {
         return this.rowComp;
     }
 
@@ -451,7 +451,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.column.isSuppressNavigable(this.rowNode);
     }
 
-    public getCellRenderer(): ICellRendererComp | null {
+    public getCellRenderer(): ICellRendererComp | null | undefined {
         return this.cellRenderer;
     }
 
@@ -528,14 +528,14 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     // user can also call this via API
-    public flashCell(delays?: { flashDelay: number; fadeDelay: number; }): void {
+    public flashCell(delays?: { flashDelay?: number | null; fadeDelay?: number | null; }): void {
         const flashDelay = delays && delays.flashDelay;
         const fadeDelay = delays && delays.fadeDelay;
 
         this.animateCell('data-changed', flashDelay, fadeDelay);
     }
 
-    private animateCell(cssName: string, flashDelay?: number, fadeDelay?: number): void {
+    private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const element = this.getGui();
@@ -545,7 +545,7 @@ export class CellComp extends Component implements TooltipParentComp {
             flashDelay = gridOptionsWrapper.getCellFlashDelay();
         }
 
-        if (!fadeDelay) {
+        if (!exists(fadeDelay)) {
             fadeDelay = gridOptionsWrapper.getCellFadeDelay();
         }
 
@@ -561,8 +561,8 @@ export class CellComp extends Component implements TooltipParentComp {
             window.setTimeout(() => {
                 // and then to leave things as we got them, we remove the animation
                 this.removeCssClass(animationFullName);
-                element.style.transition = null;
-            }, fadeDelay);
+                element.style.removeProperty('transition');
+            }, fadeDelay!);
         }, flashDelay);
     }
 
@@ -663,8 +663,8 @@ export class CellComp extends Component implements TooltipParentComp {
                 colDef: colDef,
                 rowIndex: this.rowNode.rowIndex,
                 $scope: this.scope,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                api: this.beans.gridOptionsWrapper.getApi()!,
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 context: this.beans.gridOptionsWrapper.getContext()
             },
             onApplicableClass
@@ -699,7 +699,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 const valueToUse = this.getValueToUse();
 
                 if (valueToUse != null) {
-                    this.eCellValue.innerHTML = escapeString(valueToUse);
+                    this.eCellValue.innerHTML = escapeString(valueToUse) || '';
                 }
             }
         }
@@ -734,7 +734,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const hasNewTooltip = exists(newTooltip);
 
-        if (hasNewTooltip && this.tooltip === newTooltip.toString()) { return; }
+        if (hasNewTooltip && this.tooltip === newTooltip!.toString()) { return; }
 
         this.tooltip = newTooltip;
 
@@ -806,8 +806,8 @@ export class CellComp extends Component implements TooltipParentComp {
                 node: this.rowNode,
                 colDef: colDef,
                 rowIndex: this.cellPosition.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                api: this.beans.gridOptionsWrapper.getApi()!,
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);
@@ -1040,7 +1040,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    public dispatchCellContextMenuEvent(event: Event) {
+    public dispatchCellContextMenuEvent(event: Event | null) {
         const colDef = this.getComponentHolder();
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
@@ -1107,9 +1107,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: number | null, charPress?: string): void {
+    public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowComp.startRowEditing(keyPress, charPress, this);
+            this.rowComp!.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
         }
@@ -1145,13 +1145,14 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
+    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp | null> {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
 
         return cellEditorPromise.then(cellEditor => {
-            const isPopup = cellEditor.isPopup && cellEditor.isPopup();
+            const cellEditorComp = cellEditor!;
+            const isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
 
-            if (!isPopup) { return cellEditor; }
+            if (!isPopup) { return cellEditorComp; }
 
             if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
@@ -1159,7 +1160,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
 
             // if a popup, then we wrap in a popup editor and return the popup
-            const popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            const popupEditorWrapper = new PopupEditorWrapper(cellEditorComp);
             this.beans.context.createBean(popupEditorWrapper);
             popupEditorWrapper.init(params);
 
@@ -1231,7 +1232,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addPopupCellEditor(): void {
-        const ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
+        const ePopupGui = this.cellEditor && this.cellEditor.getGui();
+
+        if (!ePopupGui) { return; }
 
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
         this.hideEditorPopup = this.beans.popupService.addPopup({
@@ -1448,7 +1451,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
-        if (this.editingCell || this.rowComp.isEditing()) {
+        if (this.editingCell || this.rowComp!.isEditing()) {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
@@ -1629,7 +1632,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            window.setTimeout(() => colDef.onCellClicked(cellClickedEvent), 0);
+            window.setTimeout(() => colDef.onCellClicked!(cellClickedEvent), 0);
         }
 
         const editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
@@ -1698,7 +1701,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshAriaIndex();
     }
 
-    private modifyLeftForPrintLayout(leftPosition: number): number {
+    private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
         if (!this.printLayout || this.column.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;
         }
@@ -1707,13 +1710,13 @@ export class CellComp extends Component implements TooltipParentComp {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
 
-            return leftWidth + bodyWidth + leftPosition;
+            return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
         // is in body
         const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
 
-        return leftWidth + leftPosition;
+        return leftWidth + (leftPosition || 0);
     }
 
     public onWidthChanged(): void {
@@ -1737,8 +1740,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const thisCol = this.cellPosition.column;
         const { rangeController, columnController } = this.beans;
 
-        let leftCol: Column;
-        let rightCol: Column;
+        let leftCol: Column | null;
+        let rightCol: Column | null;
 
         if (isRtl) {
             leftCol = columnController.getDisplayedColAfter(thisCol);
@@ -1777,11 +1780,11 @@ export class CellComp extends Component implements TooltipParentComp {
                 bottom = true;
             }
 
-            if (!left && range.columns.indexOf(leftCol) < 0) {
+            if (!left && leftCol &&range.columns.indexOf(leftCol) < 0) {
                 left = true;
             }
 
-            if (!right && range.columns.indexOf(rightCol) < 0) {
+            if (!right && rightCol && range.columns.indexOf(rightCol) < 0) {
                 right = true;
             }
         }
@@ -2112,7 +2115,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowComp.stopRowEditing(cancel);
+            this.rowComp!.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
@@ -2152,7 +2155,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // important to clear this out - as parts of the code will check for
         // this to see if an async cellEditor has yet to be created
-        this.cellEditor = this.beans.context.destroyBean(this.cellEditor);
+        this.beans.context.destroyBean(this.cellEditor);
         this.cellEditor = null;
 
         if (this.cellEditorInPopup && this.hideEditorPopup) {

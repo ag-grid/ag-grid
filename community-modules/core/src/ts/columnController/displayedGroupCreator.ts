@@ -34,13 +34,13 @@ export class DisplayedGroupCreator extends BeanStub {
         let previousRealPath: ColumnGroup[];
         let previousOriginalPath: OriginalColumnGroup[];
 
-        const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
+        const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
         // go through each column, then do a bottom up comparison to the previous column, and start
         // to share groups if they converge at any point.
         sortedVisibleColumns.forEach((currentColumn: Column) => {
 
-            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn);
+            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn)!;
             const currentRealPath: ColumnGroup[] = [];
             const firstColumn = !previousOriginalPath;
 
@@ -89,14 +89,14 @@ export class DisplayedGroupCreator extends BeanStub {
             originalGroup: OriginalColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
-            pinned: 'left' | 'right'
+            pinned: 'left' | 'right' | null
         ): ColumnGroup {
 
         const groupId = originalGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
         const uniqueId = ColumnGroup.createUniqueId(groupId, instanceId);
 
-        let columnGroup = oldColumnsMapped[uniqueId];
+        let columnGroup: ColumnGroup | null = oldColumnsMapped[uniqueId];
 
         // if the user is setting new colDefs, it is possible that the id's overlap, and we
         // would have a false match from above. so we double check we are talking about the
@@ -120,8 +120,8 @@ export class DisplayedGroupCreator extends BeanStub {
     private mapOldGroupsById(displayedGroups: ColumnGroupChild[]): {[uniqueId: string]: ColumnGroup} {
         const result: {[uniqueId: string]: ColumnGroup} = {};
 
-        const recursive = (columnsOrGroups: ColumnGroupChild[]) => {
-            columnsOrGroups.forEach(columnOrGroup => {
+        const recursive = (columnsOrGroups: ColumnGroupChild[] | null) => {
+            columnsOrGroups!.forEach(columnOrGroup => {
                 if (columnOrGroup instanceof ColumnGroup) {
                     const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
@@ -137,8 +137,8 @@ export class DisplayedGroupCreator extends BeanStub {
         return result;
     }
 
-    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[], parent: ColumnGroup): void {
-        columnsOrGroups.forEach(columnsOrGroup => {
+    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[] | null, parent: ColumnGroup | null): void {
+        columnsOrGroups!.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {
                 const columnGroup = columnsOrGroup;
@@ -147,7 +147,7 @@ export class DisplayedGroupCreator extends BeanStub {
         });
     }
 
-    private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
+    private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] | null {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
@@ -176,6 +176,7 @@ export class DisplayedGroupCreator extends BeanStub {
         if (found) { return result; }
 
         console.warn('could not get path');
+
         return null;
     }
 }

@@ -152,11 +152,13 @@ export class AlignedGridsService extends BeanStub {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         // likewise for column group
         const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: OriginalColumnGroup | undefined;
+        let otherColumnGroup: OriginalColumnGroup | null = null;
+
         if (masterColumnGroup) {
             const groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
         }
+
         if (masterColumnGroup && !otherColumnGroup) { return; }
 
         this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
@@ -167,7 +169,7 @@ export class AlignedGridsService extends BeanStub {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         const masterColumn = colEvent.column;
-        let otherColumn: Column | undefined;
+        let otherColumn: Column | null = null;
 
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
@@ -185,7 +187,7 @@ export class AlignedGridsService extends BeanStub {
             case Events.EVENT_COLUMN_MOVED:
                 const movedEvent = colEvent as ColumnMovedEvent;
                 this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
+                this.columnController.moveColumns(columnIds, movedEvent.toIndex!, "alignedGridChanged");
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
                 const visibleEvent = colEvent as ColumnVisibleEvent;
@@ -210,8 +212,12 @@ export class AlignedGridsService extends BeanStub {
         const isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
         const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
 
-        alignedGrids.forEach((grid) => {
-            grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-        });
+        if (alignedGrids) {
+            alignedGrids.forEach((grid) => {
+                if (grid.api) {
+                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+                }
+            });
+        }
     }
 }

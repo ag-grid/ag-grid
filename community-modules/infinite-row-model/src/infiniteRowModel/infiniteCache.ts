@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     BeanStub,
     StoreUpdatedEvent,
@@ -14,7 +13,8 @@ import {
     Qualifier,
     RowNode,
     RowNodeBlockLoader,
-    RowRenderer
+    RowRenderer,
+    _
 } from "@ag-grid-community/core";
 import {InfiniteBlock} from "./infiniteBlock";
 
@@ -67,16 +67,15 @@ export class InfiniteCache extends BeanStub {
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
-    public getRow(rowIndex: number, dontCreatePage = false): RowNode {
-        const blockId = Math.floor(rowIndex / this.params.blockSize);
+    public getRow(rowIndex: number, dontCreatePage = false): RowNode | null {
+        const blockId = Math.floor(rowIndex / this.params.blockSize!);
         let block = this.blocks[blockId];
 
         if (!block) {
             if (dontCreatePage) {
                 return null;
-            } else {
-                block = this.createBlock(blockId);
             }
+            block = this.createBlock(blockId);
         }
 
         return block.getRow(rowIndex);
@@ -90,7 +89,7 @@ export class InfiniteCache extends BeanStub {
 
         this.purgeBlocksIfNeeded(newBlock);
 
-        this.params.rowNodeBlockLoader.addBlock(newBlock);
+        this.params.rowNodeBlockLoader!.addBlock(newBlock);
 
         return newBlock;
     }
@@ -101,7 +100,7 @@ export class InfiniteCache extends BeanStub {
     // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
         this.getBlocksInOrder().forEach(block => block.setStateWaitingToLoad());
-        this.params.rowNodeBlockLoader.checkBlockToLoad();
+        this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
     @PreDestroy
@@ -118,7 +117,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     // block calls this, when page loaded
-    public pageLoaded(block: InfiniteBlock, lastRow: number): void {
+    public pageLoaded(block: InfiniteBlock, lastRow?: number): void {
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isAlive()) {
@@ -141,15 +140,14 @@ export class InfiniteCache extends BeanStub {
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
         // we want to keep, which means we are left with blocks that we can potentially purge
-        const maxBlocksProvided = this.params.maxBlocksInCache > 0;
-        const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache - 1 : null;
+        const maxBlocksProvided = this.params.maxBlocksInCache! > 0;
+        const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache! - 1 : null;
         const emptyBlocksToKeep = InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
-
             const purgeBecauseBlockEmpty = block.getState() === InfiniteBlock.STATE_WAITING_TO_LOAD && index >= emptyBlocksToKeep;
 
-            const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
+            const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep! : false;
 
             if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
 
@@ -172,9 +170,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     private removeBlockFromCache(blockToRemove: InfiniteBlock): void {
-        if (!blockToRemove) {
-            return;
-        }
+        if (!blockToRemove) { return; }
 
         this.destroyBlock(blockToRemove);
 
@@ -191,7 +187,7 @@ export class InfiniteCache extends BeanStub {
             this.lastRowIndexKnown = true;
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
-            const lastRowIndex = (block.getId() + 1) * this.params.blockSize;
+            const lastRowIndex = (block.getId() + 1) * this.params.blockSize!;
             const lastRowIndexPlusOverflow = lastRowIndex + this.params.overflowSize;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
@@ -213,7 +209,7 @@ export class InfiniteCache extends BeanStub {
         // of a particular page, otherwise the searching will not pop into the
         // next page
         if (!this.lastRowIndexKnown) {
-            if (this.rowCount % this.params.blockSize === 0) {
+            if (this.rowCount % this.params.blockSize! === 0) {
                 this.rowCount++;
             }
         }
@@ -237,7 +233,7 @@ export class InfiniteCache extends BeanStub {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
         this.blockCount--;
-        this.params.rowNodeBlockLoader.removeBlock(block);
+        this.params.rowNodeBlockLoader!.removeBlock(block);
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
@@ -262,7 +258,7 @@ export class InfiniteCache extends BeanStub {
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
         this.getBlocksInOrder().forEach(block => {
-            const startRow = block.getId() * this.params.blockSize;
+            const startRow = block.getId() * this.params.blockSize!;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }

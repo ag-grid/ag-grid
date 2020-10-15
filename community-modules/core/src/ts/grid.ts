@@ -173,8 +173,8 @@ export class Grid {
         agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
-    private getRegisteredModules(params: GridParams): Module[] {
-        const passedViaConstructor: Module[] = params ? params.modules : null;
+    private getRegisteredModules(params?: GridParams): Module[] {
+        const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.getRegisteredModules();
 
         const allModules: Module[] = [];
@@ -219,7 +219,7 @@ export class Grid {
         });
     }
 
-    private createProvidedBeans(eGridDiv: HTMLElement, params: GridParams): any {
+    private createProvidedBeans(eGridDiv: HTMLElement, params?: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -271,7 +271,7 @@ export class Grid {
         return components;
     }
 
-    private createBeansList(registeredModules: Module[]): any[] {
+    private createBeansList(registeredModules: Module[]): any[] | undefined {
         const rowModelClass = this.getRowModelClass(registeredModules);
 
         if (!rowModelClass) { return; }
@@ -329,8 +329,8 @@ export class Grid {
         const eventService: EventService = this.context.getBean('eventService');
         const readyEvent: GridReadyEvent = {
             type: Events.EVENT_GRID_READY,
-            api: gridOptions.api,
-            columnApi: gridOptions.columnApi
+            api: gridOptions.api!,
+            columnApi: gridOptions.columnApi!
         };
         eventService.dispatchEvent(readyEvent);
     }
@@ -373,6 +373,6 @@ export class Grid {
     }
 
     public destroy(): void {
-        this.gridOptions.api.destroy();
+        this.gridOptions.api!.destroy();
     }
 }

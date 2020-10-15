@@ -68,6 +68,7 @@
     .ag-menu-header {
         @include ag-color-property(background-color, control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border
+        min-width: 240px;
     }
 
     .ag-tabs-header {
@@ -156,10 +157,6 @@
             @include ag-color-property(background-color, input-disabled-background-color);
             @include ag-color-property(border-color, input-disabled-border-color);
         }
-    }
-
-    .ag-menu-header {
-        min-width: 240px;
     }
 
     .ag-column-drop-vertical {

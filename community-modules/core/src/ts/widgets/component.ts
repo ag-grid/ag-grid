@@ -94,9 +94,13 @@ export class Component extends BeanStub {
         });
     }
 
-    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: { [key: string]: any; }): Component {
+    public createComponentFromElement(
+        element: HTMLElement,
+        afterPreCreateCallback?: (comp: Component) => void,
+        paramsMap?: { [key: string]: any; }
+    ): Component | null {
         const key = element.nodeName;
-        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')!] : undefined;
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
         if (ComponentClass) {
@@ -144,7 +148,7 @@ export class Component extends BeanStub {
         }
     }
 
-    public setTemplate(template: string, paramsMap?: { [key: string]: any; }): void {
+    public setTemplate(template: string | null, paramsMap?: { [key: string]: any; }): void {
         const eGui = loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
     }

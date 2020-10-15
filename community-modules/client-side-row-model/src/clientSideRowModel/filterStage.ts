@@ -18,9 +18,9 @@ export class FilterStage extends BeanStub implements IRowNodeStage {
     @Autowired('filterService') private filterService: FilterService;
 
     public execute(params: StageExecuteParams): void {
-        const {rowNode, changedPath} = params;
+        const { rowNode, changedPath } = params;
 
-        this.filterService.filter(changedPath);
+        this.filterService.filter(changedPath!);
 
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     }

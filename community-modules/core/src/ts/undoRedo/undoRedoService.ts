@@ -42,7 +42,7 @@ export class UndoRedoService extends BeanStub {
         }
 
         const undoRedoLimit = this.gridOptionsWrapper.getUndoRedoCellEditingLimit();
-        if (undoRedoLimit <= 0) {
+        if (undoRedoLimit! <= 0) {
             return;
         }
 
@@ -105,7 +105,7 @@ export class UndoRedoService extends BeanStub {
             return;
         }
 
-        const undoAction: UndoRedoAction = this.undoStack.pop();
+        const undoAction: UndoRedoAction | undefined = this.undoStack.pop();
         if (!undoAction || !undoAction.cellValueChanges) {
             return;
         }
@@ -126,7 +126,7 @@ export class UndoRedoService extends BeanStub {
             return;
         }
 
-        const redoAction: UndoRedoAction = this.redoStack.pop();
+        const redoAction: UndoRedoAction | undefined = this.redoStack.pop();
         if (!redoAction || !redoAction.cellValueChanges) {
             return;
         }
@@ -149,11 +149,11 @@ export class UndoRedoService extends BeanStub {
             const currentRow = this.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
-            if (currentRow.rowTop == null) {
+            if (currentRow!.rowTop == null) {
                 return;
             }
 
-            currentRow.setDataValue(columnId, valueExtractor(cellValueChange));
+            currentRow!.setDataValue(columnId, valueExtractor(cellValueChange));
         });
     }
 
@@ -163,18 +163,18 @@ export class UndoRedoService extends BeanStub {
             const endRow = range.endRow;
 
             const lastFocusedCell: LastFocusedCell = {
-                rowPinned: startRow.rowPinned,
-                rowIndex: startRow.rowIndex,
+                rowPinned: startRow!.rowPinned,
+                rowIndex: startRow!.rowIndex,
                 columnId: range.startColumn.getColId()
             };
 
             this.setLastFocusedCell(lastFocusedCell);
 
             const cellRangeParams: CellRangeParams = {
-                rowStartIndex: startRow.rowIndex,
-                rowStartPinned: startRow.rowPinned,
-                rowEndIndex: endRow.rowIndex,
-                rowEndPinned: endRow.rowPinned,
+                rowStartIndex: startRow!.rowIndex,
+                rowStartPinned: startRow!.rowPinned,
+                rowEndIndex: endRow!.rowIndex,
+                rowEndPinned: endRow!.rowPinned,
                 columnStart: range.startColumn,
                 columns: range.columns
             };
@@ -191,7 +191,7 @@ export class UndoRedoService extends BeanStub {
 
         const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
-            rowIndex: row.rowIndex,
+            rowIndex: row!.rowIndex,
             columnId: cellValueChange.columnId
         };
 

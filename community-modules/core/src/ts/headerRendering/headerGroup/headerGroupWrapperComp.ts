@@ -47,7 +47,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     protected readonly column: ColumnGroup;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
 
     private eHeaderCellResize: HTMLElement;
 
@@ -55,15 +55,15 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private resizeStartWidth: number;
     private resizeRatios: number[];
 
-    private resizeTakeFromCols: Column[];
-    private resizeTakeFromStartWidth: number;
-    private resizeTakeFromRatios: number[];
+    private resizeTakeFromCols: Column[] | null;
+    private resizeTakeFromStartWidth: number | null;
+    private resizeTakeFromRatios: number[] | null;
     private expandable: boolean;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    constructor(columnGroup: ColumnGroup, pinned: string) {
+    constructor(columnGroup: ColumnGroup, pinned: string | null) {
         super(HeaderGroupWrapperComp.TEMPLATE);
         this.column = columnGroup;
         this.pinned = pinned;
@@ -76,7 +76,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         const displayName = this.columnController.getDisplayNameForColumnGroup(this.column, 'header');
 
-        this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName!);
 
         this.setupResize();
         this.addClasses();
@@ -154,12 +154,13 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.onColumnMovingChanged();
     }
 
-    public getComponentHolder(): ColGroupDef {
+    public getComponentHolder(): ColGroupDef | null {
         return this.column.getColGroupDef();
     }
 
-    private getTooltipText(): string {
+    private getTooltipText(): string | null | undefined {
         const colGroupDef = this.getComponentHolder();
+
         return colGroupDef && colGroupDef.headerTooltip;
     }
 
@@ -223,11 +224,11 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             const colGroupDef = columnGroup.getColGroupDef();
 
             if (colGroupDef) {
-                displayName = colGroupDef.headerName;
+                displayName = colGroupDef.headerName!;
             }
 
             if (!displayName) {
-                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true) : '';
+                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true)! : '';
             }
         }
 
@@ -405,7 +406,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.resizeRatios = [];
         this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
 
-        let takeFromGroup: ColumnGroup = null;
+        let takeFromGroup: ColumnGroup | null = null;
 
         if (shiftKey) {
             takeFromGroup = this.columnController.getDisplayedGroupAfter(this.column);
@@ -417,9 +418,9 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             this.resizeTakeFromCols = takeFromLeafCols.filter(col => col.isResizable());
 
             this.resizeTakeFromStartWidth = 0;
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromStartWidth += col.getActualWidth());
+            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromStartWidth! += col.getActualWidth());
             this.resizeTakeFromRatios = [];
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromRatios.push(col.getActualWidth() / this.resizeTakeFromStartWidth));
+            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromRatios!.push(col.getActualWidth() / this.resizeTakeFromStartWidth!));
         } else {
             this.resizeTakeFromCols = null;
             this.resizeTakeFromStartWidth = null;
@@ -443,8 +444,8 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         if (this.resizeTakeFromCols) {
             resizeSets.push({
                 columns: this.resizeTakeFromCols,
-                ratios: this.resizeTakeFromRatios,
-                width: this.resizeTakeFromStartWidth - resizeAmountNormalised
+                ratios: this.resizeTakeFromRatios!,
+                width: this.resizeTakeFromStartWidth! - resizeAmountNormalised
             });
         }
 

@@ -8,7 +8,7 @@ import { addCssClass } from "../utils/dom";
 
 export class CssClassApplier {
 
-    public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: ColumnGroup) {
+    public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ColumnGroup | null) {
         if (missing(abstractColDef)) {
             return;
         }
@@ -19,15 +19,15 @@ export class CssClassApplier {
         if (missing(abstractColDef)) {
             return;
         }
-        this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
+        this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass!, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]),
+    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]) | null | undefined,
                                               abstractColDef: AbstractColDef,
                                               eHeaderCell: HTMLElement,
                                               gridOptionsWrapper: GridOptionsWrapper,
-                                              column: Column,
-                                              columnGroup: ColumnGroup | OriginalColumnGroup) {
+                                              column: Column | null,
+                                              columnGroup: ColumnGroup | OriginalColumnGroup | null) {
         if (missing(classesOrFunc)) {
             return;
         }

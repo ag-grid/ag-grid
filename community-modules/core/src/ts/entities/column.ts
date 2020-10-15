@@ -76,25 +76,25 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef;
+    private userProvidedColDef: ColDef | null;
 
     private actualWidth: any;
 
     private visible: any;
     private pinned: 'left' | 'right' | null;
-    private left: number;
-    private oldLeft: number;
-    private aggFunc: string | IAggFunc | null;
-    private sort: string;
-    private sortIndex: number;
+    private left: number | null;
+    private oldLeft: number | null;
+    private aggFunc: string | IAggFunc | null | undefined;
+    private sort: string | null | undefined;
+    private sortIndex: number | null | undefined;
     private moving = false;
     private menuVisible = false;
 
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
 
-    private minWidth: number;
-    private maxWidth: number;
+    private minWidth: number | null | undefined;
+    private maxWidth: number | null | undefined;
 
     private filterActive = false;
 
@@ -106,12 +106,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private rowGroupActive = false;
     private pivotActive = false;
     private aggregationActive = false;
-    private flex: number;
+    private flex: number | null | undefined;
 
     private readonly primary: boolean;
 
     private parent: ColumnGroup;
-    private originalParent: OriginalColumnGroup;
+    private originalParent: OriginalColumnGroup | null;
 
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -180,7 +180,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.userProvidedColDef = userProvidedColDef;
     }
 
-    public getUserProvidedColDef(): ColDef {
+    public getUserProvidedColDef(): ColDef | null {
         return this.userProvidedColDef;
     }
 
@@ -398,7 +398,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.resizable === true;
     }
 
-    private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
+    private isColumnFunc(rowNode: RowNode, value?: boolean | IsColumnFunc | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value as boolean;
@@ -434,7 +434,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.moving;
     }
 
-    public getSort(): string {
+    public getSort(): string | null | undefined {
         return this.sort;
     }
 
@@ -472,11 +472,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return exists(this.sort);
     }
 
-    public getSortIndex(): number {
+    public getSortIndex(): number | null | undefined {
         return this.sortIndex;
     }
 
-    public setSortIndex(sortOrder: number | null): void {
+    public setSortIndex(sortOrder?: number | null): void {
         this.sortIndex = sortOrder;
     }
 
@@ -484,15 +484,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.aggFunc = aggFunc;
     }
 
-    public getAggFunc(): string | IAggFunc {
+    public getAggFunc(): string | IAggFunc | null | undefined {
         return this.aggFunc;
     }
 
-    public getLeft(): number {
+    public getLeft(): number | null {
         return this.left;
     }
 
-    public getOldLeft(): number {
+    public getOldLeft(): number | null {
         return this.oldLeft;
     }
 
@@ -569,7 +569,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pinned === Constants.PINNED_RIGHT;
     }
 
-    public getPinned(): 'left' | 'right' {
+    public getPinned(): 'left' | 'right' | null | undefined {
         return this.pinned;
     }
 
@@ -671,11 +671,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return false;
     }
 
-    public getMinWidth(): number {
+    public getMinWidth(): number | null | undefined {
         return this.minWidth;
     }
 
-    public getMaxWidth(): number {
+    public getMaxWidth(): number | null | undefined {
         return this.maxWidth;
     }
 
@@ -685,12 +685,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     // this method should only be used by the columnController to
     // change flex when required by the setColumnState method.
-    public setFlex(flex: number) {
+    public setFlex(flex: number | null) {
         if (this.flex !== flex) { this.flex = flex; }
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {
-        this.setActualWidth(this.minWidth, source);
+        if (exists(this.minWidth)) {
+            this.setActualWidth(this.minWidth, source);
+        }
     }
 
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "api"): void {
@@ -747,10 +749,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public getMenuTabs(defaultValues: string[]): string[] {
-        let menuTabs: string[] = this.getColDef().menuTabs;
+        let menuTabs = this.getColDef().menuTabs;
+
         if (menuTabs == null) {
             menuTabs = defaultValues;
         }
+
         return menuTabs;
     }
 

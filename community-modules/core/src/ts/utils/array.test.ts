@@ -48,7 +48,7 @@ describe('areEqual', () => {
 
 describe('every', () => {
     it.each([undefined, null])('returns true if list is %s', list => {
-        expect(every(list, () => true)).toBe(true);
+        expect(every(list!, () => true)).toBe(true);
     });
 
     it('returns false if any element does not pass the predicate', () => {
@@ -73,7 +73,7 @@ describe('every', () => {
 
 describe('some', () => {
     it.each([undefined, null])('returns false if list is %s', list => {
-        expect(some(list, () => true)).toBe(false);
+        expect(some(list!, () => true)).toBe(false);
     });
 
     it('returns false if every element does not pass the predicate', () => {
@@ -98,7 +98,7 @@ describe('some', () => {
 
 describe('forEach', () => {
     it.each([undefined, null])('returns successfully if list is %s', value => {
-        expect(() => forEach(value, () => { })).not.toThrow();
+        expect(() => forEach(value!, () => { })).not.toThrow();
     });
 
     it('executes for each value in order', () => {
@@ -112,7 +112,7 @@ describe('forEach', () => {
 
 describe('forEachReverse', () => {
     it.each([undefined, null])('returns successfully if list is %s', value => {
-        expect(() => forEachReverse(value, () => { })).not.toThrow();
+        expect(() => forEachReverse(value!, () => { })).not.toThrow();
     });
 
     it('executes for each value in reverse order', () => {
@@ -126,7 +126,7 @@ describe('forEachReverse', () => {
 
 describe('map', () => {
     it.each([undefined, null])('returns null if list to map is %s', list => {
-        expect(map(list, x => true)).toBe(null);
+        expect(map(list!, x => true)).toBe(null);
     });
 
     it('returns mapped list', () => {
@@ -136,7 +136,7 @@ describe('map', () => {
 
 describe('filter', () => {
     it.each([undefined, null])('returns null if list to filter is %s', list => {
-        expect(filter(list, x => true)).toBe(null);
+        expect(filter(list!, x => true)).toBe(null);
     });
 
     it('returns filtered list', () => {
@@ -146,10 +146,11 @@ describe('filter', () => {
 
 describe('reduce', () => {
     it.each([undefined, null])('returns null if list to reduce is %s', list => {
-        expect(reduce(list, x => true, {})).toBe(null);
+        expect(reduce(list!, x => true, {})).toBe(null);
     });
 
     it.each([undefined, null])('returns null if initial value is %s', initial => {
+        // @ts-ignore
         expect(reduce([], x => true, initial)).toBe(null);
     });
 

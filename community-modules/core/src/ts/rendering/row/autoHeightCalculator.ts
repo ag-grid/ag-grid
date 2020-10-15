@@ -6,8 +6,8 @@ import { CellComp } from "../cellComp";
 import { ColumnController } from "../../columnController/columnController";
 import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
-import {RowCssClassCalculator} from "./rowCssClassCalculator";
-import {AngularRowUtils} from "./angularRowUtils";
+import { RowCssClassCalculator } from "./rowCssClassCalculator";
+import { AngularRowUtils } from "./angularRowUtils";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {

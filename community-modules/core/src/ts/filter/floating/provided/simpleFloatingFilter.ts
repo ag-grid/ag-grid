@@ -17,7 +17,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract setEditable(editable: boolean): void;
 
-    private lastType: string;
+    private lastType: string | null | undefined;
 
     private optionsFactory: OptionsFactory;
 
@@ -34,10 +34,8 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    protected getTextFromModel(model: ProvidedFilterModel): string {
-        if (!model) {
-            return null;
-        }
+    protected getTextFromModel(model: ProvidedFilterModel): string | null {
+        if (!model) { return null; }
 
         const isCombined = (model as any).operator;
 
@@ -54,11 +52,11 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         }
     }
 
-    protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean {
+    protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean | undefined {
         return event && event.afterFloatingFilter;
     }
 
-    protected getLastType(): string {
+    protected getLastType(): string | null | undefined {
         return this.lastType;
     }
 
@@ -120,10 +118,9 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         return customFilterOption && customFilterOption.hideFilterInput;
     }
 
-    private isTypeEditable(type: string): boolean {
-        return !this.doesFilterHaveHiddenInput(type) &&
-            type
-            && type !== SimpleFilter.IN_RANGE
+    private isTypeEditable(type?: string | null): boolean {
+        return !!type && !this.doesFilterHaveHiddenInput(type) &&
+            type !== SimpleFilter.IN_RANGE
             && type !== SimpleFilter.EMPTY;
     }
 }

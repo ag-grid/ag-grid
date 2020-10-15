@@ -10,7 +10,7 @@ export class AgToggleButton extends AgCheckbox {
     public setValue(value: boolean, silent?: boolean): this {
         super.setValue(value, silent);
 
-        addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
+        addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue()!);
 
         return this;
     }

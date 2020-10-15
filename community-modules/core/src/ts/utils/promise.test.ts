@@ -72,8 +72,8 @@ describe('then', () => {
 
     it('returns a promise that can be chained', done => {
         new Promise<number>(resolve => setTimeout(() => resolve(3), 0))
-            .then(value => value * 3)
-            .then(value => value + 20)
+            .then(value => value! * 3)
+            .then(value => value! + 20)
             .then(value => {
                 asyncAssert(done, () => expect(value).toBe(29));
             });

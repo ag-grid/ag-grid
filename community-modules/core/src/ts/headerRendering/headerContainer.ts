@@ -19,15 +19,15 @@ export class HeaderContainer extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private eContainer: HTMLElement;
-    private eViewport: HTMLElement;
+    private eViewport: HTMLElement | null;
 
-    private pinned: string;
+    private pinned: string | null;
 
-    private filtersRowComp: HeaderRowComp;
-    private columnsRowComp: HeaderRowComp;
+    private filtersRowComp: HeaderRowComp | undefined;
+    private columnsRowComp: HeaderRowComp | undefined;
     private groupsRowComps: HeaderRowComp[] = [];
 
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement | null, pinned: string | null) {
         super();
         this.eContainer = eContainer;
         this.pinned = pinned;
@@ -42,7 +42,7 @@ export class HeaderContainer extends BeanStub {
             this.columnsRowComp.forEachHeaderElement(callback);
         }
         if (this.filtersRowComp) {
-            this.columnsRowComp.forEachHeaderElement(callback);
+            this.filtersRowComp.forEachHeaderElement(callback);
         }
     }
 
@@ -145,7 +145,7 @@ export class HeaderContainer extends BeanStub {
         }
     }
 
-    private destroyRowComp(rowComp: HeaderRowComp): void {
+    private destroyRowComp(rowComp?: HeaderRowComp): void {
         if (rowComp) {
             this.destroyBean(rowComp);
             this.eContainer.removeChild(rowComp.getGui());

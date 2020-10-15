@@ -21,7 +21,7 @@ export class HorizontalResizeService extends BeanStub {
 
     private oldBodyCursor: string;
     private oldUserSelect: string;
-    private oldWebkitUserSelect: string;
+    private oldWebkitUserSelect: string | null;
 
     public addResizeBar(params: HorizontalResizeParams): () => void {
         const dragSource: DragListenerParams = {
