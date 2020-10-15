@@ -7,7 +7,7 @@ export class PropertyKeys {
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate',
         'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
         'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'serverSideAsyncTransactionLoadingStrategy'
+        'serverSideAsyncTransactionLoadingStrategy', 'serverSideStoreType'
     ];
 
     public static OBJECT_PROPERTIES = [

@@ -21,8 +21,8 @@ interface AsyncTransactionWrapper {
 }
 
 enum LoadingStrategy {
-    ApplyAfterLoaded = 'ApplyAfterLoaded',
-    DoNotApply = 'DoNotApply'
+    ApplyAfterLoaded = 'applyAfterLoaded',
+    DoNotApply = 'doNotApply'
 }
 
 @Bean('serverSideTransactionManager')
