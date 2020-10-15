@@ -248,6 +248,18 @@ const barLabelMapping: any = {
     }
 };
 
+const tooltipMapping: any = {
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            }
+        }
+    }
+};
+
 const axisMappings: any = {
     line: {
         meta: {
@@ -373,6 +385,7 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
@@ -387,6 +400,7 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
@@ -405,12 +419,12 @@ const mappings: any = {
                         strokeOpacity: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -443,12 +457,12 @@ const mappings: any = {
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -481,12 +495,12 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         shadow: undefined,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -521,12 +535,12 @@ const mappings: any = {
                         lineDashOffset: 0,
                         areaPlot: false,
                         aggregation: 'sum',
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 label: {
                     meta: {
@@ -636,6 +650,7 @@ const mappings: any = {
                         shadow: undefined
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 title: {
                     meta: {
