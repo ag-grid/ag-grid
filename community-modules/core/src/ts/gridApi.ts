@@ -38,7 +38,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
+import {IServerSideRowModel, IServerSideTransactionManager} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -64,6 +64,8 @@ import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import {_} from "./utils";
+import {RowNodeBlockLoader} from "./rowNodeCache/rowNodeBlockLoader";
+import {ServerSideTransaction, ServerSideTransactionResult} from "./interfaces/serverSideTransaction";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -155,6 +157,8 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
+    @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
+    @Optional('serverSideTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -1248,25 +1252,38 @@ export class GridApi {
         }
     }
 
-    public applyServerSideTransaction(rowDataTransaction: RowDataTransaction, route: string[] = []): void {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.applyTransaction(rowDataTransaction, route);
+    public applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            return undefined;
         }
+        return this.serverSideTransactionManager.applyTransaction(transaction);
+    }
+
+    public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot apply Server Side Transaction if not using the Server Side Row Model.');
+            return;
+        }
+        return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
+    }
+
+    public flushServerSideAsyncTransactions(): void {
+        if (!this.serverSideTransactionManager) {
+            console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
+            return;
+        }
+        return this.serverSideTransactionManager.flushAsyncTransactions();
     }
 
     public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
-        let res: RowNodeTransaction = null;
-        if (this.clientSideRowModel) {
-            res = this.clientSideRowModel.updateRowData(rowDataTransaction);
-        } else if (this.infiniteRowModel) {
-            const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
-            doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
 
-            this.infiniteRowModel.updateRowData(rowDataTransaction);
-        } else {
-            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel.');
+        if (!this.clientSideRowModel) {
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel. Working with InfiniteRowModel was deprecated in v23.1 and removed in v24.1');
             return;
         }
+
+        const res: RowNodeTransaction = this.clientSideRowModel.updateRowData(rowDataTransaction);
 
         // refresh all the full width rows
         this.rowRenderer.refreshFullWidthRows(res.update);
@@ -1371,7 +1388,7 @@ export class GridApi {
 
     public purgeServerSideCache(route?: string[]): void {
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeCache(route);
+            this.serverSideRowModel.purgeStore(route);
         } else {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
@@ -1384,15 +1401,20 @@ export class GridApi {
 
     public getInfiniteRowCount(): number {
         if (this.infiniteRowModel) {
-            return this.infiniteRowModel.getVirtualRowCount();
+            return this.infiniteRowModel.getRowCount();
         } else {
             console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public isMaxRowFound(): boolean {
+        console.warn(`ag-Grid: api.isLastRowIndexKnown is deprecated, please use api.isLastRowIndexKnown()`);
+        return this.isLastRowIndexKnown();
+    }
+
+    public isLastRowIndexKnown(): boolean {
         if (this.infiniteRowModel) {
-            return this.infiniteRowModel.isMaxRowFound();
+            return this.infiniteRowModel.isLastRowIndexKnown();
         } else {
             console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
@@ -1400,14 +1422,19 @@ export class GridApi {
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
         console.warn('ag-Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead');
-        this.setInfiniteRowCount(rowCount, maxRowFound);
+        this.setRowCount(rowCount, maxRowFound);
     }
 
     public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
+        console.warn('ag-Grid: setInfiniteRowCount() is now called setRowCount(), please call setRowCount() instead');
+        this.setRowCount(rowCount, maxRowFound);
+    }
+
+    public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.infiniteRowModel) {
-            this.infiniteRowModel.setVirtualRowCount(rowCount, maxRowFound);
+            this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
         } else {
-            console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.setRowCount is only available for Infinite Row Model.`);
         }
     }
 
@@ -1422,13 +1449,7 @@ export class GridApi {
     }
 
     public getCacheBlockState(): any {
-        if (this.infiniteRowModel) {
-            return this.infiniteRowModel.getBlockState();
-        } else if (this.serverSideRowModel) {
-            return this.serverSideRowModel.getBlockState();
-        } else {
-            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='serverSide'.`);
-        }
+        return this.rowNodeBlockLoader.getBlockState();
     }
 
     public checkGridSize(): void {

@@ -174,10 +174,10 @@ export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/ce
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { RowDataTransaction } from "./interfaces/rowDataTransaction";
+export { ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus } from "./interfaces/serverSideTransaction";
 export { ChangedPath } from "./utils/changedPath";
-export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
+export { RowNodeBlock, LoadCompleteEvent, LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 export { PaginationProxy } from "./pagination/paginationProxy";
 export { RefreshModelParams } from "./interfaces/refreshModelParams";
 export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
@@ -186,8 +186,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
-export { IServerSideCache } from "./interfaces/iServerSideCache";
+export { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -248,6 +248,7 @@ export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
+export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { GridCore } from "./gridCore";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
@@ -308,7 +309,8 @@ export {
     ProcessDataFromClipboardParams,
     ChartRef,
     ProcessChartOptionsParams,
-    ProcessChartParams
+    ProcessChartParams,
+    ServerSideStoreType
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

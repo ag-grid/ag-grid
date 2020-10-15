@@ -1,5 +1,8 @@
 import {
     _,
+    RowNodeSorter,
+    SortedRowNode,
+    SortOption,
     Autowired,
     Bean,
     ChangedPath,
@@ -15,16 +18,6 @@ import {
 
 import {RowNodeMap} from "./clientSideRowModel";
 
-export interface SortOption {
-    inverter: number;
-    column: Column;
-}
-
-export interface SortedRowNode {
-    currentPos: number;
-    rowNode: RowNode;
-}
-
 @Bean('sortService')
 export class SortService extends BeanStub {
 
@@ -32,6 +25,7 @@ export class SortService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;
 
@@ -57,10 +51,9 @@ export class SortService extends BeanStub {
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             if (sortActive) {
-                const sortedRowNodes: SortedRowNode[] = deltaSort ?
+                rowNode.childrenAfterSort = deltaSort ?
                     this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                    : this.doFullSort(rowNode, sortOptions);
-                rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
+                    : this.rowNodeSorter.doFullSort(rowNode.childrenAfterFilter, sortOptions);
             } else {
                 rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
             }
@@ -77,15 +70,6 @@ export class SortService extends BeanStub {
         this.updateGroupDataForHiddenOpenParents(changedPath);
     }
 
-    private doFullSort(rowNode: RowNode, sortOptions: SortOption[]): SortedRowNode[] {
-        const sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterFilter
-            .map(this.mapNodeToSortedNode.bind(this));
-
-        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
-
-        return sortedRowNodes;
-    }
-
     private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
         return {currentPos: pos, rowNode: rowNode};
     }
@@ -94,7 +78,7 @@ export class SortService extends BeanStub {
                         sortOptions: SortOption[],
                         dirtyLeafNodes: { [nodeId: string]: boolean },
                         changedPath: ChangedPath,
-                        noAggregations: boolean): SortedRowNode[] {
+                        noAggregations: boolean): RowNode[] {
 
         // clean nodes will be a list of all row nodes that remain in the set
         // and ordered. we start with the old sorted set and take out any nodes
@@ -129,15 +113,18 @@ export class SortService extends BeanStub {
 
         // sort changed nodes. note that we don't need to sort cleanNodes as they are
         // already sorted from last time.
-        changedNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        changedNodes.sort(this.rowNodeSorter.compareRowNodes.bind(this, sortOptions));
 
+        let result: SortedRowNode[];
         if (changedNodes.length === 0) {
-            return cleanNodes;
+            result = cleanNodes;
         } else if (cleanNodes.length === 0) {
-            return changedNodes;
+            result = changedNodes;
         } else {
-            return this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
+            result = this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
         }
+
+        return result.map( item => item.rowNode );
     }
 
     // Merge two sorted arrays into each other
@@ -155,7 +142,7 @@ export class SortService extends BeanStub {
             // of second array. If yes, store first
             // array element and increment first array
             // index. Otherwise do same with second array
-            const compareResult = this.compareRowNodes(sortOptions, arr1[i], arr2[j]);
+            const compareResult = this.rowNodeSorter.compareRowNodes(sortOptions, arr1[i], arr2[j]);
             if (compareResult < 0) {
                 res.push(arr1[i++]);
             } else {
@@ -174,40 +161,6 @@ export class SortService extends BeanStub {
         }
 
         return res;
-    }
-
-    private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
-        const nodeA: RowNode = sortedNodeA.rowNode;
-        const nodeB: RowNode = sortedNodeB.rowNode;
-
-        // Iterate columns, return the first that doesn't match
-        for (let i = 0, len = sortOptions.length; i < len; i++) {
-            const sortOption = sortOptions[i];
-            // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-
-            const isInverted = sortOption.inverter === -1;
-            const valueA: any = this.getValue(nodeA, sortOption.column);
-            const valueB: any = this.getValue(nodeB, sortOption.column);
-            let comparatorResult: number;
-            const providedComparator = sortOption.column.getColDef().comparator;
-            if (providedComparator) {
-                //if comparator provided, use it
-                comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
-            } else {
-                //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
-            }
-
-            if (comparatorResult !== 0) {
-                return comparatorResult * sortOption.inverter;
-            }
-        }
-        // All matched, we make is so that the original sort order is kept:
-        return sortedNodeA.currentPos - sortedNodeB.currentPos;
-    }
-
-    private getValue(nodeA: RowNode, column: Column): string {
-        return this.valueService.getValue(column, nodeA);
     }
 
     private updateChildIndexes(rowNode: RowNode) {

@@ -1599,6 +1599,21 @@ export class RowRenderer extends BeanStub {
 
         return this.paginationProxy.getRow(cell.rowIndex);
     }
+
+    // returns true if any row between startIndex and endIndex is rendered. used by
+    // SSRM or IRM, as they don't want to purge visible blocks from cache.
+    public isRangeInRenderedViewport(startIndex: number, endIndex: number): boolean {
+
+        // parent closed means the parent node is not expanded, thus these blocks are not visible
+        const parentClosed = startIndex == null || endIndex == null;
+        if (parentClosed) { return false; }
+
+        const blockAfterViewport = startIndex > this.lastRenderedRow;
+        const blockBeforeViewport = endIndex < this.firstRenderedRow;
+        const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
+
+        return blockInsideViewport;
+    }
 }
 
 export interface RefreshViewParams {

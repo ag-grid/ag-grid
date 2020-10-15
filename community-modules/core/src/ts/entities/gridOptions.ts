@@ -14,6 +14,7 @@ import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
+    AsyncTransactionsApplied,
     BodyScrollEvent,
     CellClickedEvent,
     CellContextMenuEvent,
@@ -89,6 +90,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import {ServerSideTransaction} from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
 
 export interface GridOptions {
@@ -145,7 +147,7 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
 
-    /** @deprecated Allows user to suppress certain keyboard events */
+    /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
@@ -259,6 +261,8 @@ export interface GridOptions {
 
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
+    serverSideAsyncTransactionLoadingStrategy?: string;
+    serverSideStoreType?: string;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -367,13 +371,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
-
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
-    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
-
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
-
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
@@ -402,6 +401,7 @@ export interface GridOptions {
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
@@ -577,6 +577,8 @@ export interface GridOptions {
 
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
+    onAsyncTransactionsApplied?(event: AsyncTransactionsApplied): void;
+
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
 
@@ -605,6 +607,13 @@ export interface GetDataPath {
 
 export interface IsServerSideGroup {
     (dataItem: any): boolean;
+}
+
+export interface IsApplyServerSideTransaction {
+    (params: {
+        transaction: ServerSideTransaction,
+        parentNode: RowNode
+    }): boolean;
 }
 
 export interface GetServerSideGroupKey {
@@ -750,4 +759,9 @@ export interface ChartRef {
     chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
+}
+
+export enum ServerSideStoreType {
+    ClientSide = 'clientSide',
+    Infinite = 'infinite'
 }

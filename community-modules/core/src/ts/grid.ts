@@ -90,6 +90,8 @@ import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
 import {RowCssClassCalculator} from "./rendering/row/rowCssClassCalculator";
+import {RowNodeBlockLoader} from "./rowNodeCache/rowNodeBlockLoader";
+import {RowNodeSorter} from "./rowNodes/rowNodeSorter";
 
 export interface GridParams {
     // used by Web Components
@@ -290,7 +292,7 @@ export class Grid {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

@@ -8,10 +8,11 @@ import {
     RowNodeTransaction,
     SortController,
     StageExecuteParams,
-    BeanStub
+    BeanStub,
+    SortOption
 } from "@ag-grid-community/core";
 
-import {SortOption, SortService} from "./sortService";
+import {SortService} from "./sortService";
 
 @Bean('sortStage')
 export class SortStage extends BeanStub {
@@ -22,7 +23,7 @@ export class SortStage extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): void {
-        const sortOptions: SortOption[] = this.sortController.getSortForRowController();
+        const sortOptions: SortOption[] = this.sortController.getSortOptions();
 
         const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         const deltaSort = sortActive

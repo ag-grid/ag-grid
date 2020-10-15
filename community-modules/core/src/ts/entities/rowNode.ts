@@ -9,13 +9,12 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
-import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
-import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
+import {IServerSideStore} from "../interfaces/IServerSideStore";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -184,7 +183,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
+    public childrenCache: IServerSideStore | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
@@ -288,7 +287,6 @@ export class RowNode implements IEventEmitter {
         this.data = data;
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
-        this.updateDataOnDetailNode();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
 

@@ -6,7 +6,7 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions,
+    GridOptions, IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
@@ -43,6 +43,7 @@ import { ChartOptions } from './interfaces/iChartOptions';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
@@ -77,10 +78,13 @@ function zeroOrGreater(value: any, defaultValue: number): number {
     return defaultValue;
 }
 
-function oneOrGreater(value: any, defaultValue: number): number {
-    if (value > 0) { return value; }
-    // zero gets returned if number is missing or the wrong type
-    return defaultValue;
+function oneOrGreater(value: any, defaultValue: number = undefined): number {
+    const valueNumber = parseInt(value);
+    if (isNumeric(valueNumber) && valueNumber > 0) {
+        return valueNumber;
+    } else {
+        return defaultValue;
+    }
 }
 
 export interface PropertyChangedEvent extends AgEvent {
@@ -286,24 +290,18 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getDomDataKey(): string {
-        return this.domDataKey;
-    }
-
     // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
-        const domData = (element as any)[this.getDomDataKey()];
+        const domData = (element as any)[this.domDataKey];
 
         return domData ? domData[key] : undefined;
     }
 
     public setDomData(element: Element, key: string, value: any): any {
-        const domDataKey = this.getDomDataKey();
-        let domData = (element as any)[domDataKey];
-
+        let domData = (element as any)[this.domDataKey];
         if (missing(domData)) {
             domData = {};
-            (element as any)[domDataKey] = domData;
+            (element as any)[this.domDataKey] = domData;
         }
         domData[key] = value;
     }
@@ -648,6 +646,14 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
+    public getServerSideAsyncTransactionLoadingStrategy(): string {
+        return this.gridOptions.serverSideAsyncTransactionLoadingStrategy;
+    }
+
+    public getServerSideStoreType(): string {
+        return this.gridOptions.serverSideStoreType;
+    }
+
     public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
         return this.gridOptions.createChartContainer;
     }
@@ -670,6 +676,10 @@ export class GridOptionsWrapper {
 
     public getChildCountFunc() {
         return this.gridOptions.getChildCount;
+    }
+
+    public getIsApplyServerSideTransactionFunc(): IsApplyServerSideTransaction {
+        return this.gridOptions.isApplyServerSideTransaction;
     }
 
     public getDefaultGroupSortComparator() {
@@ -766,7 +776,7 @@ export class GridOptionsWrapper {
     }
 
     public getCacheBlockSize(): number | undefined {
-        return this.gridOptions.cacheBlockSize;
+        return oneOrGreater(this.gridOptions.cacheBlockSize);
     }
 
     public getInfiniteInitialRowCount(): number | undefined {
@@ -1115,14 +1125,6 @@ export class GridOptionsWrapper {
 
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
-    }
-
-    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
-        return this.gridOptions.navigateToNextHeader;
-    }
-
-    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
-        return this.gridOptions.tabToNextHeader;
     }
 
     public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
@@ -1526,6 +1528,11 @@ export class GridOptionsWrapper {
             options.detailRowAutoHeight = true;
         }
 
+        if (options.suppressEnterpriseResetOnNewColumns) {
+            console.warn('ag-Grid: since v25, grid property suppressEnterpriseResetOnNewColumns is deprecated. This was a temporary property to allow changing columns in Server Side Row Model without triggering a reload. Now that it is possible to dynamically change columns in the grid, this is no longer needed.');
+            options.detailRowAutoHeight = true;
+        }
+
         if (options.suppressKeyboardEvent) {
             console.warn(
                 `ag-Grid: since v24.1 suppressKeyboardEvent in the gridOptions has been deprecated and will be removed in
@@ -1618,7 +1625,7 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
-            if (this.isNumeric(height)) {
+            if (height != null) {
                 return { height, estimated: false };
             }
         }
@@ -1663,7 +1670,7 @@ export class GridOptionsWrapper {
     }
 
     private isNumeric(value: any) {
-        return !isNaN(value) && typeof value === 'number' && isFinite(value);
+        return !isNaN(value) && typeof value === 'number';
     }
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones

@@ -51,7 +51,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         return true;
     }
 
@@ -177,10 +177,6 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
         return topLevelIndex;
-    }
-
-    public getCurrentPageHeight(): number {
-        return this.rowCount * this.rowHeight;
     }
 
     public isEmpty(): boolean {

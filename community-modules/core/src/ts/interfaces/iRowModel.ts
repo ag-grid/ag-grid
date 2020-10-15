@@ -22,8 +22,6 @@ export interface IRowModel {
 
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
-    /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
-    getCurrentPageHeight(): number;
     /** Returns true if the provided rowNode is in the list of rows to render */
     isRowPresent(rowNode: RowNode): boolean;
     /** Returns row top and bottom for a given row */
@@ -53,7 +51,7 @@ export interface IRowModel {
      * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
      * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.
      */
-    isLastRowFound(): boolean;
+    isLastRowIndexKnown(): boolean;
 
     /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;

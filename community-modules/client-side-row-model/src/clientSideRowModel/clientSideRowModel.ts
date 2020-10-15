@@ -28,7 +28,8 @@ import {
     RowNodeTransaction,
     SelectionController,
     ValueCache,
-    ValueService
+    ValueService,
+    AsyncTransactionsApplied
 } from "@ag-grid-community/core";
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
@@ -269,7 +270,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.lastHighlightedRow;
     }
 
-    public isLastRowFound(): boolean {
+    public isLastRowIndexKnown(): boolean {
         return true;
     }
 
@@ -558,16 +559,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return pixelInRow;
     }
 
-    public getCurrentPageHeight(): number {
-        if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            const lastRow = _.last(this.rowsToDisplay);
-            const lastPixel = lastRow.rowTop + lastRow.rowHeight;
-            return lastPixel;
-        }
-
-        return 0;
-    }
-
     public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
         if (this.rootNode.allLeafChildren) {
             this.rootNode.allLeafChildren.forEach((rowNode, index) => callback(rowNode, index));
@@ -822,6 +813,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             window.setTimeout(() => {
                 callbackFuncsBound.forEach(func => func());
             }, 0);
+        }
+
+        if (rowNodeTrans.length>0) {
+            const event: AsyncTransactionsApplied = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
+                results: rowNodeTrans
+            };
+            this.eventService.dispatchEvent(event)
         }
 
         this.rowDataTransactionBatch = null;
