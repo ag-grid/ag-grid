@@ -371,8 +371,13 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
+
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
+    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
+
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
+
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 

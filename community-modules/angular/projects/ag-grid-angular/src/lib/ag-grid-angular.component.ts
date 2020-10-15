@@ -203,6 +203,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotRowTotals : any = undefined;
     @Input() public pivotPanelShow : any = undefined;
     @Input() public fillHandleDirection : any = undefined;
+    @Input() public serverSideAsyncTransactionLoadingStrategy : any = undefined;
+    @Input() public serverSideStoreType : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
@@ -292,6 +294,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
     @Input() public fillOperation : any = undefined;
+    @Input() public isApplyServerSideTransaction : any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
@@ -430,6 +433,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnResized: EventEmitter<any> = new EventEmitter<any>();
     @Output() public displayedColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public virtualColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public asyncTransactionsApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowGroupOpened: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataUpdated: EventEmitter<any> = new EventEmitter<any>();
@@ -499,6 +503,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnAggFuncChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public keyboardFocus: EventEmitter<any> = new EventEmitter<any>();
     @Output() public mouseFocus: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public storeUpdated: EventEmitter<any> = new EventEmitter<any>();
     // @END@
 }
 
