@@ -52,6 +52,22 @@ SNIPPET
     the batching of aggregations, sorts and filters.
 </note>
 
+<h2>Async Transactions Applied Event</h2>
+
+<p>
+    Each time the grid executes a batch of Async Transactions, it dispatches a <code>asyncTransactionsApplied</code>
+    event.
+<p>
+
+<p>
+    The event contains <code>results</code> attribute, which is a list of all the results for all Transactions
+    that got applied.
+</p>
+
+<p>
+    This even is useful for debugging or observing how the Async Transactions are applied for learning purposes.
+</p>
+
 <h2>Flush Async Transactions</h2>
 
 <p>
@@ -89,6 +105,10 @@ SNIPPET
     </li>
     <li>
         Transactions getting added and executed is logged to the console.
+    </li>
+    <li>
+        The example listens on event <code>asyncTransactionsApplied</code> and logs how many
+        transactions got applied.
     </li>
 </ul>
 
