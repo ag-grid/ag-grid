@@ -26,7 +26,8 @@ import {
     RowDataChangedEvent,
     RowNode,
     RowRenderer,
-    SortController
+    SortController,
+    ServerSideStoreType
 } from "@ag-grid-community/core";
 import {ClientSideStore} from "./stores/clientSideStore";
 import {InfiniteStore} from "./stores/infiniteStore";
@@ -34,13 +35,13 @@ import {NodeManager} from "./nodeManager";
 import {SortListener} from "./listeners/sortListener";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
-    const oneBlockCache = params.blockSize == null;
-    const CacheClass = oneBlockCache ? ClientSideStore : InfiniteStore;
+    const CacheClass = params.storeType===ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
     return new CacheClass(params, parentNode);
 }
 
 export interface StoreParams {
     blockSize?: number;
+    storeType: ServerSideStoreType;
     sortModel: any;
     filterModel: any;
     maxBlocksInCache?: number;
@@ -232,7 +233,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             maxBlocksInCache = undefined;
         }
 
-        const blockSize = this.gridOptionsWrapper.getCacheBlockSize();
+        let blockSize = this.gridOptionsWrapper.getCacheBlockSize();
+        if (blockSize==null) {
+            blockSize = 100;
+        }
 
         const params: StoreParams = {
             // the columns the user has grouped and aggregated by
@@ -245,6 +249,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.sortListener.extractSortModel(),
 
+            storeType: this.getStoreType(),
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
@@ -254,6 +259,22 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         };
 
         return params;
+    }
+
+    private getStoreType(): ServerSideStoreType {
+        const storeType = this.gridOptionsWrapper.getServerSideStoreType();
+        switch (storeType) {
+            case ServerSideStoreType.Infinite :
+            case ServerSideStoreType.ClientSide :
+                return storeType;
+            case null :
+            case undefined :
+                return ServerSideStoreType.Infinite;
+            default :
+                const types = Object.keys(ServerSideStoreType).join(', ')
+                console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
+                return ServerSideStoreType.Infinite;
+        }
     }
 
     public getParams(): StoreParams {

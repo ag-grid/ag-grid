@@ -637,6 +637,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideAsyncTransactionLoadingStrategy;
     }
 
+    public getServerSideStoreType(): string {
+        return this.gridOptions.serverSideStoreType;
+    }
+
     public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
         return this.gridOptions.createChartContainer;
     }

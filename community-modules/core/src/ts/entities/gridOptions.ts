@@ -260,6 +260,7 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
     serverSideAsyncTransactionLoadingStrategy?: string;
+    serverSideStoreType?: string;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -739,4 +740,9 @@ export interface ChartRef {
     chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
+}
+
+export enum ServerSideStoreType {
+    ClientSide = 'clientSide',
+    Infinite = 'infinite'
 }
