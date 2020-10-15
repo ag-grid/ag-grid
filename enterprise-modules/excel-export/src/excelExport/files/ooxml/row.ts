@@ -31,7 +31,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
             if (mergedCells.length) {
                 cells.splice(mergeMap[i].pos + 1, 0, ...mergedCells);
             }
-            
+
         }
     }
 };

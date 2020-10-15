@@ -147,7 +147,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
-        if (!this.filtersExistInChildren(columnGroup.getChildren())) return;
+        if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
             return [];
@@ -156,7 +156,7 @@ export class FiltersToolPanelListPanel extends Component {
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
         const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
 
-        if (columnGroup.isPadding()) return childFilterComps;
+        if (columnGroup.isPadding()) { return childFilterComps; }
 
         const filterGroupComp =
             new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
@@ -283,7 +283,7 @@ export class FiltersToolPanelListPanel extends Component {
         let notExpandedCount = 0;
 
         const updateExpandCounts = (filterGroup: ToolPanelFilterGroupComp) => {
-            if (!filterGroup.isColumnGroup()) return;
+            if (!filterGroup.isColumnGroup()) { return; }
 
             filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
 
@@ -346,7 +346,7 @@ export class FiltersToolPanelListPanel extends Component {
             children.forEach((child: ToolPanelFilterItem, index: number) => {
                 const childPasses = recursivelySearch(child, parentPasses);
                 filterItem.hideGroupItem(!childPasses, index);
-                if (childPasses) anyChildPasses = true;
+                if (childPasses) { anyChildPasses = true; }
             });
 
             // hide group if no children pass

@@ -89,8 +89,8 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import {AgChartOptions, AgChartTheme, AgChartThemeOptions, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
-import {ServerSideTransaction} from "../interfaces/serverSideTransaction";
+import {AgChartOptions, AgChartTheme, AgChartThemeOverrides} from "../interfaces/iAgChartOptions";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
 
 export interface GridOptions {

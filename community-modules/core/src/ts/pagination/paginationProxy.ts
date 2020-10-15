@@ -1,6 +1,6 @@
 import { IRowModel, RowBounds } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
-import {AgGridEvent, Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
+import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";

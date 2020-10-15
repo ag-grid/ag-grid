@@ -114,7 +114,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private handleTransaction(details: GroupingDetails): void {
 
-        details.transactions.forEach( tran => {
+        details.transactions.forEach(tran => {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.

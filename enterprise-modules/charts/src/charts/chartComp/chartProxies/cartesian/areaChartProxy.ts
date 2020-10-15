@@ -139,7 +139,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }, new Map<string, AreaSeries>());
 
         const data = this.transformData(params.data, params.category.id);
-        let previousSeries: AreaSeries | undefined = undefined;
+        let previousSeries: AreaSeries | undefined;
 
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);

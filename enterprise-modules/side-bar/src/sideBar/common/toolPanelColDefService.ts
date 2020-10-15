@@ -139,14 +139,14 @@ export class ToolPanelColDefService extends BeanStub {
         };
 
         const mergeTrees = (treeA: AbstractColDef, treeB: AbstractColDef): AbstractColDef => {
-            if (!this.isColGroupDef(treeB)) return treeA;
+            if (!this.isColGroupDef(treeB)) { return treeA; }
 
             const mergeResult = treeA as AbstractColDef;
             const groupToMerge = treeB as ColGroupDef;
 
             if (groupToMerge.children && groupToMerge.groupId) {
                 const added = this.addChildrenToGroup(mergeResult, groupToMerge.groupId, groupToMerge.children[0]);
-                if (added) return mergeResult;
+                if (added) { return mergeResult; }
             }
 
             groupToMerge.children.forEach(child => mergeTrees(mergeResult, child));
@@ -158,7 +158,7 @@ export class ToolPanelColDefService extends BeanStub {
         // path groups with the same root group id are contiguous.
         const mergeColDefs: AbstractColDef[] = [];
         for (let i = 1; i <= leafPathTrees.length; i++) {
-            const first = leafPathTrees[i-1];
+            const first = leafPathTrees[i - 1];
             const second = leafPathTrees[i];
 
             if (matchingRootGroupIds(first, second)) {
@@ -180,7 +180,7 @@ export class ToolPanelColDefService extends BeanStub {
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
 
-        if (!this.isColGroupDef(tree)) return true;
+        if (!this.isColGroupDef(tree)) { return true; }
 
         const currentGroup = tree as ColGroupDef;
         const groupToAdd = colDef as ColGroupDef;

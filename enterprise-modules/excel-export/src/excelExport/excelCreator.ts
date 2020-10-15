@@ -162,7 +162,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const {zipContainer, xlsxFactory} = this;
 
         zipContainer.addFolders([
-            'xl/worksheets/', 
+            'xl/worksheets/',
             'xl/',
             'xl/theme/',
             'xl/_rels/',

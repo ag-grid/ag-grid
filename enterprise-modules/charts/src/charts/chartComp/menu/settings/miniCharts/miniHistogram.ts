@@ -14,14 +14,14 @@ export class MiniHistogram extends MiniChartWithAxes {
         const size = this.size;
 
         // approx normal curve
-        const data = [2,5,11,13,10,6,1];
+        const data = [2, 5, 11, 13, 10, 6, 1];
 
         const xScale = new LinearScale();
         xScale.domain = [0, data.length];
         xScale.range = [padding, size - padding];
 
         const yScale = new LinearScale();
-        yScale.domain = [0, data.reduce((a, b) => Math.max(a,b), 0)];
+        yScale.domain = [0, data.reduce((a, b) => Math.max(a, b), 0)];
         yScale.range = [size - padding, padding];
 
         const bottom = yScale.convert(0);
@@ -29,7 +29,7 @@ export class MiniHistogram extends MiniChartWithAxes {
         this.bars = data.map((datum, i) => {
             const top = yScale.convert(datum);
             const left = xScale.convert(i);
-            const right = xScale.convert(i+1);
+            const right = xScale.convert(i + 1);
 
             const rect = new Rect();
             rect.x = left;

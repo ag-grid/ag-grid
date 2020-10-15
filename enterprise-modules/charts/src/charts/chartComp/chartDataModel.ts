@@ -231,7 +231,7 @@ export class ChartDataModel extends BeanStub {
             return _.convertToSet(this.columnController.getAllDisplayedColumns());
         }
 
-        let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
+        const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
         if (this.dimensionCellRange) {
             columns.push(...this.dimensionCellRange.columns);
@@ -396,7 +396,7 @@ export class ChartDataModel extends BeanStub {
 
         dimensionCols.forEach(column => {
             const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            let selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            const selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
 
             this.dimensionColState.push({
                 column,
@@ -513,7 +513,7 @@ export class ChartDataModel extends BeanStub {
     private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
         this.valueCellRange = undefined;
 
-        let selectedValueCols: Column[] = [];
+        const selectedValueCols: Column[] = [];
 
         valueCols.forEach(col => {
             if (updatedColState && updatedColState.colId === col.getColId()) {

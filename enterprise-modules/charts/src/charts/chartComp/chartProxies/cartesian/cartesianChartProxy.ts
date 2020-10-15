@@ -66,7 +66,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
 
         const chartType = this.getStandaloneChartType();
-        let userThemeOverrideRotation = undefined;
+        let userThemeOverrideRotation;
 
         const commonRotation = _.get(themeOverrides, `common.axes.${axisType}.label.rotation`, undefined);
         const cartesianRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.label.rotation`, undefined);

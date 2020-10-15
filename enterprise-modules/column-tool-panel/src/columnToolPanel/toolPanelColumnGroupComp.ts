@@ -184,7 +184,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const childColumns: Column[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
-            children.forEach( child => {
+            children.forEach(child => {
                 if (!child.isPassesFilter()) { return; }
                 if (child.isGroup()) {
                     extractCols(child.getChildren());
@@ -232,7 +232,7 @@ export class ToolPanelColumnGroupComp extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        visibleLeafColumns.forEach( column => {
+        visibleLeafColumns.forEach(column => {
             if (!pivotMode && column.getColDef().lockVisible) { return; }
 
             if (this.isColumnChecked(column, pivotMode)) {

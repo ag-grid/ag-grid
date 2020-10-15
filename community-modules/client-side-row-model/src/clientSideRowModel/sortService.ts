@@ -124,7 +124,7 @@ export class SortService extends BeanStub {
             result = this.mergeSortedArrays(sortOptions, cleanNodes, changedNodes);
         }
 
-        return result.map( item => item.rowNode );
+        return result.map(item => item.rowNode);
     }
 
     // Merge two sorted arrays into each other

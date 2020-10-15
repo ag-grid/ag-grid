@@ -33,7 +33,7 @@ export class ModelItemUtils {
         const res: Column[] = [];
 
         const recursiveFunc = (items: ColumnModelItem[]) => {
-            items.forEach( item => {
+            items.forEach(item => {
                 if (!item.isPassesFilter()) { return; }
                 if (item.isGroup()) {
                     recursiveFunc(item.getChildren());
@@ -51,9 +51,9 @@ export class ModelItemUtils {
     private setAllVisible(columns: Column[], visible: boolean, eventType: ColumnEventType): void {
         const colStateItems: ColumnState[] = [];
 
-        columns.forEach( col => {
+        columns.forEach(col => {
             if (col.getColDef().lockVisible) { return; }
-            if (col.isVisible()!=visible) {
+            if (col.isVisible() != visible) {
                 colStateItems.push({
                     colId: col.getId(),
                     hide: !visible
@@ -61,7 +61,7 @@ export class ModelItemUtils {
             }
         });
 
-        if (colStateItems.length>0) {
+        if (colStateItems.length > 0) {
             this.columnController.applyColumnState({state: colStateItems}, eventType);
         }
     }
@@ -103,15 +103,15 @@ export class ModelItemUtils {
         const turnOffAction = (col: Column) => {
             if (!col.isAnyFunctionActive()) { return; }
 
-            if (copyOfPivotColumns.indexOf(col)>=0) {
+            if (copyOfPivotColumns.indexOf(col) >= 0) {
                 _.removeFromArray(copyOfPivotColumns, col);
                 pivotChanged = true;
             }
-            if (copyOfValueColumns.indexOf(col)>=0) {
+            if (copyOfValueColumns.indexOf(col) >= 0) {
                 _.removeFromArray(copyOfValueColumns, col);
                 valueChanged = true;
             }
-            if (copyOfRowGroupColumns.indexOf(col)>=0) {
+            if (copyOfRowGroupColumns.indexOf(col) >= 0) {
                 _.removeFromArray(copyOfRowGroupColumns, col);
                 rowGroupChanged = true;
             }
@@ -196,7 +196,7 @@ export class ModelItemUtils {
 
         columns.forEach(action);
 
-        if (colStateItems.length>0) {
+        if (colStateItems.length > 0) {
             this.columnController.applyColumnState({state: colStateItems}, eventType);
         }
     }

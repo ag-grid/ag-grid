@@ -25,7 +25,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private static TEMPLATE = /* html */
         `<div class="ag-filter-toolpanel">
             <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
-            <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list> 
+            <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list>
          </div>`;
 
     @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;

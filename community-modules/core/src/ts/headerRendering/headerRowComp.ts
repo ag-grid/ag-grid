@@ -5,7 +5,6 @@ import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColumnController } from '../columnController/columnController';
 import { Column } from '../entities/column';
-import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';

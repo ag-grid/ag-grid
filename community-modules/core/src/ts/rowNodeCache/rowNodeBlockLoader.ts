@@ -56,7 +56,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private loadComplete(): void {
         this.activeBlockLoadsCount--;
         this.checkBlockToLoad();
-        if (this.activeBlockLoadsCount==0) {
+        if (this.activeBlockLoadsCount == 0) {
             this.dispatchEvent({type: RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT});
         }
     }
@@ -74,7 +74,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
         this.printCacheStatus();
 
-        if (this.maxConcurrentRequests!=null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
+        if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
             this.logger.log(`checkBlockToLoad: max loads exceeded`);
             return;
         }

@@ -42,10 +42,10 @@ export class StoreUtils extends BeanStub {
     public loadFromDatasource(p: {
         storeParams: StoreParams,
         parentNode: RowNode,
-        successCallback: ()=>void,
-        failCallback: ()=>void,
-        success: ()=>void,
-        fail: ()=>void,
+        successCallback: () => void,
+        failCallback: () => void,
+        success: () => void,
+        fail: () => void,
         startRow?: number,
         endRow?: number}
     ): void {
@@ -84,7 +84,7 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string)=>RowNode ): IServerSideStore {
+    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore {
         if (_.missingOrEmpty(keys)) {
             return currentCache;
         }

@@ -62,7 +62,7 @@ export class PrimaryColsListPanel extends Component {
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
 
-    private destroyColumnItemFuncs: (()=>void)[] = [];
+    private destroyColumnItemFuncs: (() => void)[] = [];
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -131,7 +131,6 @@ export class PrimaryColsListPanel extends Component {
 
         return columnComp;
     }
-
 
     public onColumnsChanged(): void {
         const pivotModeActive = this.columnController.isPivotMode();
@@ -227,7 +226,7 @@ export class PrimaryColsListPanel extends Component {
     private flattenAndFilterModel(): void {
         this.displayedColsList = [];
 
-        const recursiveFunc = (item: ColumnModelItem)=> {
+        const recursiveFunc = (item: ColumnModelItem) => {
             if (!item.isPassesFilter()) { return; }
             this.displayedColsList.push(item);
             if (item.isGroup() && item.isExpanded()) {
@@ -256,9 +255,9 @@ export class PrimaryColsListPanel extends Component {
         }, 0);
     }
 
-    private forEachItem(callback: (item: ColumnModelItem)=>void): void {
+    private forEachItem(callback: (item: ColumnModelItem) => void): void {
         const recursiveFunc = (items: ColumnModelItem[]) => {
-            items.forEach( item => {
+            items.forEach(item => {
                 callback(item);
                 if (item.isGroup()) {
                     recursiveFunc(item.getChildren());
@@ -269,7 +268,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public doSetExpandedAll(value: boolean): void {
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (item.isGroup()) {
                 item.setExpanded(value);
             }
@@ -284,11 +283,11 @@ export class PrimaryColsListPanel extends Component {
 
         const expandedGroupIds: string[] = [];
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (!item.isGroup()) { return; }
 
             const groupId = item.getColumnGroup().getId();
-            if (groupIds.indexOf(groupId)>=0) {
+            if (groupIds.indexOf(groupId) >= 0) {
                 item.setExpanded(expand);
                 expandedGroupIds.push(groupId);
             }
@@ -304,7 +303,7 @@ export class PrimaryColsListPanel extends Component {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             if (item.isExpanded()) {
                 expandedCount++;
@@ -335,7 +334,7 @@ export class PrimaryColsListPanel extends Component {
 
         const pivotMode = this.columnController.isPivotMode();
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (item.isGroup()) { return; }
             if (!item.isPassesFilter()) { return; }
 
@@ -360,7 +359,7 @@ export class PrimaryColsListPanel extends Component {
 
         });
 
-        if (checkedCount > 0 && uncheckedCount > 0) return undefined;
+        if (checkedCount > 0 && uncheckedCount > 0) { return undefined; }
 
         return !(checkedCount === 0 || uncheckedCount > 0);
     }
@@ -374,7 +373,7 @@ export class PrimaryColsListPanel extends Component {
     private markFilteredColumns(): void {
 
         const passesFilter = (item: ColumnModelItem) => {
-            if (!_.exists(this.filterText)) return true;
+            if (!_.exists(this.filterText)) { return true; }
 
             return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText as string) >= 0 : true;
         };
@@ -382,7 +381,7 @@ export class PrimaryColsListPanel extends Component {
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {
             let atLeastOneChildPassed = false;
             if (item.isGroup()) {
-                let groupPasses = passesFilter(item);
+                const groupPasses = passesFilter(item);
                 item.getChildren().forEach(child => {
                     const childPasses = recursivelyCheckFilter(child, groupPasses || parentPasses);
                     if (childPasses) {

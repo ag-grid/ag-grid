@@ -77,7 +77,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
             const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
                 isParent &&
-                rowNode.leafGroup && 
+                rowNode.leafGroup &&
                 rowNode.childrenAfterGroup.length === 1;
 
             // hide open parents means when group is open, we don't show it. we also need to make sure the
@@ -136,7 +136,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const footerNode = new RowNode();
         this.context.createBean(footerNode);
 
-        Object.keys(groupNode).forEach(function (key) {
+        Object.keys(groupNode).forEach(function(key) {
             (footerNode as any)[key] = (groupNode as any)[key];
         });
 

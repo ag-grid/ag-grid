@@ -773,7 +773,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
-        if (this.applyAsyncTransactionsTimeout==null) {
+        if (this.applyAsyncTransactionsTimeout == null) {
             this.rowDataTransactionBatch = [];
             const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
@@ -784,7 +784,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public flushAsyncTransactions(): void {
-        if (this.applyAsyncTransactionsTimeout!=null) {
+        if (this.applyAsyncTransactionsTimeout != null) {
             clearTimeout(this.applyAsyncTransactionsTimeout);
             this.executeBatchUpdateRowData();
         }
@@ -815,7 +815,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }, 0);
         }
 
-        if (rowNodeTrans.length>0) {
+        if (rowNodeTrans.length > 0) {
             const event: AsyncTransactionsApplied = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -854,7 +854,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const orderMap: { [id: string]: number } = suppressSortOrder ? null : {};
 
         if (this.rootNode && this.rootNode.allLeafChildren) {
-            for (let index = 0; index<this.rootNode.allLeafChildren.length; index++) {
+            for (let index = 0; index < this.rootNode.allLeafChildren.length; index++) {
                 const node = this.rootNode.allLeafChildren[index];
                 orderMap[node.id] = index;
             }

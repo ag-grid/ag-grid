@@ -23,7 +23,6 @@ export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTr
         .onValueChange(newValue => chartProxy.setSeriesOption("fill.opacity", newValue));
 }
 
-
 export function initFontPanelParams(chartTranslator: ChartTranslator, chartProxy: ChartProxy<any, any>) {
     const initialFont = {
         family: chartProxy.getSeriesOption("label.fontFamily"),

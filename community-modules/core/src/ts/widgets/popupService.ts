@@ -1,4 +1,3 @@
-import { Constants } from "../constants/constants";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";

@@ -25,7 +25,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { setAriaExpanded, setAriaSelected, setAriaLabel, setAriaRowIndex } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { removeCssClass, addCssClass, addOrRemoveCssClass, setDomChildOrder, appendHtml, isElementChildOfClass, addStylesToElement } from "../../utils/dom";
-import { removeFromArray, pushAll } from "../../utils/array";
+import { removeFromArray } from "../../utils/array";
 import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { iterateObject, assign } from "../../utils/object";

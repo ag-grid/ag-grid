@@ -35,7 +35,7 @@ import {NodeManager} from "./nodeManager";
 import {SortListener} from "./listeners/sortListener";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
-    const CacheClass = params.storeType===ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
+    const CacheClass = params.storeType === ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
     return new CacheClass(params, parentNode);
 }
 
@@ -234,7 +234,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         let blockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        if (blockSize==null) {
+        if (blockSize == null) {
             blockSize = 100;
         }
 
@@ -373,7 +373,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRowIndexAtPixel(pixel: number): number {
         const rootStore = this.getRootStore();
-        if (pixel<=0 || !rootStore) { return 0; }
+        if (pixel <= 0 || !rootStore) { return 0; }
         return rootStore.getRowIndexAtPixel(pixel);
     }
 
@@ -382,7 +382,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isRowsToRender(): boolean {
-        return this.getRootStore()!=null && this.getRowCount() > 0;
+        return this.getRootStore() != null && this.getRowCount() > 0;
     }
 
     public getType(): string {

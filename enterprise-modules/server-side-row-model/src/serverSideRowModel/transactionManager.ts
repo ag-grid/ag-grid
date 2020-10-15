@@ -48,7 +48,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         const loadingStrategy = this.gridOptionsWrapper.getServerSideAsyncTransactionLoadingStrategy();
 
         // default is 'Skip'
-        if (loadingStrategy==null) {
+        if (loadingStrategy == null) {
             this.loadingStrategy = LoadingStrategy.DoNotApply;
             return;
         }
@@ -67,7 +67,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
-        if (this.asyncTransactionsTimeout==null) {
+        if (this.asyncTransactionsTimeout == null) {
             this.asyncTransactions = [];
             this.scheduleExecuteAsync();
         }
@@ -83,34 +83,34 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
     private executeAsyncTransactions(): void {
 
-        const resultFuncs: (()=>void)[] = [];
+        const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
 
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
         this.asyncTransactions.forEach(txWrapper => {
-            let result: ServerSideTransactionResult = undefined;
+            let result: ServerSideTransactionResult;
             this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, cache => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
 
-            if (result==undefined) {
+            if (result == undefined) {
                 result = {status: ServerSideTransactionResultStatus.StoreNotFound};
             }
 
             resultsForEvent.push(result);
 
-            const retryTransaction = result.status==ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy==LoadingStrategy.ApplyAfterLoaded;
+            const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy == LoadingStrategy.ApplyAfterLoaded;
             if (retryTransaction) {
                 transactionsToRetry.push(txWrapper);
                 return;
             }
 
             if (txWrapper.callback) {
-                resultFuncs.push(()=>txWrapper.callback(result));
+                resultFuncs.push(() => txWrapper.callback(result));
             }
-            if (result.status===ServerSideTransactionResultStatus.Applied) {
+            if (result.status === ServerSideTransactionResultStatus.Applied) {
                 atLeastOneTransactionApplied = true;
             }
         });
@@ -122,7 +122,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             }, 0);
         }
 
-        if (transactionsToRetry.length>0) {
+        if (transactionsToRetry.length > 0) {
             this.scheduleExecuteAsync();
             this.asyncTransactions = transactionsToRetry;
         } else {
@@ -135,7 +135,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
         }
 
-        if (resultsForEvent.length>0) {
+        if (resultsForEvent.length > 0) {
             const event: AsyncTransactionsApplied = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -147,14 +147,14 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     public flushAsyncTransactions(): void {
-        if (this.asyncTransactionsTimeout!=null) {
+        if (this.asyncTransactionsTimeout != null) {
             clearTimeout(this.asyncTransactionsTimeout);
             this.executeAsyncTransactions();
         }
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        let res: ServerSideTransactionResult = undefined;
+        let res: ServerSideTransactionResult;
 
         this.serverSideRowModel.executeOnStore(transaction.route, cache => {
             res = cache.applyTransaction(transaction);

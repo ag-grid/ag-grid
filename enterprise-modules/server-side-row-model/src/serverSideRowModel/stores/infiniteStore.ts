@@ -103,7 +103,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             _.assign(this.info, params.info);
         }
 
-        const finalRowCount = params.finalRowCount!=null && params.finalRowCount >=0 ? params.finalRowCount : undefined;
+        const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
@@ -125,7 +125,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     private purgeBlocksIfNeeded(blockToExclude: CacheBlock): void {
         // we exclude checking for the page just created, as this has yet to be accessed and hence
         // the lastAccessed stamp will not be updated for the first time yet
-        const blocksForPurging = this.getBlocksInOrder().filter( b => b!=blockToExclude );
+        const blocksForPurging = this.getBlocksInOrder().filter(b => b != blockToExclude);
         const lastAccessedComparator = (a: CacheBlock, b: CacheBlock) => b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 
@@ -283,27 +283,27 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     private findBlockAndExecute<T>(matchBlockFunc: (block: CacheBlock) => FindResult,
-                                blockFoundFunc: (foundBlock: CacheBlock)=>T,
-                                blockNotFoundFunc: (previousBlock: CacheBlock)=>T,
+                                blockFoundFunc: (foundBlock: CacheBlock) => T,
+                                blockNotFoundFunc: (previousBlock: CacheBlock) => T,
                  ): T {
 
         let blockFound = false;
         let breakSearch = false;
         let lastBlock: CacheBlock | null = null;
 
-        let res: T = undefined;
+        let res: T;
 
         this.getBlocksInOrder().forEach(block => {
             if (blockFound || breakSearch) { return; }
 
             const comparatorResult = matchBlockFunc(block);
 
-            if (comparatorResult==FindResult.FOUND) {
+            if (comparatorResult == FindResult.FOUND) {
                 res = blockFoundFunc(block);
                 blockFound = true;
-            } else if (comparatorResult==FindResult.CONTINUE_FIND) {
+            } else if (comparatorResult == FindResult.CONTINUE_FIND) {
                 lastBlock = block;
-            } else if (comparatorResult==FindResult.BREAK_FIND) {
+            } else if (comparatorResult == FindResult.BREAK_FIND) {
                 breakSearch = true;
             }
         });
@@ -526,7 +526,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         const blockId = Math.floor(topLevelIndex / blockSize);
 
         const matchBlockFunc = (block: CacheBlock): FindResult => {
-            if (block.getId()===blockId) {
+            if (block.getId() === blockId) {
                 return FindResult.FOUND;
             } else {
                 return block.getId() < blockId ? FindResult.CONTINUE_FIND : FindResult.BREAK_FIND;
@@ -603,7 +603,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        _.doOnce(()=> {
+        _.doOnce(() => {
             console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
         }, 'cacheStore.applyTransaction');
 

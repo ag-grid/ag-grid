@@ -134,7 +134,7 @@ export class InfiniteCache extends BeanStub {
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
         // we exclude checking for the page just created, as this has yet to be accessed and hence
         // the lastAccessed stamp will not be updated for the first time yet
-        const blocksForPurging = this.getBlocksInOrder().filter( b => b!=blockToExclude);
+        const blocksForPurging = this.getBlocksInOrder().filter(b => b != blockToExclude);
         const lastAccessedComparator = (a: InfiniteBlock, b: InfiniteBlock) => b.getLastAccessed() - a.getLastAccessed();
         blocksForPurging.sort(lastAccessedComparator);
 
@@ -261,7 +261,7 @@ export class InfiniteCache extends BeanStub {
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
-        this.getBlocksInOrder().forEach( block => {
+        this.getBlocksInOrder().forEach(block => {
             const startRow = block.getId() * this.params.blockSize;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);

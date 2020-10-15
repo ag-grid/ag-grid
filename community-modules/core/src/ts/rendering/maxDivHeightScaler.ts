@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { getMaxDivHeight } from "../utils/browser";
 

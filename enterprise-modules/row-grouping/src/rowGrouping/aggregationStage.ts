@@ -249,7 +249,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode): any {
         const aggFunc = typeof aggFuncOrString === 'string' ?
-            this.aggFuncService.getAggFunc(aggFuncOrString) : 
+            this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
 
         if (typeof aggFunc !== 'function') {
@@ -258,7 +258,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         }
 
         const deprecationWarning = () => {
-            _.doOnce(()=> {
+            _.doOnce(() => {
                 console.warn('ag-Grid: since v24.0, custom aggregation functions take a params object. Please alter your aggregation function to use params.values')
             }, 'aggregationStage.aggregateValues Deprecation');
         };

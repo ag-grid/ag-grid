@@ -34,7 +34,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate( /* html */
+        this.setTemplate(/* html */
             `<div class="ag-filter-toolpanel-search" role="presentation">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>

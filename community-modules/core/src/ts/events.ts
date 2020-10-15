@@ -365,7 +365,7 @@ export interface CellValueChangedEvent extends CellEvent {
 }
 
 export interface AsyncTransactionsApplied extends AgGridEvent {
-    results: (RowNodeTransaction|ServerSideTransactionResult) [];
+    results: (RowNodeTransaction | ServerSideTransactionResult) [];
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting

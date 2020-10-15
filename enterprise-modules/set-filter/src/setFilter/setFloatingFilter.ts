@@ -98,7 +98,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
                 const formattedValue = this.valueFormatterService.formatValue(this.params.column, null, null, value);
                 const valueToRender = formattedValue != null ? formattedValue : value;
 
-                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT['blanks']) : valueToRender;
+                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
             });
 
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;

@@ -7,9 +7,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
 import {RowCssClassCalculator} from "./rowCssClassCalculator";
-import {PaginationProxy} from "../../pagination/paginationProxy";
 import {AngularRowUtils} from "./angularRowUtils";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {

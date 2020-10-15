@@ -77,7 +77,7 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        this.successCommon(version, {data: rows, finalRowCount: lastRow} );
+        this.successCommon(version, {data: rows, finalRowCount: lastRow});
     }
 
     protected successCommon(version: number, params: LoadSuccessParams) {
@@ -99,6 +99,5 @@ export abstract class RowNodeBlock extends BeanStub {
 
         this.dispatchEvent(event);
     }
-
 
 }

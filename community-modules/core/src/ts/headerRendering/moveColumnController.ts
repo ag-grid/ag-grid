@@ -325,7 +325,7 @@ export class MoveColumnController implements DropListener {
         }
 
         const validMoves = [firstValidMove];
-        const numberComparator = (a: number, b:number) => a-b;
+        const numberComparator = (a: number, b:number) => a - b;
 
         // add in other valid moves due to hidden columns and married children. for example, a particular
         // move might break a group that has married children (so move isn't valid), however there could

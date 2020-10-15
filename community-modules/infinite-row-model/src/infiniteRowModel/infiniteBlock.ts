@@ -134,7 +134,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected createRowNodes(): void {
         this.rowNodes = [];
         for (let i = 0; i < this.params.blockSize; i++) {
-            let rowIndex = this.startRow + i;
+            const rowIndex = this.startRow + i;
 
             const rowNode = this.getContext().createBean(new RowNode());
 
@@ -162,7 +162,7 @@ export class InfiniteBlock extends RowNodeBlock {
             this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
 
-        const finalRowCount = params.finalRowCount!=null && params.finalRowCount >=0 ? params.finalRowCount : undefined;
+        const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
 
         this.parentCache.pageLoaded(this, finalRowCount);
     }

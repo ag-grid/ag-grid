@@ -97,7 +97,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const colLen = initialRange.columns.length;
         const rangeStartRow = this.getRangeStartRow();
         const rangeEndRow = this.getRangeEndRow();
-        
+
         let finalRange: CellRange | undefined;
 
         if (!this.isUp && !this.isLeft) {
@@ -212,7 +212,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
                 finished = this.rowPositionUtils.sameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
 
-                currentRow = this.isUp 
+                currentRow = this.isUp
                     ? this.cellNavigationService.getRowAbove(currentRow)
                     : this.cellNavigationService.getRowBelow(currentRow);
             }
@@ -231,7 +231,7 @@ export class FillHandle extends AbstractSelectionHandle {
                     rowNode.setDataValue(col, currentValue);
                 }
             }
-            
+
             values.push(currentValue);
         };
 
@@ -271,7 +271,7 @@ export class FillHandle extends AbstractSelectionHandle {
         event: MouseEvent,
         values: any[],
         initialValues: any[],
-        col: Column, 
+        col: Column,
         rowNode: RowNode,
         idx: number
     ): any {
@@ -299,7 +299,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 column: isVertical ? col : undefined,
                 rowNode: !isVertical ? rowNode : undefined // only present if left / right
             });
-            
+
             if (userResult !== false) {
                 return userResult;
             }
@@ -324,7 +324,7 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         return _.last(_.findLineByLeastSquares(values.map(Number)));
-    
+
     }
 
     protected clearValues() {

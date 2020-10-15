@@ -96,7 +96,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.initialiseRowNodes();
 
         this.rowNodeBlockLoader.addBlock(this);
-        this.addDestroyFunc( () => this.rowNodeBlockLoader.removeBlock(this) );
+        this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
     }
 
     @PreDestroy
@@ -111,7 +111,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
                 // sees row top is present, and thinks the row should be shown. maybe
                 // rowNode should have a flag on whether it is visible???
                 rowNode.clearRowTop();
-                if (rowNode.id!=null) {
+                if (rowNode.id != null) {
                     this.nodeManager.removeNode(rowNode);
                 }
             });
@@ -167,7 +167,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
                 level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
         );
 
-        if (index!=null) {
+        if (index != null) {
             _.insertIntoArray(this.allRowNodes, rowNode, index);
         } else {
             this.allRowNodes.push(rowNode);
@@ -205,7 +205,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     private sortRowNodes(): void {
         const sortOptions = this.sortController.getSortOptions();
-        const noSort = !sortOptions || sortOptions.length==0;
+        const noSort = !sortOptions || sortOptions.length == 0;
         if (noSort) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
@@ -229,7 +229,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     public clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.allRowNodes.forEach( rowNode => this.blockUtils.clearDisplayIndex(rowNode) );
+        this.allRowNodes.forEach(rowNode => this.blockUtils.clearDisplayIndex(rowNode));
     }
 
     public getDisplayIndexEnd(): number {
@@ -267,7 +267,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.allRowNodes.forEach( rowNode => {
+        this.allRowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
             const childCache = rowNode.childrenCache as IServerSideStore;
             if (childCache) {
@@ -283,7 +283,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     public getRowBounds(index: number): RowBounds {
 
-        for (let i=0; i<this.nodesAfterSort.length; i++) {
+        for (let i = 0; i < this.nodesAfterSort.length; i++) {
             const rowNode = this.nodesAfterSort[i];
             const res = this.blockUtils.extractRowBounds(rowNode, index);
             if (res) { return res; }
@@ -298,13 +298,13 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     public getRowIndexAtPixel(pixel: number): number {
 
-        if (pixel<=this.topPx) { return this.nodesAfterSort[0].rowIndex; }
-        if (pixel>=(this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length-1].rowIndex; }
+        if (pixel <= this.topPx) { return this.nodesAfterSort[0].rowIndex; }
+        if (pixel >= (this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length - 1].rowIndex; }
 
-        let res: number = undefined;
-        this.nodesAfterSort.forEach( rowNode => {
+        let res: number;
+        this.nodesAfterSort.forEach(rowNode => {
             const res2 = this.blockUtils.getIndexAtPixel(rowNode, pixel);
-            if (res2!=null) {
+            if (res2 != null) {
                 res = res2;
             }
         });
@@ -325,8 +325,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
-    private forEachChildStore(callback: (childStore: IServerSideStore)=>void ): void {
-        this.allRowNodes.forEach( rowNode => {
+    private forEachChildStore(callback: (childStore: IServerSideStore) => void): void {
+        this.allRowNodes.forEach(rowNode => {
             const childStore = rowNode.childrenCache as IServerSideStore;
             if (childStore) {
                 callback(childStore);
@@ -336,12 +336,12 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterFilter(): void {
         this.filterAndSortNodes();
-        this.forEachChildStore( store => store.refreshAfterFilter() );
+        this.forEachChildStore(store => store.refreshAfterFilter());
     }
 
     public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         this.sortRowNodes();
-        this.forEachChildStore( store => store.refreshAfterSort(changedColumnsInSort, rowGroupColIds) );
+        this.forEachChildStore(store => store.refreshAfterSort(changedColumnsInSort, rowGroupColIds));
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
@@ -411,7 +411,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private executeRemove(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
         const {remove} = rowDataTran;
 
-        if (remove==null) { return; }
+        if (remove == null) { return; }
 
         const rowIdsRemoved: {[key: string]: boolean} = {};
 
@@ -443,7 +443,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     private executeUpdate(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
-        if (update==null) { return; }
+        if (update == null) { return; }
 
         update.forEach(item => {
             const rowNode = this.lookupRowNode(item);
@@ -510,7 +510,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public isLastRowIndexKnown(): boolean {
-        return this.getState()==RowNodeBlock.STATE_LOADED;
+        return this.getState() == RowNodeBlock.STATE_LOADED;
     }
 
     public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

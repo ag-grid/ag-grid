@@ -1,4 +1,4 @@
-import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
+import { isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { isNonNullObject } from './object';
 import { hyphenToCamelCase } from './string';

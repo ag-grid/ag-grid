@@ -79,7 +79,7 @@ export class PieChartProxy extends PolarChartProxy {
         const { seriesDefaults } = this.chartOptions;
 
         let pieSeries = existingSeries;
-        let calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
+        const calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);

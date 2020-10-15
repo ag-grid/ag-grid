@@ -397,7 +397,7 @@ export class EnterpriseMenu extends BeanStub {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
+        const allowExpandAndContract = isInMemoryRowModel && (usingTreeData || rowGroupCount > (pivotModeOn ? 1 : 0));
 
         if (allowExpandAndContract) {
             result.push('expandAll');
@@ -474,7 +474,7 @@ export class EnterpriseMenu extends BeanStub {
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
         let columnsMenuParams = this.column.getColDef().columnsMenuParams;
-        if (!columnsMenuParams) columnsMenuParams = {};
+        if (!columnsMenuParams) { columnsMenuParams = {}; }
 
         this.columnSelectPanel.init(false, {
             suppressValues: false,

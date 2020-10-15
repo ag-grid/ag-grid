@@ -9,4 +9,3 @@ export const ViewportRowModelModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

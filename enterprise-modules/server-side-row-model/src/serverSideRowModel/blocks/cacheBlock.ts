@@ -26,7 +26,6 @@ import {StoreParams} from "../serverSideRowModel";
 import {InfiniteStore} from "../stores/infiniteStore";
 import {NodeManager} from "../nodeManager";
 
-
 export class CacheBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -146,7 +145,7 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     public isAnyNodeOpen(): boolean {
-        const openNodeCount = this.rowNodes.filter( node => node.expanded ).length;
+        const openNodeCount = this.rowNodes.filter(node => node.expanded).length;
         return openNodeCount > 0;
     }
 
@@ -154,7 +153,7 @@ export class CacheBlock extends RowNodeBlock {
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
                         sequence: NumberSequence = new NumberSequence(),
                         includeChildren: boolean): void {
-        this.rowNodes.forEach( rowNode => {
+        this.rowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
 
             // this will only every happen for server side row model, as infinite
@@ -199,7 +198,7 @@ export class CacheBlock extends RowNodeBlock {
         const endRow = Math.min(startRow + this.storeParams.blockSize, storeRowCount);
         const rowsToCreate = endRow - startRow;
 
-        for (let i = 0; i<rowsToCreate; i++) {
+        for (let i = 0; i < rowsToCreate; i++) {
             const rowNode = this.blockUtils.createRowNode(
                 {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
@@ -227,7 +226,7 @@ export class CacheBlock extends RowNodeBlock {
                 // sees row top is present, and thinks the row should be shown. maybe
                 // rowNode should have a flag on whether it is visible???
                 rowNode.clearRowTop();
-                if (rowNode.id!=null) {
+                if (rowNode.id != null) {
                     this.nodeManager.removeNode(rowNode);
                 }
             });
@@ -265,7 +264,7 @@ export class CacheBlock extends RowNodeBlock {
     public getRowBounds(index: number): RowBounds | null {
         this.touchLastAccessed();
 
-        let res: RowBounds = undefined;
+        let res: RowBounds;
         _.find(this.rowNodes, rowNode => {
             res = this.blockUtils.extractRowBounds(rowNode, index);
             return res != null;
@@ -277,7 +276,7 @@ export class CacheBlock extends RowNodeBlock {
     public getRowIndexAtPixel(pixel: number): number {
         this.touchLastAccessed();
 
-        let res: number = undefined;
+        let res: number;
         _.find(this.rowNodes, rowNode => {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             return res != null;
@@ -289,7 +288,7 @@ export class CacheBlock extends RowNodeBlock {
     public clearDisplayIndexes(): void {
         this.displayIndexEnd = undefined;
         this.displayIndexStart = undefined;
-        this.rowNodes.forEach( rowNode => this.blockUtils.clearDisplayIndex(rowNode) );
+        this.rowNodes.forEach(rowNode => this.blockUtils.clearDisplayIndex(rowNode));
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
@@ -297,7 +296,7 @@ export class CacheBlock extends RowNodeBlock {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTopPx = nextRowTop.value;
 
-        this.rowNodes.forEach( rowNode => this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop) );
+        this.rowNodes.forEach(rowNode => this.blockUtils.setDisplayIndex(rowNode, displayIndexSeq, nextRowTop));
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.blockHeightPx = nextRowTop.value - this.blockTopPx;

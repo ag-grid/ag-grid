@@ -65,7 +65,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
-        let previousSeries: LineSeries | undefined = undefined;
+        let previousSeries: LineSeries | undefined;
 
         params.fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);

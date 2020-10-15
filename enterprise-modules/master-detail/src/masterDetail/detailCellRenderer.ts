@@ -131,8 +131,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.params.refreshStrategy = 'rows';
     }
 
-
-
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.

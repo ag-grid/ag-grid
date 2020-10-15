@@ -26,12 +26,12 @@ export class RowNodeSorter {
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
 
-        const mapper = (rowNode: RowNode, pos: number) => {return {currentPos: pos, rowNode: rowNode} };
+        const mapper = (rowNode: RowNode, pos: number) => ({currentPos: pos, rowNode: rowNode});
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
         sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
 
-        return sortedRowNodes.map( item => item.rowNode );
+        return sortedRowNodes.map(item => item.rowNode);
     }
 
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {

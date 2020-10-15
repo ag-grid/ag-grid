@@ -1,5 +1,5 @@
 import { EventService } from "../eventService";
-import { AgEvent, Events, RowEvent, RowGroupOpenedEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { SelectionController } from "../selectionController";
 import { Column } from "./column";

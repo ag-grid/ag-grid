@@ -139,7 +139,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
 
-        return this.columnController.getDisplayNameForColumn(column, 'csv', true)        
+        return this.columnController.getDisplayNameForColumn(column, 'csv', true)
     }
 
     private createValueForGroupNode(node: RowNode): string {

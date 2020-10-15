@@ -43,7 +43,7 @@ export class ColumnModelItem implements IEventEmitter {
     public isPassesFilter(): boolean { return this.passesFilter; }
 
     public setExpanded(expanded: boolean): void {
-        if (expanded===this.expanded) { return; }
+        if (expanded === this.expanded) { return; }
         this.expanded = expanded;
         this.eventService.dispatchEvent({type: ColumnModelItem.EVENT_EXPANDED_CHANGED});
     }

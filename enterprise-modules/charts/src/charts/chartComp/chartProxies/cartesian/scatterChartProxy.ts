@@ -104,7 +104,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const { fills, strokes } = this.getPalette();
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
-        let previousSeries: ScatterSeries | undefined = undefined;
+        let previousSeries: ScatterSeries | undefined;
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);

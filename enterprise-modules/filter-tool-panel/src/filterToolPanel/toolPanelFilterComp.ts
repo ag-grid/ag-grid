@@ -114,7 +114,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public expand(): void {
-        if (this.expanded) return;
+        if (this.expanded) { return; }
 
         this.expanded = true;
 
@@ -140,7 +140,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public collapse(): void {
-        if (!this.expanded) return;
+        if (!this.expanded) { return; }
 
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
@@ -154,7 +154,7 @@ export class ToolPanelFilterComp extends Component {
 
         const filter = this.underlyingFilter as any;
 
-        if (!filter) return;
+        if (!filter) { return; }
 
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the

@@ -145,7 +145,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
-        
+
         if (cell === this.lastCellHovered) { return; }
 
         this.lastCellHovered = cell;
