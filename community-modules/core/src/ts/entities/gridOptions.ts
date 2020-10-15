@@ -90,6 +90,7 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 
@@ -147,7 +148,7 @@ export interface GridOptions {
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
 
-    /** @deprecated Allows user to suppress certain keyboard events */
+    /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
