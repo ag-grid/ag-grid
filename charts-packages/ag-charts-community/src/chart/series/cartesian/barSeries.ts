@@ -7,7 +7,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     HighlightStyle,
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as BarTooltipRendererParams
+    CartesianTooltipRendererParams as BarTooltipRendererParams, SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -77,6 +77,10 @@ export interface BarSeriesFormat {
     strokeWidth?: number;
 }
 
+export class BarSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+}
+
 export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
@@ -104,7 +108,11 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
     @reactive('layoutChange') flipXY = false;
 
@@ -629,7 +637,8 @@ export class BarSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltip } = this;
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const datum = nodeDatum.seriesDatum;
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];

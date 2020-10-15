@@ -5,7 +5,7 @@ import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
 import { Sector } from "../../../scene/shape/sector";
-import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
+import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTooltip } from "./../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { normalizeAngle180, toRadians } from "../../../util/angle";
@@ -84,6 +84,10 @@ class PieSeriesCallout extends Observable {
     @reactive('change') strokeWidth: number = 1;
 }
 
+export class PieSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+}
+
 export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
@@ -135,6 +139,12 @@ export class PieSeries extends PolarSeries {
 
     readonly label = new PieSeriesLabel();
     readonly callout = new PieSeriesCallout();
+
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
     constructor() {
         super();
@@ -504,7 +514,7 @@ export class PieSeries extends PolarSeries {
 
         const {
             fills,
-            tooltipRenderer,
+            tooltip,
             angleName,
             radiusKey,
             radiusName,
@@ -512,6 +522,7 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const color = fills[nodeDatum.index % fills.length];
         const datum = nodeDatum.seriesDatum;
         const label = labelKey ? `${datum[labelKey]}: ` : '';
@@ -543,8 +554,6 @@ export class PieSeries extends PolarSeries {
 
         return toTooltipHtml(defaults);
     }
-
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const { labelKey, data } = this;

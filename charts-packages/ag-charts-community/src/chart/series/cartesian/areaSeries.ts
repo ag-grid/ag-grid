@@ -4,7 +4,8 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as AreaTooltipRendererParams,
-    HighlightStyle
+    HighlightStyle,
+    SeriesTooltip
 } from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
@@ -46,13 +47,21 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
 
 export { AreaTooltipRendererParams };
 
+export class AreaSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
+    @reactive('change') format?: string;
+}
+
 export class AreaSeries extends CartesianSeries {
 
     static className = 'AreaSeries';
     static type = 'area';
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
-    tooltipFormat?: string;
+    tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
@@ -538,7 +547,11 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltipFormat, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltip } = this;
+        const {
+            renderer: tooltipRenderer = this.tooltipRenderer,
+            format: tooltipFormat
+        } = tooltip;
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
