@@ -20,7 +20,8 @@ import {
     StoreUpdatedEvent,
     RowNodeSorter,
     SortController,
-    LoadSuccessParams
+    LoadSuccessParams,
+    FilterManager
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -38,6 +39,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -191,10 +193,14 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         const rowData = params.data ? params.data : [];
         rowData.forEach(this.createDataNode.bind(this));
 
-        this.filterRowNodes();
-        this.sortRowNodes();
+        this.filterAndSortNodes();
 
         this.fireStoreUpdatedEvent();
+    }
+
+    private filterAndSortNodes(): void {
+        this.filterRowNodes();
+        this.sortRowNodes();
     }
 
     private sortRowNodes(): void {
@@ -207,13 +213,22 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
     }
 
-    public refresAfterFilter(): void {
-        this.filterRowNodes();
-        this.sortRowNodes();
-    }
-
     private filterRowNodes(): void {
-        this.nodesAfterFilter = this.allRowNodes;
+        if (this.groupLevel) {
+            this.nodesAfterFilter = this.allRowNodes
+            return;
+        }
+
+        // if a group level, then we only want to filter columns showing this group
+        const restrictToCols: Column[] = [];
+        if (this.groupLevel) {
+
+        } else {
+        }
+
+        this.nodesAfterFilter = this.allRowNodes.filter(
+            rowNode => this.filterManager.doesRowPassFilter({rowNode: rowNode})
+        );
     }
 
     public clearDisplayIndexes(): void {
@@ -315,18 +330,23 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
+    private forEachChildStore(callback: (childStore: IServerSideStore)=>void ): void {
+        this.allRowNodes.forEach( rowNode => {
+            const childStore = rowNode.childrenCache as IServerSideStore;
+            if (childStore) {
+                callback(childStore);
+            }
+        });
+    }
+
     public refreshAfterFilter(): void {
-        // this.purgeStore(true);
+        this.filterAndSortNodes();
+        this.forEachChildStore( store => store.refreshAfterFilter() );
     }
 
     public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         this.sortRowNodes();
-        this.allRowNodes.forEach(rowNode => {
-            const nextCache = (rowNode.childrenCache as IServerSideStore);
-            if (nextCache) {
-                nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
-            }
-        });
+        this.forEachChildStore( store => store.refreshAfterSort(changedColumnsInSort, rowGroupColIds) );
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
@@ -366,6 +386,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.executeAdd(transaction, res);
         this.executeRemove(transaction, res, nodesToUnselect);
         this.executeUpdate(transaction, res, nodesToUnselect);
+
+        this.filterAndSortNodes();
 
         // this.updateSelection(nodesToUnselect);
 
