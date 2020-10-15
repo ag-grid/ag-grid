@@ -265,7 +265,7 @@ export class FilterManager extends BeanStub {
     }
 
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
-        return this.doesRowPassFilter(node, filterToSkip);
+        return this.doesRowPassFilter({rowNode: node, filterInstanceToSkip: filterToSkip});
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
@@ -295,23 +295,25 @@ export class FilterManager extends BeanStub {
         );
     }
 
-    public doesRowPassFilter(node: any, filterToSkip?: IFilterComp): boolean {
+    public doesRowPassFilter(params: {
+        rowNode: RowNode,
+        filterInstanceToSkip?: IFilterComp}): boolean {
         // the row must pass ALL of the filters, so if any of them fail,
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
 
         // first up, check quick filter
-        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(node)) {
+        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
 
         // secondly, give the client a chance to reject this row
-        if (this.externalFilterPresent && !this.gridOptionsWrapper.doesExternalFilterPass(node)) {
+        if (this.externalFilterPresent && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
             return false;
         }
 
         // lastly, check our internal advanced filter
-        if (this.isAdvancedFilterPresent() && !this.doAdvancedFiltersPass(node, filterToSkip)) {
+        if (this.isAdvancedFilterPresent() && !this.doAdvancedFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
 
