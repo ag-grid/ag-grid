@@ -17,8 +17,8 @@ export interface IServerSideStore {
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number;
     getChildStore(keys: string[]): IServerSideStore | null;
-    refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
-    refreshStoreAfterFilter(): void;
+    refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
+    refreshAfterFilter(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     purgeStore(): void;
     getRowCount(): number;
