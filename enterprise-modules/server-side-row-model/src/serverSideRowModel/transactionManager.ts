@@ -11,6 +11,7 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
+    AsyncTransactionsApplied,
     _
 } from "@ag-grid-community/core";
 import {ServerSideRowModel} from "./serverSideRowModel";
@@ -83,6 +84,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private executeAsyncTransactions(): void {
 
         const resultFuncs: (()=>void)[] = [];
+        const resultsForEvent: ServerSideTransactionResult[] = [];
 
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
@@ -96,6 +98,8 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             if (result==undefined) {
                 result = {status: ServerSideTransactionResultStatus.StoreNotFound};
             }
+
+            resultsForEvent.push(result);
 
             const retryTransaction = result.status==ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy==LoadingStrategy.ApplyAfterLoaded;
             if (retryTransaction) {
@@ -129,6 +133,16 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+        }
+
+        if (resultsForEvent.length>0) {
+            const event: AsyncTransactionsApplied = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
+                results: resultsForEvent
+            };
+            this.eventService.dispatchEvent(event);
         }
     }
 
