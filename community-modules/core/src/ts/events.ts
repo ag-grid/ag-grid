@@ -9,6 +9,8 @@ import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/iRangeController';
 import { ChartModel } from './interfaces/IChartService';
+import {ServerSideTransactionResult} from "./interfaces/serverSideTransaction";
+import {RowNodeTransaction} from "./interfaces/rowNodeTransaction";
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
@@ -360,6 +362,10 @@ export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
     source: string | undefined;
+}
+
+export interface AsyncTransactionsApplied extends AgGridEvent {
+    results: (RowNodeTransaction|ServerSideTransactionResult) [];
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting

@@ -45,6 +45,9 @@ export class Events {
     /** The list of virtual columns has changed, results from viewport changing */
     public static EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
 
+    /** Async Transactions Executed */
+    public static EVENT_ASYNC_TRANSACTIONS_APPLIED = 'asyncTransactionsApplied';
+
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
 

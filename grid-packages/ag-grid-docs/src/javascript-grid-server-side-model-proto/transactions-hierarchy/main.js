@@ -63,6 +63,18 @@ var gridOptions = {
     }
     return transactionCreatedSinceInitialLoad;
   },
+  onAsyncTransactionsApplied: function(e) {
+    var summary = {};
+    e.results.forEach(function(result) {
+      var status = result.status;
+      if (summary[status]==null) {
+        summary[status] = 0;
+      }
+      summary[status]++;
+    });
+    console.log('onAsyncTransactionsApplied: ' + JSON.stringify(summary));
+  },
+  asyncTransactionWaitMillis: 500,
   purgeClosedRowNodes: true,
   rowSelection: 'multiple',
   serverSideAsyncTransactionLoadingStrategy: 'applyAfterLoaded',

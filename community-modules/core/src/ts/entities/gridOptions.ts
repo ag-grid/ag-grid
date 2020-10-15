@@ -14,6 +14,7 @@ import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
+    AsyncTransactionsApplied,
     BodyScrollEvent,
     CellClickedEvent,
     CellContextMenuEvent,
@@ -580,6 +581,8 @@ export interface GridOptions {
     onChartDestroyed?(event: ChartDestroyed): void;
 
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
+
+    onAsyncTransactionsApplied?(event: AsyncTransactionsApplied): void;
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
