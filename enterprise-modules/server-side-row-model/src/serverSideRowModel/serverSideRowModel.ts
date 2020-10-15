@@ -233,13 +233,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             maxBlocksInCache = undefined;
         }
 
-        const userProvidedBlockSize = this.gridOptionsWrapper.getCacheBlockSize();
+        let blockSize = this.gridOptionsWrapper.getCacheBlockSize();
 
-        let blockSize: number;
-        if (typeof userProvidedBlockSize == 'number' && userProvidedBlockSize > 0) {
-            blockSize = userProvidedBlockSize;
-        } else {
-            blockSize = ServerSideBlock.DefaultBlockSize;
+        if (blockSize == null) {
+            blockSize = 100;
         }
 
         const params: StoreParams = {
