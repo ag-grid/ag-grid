@@ -290,6 +290,23 @@ FakeServer.prototype.doBatch = function() {
     });
 };
 
+FakeServer.prototype.insertOneRecord = function() {
+    var transactions = [];
+
+    this.touchVersion();
+
+    // pick first book
+    var product = this.products[0];
+    var portfolio = product.children[0];
+    var book = portfolio.children[0];
+
+    this.createOneTrade(transactions, product, portfolio, book);
+
+    this.updateListeners.forEach(function(listener) {
+        listener(transactions);
+    });
+};
+
 FakeServer.prototype.createOneTrade = function(transactions, product, portfolio, book) {
 
     var newTrade = this.createTradeRecord(product.productId, product.productName, portfolio.portfolioId, portfolio.portfolioName, book.bookId, book);

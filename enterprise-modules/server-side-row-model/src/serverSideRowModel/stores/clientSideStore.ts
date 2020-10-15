@@ -207,7 +207,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
     }
 
-    public refreshStoreAfterFilter(): void {
+    public refresAfterFilter(): void {
         this.filterRowNodes();
         this.sortRowNodes();
     }
@@ -315,12 +315,16 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
-    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshAfterFilter(): void {
+        // this.purgeStore(true);
+    }
+
+    public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         this.sortRowNodes();
         this.allRowNodes.forEach(rowNode => {
             const nextCache = (rowNode.childrenCache as IServerSideStore);
             if (nextCache) {
-                nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+                nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
             }
         });
     }

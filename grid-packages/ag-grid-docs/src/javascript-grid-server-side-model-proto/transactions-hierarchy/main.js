@@ -86,13 +86,19 @@ function onBtStop() {
 }
 
 function onBtApplyOneTransaction() {
-  fakeServer.doBatch();
+  fakeServer.insertOneRecord();
 }
 
 function processUpdateFromFakeServer(transactions) {
+  const updatingJustOneTransaction = transactions.length==4;
+  if (updatingJustOneTransaction) {
+    console.log('Updating One Record');
+  }
   transactions.forEach(function(tx) {
     gridOptions.api.applyServerSideTransactionAsync(tx, function(res) {
-      // console.log('Route [' + tx.route.join(',') + '], status = ' + res.status);
+      if (updatingJustOneTransaction) {
+        console.log('Route [' + tx.route.join(',') + '], status = ' + res.status);
+      }
     });
   });
 }

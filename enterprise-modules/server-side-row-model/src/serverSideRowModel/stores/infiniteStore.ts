@@ -634,11 +634,11 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
     }
 
-    public refreshStoreAfterFilter(): void {
+    public refreshAfterFilter(): void {
         this.purgeStore(true);
     }
 
-    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         const level = this.parentRowNode.level + 1;
         const grouping = level < this.storeParams.rowGroupCols.length;
 
@@ -661,7 +661,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
                     const callback = (rowNode: RowNode) => {
                         const nextCache = (rowNode.childrenCache as IServerSideStore);
                         if (nextCache) {
-                            nextCache.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+                            nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
                     block.forEachNodeShallow(callback, new NumberSequence());

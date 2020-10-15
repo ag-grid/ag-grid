@@ -165,11 +165,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshStoreAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
-        rootStore.refreshStoreAfterSort(changedColumnsInSort, rowGroupColIds);
+        rootStore.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
 
         this.onStoreUpdated();
     }
@@ -314,7 +314,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
-        rootStore.refreshStoreAfterFilter();
+        rootStore.refreshAfterFilter();
 
         this.onStoreUpdated();
     }
