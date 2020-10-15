@@ -708,6 +708,16 @@
           "max": 20,
           "unit": "px"
         },
+        "lineDash": {
+          "default": [],
+          "type": "number[]",
+          "description": "Defines how the bar strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
+        },
+        "lineDashOffset": {
+          "default": 0,
+          "type": "number",
+          "description": "The initial offset of the dashed lines in pixels."
+        },
         "highlightStyle": {
           "meta": {
             "requiresWholeObject": true,
@@ -869,6 +879,16 @@
           "description": "For variable width bins, if true the histogram will represent the aggregated `yKey` values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
           "default": "false"
         },
+        "lineDash": {
+          "default": [],
+          "type": "number[]",
+          "description": "Defines how the histogram strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
+        },
+        "lineDashOffset": {
+          "default": 0,
+          "type": "number",
+          "description": "The initial offset of the dashed lines in pixels."
+        },
         "highlightStyle": {
           "meta": {
             "requiresWholeObject": true,
@@ -1027,6 +1047,16 @@
             "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
           }
         },
+        "lineDash": {
+          "default": [],
+          "type": "number[]",
+          "description": "Defines how the line strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
+        },
+        "lineDashOffset": {
+          "default": 0,
+          "type": "number",
+          "description": "The initial offset of the dashed lines in pixels."
+        },
         "highlightStyle": {
           "meta": {
             "requiresWholeObject": true,
@@ -1116,6 +1146,16 @@
           "min": 0,
           "max": 20,
           "unit": "px"
+        },
+        "lineDash": {
+          "default": [],
+          "type": "number[]",
+          "description": "Defines how the area strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
+        },
+        "lineDashOffset": {
+          "default": 0,
+          "type": "number",
+          "description": "The initial offset of the dashed lines in pixels."
         },
         "marker": {
           "meta": {
@@ -1535,6 +1575,16 @@
           "min": 0,
           "max": 20,
           "unit": "px"
+        },
+        "lineDash": {
+          "default": [],
+          "type": "number[]",
+          "description": "Defines how the pie strokes are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels."
+        },
+        "lineDashOffset": {
+          "default": 0,
+          "type": "number",
+          "description": "The initial offset of the dashed lines in pixels."
         },
         "highlightStyle": {
           "meta": {
