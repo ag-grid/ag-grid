@@ -4,6 +4,7 @@ import './menu.scss';
 import { Link } from 'gatsby';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import Search from './search';
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className="menu-section">
@@ -45,6 +46,8 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage]);
 
     return <div className="menu">
+        <Search indices={[{ name: 'AG-GRID_dev', title: "Documentation Pages" }]} />
+
         <ul className="menu__sections">
             {combinedMenuItems.map(item => {
                 const { title } = item;

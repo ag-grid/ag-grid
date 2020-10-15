@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = {
   siteMetadata: {
     title: 'AG-Grid Documentation',
@@ -25,6 +27,13 @@ module.exports = {
       options: {
         path: `${__dirname}/src/pages`,
         name: 'examples',
+      }
+    },
+    {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'data',
+        path: `${__dirname}/src/data/`,
       }
     },
     {
@@ -65,20 +74,18 @@ module.exports = {
         ]
       }
     },
-    {
-      resolve: 'gatsby-transformer-json'
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `data`,
-        path: `${__dirname}/src/data/`,
-      }
-    },
-    {
-      resolve: 'gatsby-plugin-sass'
-    },
+    'gatsby-transformer-json',
+    'gatsby-plugin-sass',
+    'gatsby-plugin-styled-components',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
+    {
+      resolve: 'gatsby-plugin-algolia',
+      options: {
+        appId: process.env.GATSBY_ALGOLIA_APP_ID,
+        apiKey: process.env.GATSBY_ALGOLIA_ADMIN_KEY,
+        queries: require('./src/utils/algolia-queries')
+      },
+    }
   ]
 };
