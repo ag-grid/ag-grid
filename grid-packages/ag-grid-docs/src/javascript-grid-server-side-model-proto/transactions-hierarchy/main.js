@@ -103,7 +103,7 @@ function onBtApplyOneTransaction() {
 }
 
 function processUpdateFromFakeServer(transactions) {
-  const updatingJustOneTransaction = transactions.length==4;
+  var updatingJustOneTransaction = transactions.length==4;
   if (updatingJustOneTransaction) {
     console.log('Updating One Record');
   }
