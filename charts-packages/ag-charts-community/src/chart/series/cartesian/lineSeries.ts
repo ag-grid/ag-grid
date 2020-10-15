@@ -5,7 +5,7 @@ import { Group } from "../../../scene/group";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as LineTooltipRendererParams,
-    HighlightStyle
+    HighlightStyle, SeriesTooltip
 } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
@@ -17,6 +17,7 @@ import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import Scale from "../../../scale/scale";
+import { interpolate } from "../../../util/string";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -34,6 +35,11 @@ export interface LineSeriesNodeClickEvent extends TypedEvent {
 }
 
 export { LineTooltipRendererParams };
+
+export class LineSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
+    @reactive('change') format?: string;
+}
 
 export class LineSeries extends CartesianSeries {
 
@@ -62,7 +68,11 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
         super();
@@ -352,7 +362,11 @@ export class LineSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, stroke: color, tooltipRenderer } = this;
+        const { xName, yName, stroke: color, tooltip } = this;
+        const {
+            renderer: tooltipRenderer = this.tooltipRenderer,
+            format: tooltipFormat
+        } = tooltip;
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -366,9 +380,8 @@ export class LineSeries extends CartesianSeries {
             content
         };
 
-        if (tooltipRenderer) {
-            const datum = nodeDatum.seriesDatum;
-            return toTooltipHtml(tooltipRenderer({
+        if (tooltipFormat || tooltipRenderer) {
+            const params = {
                 datum,
                 xKey,
                 xValue,
@@ -378,7 +391,15 @@ export class LineSeries extends CartesianSeries {
                 yName,
                 title,
                 color
-            }), defaults);
+            };
+            if (tooltipFormat) {
+                return toTooltipHtml({
+                    content: interpolate(tooltipFormat, params)
+                }, defaults);
+            }
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
         }
 
         return toTooltipHtml(defaults);

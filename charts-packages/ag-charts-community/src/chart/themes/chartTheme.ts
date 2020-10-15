@@ -85,7 +85,11 @@ export class ChartTheme {
 
     private static getSeriesDefaults(): any {
         return {
-            tooltipEnabled: true,
+            tooltip: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
+            },
             visible: true,
             showInLegend: true
         };

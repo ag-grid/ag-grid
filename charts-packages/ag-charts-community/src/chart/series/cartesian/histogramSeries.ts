@@ -6,7 +6,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     HighlightStyle,
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams
+    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -106,7 +106,11 @@ export class HistogramBin {
     getY(areaPlot: boolean) {
         return areaPlot ? this.relativeHeight : this.aggregatedValue;
     }
-};
+}
+
+export class HistogramSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+}
 
 export class HistogramSeries extends CartesianSeries {
 
@@ -131,7 +135,11 @@ export class HistogramSeries extends CartesianSeries {
 
     private seriesItemEnabled = true;
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
     @reactive('dataChange') fill: string | undefined = undefined;
     @reactive('dataChange') stroke: string | undefined = undefined;
@@ -584,7 +592,8 @@ export class HistogramSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill: color, tooltipRenderer, aggregation } = this;
+        const { xName, yName, fill: color, tooltip, aggregation } = this;
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
         const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
