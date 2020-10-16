@@ -21,12 +21,14 @@ export class LineSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
+                <ag-slider ref="seriesLineDashSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
+    @RefSelector('seriesLineDashSlider') private seriesLineDashSlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -50,6 +52,7 @@ export class LineSeriesPanel extends Component {
         this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
+        this.initSeriesLineDash();
         this.initMarkersPanel();
     }
 
@@ -77,6 +80,15 @@ export class LineSeriesPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+    }
+
+    private initSeriesLineDash() {
+        this.seriesLineDashSlider
+            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
     }
 
     private initMarkersPanel() {

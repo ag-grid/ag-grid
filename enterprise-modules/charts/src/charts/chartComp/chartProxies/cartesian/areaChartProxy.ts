@@ -210,7 +210,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 size: seriesDefaults.marker.size,
                 strokeWidth: seriesDefaults.marker.strokeWidth
             },
-            lineDash: seriesDefaults.lineDash,
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
             lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
         } as AreaSeriesOptions;

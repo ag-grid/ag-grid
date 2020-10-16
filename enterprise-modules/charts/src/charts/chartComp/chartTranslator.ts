@@ -68,6 +68,7 @@ export class ChartTranslator extends BeanStub {
         xOffset: 'X Offset',
         yOffset: 'Y Offset',
         lineWidth: 'Line Width',
+        lineDash: 'Line Dash',
         normal: 'Normal',
         bold: 'Bold',
         italic: 'Italic',

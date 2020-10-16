@@ -24,6 +24,7 @@ export class HistogramSeriesPanel extends Component {
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="binCountSlider"></ag-slider>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
+                <ag-slider ref="seriesLineDashSlider"></ag-slider>
                 <ag-slider ref="seriesLineOpacitySlider"></ag-slider>
                 <ag-slider ref="seriesFillOpacitySlider"></ag-slider>
             </ag-group-component>
@@ -34,6 +35,7 @@ export class HistogramSeriesPanel extends Component {
     @RefSelector('binCountSlider') private seriesBinCountSlider: AgSlider;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
     @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
+    @RefSelector('seriesLineDashSlider') private seriesLineDashSlider: AgSlider;
     @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
@@ -61,6 +63,7 @@ export class HistogramSeriesPanel extends Component {
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
+        this.initSeriesLineDash();
         this.initOpacity();
         this.initLabelPanel();
         this.initShadowPanel();
@@ -84,6 +87,15 @@ export class HistogramSeriesPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+    }
+
+    private initSeriesLineDash() {
+        this.seriesLineDashSlider
+            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
     }
 
     private initOpacity() {
