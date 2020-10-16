@@ -44,7 +44,7 @@ import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
-import { missingOrEmpty, exists, missing, find } from '../utils/generic';
+import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -2618,10 +2618,10 @@ export class ColumnController extends BeanStub {
             const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
             const colDef = col.getColDef();
 
-            const value = getValueFunc(colDef);
-            const initialValue = getInitialValueFunc(colDef);
-            const index = getIndexFunc(colDef);
-            const initialIndex = getInitialIndexFunc(colDef);
+            const value = attrToBoolean(getValueFunc(colDef));
+            const initialValue = attrToBoolean(getInitialValueFunc(colDef));
+            const index = attrToNumber(getIndexFunc(colDef));
+            const initialIndex = attrToNumber(getInitialIndexFunc(colDef));
 
             let include: boolean;
 
@@ -2629,7 +2629,7 @@ export class ColumnController extends BeanStub {
                 // col is new, use values if present, otherwise use default values if present
                 const valuePresent = value !== undefined || index !== undefined;
                 if (valuePresent) {
-                    if (value != null) {
+                    if (value !== undefined) {
                         // if boolean value present, we take it's value, even if 'false'
                         include = value;
                     } else {
@@ -2643,7 +2643,7 @@ export class ColumnController extends BeanStub {
             } else {
                 // col is not new, we ignore the default values, just use the values if provided
                 if (value !== undefined) { // value is never null, as attrToBoolean converts null to false
-                    include = !!value;
+                    include = value;
                 } else if (index !== undefined) {
                     if (index === null) {
                         include = false;
@@ -2718,7 +2718,9 @@ export class ColumnController extends BeanStub {
     }
 
     private extractPivotColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
-        this.pivotColumns = this.extractColumns(oldPrimaryColumns, this.pivotColumns,
+        this.pivotColumns = this.extractColumns(
+            oldPrimaryColumns,
+            this.pivotColumns,
             (col: Column, flag: boolean) => col.setPivotActive(flag, source),
             (colDef: ColDef) => colDef.pivotIndex,
             (colDef: ColDef) => colDef.initialPivotIndex,
