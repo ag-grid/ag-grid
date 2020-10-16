@@ -45,7 +45,8 @@
     "react-instantsearch-dom": "^6.8.1",
     "rehype-react": "^6.1.0",
     "styled-components": "^5.2.0",
-    "typeface-roboto": "0.0.75"
+    "typeface-roboto": "0.0.75",
+    "unist-util-visit": "^2.0.3"
   },
   "devDependencies": {
     "prettier": "2.1.1"

@@ -25,7 +25,7 @@ const PageHit = ({ hit }) => (
                 <Highlight attribute="title" hit={hit} tagName="mark" />
             </h4>
         </Link>
-        <Snippet attribute="excerpt" hit={hit} tagName="mark" />
+        <Snippet attribute="text" hit={hit} tagName="mark" />
     </div>
 );
 

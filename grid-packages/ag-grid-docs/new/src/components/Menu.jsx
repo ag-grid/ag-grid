@@ -46,7 +46,7 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage]);
 
     return <div className="menu">
-        <Search indices={[{ name: 'AG-GRID_dev', title: "Documentation Pages" }]} />
+        <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
 
         <ul className="menu__sections">
             {combinedMenuItems.map(item => {

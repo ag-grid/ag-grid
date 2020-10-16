@@ -4,6 +4,7 @@ import { graphql } from "gatsby";
 import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/ExampleRunner';
 import SideMenu from '../components/SideMenu';
+import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import './doc-page.scss';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
@@ -45,26 +46,5 @@ export const pageQuery = graphql`
     }
   }
 `;
-
-const processFrameworkSpecificSections = (ast, framework) => {
-  return {
-    ...ast,
-    children: ast.children.reduce((children, child) => {
-      if (child.properties != null && child.tagName === 'div' && child.properties.className[0] === 'custom-block') {
-        const blockCustomClass = child.properties.className[1];
-
-        if (blockCustomClass.endsWith('-only-section')) {
-          if (blockCustomClass === `${framework}-only-section`) {
-            return [...children, ...child.children[0].children];
-          } else {
-            return children;
-          }
-        }
-      }
-
-      return [...children, child];
-    }, [])
-  };
-};
 
 export default DocPageTemplate;
