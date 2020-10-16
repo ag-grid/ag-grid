@@ -19,6 +19,7 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "algoliasearch": "^4.5.1",
     "bootstrap": "^4.5.2",
+    "fontsource-roboto": "^3.0.3",
     "gatsby": "^2.24.63",
     "gatsby-cli": "^2.12.100",
     "gatsby-plugin-algolia": "^0.13.0",
@@ -45,7 +46,6 @@
     "react-instantsearch-dom": "^6.8.1",
     "rehype-react": "^6.1.0",
     "styled-components": "^5.2.0",
-    "typeface-roboto": "0.0.75",
     "unist-util-visit": "^2.0.3"
   },
   "devDependencies": {
