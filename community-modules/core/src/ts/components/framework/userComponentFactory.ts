@@ -246,7 +246,7 @@ export class UserComponentFactory extends BeanStub {
      */
     public createUserComponentFromConcreteClass<A extends IComponent<TParams>, TParams>(
         clazz: { new(): A; }, agGridParams: TParams): A {
-        const internalComponent = new clazz() as A;
+        const internalComponent = new clazz();
 
         this.initComponent(internalComponent, agGridParams);
 
@@ -508,7 +508,7 @@ export class UserComponentFactory extends BeanStub {
                 thisComponentConfig.optionalMethodList,
                 componentType,
                 defaultComponentName
-            ) as A;
+            );
         } else {
             // Using plain JavaScript component
             componentInstance = new componentToUse.component!() as A;

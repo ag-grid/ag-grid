@@ -1,11 +1,8 @@
 import { Bean, Autowired } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -15,10 +12,8 @@ export interface SetScrollsVisibleParams {
 @Bean('scrollVisibleService')
 export class ScrollVisibleService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;

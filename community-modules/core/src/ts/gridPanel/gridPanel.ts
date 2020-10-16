@@ -1040,8 +1040,8 @@ export class GridPanel extends Component {
         const alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         const alignColToRight = viewportScrolledBeforeCol;
 
-        let newScrollPosition = this.getCenterViewportScrollLeft();
         if (alignColToLeft || alignColToRight) {
+            let newScrollPosition: number;
             if (this.enableRtl) {
                 newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel!) : (bodyWidth - colRightPixel);
             } else {

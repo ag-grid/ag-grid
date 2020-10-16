@@ -113,7 +113,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private parent: ColumnGroup;
     private originalParent: OriginalColumnGroup | null;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: string, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -355,13 +355,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isSuppressNavigable(rowNode: RowNode): boolean {
         // if boolean set, then just use it
         if (typeof this.colDef.suppressNavigable === 'boolean') {
-            return this.colDef.suppressNavigable as boolean;
+            return this.colDef.suppressNavigable;
         }
 
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             const params = this.createIsColumnFuncParams(rowNode);
-            const userFunc = this.colDef.suppressNavigable as IsColumnFunc;
+            const userFunc = this.colDef.suppressNavigable;
             return userFunc(params);
         }
 
@@ -401,13 +401,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private isColumnFunc(rowNode: RowNode, value?: boolean | IsColumnFunc | null): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
-            return value as boolean;
+            return value;
         }
 
         // if function, then call the function to find out
         if (typeof value === 'function') {
             const params = this.createIsColumnFuncParams(rowNode);
-            const editableFunc = value as IsColumnFunc;
+            const editableFunc = value;
             return editableFunc(params);
         }
 

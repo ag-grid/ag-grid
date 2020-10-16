@@ -24,10 +24,10 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (focusedHeader.column instanceof ColumnGroup) {
             getGroupMethod = `getDisplayedGroup${direction}` as any;
-            nextColumn = this.columnController[getGroupMethod](focusedHeader.column as ColumnGroup)!;
+            nextColumn = this.columnController[getGroupMethod](focusedHeader.column)!;
         } else {
             getColMethod = `getDisplayedCol${direction}` as any;
-            nextColumn = this.columnController[getColMethod](focusedHeader.column as Column)!;
+            nextColumn = this.columnController[getColMethod](focusedHeader.column)!;
         }
 
         if (nextColumn) {

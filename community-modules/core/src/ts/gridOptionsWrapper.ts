@@ -157,7 +157,7 @@ export class GridOptionsWrapper {
 
     @PostConstruct
     public init(): void {
-        if (!(this.gridOptions.suppressPropertyNamesCheck === true)) {
+        if (this.gridOptions.suppressPropertyNamesCheck !== true) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
         }
@@ -973,7 +973,7 @@ export class GridOptionsWrapper {
             return 'xy';
         }
 
-        return direction as 'x' | 'y' | 'xy';
+        return direction;
     }
 
     public getFillOperation(): ((params: FillOperationParams) => any) | undefined {

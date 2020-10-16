@@ -159,7 +159,7 @@ export class ColumnFactory extends BeanStub {
                 // likewise this if statement will not run if no padded groups
                 if (firstPaddedGroup && currentPaddedGroup) {
                     result.push(firstPaddedGroup);
-                    const hasGroups = unbalancedTree.some(child => child instanceof OriginalColumnGroup);
+                    const hasGroups = unbalancedTree.some(tree => tree instanceof OriginalColumnGroup);
 
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);

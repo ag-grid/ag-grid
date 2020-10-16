@@ -75,7 +75,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setName(name: string): this {
-        const input = this.getInputElement() as HTMLInputElement;
+        const input = this.getInputElement();
         input.name = name;
 
         return this;
@@ -93,8 +93,8 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         const previousValue = this.isSelected();
 
         selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
-        (this.eInput as HTMLInputElement).checked = selected!;
-        (this.eInput as HTMLInputElement).indeterminate = selected === undefined;
+        this.eInput.checked = selected!;
+        this.eInput.indeterminate = selected === undefined;
 
         if (!silent) {
             this.dispatchChange(this.selected, previousValue);
@@ -104,7 +104,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
         this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, previousValue, event });
 
-        const input = this.getInputElement() as HTMLInputElement;
+        const input = this.getInputElement();
         const checkboxChangedEvent: CheckboxChangedEvent = {
             type: Events.EVENT_CHECKBOX_CHANGED,
             id: input.id,

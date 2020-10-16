@@ -96,7 +96,7 @@ export class BeanStub implements IEventEmitter {
         }
 
         if (object instanceof HTMLElement) {
-            addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
+            addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
         } else {
             object.addEventListener(event, listener);
         }

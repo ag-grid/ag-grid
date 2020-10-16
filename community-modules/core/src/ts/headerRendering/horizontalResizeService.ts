@@ -46,7 +46,7 @@ export class HorizontalResizeService extends BeanStub {
 
         this.setResizeIcons();
 
-        const shiftKey = mouseEvent instanceof MouseEvent ? (mouseEvent as MouseEvent).shiftKey === true : false;
+        const shiftKey = mouseEvent instanceof MouseEvent ? mouseEvent.shiftKey === true : false;
         params.onResizeStart(shiftKey);
     }
 

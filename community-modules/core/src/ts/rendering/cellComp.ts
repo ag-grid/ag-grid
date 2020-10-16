@@ -1706,16 +1706,14 @@ export class CellComp extends Component implements TooltipParentComp {
             return leftPosition;
         }
 
-        if (this.column.getPinned() === Constants.PINNED_RIGHT) {
-            const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
-            const bodyWidth = this.beans.columnController.getBodyContainerWidth();
+        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
 
+        if (this.column.getPinned() === Constants.PINNED_RIGHT) {
+            const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
         // is in body
-        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
-
         return leftWidth + (leftPosition || 0);
     }
 
@@ -1916,7 +1914,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addSelectionHandle() {
-        const { gridOptionsWrapper, context, rangeController } = this.beans;
+        const { gridOptionsWrapper, rangeController } = this.beans;
         const cellRangeType = last(rangeController.getCellRanges()).type;
         const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;

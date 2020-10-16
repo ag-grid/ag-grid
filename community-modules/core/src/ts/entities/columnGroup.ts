@@ -84,7 +84,7 @@ export class ColumnGroup implements ColumnGroupChild {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren!.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).checkLeft();
+                child.checkLeft();
             }
         });
 
@@ -93,10 +93,10 @@ export class ColumnGroup implements ColumnGroupChild {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
-                this.setLeft(lastChildLeft!);
+                this.setLeft(lastChildLeft);
             } else {
                 const firstChildLeft = this.displayedChildren![0].getLeft();
-                this.setLeft(firstChildLeft!);
+                this.setLeft(firstChildLeft);
             }
         } else {
             // this should never happen, as if we have no displayed columns, then
@@ -153,7 +153,7 @@ export class ColumnGroup implements ColumnGroupChild {
                 result = true;
             }
             if (foundChild instanceof ColumnGroup) {
-                if ((foundChild as ColumnGroup).isChildInThisGroupDeepSearch(wantedChild)) {
+                if (foundChild.isChildInThisGroupDeepSearch(wantedChild)) {
                     result = true;
                 }
             }
@@ -245,9 +245,9 @@ export class ColumnGroup implements ColumnGroupChild {
     private addDisplayedLeafColumns(leafColumns: Column[]): void {
         this.displayedChildren!.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addDisplayedLeafColumns(leafColumns);
+                child.addDisplayedLeafColumns(leafColumns);
             }
         });
     }
@@ -255,9 +255,9 @@ export class ColumnGroup implements ColumnGroupChild {
     private addLeafColumns(leafColumns: Column[]): void {
         this.children!.forEach((child: ColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addLeafColumns(leafColumns);
+                child.addLeafColumns(leafColumns);
             }
         });
     }

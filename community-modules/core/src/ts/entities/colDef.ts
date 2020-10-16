@@ -376,7 +376,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     refData?: { [key: string]: string; };
 
     /** Defines the column data type used when charting */
-    chartDataType?: 'category' | 'series' | 'time' | 'excluded' | undefined;
+    chartDataType?: 'category' | 'series' | 'time' | 'excluded';
 
     /** Params to customise the columns menu behaviour and appearance */
     columnsMenuParams?: ColumnsMenuParams;

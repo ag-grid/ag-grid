@@ -202,7 +202,7 @@ export class SortService extends BeanStub {
 
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
 
-        rowNodes!.forEach(childRowNode => {
+        rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnController.getGroupDisplayColumns();
             groupDisplayCols.forEach(groupDisplayCol => {
 

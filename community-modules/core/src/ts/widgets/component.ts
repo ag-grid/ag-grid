@@ -71,10 +71,10 @@ export class Component extends BeanStub {
                 return;
             }
 
-            const childComp = this.createComponentFromElement(childNode, (childComp) => {
+            const childComp = this.createComponentFromElement(childNode, comp => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                this.copyAttributesFromNode(childNode, childComp.getGui());
+                this.copyAttributesFromNode(childNode, comp.getGui());
             }, paramsMap);
 
             if (childComp) {
@@ -185,7 +185,7 @@ export class Component extends BeanStub {
             const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
 
             if (resultOfQuery) {
-                thisNoType[querySelector.attributeName] = (resultOfQuery as any).__agComponent || resultOfQuery;
+                thisNoType[querySelector.attributeName] = resultOfQuery.__agComponent || resultOfQuery;
             } else {
                 // put debug msg in here if query selector fails???
             }

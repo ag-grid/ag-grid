@@ -32,7 +32,7 @@ export function isBrowserSafari(): boolean {
         const anyWindow = window as any;
         const hasNotification = (p: any) => p && p.toString() === '[object SafariRemoteNotification]';
 
-        isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
+        isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') !== -1
             || hasNotification(anyWindow.safari && anyWindow.safari.pushNotification);
     }
 

@@ -36,12 +36,12 @@ export const isEventSupported = (() => {
         abort: 'img'
     } as any;
 
-    const isEventSupported = (eventName: any) => {
+    const eventChecker = (eventName: any) => {
         if (typeof supports[eventName] === 'boolean') {
             return supports[eventName];
         }
 
-        let el = document.createElement(tags[eventName] || 'div');
+        const el = document.createElement(tags[eventName] || 'div');
         eventName = 'on' + eventName;
 
         let isSupported = (eventName in el);
@@ -50,12 +50,11 @@ export const isEventSupported = (() => {
             el.setAttribute(eventName, 'return;');
             isSupported = typeof el[eventName] == 'function';
         }
-        el = null;
 
         return supports[eventName] = isSupported;
     };
 
-    return isEventSupported;
+    return eventChecker;
 })();
 
 export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp | null {

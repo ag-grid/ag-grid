@@ -125,7 +125,7 @@ export class FilterManager extends BeanStub {
         this.allAdvancedFilters.forEach((filterWrapper, key) => {
             // because user can provide filters, we provide useful error checking and messages
             const filterPromise = filterWrapper.filterPromise;
-            const filter = filterPromise!.resolveNow(null, filter => filter);
+            const filter = filterPromise!.resolveNow(null, promiseFilter => promiseFilter);
 
             if (filter == null) { return null; }
 

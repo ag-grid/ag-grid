@@ -1477,7 +1477,7 @@ export class RowRenderer extends BeanStub {
         if (rowsMatch) {
             // same row, so we don't start / stop editing, we just move the focus along
             previousRenderedCell.setFocusOutOnEditor();
-            nextRenderedCell!.setFocusInOnEditor();
+            nextRenderedCell.setFocusInOnEditor();
         } else {
             const pRow = previousRenderedCell.getRenderedRow();
             const nRow = nextRenderedCell.getRenderedRow();

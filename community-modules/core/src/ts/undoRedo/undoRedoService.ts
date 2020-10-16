@@ -158,11 +158,13 @@ export class UndoRedoService extends BeanStub {
     }
 
     private processRangeAndCellFocus(cellValueChanges: CellValueChange[], range?: CellRange) {
+        let lastFocusedCell: LastFocusedCell;
+
         if (range) {
             const startRow = range.startRow;
             const endRow = range.endRow;
 
-            const lastFocusedCell: LastFocusedCell = {
+            lastFocusedCell = {
                 rowPinned: startRow!.rowPinned,
                 rowIndex: startRow!.rowIndex,
                 columnId: range.startColumn.getColId()
@@ -189,7 +191,7 @@ export class UndoRedoService extends BeanStub {
         const rowPosition: RowPosition = { rowIndex, rowPinned };
         const row = this.getRowNode(rowPosition);
 
-        const lastFocusedCell: LastFocusedCell = {
+        lastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
             rowIndex: row!.rowIndex,
             columnId: cellValueChange.columnId

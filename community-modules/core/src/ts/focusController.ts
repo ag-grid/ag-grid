@@ -242,7 +242,7 @@ export class FocusController extends BeanStub {
         const rowComps = childContainer!.getRowComps();
         const nextRowComp = rowComps[headerPosition.headerRowIndex];
         const headerComps = nextRowComp.getHeaderComps();
-        const nextHeader = headerComps[headerPosition.column.getUniqueId() as string];
+        const nextHeader = headerComps[headerPosition.column.getUniqueId()];
 
         if (nextHeader) {
             // this will automatically call the setFocusedHeader method above

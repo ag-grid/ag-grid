@@ -21,14 +21,14 @@ export class SelectableService extends BeanStub {
 
     public updateSelectableAfterGrouping(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterGroup;
+            const nextChildrenFunc = (node: RowNode) => node.childrenAfterGroup;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }
 
     public updateSelectableAfterFiltering(rowNode: RowNode): void {
         if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (rowNode: RowNode) => rowNode.childrenAfterFilter;
+            const nextChildrenFunc = (node: RowNode) => node.childrenAfterFilter;
             this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
         }
     }

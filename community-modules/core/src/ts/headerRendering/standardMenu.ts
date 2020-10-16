@@ -8,7 +8,6 @@ import { FocusController } from '../focusController';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { GridPanel } from "../gridPanel/gridPanel";
-import { MouseEventService } from '../gridPanel/mouseEventService';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {

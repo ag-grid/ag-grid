@@ -222,13 +222,12 @@ export class PaginationProxy extends BeanStub {
     private setPageSize(): void {
         // show put this into super class
         this.pageSize = this.gridOptionsWrapper.getPaginationPageSize()!;
-        if (!(this.pageSize >= 1)) {
+        if (this.pageSize < 1) {
             this.pageSize = 100;
         }
     }
 
     private calculatePages(): void {
-
         if (this.active) {
             this.setPageSize();
             if (this.paginateChildRows) {

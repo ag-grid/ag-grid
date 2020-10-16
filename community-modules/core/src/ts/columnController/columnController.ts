@@ -44,7 +44,7 @@ import { Constants } from '../constants/constants';
 import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
-import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
+import { missingOrEmpty, exists, missing, find } from '../utils/generic';
 import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -1108,7 +1108,6 @@ export class ColumnController extends BeanStub {
                 finishedColsGrew = false;
 
                 const subsetCols: Column[] = [];
-                const subsetRatios: number[] = [];
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
@@ -1120,7 +1119,6 @@ export class ColumnController extends BeanStub {
                         subsetCols.push(col);
                         const ratioThisCol = ratios[index];
                         subsetRatioTotal += ratioThisCol;
-                        subsetRatios.push(ratioThisCol);
                     }
                 });
 

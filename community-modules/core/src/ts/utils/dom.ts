@@ -358,10 +358,10 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
 export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
     for (let i = 0; i < orderedChildren.length; i++) {
         const correctCellAtIndex = orderedChildren[i];
-        const actualCellAtIndex = eContainer!.children[i];
+        const actualCellAtIndex = eContainer.children[i];
 
         if (actualCellAtIndex !== correctCellAtIndex) {
-            eContainer!.insertBefore(correctCellAtIndex!, actualCellAtIndex);
+            eContainer.insertBefore(correctCellAtIndex!, actualCellAtIndex);
         }
     }
 }

@@ -94,13 +94,13 @@ export class Environment extends BeanStub {
             addCssClass(div, theme);
             div.style.position = 'absolute';
 
-            const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string) => {
-                const div = document.createElement('div');
-                div.style.position = 'static';
-                addCssClass(div, currentClass);
-                el.appendChild(div);
+            const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
+                const currentDiv = document.createElement('div');
+                currentDiv.style.position = 'static';
+                addCssClass(currentDiv, currentClass);
+                prevEl.appendChild(currentDiv);
 
-                return div;
+                return currentDiv;
             }, div);
 
             if (document.body) {

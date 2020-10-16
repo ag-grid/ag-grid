@@ -11,7 +11,7 @@ import { RowNode } from "../entities/rowNode";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { removeFromArray } from "../utils/array";
-import { exists, find } from "../utils/generic";
+import { find } from "../utils/generic";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
 import { loadTemplate, addCssClass, clearElement, addOrRemoveCssClass } from "../utils/dom";
 import { isFunction } from "../utils/function";

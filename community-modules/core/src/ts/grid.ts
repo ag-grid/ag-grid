@@ -181,18 +181,18 @@ export class Grid {
         const mapNames: { [name: string]: boolean; } = {};
 
         // adds to list and removes duplicates
-        function addModule(moduleBased: boolean, module: Module) {
-            function addIndividualModule(module: Module) {
-                if (!mapNames[module.moduleName]) {
-                    mapNames[module.moduleName] = true;
-                    allModules.push(module);
-                    ModuleRegistry.register(module, moduleBased);
+        function addModule(moduleBased: boolean, mod: Module) {
+            function addIndividualModule(currentModule: Module) {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    ModuleRegistry.register(currentModule, moduleBased);
                 }
             }
 
-            addIndividualModule(module);
-            if (module.dependantModules) {
-                module.dependantModules.forEach(addModule.bind(null, moduleBased));
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
 

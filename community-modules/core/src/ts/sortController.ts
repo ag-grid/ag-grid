@@ -63,7 +63,7 @@ export class SortController extends BeanStub {
 
         // clear sort index on all cols not sorting
         const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex(undefined));
+        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex());
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
@@ -91,7 +91,7 @@ export class SortController extends BeanStub {
     private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!(columnToClear === columnToSkip)) {
+            if (columnToClear !== columnToSkip) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);

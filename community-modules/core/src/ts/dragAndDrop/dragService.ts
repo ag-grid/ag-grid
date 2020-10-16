@@ -158,9 +158,9 @@ export class DragService extends BeanStub {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         this.setNoSelectToBody(true);
-        const mouseMoveEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseMove(e, params.eElement);
-        const mouseUpEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseUp(e, params.eElement);
-        const contextEvent = (e: MouseEvent) => e.preventDefault();
+        const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
+        const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
+        const contextEvent = (event: MouseEvent) => event.preventDefault();
         const target = eDocument;
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },

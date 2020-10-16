@@ -16,10 +16,8 @@ export class CssClassApplier {
     }
 
     public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
-        if (missing(abstractColDef)) {
-            return;
-        }
-        this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass!, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
+        if (missing(abstractColDef)) { return; }
+        this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
     public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]) | null | undefined,
@@ -46,7 +44,7 @@ export class CssClassApplier {
             const headerClassFunc = classesOrFunc as (params: any) => string | string[];
             classToUse = headerClassFunc(params);
         } else {
-            classToUse = classesOrFunc as string | string[];
+            classToUse = classesOrFunc;
         }
 
         if (typeof classToUse === 'string') {

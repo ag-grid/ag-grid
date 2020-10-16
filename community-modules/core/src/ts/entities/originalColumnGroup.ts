@@ -105,9 +105,9 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
         this.children.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof OriginalColumnGroup) {
-                (child as OriginalColumnGroup).addLeafColumns(leafColumns);
+                child.addLeafColumns(leafColumns);
             }
         });
     }

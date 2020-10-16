@@ -74,14 +74,14 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (params) => {
-            if (params.previousValue === undefined) { // indeterminate
-                const result = this.onUncheckedClicked(params.event || {});
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (clickParams) => {
+            if (clickParams.previousValue === undefined) { // indeterminate
+                const result = this.onUncheckedClicked(clickParams.event || {});
                 if (result === 0) {
                     this.onCheckedClicked();
                 }
-            } else if (params.selected) {
-                this.onUncheckedClicked(params.event || {});
+            } else if (clickParams.selected) {
+                this.onUncheckedClicked(clickParams.event || {});
             } else {
                 this.onCheckedClicked();
             }

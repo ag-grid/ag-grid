@@ -1,7 +1,7 @@
 export function keys<T>(map: Map<T, any>): T[] {
-    const keys: T[] = [];
+    const arr: T[] = [];
 
-    map.forEach((_, key) => keys.push(key));
+    map.forEach((_, key) => arr.push(key));
 
-    return keys;
+    return arr;
 }

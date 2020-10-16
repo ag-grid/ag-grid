@@ -42,7 +42,7 @@ export function attrToNumber(value?: number | string | null): number | null | un
         return isNaN(value) ? undefined : value;
     }
 
-    const valueParsed = parseInt(value as string, 10);
+    const valueParsed = parseInt(value, 10);
 
     return isNaN(valueParsed) ? undefined : valueParsed;
 }
@@ -157,7 +157,7 @@ export function find<T>(collection: T[] | { [id: string]: T; } | null, predicate
         return find(objToArray, predicate, value);
     }
 
-    const collectionAsArray = collection as T[];
+    const collectionAsArray = collection;
 
     let firstMatchingItem: T | null = null;
     for (let i = 0; i < collectionAsArray.length; i++) {
@@ -182,11 +182,11 @@ export function find<T>(collection: T[] | { [id: string]: T; } | null, predicate
 
 export function values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>): T[] {
     if (object instanceof Set || object instanceof Map) {
-        const values: T[] = [];
+        const arr: T[] = [];
 
-        object.forEach((value: T) => values.push(value));
+        object.forEach((value: T) => arr.push(value));
 
-        return values;
+        return arr;
     }
 
     return Object.keys(object).map(key => object[key]);

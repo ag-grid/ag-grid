@@ -1,6 +1,5 @@
-import {AgEvent} from "../events";
-import {BeanStub} from "../context/beanStub";
-import {_} from "../utils";
+import { AgEvent } from "../events";
+import { BeanStub } from "../context/beanStub";
 
 export interface LoadCompleteEvent extends AgEvent {
     success: boolean;

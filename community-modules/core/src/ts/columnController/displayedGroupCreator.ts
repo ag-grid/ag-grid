@@ -151,12 +151,12 @@ export class DisplayedGroupCreator extends BeanStub {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
-        const recursePath = (balancedColumnTree: OriginalColumnGroupChild[], dept: number): void => {
-            for (let i = 0; i < balancedColumnTree.length; i++) {
+        const recursePath = (columnTree: OriginalColumnGroupChild[], dept: number): void => {
+            for (let i = 0; i < columnTree.length; i++) {
                 // quit the search, so 'result' is kept with the found result
                 if (found) { return; }
 
-                const node = balancedColumnTree[i];
+                const node = columnTree[i];
 
                 if (node instanceof OriginalColumnGroup) {
                     const nextNode = node;
