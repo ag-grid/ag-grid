@@ -9,6 +9,7 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
+import { getSourcePath } from './helpers';
 
 const updateFiles = (pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
@@ -22,13 +23,7 @@ const updateFiles = (pageName, data, name, framework, useFunctionalReact, import
 
     setActiveFile(mainFile);
 
-    if (framework === 'javascript') {
-        framework = 'vanilla';
-    } else if (framework === 'react' && useFunctionalReact) {
-        framework = 'reactFunctional';
-    }
-
-    const rootFolder = `${pageName}/examples/${name}/_gen/${importType}/${framework}/`;
+    const rootFolder = getSourcePath(pageName, name, framework, importType, useFunctionalReact);
     const filesForExample = data.allFile.edges
         .filter(edge => edge.node.relativePath.startsWith(rootFolder))
         .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));
@@ -44,7 +39,7 @@ const updateFiles = (pageName, data, name, framework, useFunctionalReact, import
     Promise.all(promises).then(() => setFiles(files));
 };
 
-const CodeViewer = ({ pageName, framework, name, importType = 'modules', useFunctionalReact = false }) => {
+const CodeViewer = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 

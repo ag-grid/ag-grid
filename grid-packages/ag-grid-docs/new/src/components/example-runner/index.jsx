@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CodeViewer from './CodeViewer';
-import GlobalContextConsumer from './GlobalContext';
+import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import './example-runner.scss';
 

@@ -30,6 +30,12 @@ module.exports = {
       }
     },
     {
+      resolve: `gatsby-transformer-rehype`,
+      options: {
+        filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
+      },
+    },
+    {
       resolve: 'gatsby-source-filesystem',
       options: {
         name: 'data',
