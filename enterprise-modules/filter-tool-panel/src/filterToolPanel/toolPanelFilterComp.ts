@@ -57,7 +57,7 @@ export class ToolPanelFilterComp extends Component {
 
     public setColumn(column: Column): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === KeyCode.ENTER) {
@@ -85,7 +85,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public getColumnFilterName(): string {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+        return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {

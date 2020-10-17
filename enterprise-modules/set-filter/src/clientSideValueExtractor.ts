@@ -11,11 +11,9 @@ export class ClientSideValuesExtractor {
         const values = new Set<string>();
         const { keyCreator } = this.colDef;
 
-        (this.rowModel as IClientSideRowModel).forEachLeafNode(node => {
+        this.rowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data || !predicate(node)) {
-                return;
-            }
+            if (!node.data || !predicate(node)) { return; }
 
             let value = this.valueGetter(node);
 

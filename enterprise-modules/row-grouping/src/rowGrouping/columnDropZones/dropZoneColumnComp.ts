@@ -5,7 +5,6 @@ import {
     Autowired,
     ColumnController,
     Events,
-    EventService,
     TouchListener,
     DragAndDropService,
     GridOptionsWrapper,
@@ -137,7 +136,7 @@ export class DropZoneColumnComp extends Component {
         if (this.valueColumn) {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
-            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc as string : 'agg';
+            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'agg';
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
 

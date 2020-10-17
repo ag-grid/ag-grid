@@ -160,10 +160,10 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const oldCellComp = this.getCellComp();
         const eGui = this.getGui();
 
-        const cellRange = _.last(this.rangeController.getCellRanges()) as CellRange;
+        const cellRange = _.last(this.rangeController.getCellRanges());
 
-        const start = cellRange.startRow as RowPosition;
-        const end = cellRange.endRow as RowPosition;
+        const start = cellRange.startRow;
+        const end = cellRange.endRow;
 
         if (start && end) {
             const isBefore = this.rowPositionUtils.before(end, start);

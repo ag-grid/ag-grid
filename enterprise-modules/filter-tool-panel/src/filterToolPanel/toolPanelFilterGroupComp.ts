@@ -134,7 +134,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private addFilterChangedListeners() {
         if (this.columnGroup instanceof OriginalColumnGroup) {
-            const group = this.columnGroup as OriginalColumnGroup;
+            const group = this.columnGroup;
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
 
             group.getLeafColumns().forEach(column => {
@@ -180,11 +180,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: OriginalColumnGroup): string {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel') as string;
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
     }
 
     private getColumnName(column: Column): string {
-        return this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
+        return this.columnController.getDisplayNameForColumn(column, 'header', false);
     }
 
     private destroyFilters() {

@@ -23,7 +23,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
-        const marker = { ...seriesDefaults.marker } as any;
+        const marker = { ...seriesDefaults.marker };
         if (marker.type) { // deprecated
             marker.shape = marker.type;
             delete marker.type;
@@ -79,7 +79,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             if (!areaSeries) {
                 const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker } as any;
+                const marker = { ...seriesDefaults.marker };
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
@@ -156,7 +156,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.strokes = [stroke];
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker } as any;
+                const marker = { ...seriesDefaults.marker };
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;

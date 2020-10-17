@@ -136,8 +136,8 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             .forEach(valueColDef => {
                 const keys: string[] = valueColDef.pivotKeys || [];
                 let values: any[];
-                const valueColumn: Column = valueColDef.pivotValueColumn as Column;
-                const colId = valueColDef.colId as string;
+                const valueColumn: Column = valueColDef.pivotValueColumn;
+                const colId = valueColDef.colId;
 
                 if (rowNode.leafGroup) {
                     // lowest level group, get the values from the mapped set
@@ -162,11 +162,11 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                     return;
                 }
 
-                pivotTotalColumnIds.forEach((colId: string) => {
-                    aggResults.push(result[colId]);
+                pivotTotalColumnIds.forEach((currentColId: string) => {
+                    aggResults.push(result[currentColId]);
                 });
 
-                result[colId as string] = this.aggregateValues(aggResults, (pivotValueColumn as Column).getAggFunc(), pivotValueColumn, rowNode);
+                result[colId] = this.aggregateValues(aggResults, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode);
             });
 
         return result;
@@ -263,7 +263,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             }, 'aggregationStage.aggregateValues Deprecation');
         };
 
-        const aggFuncAny = aggFunc as IAggFunc;
+        const aggFuncAny = aggFunc;
         const params: IAggFuncParams = {
             values: values,
             column: column,

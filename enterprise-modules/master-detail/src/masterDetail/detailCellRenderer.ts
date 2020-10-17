@@ -68,7 +68,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
                 'Please add ref="eDetailGrid" to the template.');
         }
 
-        this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
+        this.addManagedListener(params.node.parent, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
 
@@ -116,9 +116,10 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private ensureValidRefreshStrategy(): void {
         switch (this.params.refreshStrategy) {
-            case 'rows': return;
-            case 'nothing': return;
-            case 'everything': return;
+            case 'rows':
+            case 'nothing':
+            case 'everything':
+                return;
         }
 
         // check for incorrectly supplied refresh strategy
@@ -181,7 +182,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             if (typeof this.params.template === 'string') {
                 this.setTemplate(this.params.template);
             } else if (typeof this.params.template === 'function') {
-                const templateFunc = this.params.template as TemplateFunc;
+                const templateFunc = this.params.template;
                 const template = templateFunc(this.params);
                 this.setTemplate(template);
             } else {

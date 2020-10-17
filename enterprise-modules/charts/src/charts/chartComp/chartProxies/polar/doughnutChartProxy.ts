@@ -66,7 +66,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const seriesMap: { [id: string]: PieSeries } = {};
 
         doughnutChart.series.forEach((series: PieSeries) => {
-            const pieSeries = series as PieSeries;
+            const pieSeries = series;
             const id = pieSeries.angleKey;
 
             if (_.includes(fieldIds, id)) {

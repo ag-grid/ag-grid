@@ -134,7 +134,7 @@ export class DateTimeListModel implements IDateTimeListModel {
 }
 
 // modulo function that, unline the JS % operator, is safe for negative numbers
-const modulo = (value: number, modulo: number) => ((value % modulo) + modulo) % modulo;
+const modulo = (value: number, mod: number) => ((value % mod) + mod) % mod;
 
 const splitArray = <T>(array: T[], chunkSize: number): T[][] => {
     const chunks: T[][] = [];

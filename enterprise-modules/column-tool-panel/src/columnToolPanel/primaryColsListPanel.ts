@@ -16,12 +16,12 @@ import {
     VirtualListModel,
     PreDestroy
 } from "@ag-grid-community/core";
-import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
-import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
-import {ExpandState} from "./primaryColsHeaderPanel";
-import {ColumnModelItem } from "./columnModelItem";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
+import { ToolPanelColumnComp } from "./toolPanelColumnComp";
+import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
+import { ExpandState } from "./primaryColsHeaderPanel";
+import { ColumnModelItem } from "./columnModelItem";
+import { ModelItemUtils } from "./modelItemUtils";
 
 class ColumnModel implements VirtualListModel {
 
@@ -180,7 +180,7 @@ export class PrimaryColsListPanel extends Component {
         const recursivelyBuild = (tree: OriginalColumnGroupChild[], dept: number, parentList: ColumnModelItem[]): void => {
             tree.forEach(child => {
                 if (child instanceof OriginalColumnGroup) {
-                    createGroupItem(child as OriginalColumnGroup, dept, parentList);
+                    createGroupItem(child, dept, parentList);
                 } else {
                     createColumnItem(child as Column, dept, parentList);
                 }
@@ -375,7 +375,7 @@ export class PrimaryColsListPanel extends Component {
         const passesFilter = (item: ColumnModelItem) => {
             if (!_.exists(this.filterText)) { return true; }
 
-            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText as string) >= 0 : true;
+            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText) !== -1 : true;
         };
 
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {

@@ -1,6 +1,6 @@
 import {
-    RowBounds,
     _,
+    RowBounds,
     Autowired,
     Bean,
     BeanStub,
@@ -10,7 +10,6 @@ import {
     PostConstruct,
     RowNode,
     ValueService,
-    IServerSideStore,
     NumberSequence
 } from "@ag-grid-community/core";
 
@@ -142,7 +141,7 @@ export class BlockUtils extends BeanStub {
 
         const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache as IServerSideStore;
+            const childStore = rowNode.childrenCache;
             childStore.clearDisplayIndexes();
         }
 
@@ -175,7 +174,7 @@ export class BlockUtils extends BeanStub {
         // set children for SSRM child rows
         const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache as IServerSideStore;
+            const childStore = rowNode.childrenCache;
             if (rowNode.expanded) {
                 childStore.setDisplayIndexes(displayIndexSeq, nextRowTop);
             } else {
@@ -212,7 +211,7 @@ export class BlockUtils extends BeanStub {
             }
 
             // then check if child cache contains index
-            const childStore = currentRowNode.childrenCache as IServerSideStore;
+            const childStore = currentRowNode.childrenCache;
             if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
                 return childStore.getRowUsingDisplayIndex(displayRowIndex);
             }
@@ -230,20 +229,17 @@ export class BlockUtils extends BeanStub {
     }
 
     public extractRowBounds(rowNode: RowNode, index: number): RowBounds {
-
-        const extractRowBounds = (rowNode: RowNode) => {
-            return {
-                rowHeight: rowNode.rowHeight,
-                rowTop: rowNode.rowTop
-            };
-        };
+        const extractRowBounds = (currentRowNode: RowNode) => ({
+            rowHeight: currentRowNode.rowHeight,
+            rowTop: currentRowNode.rowTop
+        });
 
         if (rowNode.rowIndex === index) {
             return extractRowBounds(rowNode);
         }
 
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache as IServerSideStore;
+            const childStore = rowNode.childrenCache;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index);
             }
@@ -268,14 +264,13 @@ export class BlockUtils extends BeanStub {
 
         // then check if it's a group row with a child cache with pixel in range
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache as IServerSideStore;
+            const childStore = rowNode.childrenCache;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);
             }
         }
 
         // pixel is not within this row node or it's children / detail, so return undefined
-        return undefined;
     }
 
     public createNodeIdPrefix(parentRowNode: RowNode): string {

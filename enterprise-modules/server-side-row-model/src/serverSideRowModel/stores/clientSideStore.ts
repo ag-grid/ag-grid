@@ -270,7 +270,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.allRowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
-            const childCache = rowNode.childrenCache as IServerSideStore;
+            const childCache = rowNode.childrenCache;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -298,7 +298,6 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-
         if (pixel <= this.topPx) { return this.nodesAfterSort[0].rowIndex; }
         if (pixel >= (this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length - 1].rowIndex; }
 
@@ -314,21 +313,22 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
         if (pixelIsPastLastRow) {
             return this.displayIndexEnd - 1;
-        } else {
-            return res;
         }
+
+        return res;
     }
 
     public getChildStore(keys: string[]): IServerSideStore | null {
         return this.cacheUtils.getChildStore(keys, this, (key: string) => {
-            const rowNode = _.find(this.allRowNodes, rowNode => rowNode.key === key);
+            const rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.key === key);
+
             return rowNode;
         });
     }
 
     private forEachChildStore(callback: (childStore: IServerSideStore) => void): void {
         this.allRowNodes.forEach(rowNode => {
-            const childStore = rowNode.childrenCache as IServerSideStore;
+            const childStore = rowNode.childrenCache;
             if (childStore) {
                 callback(childStore);
             }
@@ -350,11 +350,11 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         // we only apply transactions to loaded state
         switch (this.getState()) {
             case RowNodeBlock.STATE_FAILED:
-                return {status: ServerSideTransactionResultStatus.StoreLoadingFailed};
+                return { status: ServerSideTransactionResultStatus.StoreLoadingFailed };
             case RowNodeBlock.STATE_LOADING:
-                return {status: ServerSideTransactionResultStatus.StoreLoading};
+                return { status: ServerSideTransactionResultStatus.StoreLoading };
             case RowNodeBlock.STATE_WAITING_TO_LOAD:
-                return {status: ServerSideTransactionResultStatus.StoreWaitingToLoad};
+                return { status: ServerSideTransactionResultStatus.StoreWaitingToLoad };
         }
 
         const applyCallback = this.gridOptionsWrapper.getIsApplyServerSideTransactionFunc();
@@ -366,7 +366,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             };
             const apply = applyCallback(params);
             if (!apply) {
-                return {status: ServerSideTransactionResultStatus.Cancelled};
+                return { status: ServerSideTransactionResultStatus.Cancelled };
             }
         }
 
@@ -490,7 +490,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             }
         } else {
             // find rowNode using object references
-            rowNode = _.find(this.allRowNodes, rowNode => rowNode.data === data);
+            rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.data === data);
             if (!rowNode) {
                 console.error(`ag-Grid: could not find data item as object was not found`, data);
                 return null;

@@ -12,7 +12,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
                 pos: i,
                 excelPos: posCounter
             });
-            posCounter += cells[i].mergeAcross as number;
+            posCounter += cells[i].mergeAcross;
         }
         posCounter++;
     }
@@ -21,7 +21,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
         for (let i = mergeMap.length - 1; i >= 0; i--) {
             const mergedCells: ExcelCell[] = [];
             const cell = cells[mergeMap[i].pos];
-            for (let j = 1; j <= (cell.mergeAcross as number); j++) {
+            for (let j = 1; j <= cell.mergeAcross; j++) {
                 mergedCells.push({
                     ref: `${getExcelColumnName(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,
                     styleId: cell.styleId,

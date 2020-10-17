@@ -21,9 +21,9 @@ import {
     StoreUpdatedEvent,
     LoadSuccessParams
 } from "@ag-grid-community/core";
-import {StoreParams} from "../serverSideRowModel";
-import {StoreUtils} from "./storeUtils";
-import {CacheBlock} from "../blocks/cacheBlock";
+import { StoreParams } from "../serverSideRowModel";
+import { StoreUtils } from "./storeUtils";
+import { CacheBlock } from "../blocks/cacheBlock";
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
@@ -553,13 +553,13 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
             // get the last top level node in the block before the wanted block. this will be the last
             // loaded displayed top level node.
-            const lastRowNode = previousBlock!.getRowUsingLocalIndex(lastRowTopLevelIndex);
+            const lastRowNode = previousBlock.getRowUsingLocalIndex(lastRowTopLevelIndex);
 
             // we want the index of the last displayed node, not just the top level node, so if the last top level node
             // is open, we get the index of the last displayed child node.
             let lastDisplayedNodeIndexInBlockBefore: number;
             if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                const serverSideCache = lastRowNode.childrenCache as IServerSideStore;
+                const serverSideCache = lastRowNode.childrenCache;
                 lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
             } else if (lastRowNode.expanded && lastRowNode.detailNode) {
                 lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
@@ -659,7 +659,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             this.getBlocksInOrder().forEach(block => {
                 if (block.isGroupLevel()) {
                     const callback = (rowNode: RowNode) => {
-                        const nextCache = (rowNode.childrenCache as IServerSideStore);
+                        const nextCache = rowNode.childrenCache;
                         if (nextCache) {
                             nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
                         }

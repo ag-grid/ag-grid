@@ -10,7 +10,6 @@ import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSer
 import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
 import {ChartDataModel} from "../../chartDataModel";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -108,7 +107,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
-            const marker = { ...seriesDefaults.marker } as any;
+            const marker = { ...seriesDefaults.marker };
             if (marker.type) { // deprecated
                 marker.shape = marker.type;
                 delete marker.type;
@@ -201,39 +200,36 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): SeriesDefinition[] {
-        if (fields.length < 2) {
-            return [];
-        }
+        if (fields.length < 2) { return []; }
 
         const isBubbleChart = this.chartType === ChartType.Bubble;
 
         if (paired) {
             if (isBubbleChart) {
-                return fields.map((xField, i) => i % 3 === 0 ? ({
-                    xField,
+                return fields.map((currentxField, i) => i % 3 === 0 ? ({
+                    xField: currentxField,
                     yField: fields[i + 1],
                     sizeField: fields[i + 2],
                 }) : null).filter(x => x && x.yField && x.sizeField);
-            } else {
-                return fields.map((xField, i) => i % 2 === 0 ? ({
-                    xField,
-                    yField: fields[i + 1],
-                }) : null).filter(x => x && x.yField);
             }
-        } else {
-            const xField = fields[0];
-
-            if (isBubbleChart) {
-                return fields
-                    .map((yField, i) => i % 2 === 1 ? ({
-                        xField,
-                        yField,
-                        sizeField: fields[i + 1],
-                    }) : null)
-                    .filter(x => x && x.sizeField);
-            } else {
-                return fields.filter((_, i) => i > 0).map(yField => ({ xField, yField }));
-            }
+            return fields.map((currentxField, i) => i % 2 === 0 ? ({
+                xField: currentxField,
+                yField: fields[i + 1],
+            }) : null).filter(x => x && x.yField);
         }
+
+        const xField = fields[0];
+
+        if (isBubbleChart) {
+            return fields
+                .map((yField, i) => i % 2 === 1 ? ({
+                    xField,
+                    yField,
+                    sizeField: fields[i + 1],
+                }) : null)
+                .filter(x => x && x.sizeField);
+        }
+
+        return fields.filter((value, i) => i > 0).map(yField => ({ xField, yField }));
     }
 }

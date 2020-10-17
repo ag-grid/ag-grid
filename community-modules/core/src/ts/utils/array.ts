@@ -22,7 +22,8 @@ export function existsAndNotEmpty<T>(value?: T[]): boolean {
 }
 
 export function last<T>(arr: T[]): T;
-export function last(arr: any): undefined {
+export function last<T extends Node>(arr: NodeListOf<T>): T;
+export function last(arr: any): any {
     if (!arr || !arr.length) { return; }
 
     return arr[arr.length - 1];

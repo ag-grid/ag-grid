@@ -14,8 +14,8 @@ import {
     VirtualListModel,
     IAfterGuiAttachedParams,
     Promise,
-    _,
     KeyCode,
+    _
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';

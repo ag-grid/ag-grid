@@ -73,7 +73,7 @@ export class LicenseManager extends BeanStub {
     }
 
     public getWatermarkMessage() : string {
-        return this.watermarkMessage!;
+        return this.watermarkMessage;
     }
 
     private static formatDate(date: any): string {
@@ -165,14 +165,12 @@ export class LicenseManager extends BeanStub {
     }
 
     private validateLicenseKeyForVersion(version: string, isTrial: boolean, license: string) {
-        switch (version) {
-            case "2":
-                if (isTrial) {
-                    this.validateForTrial(license);
-                } else {
-                    this.validateLegacyKey(license);
-                }
-                break;
+        if (version !== '2') { return; }
+
+        if (isTrial) {
+            this.validateForTrial(license);
+        } else {
+            this.validateLegacyKey(license);
         }
     }
 

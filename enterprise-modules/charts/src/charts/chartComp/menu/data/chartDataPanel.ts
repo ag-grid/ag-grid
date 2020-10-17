@@ -107,7 +107,7 @@ export class ChartDataPanel extends Component {
         const inputName = `chartDimension${this.getCompId()}`;
 
         columns.forEach(col => {
-            const comp = this.categoriesGroupComp!.createManagedBean(new AgRadioButton());
+            const comp = this.categoriesGroupComp.createManagedBean(new AgRadioButton());
 
             comp.setLabel(_.escapeString(col.displayName)!);
             comp.setValue(col.selected);

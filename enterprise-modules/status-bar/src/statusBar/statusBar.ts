@@ -7,7 +7,6 @@ import {
     PostConstruct,
     Promise,
     RefSelector,
-    _,
     IStatusPanelComp
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";

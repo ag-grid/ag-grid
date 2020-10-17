@@ -302,8 +302,8 @@ export class RangeController extends BeanStub implements IRangeController {
         const lastCol = _.last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
-        const endCellIndex = lastRange.endRow!.rowIndex;
-        const endCellFloating = lastRange.endRow!.rowPinned;
+        const endCellIndex = lastRange.endRow.rowIndex;
+        const endCellFloating = lastRange.endRow.rowPinned;
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
@@ -566,7 +566,7 @@ export class RangeController extends BeanStub implements IRangeController {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
                 columns: [mouseCell.column],
-                startColumn: this.newestRangeStartCell!.column
+                startColumn: this.newestRangeStartCell.column
             };
 
             this.cellRanges.push(this.draggingRange);
@@ -586,7 +586,7 @@ export class RangeController extends BeanStub implements IRangeController {
 
         const cellPosition = this.mouseEventService.getCellPositionForEvent(mouseEvent);
         const isMouseAndStartInPinned = (position: string) =>
-            cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell!.rowPinned === position;
+            cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell.rowPinned === position;
 
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 
@@ -600,7 +600,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return;
         }
 
-        const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
+        const columns = this.calculateColumnsBetween(this.newestRangeStartCell.column, cellPosition.column);
 
         if (!columns) {
             return;

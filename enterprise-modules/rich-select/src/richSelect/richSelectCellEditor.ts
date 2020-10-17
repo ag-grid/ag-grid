@@ -96,7 +96,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
 
         if (_.exists(params.charPress)) {
-            this.searchText(params.charPress as string);
+            this.searchText(params.charPress);
         }
     }
 

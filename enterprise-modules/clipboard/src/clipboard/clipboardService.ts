@@ -15,7 +15,6 @@ import {
     Constants,
     CsvExportParams,
     Events,
-    EventService,
     FlashCellsEvent,
     FocusController,
     GridApi,
@@ -466,7 +465,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         if (!this.rangeController || this.rangeController.isEmpty()) { return; }
 
-        const cellRanges = this.rangeController.getCellRanges() as CellRange[];
+        const cellRanges = this.rangeController.getCellRanges();
 
         if (onlyFirst) {
             this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);

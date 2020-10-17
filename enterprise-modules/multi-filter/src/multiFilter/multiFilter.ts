@@ -250,9 +250,9 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     public setModel(model: IMultiFilterModel): Promise<void> {
-        const setFilterModel = (filter: IFilterComp, model: any) => {
+        const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new Promise<void>(resolve => {
-                const promise = filter.setModel(model);
+                const promise = filter.setModel(filterModel);
 
                 if (promise == null) {
                     resolve();

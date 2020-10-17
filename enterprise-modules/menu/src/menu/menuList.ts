@@ -99,7 +99,7 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     public activateFirstItem(): void {
-        const item = this.menuItems.filter(item => !item.isDisabled())[0];
+        const item = this.menuItems.filter(currentItem => !currentItem.isDisabled())[0];
 
         if (!item) { return; }
 

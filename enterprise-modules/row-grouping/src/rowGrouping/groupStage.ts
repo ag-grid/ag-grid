@@ -5,7 +5,6 @@ import {
     ChangedPath,
     Column,
     ColumnController,
-    Context,
     GetDataPath,
     GridOptionsWrapper,
     IRowNodeStage,
@@ -113,7 +112,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
-
         details.transactions.forEach(tran => {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
@@ -143,14 +141,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private sortGroupsWithComparator(rootNode: RowNode): void {
         // we don't do group sorting for tree data
-        if (this.usingTreeData) {
-            return;
-        }
+        if (this.usingTreeData) { return; }
 
         const comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
-        if (_.exists(comparator)) {
-            recursiveSort(rootNode);
-        }
+        if (_.exists(comparator)) { recursiveSort(rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {
             const doSort = _.exists(rowNode.childrenAfterGroup) &&
@@ -249,7 +243,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const batchRemover: BatchRemover = new BatchRemover();
 
         nodesToRemove.forEach(nodeToRemove => {
-
             this.removeFromParent(nodeToRemove, batchRemover);
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
@@ -257,7 +250,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.forEachParentGroup(details, nodeToRemove, parentNode => {
                 batchRemover.removeFromAllLeafChildren(parentNode, nodeToRemove);
             });
-
         });
 
         batchRemover.flush();
@@ -632,14 +624,14 @@ class BatchRemover {
     }
 
     private getSet(parent: RowNode): RemoveDetails {
-        if (!this.allSets[parent!.id]) {
-            this.allSets[parent!.id] = {
+        if (!this.allSets[parent.id]) {
+            this.allSets[parent.id] = {
                 removeFromAllLeafChildren: {},
                 removeFromChildrenAfterGroup: {}
             };
-            this.allParents.push(parent!);
+            this.allParents.push(parent);
         }
-        return this.allSets[parent!.id];
+        return this.allSets[parent.id];
     }
 
     public flush(): void {

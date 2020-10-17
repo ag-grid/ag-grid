@@ -11,10 +11,9 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsApplied,
-    _
+    AsyncTransactionsApplied
 } from "@ag-grid-community/core";
-import {ServerSideRowModel} from "./serverSideRowModel";
+import { ServerSideRowModel } from "./serverSideRowModel";
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;

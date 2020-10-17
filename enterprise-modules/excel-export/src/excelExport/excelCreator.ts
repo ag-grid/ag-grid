@@ -88,7 +88,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         let sheetName = 'ag-grid';
 
         if (_.exists(params.sheetName)) {
-            sheetName = _.utf8_encode(params.sheetName!.toString().substr(0, 31));
+            sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
 
         const config: ExcelGridSerializingParams = {

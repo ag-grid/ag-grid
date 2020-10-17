@@ -125,12 +125,12 @@ export class FiltersToolPanelListPanel extends Component {
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
-                return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
+                return _.flatten(this.recursivelyAddFilterGroupComps(child, depth));
             }
 
             const column = child as Column;
 
-            if (!this.shouldDisplayFilter(column)) { return []; };
+            if (!this.shouldDisplayFilter(column)) { return []; }
 
             const hideFilterCompHeader = depth === 0;
             const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);

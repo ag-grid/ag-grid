@@ -29,10 +29,10 @@ import {
     SortController,
     ServerSideStoreType
 } from "@ag-grid-community/core";
-import {ClientSideStore} from "./stores/clientSideStore";
-import {InfiniteStore} from "./stores/infiniteStore";
-import {NodeManager} from "./nodeManager";
-import {SortListener} from "./listeners/sortListener";
+import { ClientSideStore } from "./stores/clientSideStore";
+import { InfiniteStore } from "./stores/infiniteStore";
+import { NodeManager } from "./nodeManager";
+import { SortListener } from "./listeners/sortListener";
 
 export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
     const CacheClass = params.storeType === ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
@@ -81,7 +81,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const datasource = this.gridOptionsWrapper.getServerSideDatasource();
 
         if (datasource) {
-            this.setDatasource(datasource!);
+            this.setDatasource(datasource);
         }
     }
 
@@ -221,13 +221,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
 
-        if (dynamicRowHeight && maxBlocksInCache as number >= 0) {
+        if (dynamicRowHeight && maxBlocksInCache >= 0) {
             console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
-        if (maxBlocksInCache as number >= 0 && this.columnController.isAutoRowHeightActive()) {
+        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
             console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
@@ -335,9 +335,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public getRootStore(): IServerSideStore {
         if (this.rootNode && this.rootNode.childrenCache) {
-            return (this.rootNode.childrenCache as IServerSideStore);
-        } else {
-            return undefined;
+            return this.rootNode.childrenCache;
         }
     }
 
@@ -414,7 +412,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return (firstInRange.parent!.childrenCache as IServerSideStore)!.getRowNodesInRange(lastInRange, firstInRange);
+        return firstInRange.parent.childrenCache.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {
