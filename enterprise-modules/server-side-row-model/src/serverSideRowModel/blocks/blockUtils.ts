@@ -148,7 +148,7 @@ export class BlockUtils extends BeanStub {
         const hasDetailNode = rowNode.master && rowNode.detailNode;
         if (hasDetailNode) {
             rowNode.detailNode.clearRowTop();
-            rowNode.detailNode.setRowIndex(undefined);
+            rowNode.detailNode.setRowIndex();
         }
     }
 
@@ -167,7 +167,7 @@ export class BlockUtils extends BeanStub {
                 nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {
                 rowNode.detailNode.clearRowTop();
-                rowNode.detailNode.setRowIndex(undefined);
+                rowNode.detailNode.setRowIndex();
             }
         }
 

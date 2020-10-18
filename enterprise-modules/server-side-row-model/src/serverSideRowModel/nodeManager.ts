@@ -13,7 +13,7 @@ export class NodeManager {
             console.warn('second instance', rowNode.data);
         }
 
-        this.rowNodes[id!] = rowNode;
+        this.rowNodes[id] = rowNode;
     }
 
     public removeNode(rowNode: RowNode): void {

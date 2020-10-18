@@ -257,7 +257,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
                 if (promise == null) {
                     resolve();
                 } else {
-                    (promise as Promise<void>).then(() => resolve());
+                    promise.then(() => resolve());
                 }
             });
         };
@@ -346,7 +346,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
 
         if (filterPromise != null) {
-            return filterPromise.then(filter => filterInstance = filter!) as Promise<IFilterComp>;
+            return filterPromise.then(filter => filterInstance = filter!);
         }
 
         return filterPromise;
