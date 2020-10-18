@@ -150,7 +150,7 @@ export class RowComp extends Component {
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.fullWidthContainerComp = fullWidthContainerComp;
         this.rowNode = rowNode;
-        this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        this.rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -160,7 +160,7 @@ export class RowComp extends Component {
     }
 
     public init(): void {
-        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
@@ -201,7 +201,7 @@ export class RowComp extends Component {
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex + 1}"`);
+        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex! + 1}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
@@ -247,7 +247,7 @@ export class RowComp extends Component {
             ePinnedRightRow: this.ePinnedRightRow,
             node: this.rowNode,
             api: this.beans.gridOptionsWrapper.getApi()!,
-            rowIndex: this.rowNode.rowIndex,
+            rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext()
@@ -316,7 +316,7 @@ export class RowComp extends Component {
             if (useAnimationsFrameForCreate) {
                 this.beans.taskQueue.createTask(
                     this.lazyCreateCells.bind(this, cols, eRow),
-                    this.rowNode.rowIndex,
+                    this.rowNode.rowIndex!,
                     'createTasksP1'
                 );
             } else {
@@ -640,7 +640,7 @@ export class RowComp extends Component {
 
             this.beans.taskQueue.createTask(
                 this.refreshCellsInAnimationFrame.bind(this),
-                this.rowNode.rowIndex,
+                this.rowNode.rowIndex!,
                 'createTasksP1'
             );
         }
@@ -823,7 +823,7 @@ export class RowComp extends Component {
             type: type,
             node: this.rowNode,
             data: this.rowNode.data,
-            rowIndex: this.rowNode.rowIndex,
+            rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
             context: this.beans.gridOptionsWrapper.getContext(),
             api: this.beans.gridOptionsWrapper.getApi()!,
@@ -1269,7 +1269,7 @@ export class RowComp extends Component {
         if (this.useAnimationFrameForCreate) {
             this.beans.taskQueue.createTask(
                 this.addHoverFunctionality.bind(this, eRow),
-                this.rowNode.rowIndex,
+                this.rowNode.rowIndex!,
                 'createTasksP2'
             );
         } else {
@@ -1393,7 +1393,7 @@ export class RowComp extends Component {
     }
 
     private onCellFocusChanged(): void {
-        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
@@ -1494,7 +1494,7 @@ export class RowComp extends Component {
 
     private updateRowIndexes(): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
@@ -1504,7 +1504,7 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
-            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex + 1);
+            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex! + 1);
 
             if (!rowIsEvenChanged) { return; }
             addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

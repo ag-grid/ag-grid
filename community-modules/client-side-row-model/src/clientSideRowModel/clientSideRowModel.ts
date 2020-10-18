@@ -308,7 +308,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
         }
 
-        return rowNode.rowIndex;
+        return rowNode.rowIndex!;
     }
 
     public getRowBounds(index: number): RowBounds | null {

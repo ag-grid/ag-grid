@@ -32,7 +32,7 @@ export class ToolPanelFilterGroupComp extends Component {
     private readonly columnGroup: OriginalColumnGroupChild;
     private childFilterComps: ToolPanelFilterItem[];
     private expandedCallback: () => void;
-    private filterGroupName: string;
+    private filterGroupName: string | null;
 
     constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
         expandedCallback: () => void, depth: number) {
@@ -176,14 +176,14 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupName = (this.columnGroup instanceof OriginalColumnGroup) ?
             this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup as Column);
 
-        this.filterGroupComp.setTitle(this.filterGroupName);
+        this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
-    private getColumnGroupName(columnGroup: OriginalColumnGroup): string {
+    private getColumnGroupName(columnGroup: OriginalColumnGroup): string | null {
         return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
     }
 
-    private getColumnName(column: Column): string {
+    private getColumnName(column: Column): string | null {
         return this.columnController.getDisplayNameForColumn(column, 'header', false);
     }
 

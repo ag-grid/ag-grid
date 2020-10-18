@@ -163,7 +163,7 @@ export class FocusController extends BeanStub {
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
-        return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
+        return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
     }
 
     public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {

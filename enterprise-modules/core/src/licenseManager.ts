@@ -73,7 +73,7 @@ export class LicenseManager extends BeanStub {
     }
 
     public getWatermarkMessage() : string {
-        return this.watermarkMessage;
+        return this.watermarkMessage || '';
     }
 
     private static formatDate(date: any): string {

@@ -163,7 +163,7 @@ class DateTimeListPageEntryComp extends Component {
         }
         this.entry = entry;
         this.getGui().textContent = entry.label;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', entry.isPadding);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-date-time-list-page-entry-is-padding', !!entry.isPadding);
         this.onDataChange();
     }
 

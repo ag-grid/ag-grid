@@ -44,7 +44,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
+            icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null)!,
             emptyMessage: emptyMessage,
             title: title
         });

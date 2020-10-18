@@ -6,10 +6,11 @@ import {
     MenuItemDef,
     PostConstruct,
     TooltipFeature,
-    _,
     PopupService,
     IComponent,
-    KeyCode, ITooltipParams
+    KeyCode,
+    ITooltipParams,
+    _
 } from "@ag-grid-community/core";
 import { MenuList } from './menuList';
 import { MenuPanel } from './menuPanel';
@@ -46,7 +47,7 @@ export class MenuItemComponent extends Component {
 
     private isActive = false;
     private tooltip: string;
-    private hideSubMenu: () => void;
+    private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
     private activateTimeoutId: number;
     private deactivateTimeoutId: number;
@@ -134,7 +135,7 @@ export class MenuItemComponent extends Component {
             ePopup.appendChild(subMenuGui);
 
             if (subMenu.afterGuiAttached) {
-                setTimeout(() => subMenu.afterGuiAttached(), 0);
+                setTimeout(() => subMenu.afterGuiAttached!(), 0);
             }
         }
 
@@ -198,7 +199,7 @@ export class MenuItemComponent extends Component {
         this.isActive = false;
 
         if (this.subMenuIsOpen) {
-            this.hideSubMenu();
+            this.hideSubMenu!();
         }
     }
 
@@ -209,7 +210,7 @@ export class MenuItemComponent extends Component {
             `<span ref="eIcon" class="${this.getClassName('part')} ${this.getClassName('icon')}" role="presentation"></span>`);
 
         if (this.params.checked) {
-            icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper));
+            icon.appendChild(_.createIconNoSpan('check', this.gridOptionsWrapper)!);
         } else if (this.params.icon) {
             if (_.isNodeOrElement(this.params.icon)) {
                 icon.appendChild(this.params.icon as HTMLElement);
@@ -271,7 +272,7 @@ export class MenuItemComponent extends Component {
             const iconName = this.gridOptionsWrapper.isEnableRtl() ? 'smallLeft' : 'smallRight';
             _.setAriaExpanded(eGui, false);
 
-            pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper));
+            pointer.appendChild(_.createIconNoSpan(iconName, this.gridOptionsWrapper)!);
         }
 
         eGui.appendChild(pointer);

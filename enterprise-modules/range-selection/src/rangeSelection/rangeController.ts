@@ -180,7 +180,7 @@ export class RangeController extends BeanStub implements IRangeController {
         // if there is already a range for this cell, then we reuse the same range, otherwise the user
         // can ctrl & click a cell many times and hit ctrl+c, which would result in the cell getting copied
         // many times to the clipboard.
-        let cellRange: CellRange;
+        let cellRange: CellRange | undefined;
 
         for (let i = 0; i < this.cellRanges.length; i++) {
             const range = this.cellRanges[i];
@@ -302,8 +302,8 @@ export class RangeController extends BeanStub implements IRangeController {
         const lastCol = _.last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
-        const endCellIndex = lastRange.endRow.rowIndex;
-        const endCellFloating = lastRange.endRow.rowPinned;
+        const endCellIndex = lastRange.endRow!.rowIndex;
+        const endCellFloating = lastRange.endRow!.rowPinned;
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
@@ -359,7 +359,7 @@ export class RangeController extends BeanStub implements IRangeController {
         let columns: Column[] | undefined;
 
         if (params.columns) {
-            columns = params.columns.map(c => this.columnController.getColumnWithValidation(c)).filter(c => c);
+            columns = params.columns.map(c => this.columnController.getColumnWithValidation(c)!).filter(c => c);
         } else {
             const columnStart = this.columnController.getColumnWithValidation(params.columnStart);
             const columnEnd = this.columnController.getColumnWithValidation(params.columnEnd);
@@ -464,8 +464,8 @@ export class RangeController extends BeanStub implements IRangeController {
 
     private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
         const { startRow, endRow } = cellRange;
-        const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
+        const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
         const rangeFirstIndexColumn = cellRange.columns[0];
         const rangeLastIndexColumn = _.last(cellRange.columns);
         const lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
@@ -478,10 +478,10 @@ export class RangeController extends BeanStub implements IRangeController {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
-        const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
 
         const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        const isLastRow = cell.rowIndex === lastRow.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow.rowPinned);
+        const isLastRow = cell.rowIndex === lastRow!.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow!.rowPinned);
 
         return isRightColumn && isLastRow;
     }
@@ -495,7 +495,7 @@ export class RangeController extends BeanStub implements IRangeController {
         return this.cellRanges.filter(cellRange => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    private isRowInRange(rowIndex: number, floating: string | undefined, cellRange: CellRange): boolean {
+    private isRowInRange(rowIndex: number, floating: string | null | undefined, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
         const thisRow: RowPosition = { rowIndex, rowPinned: floating };
@@ -566,7 +566,7 @@ export class RangeController extends BeanStub implements IRangeController {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
                 columns: [mouseCell.column],
-                startColumn: this.newestRangeStartCell.column
+                startColumn: this.newestRangeStartCell!.column
             };
 
             this.cellRanges.push(this.draggingRange);
@@ -586,11 +586,11 @@ export class RangeController extends BeanStub implements IRangeController {
 
         const cellPosition = this.mouseEventService.getCellPositionForEvent(mouseEvent);
         const isMouseAndStartInPinned = (position: string) =>
-            cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell.rowPinned === position;
+            cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell!.rowPinned === position;
 
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 
-        this.autoScrollService.check(mouseEvent, skipVerticalScroll);
+        this.autoScrollService.check(mouseEvent, skipVerticalScroll!);
 
         if (
             !cellPosition ||
@@ -600,7 +600,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return;
         }
 
-        const columns = this.calculateColumnsBetween(this.newestRangeStartCell.column, cellPosition.column);
+        const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
 
         if (!columns) {
             return;
@@ -608,14 +608,14 @@ export class RangeController extends BeanStub implements IRangeController {
 
         this.draggingCell = cellPosition;
 
-        this.draggingRange.endRow = {
+        this.draggingRange!.endRow = {
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned
         };
 
-        this.draggingRange.columns = columns;
+        this.draggingRange!.columns = columns;
 
-        this.dispatchChangedEvent(false, false, this.draggingRange.id);
+        this.dispatchChangedEvent(false, false, this.draggingRange!.id);
     }
 
     public onDragStop(): void {
@@ -623,7 +623,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return;
         }
 
-        const { id } = this.draggingRange;
+        const { id } = this.draggingRange!;
 
         this.autoScrollService.ensureCleared();
 
@@ -656,14 +656,14 @@ export class RangeController extends BeanStub implements IRangeController {
 
         if (fromIndex < 0) {
             console.warn(`ag-Grid: column ${columnFrom.getId()} is not visible`);
-            return undefined;
+            return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo);
 
         if (toIndex < 0) {
             console.warn(`ag-Grid: column ${columnTo.getId()} is not visible`);
-            return undefined;
+            return;
         }
 
         if (isSameColumn) {
@@ -702,7 +702,7 @@ class AutoScrollService {
     }
 
     public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-        const rect: ClientRect = this.gridPanel.getBodyClientRect();
+        const rect: ClientRect = this.gridPanel.getBodyClientRect()!;
         skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
 
         // we don't do ticking if grid is auto height unless we have a horizontal scroller

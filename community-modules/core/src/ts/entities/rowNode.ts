@@ -141,7 +141,7 @@ export class RowNode implements IEventEmitter {
     public childIndex: number;
 
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
-    public rowIndex: number;
+    public rowIndex: number | undefined;
 
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     public rowPinned: string;
@@ -296,7 +296,7 @@ export class RowNode implements IEventEmitter {
             return 'b-' + this.rowIndex;
         }
 
-        return this.rowIndex.toString();
+        return this.rowIndex!.toString();
     }
 
     private createDaemonNode(): RowNode {
@@ -476,7 +476,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowIndex(rowIndex: number): void {
+    public setRowIndex(rowIndex?: number): void {
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
@@ -519,7 +519,7 @@ export class RowNode implements IEventEmitter {
             type: type,
             node: this,
             data: this.data,
-            rowIndex: this.rowIndex,
+            rowIndex: this.rowIndex!,
             rowPinned: this.rowPinned,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridOptionsWrapper.getApi()!,

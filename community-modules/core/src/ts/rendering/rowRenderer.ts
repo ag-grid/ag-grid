@@ -862,7 +862,7 @@ export class RowRenderer extends BeanStub {
             if (rowComp.isFullWidth()) {
                 const rowIndex = rowComp.getRowNode().rowIndex;
 
-                rowsToRemove.push(rowIndex.toString());
+                rowsToRemove.push(rowIndex!.toString());
             }
         });
 
@@ -900,7 +900,7 @@ export class RowRenderer extends BeanStub {
             if (!fullWidthRowsRefreshed) {
                 const rowIndex = rowComp.getRowNode().rowIndex;
 
-                rowsToRemove.push(rowIndex.toString());
+                rowsToRemove.push(rowIndex!.toString());
             }
         });
 

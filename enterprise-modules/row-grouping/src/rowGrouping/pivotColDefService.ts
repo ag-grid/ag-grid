@@ -181,8 +181,8 @@ export class PivotColDefService extends BeanStub {
                 const pivotValueColId = def.pivotValueColumn.getColId();
 
                 const arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
-                arr.push(def.colId);
-                acc.set(pivotValueColId, arr);
+                arr!.push(def.colId!);
+                acc.set(pivotValueColId, arr!);
             }
         };
 
@@ -382,18 +382,20 @@ export class PivotColDefService extends BeanStub {
 
             if (a.headerName < b.headerName) {
                 return -1;
-            } else if (a.headerName > b.headerName) {
-                return 1;
-            } else {
-                return 0;
             }
+
+            if (a.headerName > b.headerName) {
+                return 1;
+            }
+
+            return 0;
         }
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
         m2.forEach((value, key, map) => {
             const existingList = m1.has(key) ? m1.get(key) : [];
-            const updatedList = [...existingList, ...value];
+            const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
         });
     }

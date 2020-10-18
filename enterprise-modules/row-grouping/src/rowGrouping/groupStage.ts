@@ -96,16 +96,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
             includeParents: !this.gridOptionsWrapper.isSuppressParentsInRowNodes(),
-            expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded(),
-            groupedCols: groupedCols,
+            expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded()!,
+            groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
-            rowNodeOrder: rowNodeOrder,
-            transactions: rowNodeTransactions,
+            rowNodeOrder: rowNodeOrder!,
+            transactions: rowNodeTransactions!,
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath
+            changedPath: changedPath!
         };
 
         return details;
@@ -135,7 +135,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private sortChildren(details: GroupingDetails): void {
         details.changedPath.forEachChangedNodeDepthFirst(rowNode => {
-            _.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
+            _.sortRowNodesByOrder(rowNode.childrenAfterGroup!, details.rowNodeOrder);
         });
     }
 
@@ -152,8 +152,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 !rowNode.leafGroup;
 
             if (doSort) {
-                rowNode.childrenAfterGroup.sort(comparator);
-                rowNode.childrenAfterGroup.forEach((childNode: RowNode) => recursiveSort(childNode));
+                rowNode.childrenAfterGroup!.sort(comparator);
+                rowNode.childrenAfterGroup!.forEach((childNode: RowNode) => recursiveSort(childNode));
             }
         }
     }
@@ -274,7 +274,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 newGroupNode.childrenMapped = nodeToRemove.childrenMapped;
                 newGroupNode.updateHasChildren();
 
-                newGroupNode.childrenAfterGroup.forEach(rowNode => rowNode.parent = newGroupNode);
+                newGroupNode.childrenAfterGroup!.forEach(rowNode => rowNode.parent = newGroupNode);
             }
 
         });
@@ -298,10 +298,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
                 return false;
-            } else {
-                // if still not removed, then we remove if this group is empty
-                return rowNode.isEmptyRowGroupNode();
             }
+            // if still not removed, then we remove if this group is empty
+            return !!rowNode.isEmptyRowGroupNode();
         };
 
         while (checkAgain) {
@@ -332,7 +331,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (batchRemover) {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
-                _.removeFromArray(child.parent.childrenAfterGroup, child);
+                _.removeFromArray(child.parent.childrenAfterGroup!, child);
                 child.parent.updateHasChildren();
             }
         }
@@ -351,7 +350,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             if (parent.childrenMapped) {
                 parent.childrenMapped[mapKey] = child;
             }
-            parent.childrenAfterGroup.push(child);
+            parent.childrenAfterGroup!.push(child);
             parent.updateHasChildren();
         }
     }
@@ -408,7 +407,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         } else {
             childNode.parent = parentGroup;
             childNode.level = path.length;
-            parentGroup.childrenAfterGroup.push(childNode);
+            parentGroup.childrenAfterGroup!.push(childNode);
             parentGroup.updateHasChildren();
         }
     }
@@ -451,7 +450,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         userGroup.updateHasChildren();
 
         this.removeFromParent(fillerGroup);
-        userGroup.childrenAfterGroup.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
+        userGroup.childrenAfterGroup!.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
         this.addToParent(userGroup, fillerGroup.parent);
     }
 
@@ -464,7 +463,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // we use hasOwnProperty as otherwise things like 'constructor' would fail as a key,
         // as javascript map already has an inherited property 'constructor
         const nodeExists = map && map.hasOwnProperty(key);
-        let nextNode = nodeExists ? map[key] as RowNode : undefined;
+        let nextNode = nodeExists ? map![key] as RowNode : undefined;
 
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
@@ -615,33 +614,33 @@ class BatchRemover {
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
-        set.removeFromChildrenAfterGroup[child.id] = true;
+        set.removeFromChildrenAfterGroup[child.id!] = true;
     }
 
     public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
-        set.removeFromAllLeafChildren[child.id] = true;
+        set.removeFromAllLeafChildren[child.id!] = true;
     }
 
     private getSet(parent: RowNode): RemoveDetails {
-        if (!this.allSets[parent.id]) {
-            this.allSets[parent.id] = {
+        if (!this.allSets[parent.id!]) {
+            this.allSets[parent.id!] = {
                 removeFromAllLeafChildren: {},
                 removeFromChildrenAfterGroup: {}
             };
             this.allParents.push(parent);
         }
-        return this.allSets[parent.id];
+        return this.allSets[parent.id!];
     }
 
     public flush(): void {
         this.allParents.forEach(parent => {
-            const nodeDetails = this.allSets[parent.id];
-            parent.childrenAfterGroup = parent.childrenAfterGroup.filter(child => {
-                const res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
+            const nodeDetails = this.allSets[parent.id!];
+            parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(child => {
+                const res = !nodeDetails.removeFromChildrenAfterGroup[child.id!];
                 return res;
             });
-            parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id]);
+            parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id!]);
             parent.updateHasChildren();
         });
         this.allSets = {};

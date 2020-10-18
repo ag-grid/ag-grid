@@ -122,9 +122,9 @@ function aggLast(params: IAggFuncParams): any {
     return params.values.length > 0 ? _.last(params.values) : null;
 }
 
-function aggMin(params: IAggFuncParams): number | bigint {
+function aggMin(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
-    let result: number | bigint = null;
+    let result: number | bigint | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
@@ -138,9 +138,9 @@ function aggMin(params: IAggFuncParams): number | bigint {
     return result;
 }
 
-function aggMax(params: IAggFuncParams): number | bigint {
+function aggMax(params: IAggFuncParams): number | bigint | null {
     const { values } = params;
-    let result: number | bigint = null;
+    let result: number | bigint | null = null;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
@@ -180,7 +180,7 @@ function aggCount(params: IAggFuncParams): { value: number; toString(): string; 
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): { value: number | bigint; count: number; toString(): string; toNumber(): number; } {
+function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count: number; toString(): string; toNumber(): number; } {
     const { values } = params;
     let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
     let count = 0;

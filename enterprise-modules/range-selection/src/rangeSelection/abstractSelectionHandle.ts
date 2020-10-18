@@ -36,7 +36,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private rangeEndRow: RowPosition;
 
     private cellHoverListener: (() => void) | undefined;
-    private lastCellHovered: CellPosition | undefined;
+    private lastCellHovered: CellPosition | null | undefined;
     protected changedCalculatedValues: boolean = false;
     private dragging: boolean = false;
 
@@ -120,7 +120,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.rangeEndRow = row;
     }
 
-    protected getLastCellHovered(): CellPosition | undefined {
+    protected getLastCellHovered(): CellPosition | null | undefined {
         return this.lastCellHovered;
     }
 

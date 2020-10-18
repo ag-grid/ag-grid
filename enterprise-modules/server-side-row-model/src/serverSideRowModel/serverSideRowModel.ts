@@ -162,7 +162,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @PreDestroy
     private destroyRootStore(): void {
         if (!this.rootNode || !this.rootNode.childrenCache) { return; }
-        this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache);
+        this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache)!;
         this.nodeManager.clear();
     }
 
@@ -221,13 +221,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
 
-        if (dynamicRowHeight && maxBlocksInCache >= 0) {
+        if (dynamicRowHeight && maxBlocksInCache! >= 0) {
             console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
-        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+        if (maxBlocksInCache! >= 0 && this.columnController.isAutoRowHeightActive()) {
             console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
@@ -333,7 +333,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.onStoreUpdated();
     }
 
-    public getRootStore(): IServerSideStore {
+    public getRootStore(): IServerSideStore | undefined {
         if (this.rootNode && this.rootNode.childrenCache) {
             return this.rootNode.childrenCache;
         }
@@ -342,7 +342,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getRowCount(): number {
         const rootStore = this.getRootStore();
         if (!rootStore) { return 1; }
-        return rootStore.getDisplayIndexEnd();
+
+        return rootStore.getDisplayIndexEnd()!;
     }
 
     public getTopLevelRowCount(): number {
@@ -366,13 +367,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                 rowHeight: rowHeight
             };
         }
-        return rootStore.getRowBounds(index);
+        return rootStore.getRowBounds(index)!;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
         const rootStore = this.getRootStore();
         if (pixel <= 0 || !rootStore) { return 0; }
-        return rootStore.getRowIndexAtPixel(pixel);
+
+        return rootStore.getRowIndexAtPixel(pixel)!;
     }
 
     public isEmpty(): boolean {
@@ -412,7 +414,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return firstInRange.parent.childrenCache.getRowNodesInRange(lastInRange, firstInRange);
+        return firstInRange.parent!.childrenCache!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {
@@ -430,7 +432,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     // always returns true - this is used by the
     public isRowPresent(rowNode: RowNode): boolean {
-        const foundRowNode = this.getRowNode(rowNode.id);
+        const foundRowNode = this.getRowNode(rowNode.id!);
         return !!foundRowNode;
     }
 }

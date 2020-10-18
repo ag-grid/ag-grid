@@ -661,7 +661,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 colDef: colDef,
-                rowIndex: this.rowNode.rowIndex,
+                rowIndex: this.rowNode.rowIndex!,
                 $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi()!,
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
@@ -918,7 +918,7 @@ export class CellComp extends Component implements TooltipParentComp {
         };
 
         if (useTaskService) {
-            this.beans.taskQueue.createTask(this.createCellRendererFunc, this.rowNode.rowIndex, 'createTasksP2');
+            this.beans.taskQueue.createTask(this.createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
         } else {
             this.createCellRendererFunc();
         }
@@ -1064,7 +1064,7 @@ export class CellComp extends Component implements TooltipParentComp {
             rowPinned: this.rowNode.rowPinned,
             event: domEvent,
             type: eventType,
-            rowIndex: this.rowNode.rowIndex
+            rowIndex: this.rowNode.rowIndex!
         };
 
         // because we are hacking in $scope for angular 1, we have to de-reference
@@ -1645,7 +1645,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createGridCellVo(): void {
         this.cellPosition = {
-            rowIndex: this.rowNode.rowIndex,
+            rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
             column: this.column
         };

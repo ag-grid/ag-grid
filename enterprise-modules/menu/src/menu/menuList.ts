@@ -198,16 +198,14 @@ export class MenuList extends ManagedFocusComponent {
                 if (item === this.activeMenuItem) {
                     foundCurrent = true;
                 }
-
                 continue;
             }
 
             nextItem = item;
-
             break;
         }
 
-        return nextItem || this.activeMenuItem;
+        return nextItem! || this.activeMenuItem;
     }
 
     protected destroy(): void {

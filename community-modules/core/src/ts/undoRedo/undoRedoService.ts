@@ -193,7 +193,7 @@ export class UndoRedoService extends BeanStub {
 
         lastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
-            rowIndex: row!.rowIndex,
+            rowIndex: row!.rowIndex!,
             columnId: cellValueChange.columnId
         };
 

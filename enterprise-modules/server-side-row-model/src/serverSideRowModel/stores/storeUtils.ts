@@ -50,8 +50,8 @@ export class StoreUtils extends BeanStub {
         if (!storeParams.datasource) { return; }
 
         const request: IServerSideGetRowsRequest = {
-            startRow: p.startRow,
-            endRow: p.endRow,
+            startRow: p.startRow!,
+            endRow: p.endRow!,
             rowGroupCols: storeParams.rowGroupCols,
             valueCols: storeParams.valueCols,
             pivotCols: storeParams.pivotCols,
@@ -79,7 +79,7 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore {
+    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore | null {
         if (_.missingOrEmpty(keys)) { return currentCache; }
 
         const nextKey = keys[0];

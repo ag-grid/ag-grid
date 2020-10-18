@@ -68,7 +68,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
                 'Please add ref="eDetailGrid" to the template.');
         }
 
-        this.addManagedListener(params.node.parent, RowNode.EVENT_DATA_CHANGED, () => {
+        this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
 
@@ -142,13 +142,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     }
 
     private registerDetailWithMaster(): void {
-        const rowId = this.params.node.id;
+        const rowId = this.params.node.id!;
         const masterGridApi = this.params.api;
 
         const gridInfo: DetailGridInfo = {
             id: rowId,
-            api: this.detailGridOptions.api,
-            columnApi: this.detailGridOptions.columnApi
+            api: this.detailGridOptions.api!,
+            columnApi: this.detailGridOptions.columnApi!
         };
 
         const rowNode = this.params.node;

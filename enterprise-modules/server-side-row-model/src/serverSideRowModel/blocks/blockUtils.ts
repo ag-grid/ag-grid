@@ -74,7 +74,7 @@ export class BlockUtils extends BeanStub {
                 }
 
             } else if (rowNode.group) {
-                rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn, rowNode);
+                rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
                 if (rowNode.key === null || rowNode.key === undefined) {
                     _.doOnce(() => {
                         console.warn(`null and undefined values are not allowed for server side row model keys`);
@@ -128,8 +128,8 @@ export class BlockUtils extends BeanStub {
             }
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
-            } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn.getId())) {
-                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn, rowNode);
+            } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
+                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = groupValue;
             }
         });
@@ -137,12 +137,12 @@ export class BlockUtils extends BeanStub {
 
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTop();
-        rowNode.setRowIndex(undefined);
+        rowNode.setRowIndex();
 
         const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
         if (hasChildStore) {
             const childStore = rowNode.childrenCache;
-            childStore.clearDisplayIndexes();
+            childStore!.clearDisplayIndexes();
         }
 
         const hasDetailNode = rowNode.master && rowNode.detailNode;
@@ -156,7 +156,7 @@ export class BlockUtils extends BeanStub {
         // set this row
         rowNode.setRowIndex(displayIndexSeq.next());
         rowNode.setRowTop(nextRowTop.value);
-        nextRowTop.value += rowNode.rowHeight;
+        nextRowTop.value += rowNode.rowHeight!;
 
         // set child for master / detail
         const hasDetailRow = rowNode.master;
@@ -164,7 +164,7 @@ export class BlockUtils extends BeanStub {
             if (rowNode.expanded && rowNode.detailNode) {
                 rowNode.detailNode.setRowIndex(displayIndexSeq.next());
                 rowNode.detailNode.setRowTop(nextRowTop.value);
-                nextRowTop.value += rowNode.detailNode.rowHeight;
+                nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {
                 rowNode.detailNode.clearRowTop();
                 rowNode.detailNode.setRowIndex(undefined);
@@ -176,11 +176,11 @@ export class BlockUtils extends BeanStub {
         if (hasChildStore) {
             const childStore = rowNode.childrenCache;
             if (rowNode.expanded) {
-                childStore.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop);
             } else {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out
-                childStore.clearDisplayIndexes();
+                childStore!.clearDisplayIndexes();
             }
         }
     }
@@ -217,9 +217,9 @@ export class BlockUtils extends BeanStub {
             }
 
             // otherwise adjust pointers to continue searching for index
-            if (currentRowNode.rowIndex < displayRowIndex) {
+            if (currentRowNode.rowIndex! < displayRowIndex) {
                 bottomPointer = midPointer + 1;
-            } else if (currentRowNode.rowIndex > displayRowIndex) {
+            } else if (currentRowNode.rowIndex! > displayRowIndex) {
                 topPointer = midPointer - 1;
             } else {
                 console.warn(`ag-Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
@@ -228,10 +228,10 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public extractRowBounds(rowNode: RowNode, index: number): RowBounds {
-        const extractRowBounds = (currentRowNode: RowNode) => ({
-            rowHeight: currentRowNode.rowHeight,
-            rowTop: currentRowNode.rowTop
+    public extractRowBounds(rowNode: RowNode, index: number): RowBounds | undefined {
+        const extractRowBounds = (currentRowNode: RowNode): RowBounds => ({
+            rowHeight: currentRowNode.rowHeight!,
+            rowTop: currentRowNode.rowTop!
         });
 
         if (rowNode.rowIndex === index) {
@@ -241,7 +241,7 @@ export class BlockUtils extends BeanStub {
         if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
             const childStore = rowNode.childrenCache;
             if (childStore.isDisplayIndexInStore(index)) {
-                return childStore.getRowBounds(index);
+                return childStore.getRowBounds(index)!;
             }
         } else if (rowNode.master && rowNode.expanded && _.exists(rowNode.detailNode)) {
             if (rowNode.detailNode.rowIndex === index) {

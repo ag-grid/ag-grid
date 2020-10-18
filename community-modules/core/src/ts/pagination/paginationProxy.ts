@@ -126,7 +126,7 @@ export class PaginationProxy extends BeanStub {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        const nodeIsInPage = rowNode.rowIndex >= this.topDisplayedRowIndex && rowNode.rowIndex <= this.bottomDisplayedRowIndex;
+        const nodeIsInPage = rowNode.rowIndex! >= this.topDisplayedRowIndex && rowNode.rowIndex! <= this.bottomDisplayedRowIndex;
         return nodeIsInPage;
     }
 

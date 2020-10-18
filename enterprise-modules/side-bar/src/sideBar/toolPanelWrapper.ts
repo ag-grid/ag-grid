@@ -35,8 +35,8 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelId = toolPanelDef.id;
 
         const params: IToolPanelParams = {
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
 
         const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(

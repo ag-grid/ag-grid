@@ -384,10 +384,10 @@ export class FilterManager extends BeanStub {
         return filterWrapper ? filterWrapper.filterPromise : null;
     }
 
-    public isFilterActive(column: Column): boolean | undefined {
+    public isFilterActive(column: Column): boolean {
         const filterWrapper = this.cachedFilter(column);
 
-        return filterWrapper && filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive());
+        return !!filterWrapper && filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive());
     }
 
     public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {

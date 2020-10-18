@@ -7,7 +7,7 @@ export interface IServerSideRowModel extends IRowModel {
 }
 
 export interface IServerSideTransactionManager {
-    applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
+    applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
     applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void;
     flushAsyncTransactions(): void;
 }

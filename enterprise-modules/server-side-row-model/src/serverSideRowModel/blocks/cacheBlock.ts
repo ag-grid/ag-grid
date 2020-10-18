@@ -57,8 +57,8 @@ export class CacheBlock extends RowNodeBlock {
 
     public rowNodes: RowNode[];
 
-    private displayIndexStart: number;
-    private displayIndexEnd: number;
+    private displayIndexStart: number | undefined;
+    private displayIndexEnd: number | undefined;
 
     private blockTopPx: number;
     private blockHeightPx: number;
@@ -75,7 +75,7 @@ export class CacheBlock extends RowNodeBlock {
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = blockNumber * storeParams.blockSize;
+        this.startRow = blockNumber * storeParams.blockSize!;
 
         this.parentStore = parentStore;
         this.level = parentRowNode.level + 1;
@@ -91,7 +91,7 @@ export class CacheBlock extends RowNodeBlock {
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.storeParams.rowGroupCols[this.level];
-            this.groupField = groupColVo.field;
+            this.groupField = groupColVo.field!;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
 
@@ -100,18 +100,18 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     public isDisplayIndexInBlock(displayIndex: number): boolean {
-        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
+        return displayIndex >= this.displayIndexStart! && displayIndex < this.displayIndexEnd!;
     }
 
     public isBlockBefore(displayIndex: number): boolean {
-        return displayIndex >= this.displayIndexEnd;
+        return displayIndex >= this.displayIndexEnd!;
     }
 
-    public getDisplayIndexStart(): number {
+    public getDisplayIndexStart(): number | undefined {
         return this.displayIndexStart;
     }
 
-    public getDisplayIndexEnd(): number {
+    public getDisplayIndexEnd(): number | undefined {
         return this.displayIndexEnd;
     }
 
@@ -137,7 +137,7 @@ export class CacheBlock extends RowNodeBlock {
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
-                endRow: this.startRow + this.storeParams.blockSize,
+                endRow: this.startRow + this.storeParams.blockSize!,
                 pageStatus: this.getState()
             }
         };
@@ -193,13 +193,13 @@ export class CacheBlock extends RowNodeBlock {
         this.destroyRowNodes();
 
         const storeRowCount = this.parentStore.getRowCount();
-        const startRow = this.getId() * this.storeParams.blockSize;
-        const endRow = Math.min(startRow + this.storeParams.blockSize, storeRowCount);
+        const startRow = this.getId() * this.storeParams.blockSize!;
+        const endRow = Math.min(startRow + this.storeParams.blockSize!, storeRowCount);
         const rowsToCreate = endRow - startRow;
 
         for (let i = 0; i < rowsToCreate; i++) {
             const rowNode = this.blockUtils.createRowNode(
-                {field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
+                {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
             const dataLoadedForThisRow = i < rows.length;
@@ -246,7 +246,7 @@ export class CacheBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         this.cacheUtils.loadFromDatasource({
             startRow: this.startRow,
-            endRow: this.startRow + this.storeParams.blockSize,
+            endRow: this.startRow + this.storeParams.blockSize!,
             parentNode: this.parentRowNode,
             storeParams: this.storeParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
@@ -260,10 +260,10 @@ export class CacheBlock extends RowNodeBlock {
         return pixel >= this.blockTopPx && pixel < (this.blockTopPx + this.blockHeightPx);
     }
 
-    public getRowBounds(index: number): RowBounds | null {
+    public getRowBounds(index: number): RowBounds | undefined {
         this.touchLastAccessed();
 
-        let res: RowBounds;
+        let res: RowBounds | undefined;
         _.find(this.rowNodes, rowNode => {
             res = this.blockUtils.extractRowBounds(rowNode, index);
             return res != null;
@@ -272,10 +272,10 @@ export class CacheBlock extends RowNodeBlock {
         return res;
     }
 
-    public getRowIndexAtPixel(pixel: number): number {
+    public getRowIndexAtPixel(pixel: number): number | undefined {
         this.touchLastAccessed();
 
-        let res: number;
+        let res: number | undefined;
         _.find(this.rowNodes, rowNode => {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             return res != null;

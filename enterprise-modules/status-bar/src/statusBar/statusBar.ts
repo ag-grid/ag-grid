@@ -57,8 +57,8 @@ export class StatusBar extends Component {
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 

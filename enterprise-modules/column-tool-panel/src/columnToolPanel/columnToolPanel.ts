@@ -113,7 +113,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
             this.setLastVisible();
             const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
-            this.childDestroyFuncs.push(() => pivotModeListener());
+            this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 
         this.initialised = true;

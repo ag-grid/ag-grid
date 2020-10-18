@@ -17,11 +17,14 @@ const HTML_ESCAPES: { [id: string]: string; } = {
  * @param {string} s
  * @returns {string}
  */
-export function utf8_encode(s: string): string {
+export function utf8_encode(s: string | null): string {
     const stringFromCharCode = String.fromCharCode;
 
-    function ucs2decode(string: string): number[] {
+    function ucs2decode(string: string | null): number[] {
         const output: number[] = [];
+
+        if (!string) { return []; }
+
         const len = string.length;
 
         let counter = 0;

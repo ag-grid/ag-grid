@@ -158,7 +158,7 @@ export class RowCssClassCalculator {
                 colDef: undefined,
                 data: rowNode.data,
                 node: rowNode,
-                rowIndex: rowNode.rowIndex,
+                rowIndex: rowNode.rowIndex!,
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 $scope: scope,

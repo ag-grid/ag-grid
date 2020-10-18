@@ -26,7 +26,7 @@ export class ToolPanelColDefService extends BeanStub {
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
                 const groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
-                const group = new OriginalColumnGroup(groupDef, groupId, false, depth);
+                const group = new OriginalColumnGroup(groupDef, groupId!, false, depth);
                 const children: OriginalColumnGroupChild[] = [];
                 groupDef.children.forEach(def => {
                     const child = createDummyColGroup(def, depth + 1);
@@ -41,7 +41,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnController.getPrimaryColumn(key) as OriginalColumnGroupChild;
+                const column = this.columnController.getPrimaryColumn(key!) as OriginalColumnGroupChild;
 
                 if (!column) {
                     invalidColIds.push(colDef);

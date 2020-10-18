@@ -160,7 +160,7 @@ export class ValueService extends BeanStub {
         const event: CellValueChangedEvent = {
             type: Events.EVENT_CELL_VALUE_CHANGED,
             event: null,
-            rowIndex: rowNode.rowIndex,
+            rowIndex: rowNode.rowIndex!,
             rowPinned: rowNode.rowPinned,
             column: params.column,
             api: params.api!,

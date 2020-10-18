@@ -37,7 +37,7 @@ export class ExpandListener extends BeanStub {
                 rowNode.childrenCache = this.createBean(cacheFactory(storeParams, rowNode));
             }
         } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
+            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache)!;
         }
 
         const cacheUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };

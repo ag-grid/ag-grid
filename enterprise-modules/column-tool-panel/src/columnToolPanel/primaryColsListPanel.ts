@@ -188,7 +188,8 @@ export class PrimaryColsListPanel extends Component {
         };
 
         const createGroupItem = (columnGroup: OriginalColumnGroup, dept: number, parentList: ColumnModelItem[]): void => {
-            const skipThisGroup = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel;
+            const columnGroupDef = columnGroup.getColGroupDef();
+            const skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
             if (skipThisGroup) { return; }
 
             if (columnGroup.isPadding()) {
@@ -375,7 +376,9 @@ export class PrimaryColsListPanel extends Component {
         const passesFilter = (item: ColumnModelItem) => {
             if (!_.exists(this.filterText)) { return true; }
 
-            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText) !== -1 : true;
+            const displayName = item.getDisplayName();
+
+            return displayName != null ? displayName.toLowerCase().indexOf(this.filterText) !== -1 : true;
         };
 
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {

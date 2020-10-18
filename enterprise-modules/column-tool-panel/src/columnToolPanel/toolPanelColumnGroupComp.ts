@@ -69,7 +69,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
@@ -313,7 +313,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    public isSelected(): boolean {
+    public isSelected(): boolean | undefined {
         return this.cbSelect.getValue();
     }
 
