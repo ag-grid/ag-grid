@@ -254,7 +254,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             return new Promise<void>(resolve => {
                 const promise = filter.setModel(filterModel);
 
-                if (promise == null) {
+                if (!promise) {
                     resolve();
                 } else {
                     promise.then(() => resolve());
