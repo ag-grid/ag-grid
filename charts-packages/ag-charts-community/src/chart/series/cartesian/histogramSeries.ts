@@ -207,18 +207,18 @@ export class HistogramSeries extends CartesianSeries {
         return this._areaPlot;
     }
 
-    private _bins: [number, number][];
-    set bins(bins: [number, number][]) {
+    private _bins: [number, number][] | undefined = undefined;
+    set bins(bins: [number, number][] | undefined) {
         this._bins = bins;
 
         this.scheduleData();
     }
 
-    get bins(): [number, number][] {
+    get bins(): [number, number][] | undefined {
         return this._bins;
     }
 
-    private _aggregation: HistogramAggregation;
+    private _aggregation: HistogramAggregation = 'count';
     set aggregation(aggregation: HistogramAggregation) {
         this._aggregation = aggregation;
 
@@ -229,14 +229,14 @@ export class HistogramSeries extends CartesianSeries {
         return this._aggregation;
     }
 
-    private _binCount: number;
-    set binCount(binCount: number) {
+    private _binCount: number | undefined = undefined;
+    set binCount(binCount: number | undefined) {
         this._binCount = binCount;
 
         this.scheduleData();
     }
 
-    get binCount(): number {
+    get binCount(): number | undefined {
         return this._binCount;
     }
 

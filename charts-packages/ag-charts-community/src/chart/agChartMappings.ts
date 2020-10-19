@@ -534,6 +534,8 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         areaPlot: false,
+                        binCount: undefined,
+                        bins: undefined,
                         aggregation: 'sum',
                         highlightStyle: {
                             fill: 'yellow'
