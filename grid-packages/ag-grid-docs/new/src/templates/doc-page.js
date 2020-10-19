@@ -9,7 +9,12 @@ import './doc-page.scss';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
-  const pageName = location.pathname.replace(`/${framework}/`, '');
+  let pageName = location.pathname.replace(`/${framework}/`, '');
+
+  if (pageName.substr(pageName.length - 1, 1) === '/') {
+    pageName = pageName.substring(0, pageName.length - 1);
+  }
+
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
 
   const renderAst = new rehypeReact({
