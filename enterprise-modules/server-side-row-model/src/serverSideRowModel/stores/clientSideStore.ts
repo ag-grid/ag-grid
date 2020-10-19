@@ -21,7 +21,8 @@ import {
     RowNodeSorter,
     SortController,
     LoadSuccessParams,
-    FilterManager
+    FilterManager,
+    SelectionChangedEvent
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -384,9 +385,25 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
         this.filterAndSortNodes();
 
-        // this.updateSelection(nodesToUnselect);
+        this.updateSelection(nodesToUnselect);
 
         return res;
+    }
+
+    private updateSelection(nodesToUnselect: RowNode[]): void {
+        const selectionChanged = nodesToUnselect.length > 0;
+        if (selectionChanged) {
+            nodesToUnselect.forEach(rowNode => {
+                rowNode.setSelected(false, false, true);
+            });
+
+            const event: SelectionChangedEvent = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private executeAdd(rowDataTran: ServerSideTransaction, rowNodeTransaction: ServerSideTransactionResult): void {
