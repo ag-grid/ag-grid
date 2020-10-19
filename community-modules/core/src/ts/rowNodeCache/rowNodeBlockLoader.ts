@@ -1,9 +1,9 @@
 import { RowNodeBlock } from "./rowNodeBlock";
-import {Autowired, Bean, PostConstruct, Qualifier} from "../context/context";
-import {BeanStub} from "../context/beanStub";
-import {Logger, LoggerFactory} from "../logger";
-import {_} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { Logger, LoggerFactory } from "../logger";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {
@@ -12,7 +12,7 @@ export class RowNodeBlockLoader extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private maxConcurrentRequests: number;
+    private maxConcurrentRequests: number | undefined;
     private checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
@@ -24,6 +24,7 @@ export class RowNodeBlockLoader extends BeanStub {
     private postConstruct(): void {
         this.maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }

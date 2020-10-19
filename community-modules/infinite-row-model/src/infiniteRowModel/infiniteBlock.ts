@@ -36,8 +36,8 @@ export class InfiniteBlock extends RowNodeBlock {
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = id * params.blockSize;
-        this.endRow = this.startRow + params.blockSize;
+        this.startRow = id * params.blockSize!;
+        this.endRow = this.startRow + params.blockSize!;
     }
 
     @PostConstruct
@@ -133,7 +133,7 @@ export class InfiniteBlock extends RowNodeBlock {
     // creates empty row nodes, data is missing as not loaded yet
     protected createRowNodes(): void {
         this.rowNodes = [];
-        for (let i = 0; i < this.params.blockSize; i++) {
+        for (let i = 0; i < this.params.blockSize!; i++) {
             const rowIndex = this.startRow + i;
 
             const rowNode = this.getContext().createBean(new RowNode());

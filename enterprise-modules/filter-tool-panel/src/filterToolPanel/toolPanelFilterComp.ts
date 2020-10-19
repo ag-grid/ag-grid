@@ -40,7 +40,7 @@ export class ToolPanelFilterComp extends Component {
     private hideHeader: boolean;
     private column: Column;
     private expanded: boolean = false;
-    private underlyingFilter: IFilterComp;
+    private underlyingFilter: IFilterComp | null;
 
     constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
@@ -49,15 +49,15 @@ export class ToolPanelFilterComp extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper);
-        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper);
+        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper)!;
+        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper)!;
         this.eExpand.appendChild(this.eExpandChecked);
         this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
     public setColumn(column: Column): void {
         this.column = column;
-        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === KeyCode.ENTER) {
@@ -84,8 +84,8 @@ export class ToolPanelFilterComp extends Component {
         return this.column;
     }
 
-    public getColumnFilterName(): string {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+    public getColumnFilterName(): string | null {
+        return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
     }
 
     public addCssClassToTitleBar(cssClass: string) {
@@ -95,7 +95,7 @@ export class ToolPanelFilterComp extends Component {
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
-        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column)!;
         eParent.appendChild(eIcon);
     }
 
@@ -125,6 +125,7 @@ export class ToolPanelFilterComp extends Component {
             filterPromise.then(filter => {
                 this.underlyingFilter = filter;
 
+                if (!filter) { return; }
                 container.appendChild(filter.getGui());
 
                 this.agFilterToolPanelBody.appendChild(container);

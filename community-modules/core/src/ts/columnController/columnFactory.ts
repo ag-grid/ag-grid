@@ -45,7 +45,7 @@ export class ColumnFactory extends BeanStub {
 
         // create am unbalanced tree that maps the provided definitions
         const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
-            existingColsCopy, columnKeyCreator, null);
+            existingColsCopy, columnKeyCreator);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -67,8 +67,9 @@ export class ColumnFactory extends BeanStub {
         };
     }
 
-    public createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
+    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
         const autoColBalancedTree: OriginalColumnGroupChild[] = [];
+
         autoGroupCols.forEach(col => {
             const fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
             autoColBalancedTree.push(fakeTreeItem);
@@ -78,7 +79,6 @@ export class ColumnFactory extends BeanStub {
     }
 
     private createAutoGroupTreeItem(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroupChild {
-
         const dept = this.findDepth(balancedColumnTree);
 
         // at the end, this will be the top of the tree item.
@@ -157,9 +157,9 @@ export class ColumnFactory extends BeanStub {
                 }
 
                 // likewise this if statement will not run if no padded groups
-                if (firstPaddedGroup) {
+                if (firstPaddedGroup && currentPaddedGroup) {
                     result.push(firstPaddedGroup);
-                    const hasGroups = unbalancedTree.some(child => child instanceof OriginalColumnGroup);
+                    const hasGroups = unbalancedTree.some(leaf => leaf instanceof OriginalColumnGroup);
 
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);
@@ -195,14 +195,12 @@ export class ColumnFactory extends BeanStub {
     }
 
     private recursivelyCreateColumns(
-        defs: (ColDef | ColGroupDef)[],
+        defs: (ColDef | ColGroupDef)[] | null,
         level: number,
         primaryColumns: boolean,
-        existingColsCopy: Column[],
+        existingColsCopy: Column[] | null,
         columnKeyCreator: ColumnKeyCreator,
-        parent: OriginalColumnGroup | null
     ): OriginalColumnGroupChild[] {
-
         const result: OriginalColumnGroupChild[] = [];
 
         if (!defs) { return result; }
@@ -212,9 +210,9 @@ export class ColumnFactory extends BeanStub {
 
             if (this.isColumnGroup(def)) {
                 newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
-                    columnKeyCreator, parent);
+                    columnKeyCreator);
             } else {
-                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, parent);
+                newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
             }
 
             result.push(newGroupOrColumn);
@@ -227,25 +225,24 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         colGroupDef: ColGroupDef,
         level: number,
-        existingColumns: Column[],
-        columnKeyCreator: ColumnKeyCreator,
-        parent: OriginalColumnGroup | null
+        existingColumns: Column[] | null,
+        columnKeyCreator: ColumnKeyCreator
     ): OriginalColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
-        const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
+        const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
         const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
 
         this.context.createBean(originalGroup);
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
+            level + 1, primaryColumns, existingColumns, columnKeyCreator);
 
         originalGroup.setChildren(children);
 
         return originalGroup;
     }
 
-    private createMergedColGroupDef(colGroupDef: ColGroupDef): ColGroupDef {
+    private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
         assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
         assign(colGroupDefMerged, colGroupDef);
@@ -257,9 +254,8 @@ export class ColumnFactory extends BeanStub {
     private createColumn(
         primaryColumns: boolean,
         colDef: ColDef,
-        existingColsCopy: Column[],
-        columnKeyCreator: ColumnKeyCreator,
-        parent: OriginalColumnGroup | null
+        existingColsCopy: Column[] | null,
+        columnKeyCreator: ColumnKeyCreator
     ): Column {
         const colDefMerged = this.mergeColDefs(colDef);
 
@@ -325,8 +321,8 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    public findExistingColumn(newColDef: ColDef, existingColsCopy: Column[]): Column {
-        const res: Column = find(existingColsCopy, existingCol => {
+    public findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | null {
+        const res: Column | null = find(existingColsCopy, existingCol => {
 
             const existingColDef = existingCol.getUserProvidedColDef();
             if (!existingColDef) { return false; }
@@ -350,7 +346,7 @@ export class ColumnFactory extends BeanStub {
 
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (res) {
+        if (existingColsCopy && res) {
             removeFromArray(existingColsCopy, res);
         }
 
@@ -366,9 +362,14 @@ export class ColumnFactory extends BeanStub {
         mergeDeep(colDefMerged, defaultColDef, true, true);
 
         // merge properties from column type properties
-        if (colDef.type || (defaultColDef && defaultColDef.type)) {
-            // if type of both colDef and defaultColDef, then colDef gets preference
-            const columnType = colDef.type ? colDef.type : defaultColDef.type;
+        let columnType = colDef.type;
+
+        if (!columnType) {
+            columnType = defaultColDef && defaultColDef.type;
+        }
+
+        // if type of both colDef and defaultColDef, then colDef gets preference
+        if (columnType) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
 
@@ -379,7 +380,7 @@ export class ColumnFactory extends BeanStub {
     }
 
     private assignColumnTypes(type: string | string[], colDefMerged: ColDef) {
-        let typeKeys: string[];
+        let typeKeys: string[] = [];
 
         if (type instanceof Array) {
             const invalidArray = type.some(a => typeof a !== 'string');

@@ -12,9 +12,9 @@ import {
     TextFormatter,
     ValueFormatterService,
     IEventEmitter,
-    _,
     EventService,
-    RowNode
+    RowNode,
+    _
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -102,7 +102,7 @@ export class SetValueModel implements IEventEmitter {
             this.providedValues = values;
         }
 
-        this.updateAllValues().then(values => this.resetSelectionState(values));
+        this.updateAllValues().then(updatedValues => this.resetSelectionState(updatedValues));
     }
 
     public addEventListener(eventType: string, listener: Function, async?: boolean): void {

@@ -26,7 +26,7 @@ export class ToolPanelColDefService extends BeanStub {
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
                 const groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
-                const group = new OriginalColumnGroup(groupDef, groupId as string, false, depth);
+                const group = new OriginalColumnGroup(groupDef, groupId!, false, depth);
                 const children: OriginalColumnGroupChild[] = [];
                 groupDef.children.forEach(def => {
                     const child = createDummyColGroup(def, depth + 1);
@@ -40,8 +40,8 @@ export class ToolPanelColDefService extends BeanStub {
                 return group;
             } else {
                 const colDef = abstractColDef as ColDef;
-                const key = colDef.colId ? colDef.colId : colDef.field as string;
-                const column = this.columnController.getPrimaryColumn(key) as OriginalColumnGroupChild;
+                const key = colDef.colId ? colDef.colId : colDef.field;
+                const column = this.columnController.getPrimaryColumn(key!) as OriginalColumnGroupChild;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -141,7 +141,7 @@ export class ToolPanelColDefService extends BeanStub {
         const mergeTrees = (treeA: AbstractColDef, treeB: AbstractColDef): AbstractColDef => {
             if (!this.isColGroupDef(treeB)) { return treeA; }
 
-            const mergeResult = treeA as AbstractColDef;
+            const mergeResult = treeA;
             const groupToMerge = treeB as ColGroupDef;
 
             if (groupToMerge.children && groupToMerge.groupId) {
@@ -172,11 +172,11 @@ export class ToolPanelColDefService extends BeanStub {
     }
 
     private addChildrenToGroup(tree: AbstractColDef, groupId: string, colDef: AbstractColDef): boolean {
-        const subGroupIsSplit = (currentGroup: ColGroupDef, groupToAdd: ColGroupDef) => {
-            const existingChildIds = currentGroup.children.map(this.getId);
-            const childGroupAlreadyExists = _.includes(existingChildIds, this.getId(groupToAdd));
-            const lastChild = _.last(currentGroup.children);
-            const lastChildIsDifferent = lastChild && this.getId(lastChild) !== this.getId(groupToAdd);
+        const subGroupIsSplit = (currentSubGroup: ColGroupDef, currentSubGroupToAdd: ColGroupDef) => {
+            const existingChildIds = currentSubGroup.children.map(this.getId);
+            const childGroupAlreadyExists = _.includes(existingChildIds, this.getId(currentSubGroupToAdd));
+            const lastChild = _.last(currentSubGroup.children);
+            const lastChildIsDifferent = lastChild && this.getId(lastChild) !== this.getId(currentSubGroupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
 

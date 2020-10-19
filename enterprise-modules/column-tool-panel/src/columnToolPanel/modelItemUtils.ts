@@ -1,5 +1,20 @@
-import {ColumnModelItem} from "./columnModelItem";
-import {_, ColumnController, Events, GridApi, ColumnApi, ColumnPivotChangeRequestEvent, GridOptionsWrapper, ColumnEventType, Bean, IAggFuncService, Autowired, Column, EventService, IEventEmitter, OriginalColumnGroup, ColumnState} from "@ag-grid-community/core";
+import { ColumnModelItem } from "./columnModelItem";
+import {
+    ColumnController,
+    Events,
+    GridApi,
+    ColumnApi,
+    ColumnPivotChangeRequestEvent,
+    GridOptionsWrapper,
+    ColumnEventType,
+    Bean,
+    IAggFuncService,
+    Autowired,
+    Column,
+    EventService,
+    ColumnState,
+    _
+} from "@ag-grid-community/core";
 
 @Bean('modelItemUtils')
 export class ModelItemUtils {

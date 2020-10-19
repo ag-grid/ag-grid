@@ -6,16 +6,16 @@ import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTr
 export interface IServerSideStore {
 
     clearDisplayIndexes(): void;
-    getDisplayIndexEnd(): number;
+    getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
 
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
 
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
-    getRowBounds(index: number): RowBounds;
+    getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
-    getRowIndexAtPixel(pixel: number): number;
+    getRowIndexAtPixel(pixel: number): number | undefined;
     getChildStore(keys: string[]): IServerSideStore | null;
     refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
     refreshAfterFilter(): void;

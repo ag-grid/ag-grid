@@ -9,7 +9,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 
 export interface DropListener {
-    getIconName(): string;
+    getIconName(): string | null;
     onDragEnter(params: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;
@@ -25,7 +25,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
-    private pinned: string;
+    private pinned: string | null;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
     // public because it's part of the DropTarget interface
@@ -34,7 +34,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     private currentDropListener: DropListener;
     private moveColumnController: MoveColumnController;
 
-    constructor(pinned: string, eContainer: HTMLElement) {
+    constructor(pinned: string | null, eContainer: HTMLElement) {
         super();
         this.pinned = pinned;
         this.eContainer = eContainer;
@@ -79,7 +79,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.dragAndDropService.addDropTarget(this);
     }
 
-    public getIconName(): string {
+    public getIconName(): string | null {
         return this.currentDropListener.getIconName();
     }
 

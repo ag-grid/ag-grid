@@ -170,9 +170,9 @@ export class ChartDatasource extends BeanStub {
                     if (!groupItem) {
                         groupItem = { __children: [] };
 
-                        dimensionCols.forEach(col => {
-                            const colId = col.colId;
-                            groupItem[colId] = data[colId];
+                        dimensionCols.forEach(dimCol => {
+                            const dimColId = dimCol.colId;
+                            groupItem[dimColId] = data[dimColId];
                         });
 
                         currentMap[key] = groupItem;
@@ -196,7 +196,7 @@ export class ChartDatasource extends BeanStub {
             let aggResult: any = 0;
 
             if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
             }
 
             groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -241,7 +241,7 @@ export class ChartDatasource extends BeanStub {
     private static getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
         const labels = [initialLabel];
         while (rowNode && rowNode.level !== 0) {
-            rowNode = rowNode.parent!;
+            rowNode = rowNode.parent;
             if (rowNode) {
                 labels.push(rowNode.key);
             }

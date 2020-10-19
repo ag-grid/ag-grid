@@ -15,14 +15,13 @@ export class ColumnKeyCreator {
         }
     }
 
-    public getUniqueKey(colId: string, colField: string): string {
-
+    public getUniqueKey(colId?: string | null, colField?: string | null): string {
         // in case user passed in number for colId, convert to string
         colId = toStringOrNull(colId);
 
         let count = 0;
-        while (true) {
 
+        while (true) {
             let idToTry: string;
             if (colId) {
                 idToTry = colId;

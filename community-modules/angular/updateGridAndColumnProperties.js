@@ -142,7 +142,7 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
     replace(optionsForGrid)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
-            console.log(`Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(changes => changes.file).join(', ')}`);
+            console.log(`Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
             resolve();
         })
         .catch(error => {
@@ -163,7 +163,7 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
     replace(optionsForGridColumn)
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
-            console.log(`Column Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(changes => changes.file).join(', ')}`);
+            console.log(`Column Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
             resolve();
         })
         .catch(error => {

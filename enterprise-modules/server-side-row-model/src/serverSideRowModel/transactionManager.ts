@@ -11,10 +11,9 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsApplied,
-    _
+    AsyncTransactionsApplied
 } from "@ag-grid-community/core";
-import {ServerSideRowModel} from "./serverSideRowModel";
+import { ServerSideRowModel } from "./serverSideRowModel";
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -34,8 +33,8 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
-    private asyncTransactionsTimeout: number;
-    private asyncTransactions: AsyncTransactionWrapper[];
+    private asyncTransactionsTimeout: number | undefined;
+    private asyncTransactions: AsyncTransactionWrapper[] | null;
 
     private loadingStrategy: LoadingStrategy;
 
@@ -71,7 +70,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             this.asyncTransactions = [];
             this.scheduleExecuteAsync();
         }
-        this.asyncTransactions.push({ transaction: transaction, callback: callback });
+        this.asyncTransactions!.push({ transaction: transaction, callback: callback });
     }
 
     private scheduleExecuteAsync(): void {
@@ -82,16 +81,15 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private executeAsyncTransactions(): void {
-
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
 
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        this.asyncTransactions.forEach(txWrapper => {
-            let result: ServerSideTransactionResult;
-            this.serverSideRowModel.executeOnStore(txWrapper.transaction.route, cache => {
+        this.asyncTransactions!.forEach(txWrapper => {
+            let result: ServerSideTransactionResult | undefined;
+            this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, cache => {
                 result = cache.applyTransaction(txWrapper.transaction);
             });
 
@@ -108,7 +106,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             }
 
             if (txWrapper.callback) {
-                resultFuncs.push(() => txWrapper.callback(result));
+                resultFuncs.push(() => txWrapper.callback!(result!));
             }
             if (result.status === ServerSideTransactionResultStatus.Applied) {
                 atLeastOneTransactionApplied = true;
@@ -137,8 +135,8 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (resultsForEvent.length > 0) {
             const event: AsyncTransactionsApplied = {
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
                 results: resultsForEvent
             };
@@ -153,10 +151,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         }
     }
 
-    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        let res: ServerSideTransactionResult;
+    public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
+        let res: ServerSideTransactionResult | undefined;
 
-        this.serverSideRowModel.executeOnStore(transaction.route, cache => {
+        this.serverSideRowModel.executeOnStore(transaction.route!, cache => {
             res = cache.applyTransaction(transaction);
         });
 
@@ -164,7 +162,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             this.valueCache.onDataChanged();
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
         } else {
-            return {status: ServerSideTransactionResultStatus.StoreNotFound};
+            return { status: ServerSideTransactionResultStatus.StoreNotFound };
         }
     }
 }

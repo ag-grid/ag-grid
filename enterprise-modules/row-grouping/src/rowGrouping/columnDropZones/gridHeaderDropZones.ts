@@ -4,7 +4,6 @@ import {
     Component,
     Constants,
     Events,
-    EventService,
     GridOptionsWrapper,
     PostConstruct,
     _

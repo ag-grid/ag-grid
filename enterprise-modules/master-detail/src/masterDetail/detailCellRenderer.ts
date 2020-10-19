@@ -116,9 +116,10 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private ensureValidRefreshStrategy(): void {
         switch (this.params.refreshStrategy) {
-            case 'rows': return;
-            case 'nothing': return;
-            case 'everything': return;
+            case 'rows':
+            case 'nothing':
+            case 'everything':
+                return;
         }
 
         // check for incorrectly supplied refresh strategy
@@ -141,13 +142,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     }
 
     private registerDetailWithMaster(): void {
-        const rowId = this.params.node.id;
+        const rowId = this.params.node.id!;
         const masterGridApi = this.params.api;
 
         const gridInfo: DetailGridInfo = {
             id: rowId,
-            api: this.detailGridOptions.api,
-            columnApi: this.detailGridOptions.columnApi
+            api: this.detailGridOptions.api!,
+            columnApi: this.detailGridOptions.columnApi!
         };
 
         const rowNode = this.params.node;
@@ -181,7 +182,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             if (typeof this.params.template === 'string') {
                 this.setTemplate(this.params.template);
             } else if (typeof this.params.template === 'function') {
-                const templateFunc = this.params.template as TemplateFunc;
+                const templateFunc = this.params.template;
                 const template = templateFunc(this.params);
                 this.setTemplate(template);
             } else {

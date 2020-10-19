@@ -113,14 +113,14 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
             this.setLastVisible();
             const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
-            this.childDestroyFuncs.push(() => pivotModeListener());
+            this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 
         this.initialised = true;
     }
 
     public setPivotModeSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return };
+        if (!this.isRowGroupingModuleLoaded()) { return; }
 
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
@@ -135,7 +135,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setRowGroupsSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return };
+        if (!this.isRowGroupingModuleLoaded()) { return; }
 
         if (this.rowGroupDropZonePanel) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
@@ -148,7 +148,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setValuesSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return };
+        if (!this.isRowGroupingModuleLoaded()) { return; }
 
         if (this.valuesDropZonePanel) {
             this.valuesDropZonePanel.setDisplayed(visible);
@@ -161,7 +161,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public setPivotSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) { return };
+        if (!this.isRowGroupingModuleLoaded()) { return; }
 
         if (this.pivotDropZonePanel) {
             this.pivotDropZonePanel.setDisplayed(visible);
@@ -181,7 +181,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         columnDrops.forEach(columnDrop => _.removeCssClass(columnDrop, 'ag-last-column-drop'));
 
-        const lastVisible = _.last(eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)') as any) as HTMLElement;
+        const columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
+        const lastVisible = _.last(columnDropEls) as HTMLElement;
 
         if (lastVisible) {
             _.addCssClass(lastVisible, 'ag-last-column-drop');

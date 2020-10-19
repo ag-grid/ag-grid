@@ -1,7 +1,6 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('columnAnimationService')

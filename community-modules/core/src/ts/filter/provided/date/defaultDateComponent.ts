@@ -29,7 +29,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             if (isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
-                (this.eDateInput.getInputElement() as HTMLInputElement).type = 'date';
+                this.eDateInput.getInputElement().type = 'date';
             }
         }
 
@@ -42,7 +42,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
     }
 
-    public getDate(): Date {
+    public getDate(): Date | null {
         return parseDateTimeFromString(this.eDateInput.getValue());
     }
 
@@ -57,8 +57,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
-        } else {
-            return isBrowserChrome() || isBrowserFirefox();
         }
+        return isBrowserChrome() || isBrowserFirefox();
     }
 }

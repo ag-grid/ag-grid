@@ -29,10 +29,12 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
         $compile: $compile,
         quickFilterOnScope: quickFilterOnScope
     };
-    let grid = new Grid(eGridDiv, gridOptions, gridParams);
+    let grid: Grid | null = new Grid(eGridDiv, gridOptions, gridParams);
 
     $scope.$on("$destroy", function() {
-        grid.destroy();
+        if (grid) {
+            grid.destroy();
+        }
         grid = null;
     });
 }

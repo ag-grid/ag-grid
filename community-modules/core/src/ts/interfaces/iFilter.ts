@@ -78,10 +78,10 @@ export interface IFilterParams {
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;
-    filterChangedCallback: (additionalEventAttributes?: any) => void;
-    filterModifiedCallback: () => void;
+    filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
+    filterModifiedCallback: (() => void) | null;
     valueGetter: (rowNode: RowNode) => any;
-    doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
+    doesRowPassOtherFilter: ((rowNode: RowNode) => boolean) | null; // TODO: this method should be "doesRowPassOtherFilters"
     context: any;
 }
 

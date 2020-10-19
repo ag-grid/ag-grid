@@ -90,7 +90,7 @@ export class MaxDivHeightScaler extends BeanStub {
         const newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
         if (this.offset === newOffsetFloor) { return; }
 
-        this.offset = newOffsetFloor;
+        this.offset = newOffsetFloor!;
         this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 

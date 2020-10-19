@@ -49,13 +49,13 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     @RefSelector('eButtonShowMainFilter') private eButtonShowMainFilter: HTMLElement;
 
     protected readonly column: Column;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
 
     private suppressFilterButton: boolean;
 
-    private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
+    private floatingFilterCompPromise: Promise<IFloatingFilterComp> | null;
 
-    constructor(column: Column, pinned: string) {
+    constructor(column: Column, pinned: string | null) {
         super(FloatingFilterWrapper.TEMPLATE);
         this.column = column;
         this.pinned = pinned;
@@ -152,7 +152,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     private setupSyncWithFilter(): void {
-        const syncWithFilter = (filterChangedEvent: FilterChangedEvent) => {
+        const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
             this.onParentModelChanged(this.currentParentModel(), filterChangedEvent);
         };
 
@@ -208,7 +208,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         setDisplayed(this.eButtonWrapper, !this.suppressFilterButton);
 
         const eIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-        this.eButtonShowMainFilter.appendChild(eIcon);
+        this.eButtonShowMainFilter.appendChild(eIcon!);
 
         this.eFloatingFilterBody.appendChild(floatingFilterCompUi);
 
@@ -218,19 +218,21 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     private parentFilterInstance(callback: (filterInstance: IFilterComp) => void): void {
-        this.getFilterComponent().then(callback);
+        const filterComponent = this.getFilterComponent();
+
+        if (filterComponent) {
+            filterComponent.then(callback);
+        }
     }
 
-    private getFilterComponent(createIfDoesNotExist = true): Promise<IFilterComp> {
+    private getFilterComponent(createIfDoesNotExist = true): Promise<IFilterComp> | null {
         return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
     }
 
-    public static getDefaultFloatingFilterType(def: IFilterDef): string {
-        if (def == null) {
-            return null;
-        }
+    public static getDefaultFloatingFilterType(def: IFilterDef): string | null {
+        if (def == null) { return null; }
 
-        let defaultFloatingFilterType: string = null;
+        let defaultFloatingFilterType: string | null = null;
 
         if (typeof def.filter === 'string') {
             // will be undefined if not in the map
@@ -247,7 +249,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         return defaultFloatingFilterType;
     }
 
-    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
+    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> | null {
         const colDef = this.column.getColDef();
         const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
@@ -294,21 +296,22 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         };
     }
 
-    private getFilterComponentPrototype(colDef: ColDef): { new(): any; } {
+    private getFilterComponentPrototype(colDef: ColDef): { new(): any; } | null {
         const resolvedComponent = this.userComponentFactory.lookupComponentClassDef(colDef, 'filter', this.createDynamicParams());
+
         return resolvedComponent ? resolvedComponent.component : null;
     }
 
     private currentParentModel(): any {
         const filterComponent = this.getFilterComponent(false);
 
-        return filterComponent ? filterComponent.resolveNow(null, filter => filter.getModel()) : null;
+        return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
     }
 
-    private onParentModelChanged(model: any, filterChangedEvent: FilterChangedEvent): void {
+    private onParentModelChanged(model: any, filterChangedEvent: FilterChangedEvent | null): void {
         if (!this.floatingFilterCompPromise) { return; }
 
-        this.floatingFilterCompPromise.then(comp => comp.onParentModelChanged(model, filterChangedEvent));
+        this.floatingFilterCompPromise.then(comp => comp && comp.onParentModelChanged(model, filterChangedEvent));
     }
 
     private onFloatingFilterChanged(): void {

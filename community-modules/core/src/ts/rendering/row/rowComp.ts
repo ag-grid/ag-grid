@@ -71,10 +71,10 @@ export class RowComp extends Component {
     private readonly pinnedLeftContainerComp: RowContainerComponent;
     private readonly pinnedRightContainerComp: RowContainerComponent;
 
-    private fullWidthRowComponent: ICellRendererComp;
-    private fullWidthRowComponentBody: ICellRendererComp;
-    private fullWidthRowComponentLeft: ICellRendererComp;
-    private fullWidthRowComponentRight: ICellRendererComp;
+    private fullWidthRowComponent: ICellRendererComp | null | undefined;
+    private fullWidthRowComponentBody: ICellRendererComp | null | undefined;
+    private fullWidthRowComponentLeft: ICellRendererComp | null | undefined;
+    private fullWidthRowComponentRight: ICellRendererComp | null | undefined;
 
     private fullWidthRowDestroyFuncs: (() => void)[] = [];
 
@@ -92,7 +92,7 @@ export class RowComp extends Component {
     private refreshNeeded = false;
     private columnRefreshPending = false;
 
-    private cellComps: { [key: string]: CellComp; } = {};
+    private cellComps: { [key: string]: CellComp | null; } = {};
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -150,7 +150,7 @@ export class RowComp extends Component {
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.fullWidthContainerComp = fullWidthContainerComp;
         this.rowNode = rowNode;
-        this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        this.rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -160,7 +160,7 @@ export class RowComp extends Component {
     }
 
     public init(): void {
-        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
@@ -187,21 +187,21 @@ export class RowComp extends Component {
         }
     }
 
-    private createTemplate(contents: string, extraCssClass: string = null): string {
+    private createTemplate(contents: string, extraCssClass: string | null = null): string {
         const templateParts: string[] = [];
         const rowHeight = this.rowNode.rowHeight;
-        const rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        const rowIdSanitised = escapeString(this.rowNode.id);
+        const rowClasses = this.getInitialRowClasses(extraCssClass!).join(' ');
+        const rowIdSanitised = escapeString(this.rowNode.id!);
         const userRowStyles = this.preProcessStylesFromGridOptions();
         const businessKey = this.getRowBusinessKey();
-        const businessKeySanitised = escapeString(businessKey);
+        const businessKeySanitised = escapeString(businessKey!);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex + 1}"`);
+        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex! + 1}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
@@ -224,7 +224,7 @@ export class RowComp extends Component {
         return templateParts.join('');
     }
 
-    public getCellForCol(column: Column): HTMLElement {
+    public getCellForCol(column: Column): HTMLElement | null {
         const cellComp = this.cellComps[column.getColId()];
 
         return cellComp ? cellComp.getGui() : null;
@@ -246,10 +246,10 @@ export class RowComp extends Component {
             ePinnedLeftRow: this.ePinnedLeftRow,
             ePinnedRightRow: this.ePinnedRightRow,
             node: this.rowNode,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            rowIndex: this.rowNode.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            rowIndex: this.rowNode.rowIndex!,
             addRenderedRowListener: this.addEventListener.bind(this),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext()
         };
         func(params);
@@ -260,8 +260,8 @@ export class RowComp extends Component {
         if (this.printLayout) { return ''; }
 
         // if sliding in, we take the old row top. otherwise we just set the current row top.
-        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-        const afterPaginationPixels = this.applyPaginationOffset(pixels);
+        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
         // we don't apply scaling if row is pinned
         const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
         const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
@@ -269,7 +269,7 @@ export class RowComp extends Component {
         return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
     }
 
-    private getRowBusinessKey(): string {
+    private getRowBusinessKey(): string | undefined {
         const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
         if (typeof businessKeyForNodeFunc !== 'function') { return; }
 
@@ -309,14 +309,14 @@ export class RowComp extends Component {
         // and then all the callbacks are called. this is NOT done in an animation frame.
         rowContainerComp.appendRowTemplate(rowTemplate, () => {
             const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            this.refreshAriaLabel(eRow, this.rowNode.isSelected());
+            this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
 
             if (useAnimationsFrameForCreate) {
                 this.beans.taskQueue.createTask(
                     this.lazyCreateCells.bind(this, cols, eRow),
-                    this.rowNode.rowIndex,
+                    this.rowNode.rowIndex!,
                     'createTasksP1'
                 );
             } else {
@@ -368,12 +368,12 @@ export class RowComp extends Component {
         this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
-    private createFullWidthRows(type: string, name: string, detailRow: boolean): void {
+    private createFullWidthRows(type: string, name: string | null, detailRow: boolean): void {
         this.fullWidthRow = true;
 
         if (this.embedFullWidth) {
             this.createFullWidthRowContainer(this.bodyContainerComp, null,
-                null, type, name,
+                null, type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowBody = eRow;
                 },
@@ -386,7 +386,7 @@ export class RowComp extends Component {
             if (this.printLayout) { return; }
 
             this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT,
-                'ag-cell-last-left-pinned', type, name,
+                'ag-cell-last-left-pinned', type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowLeft = eRow;
                 },
@@ -395,7 +395,7 @@ export class RowComp extends Component {
                 },
                 detailRow);
             this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT,
-                'ag-cell-first-right-pinned', type, name,
+                'ag-cell-first-right-pinned', type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRowRight = eRow;
                 },
@@ -407,7 +407,7 @@ export class RowComp extends Component {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
-                null, type, name,
+                null, type, name!,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
                 },
@@ -447,7 +447,7 @@ export class RowComp extends Component {
     public refreshFullWidth(): boolean {
 
         // returns 'true' if refresh succeeded
-        const tryRefresh = (eRow: HTMLElement, cellComp: ICellRendererComp, pinned: string): boolean => {
+        const tryRefresh = (eRow: HTMLElement, cellComp: ICellRendererComp | null | undefined, pinned: string | null): boolean => {
             if (!eRow || !cellComp) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
@@ -640,7 +640,7 @@ export class RowComp extends Component {
 
             this.beans.taskQueue.createTask(
                 this.refreshCellsInAnimationFrame.bind(this),
-                this.rowNode.rowIndex,
+                this.rowNode.rowIndex!,
                 'createTasksP1'
             );
         }
@@ -732,7 +732,7 @@ export class RowComp extends Component {
         const element = cellComp.getGui();
         const column = cellComp.getColumn();
         const pinnedType = column.getPinned();
-        const eContainer = this.getContainerForCell(pinnedType);
+        const eContainer = this.getContainerForCell(pinnedType!);
 
         // if in wrong container, remove it
         const eOldContainer = cellComp.getParentRow();
@@ -749,7 +749,7 @@ export class RowComp extends Component {
 
     private isCellInWrongRow(cellComp: CellComp): boolean {
         const column = cellComp.getColumn();
-        const rowWeWant = this.getContainerForCell(column.getPinned());
+        const rowWeWant = this.getContainerForCell(column.getPinned()!);
         const oldRow = cellComp.getParentRow(); // if in wrong container, remove it
 
         return oldRow !== rowWeWant;
@@ -823,11 +823,11 @@ export class RowComp extends Component {
             type: type,
             node: this.rowNode,
             data: this.rowNode.data,
-            rowIndex: this.rowNode.rowIndex,
+            rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
             context: this.beans.gridOptionsWrapper.getContext(),
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             event: domEvent
         };
     }
@@ -916,8 +916,10 @@ export class RowComp extends Component {
 
     private createFullWidthRowContainer(
         rowContainerComp: RowContainerComponent,
-        pinned: string,
-        extraCssClass: string, cellRendererType: string, cellRendererName: string,
+        pinned: string | null,
+        extraCssClass: string | null,
+        cellRendererType: string,
+        cellRendererName: string,
         eRowCallback: (eRow: HTMLElement) => void,
         cellRendererCallback: (comp: ICellRendererComp) => void,
         detailRow: boolean
@@ -1005,7 +1007,7 @@ export class RowComp extends Component {
         this.beans.$compile(element)(this.scope);
     }
 
-    private createFullWidthParams(eRow: HTMLElement, pinned: string): any {
+    private createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
         const params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -1207,7 +1209,7 @@ export class RowComp extends Component {
     }
 
     private onRowSelected(): void {
-        const selected = this.rowNode.isSelected();
+        const selected = this.rowNode.isSelected()!;
         this.eAllRowContainers.forEach((row) => {
             setAriaSelected(row, selected);
             addOrRemoveCssClass(row, 'ag-row-selected', selected);
@@ -1267,7 +1269,7 @@ export class RowComp extends Component {
         if (this.useAnimationFrameForCreate) {
             this.beans.taskQueue.createTask(
                 this.addHoverFunctionality.bind(this, eRow),
-                this.rowNode.rowIndex,
+                this.rowNode.rowIndex!,
                 'createTasksP2'
             );
         } else {
@@ -1391,7 +1393,7 @@ export class RowComp extends Component {
     }
 
     private onCellFocusChanged(): void {
-        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach(row => addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
@@ -1416,7 +1418,7 @@ export class RowComp extends Component {
     }
 
     private onTopChanged(): void {
-        this.setRowTop(this.rowNode.rowTop);
+        this.setRowTop(this.rowNode.rowTop!);
     }
 
     private onPaginationPixelOffsetChanged(): void {
@@ -1468,7 +1470,7 @@ export class RowComp extends Component {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp | undefined {
+    public getRenderedCellForColumn(column: Column): CellComp | null | undefined {
         const cellComp = this.cellComps[column.getColId()];
 
         if (cellComp) { return cellComp; }
@@ -1492,7 +1494,7 @@ export class RowComp extends Component {
 
     private updateRowIndexes(): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
@@ -1502,7 +1504,7 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
-            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex + 1);
+            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex! + 1);
 
             if (!rowIsEvenChanged) { return; }
             addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

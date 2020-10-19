@@ -49,10 +49,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
 
         return Promise.all(floatingFilterPromises).then(floatingFilters => {
-            _.forEach(floatingFilters, (floatingFilter, index) => {
-                this.floatingFilters.push(floatingFilter);
+            _.forEach(floatingFilters!, (floatingFilter, index) => {
+                this.floatingFilters.push(floatingFilter!);
 
-                const gui = floatingFilter.getGui();
+                const gui = floatingFilter!.getGui();
 
                 this.appendChild(gui);
 
@@ -79,7 +79,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
                 _.forEach(this.floatingFilters, (filter, i) => {
-                    const filterModel = model.filterModels.length > i ? model.filterModels[i] : null;
+                    const filterModel = model.filterModels!.length > i ? model.filterModels![i] : null;
 
                     filter.onParentModelChanged(filterModel, event);
 
@@ -98,7 +98,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> {
+    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> | null {
         const defaultComponentName =
             FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 

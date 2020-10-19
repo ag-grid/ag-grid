@@ -21,8 +21,7 @@ import {
     GridOptions,
     GridParams,
     Module,
-    Promise,
-    _
+    Promise
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";

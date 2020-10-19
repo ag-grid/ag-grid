@@ -36,7 +36,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     private providedFilterParams: IProvidedFilterParams;
 
     private applyActive = false;
-    private hidePopup: (params: PopupEventParams) => void = null;
+    private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
 
@@ -80,7 +80,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
         gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
         a method that existed on an old version of the filters that was not intended for public use.`);
-        this.providedFilterParams.filterChangedCallback();
+        this.providedFilterParams.filterChangedCallback!();
     }
 
     public isFilterActive(): boolean {
@@ -162,18 +162,22 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
                     break;
                 case 'cancel':
                     text = this.translate('cancelFilter');
-                    clickListener = (e) => { this.onBtCancel(e); };
+                    clickListener = (e) => { this.onBtCancel(e!); };
                     break;
                 default:
                     console.warn('Unknown button type specified');
                     return;
             }
 
-            const button = loadTemplate(/* html */
+            const button = loadTemplate(
+                /* html */
                 `<button
                     type="button"
                     ref="${type}FilterButton"
-                    class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
+                    class="ag-standard-button ag-filter-apply-panel-button"
+                >${text}
+                </button>`
+                );
 
             eButtonsPanel.appendChild(button);
             this.addManagedListener(button, 'click', clickListener);
@@ -224,7 +228,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
-    public getModel(): ProvidedFilterModel {
+    public getModel(): ProvidedFilterModel | null {
         return this.appliedModel;
     }
 
@@ -242,7 +246,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     }
 
     private onBtCancel(e: Event): void {
-        this.setModelIntoUi(this.getModel()).then(() => {
+        this.setModelIntoUi(this.getModel()!).then(() => {
             this.onUiChanged(false, 'prevent');
 
             if (this.providedFilterParams.closeOnApply) {
@@ -266,7 +270,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     public applyModel(): boolean {
         const newModel = this.getModelFromUi();
 
-        if (!this.isModelValid(newModel)) { return false; }
+        if (!this.isModelValid(newModel!)) { return false; }
 
         const previousModel = this.appliedModel;
 
@@ -274,7 +278,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(previousModel, newModel);
+        return !this.areModelsEqual(previousModel!, newModel!);
     }
 
     protected isModelValid(model: ProvidedFilterModel): boolean {
@@ -285,7 +289,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
+            this.providedFilterParams.filterChangedCallback!({ afterFloatingFilter, afterDataChange });
         }
 
         const { closeOnApply } = this.providedFilterParams;
@@ -313,7 +317,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
             params = { keyboardEvent };
         }
 
-        this.hidePopup(params);
+        this.hidePopup(params!);
         this.hidePopup = null;
     }
 
@@ -329,10 +333,10 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
-        this.providedFilterParams.filterModifiedCallback();
+        this.providedFilterParams.filterModifiedCallback!();
 
         if (this.applyActive) {
-            const isValid = this.isModelValid(this.getModelFromUi());
+            const isValid = this.isModelValid(this.getModelFromUi()!);
 
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);
         }
@@ -367,7 +371,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
         ProvidedFilter.checkForDeprecatedParams(params);
 
-        return params.buttons && params.buttons.indexOf('apply') >= 0;
+        return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
     public destroy(): void {

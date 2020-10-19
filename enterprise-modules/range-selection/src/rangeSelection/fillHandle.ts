@@ -31,7 +31,7 @@ export class FillHandle extends AbstractSelectionHandle {
     static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
     private initialPosition: CellPosition | undefined;
-    private initialXY: { x: number, y: number };
+    private initialXY: { x: number, y: number } | null;
     private lastCellMarked: CellPosition | undefined;
     private markedCellComps: CellComp[] = [];
     private cellValues: FillValues[][] = [];
@@ -110,11 +110,11 @@ export class FillHandle extends AbstractSelectionHandle {
                 columnEnd: isX ? this.lastCellMarked!.column : initialRange.columns[colLen - 1]
             });
         } else {
-            const startRow = isX ? rangeStartRow : this.lastCellMarked!;
+            const startRow = isX ? rangeStartRow : this.lastCellMarked;
 
             finalRange = this.rangeController.createCellRangeFromCellRangeParams({
-                rowStartIndex: startRow.rowIndex,
-                rowStartPinned: startRow.rowPinned,
+                rowStartIndex: startRow!.rowIndex,
+                rowStartPinned: startRow!.rowPinned,
                 columnStart: isX ? this.lastCellMarked!.column : initialRange.columns[0],
                 rowEndIndex: rangeEndRow.rowIndex,
                 rowEndPinned: rangeEndRow.rowPinned,
@@ -136,8 +136,8 @@ export class FillHandle extends AbstractSelectionHandle {
     private raiseFillStartEvent() {
         const fillStartEvent: FillStartEvent = {
             type: Events.EVENT_FILL_START,
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            api: this.gridOptionsWrapper.getApi()
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsWrapper.getApi()!
         };
         this.eventService.dispatchEvent(fillStartEvent);
     }
@@ -145,8 +145,8 @@ export class FillHandle extends AbstractSelectionHandle {
     private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
         const fillEndEvent: FillEndEvent = {
             type: Events.EVENT_FILL_END,
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsWrapper.getApi()!,
             initialRange: initialRange,
             finalRange: finalRange
         };
@@ -218,7 +218,7 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         };
 
-        const fillValues = (values: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
+        const fillValues = (currentValues: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
             let currentValue: any;
 
             if (withinInitialRange) {
@@ -226,13 +226,13 @@ export class FillHandle extends AbstractSelectionHandle {
                 initialValues.push(currentValue);
                 withinInitialRange = updateInitialSet();
             } else {
-                currentValue = this.processValues(e, values, initialValues, col, rowNode, idx++);
+                currentValue = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
                 if (col.isCellEditable(rowNode)) {
                     rowNode.setDataValue(col, currentValue);
                 }
             }
 
-            values.push(currentValue);
+            currentValues.push(currentValue);
         };
 
         if (isVertical) {
@@ -516,7 +516,7 @@ export class FillHandle extends AbstractSelectionHandle {
                     }
                 }
 
-                row = this.cellNavigationService.getRowBelow(row) as RowPosition;
+                row = this.cellNavigationService.getRowBelow(row)!;
             } while (!isLastRow);
         });
     }
@@ -548,7 +548,7 @@ export class FillHandle extends AbstractSelectionHandle {
                     _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[0]);
                 }
 
-                row = this.cellNavigationService.getRowBelow(row) as RowPosition;
+                row = this.cellNavigationService.getRowBelow(row)!;
             }
             while (!isLastRow);
         });

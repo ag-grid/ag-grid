@@ -1,4 +1,9 @@
-import {Column, EventService, IEventEmitter, OriginalColumnGroup} from "@ag-grid-community/core";
+import {
+    Column,
+    EventService,
+    IEventEmitter,
+    OriginalColumnGroup
+} from "@ag-grid-community/core";
 
 export class ColumnModelItem implements IEventEmitter {
 
@@ -7,19 +12,22 @@ export class ColumnModelItem implements IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
 
     private readonly group: boolean;
-    private readonly displayName: string;
+    private readonly displayName: string | null;
     private readonly columnGroup: OriginalColumnGroup;
     private readonly column: Column;
     private readonly dept: number;
     private readonly children: ColumnModelItem[]
 
-    private expanded: boolean;
+    private expanded: boolean | undefined;
     private passesFilter: boolean;
 
-    constructor(displayName: string, columnOrGroup: Column | OriginalColumnGroup,
-                dept: number,
-                group = false, expanded?: boolean) {
-
+    constructor(
+        displayName: string | null,
+        columnOrGroup: Column | OriginalColumnGroup,
+        dept: number,
+        group = false,
+        expanded?: boolean
+    ) {
         this.displayName = displayName;
         this.dept = dept;
         this.group = group;
@@ -34,11 +42,11 @@ export class ColumnModelItem implements IEventEmitter {
     }
 
     public isGroup(): boolean { return this.group; }
-    public getDisplayName(): string { return this.displayName; }
+    public getDisplayName(): string | null { return this.displayName; }
     public getColumnGroup(): OriginalColumnGroup { return this.columnGroup; }
     public getColumn(): Column { return this.column; }
     public getDept(): number { return this.dept; }
-    public isExpanded(): boolean { return this.expanded; }
+    public isExpanded(): boolean { return !!this.expanded; }
     public getChildren(): ColumnModelItem[] { return this.children; }
     public isPassesFilter(): boolean { return this.passesFilter; }
 

@@ -93,7 +93,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         }
 
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
-        const axis = find(this.chart.axes, axis => axis.position === axisPosition);
+        const axis = find(this.chart.axes, currentAxis => currentAxis.position === axisPosition);
 
         if (axis) {
             axis.label.rotation = labelRotation;

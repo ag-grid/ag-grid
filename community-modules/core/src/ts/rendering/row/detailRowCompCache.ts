@@ -18,7 +18,7 @@ export class DetailRowCompCache extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cacheItems: CacheItem[] = [];
-    private maxCacheSize: number;
+    private maxCacheSize: number | undefined;
     private active: boolean;
 
     @PostConstruct
@@ -27,7 +27,7 @@ export class DetailRowCompCache extends BeanStub {
         this.maxCacheSize = this.gridOptionsWrapper.getKeepDetailRowsCount();
     }
 
-    public addOrDestroy(rowNode: RowNode, pinned: string, comp: ICellRendererComp): void {
+    public addOrDestroy(rowNode: RowNode, pinned: string | null, comp: ICellRendererComp): void {
         // only accept detail rows
         const doNotUseCache = !this.active || !rowNode.detail;
         if (doNotUseCache) {
@@ -35,7 +35,7 @@ export class DetailRowCompCache extends BeanStub {
             return;
         }
 
-        const item = this.getCacheItem(rowNode, true);
+        const item = this.getCacheItem(rowNode, true)!;
 
         // put the comp in the right location of the item.
         // we also destroy any previous comp - this should never happen
@@ -44,15 +44,15 @@ export class DetailRowCompCache extends BeanStub {
         // outside of this class is changed and this could happen.
         switch (pinned) {
             case Constants.PINNED_LEFT:
-                this.destroyFullWidthRow(item.left);
+                this.destroyFullWidthRow(item.left!);
                 item.left = comp;
                 break;
             case Constants.PINNED_RIGHT:
-                this.destroyFullWidthRow(item.right);
+                this.destroyFullWidthRow(item.right!);
                 item.right = comp;
                 break;
             default:
-                this.destroyFullWidthRow(item.center);
+                this.destroyFullWidthRow(item.center!);
                 item.center = comp;
                 break;
         }
@@ -60,11 +60,11 @@ export class DetailRowCompCache extends BeanStub {
         this.cacheItems.sort((a: CacheItem, b: CacheItem) => {
             return b.lastAccessedTime - a.lastAccessedTime;
         });
-        this.purgeCache(this.maxCacheSize);
+        this.purgeCache(this.maxCacheSize!);
     }
 
-    private getCacheItem(rowNode: RowNode, autoCreate = false): CacheItem {
-        let res: CacheItem;
+    private getCacheItem(rowNode: RowNode, autoCreate = false): CacheItem | null {
+        let res: CacheItem | null = null;
 
         for (let i = 0; i < this.cacheItems.length; i++) {
             const item = this.cacheItems[i];
@@ -100,9 +100,9 @@ export class DetailRowCompCache extends BeanStub {
         // delete all rows past the index of interest
         for (let i = startIndex; i < this.cacheItems.length; i++) {
             const item = this.cacheItems[i];
-            this.destroyFullWidthRow(item.center);
-            this.destroyFullWidthRow(item.left);
-            this.destroyFullWidthRow(item.right);
+            this.destroyFullWidthRow(item.center!);
+            this.destroyFullWidthRow(item.left!);
+            this.destroyFullWidthRow(item.right!);
         }
 
         // change the length of the array so it no longer contains the deleted items
@@ -111,11 +111,12 @@ export class DetailRowCompCache extends BeanStub {
         }
     }
 
-    public get(rowNode: RowNode, pinned: string): ICellRendererComp {
-        if (!rowNode.detail) { return undefined; }
+    public get(rowNode: RowNode, pinned: string | null): ICellRendererComp | undefined {
+        if (!rowNode.detail) { return; }
 
         const item = this.getCacheItem(rowNode);
-        let res: ICellRendererComp;
+        let res: ICellRendererComp | undefined;
+
         if (item) {
             switch (pinned) {
                 case Constants.PINNED_LEFT:

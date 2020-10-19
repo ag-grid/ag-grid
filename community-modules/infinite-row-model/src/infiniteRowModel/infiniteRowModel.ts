@@ -36,12 +36,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private readonly rowNodeBlockLoader: RowNodeBlockLoader;
 
-    private infiniteCache: InfiniteCache | null;
-
+    private infiniteCache: InfiniteCache | null | undefined;
     private datasource: IDatasource | null | undefined;
-
     private rowHeight: number;
-
     private cacheParams: InfiniteCacheParams;
 
     public getRowBounds(index: number): RowBounds {
@@ -219,8 +216,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
     }
 
-    private defaultIfInvalid(value: number, defaultValue: number): number {
-        return value > 0 ? value : defaultValue;
+    private defaultIfInvalid(value: number | undefined, defaultValue: number): number {
+        return value! > 0 ? value! : defaultValue;
     }
 
     private destroyCache(): void {

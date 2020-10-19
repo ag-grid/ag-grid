@@ -19,9 +19,9 @@ export class ValueFormatterService extends BeanStub {
         value: any,
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
-    ): string {
-        let result: string = null;
-        let formatter: ((value: any) => string) | string;
+    ): string | null {
+        let result: string | null = null;
+        let formatter: ((value: any) => string) | string | undefined;
 
         const colDef = column.getColDef();
 

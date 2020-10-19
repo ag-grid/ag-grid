@@ -17,19 +17,23 @@ const HTML_ESCAPES: { [id: string]: string; } = {
  * @param {string} s
  * @returns {string}
  */
-export function utf8_encode(s: string): string {
+export function utf8_encode(s: string | null): string {
     const stringFromCharCode = String.fromCharCode;
 
-    function ucs2decode(string: string) {
-        const output = [];
+    function ucs2decode(string: string | null): number[] {
+        const output: number[] = [];
+
+        if (!string) { return []; }
+
+        const len = string.length;
+
         let counter = 0;
-        const length = string.length;
         let value;
         let extra;
 
-        while (counter < length) {
+        while (counter < len) {
             value = string.charCodeAt(counter++);
-            if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+            if (value >= 0xD800 && value <= 0xDBFF && counter < len) {
                 // high surrogate, and there is a next character
                 extra = string.charCodeAt(counter++);
                 if ((extra & 0xFC00) == 0xDC00) { // low surrogate
@@ -47,37 +51,37 @@ export function utf8_encode(s: string): string {
         return output;
     }
 
-    function checkScalarValue(codePoint: number) {
-        if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+    function checkScalarValue(point: number) {
+        if (point >= 0xD800 && point <= 0xDFFF) {
             throw Error(
-                'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+                'Lone surrogate U+' + point.toString(16).toUpperCase() +
                 ' is not a scalar value'
             );
         }
     }
 
-    function createByte(codePoint: number, shift: number) {
-        return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+    function createByte(point: number, shift: number) {
+        return stringFromCharCode(((point >> shift) & 0x3F) | 0x80);
     }
 
-    function encodeCodePoint(codePoint: number) {
-        if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
-            return stringFromCharCode(codePoint);
+    function encodeCodePoint(point: number) {
+        if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
+            return stringFromCharCode(point);
         }
         let symbol = '';
 
-        if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
-            symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
-        } else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-            checkScalarValue(codePoint);
-            symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
-            symbol += createByte(codePoint, 6);
-        } else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
-            symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
-            symbol += createByte(codePoint, 12);
-            symbol += createByte(codePoint, 6);
+        if ((point & 0xFFFFF800) == 0) { // 2-byte sequence
+            symbol = stringFromCharCode(((point >> 6) & 0x1F) | 0xC0);
+        } else if ((point & 0xFFFF0000) == 0) { // 3-byte sequence
+            checkScalarValue(point);
+            symbol = stringFromCharCode(((point >> 12) & 0x0F) | 0xE0);
+            symbol += createByte(point, 6);
+        } else if ((point & 0xFFE00000) == 0) { // 4-byte sequence
+            symbol = stringFromCharCode(((point >> 18) & 0x07) | 0xF0);
+            symbol += createByte(point, 12);
+            symbol += createByte(point, 6);
         }
-        symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+        symbol += stringFromCharCode((point & 0x3F) | 0x80);
         return symbol;
     }
 

@@ -118,10 +118,6 @@ export class ChartSettingsPanel extends Component {
         return prev;
     }
 
-    private prev() {
-        ;
-    }
-
     private getNext(): number {
         let next = this.activePaletteIndex + 1;
 

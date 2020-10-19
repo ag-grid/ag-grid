@@ -79,7 +79,7 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
 
     if (!type) { return 'thin'; }
     if (type === 'Continuous') { return namedWeight; }
-    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) { return `medium${mappedName}`; }
+    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) !== -1) { return `medium${mappedName}`; }
 
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
 };

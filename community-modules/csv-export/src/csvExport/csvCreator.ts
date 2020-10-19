@@ -276,8 +276,15 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, processRowGroupCallback, suppressQuotes, columnSeparator} = params;
+        const { columnController, valueService, gridOptionsWrapper } = this;
+        const {
+            processCellCallback,
+            processHeaderCallback, 
+            processGroupHeaderCallback, 
+            processRowGroupCallback, 
+            suppressQuotes, 
+            columnSeparator
+        } = params!;
 
         return new CsvSerializingSession({
             columnController,

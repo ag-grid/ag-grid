@@ -116,6 +116,7 @@ export class AxisPanel extends Component {
 
     private initAxisLabels() {
         const chartProxy = this.getChartProxy();
+
         const initialFont = {
             family: chartProxy.getAxisProperty("label.fontFamily"),
             style: chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
@@ -125,15 +126,15 @@ export class AxisPanel extends Component {
         };
 
         const setFont = (font: Font) => {
-            const chartProxy = this.getChartProxy();
+            const proxy = this.getChartProxy();
 
-            if (font.family) { chartProxy.setAxisProperty("label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setAxisProperty("label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setAxisProperty("label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setAxisProperty("label.fontSize", font.size); }
-            if (font.color) { chartProxy.setAxisProperty("label.color", font.color); }
+            if (font.family) { proxy.setAxisProperty("label.fontFamily", font.family); }
+            if (font.weight) { proxy.setAxisProperty("label.fontWeight", font.weight); }
+            if (font.style) { proxy.setAxisProperty("label.fontStyle", font.style); }
+            if (font.size) { proxy.setAxisProperty("label.fontSize", font.size); }
+            if (font.color) { proxy.setAxisProperty("label.color", font.color); }
 
-            chartProxy.getChart().performLayout();
+            proxy.getChart().performLayout();
         };
 
         const params: FontPanelParams = {
@@ -165,7 +166,7 @@ export class AxisPanel extends Component {
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
             const chartProxy = this.getChartProxy();
             const chart = chartProxy.getChart();
-            const axis = find(chart.axes as AgCartesianAxisOptions[], axis => axis.position === axisPosition);
+            const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
 
             if (axis) {
                 axis.label.rotation = newValue;

@@ -19,7 +19,7 @@ export class SetLeftFeature extends BeanStub {
 
     // if we are spanning columns, this tells what columns,
     // otherwise this is empty
-    private colsSpanning: Column[];
+    private colsSpanning: Column[] | undefined;
 
     private beans: Beans;
 
@@ -67,14 +67,14 @@ export class SetLeftFeature extends BeanStub {
     private animateInLeft(): void {
         const left = this.getColumnOrGroup().getLeft();
         const oldLeft = this.getColumnOrGroup().getOldLeft();
-        this.setLeft(oldLeft);
+        this.setLeft(oldLeft!);
 
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
         // condition, if the user changed the left value many times in one VM turn, then we want to make
         // make sure the actualLeft we set in the timeout below (in the next VM turn) is the correct left
         // position. eg if user changes column position twice, then setLeft() below executes twice in next
         // VM turn, but only one (the correct one) should get applied.
-        this.actualLeft = left;
+        this.actualLeft = left!;
 
         this.beans.columnAnimationService.executeNextVMTurn(() => {
             // test this left value is the latest one to be applied, and if not, do nothing
@@ -87,7 +87,7 @@ export class SetLeftFeature extends BeanStub {
     private onLeftChanged(): void {
         const colOrGroup = this.getColumnOrGroup();
         const left = colOrGroup.getLeft();
-        this.actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left);
+        this.actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left!);
         this.setLeft(this.actualLeft);
     }
 
@@ -98,13 +98,14 @@ export class SetLeftFeature extends BeanStub {
             return leftPosition;
         }
 
+        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+
         if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
-            const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }
+
         // is in body
-        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
         return leftWidth + leftPosition;
     }
 

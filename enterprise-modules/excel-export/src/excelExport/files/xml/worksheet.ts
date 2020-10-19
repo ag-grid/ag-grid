@@ -1,4 +1,4 @@
-import { XmlElement, _ } from '@ag-grid-community/core';
+import { XmlElement } from '@ag-grid-community/core';
 import { ExcelXMLTemplate, ExcelWorksheet } from '@ag-grid-community/core';
 import column from './column';
 import row from './row';

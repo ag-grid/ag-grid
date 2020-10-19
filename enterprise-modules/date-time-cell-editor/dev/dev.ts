@@ -1,7 +1,6 @@
 import { Grid, Autowired, GridOptions } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
-import { Component, PostConstruct, _ } from '@ag-grid-community/core';
+import { Component, PostConstruct } from '@ag-grid-community/core';
 
 import './dev.scss';
 import { DateTimeList } from '../src/dateTimeList/dateTimeList';

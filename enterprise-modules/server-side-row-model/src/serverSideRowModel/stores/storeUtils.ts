@@ -9,10 +9,9 @@ import {
     GridOptionsWrapper,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
-    PostConstruct,
     RowNode
 } from "@ag-grid-community/core";
-import {StoreParams} from "../serverSideRowModel";
+import { StoreParams } from "../serverSideRowModel";
 
 @Bean('ssrmCacheUtils')
 export class StoreUtils extends BeanStub {
@@ -20,10 +19,6 @@ export class StoreUtils extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-
-    @PostConstruct
-    private postConstruct(): void {
-    }
 
     private createGroupKeys(groupNode: RowNode): string[] {
         const keys: string[] = [];
@@ -55,8 +50,8 @@ export class StoreUtils extends BeanStub {
         if (!storeParams.datasource) { return; }
 
         const request: IServerSideGetRowsRequest = {
-            startRow: p.startRow,
-            endRow: p.endRow,
+            startRow: p.startRow!,
+            endRow: p.endRow!,
             rowGroupCols: storeParams.rowGroupCols,
             valueCols: storeParams.valueCols,
             pivotCols: storeParams.pivotCols,
@@ -84,21 +79,19 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore {
-        if (_.missingOrEmpty(keys)) {
-            return currentCache;
-        }
+    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore | null {
+        if (_.missingOrEmpty(keys)) { return currentCache; }
 
         const nextKey = keys[0];
         const nextNode = findNodeFunc(nextKey);
 
         if (nextNode) {
             const keyListForNextLevel = keys.slice(1, keys.length);
-            const nextStore = nextNode.childrenCache as IServerSideStore;
+            const nextStore = nextNode.childrenCache;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
 }

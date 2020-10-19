@@ -105,7 +105,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;
 
-        const { headerRowIndex, column } = this.focusController.getFocusedHeader();
+        const { headerRowIndex, column } = this.focusController.getFocusedHeader()!;
 
         if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
             return;
@@ -119,9 +119,9 @@ export class HeaderRootComp extends ManagedFocusComponent {
      }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        let direction: HeaderNavigationDirection;
+        let direction: HeaderNavigationDirection | null = null;
 
-        const { headerRowIndex, column } = this.focusController.getFocusedHeader();
+        const { headerRowIndex, column } = this.focusController.getFocusedHeader()!;
 
         if (isUserSuppressingHeaderKeyboardEvent(this.gridOptionsWrapper, e, headerRowIndex, column)) {
             return;

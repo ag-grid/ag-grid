@@ -11,7 +11,7 @@ export class ColumnHoverService extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private selectedColumns: Column[];
+    private selectedColumns: Column[] | null;
 
     public setMouseOver(columns: Column[]): void {
         this.selectedColumns = columns;
@@ -34,6 +34,6 @@ export class ColumnHoverService extends BeanStub {
     }
 
     public isHovered(column: Column): boolean {
-        return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
+        return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     }
 }

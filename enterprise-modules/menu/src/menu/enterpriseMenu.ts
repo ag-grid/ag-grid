@@ -124,7 +124,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
-            closedCallback: (e: Event) => { // menu closed callback
+            closedCallback: (e?: Event) => { // menu closed callback
                 this.destroyBean(menu);
                 column.setMenuVisible(false, 'contextMenu');
 
@@ -417,7 +417,7 @@ export class EnterpriseMenu extends BeanStub {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
@@ -450,16 +450,16 @@ export class EnterpriseMenu extends BeanStub {
             // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
             // async and is confusing if you don't have this context
             filterWrapper.filterPromise.then(filter => {
-                if (filter.afterGuiAttached) {
+                if (filter && filter.afterGuiAttached) {
                     filter.afterGuiAttached(params);
                 }
             });
         };
 
         this.tabItemFilter = {
-            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper.guiPromise,
+            bodyPromise: filterWrapper.guiPromise as Promise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -495,7 +495,7 @@ export class EnterpriseMenu extends BeanStub {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column), //createColumnsIcon(),
+            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column)!, //createColumnsIcon(),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
