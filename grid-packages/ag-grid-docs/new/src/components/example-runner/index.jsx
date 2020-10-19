@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
+import VisibilitySensor from "react-visibility-sensor";
 import './example-runner.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
@@ -26,12 +27,19 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                {!showCode && <ExampleRunnerResult
-                    pageName={pageName}
-                    framework={framework}
-                    name={name}
-                    importType={exampleImportType}
-                    useFunctionalReact={useFunctionalReact} />}
+                {!showCode &&
+                    <VisibilitySensor partialVisibility={true}>
+                        {({ isVisible }) =>
+                            <ExampleRunnerResult
+                                pageName={pageName}
+                                framework={framework}
+                                name={name}
+                                importType={exampleImportType}
+                                useFunctionalReact={useFunctionalReact}
+                                isVisible={isVisible} />
+                        }
+                    </VisibilitySensor>
+                }
                 {showCode && <CodeViewer
                     pageName={pageName}
                     framework={framework}

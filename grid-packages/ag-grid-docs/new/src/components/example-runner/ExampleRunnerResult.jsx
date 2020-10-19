@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { useStaticQuery, graphql } from 'gatsby';
 import fs from 'fs';
 import './example-runner-result.scss';
 import { getSourcePath } from './helpers';
 
-const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false }) => {
+const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false, isVisible }) => {
+    const [shouldExecute, setShouldExecute] = useState(isVisible);
+
     const data = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { eq: "examples" }, relativePath: { regex: "/.*\/examples\/.*/" } }) {
@@ -64,14 +66,21 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
     }
 
     useEffect(() => {
-        // TODO: make this only happen when it scrolls into view
-        const iframe = iframeRef.current;
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (isVisible) {
+            setShouldExecute(true);
+        }
+    }, [isVisible]);
 
-        iframeDoc.open();
-        iframeDoc.write(generated);
-        iframeDoc.close();
-    }, []);
+    useEffect(() => {
+        if (shouldExecute) {
+            const iframe = iframeRef.current;
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            iframeDoc.open();
+            iframeDoc.write(generated);
+            iframeDoc.close();
+        }
+    }, [shouldExecute]);
 
     return <iframe ref={iframeRef} title={name} className="example-runner-result"></iframe>;
 };

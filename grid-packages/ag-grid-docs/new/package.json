@@ -45,6 +45,7 @@
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
     "react-instantsearch-dom": "^6.8.1",
+    "react-visibility-sensor": "^5.1.1",
     "rehype-react": "^6.1.0",
     "styled-components": "^5.2.0",
     "unist-util-visit": "^2.0.3"
