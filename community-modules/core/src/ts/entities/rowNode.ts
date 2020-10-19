@@ -238,6 +238,19 @@ export class RowNode implements IEventEmitter {
     private eventService: EventService;
 
     public setData(data: any): void {
+        this.setDataCommon(data, false);
+    }
+
+    // similar to setRowData, however it is expected that the data is the same data item. this
+    // is intended to be used with Redux type stores, where the whole data can be changed. we are
+    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
+    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
+    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    public updateData(data: any): void {
+        this.setDataCommon(data, true);
+    }
+
+    private setDataCommon(data: any, update: boolean): void {
         const oldData = this.data;
 
         this.data = data;
@@ -245,7 +258,7 @@ export class RowNode implements IEventEmitter {
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, update);
 
         this.dispatchLocalEvent(event);
     }
@@ -274,23 +287,6 @@ export class RowNode implements IEventEmitter {
             type: type,
             node: this
         };
-    }
-
-    // similar to setRowData, however it is expected that the data is the same data item. this
-    // is intended to be used with Redux type stores, where the whole data can be changed. we are
-    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
-    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
-    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    public updateData(data: any): void {
-        const oldData = this.data;
-
-        this.data = data;
-        this.updateDataOnDetailNode();
-        this.checkRowSelectable();
-
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
-
-        this.dispatchLocalEvent(event);
     }
 
     public getRowIndexString(): string {
