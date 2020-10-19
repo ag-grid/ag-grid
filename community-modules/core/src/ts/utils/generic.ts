@@ -3,8 +3,11 @@
  * @param {T} value
  * @returns {T | null}
  */
-export function makeNull<T>(value?: T): T | null {
-    return value == null || value as any === '' ? null : value;
+export function makeNull<T extends unknown>(value?: T): T | null {
+    if (value == null || value === '') {
+        return null;
+    }
+    return value;
 }
 
 export function exists(value: string | null | undefined, allowEmptyString?: boolean): value is string;
