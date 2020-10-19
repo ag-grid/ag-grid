@@ -284,7 +284,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
             processRowGroupCallback, 
             suppressQuotes, 
             columnSeparator
-        } = params as CsvExportParams;
+        } = params!;
 
         return new CsvSerializingSession({
             columnController,

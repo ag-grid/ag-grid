@@ -58,14 +58,13 @@ import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
-import { iterateObject } from "./utils/object";
+import { iterateObject, removeAllReferences } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
 import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
-import { _ } from "./utils";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -1064,7 +1063,7 @@ export class GridApi {
         //
         // wait about 100ms before clearing down the references, in case user has some cleanup to do,
         // and needs to deference the API first
-        setTimeout(_.removeAllReferences.bind(window, this, 'Grid API'), 100);
+        setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
     }
 
     private warnIfDestroyed(methodName: string): boolean {

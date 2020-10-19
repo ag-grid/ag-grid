@@ -33,7 +33,7 @@ export class ClientSideNodeManager {
 
     private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-    private isRowMasterFunc: IsRowMaster | undefined;
+    private isRowMasterFunc?: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
 
     private doingTreeData: boolean;

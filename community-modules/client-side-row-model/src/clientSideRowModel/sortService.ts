@@ -198,9 +198,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (_.missing(rowNodes)) { return; }
-
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents() || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnController.getGroupDisplayColumns();
@@ -216,7 +214,7 @@ export class SortService extends BeanStub {
                 const rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
-                if (thisRowNodeMatches) { return }
+                if (thisRowNodeMatches) { return; }
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column

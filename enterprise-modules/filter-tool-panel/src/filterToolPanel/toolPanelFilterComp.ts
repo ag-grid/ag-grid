@@ -125,7 +125,7 @@ export class ToolPanelFilterComp extends Component {
             filterPromise.then(filter => {
                 this.underlyingFilter = filter;
 
-                if (!filter) { return ; }
+                if (!filter) { return; }
                 container.appendChild(filter.getGui());
 
                 this.agFilterToolPanelBody.appendChild(container);

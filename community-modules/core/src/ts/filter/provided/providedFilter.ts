@@ -174,7 +174,8 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
                 `<button
                     type="button"
                     ref="${type}FilterButton"
-                    class="ag-standard-button ag-filter-apply-panel-button">${text}>
+                    class="ag-standard-button ag-filter-apply-panel-button"
+                >${text}
                 </button>`
                 );
 

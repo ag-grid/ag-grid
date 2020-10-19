@@ -669,7 +669,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private doRowGrouping(
         groupState: any,
-        rowNodeTransactions: (RowNodeTransaction)[] | undefined,
+        rowNodeTransactions: RowNodeTransaction[] | undefined,
         rowNodeOrder: { [id: string]: number; } | undefined,
         changedPath: ChangedPath,
         afterColumnsChanged: boolean
@@ -864,7 +864,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: (RowNodeTransaction)[], rowNodeOrder?: { [id: string]: number; }): void {
+    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], rowNodeOrder?: { [id: string]: number; }): void {
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             rowNodeTransactions: rowNodeTrans,

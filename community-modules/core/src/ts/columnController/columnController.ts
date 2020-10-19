@@ -1486,7 +1486,7 @@ export class ColumnController extends BeanStub {
         this.setColumnsVisible([key], visible, source);
     }
 
-    public setColumnsVisible(keys: (string | Column)[], visible: boolean = false, source: ColumnEventType = "api"): void {
+    public setColumnsVisible(keys: (string | Column)[], visible = false, source: ColumnEventType = "api"): void {
         this.columnAnimationService.start();
 
         this.actionOnGridColumns(keys, (column: Column): boolean => {
@@ -2563,9 +2563,10 @@ export class ColumnController extends BeanStub {
                     return null;
                 }
                 if (aggFunc === undefined) {
-                    return undefined;
+                    return;
                 }
-                return aggFunc != '';
+
+                return !!aggFunc;
             },
             (colDef: ColDef) => {
                 // return false if any of the following: null, undefined, empty string
@@ -2638,7 +2639,7 @@ export class ColumnController extends BeanStub {
                         include = index! >= 0;
                     }
                 } else {
-                    include = initialValue == true || initialIndex! >= 0;
+                    include = initialValue || initialIndex! >= 0;
                 }
             } else {
                 // col is not new, we ignore the default values, just use the values if provided
@@ -2674,7 +2675,7 @@ export class ColumnController extends BeanStub {
         };
 
         // sort cols with index, and add these first
-        colsWithIndex.sort((colA: Column, colB: Column): number => {
+        colsWithIndex.sort((colA, colB) => {
             const indexA = getIndexForCol(colA);
             const indexB = getIndexForCol(colB);
 
@@ -3284,7 +3285,7 @@ export class ColumnController extends BeanStub {
             for (let i = 0; i < children.length; i++) {
                 // see if this item is within viewport
                 const child = children[i];
-                let addThisItem: boolean = false;
+                let addThisItem = false;
 
                 if (child instanceof Column) {
                     // for column, test if column is included
@@ -3368,7 +3369,7 @@ export class ColumnController extends BeanStub {
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
                 const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
-                let constrainedWidth: number = 0;
+                let constrainedWidth = 0;
 
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();

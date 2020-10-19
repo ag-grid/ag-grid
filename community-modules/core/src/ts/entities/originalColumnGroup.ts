@@ -28,7 +28,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
-        this.expanded = !!(colGroupDef && !!colGroupDef.openByDefault);
+        this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
         this.level = level;
     }

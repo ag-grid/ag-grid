@@ -378,7 +378,7 @@ export class PrimaryColsListPanel extends Component {
 
             const displayName = item.getDisplayName();
 
-            return displayName != null ? displayName.toLowerCase().indexOf(this.filterText) !== -1 : true;
+            return displayName == null || displayName.toLowerCase().indexOf(this.filterText) !== -1;
         };
 
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {
