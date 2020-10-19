@@ -1926,8 +1926,8 @@ export class ColumnController extends BeanStub {
                 return -1;
             }
 
-            // b is old, a is new, a is first
-            // this bit does matter, means both are new cols but without index
+            // this bit does matter, means both are new cols
+            // but without index or that b is old and a is new
             return 1;
         };
 
