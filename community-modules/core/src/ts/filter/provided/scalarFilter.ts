@@ -26,7 +26,7 @@ export interface Comparator<T> {
 export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends SimpleFilter<M> {
     private scalarFilterParams: IScalarFilterParams;
 
-    protected abstract comparator(): Comparator<T | null>;
+    protected abstract comparator(): Comparator<T>;
 
     // because the date and number filter models have different attribute names, we have to map
     protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: T | null | undefined, to: T | null | undefined; };
