@@ -309,7 +309,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const params = this.createParams();
         const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
-        this.userComponentFactory.newHeaderComponent(params).then(callback);
+        this.userComponentFactory.newHeaderComponent(params)!.then(callback);
     }
 
     private createParams(): IHeaderParams {

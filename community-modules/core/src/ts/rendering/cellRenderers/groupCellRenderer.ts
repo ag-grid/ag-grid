@@ -263,7 +263,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         params.valueFormatted = valueFormatted;
 
-        let rendererPromise: Promise<ICellRendererComp>;
+        let rendererPromise: Promise<ICellRendererComp> | null;
 
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
@@ -285,7 +285,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         groupCellRendererParams: GroupCellRendererParams,
         groupedColumnDef: ColDef, // the column this group row is for, eg 'Country'
         params: ICellRendererParams
-    ): Promise<ICellRendererComp> {
+    ): Promise<ICellRendererComp> | null {
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
         // cell renderer for each rating group row.
@@ -348,8 +348,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         return cellRendererPromise;
     }
 
-    private useFullWidth(params: ICellRendererParams): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
+    private useFullWidth(params: ICellRendererParams): Promise<ICellRendererComp> | null {
+        const cellRendererPromise: Promise<ICellRendererComp> | null = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);

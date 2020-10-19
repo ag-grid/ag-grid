@@ -234,7 +234,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         const callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.userComponentFactory.newHeaderGroupComponent(params).then(callback);
+        this.userComponentFactory.newHeaderGroupComponent(params)!.then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {

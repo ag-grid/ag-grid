@@ -156,7 +156,7 @@ export class SortController extends BeanStub {
 
     public getSortOptions(): SortOption[] {
         return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort(),
+            sort: column.getSort()!,
             column
         }));
     }

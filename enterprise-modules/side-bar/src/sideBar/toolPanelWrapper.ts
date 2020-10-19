@@ -39,7 +39,7 @@ export class ToolPanelWrapper extends Component {
             columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
 
-        const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(
+        const componentPromise: Promise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
             toolPanelDef, params);
 
         if (componentPromise == null) {

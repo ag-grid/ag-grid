@@ -53,7 +53,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private suppressFilterButton: boolean;
 
-    private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
+    private floatingFilterCompPromise: Promise<IFloatingFilterComp> | null;
 
     constructor(column: Column, pinned: string | null) {
         super(FloatingFilterWrapper.TEMPLATE);
@@ -249,7 +249,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         return defaultFloatingFilterType;
     }
 
-    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
+    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> | null {
         const colDef = this.column.getColDef();
         const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);

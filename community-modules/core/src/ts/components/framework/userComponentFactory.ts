@@ -90,27 +90,27 @@ export class UserComponentFactory extends BeanStub {
     @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
     @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
 
-    public newDateComponent(params: IDateParams): Promise<IDateComp> {
+    public newDateComponent(params: IDateParams): Promise<IDateComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
 
-    public newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp> {
+    public newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp> | null {
         return this.createAndInitUserComponent(params.column.getColDef(), params, HeaderComponent, 'agColumnHeader');
     }
 
-    public newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp> {
+    public newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp> | null {
         return this.createAndInitUserComponent(
             params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, 'agColumnGroupHeader');
     }
 
-    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> {
+    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     public newFullWidthCellRenderer(
-        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> {
+        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(
             null,
             params,
@@ -121,50 +121,50 @@ export class UserComponentFactory extends BeanStub {
     public newCellRenderer(
         target: ColDef | IRichCellEditorParams,
         params: ICellRendererParams,
-        isPinned = false): Promise<ICellRendererComp> {
+        isPinned = false): Promise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(
             target, params, isPinned ? PinnedRowCellRendererComponent : CellRendererComponent, null, true);
     }
 
-    public newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+    public newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> | null {
         return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
 
-    public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp> {
+    public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(target, params, InnerRendererComponent, null);
     }
 
-    public newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp> {
+    public newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');
     }
 
-    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp> {
+    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp> | null {
         return this.createAndInitUserComponent(this.gridOptions, params, NoRowsOverlayComponent, 'agNoRowsOverlay');
     }
 
-    public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
+    public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> | null {
         return this.createAndInitUserComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
     }
 
-    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp> {
+    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): Promise<IFilterComp> | null {
         return this.createAndInitUserComponent(def, params, FilterComponent, defaultFilter, false);
     }
 
     public newSetFilterCellRenderer(
-        target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp> {
+        target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp> | null {
         return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     }
 
     public newFloatingFilterComponent(
-        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): Promise<IFloatingFilterComp> {
+        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): Promise<IFloatingFilterComp> | null {
         return this.createAndInitUserComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
-    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
+    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> | null {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp> {
+    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp> | null {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 
@@ -189,7 +189,7 @@ export class UserComponentFactory extends BeanStub {
         defaultComponentName?: string | null,
         // optional items are: FloatingFilter, CellComp (for cellRenderer)
         optional = false,
-    ): Promise<A> {
+    ): Promise<A> | null {
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
@@ -199,7 +199,7 @@ export class UserComponentFactory extends BeanStub {
             = this.createComponentInstance(definitionObject, componentType, paramsFromGrid, defaultComponentName, optional);
 
         if (!componentAndParams) {
-            return Promise.resolve();
+            return null;
         }
 
         const componentInstance = componentAndParams.componentInstance;

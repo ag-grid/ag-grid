@@ -188,7 +188,7 @@ export class TooltipFeature extends BeanStub {
         // we disregard it
         const callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
 
-        this.userComponentFactory.newTooltipComponent(params).then(callback);
+        this.userComponentFactory.newTooltipComponent(params)!.then(callback);
     }
 
     private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: ITooltipComp): void {

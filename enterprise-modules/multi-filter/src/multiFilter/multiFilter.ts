@@ -329,7 +329,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         });
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> {
+    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> | null {
         const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
         let filterInstance: IFilterComp;

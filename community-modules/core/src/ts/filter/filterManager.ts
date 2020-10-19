@@ -407,7 +407,7 @@ export class FilterManager extends BeanStub {
         return this.allAdvancedFilters.get(column.getColId());
     }
 
-    private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> {
+    private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> | null {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 

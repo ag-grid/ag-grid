@@ -98,7 +98,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> {
+    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): Promise<IFloatingFilterComp> | null {
         const defaultComponentName =
             FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 

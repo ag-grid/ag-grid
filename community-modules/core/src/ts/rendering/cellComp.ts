@@ -1145,10 +1145,10 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp | null> {
+    private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
 
-        return cellEditorPromise.then(cellEditor => {
+        return cellEditorPromise!.then(cellEditor => {
             const cellEditorComp = cellEditor!;
             const isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
 
