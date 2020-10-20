@@ -82,92 +82,12 @@ export class SortListener extends BeanStub {
     }
 
     private onSortChanged(): void {
-        const rootStore = this.serverSideRowModel.getRootStore();
-        if (!rootStore) { return; }
-
         const storeParams = this.serverSideRowModel.getParams();
-
         const newSortModel = this.extractSortModel();
         const oldSortModel = storeParams.sortModel;
-        const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
 
         this.serverSideRowModel.updateSortModel(newSortModel);
-
-        const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-
-        const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
-
-        const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
-            this.serverSideRowModel.resetRootStore();
-        } else {
-            this.serverSideRowModel.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
-        }
-    }
-
-    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) {
-            return false;
-        }
-
-        const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
-    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
-    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
-    // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(
-        newSortModel: { colId: string, sort: string }[],
-        oldSortModel: { colId: string, sort: string }[]): string[] {
-
-        let allColsInBothSorts: string[] = [];
-
-        [newSortModel, oldSortModel].forEach(sortModel => {
-            if (sortModel) {
-                const ids = sortModel.map(sm => sm.colId);
-                allColsInBothSorts = allColsInBothSorts.concat(ids);
-            }
-        });
-
-        const differentSorts = (oldSortItem: any, newSortItem: any) => {
-            const oldSort = oldSortItem ? oldSortItem.sort : null;
-            const newSort = newSortItem ? newSortItem.sort : null;
-            return oldSort !== newSort;
-        };
-
-        const differentIndexes = (oldSortItem: any, newSortItem: any) => {
-            const oldIndex = oldSortModel.indexOf(oldSortItem);
-            const newIndex = newSortModel.indexOf(newSortItem);
-            return oldIndex !== newIndex;
-        };
-
-        return allColsInBothSorts.filter(colId => {
-            const oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
-            const newSortItem = _.find(newSortModel, sm => sm.colId === colId);
-            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
-        });
+        this.serverSideRowModel.refreshAfterSort(oldSortModel, newSortModel);
     }
 
 }

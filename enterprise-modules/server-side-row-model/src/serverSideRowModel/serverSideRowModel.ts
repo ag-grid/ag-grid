@@ -27,6 +27,7 @@ import {
     RowNode,
     RowRenderer,
     SortController,
+    SortModelItem,
     ServerSideStoreType
 } from "@ag-grid-community/core";
 import { ClientSideStore } from "./stores/clientSideStore";
@@ -166,11 +167,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
-        rootStore.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
+        rootStore.refreshAfterSort(oldSortModel, newSortModel);
 
         this.onStoreUpdated();
     }

@@ -2,6 +2,7 @@ import {NumberSequence} from "../utils";
 import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
 import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
+import {SortModelItem} from "../sortController";
 
 export interface IServerSideStore {
 
@@ -17,7 +18,7 @@ export interface IServerSideStore {
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number | undefined;
     getChildStore(keys: string[]): IServerSideStore | null;
-    refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
+    refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void;
     refreshAfterFilter(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     purgeStore(): void;

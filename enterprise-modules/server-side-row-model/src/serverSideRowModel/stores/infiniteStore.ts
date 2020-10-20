@@ -19,7 +19,9 @@ import {
     ServerSideTransaction,
     ServerSideTransactionResult,
     StoreUpdatedEvent,
-    LoadSuccessParams
+    LoadSuccessParams,
+    ColumnController,
+    SortModelItem
 } from "@ag-grid-community/core";
 import { StoreParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -41,6 +43,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private readonly storeParams: StoreParams;
     private readonly parentRowNode: RowNode;
@@ -637,7 +640,21 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         this.purgeStore(true);
     }
 
-    public refreshAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+    public refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void {
+
+        const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
+
+        const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
+
+        const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
+
+        const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
+            this.purgeStore(true);
+            return;
+        }
+
         const level = this.parentRowNode.level + 1;
         const grouping = level < this.storeParams.rowGroupCols.length;
 
@@ -646,7 +663,6 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             const groupColVo = this.storeParams.rowGroupCols[level];
             const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
             const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
-
             shouldPurgeCache = rowGroupBlock && sortingByGroup;
         } else {
             shouldPurgeCache = true;
@@ -657,12 +673,14 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             return;
         }
 
+        console.log(` ${this.parentRowNode.field} - ${this.parentRowNode.key}`);
+
         this.getBlocksInOrder().forEach(block => {
             if (block.isGroupLevel()) {
                 const callback = (rowNode: RowNode) => {
                     const nextCache = rowNode.childrenCache;
                     if (nextCache) {
-                        nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
+                        nextCache.refreshAfterSort(oldSortModel, newSortModel);
                     }
                 };
                 block.forEachNodeShallow(callback, new NumberSequence());
@@ -670,4 +688,67 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         });
     }
 
+    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
+        const valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
+
+        for (let i = 0; i < changedColumnsInSort.length; i++) {
+            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
+        if (!this.columnController.getSecondaryColumns()) {
+            return false;
+        }
+
+        const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
+
+        for (let i = 0; i < changedColumnsInSort.length; i++) {
+            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
+    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
+    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
+    // was previously sorted by A and then the A sort now needs to be cleared.
+    private findChangedColumnsInSort(
+        newSortModel: { colId: string, sort: string }[],
+        oldSortModel: { colId: string, sort: string }[]): string[] {
+
+        let allColsInBothSorts: string[] = [];
+
+        [newSortModel, oldSortModel].forEach(sortModel => {
+            if (sortModel) {
+                const ids = sortModel.map(sm => sm.colId);
+                allColsInBothSorts = allColsInBothSorts.concat(ids);
+            }
+        });
+
+        const differentSorts = (oldSortItem: any, newSortItem: any) => {
+            const oldSort = oldSortItem ? oldSortItem.sort : null;
+            const newSort = newSortItem ? newSortItem.sort : null;
+            return oldSort !== newSort;
+        };
+
+        const differentIndexes = (oldSortItem: any, newSortItem: any) => {
+            const oldIndex = oldSortModel.indexOf(oldSortItem);
+            const newIndex = newSortModel.indexOf(newSortItem);
+            return oldIndex !== newIndex;
+        };
+
+        return allColsInBothSorts.filter(colId => {
+            const oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
+            const newSortItem = _.find(newSortModel, sm => sm.colId === colId);
+            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
+        });
+    }
 }
