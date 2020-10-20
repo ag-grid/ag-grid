@@ -837,8 +837,7 @@ export abstract class Chart extends Observable {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
                     this.onSeriesDatumPick(event, node.datum, node);
-                // TODO: remove deprecated tooltipEnabled check eventually.
-                } else if (pick.series.tooltip.enabled || pick.series.tooltipEnabled) { // cursor moved within the same node
+                } else if (pick.series.tooltip.enabled) { // cursor moved within the same node
                     this.showTooltip(event);
                 }
                 // A non-marker node (takes precedence over marker nodes) was highlighted.
@@ -930,8 +929,7 @@ export abstract class Chart extends Observable {
 
         this.highlightDatum(datum);
 
-        // TODO: remove deprecated tooltipEnabled check eventually.
-        const html = (datum.series.tooltip.enabled || datum.series.tooltipEnabled) && datum.series.getTooltipHtml(datum);
+        const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
         if (html) {
             this.showTooltip(meta, html);
