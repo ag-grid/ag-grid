@@ -14,12 +14,12 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {AgCartesianAxisOptions, ChartAxisPosition, find} from "ag-charts-community";
-import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartController } from "../../../chartController";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
@@ -99,7 +99,7 @@ export class AxisPanel extends Component {
                 .onValueChange(newValue => {
                     const chartProxy = this.getChartProxy();
 
-                    chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+                    chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
 
                     this.chartController.updateForDataChange();
                 });
@@ -169,7 +169,7 @@ export class AxisPanel extends Component {
             const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
 
             if (axis) {
-                axis.label.rotation = newValue;
+                axis.label!.rotation = newValue;
                 if (axis.position === ChartAxisPosition.Bottom) {
                     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue); // TODO: fix this
                 } else if (axis.position === ChartAxisPosition.Left) {

@@ -69,7 +69,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             stroke: seriesDefaults.stroke.colors[0],
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+            tooltipRenderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
             type: 'histogram'
         }];
 
@@ -84,7 +84,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
         series.data = params.data;
         series.xKey = xField.colId;
-        series.xName = xField.displayName;
+        series.xName = xField.displayName!;
 
         // for now, only constant width is supported via integrated charts
         series.areaPlot = false;

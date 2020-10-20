@@ -6,10 +6,10 @@ import {
     HighlightOptions,
     ScatterSeriesOptions
 } from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries} from "ag-charts-community";
-import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
-import {ChartDataModel} from "../../chartDataModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, ScatterSeries } from "ag-charts-community";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartDataModel } from "../../chartDataModel";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -45,10 +45,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 width: seriesDefaults.strokeWidth
             },
             marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             paired: true
@@ -106,7 +106,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         let previousSeries: ScatterSeries | undefined;
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
-            const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
+            const existingSeries = existingSeriesById.get(seriesDefinition!.yField.colId);
             const marker = { ...seriesDefaults.marker };
             if (marker.type) { // deprecated
                 marker.shape = marker.type;
@@ -130,7 +130,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 xField: xFieldDefinition,
                 yField: yFieldDefinition,
                 sizeField: sizeFieldDefinition
-            } = seriesDefinition;
+            } = seriesDefinition!;
 
             series.title = `${yFieldDefinition.displayName} vs ${xFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;
@@ -199,7 +199,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         return options;
     }
 
-    private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): SeriesDefinition[] {
+    private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
         if (fields.length < 2) { return []; }
 
         const isBubbleChart = this.chartType === ChartType.Bubble;

@@ -9,12 +9,12 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
-import {initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider} from "../widgetInitialiser";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
+import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 
 export class BarSeriesPanel extends Component {
 
@@ -94,7 +94,6 @@ export class BarSeriesPanel extends Component {
             .setValue(this.getChartProxy().getSeriesOption("lineDash"))
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
     }
-
 
     private initOpacity() {
         initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());

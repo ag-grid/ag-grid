@@ -1,7 +1,7 @@
-import {ChartTranslator} from "../../chartTranslator";
-import {ChartProxy} from "../../chartProxies/chartProxy";
-import {AgSlider, FontStyle, FontWeight} from "@ag-grid-community/core";
-import {Font, FontPanelParams} from "./fontPanel";
+import { ChartTranslator } from "../../chartTranslator";
+import { ChartProxy } from "../../chartProxies/chartProxy";
+import { AgSlider, FontStyle, FontWeight } from "@ag-grid-community/core";
+import { Font, FontPanelParams } from "./fontPanel";
 
 export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartProxy: ChartProxy<any, any>) {
     seriesLineOpacitySlider

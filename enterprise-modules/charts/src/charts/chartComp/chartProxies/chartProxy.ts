@@ -61,7 +61,7 @@ export interface ChartProxyParams {
 
 export interface FieldDefinition {
     colId: string;
-    displayName: string;
+    displayName: string | null;
 }
 
 export interface UpdateChartParams {
@@ -158,8 +158,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
 
-        const gridOptionsThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        const apiThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
+        const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
@@ -191,7 +191,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return _.includes(Object.keys(themes), themeName);
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartThemeOverrides, apiThemeOverrides: AgChartThemeOverrides) {
+    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
         if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
         if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
@@ -526,7 +526,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected destroyChart(): void {
         if (this.chart) {
             this.chart.destroy();
-            this.chart = undefined;
+            (this.chart as any) = undefined;
         }
     }
 }

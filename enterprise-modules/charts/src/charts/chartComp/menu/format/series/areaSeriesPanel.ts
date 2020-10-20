@@ -9,12 +9,12 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ShadowPanel} from "./shadowPanel";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
-import {initFillOpacitySlider, initLineOpacitySlider} from "../widgetInitialiser";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ShadowPanel } from "./shadowPanel";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
+import { initFillOpacitySlider, initLineOpacitySlider } from "../widgetInitialiser";
 
 export class AreaSeriesPanel extends Component {
 

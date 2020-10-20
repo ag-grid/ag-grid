@@ -1,7 +1,7 @@
-import {_, Autowired, Component, FontStyle, FontWeight, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { _, Autowired, Component, FontStyle, FontWeight, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../../chartController";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export default class TitlePanel extends Component {
 

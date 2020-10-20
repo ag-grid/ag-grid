@@ -1,7 +1,7 @@
-import {AgChart, AgPieSeriesOptions, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart} from "ag-charts-community";
-import {_, HighlightOptions, PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {PolarChartProxy} from "./polarChartProxy";
+import { AgChart, AgPieSeriesOptions, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
+import { _, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { PolarChartProxy } from "./polarChartProxy";
 
 export class DoughnutChartProxy extends PolarChartProxy {
 
@@ -20,7 +20,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             title: seriesDefaults.title,
             label: {
                 ...seriesDefaults.label,
-                minRequiredAngle: seriesDefaults.label.minAngle
+                minRequiredAngle: seriesDefaults.label!.minAngle
             },
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
@@ -88,20 +88,20 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 showInLegend: index === 0, // show legend items for the first series only
                 title: {
                     ...seriesDefaults.title,
-                    text: seriesDefaults.title.text || f.displayName,
+                    text: seriesDefaults.title.text || f.displayName!,
                 },
                 fills: seriesDefaults.fill.colors,
                 fillOpacity: seriesDefaults.fill.opacity,
                 strokes: seriesDefaults.stroke.colors,
                 strokeOpacity: seriesDefaults.stroke.opacity,
                 strokeWidth: seriesDefaults.stroke.width,
-                tooltipRenderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                tooltipRenderer: (seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer) || undefined,
             };
 
             const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
             const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
-            pieSeries.angleName = f.displayName;
+            pieSeries.angleName = f.displayName!;
             pieSeries.labelKey = params.category.id;
             pieSeries.labelName = params.category.name;
             pieSeries.data = params.data;

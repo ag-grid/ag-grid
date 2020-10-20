@@ -1,7 +1,7 @@
-import {AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions} from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries} from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgLineSeriesOptions, CartesianChartOptions, HighlightOptions, LineSeriesOptions } from "@ag-grid-community/core";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
@@ -73,12 +73,12 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             const stroke = strokes[index % strokes.length];
 
             if (lineSeries) {
-                lineSeries.title = f.displayName;
+                lineSeries.title = f.displayName!;
                 lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
-                lineSeries.yName = f.displayName;
+                lineSeries.yName = f.displayName!;
                 lineSeries.marker.fill = fill;
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
@@ -113,7 +113,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
-                chart.addSeriesAfter(lineSeries, previousSeries);
+                chart.addSeriesAfter(lineSeries!, previousSeries);
             }
 
             previousSeries = lineSeries;
@@ -141,10 +141,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 width: seriesDefaults.strokeWidth
             },
             marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth
             },
             lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
             lineDashOffset: seriesDefaults.lineDashOffset,

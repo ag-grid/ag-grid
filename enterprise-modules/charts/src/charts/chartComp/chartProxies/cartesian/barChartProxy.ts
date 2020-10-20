@@ -8,9 +8,9 @@ import {
     DropShadowOptions,
     HighlightOptions
 } from "@ag-grid-community/core";
-import {AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, ChartTheme} from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, ChartTheme } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
@@ -106,7 +106,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(f => f.colId);
-        barSeries.yNames = params.fields.map(f => f.displayName);
+        barSeries.yNames = params.fields.map(f => f.displayName!);
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
 

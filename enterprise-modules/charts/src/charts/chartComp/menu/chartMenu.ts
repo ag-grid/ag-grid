@@ -11,9 +11,9 @@ import {
     Promise
 } from "@ag-grid-community/core";
 
-import {TabbedChartMenu} from "./tabbedChartMenu";
-import {ChartController} from "../chartController";
-import {ChartTranslator} from "../chartTranslator";
+import { TabbedChartMenu } from "./tabbedChartMenu";
+import { ChartController } from "../chartController";
+import { ChartTranslator } from "../chartTranslator";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -109,7 +109,7 @@ export class ChartMenu extends Component {
         _.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
 
         const tooltipKey = active ? 'chartUnlinkToolbarTooltip' : 'chartLinkToolbarTooltip';
-        let tooltipTitle = this.chartTranslator.translate(tooltipKey);
+        const tooltipTitle = this.chartTranslator.translate(tooltipKey);
         if (tooltipTitle) {
             target.title = tooltipTitle;
         }
@@ -129,10 +129,10 @@ export class ChartMenu extends Component {
                 this.gridOptionsWrapper,
                 undefined,
                 true
-            );
+            )!;
             _.addCssClass(buttonEl, 'ag-chart-menu-icon');
 
-            let tooltipTitle = this.chartTranslator.translate(button + 'ToolbarTooltip');
+            const tooltipTitle = this.chartTranslator.translate(button + 'ToolbarTooltip');
             if (tooltipTitle) {
                 buttonEl.title = tooltipTitle;
             }
@@ -201,7 +201,7 @@ export class ChartMenu extends Component {
         if (!this.menuPanel) { return; }
 
         this.menuVisible = true;
-        this.showParent(this.menuPanel.getWidth());
+        this.showParent(this.menuPanel.getWidth()!);
         this.refreshMenuClasses();
     }
 

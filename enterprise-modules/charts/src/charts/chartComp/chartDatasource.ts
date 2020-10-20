@@ -13,7 +13,7 @@ import {
     RowNode,
     ValueService
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
+import { ChartDataModel, ColState } from "./chartDataModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -196,7 +196,7 @@ export class ChartDatasource extends BeanStub {
             let aggResult: any = 0;
 
             if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
-                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
+                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
             }
 
             groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -232,13 +232,13 @@ export class ChartDatasource extends BeanStub {
                 return childId.split(groupId)[1][0];
             }
             return extractSeparator(columnGroup.getParent(), groupId);
-        }
+        };
 
         const firstSecondaryCol = secondaryColumns[0];
         return extractSeparator(firstSecondaryCol.getParent(), firstSecondaryCol.getColId());
     }
 
-    private static getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
+    private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
         const labels = [initialLabel];
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;
