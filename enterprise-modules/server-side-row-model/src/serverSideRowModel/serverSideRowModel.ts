@@ -28,7 +28,8 @@ import {
     RowRenderer,
     SortController,
     SortModelItem,
-    ServerSideStoreType
+    ServerSideStoreType,
+    RefreshSortParams
 } from "@ag-grid-community/core";
 import { ClientSideStore } from "./stores/clientSideStore";
 import { InfiniteStore } from "./stores/infiniteStore";
@@ -167,11 +168,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void {
+    public refreshAfterSort(params: RefreshSortParams): void {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
-        rootStore.refreshAfterSort(oldSortModel, newSortModel);
+        rootStore.refreshAfterSort(params);
 
         this.onStoreUpdated();
     }

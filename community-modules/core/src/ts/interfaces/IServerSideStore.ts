@@ -18,7 +18,7 @@ export interface IServerSideStore {
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number | undefined;
     getChildStore(keys: string[]): IServerSideStore | null;
-    refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void;
+    refreshAfterSort(params: RefreshSortParams): void;
     refreshAfterFilter(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
     purgeStore(): void;
@@ -26,5 +26,13 @@ export interface IServerSideStore {
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;
     getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
+}
 
+export interface RefreshSortParams {
+    oldSortModel: SortModelItem[];
+    newSortModel: SortModelItem[];
+    valueColSortChanged: boolean;
+    secondaryColSortChanged: boolean;
+    sortAlwaysResets: boolean;
+    changedColumnsInSort: string[];
 }

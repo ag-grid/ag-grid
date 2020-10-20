@@ -23,7 +23,7 @@ import {
     LoadSuccessParams,
     FilterManager,
     SelectionChangedEvent,
-    SortModelItem
+    RefreshSortParams
 } from "@ag-grid-community/core";
 import {StoreParams} from "../serverSideRowModel";
 import {StoreUtils} from "./storeUtils";
@@ -340,9 +340,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.forEachChildStore(store => store.refreshAfterFilter());
     }
 
-    public refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void {
+    public refreshAfterSort(params: RefreshSortParams): void {
         this.sortRowNodes();
-        this.forEachChildStore(store => store.refreshAfterSort(oldSortModel, newSortModel));
+        this.forEachChildStore(store => store.refreshAfterSort(params));
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {

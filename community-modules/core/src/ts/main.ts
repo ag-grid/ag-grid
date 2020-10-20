@@ -187,7 +187,7 @@ export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
 export { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore } from "./interfaces/IServerSideStore";
+export { IServerSideStore, RefreshSortParams } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
