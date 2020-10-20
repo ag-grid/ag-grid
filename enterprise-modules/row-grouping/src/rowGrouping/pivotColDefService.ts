@@ -130,7 +130,7 @@ export class PivotColDefService extends BeanStub {
         columnIdSequence: NumberSequence
     ) {
         if (
-            this.gridOptionsWrapper.isSuppressExpandablePivotGroups() || 
+            this.gridOptionsWrapper.isSuppressExpandablePivotGroups() ||
             this.gridOptionsWrapper.getPivotColumnGroupTotals()
         ) {
             return;

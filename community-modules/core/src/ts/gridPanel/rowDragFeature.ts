@@ -21,7 +21,7 @@ import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
 import { exists, missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
-import {PaginationProxy} from "../pagination/paginationProxy";
+import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;

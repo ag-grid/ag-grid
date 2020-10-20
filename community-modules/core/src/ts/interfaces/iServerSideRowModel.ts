@@ -1,5 +1,5 @@
 import { IRowModel } from "./iRowModel";
-import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
 
 export interface IServerSideRowModel extends IRowModel {
     purgeStore(route?: string[]): void;

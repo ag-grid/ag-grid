@@ -1778,7 +1778,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 bottom = true;
             }
 
-            if (!left && leftCol &&range.columns.indexOf(leftCol) < 0) {
+            if (!left && leftCol && range.columns.indexOf(leftCol) < 0) {
                 left = true;
             }
 

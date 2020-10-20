@@ -177,7 +177,7 @@ class DateTimeListPageEntryComp extends Component {
     }
 
     private onDataChange() {
-        console.log(this.entry.value, this.currentValue)
+        // console.log(this.entry.value, this.currentValue);
         _.addOrRemoveCssClass(this.getGui(),
             'ag-date-time-list-page-entry-is-current',
             this.entry.value && this.currentValue && this.entry.value.getTime() === this.currentValue.getTime());

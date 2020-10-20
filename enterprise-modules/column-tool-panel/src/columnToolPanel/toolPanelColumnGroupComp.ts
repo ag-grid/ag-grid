@@ -18,7 +18,7 @@ import {
     ColumnEventType, Component
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ModelItemUtils } from "./modelItemUtils";
 
 export class ToolPanelColumnGroupComp extends Component {
 
@@ -191,7 +191,7 @@ export class ToolPanelColumnGroupComp extends Component {
                 } else {
                     childColumns.push(child.getColumn());
                 }
-            })
+            });
         };
 
         extractCols(this.modelItem.getChildren());

@@ -12,9 +12,9 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 

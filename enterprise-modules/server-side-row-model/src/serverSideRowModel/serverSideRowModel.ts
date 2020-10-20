@@ -273,7 +273,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             case undefined :
                 return ServerSideStoreType.Infinite;
             default :
-                const types = Object.keys(ServerSideStoreType).join(', ')
+                const types = Object.keys(ServerSideStoreType).join(', ');
                 console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
                 return ServerSideStoreType.Infinite;
         }

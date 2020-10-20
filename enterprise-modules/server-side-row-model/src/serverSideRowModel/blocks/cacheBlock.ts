@@ -19,11 +19,11 @@ import {
     RowRenderer,
     ValueService
 } from "@ag-grid-community/core";
-import {StoreUtils} from "../stores/storeUtils";
-import {BlockUtils} from "./blockUtils";
-import {StoreParams} from "../serverSideRowModel";
-import {InfiniteStore} from "../stores/infiniteStore";
-import {NodeManager} from "../nodeManager";
+import { StoreUtils } from "../stores/storeUtils";
+import { BlockUtils } from "./blockUtils";
+import { StoreParams } from "../serverSideRowModel";
+import { InfiniteStore } from "../stores/infiniteStore";
+import { NodeManager } from "../nodeManager";
 
 export class CacheBlock extends RowNodeBlock {
 

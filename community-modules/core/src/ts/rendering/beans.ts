@@ -31,11 +31,11 @@ import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
-import {RowCssClassCalculator} from "./row/rowCssClassCalculator";
-import {IRowModel} from "../interfaces/iRowModel";
-import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
-import {IServerSideRowModel} from "../interfaces/iServerSideRowModel";
-import {ResizeObserverService} from "../misc/resizeObserverService";
+import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp

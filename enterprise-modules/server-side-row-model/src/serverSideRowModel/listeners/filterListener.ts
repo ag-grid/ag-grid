@@ -1,5 +1,5 @@
-import {Autowired, Bean, BeanStub, Events, PostConstruct, FilterManager} from "@ag-grid-community/core";
-import {ServerSideRowModel} from "../serverSideRowModel";
+import { Autowired, Bean, BeanStub, Events, PostConstruct, FilterManager } from "@ag-grid-community/core";
+import { ServerSideRowModel } from "../serverSideRowModel";
 
 @Bean('ssrmFilterListener')
 export class FilterListener extends BeanStub {

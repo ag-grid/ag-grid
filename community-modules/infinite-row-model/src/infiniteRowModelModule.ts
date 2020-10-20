@@ -3,5 +3,5 @@ import { InfiniteRowModel } from "./infiniteRowModel/infiniteRowModel";
 
 export const InfiniteRowModelModule: Module = {
     moduleName: ModuleNames.InfiniteRowModelModule,
-    rowModels: {'infinite': InfiniteRowModel}
+    rowModels: {infinite: InfiniteRowModel}
 };

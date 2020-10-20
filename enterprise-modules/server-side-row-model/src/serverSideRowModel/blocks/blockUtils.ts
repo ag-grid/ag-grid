@@ -26,7 +26,7 @@ export class BlockUtils extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber()
+        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }

@@ -1,10 +1,10 @@
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ValueService} from "../valueService/valueService";
-import {_} from "../utils";
-import {Constants} from "../constants/constants";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ValueService } from "../valueService/valueService";
+import { _ } from "../utils";
+import { Constants } from "../constants/constants";
 
 export interface SortOption {
     sort: string;

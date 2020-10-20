@@ -106,7 +106,7 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName,
+            chartThemeName: chartThemeName!,
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -179,7 +179,7 @@ export class GridChartComp extends Component {
             chartId: this.model.getChartId(),
             chartType,
             chartThemeName: this.model.getChartThemeName(),
-            processChartOptions: processChartOptionsFunc,
+            processChartOptions: processChartOptionsFunc!,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: customChartThemes,
@@ -203,7 +203,11 @@ export class GridChartComp extends Component {
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
 
-        _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
+        const canvas = this.eChart.querySelector('canvas');
+
+        if (canvas) {
+            _.addCssClass(canvas, 'ag-charts-canvas');
+        }
 
         this.chartController.setChartProxy(this.chartProxy);
     }
@@ -351,7 +355,7 @@ export class GridChartComp extends Component {
             grouping: model.isGrouping(),
             category: {
                 id: selectedDimension.colId,
-                name: selectedDimension.displayName,
+                name: selectedDimension.displayName!,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
             fields

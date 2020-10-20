@@ -15,10 +15,10 @@ import {
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
-import {ChartProxy} from "./chartProxies/chartProxy";
-import {getChartTheme} from "ag-charts-community";
-import {ChartModelType} from "@ag-grid-community/core/dist/cjs/interfaces/IChartService";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartProxy } from "./chartProxies/chartProxy";
+import { getChartTheme } from "ag-charts-community";
+import { ChartModelType } from "@ag-grid-community/core/dist/cjs/interfaces/IChartService";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

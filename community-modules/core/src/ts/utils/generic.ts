@@ -22,11 +22,11 @@ export function missing(value: any): boolean {
 }
 
 export function missingOrEmpty<T>(value?: T[] | string | null): boolean {
-    return !value || missing(value) || value.length === 0;
+    return value == null || value.length === 0;
 }
 
 export function toStringOrNull(value: any): string | null {
-    return exists(value) && value.toString ? value.toString() : null;
+    return value != null && typeof value.toString === 'function' ? value.toString() : null;
 }
 
 // for parsing html attributes, where we want empty strings and missing attributes to be undefined

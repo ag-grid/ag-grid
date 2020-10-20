@@ -1,4 +1,4 @@
-import {RowNode} from "../entities/rowNode";
+import { RowNode } from "../entities/rowNode";
 
 export interface ServerSideTransaction {
     route?: string[];

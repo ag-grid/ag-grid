@@ -11,15 +11,15 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartTranslator } from "../../chartTranslator";
 
-export type Font = {
+export interface Font {
     family?: string;
     style?: FontStyle;
     weight?: FontWeight;
     size?: number;
     color?: string;
-};
+}
 
 export interface FontPanelParams {
     name?: string;
@@ -147,7 +147,7 @@ export class FontPanel extends Component {
         this.familySelect.addOptions(options)
             .setInputWidth('flex')
             .setValue(`${initialValue}`)
-            .onValueChange(newValue => this.params.setFont({ family: newValue }));
+            .onValueChange(newValue => this.params.setFont({ family: newValue! }));
     }
 
     private initFontSizeSelect() {
@@ -155,7 +155,7 @@ export class FontPanel extends Component {
         const { size } = this.params.initialFont;
 
         if (!_.includes(sizes, size)) {
-            sizes.push(size);
+            sizes.push(size!);
         }
 
         const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
@@ -163,7 +163,7 @@ export class FontPanel extends Component {
         this.sizeSelect.addOptions(options)
             .setInputWidth('flex')
             .setValue(`${size}`)
-            .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue, 10) }));
+            .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue!, 10) }));
 
         this.sizeSelect.setLabel(this.chartTranslator.translate('size'));
     }
@@ -196,7 +196,7 @@ export class FontPanel extends Component {
             .onValueChange(newValue => {
                 const selectedWeightStyle = _.find(weightStyles, x => x.name === newValue);
 
-                this.params.setFont({ weight: selectedWeightStyle.weight, style: selectedWeightStyle.style });
+                this.params.setFont({ weight: selectedWeightStyle!.weight, style: selectedWeightStyle!.style });
             });
     }
 
@@ -205,7 +205,7 @@ export class FontPanel extends Component {
             .setLabel(this.chartTranslator.translate('color'))
             .setInputWidth(45)
             .setValue(`${this.params.initialFont.color}`)
-            .onValueChange(newColor => this.params.setFont({ color: newColor }));
+            .onValueChange(newColor => this.params.setFont({ color: newColor! }));
     }
 
     private destroyActiveComps(): void {

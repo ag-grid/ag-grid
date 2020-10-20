@@ -3,7 +3,7 @@ import { ExpressionService } from "../../valueService/expressionService";
 import { Constants } from "../../constants/constants";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
 import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";

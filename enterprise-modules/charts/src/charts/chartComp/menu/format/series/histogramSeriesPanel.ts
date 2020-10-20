@@ -9,12 +9,12 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {HistogramChartProxy} from "../../../chartProxies/cartesian/histogramChartProxy";
-import {initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider} from "../widgetInitialiser";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { HistogramChartProxy } from "../../../chartProxies/cartesian/histogramChartProxy";
+import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 
 export class HistogramSeriesPanel extends Component {
 

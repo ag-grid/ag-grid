@@ -89,9 +89,9 @@ import { HeaderNavigationService } from "./headerRendering/header/headerNavigati
 import { missing, exists } from "./utils/generic";
 import { assign, iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columnController/columnDefFactory";
-import {RowCssClassCalculator} from "./rendering/row/rowCssClassCalculator";
-import {RowNodeBlockLoader} from "./rowNodeCache/rowNodeBlockLoader";
-import {RowNodeSorter} from "./rowNodes/rowNodeSorter";
+import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
+import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
+import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 
 export interface GridParams {
     // used by Web Components

@@ -1,8 +1,8 @@
-import {ChartOptions, ChartType} from "./iChartOptions";
-import {ChartRef} from "../entities/gridOptions";
-import {CreatePivotChartParams, CreateRangeChartParams} from "../gridApi";
-import {CellRangeParams} from "./iRangeController";
-import {IAggFunc} from "../entities/colDef";
+import { ChartOptions, ChartType } from "./iChartOptions";
+import { ChartRef } from "../entities/gridOptions";
+import { CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
+import { CellRangeParams } from "./iRangeController";
+import { IAggFunc } from "../entities/colDef";
 
 export interface GetChartImageDataUrlParams {
     type?: string;

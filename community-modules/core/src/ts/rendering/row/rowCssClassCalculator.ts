@@ -1,9 +1,9 @@
-import {exists} from "../../utils/generic";
-import {RowNode} from "../../entities/rowNode";
-import {pushAll} from "../../utils/array";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, Bean} from "../../context/context";
-import {StylingService} from "../../styling/stylingService";
+import { exists } from "../../utils/generic";
+import { RowNode } from "../../entities/rowNode";
+import { pushAll } from "../../utils/array";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Autowired, Bean } from "../../context/context";
+import { StylingService } from "../../styling/stylingService";
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;

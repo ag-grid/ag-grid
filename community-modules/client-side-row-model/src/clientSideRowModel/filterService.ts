@@ -7,7 +7,7 @@ import {
     PostConstruct,
     RowNode,
     BeanStub
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
 @Bean("filterService")
 export class FilterService extends BeanStub {

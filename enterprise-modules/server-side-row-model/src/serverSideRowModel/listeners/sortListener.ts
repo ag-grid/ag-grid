@@ -13,7 +13,7 @@ import {
     SortModelItem,
     RefreshSortParams
 } from "@ag-grid-community/core";
-import {ServerSideRowModel} from "../serverSideRowModel";
+import { ServerSideRowModel } from "../serverSideRowModel";
 
 @Bean('ssrmSortService')
 export class SortListener extends BeanStub {
@@ -62,17 +62,17 @@ export class SortListener extends BeanStub {
 
     private replaceAutoGroupColumnWithActualRowGroupColumns(sortModel: SortModelItem[]): void {
         // find index of auto group column in sort model
-        const autoGroupSortModel = sortModel.find( sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
+        const autoGroupSortModel = sortModel.find(sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
 
         // replace auto column with individual group columns
         if (autoGroupSortModel) {
 
             // remove auto group column
-            let autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
+            const autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
             _.removeFromArray(sortModel, autoGroupSortModel);
 
-            const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length==0;
-            const mapColumnToSortModel = (col: Column) => { return { colId: col.getId(), sort: autoGroupSortModel.sort} };
+            const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length == 0;
+            const mapColumnToSortModel = (col: Column) => ({ colId: col.getId(), sort: autoGroupSortModel.sort});
 
             const newModels = this.columnController.getRowGroupColumns()
                 .filter(isNotInSortModel)

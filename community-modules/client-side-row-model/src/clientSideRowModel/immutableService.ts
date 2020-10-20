@@ -10,7 +10,7 @@ import {
     RowDataTransaction,
     RowNode,
     BeanStub
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
 import { ClientSideRowModel } from "./clientSideRowModel";
 

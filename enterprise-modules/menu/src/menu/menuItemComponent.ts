@@ -142,7 +142,7 @@ export class MenuItemComponent extends Component {
         const eGui = this.getGui();
 
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
-            { eventSource: eGui, ePopup })
+            { eventSource: eGui, ePopup });
 
         const closePopup = this.popupService.addPopup({
             modal: true,
@@ -249,7 +249,7 @@ export class MenuItemComponent extends Component {
         return {
             location: 'menu',
             value: this.tooltip
-        }
+        };
     }
 
     private addShortcut(): void {

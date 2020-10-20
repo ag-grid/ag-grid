@@ -15,7 +15,7 @@ import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
-import {BeanStub} from "./context/beanStub";
+import { BeanStub } from "./context/beanStub";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {

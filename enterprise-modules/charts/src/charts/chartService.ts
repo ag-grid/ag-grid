@@ -22,7 +22,7 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
-import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
+import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
@@ -160,7 +160,7 @@ export class ChartService extends BeanStub implements IChartService {
             const theme = this.environment.getTheme();
 
             if (theme.el && !theme.el.contains(container)) {
-                _.addCssClass(container, theme.theme);
+                _.addCssClass(container, theme.theme!);
             }
         } else if (createChartContainerFunc) {
             // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
@@ -203,7 +203,7 @@ export class ChartService extends BeanStub implements IChartService {
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
     }
 
-    private mapToRangeParam(model: ChartModel, chartContainer: HTMLElement): CreateRangeChartParams {
+    private mapToRangeParam(model: ChartModel, chartContainer?: HTMLElement): CreateRangeChartParams {
         return {
             cellRange: model.cellRange,
             chartType: model.chartType,
@@ -216,7 +216,7 @@ export class ChartService extends BeanStub implements IChartService {
         };
     }
 
-    private mapToPivotParams(model: ChartModel, chartContainer: HTMLElement): CreatePivotChartParams {
+    private mapToPivotParams(model: ChartModel, chartContainer?: HTMLElement): CreatePivotChartParams {
         return {
             chartType: model.chartType,
             chartThemeName: model.chartThemeName,

@@ -16,7 +16,7 @@ export class ColumnModelItem implements IEventEmitter {
     private readonly columnGroup: OriginalColumnGroup;
     private readonly column: Column;
     private readonly dept: number;
-    private readonly children: ColumnModelItem[]
+    private readonly children: ColumnModelItem[];
 
     private expanded: boolean | undefined;
     private passesFilter: boolean;

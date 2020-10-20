@@ -334,8 +334,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
         let filterInstance: IFilterComp;
 
-        const filterParams: IFilterParams =
-        {
+        const filterParams: IFilterParams = {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged(index),
