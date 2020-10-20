@@ -252,7 +252,7 @@ export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSort
 export { GridCore } from "./gridCore";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
-export { SortController } from "./sortController";
+export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export * from "./utils";
 export { ValueService } from "./valueService/valueService";

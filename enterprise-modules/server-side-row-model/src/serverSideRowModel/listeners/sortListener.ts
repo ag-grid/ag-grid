@@ -8,7 +8,9 @@ import {
     Events,
     GridOptionsWrapper,
     PostConstruct,
-    SortController
+    SortController,
+    Column,
+    SortModelItem
 } from "@ag-grid-community/core";
 import {ServerSideRowModel} from "../serverSideRowModel";
 
@@ -28,7 +30,7 @@ export class SortListener extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
-    public extractSortModel(): { colId: string; sort: string } [] {
+    public extractSortModel(): SortModelItem [] {
         const sortModel = this.sortController.getSortModel();
 
         // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
@@ -37,45 +39,15 @@ export class SortListener extends BeanStub {
             return sortModel;
         }
 
-        const rowGroupCols = this.serverSideRowModel.columnsToValueObjects(this.columnController.getRowGroupColumns());
+        // it autoCol is active, we don't want to send this to the server. instead we want to
+        // send the
+        this.replaceAutoGroupColumnWithActualRowGroupColumns(sortModel);
+        this.removeMultiColumnPrefixOnColumnIds(sortModel);
 
-        // find index of auto group column in sort model
-        let autoGroupIndex = -1;
-        for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === Constants.GROUP_AUTO_COLUMN_ID) {
-                autoGroupIndex = i;
-                break;
-            }
-        }
+        return sortModel;
+    }
 
-        // replace auto column with individual group columns
-        if (autoGroupIndex > -1) {
-            const individualGroupCols =
-                rowGroupCols.map(group => {
-                    return {
-                        colId: group.id,
-                        sort: sortModel[autoGroupIndex].sort
-                    };
-                });
-
-            // remove auto group column
-            sortModel.splice(autoGroupIndex, 1);
-
-            // insert individual group columns
-            for (let i = 0; i < individualGroupCols.length; i++) {
-                const individualGroupCol = individualGroupCols[i];
-
-                // don't add individual group column if non group column already exists as it gets precedence
-                const sameNonGroupColumnExists = sortModel.some(sm => sm.colId === individualGroupCol.colId);
-                if (sameNonGroupColumnExists) {
-                    continue;
-                }
-
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
-            }
-        }
-
-        // strip out multi-column prefix on colId's
+    private removeMultiColumnPrefixOnColumnIds(sortModel: SortModelItem[]): void {
         if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
             const multiColumnPrefix = Constants.GROUP_AUTO_COLUMN_ID + "-";
 
@@ -85,8 +57,28 @@ export class SortListener extends BeanStub {
                 }
             }
         }
+    }
 
-        return sortModel;
+    private replaceAutoGroupColumnWithActualRowGroupColumns(sortModel: SortModelItem[]): void {
+        // find index of auto group column in sort model
+        const autoGroupSortModel = sortModel.find( sm => sm.colId == Constants.GROUP_AUTO_COLUMN_ID);
+
+        // replace auto column with individual group columns
+        if (autoGroupSortModel) {
+
+            // remove auto group column
+            let autoGroupIndex = sortModel.indexOf(autoGroupSortModel);
+            _.removeFromArray(sortModel, autoGroupSortModel);
+
+            const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length==0;
+            const mapColumnToSortModel = (col: Column) => { return { colId: col.getId(), sort: autoGroupSortModel.sort} };
+
+            const newModels = this.columnController.getRowGroupColumns()
+                .filter(isNotInSortModel)
+                .map(mapColumnToSortModel);
+
+            _.insertArrayIntoArray(sortModel, newModels, autoGroupIndex);
+        }
     }
 
     private onSortChanged(): void {

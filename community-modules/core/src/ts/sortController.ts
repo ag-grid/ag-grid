@@ -9,6 +9,11 @@ import { GridApi } from "./gridApi";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 
+export interface SortModelItem {
+    colId: string;
+    sort: string;
+}
+
 @Bean('sortController')
 export class SortController extends BeanStub {
 
