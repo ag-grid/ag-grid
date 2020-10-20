@@ -654,19 +654,20 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         if (shouldPurgeCache) {
             this.purgeStore(true);
-        } else {
-            this.getBlocksInOrder().forEach(block => {
-                if (block.isGroupLevel()) {
-                    const callback = (rowNode: RowNode) => {
-                        const nextCache = rowNode.childrenCache;
-                        if (nextCache) {
-                            nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
-                        }
-                    };
-                    block.forEachNodeShallow(callback, new NumberSequence());
-                }
-            });
+            return;
         }
+
+        this.getBlocksInOrder().forEach(block => {
+            if (block.isGroupLevel()) {
+                const callback = (rowNode: RowNode) => {
+                    const nextCache = rowNode.childrenCache;
+                    if (nextCache) {
+                        nextCache.refreshAfterSort(changedColumnsInSort, rowGroupColIds);
+                    }
+                };
+                block.forEachNodeShallow(callback, new NumberSequence());
+            }
+        });
     }
 
 }
