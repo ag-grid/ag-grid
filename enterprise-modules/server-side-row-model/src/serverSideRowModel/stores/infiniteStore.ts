@@ -643,14 +643,11 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     public refreshAfterSort(oldSortModel: SortModelItem [], newSortModel: SortModelItem []): void {
 
         const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-
-        const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-
-        const sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-        const sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
+        const valueColSortChanged = this.isSortingWithValueColumn(changedColumnsInSort);
+        const secondaryColSortChanged = this.isSortingWithSecondaryColumn(changedColumnsInSort);
 
         const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
+        if (sortAlwaysResets || valueColSortChanged || secondaryColSortChanged) {
             this.purgeStore(true);
             return;
         }
@@ -660,6 +657,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         let shouldPurgeCache: boolean;
         if (grouping) {
+            const rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
             const groupColVo = this.storeParams.rowGroupCols[level];
             const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
             const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
