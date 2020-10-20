@@ -736,8 +736,7 @@ export class SetFilter extends ProvidedFilter {
     public refreshVirtualList(): void {
         if (this.setFilterParams && this.setFilterParams.refreshValuesOnOpen) {
             this.refreshFilterValues();
-        }
-        else {
+        } else {
             this.refresh();
         }
     }

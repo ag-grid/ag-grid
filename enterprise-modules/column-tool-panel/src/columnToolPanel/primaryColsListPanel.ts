@@ -142,7 +142,7 @@ export class PrimaryColsListPanel extends Component {
             this.buildTreeFromProvidedColumnDefs();
         }
 
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
@@ -159,7 +159,7 @@ export class PrimaryColsListPanel extends Component {
             return colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
         });
 
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
@@ -204,7 +204,7 @@ export class PrimaryColsListPanel extends Component {
             addListeners(item);
 
             recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
-        }
+        };
 
         const createColumnItem = (column: Column, dept: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
@@ -214,7 +214,7 @@ export class PrimaryColsListPanel extends Component {
             const displayName = this.columnController.getDisplayNameForColumn(column, 'toolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
-        }
+        };
 
         this.destroyColumnTree();
         recursivelyBuild(columnTree, 0, this.allColsTree);
@@ -263,7 +263,7 @@ export class PrimaryColsListPanel extends Component {
                 if (item.isGroup()) {
                     recursiveFunc(item.getChildren());
                 }
-            })
+            });
         };
         recursiveFunc(this.allColsTree);
     }
@@ -367,7 +367,7 @@ export class PrimaryColsListPanel extends Component {
 
     public setFilterText(filterText: string) {
         this.filterText = _.exists(filterText) ? filterText.toLowerCase() : null;
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 

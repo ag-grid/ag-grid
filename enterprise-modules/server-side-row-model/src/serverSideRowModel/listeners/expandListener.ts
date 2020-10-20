@@ -10,7 +10,7 @@ import {
     RowNode,
     Bean
 } from "@ag-grid-community/core";
-import {cacheFactory, ServerSideRowModel} from "../serverSideRowModel";
+import { cacheFactory, ServerSideRowModel } from "../serverSideRowModel";
 
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {

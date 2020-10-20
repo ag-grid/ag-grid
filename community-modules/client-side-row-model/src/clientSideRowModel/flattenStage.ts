@@ -9,7 +9,7 @@ import {
     RowNode,
     SelectionController,
     StageExecuteParams
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
@@ -77,7 +77,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
             const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
                 isParent &&
-                rowNode.leafGroup && 
+                rowNode.leafGroup &&
                 rowNode.childrenAfterGroup!.length === 1;
 
             // hide open parents means when group is open, we don't show it. we also need to make sure the

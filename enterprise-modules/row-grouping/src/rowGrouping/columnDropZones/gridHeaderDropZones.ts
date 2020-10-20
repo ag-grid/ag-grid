@@ -8,8 +8,8 @@ import {
     PostConstruct,
     _
 } from "@ag-grid-community/core";
-import {RowGroupDropZonePanel} from "./rowGroupDropZonePanel";
-import {PivotDropZonePanel} from "./pivotDropZonePanel";
+import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
+import { PivotDropZonePanel } from "./pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 

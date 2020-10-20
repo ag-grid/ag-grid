@@ -9,8 +9,8 @@ import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/iRangeController';
 import { ChartModel } from './interfaces/IChartService';
-import {ServerSideTransactionResult} from "./interfaces/serverSideTransaction";
-import {RowNodeTransaction} from "./interfaces/rowNodeTransaction";
+import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {

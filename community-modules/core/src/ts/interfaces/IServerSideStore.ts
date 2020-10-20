@@ -1,7 +1,7 @@
-import {NumberSequence} from "../utils";
-import {RowNode} from "../entities/rowNode";
-import {RowBounds} from "./iRowModel";
-import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
+import { NumberSequence } from "../utils";
+import { RowNode } from "../entities/rowNode";
+import { RowBounds } from "./iRowModel";
+import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
 
 export interface IServerSideStore {
 

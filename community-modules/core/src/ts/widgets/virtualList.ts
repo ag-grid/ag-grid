@@ -6,7 +6,7 @@ import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
-import {ResizeObserverService} from "../misc/resizeObserverService";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 export interface VirtualListModel {
     getRowCount(): number;

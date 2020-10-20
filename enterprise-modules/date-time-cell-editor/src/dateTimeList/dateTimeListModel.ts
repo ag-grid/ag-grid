@@ -102,7 +102,7 @@ export class DateTimeListModel implements IDateTimeListModel {
         const paddingAtStart = modulo(options.columnForValue(firstValue), columnCount); // adds padding at start
         const periodLength = options.periodLength(firstValue);
         const lastValue = options.valueInPeriod(firstValue, periodLength - 1);
-        const itemsInLastColumn = modulo(options.columnForValue(lastValue), columnCount) + 1
+        const itemsInLastColumn = modulo(options.columnForValue(lastValue), columnCount) + 1;
         const paddingAtEnd = columnCount - itemsInLastColumn;
         const lastOffset = periodLength - 1 + paddingAtEnd;
         for (let i = -paddingAtStart; i <= lastOffset; i++) {

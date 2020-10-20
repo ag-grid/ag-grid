@@ -128,7 +128,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
-                this.destroyBean(menu)
+                this.destroyBean(menu);
             },
             click: mouseEvent,
             positionCallback: positionCallback,

@@ -10,7 +10,7 @@ import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
-import {RowNodeBlockLoader} from "../rowNodeCache/rowNodeBlockLoader";
+import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 
 export class PaginationComp extends Component {
 

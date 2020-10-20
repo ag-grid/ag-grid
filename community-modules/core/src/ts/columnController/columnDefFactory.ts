@@ -1,9 +1,9 @@
-import {ColDef, ColGroupDef} from "../entities/colDef";
-import {Column} from "../entities/column";
-import {Bean} from "../context/context";
-import {deepCloneDefinition} from "../utils/object";
-import {ColumnGroup} from "../entities/columnGroup";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { Column } from "../entities/column";
+import { Bean } from "../context/context";
+import { deepCloneDefinition } from "../utils/object";
+import { ColumnGroup } from "../entities/columnGroup";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
 
 @Bean('columnDefFactory')
 export class ColumnDefFactory {

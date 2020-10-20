@@ -7,7 +7,7 @@ import { PrimaryColsPanel } from "./columnToolPanel/primaryColsPanel";
 
 import { RowGroupingModule } from "@ag-grid-enterprise/row-grouping";
 import { SideBarModule } from "@ag-grid-enterprise/side-bar";
-import {ModelItemUtils} from "./columnToolPanel/modelItemUtils";
+import { ModelItemUtils } from "./columnToolPanel/modelItemUtils";
 
 export const ColumnsToolPanelModule: Module = {
     moduleName: ModuleNames.ColumnToolPanelModule,

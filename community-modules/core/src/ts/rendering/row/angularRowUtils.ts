@@ -1,5 +1,5 @@
-import {RowNode} from "../../entities/rowNode";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import { RowNode } from "../../entities/rowNode";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class AngularRowUtils {
 

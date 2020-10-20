@@ -14,7 +14,7 @@ import {
     PostConstruct,
     RefSelector, Component
 } from "@ag-grid-community/core";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ModelItemUtils } from "./modelItemUtils";
 
 export class ToolPanelColumnComp extends Component {
 

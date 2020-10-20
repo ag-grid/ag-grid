@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
-import {AbstractColDef, ColDef, ColGroupDef} from "../entities/colDef";
+import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";

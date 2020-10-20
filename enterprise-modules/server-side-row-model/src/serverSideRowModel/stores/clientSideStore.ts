@@ -24,10 +24,10 @@ import {
     FilterManager,
     SelectionChangedEvent
 } from "@ag-grid-community/core";
-import {StoreParams} from "../serverSideRowModel";
-import {StoreUtils} from "./storeUtils";
-import {BlockUtils} from "../blocks/blockUtils";
-import {NodeManager} from "../nodeManager";
+import { StoreParams } from "../serverSideRowModel";
+import { StoreUtils } from "./storeUtils";
+import { BlockUtils } from "../blocks/blockUtils";
+import { NodeManager } from "../nodeManager";
 
 export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
@@ -48,7 +48,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private readonly storeParams: StoreParams;
     private readonly parentRowNode: RowNode;
 
-    private nodeIdSequence: NumberSequence = new NumberSequence()
+    private nodeIdSequence: NumberSequence = new NumberSequence();
 
     private usingTreeData: boolean;
     private usingMasterDetail: boolean;
@@ -138,7 +138,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         return {
             id: this.nodeIdPrefix,
             state: this.getState()
-        }
+        };
     }
 
     protected loadFromDatasource(): void {
@@ -218,7 +218,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         // filtering for ClientSideStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
-            this.nodesAfterFilter = this.allRowNodes
+            this.nodesAfterFilter = this.allRowNodes;
             return;
         }
 
@@ -274,7 +274,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
-        })
+        });
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {

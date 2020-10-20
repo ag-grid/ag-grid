@@ -11,7 +11,7 @@ import {
     RowRenderer,
     LoadSuccessParams
 } from "@ag-grid-community/core";
-import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
+import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
 

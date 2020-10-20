@@ -14,7 +14,7 @@ import {
     RowNode,
     ValueService,
     CsvCustomContent
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
 import {
     BaseGridSerializingSession,
@@ -71,7 +71,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
                         this.appendEmptyCells(cell.mergeAcross);
                     }
                 });
-            })
+            });
         }
     }
 
@@ -279,10 +279,10 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         const { columnController, valueService, gridOptionsWrapper } = this;
         const {
             processCellCallback,
-            processHeaderCallback, 
-            processGroupHeaderCallback, 
-            processRowGroupCallback, 
-            suppressQuotes, 
+            processHeaderCallback,
+            processGroupHeaderCallback,
+            processRowGroupCallback,
+            suppressQuotes,
             columnSeparator
         } = params!;
 

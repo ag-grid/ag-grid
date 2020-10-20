@@ -6,7 +6,7 @@ const buildSharedString = (textNode: string): XmlElement => {
     const child: XmlElement = {
         name: 't',
         textNode: _.utf8_encode(_.escapeString(textNode))
-    }
+    };
     // if we have leading or trailing spaces, instruct Excel not to trim them
     const preserveSpaces = textNode.replace(/^\s*|\s*$/g, '').length !== textNode.length;
 
@@ -15,13 +15,13 @@ const buildSharedString = (textNode: string): XmlElement => {
             rawMap: {
                 "xml:space": "preserve"
             }
-        }
+        };
     }
 
     return {
         name: 'si',
         children: [child]
-    }
+    };
 };
 
 const sharedStrings: ExcelOOXMLTemplate = {

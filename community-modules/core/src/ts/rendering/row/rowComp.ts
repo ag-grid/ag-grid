@@ -30,7 +30,7 @@ import { missing, exists } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { iterateObject, assign } from "../../utils/object";
 import { cssStyleObjectToMarkup } from "../../utils/general";
-import {AngularRowUtils} from "./angularRowUtils";
+import { AngularRowUtils } from "./angularRowUtils";
 
 interface CellTemplate {
     template: string;

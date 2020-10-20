@@ -16,7 +16,7 @@ import {
     RowRenderer,
     _
 } from "@ag-grid-community/core";
-import {InfiniteBlock} from "./infiniteBlock";
+import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams {
     datasource: IDatasource;

@@ -12,7 +12,7 @@ import {
     SortOption
 } from "@ag-grid-community/core";
 
-import {SortService} from "./sortService";
+import { SortService } from "./sortService";
 
 @Bean('sortStage')
 export class SortStage extends BeanStub {

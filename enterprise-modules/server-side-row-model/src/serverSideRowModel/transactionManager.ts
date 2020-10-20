@@ -58,7 +58,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
                 this.loadingStrategy = loadingStrategy;
                 break;
             default:
-                const strategies = Object.keys(LoadingStrategy).join(', ')
+                const strategies = Object.keys(LoadingStrategy).join(', ');
                 console.warn(`ag-Grid: Invalid loading strategy: ${loadingStrategy}, should be one of [${strategies}]`);
                 this.loadingStrategy = LoadingStrategy.DoNotApply;
                 break;

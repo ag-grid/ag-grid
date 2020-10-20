@@ -14,7 +14,7 @@ import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
-import {IServerSideStore} from "../interfaces/IServerSideStore";
+import { IServerSideStore } from "../interfaces/IServerSideStore";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to

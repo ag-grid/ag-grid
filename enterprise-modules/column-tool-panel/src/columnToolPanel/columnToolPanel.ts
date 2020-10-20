@@ -14,7 +14,7 @@ import {
     ModuleRegistry
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
-import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping"
+import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 import { PrimaryColsPanel } from "./primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {

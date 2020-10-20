@@ -31,7 +31,7 @@ import {
     ValueService,
     AsyncTransactionsApplied
 } from "@ag-grid-community/core";
-import {ClientSideNodeManager} from "./clientSideNodeManager";
+import { ClientSideNodeManager } from "./clientSideNodeManager";
 
 enum RecursionType { Normal, AfterFilter, AfterFilterAndSort, PivotNodes }
 
@@ -822,7 +822,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
                 results: rowNodeTrans
             };
-            this.eventService.dispatchEvent(event)
+            this.eventService.dispatchEvent(event);
         }
 
         this.rowDataTransactionBatch = null;

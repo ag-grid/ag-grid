@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import {GridPanel} from "../gridPanel/gridPanel";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 export interface IMenuFactory {
     showMenuAfterButtonClick(column: Column | null, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void;
