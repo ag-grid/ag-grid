@@ -64,7 +64,7 @@ export class ChartDataModel extends BeanStub {
     private chartThemeName: string;
     private datasource: ChartDatasource;
 
-    private detached = false;
+    private unlinked = false;
     private grouping = false;
     private columnNames: { [p: string]: string[]; } = {};
 
@@ -77,7 +77,7 @@ export class ChartDataModel extends BeanStub {
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
-        this.detached = !!params.unlinkChart;
+        this.unlinked = !!params.unlinkChart;
 
         // this is used to associate chart ranges with charts
         this.chartId = this.generateId();
@@ -195,12 +195,16 @@ export class ChartDataModel extends BeanStub {
         return this.suppressChartRanges;
     }
 
-    public isDetached(): boolean {
-        return this.detached;
+    public isUnlinked(): boolean {
+        return this.unlinked;
     }
 
-    public toggleDetached(): void {
-        this.detached = !this.detached;
+    public toggleUnlinked(): void {
+        this.unlinked = !this.unlinked;
+    }
+
+    public getAggFunc(): string | IAggFunc {
+        return this.aggFunc;
     }
 
     public getSelectedValueColState(): { colId: string; displayName: string; }[] {

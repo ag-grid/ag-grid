@@ -310,8 +310,8 @@ export class HistogramSeries extends CartesianSeries {
 
     protected highlightedDatum?: HistogramNodeDatum;
 
-    /*  during processData phase, used to unify different ways of the user specifying
-        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    // During processData phase, used to unify different ways of the user specifying
+    // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     private deriveBins(): [number, number][] {
         const { bins, binCount } = this;
 
@@ -320,11 +320,10 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         if (bins && binCount) {
-            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+            console.warn('bins and bitCount are mutually exclusive properties.');
         }
 
         if (bins) {
-            // we have explicity set bins from user. Use those.
             return bins;
         }
 
@@ -362,15 +361,19 @@ export class HistogramSeries extends CartesianSeries {
 
         let currentBin = 0;
         const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
-        sortedData.forEach(datum => {
 
+        loop: for (let i = 0, ln = sortedData.length; i < ln; i++) {
+            const datum = sortedData[i];
             while (datum[xKey] > derivedBins[currentBin][1]) {
                 currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
+                const bin = derivedBins[currentBin];
+                if (!bin) {
+                    break loop;
+                }
+                bins.push(new HistogramBin(bin));
             }
-
             bins[currentBin].addDatum(datum);
-        });
+        }
 
         bins.forEach(b => b.calculateAggregatedValue(this._aggregation, this.yKey));
 

@@ -1142,6 +1142,13 @@ export class GridApi {
         }
     }
 
+    public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.restoreChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart')) {
+            return this.chartService.restoreChart(chartModel, chartContainer);
+        }
+    }
+
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
