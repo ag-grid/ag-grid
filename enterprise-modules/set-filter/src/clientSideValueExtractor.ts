@@ -7,15 +7,15 @@ export class ClientSideValuesExtractor {
         private readonly valueGetter: (node: RowNode) => string) {
     }
 
-    public extractUniqueValues(predicate: (node: RowNode) => boolean): string[] {
-        const values = new Set<string>();
+    public extractUniqueValues(predicate: (node: RowNode) => boolean): (string | null)[] {
+        const values = new Set<string | null>();
         const { keyCreator } = this.colDef;
 
         this.rowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || !predicate(node)) { return; }
 
-            let value = this.valueGetter(node);
+            let value: string | null = this.valueGetter(node);
 
             if (keyCreator) {
                 value = keyCreator({ value });

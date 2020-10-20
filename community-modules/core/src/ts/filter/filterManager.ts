@@ -266,7 +266,7 @@ export class FilterManager extends BeanStub {
     }
 
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {
-        return this.doesRowPassFilter({rowNode: node, filterInstanceToSkip: filterToSkip});
+        return this.doesRowPassFilter({ rowNode: node, filterInstanceToSkip: filterToSkip });
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
@@ -298,7 +298,8 @@ export class FilterManager extends BeanStub {
 
     public doesRowPassFilter(params: {
         rowNode: RowNode,
-        filterInstanceToSkip?: IFilterComp}): boolean {
+        filterInstanceToSkip?: IFilterComp;
+    }): boolean {
         // the row must pass ALL of the filters, so if any of them fail,
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
@@ -448,11 +449,11 @@ export class FilterManager extends BeanStub {
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,
-            filterChangedCallback: null,
-            filterModifiedCallback: null,
+            filterChangedCallback: () => { },
+            filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
             context: this.gridOptionsWrapper.getContext(),
-            doesRowPassOtherFilter: null
+            doesRowPassOtherFilter: () => true,
         };
 
         // hack in scope if using AngularJS

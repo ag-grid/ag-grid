@@ -32,9 +32,9 @@ export class SetFilter extends ProvidedFilter {
 
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
 
-    private valueModel: SetValueModel;
-    private setFilterParams: ISetFilterParams;
-    private virtualList: VirtualList;
+    private valueModel: SetValueModel | null = null;
+    private setFilterParams: ISetFilterParams | null = null;
+    private virtualList: VirtualList | null = null;
 
     // To make the filtering super fast, we store the values in an object, and check for the boolean value.
     // Although Set would be a more natural choice of data structure, its performance across browsers is
@@ -73,7 +73,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private handleKeySpace(e: KeyboardEvent): void {
-        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
+        if (!this.eSetFilterList.contains(document.activeElement) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
 
@@ -88,6 +88,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
+        if (!this.setFilterParams) { return; }
+
         if (this.setFilterParams.excelMode) {
             e.preventDefault();
 
@@ -105,10 +107,14 @@ export class SetFilter extends ProvidedFilter {
         return 'set-filter';
     }
 
+    private setModelAndRefresh(values: (string | null)[] | null): Promise<void> {
+        return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : Promise.resolve();
+    }
+
     protected resetUiToDefaults(): Promise<void> {
         this.setMiniFilter(null);
 
-        return this.valueModel.setModel(null).then(() => this.refresh());
+        return this.setModelAndRefresh(null);
     }
 
     protected setModelIntoUi(model: SetFilterModel): Promise<void> {
@@ -124,10 +130,12 @@ export class SetFilter extends ProvidedFilter {
         // also supporting old filter model for backwards compatibility
         const values = model == null ? null : (model instanceof Array ? model as string[] : model.values);
 
-        return this.valueModel.setModel(values).then(() => this.refresh());
+        return this.setModelAndRefresh(values);
     }
 
     public getModelFromUi(): SetFilterModel | null {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const values = this.valueModel.getModel();
 
         if (!values) { return null; }
@@ -148,7 +156,7 @@ export class SetFilter extends ProvidedFilter {
         return 'set';
     }
 
-    public getValueModel(): SetValueModel {
+    public getValueModel(): SetValueModel | null {
         return this.valueModel;
     }
 
@@ -244,14 +252,16 @@ export class SetFilter extends ProvidedFilter {
             Events.EVENT_CELL_VALUE_CHANGED,
             (event: CellValueChangedEvent) => {
                 // only interested in changes to do with this column
-                if (event.column === this.setFilterParams.column) {
+                if (this.setFilterParams && event.column === this.setFilterParams.column) {
                     this.syncAfterDataChange();
                 }
             });
     }
 
-    private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
-        let promise = Promise.resolve();
+    private syncAfterDataChange(refreshValues = true, keepSelection = true): Promise<void> {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+        let promise: Promise<void> = Promise.resolve();
 
         if (refreshValues) {
             promise = this.valueModel.refreshValues(keepSelection);
@@ -259,7 +269,7 @@ export class SetFilter extends ProvidedFilter {
             promise = this.valueModel.setModel(null);
         }
 
-        promise.then(() => {
+        return promise.then(() => {
             this.refresh();
             this.onBtApply(false, true);
         });
@@ -282,7 +292,10 @@ export class SetFilter extends ProvidedFilter {
         this.initMiniFilter();
     }
 
-    private initVirtualList() {
+    private initVirtualList(): void {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const virtualList = this.virtualList = this.createBean(new VirtualList('filter'));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
@@ -310,6 +323,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private getSelectAllLabel(): string {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const key = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             'selectAll' : 'selectAllSearchResults';
 
@@ -317,6 +333,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         if (value === SetFilter.SELECT_ALL_VALUE) {
             const listItem = this.createBean(new SetFilterListItem(
                 () => this.getSelectAllLabel(),
@@ -344,6 +363,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initMiniFilter() {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const { eMiniFilter } = this;
 
         _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
@@ -358,6 +380,8 @@ export class SetFilter extends ProvidedFilter {
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+
         super.afterGuiAttached(params);
 
         this.refreshVirtualList();
@@ -376,6 +400,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public applyModel(): boolean {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
             // In Excel, if the filter is applied with all visible values selected, then any active filter on the
             // column is removed. This ensures the filter is removed in this situation.
@@ -389,9 +416,13 @@ export class SetFilter extends ProvidedFilter {
             const appliedModel = this.getModel();
 
             if (appliedModel) {
-                this.appliedModelValues = {};
-
-                _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
+                this.appliedModelValues = _.reduce(
+                    appliedModel.values,
+                    (values, value) => {
+                        values[String(value)] = true;
+                        return values;
+                    },
+                    {} as { [key: string]: boolean; });
             } else {
                 this.appliedModelValues = null;
             }
@@ -401,11 +432,11 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected isModelValid(model: SetFilterModel): boolean {
-        return this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
+        return this.setFilterParams && this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        if (this.appliedModelValues == null) { return true; }
+        if (!this.setFilterParams || !this.valueModel || !this.appliedModelValues) { return true; }
 
         const { valueGetter, colDef: { keyCreator } } = this.setFilterParams;
 
@@ -418,7 +449,7 @@ export class SetFilter extends ProvidedFilter {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return _.some(value, v => this.appliedModelValues[_.makeNull(v)] === true);
+            return _.some(value, v => this.appliedModelValues![_.makeNull(v)] === true);
         }
 
         // Comparing against a value performs better than just checking for undefined
@@ -427,6 +458,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onNewRowsLoaded(): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const valuesType = this.valueModel.getValuesType();
         const keepSelection = this.isNewRowsActionKeep();
 
@@ -440,6 +473,8 @@ export class SetFilter extends ProvidedFilter {
      * @param options The options to use.
      */
     public setFilterValues(options: string[]): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.overrideValues(options, this.isNewRowsActionKeep()).then(() => {
             this.refresh();
             this.onUiChanged();
@@ -451,11 +486,15 @@ export class SetFilter extends ProvidedFilter {
      * Public method provided so the user can reset the values of the filter once that it has started.
      */
     public resetFilterValues(): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.syncAfterDataChange(true, this.isNewRowsActionKeep());
     }
 
     public refreshFilterValues(): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.refreshValues().then(() => {
             this.refresh();
             this.onUiChanged();
@@ -464,10 +503,17 @@ export class SetFilter extends ProvidedFilter {
 
     public onAnyFilterChanged(): void {
         // don't block the current action when updating the values for this filter
-        setTimeout(() => this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh()), 0);
+        setTimeout(() => {
+            if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+            this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh());
+        }, 0);
     }
 
     private onMiniFilterInput() {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             if (this.setFilterParams.applyMiniFilterWhileTyping) {
                 this.filterOnAllVisibleValues(false);
@@ -478,6 +524,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateUiAfterMiniFilterChange(): void {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         if (this.setFilterParams.excelMode) {
             if (this.valueModel.getMiniFilter() == null) {
                 this.resetUiToActiveModel();
@@ -494,6 +543,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private showOrHideResults(): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
 
         _.setDisplayed(this.eNoMatches, hideResults);
@@ -501,26 +552,34 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private resetUiToActiveModel(): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
         this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, KeyCode.ENTER) && !this.setFilterParams.excelMode) {
+        if (_.isKeyPressed(e, KeyCode.ENTER) && (!this.setFilterParams || !this.setFilterParams.excelMode)) {
             this.filterOnAllVisibleValues();
         }
     }
 
     private filterOnAllVisibleValues(applyImmediately = true): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
         this.showOrHideResults();
     }
 
-    private focusRowIfAlive(rowIndex: number): void {
+    private focusRowIfAlive(rowIndex: number | null): void {
+        if (rowIndex == null) { return; }
+
         window.setTimeout(() => {
+            if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+
             if (this.isAlive()) {
                 this.virtualList.focusRow(rowIndex);
             }
@@ -528,6 +587,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onSelectAll(isSelected: boolean): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+
         if (isSelected) {
             this.valueModel.selectAllMatchingMiniFilter();
         } else {
@@ -542,6 +604,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onItemSelected(value: any, isSelected: boolean): void {
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+
         if (isSelected) {
             this.valueModel.selectValue(value);
         } else {
@@ -555,19 +620,21 @@ export class SetFilter extends ProvidedFilter {
         this.focusRowIfAlive(focusedRow);
     }
 
-    public setMiniFilter(newMiniFilter: string): void {
+    public setMiniFilter(newMiniFilter: string | null): void {
         this.eMiniFilter.setValue(newMiniFilter);
         this.onMiniFilterInput();
     }
 
-    public getMiniFilter(): string {
-        return this.valueModel.getMiniFilter();
+    public getMiniFilter(): string | null {
+        return this.valueModel ? this.valueModel.getMiniFilter() : null;
     }
 
     /** @deprecated since version 23.2. Please use setModel instead. */
     public selectEverything() {
         const message = 'ag-Grid: since version 23.2, selectEverything has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectEverything');
+
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         this.valueModel.selectAllMatchingMiniFilter();
         this.refresh();
@@ -578,6 +645,8 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, selectNothing has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectNothing');
 
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.deselectAllMatchingMiniFilter();
         this.refresh();
     }
@@ -586,6 +655,8 @@ export class SetFilter extends ProvidedFilter {
     public unselectValue(value: string) {
         const message = 'ag-Grid: since version 23.2, unselectValue has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.unselectValue');
+
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         this.valueModel.deselectValue(value);
         this.refresh();
@@ -596,11 +667,15 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, selectValue has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectValue');
 
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         this.valueModel.selectValue(value);
         this.refresh();
     }
 
     private refresh() {
+        if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
+
         this.virtualList.refresh();
     }
 
@@ -608,6 +683,8 @@ export class SetFilter extends ProvidedFilter {
     public isValueSelected(value: string) {
         const message = 'ag-Grid: since version 23.2, isValueSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isValueSelected');
+
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         return this.valueModel.isValueSelected(value);
     }
@@ -617,6 +694,8 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, isEverythingSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isEverythingSelected');
 
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         return this.valueModel.isEverythingVisibleSelected();
     }
 
@@ -624,6 +703,8 @@ export class SetFilter extends ProvidedFilter {
     public isNothingSelected() {
         const message = 'ag-Grid: since version 23.2, isNothingSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isNothingSelected');
+
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         return this.valueModel.isNothingVisibleSelected();
     }
@@ -633,6 +714,8 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, getUniqueValueCount has been deprecated. Please use getValues instead.';
         _.doOnce(() => console.warn(message), 'setFilter.getUniqueValueCount');
 
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         return this.valueModel.getUniqueValueCount();
     }
 
@@ -641,15 +724,17 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, getUniqueValue has been deprecated. Please use getValues instead.';
         _.doOnce(() => console.warn(message), 'setFilter.getUniqueValue');
 
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
         return this.valueModel.getUniqueValue(index);
     }
 
-    public getValues(): string[] {
-        return this.valueModel.getValues();
+    public getValues(): (string | null)[] {
+        return this.valueModel ? this.valueModel.getValues() : [];
     }
 
     public refreshVirtualList(): void {
-        if (this.setFilterParams.refreshValuesOnOpen) {
+        if (this.setFilterParams && this.setFilterParams.refreshValuesOnOpen) {
             this.refreshFilterValues();
         }
         else {
@@ -663,7 +748,9 @@ export class SetFilter extends ProvidedFilter {
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }
 
-    private isSelectAllSelected(): boolean | undefined {
+    private isSelectAllSelected(): boolean {
+        if (!this.setFilterParams || !this.valueModel) { return false; }
+
         if (!this.setFilterParams.defaultToNothingSelected) {
             // everything selected by default
             if (this.valueModel.hasSelections() && this.valueModel.isNothingVisibleSelected()) {
@@ -684,7 +771,7 @@ export class SetFilter extends ProvidedFilter {
             }
         }
 
-        return undefined;
+        return false;
     }
 
     public destroy(): void {
@@ -705,7 +792,7 @@ class ModelWrapper implements VirtualListModel {
         return this.model.getDisplayedValueCount();
     }
 
-    public getRow(index: number): string {
+    public getRow(index: number): string | null {
         return this.model.getDisplayedValue(index);
     }
 
@@ -717,18 +804,18 @@ class ModelWrapper implements VirtualListModel {
 class ModelWrapperWithSelectAll implements VirtualListModel {
     constructor(
         private readonly model: SetValueModel,
-        private readonly isSelectAllSelected: (() => boolean | undefined)) {
+        private readonly isSelectAllSelected: (() => boolean)) {
     }
 
     public getRowCount(): number {
         return this.model.getDisplayedValueCount() + 1;
     }
 
-    public getRow(index: number): string {
+    public getRow(index: number): string | null {
         return index === 0 ? SetFilter.SELECT_ALL_VALUE : this.model.getDisplayedValue(index - 1);
     }
 
-    public isRowSelected(index: number): boolean | undefined {
+    public isRowSelected(index: number): boolean {
         return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
     }
 }

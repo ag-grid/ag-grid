@@ -31,11 +31,11 @@ function createSetValueModel(
         params,
         _ => { },
         valueFormatterService,
-        key => key === 'blanks' ? '(Blanks)' : null);
+        key => key === 'blanks' ? '(Blanks)' : '');
 }
 
 function getDisplayedValues(model: SetValueModel) {
-    const values = [];
+    const values: (string | null)[] = [];
 
     for (let i = 0; i < model.getDisplayedValueCount(); i++) {
         values.push(model.getDisplayedValue(i));

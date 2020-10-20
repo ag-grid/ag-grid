@@ -17,10 +17,10 @@ import { SetValueModel } from './setValueModel';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
-    @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
+    @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
+    @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
+    @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private readonly columnController: ColumnController;
 
     private params: IFloatingFilterParams;
     private lastKnownModel: SetFilterModel;
@@ -58,6 +58,9 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     private addAvailableValuesListener(): void {
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const setValueModel = setFilter.getValueModel();
+
+            if (!setValueModel) { return; }
+
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
@@ -90,7 +93,10 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const valueModel = setFilter.getValueModel();
-            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v));
+
+            if (!valueModel) { return; }
+
+            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v))!;
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
             // format all the values, if a formatter is provided
@@ -99,7 +105,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
                 const valueToRender = formattedValue != null ? formattedValue : value;
 
                 return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
-            });
+            })!;
 
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
