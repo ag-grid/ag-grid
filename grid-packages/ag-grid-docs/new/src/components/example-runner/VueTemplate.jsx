@@ -1,9 +1,9 @@
 import React from 'react';
-import { gridSystemJsCommunityMap, gridSystemJsEnterpriseMap, gridSystemJsMap } from './systemJsConfiguration';
+import Extras from './Extras';
+import SystemJs from './SystemJs';
 
-const VueTemplate = ({ isEnterprise = false, appLocation }) => {
+const VueTemplate = ({ appLocation, options }) => {
     const boilerplatePath = '/example-runner/grid-vue-boilerplate/';
-    const systemJsPath = `${boilerplatePath}systemjs.prod.config.js`;
 
     return <html lang="en">
         <head>
@@ -34,19 +34,12 @@ const VueTemplate = ({ isEnterprise = false, appLocation }) => {
                 }`}
             </style>
 
+            <Extras options={options} />
         </head>
         <body>
             <div id="app" style={{ height: '100%' }} dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
 
-            <script dangerouslySetInnerHTML={{
-                __html: `var appLocation = '${appLocation}';
-                var boilerplatePath = '${boilerplatePath}';
-                var systemJsMap = ${JSON.stringify(gridSystemJsMap, null, 2)};
-                var systemJsPaths = ${JSON.stringify(isEnterprise ? gridSystemJsEnterpriseMap : gridSystemJsCommunityMap, null, 2)};`
-            }}></script>
-
-            <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-            <script src={systemJsPath}></script>
+            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} options={options} />
 
             <script dangerouslySetInnerHTML={{ __html: `System.import('${appLocation}main.js').catch(function(err) { console.error(err); });` }}></script>
         </body>

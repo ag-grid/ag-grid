@@ -7,7 +7,7 @@ import './example-runner.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
-    //const parsedOptions = JSON.parse(options);
+    const parsedOptions = JSON.parse(options);
 
     return <GlobalContextConsumer>
         {({ exampleImportType, useFunctionalReact, set }) => {
@@ -31,12 +31,13 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                     <VisibilitySensor partialVisibility={true}>
                         {({ isVisible }) =>
                             <ExampleRunnerResult
+                                isVisible={isVisible}
                                 pageName={pageName}
                                 framework={framework}
                                 name={name}
                                 importType={exampleImportType}
-                                useFunctionalReact={useFunctionalReact}
-                                isVisible={isVisible} />
+                                options={parsedOptions}
+                            />
                         }
                     </VisibilitySensor>
                 }

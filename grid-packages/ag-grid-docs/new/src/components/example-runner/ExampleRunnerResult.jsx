@@ -9,7 +9,7 @@ import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
 
-const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false, isVisible }) => {
+const ExampleRunnerResult = ({ isVisible, pageName, name, framework, importType = 'modules', useFunctionalReact = false, options = {} }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const data = useStaticQuery(graphql`
@@ -50,17 +50,17 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
         }
 
         case 'angular': {
-            element = <AngularTemplate appLocation={appLocation} />;
+            element = <AngularTemplate appLocation={appLocation} options={options} />;
             break;
         }
 
         case 'react': {
-            element = <ReactTemplate appLocation={appLocation} />;
+            element = <ReactTemplate appLocation={appLocation} options={options} />;
             break;
         }
 
         case 'vue': {
-            element = <VueTemplate appLocation={appLocation} />;
+            element = <VueTemplate appLocation={appLocation} options={options} />;
             break;
         }
 
