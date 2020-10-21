@@ -6,6 +6,7 @@ import './example-runner-result.scss';
 import { getAppLocation, getInternalFramework, getSourcePath } from './helpers';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
+import ReactTemplate from './ReactTemplate';
 
 const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false, isVisible }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
@@ -49,7 +50,11 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
 
         case 'angular': {
             element = <AngularTemplate appLocation={appLocation} />;
+            break;
+        }
 
+        case 'react': {
+            element = <ReactTemplate appLocation={appLocation} />;
             break;
         }
 
