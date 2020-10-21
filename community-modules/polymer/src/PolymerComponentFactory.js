@@ -12,8 +12,6 @@ export default class PolymerComponentFactory {
     }
 
     adaptComponentToRenderer(componentType) {
-        let that = this;
-
         class CellRenderer extends BaseGuiComponent {
             constructor() {
                 super(componentType);
@@ -29,9 +27,8 @@ export default class PolymerComponentFactory {
                 if (this._agAwareComponent.refresh) {
                     this._agAwareComponent.refresh(params);
                     return true;
-                } else {
-                    return false;
                 }
+                return false;
             }
         }
 
@@ -39,8 +36,6 @@ export default class PolymerComponentFactory {
     }
 
     adaptComponentToEditor(componentType) {
-        let that = this;
-
         class CellEditor extends BaseGuiComponent {
             constructor() {
                 super(componentType);
@@ -86,8 +81,6 @@ export default class PolymerComponentFactory {
     }
 
     adaptComponentToFilter(componentType) {
-        let that = this;
-
         class Filter extends BaseGuiComponent {
             constructor() {
                 super(componentType);
