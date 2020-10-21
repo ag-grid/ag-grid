@@ -19,7 +19,7 @@ var gridOptions = {
 }
 ```
 
-See [Column Properties](../column-properties/) for a
+See [Column Properties](./column-properties/) for a
 list of all properties that can be applied to a column.
 
 If you want the columns to be grouped, you can include them as children like so:
@@ -42,13 +42,13 @@ var gridOptions = {
 }
 ```
 
-Groups are explained in more detail in the section [Column Groups](../grouping-headers/).
+Groups are explained in more detail in the section [Column Groups](./grouping-headers/).
 
 ## Declarative Columns
 
 If you're using either Angular (`ag-grid-column`) or React (`AgGridColumn`) you additionally have
-the option to declare your column definitions declaratively; please refer to the [Angular](../angular-markup)
-and [React](../react-column-configuration/) documentation for more information.
+the option to declare your column definitions declaratively; please refer to the [Angular](./angular-markup/)
+and [React](./react-column-configuration/) documentation for more information.
 
 ## Custom Column Types {#default-column-definitions}
 
@@ -59,7 +59,7 @@ This is done through the following:
 - `defaultColGroupDef`: contains properties that all column groups will inherit.
 - `columnTypes`: specific column types containing properties that column definitions can inherit.
 
-Default columns and column types can specify any of the [column properties](../column-properties/) available on a column.
+Default columns and column types can specify any of the [column properties](./column-properties/) available on a column.
 
 [[note]]
 | Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.

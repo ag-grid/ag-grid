@@ -1,0 +1,29 @@
+.test-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.test-header {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 13px;
+  margin-bottom: 0.5rem;
+}
+
+.test-header .example-section {
+  margin-bottom: 0.5rem;
+}
+
+.test-button-group {
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.test-button-group button {
+  margin: 4px;
+}
+
+#myGrid {
+  flex: 1 1 0px;
+}
