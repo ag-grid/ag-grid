@@ -5,8 +5,10 @@ import {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
-    GetRowNodeIdFunc, GetServerSideStoreParamsParams,
-    GridOptions, IsApplyServerSideTransaction,
+    GetRowNodeIdFunc,
+    GetServerSideStoreParamsParams,
+    GridOptions,
+    IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
     NavigateToNextCellParams,
@@ -14,7 +16,8 @@ import {
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessDataFromClipboardParams, ServerSideStoreParams,
+    ProcessDataFromClipboardParams,
+    ServerSideStoreParams,
     TabToNextCellParams,
     TabToNextHeaderParams
 } from './entities/gridOptions';

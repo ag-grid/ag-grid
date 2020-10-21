@@ -27,12 +27,9 @@ import {
     RowNode,
     RowRenderer,
     SortController,
-    SortModelItem,
-    ServerSideStoreType,
     RefreshSortParams
 } from "@ag-grid-community/core";
-import { ClientSideStore } from "./stores/clientSideStore";
-import { InfiniteStore } from "./stores/infiniteStore";
+
 import { NodeManager } from "./nodeManager";
 import { SortListener } from "./listeners/sortListener";
 import {StoreFactory} from "./stores/storeFactory";

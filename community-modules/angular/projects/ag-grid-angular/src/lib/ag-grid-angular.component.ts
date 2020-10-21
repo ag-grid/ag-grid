@@ -294,6 +294,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getChartToolbarItems : any = undefined;
     @Input() public fillOperation : any = undefined;
     @Input() public isApplyServerSideTransaction : any = undefined;
+    @Input() public getServerSideStoreParams : any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;

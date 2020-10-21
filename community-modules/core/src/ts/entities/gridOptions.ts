@@ -778,7 +778,7 @@ export interface ServerSideStoreParams {
     sortingAlwaysResets?: boolean;
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
-    cacheBlockSize?: number | undefined;
+    cacheBlockSize?: number;
     blockLoadDebounceMillis?: number;
 }
 
