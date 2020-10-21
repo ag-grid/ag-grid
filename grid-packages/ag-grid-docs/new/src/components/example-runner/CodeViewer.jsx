@@ -9,7 +9,7 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
-import { getSourcePath } from './helpers';
+import { getInternalFramework, getSourcePath } from './helpers';
 
 const updateFiles = (pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
@@ -23,7 +23,8 @@ const updateFiles = (pageName, data, name, framework, useFunctionalReact, import
 
     setActiveFile(mainFile);
 
-    const rootFolder = getSourcePath(pageName, name, framework, importType, useFunctionalReact);
+    const internalFramework = getInternalFramework(framework, useFunctionalReact);
+    const rootFolder = getSourcePath(pageName, name, internalFramework, importType);
     const filesForExample = data.allFile.edges
         .filter(edge => edge.node.relativePath.startsWith(rootFolder))
         .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));

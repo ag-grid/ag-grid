@@ -3,7 +3,9 @@ import ReactDOMServer from 'react-dom/server';
 import { useStaticQuery, graphql } from 'gatsby';
 import fs from 'fs';
 import './example-runner-result.scss';
-import { getSourcePath } from './helpers';
+import { getAppLocation, getInternalFramework, getSourcePath } from './helpers';
+import VanillaTemplate from './VanillaTemplate';
+import AngularTemplate from './AngularTemplate';
 
 const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false, isVisible }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
@@ -25,7 +27,9 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
     }
     `);
 
-    const sourceRootFolder = getSourcePath(pageName, name, framework, importType, useFunctionalReact);
+    const internalFramework = getInternalFramework(framework, useFunctionalReact);
+    const sourceRootFolder = getSourcePath(pageName, name, internalFramework, importType);
+    const appLocation = getAppLocation(pageName, name, internalFramework, importType);
 
     let element;
 
@@ -39,6 +43,12 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
                 .map(edge => edge.node.publicURL);
 
             element = <VanillaTemplate indexFragment={indexFile.node.childHtmlRehype.html} scriptFiles={scriptFiles} />;
+
+            break;
+        }
+
+        case 'angular': {
+            element = <AngularTemplate appLocation={appLocation} />;
 
             break;
         }
@@ -103,42 +113,6 @@ const format = (html) => {
     });
 
     return result.substring(1, result.length - 3);
-};
-
-const VanillaTemplate = ({ indexFragment, scriptFiles }) => {
-    return <html lang="en">
-        <head>
-            <script dangerouslySetInnerHTML={{ __html: "var __basePath = '/';" }}></script>
-            <style media="only screen">
-                {`html, body {
-                    height: 100%;
-                    width: 100%;
-                    margin: 0;
-                    box-sizing: border-box;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                html {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    padding: 0;
-                    overflow: auto;
-                }
-
-                body {
-                    padding: 1rem;
-                    overflow: auto;
-                }`}
-            </style>
-            <script src="https://unpkg.com/@ag-grid-community/all-modules@24.1.0/dist/ag-grid-community.min.js"></script>
-        </head>
-
-        <body>
-            <div style={{ height: '100%', boxSizing: 'border-box' }} dangerouslySetInnerHTML={{ __html: indexFragment }}></div>
-            {scriptFiles.map(script => <script key={script} src={script}></script>)}
-        </body>
-    </html >;
 };
 
 export default ExampleRunnerResult;

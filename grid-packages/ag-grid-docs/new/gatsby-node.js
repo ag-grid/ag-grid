@@ -1,6 +1,58 @@
 const path = require('path');
 const express = require('express');
 const { createFilePath } = require('gatsby-source-filesystem');
+const { GraphQLString } = require('gatsby/graphql');
+const fs = require('fs-extra');
+
+exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = `` }) => {
+    if (type.name !== `File`) {
+        return {};
+    }
+
+    return {
+        publicURL: {
+            type: GraphQLString,
+            args: {},
+            description: `Copy file to static directory and return public url to it`,
+            resolve: async (file, fieldArgs, context) => {
+                const details = getNodeAndSavePathDependency(file.id, context.path);
+
+                let fileName = `${file.internal.contentDigest}/${details.base}`;
+
+                if (file.relativeDirectory.indexOf('/examples/') >= 0) {
+                    // handle example runner files separately to preserve the directory structure
+                    let rootDirectory = 'examples/' + file.relativeDirectory.replace('/examples/', '/').replace('/_gen/', '/');
+                    fileName = `${rootDirectory}/${details.base}`;
+                }
+
+                const publicPath = path.join(
+                    process.cwd(),
+                    `public`,
+                    `static`,
+                    fileName
+                );
+
+                if (!fs.existsSync(publicPath)) {
+                    fs.copy(
+                        details.absolutePath,
+                        publicPath,
+                        { dereference: true },
+                        err => {
+                            if (err) {
+                                console.error(
+                                    `error copying file from ${details.absolutePath} to ${publicPath}`,
+                                    err
+                                );
+                            }
+                        }
+                    );
+                }
+
+                return `${pathPrefix}/static/${fileName}`;
+            },
+        },
+    };
+};
 
 exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
     if (node.internal.type === 'MarkdownRemark') {

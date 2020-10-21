@@ -1,9 +1,15 @@
-export const getSourcePath = (pageName, name, framework, importType, useFunctionalReact) => {
+export const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
-        framework = 'vanilla';
+        return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
-        framework = 'reactFunctional';
+        return 'reactFunctional';
     }
 
-    return `${pageName}/examples/${name}/_gen/${importType}/${framework}/`;
-}
+    return framework;
+};
+
+export const getSourcePath = (pageName, name, internalFramework, importType) =>
+    `${pageName}/examples/${name}/_gen/${importType}/${internalFramework}/`;
+
+export const getAppLocation = (pageName, name, internalFramework, importType) =>
+    `/static/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
