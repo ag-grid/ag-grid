@@ -12,55 +12,63 @@ import VueTemplate from './VueTemplate';
 const ExampleRunnerResult = ({ isVisible, pageName, name, framework, importType = 'modules', useFunctionalReact = false, options = {} }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
-    const data = useStaticQuery(graphql`
+    const files = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { eq: "examples" }, relativePath: { regex: "/.*\/examples\/.*/" } }) {
-            edges {
-                node {
-                    publicURL
-                    relativePath
-                    base
-                    childHtmlRehype {
-                        html
-                    }
+            nodes {
+                publicURL
+                relativePath
+                base
+                childHtmlRehype {
+                    html
                 }
             }
         }
     }
-    `);
+    `).allFile.nodes;
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const sourceRootFolder = getSourcePath(pageName, name, internalFramework, importType);
+
+    const getExampleFile = name => files.filter(file => file.relativePath === sourceRootFolder + name)[0];
+
+    const getExampleFileUrls = (extension, exclude) => files
+        .filter(file => file.relativePath.startsWith(sourceRootFolder) && file.base.endsWith(`.${extension}`) && (!exclude || file.base !== exclude))
+        .map(file => file.publicURL);
+
     const appLocation = getAppLocation(pageName, name, internalFramework, importType);
+    const scriptFiles = getExampleFileUrls('js', 'main.js');
+    const styleFiles = getExampleFileUrls('css');
 
     let element;
 
     switch (framework) {
-        case 'javascript': {
-            const indexFile = data.allFile.edges
-                .filter(edge => edge.node.relativePath === `${sourceRootFolder}index.html`)[0];
-
-            const scriptFiles = data.allFile.edges
-                .filter(edge => edge.node.relativePath.startsWith(sourceRootFolder) && edge.node.base.endsWith('.js'))
-                .map(edge => edge.node.publicURL);
-
-            element = <VanillaTemplate indexFragment={indexFile.node.childHtmlRehype.html} scriptFiles={scriptFiles} />;
+        case 'javascript':
+            element = <VanillaTemplate
+                appLocation={appLocation}
+                options={options}
+                indexFragment={getExampleFile('index.html').childHtmlRehype.html}
+                scriptFiles={[...scriptFiles, getExampleFile('main.js').publicURL]}
+                styleFiles={styleFiles} />;
 
             break;
-        }
 
-        case 'angular': {
-            element = <AngularTemplate appLocation={appLocation} options={options} />;
-            break;
-        }
-
-        case 'react': {
-            element = <ReactTemplate appLocation={appLocation} options={options} />;
-            break;
-        }
-
+        case 'angular':
+        case 'react':
         case 'vue': {
-            element = <VueTemplate appLocation={appLocation} options={options} />;
+            const frameworkTemplates = {
+                angular: AngularTemplate,
+                react: ReactTemplate,
+                vue: VueTemplate
+            };
+
+            const FrameworkTemplate = frameworkTemplates[framework];
+
+            element = <FrameworkTemplate
+                appLocation={appLocation}
+                options={options}
+                scriptFiles={scriptFiles}
+                styleFiles={styleFiles} />;
             break;
         }
 

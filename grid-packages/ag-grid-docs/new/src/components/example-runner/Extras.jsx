@@ -1,4 +1,6 @@
 import React from 'react';
+import Styles from './Styles';
+import Scripts from './Scripts';
 
 const extrasMap = {
     xlsx: {
@@ -111,8 +113,8 @@ const Extras = ({ options }) => {
     });
 
     return <>
-        {styles.map(style => <link key={style} rel="stylesheet" href={style} />)}
-        {scripts.map(script => <script key={script} src={script}></script>)}
+        <Styles files={styles} />
+        <Scripts files={scripts} />
     </>;
 };
 

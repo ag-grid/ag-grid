@@ -1,42 +1,24 @@
 import React from 'react';
+import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
+import Scripts from './Scripts';
+import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const AngularTemplate = ({ appLocation, options }) => {
+const AngularTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
     const boilerplatePath = '/example-runner/grid-angular-boilerplate/';
 
     return <html lang="en">
         <head>
             <title>Angular 2 example</title>
-            <script dangerouslySetInnerHTML={{ __html: `document.write('<base href="' + document.location + '" />');` }}></script>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-            <style media="only screen">
-                {`html, body {
-                    height: 100%;
-                    width: 100%;
-                    margin: 0;
-                    box-sizing: border-box;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                html {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    padding: 0;
-                    overflow: auto;
-                }
-
-                body {
-                    padding: 1rem;
-                    overflow: auto;
-                }`}
-            </style>
-
+            <ExampleStyle />
+            <Styles files={styleFiles} />
             <Extras options={options} />
+            <Scripts files={scriptFiles} />
 
+            <script dangerouslySetInnerHTML={{ __html: `document.write('<base href="' + document.location + '" />');` }}></script>
             <script src="https://unpkg.com/core-js@2.6.5/client/shim.min.js"></script>
             <script src="https://unpkg.com/zone.js@0.8.17/dist/zone.js"></script>
 

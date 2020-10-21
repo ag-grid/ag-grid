@@ -1,8 +1,11 @@
 import React from 'react';
+import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
+import Scripts from './Scripts';
+import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const ReactTemplate = ({ appLocation, options }) => {
+const ReactTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
     const boilerplatePath = '/example-runner/grid-react-boilerplate/';
 
     return <html lang="en">
@@ -10,31 +13,10 @@ const ReactTemplate = ({ appLocation, options }) => {
             <title>React example</title>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-            <style media="only screen">
-                {`html, body, #root {
-                    height: 100%;
-                    width: 100%;
-                    margin: 0;
-                    box-sizing: border-box;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                html {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    padding: 0;
-                    overflow: auto;
-                }
-
-                body {
-                    padding: 1rem;
-                    overflow: auto;
-                }`}
-            </style>
-
+            <ExampleStyle rootId="root" />
+            <Styles files={styleFiles} />
             <Extras options={options} />
+            <Scripts files={scriptFiles} />
         </head>
         <body>
             <div id="root">Loading React example&hellip;</div>
