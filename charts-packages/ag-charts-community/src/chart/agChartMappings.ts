@@ -173,6 +173,7 @@ const chartMeta = {
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
     constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
     setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
+    nonSerializable: ['container', 'data']
 };
 
 const axisDefaults: any = {

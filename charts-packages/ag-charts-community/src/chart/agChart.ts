@@ -126,6 +126,12 @@ export abstract class AgChart {
         }
     }
 
+    static save(component: any): any {
+        const target: any = {};
+        save(component, target);
+        return target;
+    }
+
     static createComponent = create;
 }
 
@@ -149,6 +155,26 @@ const actualSeriesTypeMap = (() => {
     map['column'] = 'bar';
     return map;
 })();
+
+function save(component: any, target: any = {}, mapping: any = mappings) {
+    if (component.constructor && component.constructor.type && !mapping.meta) {
+        mapping = mapping[component.constructor.type];
+    }
+    const defaults = mapping && mapping.meta && mapping.meta.defaults;
+    const keys = Object.keys(defaults);
+    keys.forEach(key => {
+        const value = component[key];
+        if (isObject(value) && (!mapping.meta.nonSerializable || mapping.meta.nonSerializable.indexOf(key) < 0)) {
+            target[key] = {};
+            // save(value, target[key], mapping[key]);
+        } else if (Array.isArray(value)) {
+            // target[key] = [];
+            // save(value, target[key], map[key]);
+        } else {
+            target[key] = component[key];
+        }
+    });
+}
 
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
