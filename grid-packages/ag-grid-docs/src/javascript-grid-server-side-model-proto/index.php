@@ -24,5 +24,8 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
+<h1>Dynamic Params</h1>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -21,9 +21,10 @@ import {
     StoreUpdatedEvent,
     LoadSuccessParams,
     ColumnController,
+    ServerSideStoreParams,
     RefreshSortParams
 } from "@ag-grid-community/core";
-import { StoreParams } from "../serverSideRowModel";
+import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { CacheBlock } from "../blocks/cacheBlock";
 
@@ -45,7 +46,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('columnController') private columnController: ColumnController;
 
-    private readonly storeParams: StoreParams;
+    private readonly ssrmParams: SSRMParams;
+    private readonly storeParams: ServerSideStoreParams;
     private readonly parentRowNode: RowNode;
     private readonly blocks: { [blockNumber: string]: CacheBlock; } = {};
     private readonly blockHeights: { [blockId: number]: number } = {};
@@ -69,11 +71,12 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(storeParams: StoreParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideStoreParams, parentRowNode: RowNode) {
         super();
+        this.ssrmParams = ssrmParams;
+        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
         this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
-        this.storeParams  = storeParams;
     }
 
     @PostConstruct
@@ -135,8 +138,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
         // we want to keep, which means we are left with blocks that we can potentially purge
-        const maxBlocksProvided = this.storeParams.maxBlocksInCache! > 0;
-        const blocksToKeep = maxBlocksProvided ? this.storeParams.maxBlocksInCache! - 1 : null;
+        const maxBlocksProvided = this.ssrmParams.maxBlocksInCache! > 0;
+        const blocksToKeep = maxBlocksProvided ? this.ssrmParams.maxBlocksInCache! - 1 : null;
         const emptyBlocksToKeep = InfiniteStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: CacheBlock, index: number) => {
@@ -178,7 +181,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             this.lastRowIndexKnown = true;
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
-            const lastRowIndex = (block.getId() + 1) * this.storeParams.blockSize!;
+            const lastRowIndex = (block.getId() + 1) * this.storeParams.cacheBlockSize!;
             const lastRowIndexPlusOverflow = lastRowIndex + InfiniteStore.OVERFLOW_SIZE;
 
             if (this.rowCount < lastRowIndexPlusOverflow) {
@@ -218,7 +221,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: CacheBlock[] = [];
         this.getBlocksInOrder().forEach((block: CacheBlock) => {
-            const startRow = block.getId() * this.storeParams.blockSize!;
+            const startRow = block.getId() * this.storeParams.cacheBlockSize!;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
@@ -409,7 +412,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         let lastBlockId = -1;
 
-        const blockSize = this.storeParams.blockSize;
+        const blockSize = this.storeParams.cacheBlockSize;
 
         this.getBlocksInOrder().forEach(currentBlock => {
 
@@ -481,7 +484,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             let displayIndexStart: number;
             let nextRowTop: number;
 
-            const blockSize = this.storeParams.blockSize;
+            const blockSize = this.storeParams.cacheBlockSize;
 
             // because missing blocks are always fully closed, we can work out
             // the start index of the block we want by hopping from the closest block,
@@ -525,7 +528,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
 
-        const blockSize = this.storeParams.blockSize;
+        const blockSize = this.storeParams.cacheBlockSize;
         const blockId = Math.floor(topLevelIndex / blockSize!);
 
         const matchBlockFunc = (block: CacheBlock): FindResult => {
@@ -581,7 +584,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): CacheBlock {
 
-        const block = this.createBean(new CacheBlock(blockNumber, this.parentRowNode, this.storeParams, this));
+        const block = this.createBean(new CacheBlock(
+            blockNumber, this.parentRowNode, this.ssrmParams, this.storeParams, this));
         block.setDisplayIndexes(new NumberSequence(displayIndex), nextRowTop);
 
         this.blocks[block.getId()] = block;
@@ -648,14 +652,14 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         }
 
         const level = this.parentRowNode.level + 1;
-        const grouping = level < this.storeParams.rowGroupCols.length;
+        const grouping = level < this.ssrmParams.rowGroupCols.length;
 
         if (!grouping) {
             this.purgeStore(true);
             return;
         }
 
-        const colIdThisGroup = this.storeParams.rowGroupCols[level].id;
+        const colIdThisGroup = this.ssrmParams.rowGroupCols[level].id;
         const sortingByThisGroup = params.changedColumnsInSort.indexOf(colIdThisGroup) > -1;
 
         if (sortingByThisGroup) {

@@ -264,6 +264,8 @@ export interface GridOptions {
     serverSideAsyncTransactionLoadingStrategy?: string;
     serverSideStoreType?: string;
 
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+
     statusBar?: {
         statusPanels: StatusPanelDef[];
     };
@@ -769,4 +771,18 @@ export interface ChartRef {
 export enum ServerSideStoreType {
     ClientSide = 'clientSide',
     Infinite = 'infinite'
+}
+
+export interface ServerSideStoreParams {
+    storeType?: ServerSideStoreType;
+    sortingAlwaysResets?: boolean;
+    maxBlocksInCache?: number;
+    purgeClosedRowNodes?: boolean;
+    cacheBlockSize?: number | undefined;
+    blockLoadDebounceMillis?: number;
+}
+
+export interface GetServerSideStoreParamsParams {
+    level: number;
+    parentRowNode?: RowNode;
 }

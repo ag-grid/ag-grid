@@ -8,11 +8,13 @@ import { TransactionManager } from "./serverSideRowModel/transactionManager";
 import { ExpandListener } from "./serverSideRowModel/listeners/expandListener";
 import { SortListener } from "./serverSideRowModel/listeners/sortListener";
 import { FilterListener } from "./serverSideRowModel/listeners/filterListener";
+import {StoreFactory} from "./serverSideRowModel/stores/storeFactory";
 
 export const ServerSideRowModelModule: Module = {
     moduleName: ModuleNames.ServerSideRowModelModule,
     rowModels: { serverSide: ServerSideRowModel },
-    beans: [ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager, FilterListener],
+    beans: [ExpandListener, SortListener, StoreUtils, BlockUtils, NodeManager, TransactionManager,
+        FilterListener, StoreFactory],
     dependantModules: [
         EnterpriseCoreModule
     ]

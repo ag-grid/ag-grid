@@ -23,9 +23,10 @@ import {
     LoadSuccessParams,
     FilterManager,
     SelectionChangedEvent,
-    RefreshSortParams
+    RefreshSortParams,
+    ServerSideStoreParams
 } from "@ag-grid-community/core";
-import { StoreParams } from "../serverSideRowModel";
+import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
@@ -46,7 +47,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
-    private readonly storeParams: StoreParams;
+    private readonly ssrmParams: SSRMParams;
     private readonly parentRowNode: RowNode;
 
     private nodeIdSequence: NumberSequence = new NumberSequence();
@@ -73,14 +74,14 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     private info: any = {};
 
-    constructor(storeParams: StoreParams, parentRowNode: RowNode) {
+    constructor(ssrmParams: SSRMParams, storeParams: ServerSideStoreParams, parentRowNode: RowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
-        this.storeParams = storeParams;
+        this.ssrmParams = ssrmParams;
         this.parentRowNode = parentRowNode;
         this.level = parentRowNode.level + 1;
-        this.groupLevel = storeParams.rowGroupCols ? this.level < storeParams.rowGroupCols.length : undefined;
-        this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
+        this.groupLevel = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : undefined;
+        this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
     @PostConstruct
@@ -90,7 +91,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
-            const groupColVo = this.storeParams.rowGroupCols[this.level];
+            const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
@@ -147,7 +148,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
             startRow: undefined,
             endRow: undefined,
             parentNode: this.parentRowNode,
-            storeParams: this.storeParams,
+            storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),

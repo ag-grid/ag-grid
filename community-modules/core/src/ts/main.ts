@@ -310,7 +310,9 @@ export {
     ChartRef,
     ProcessChartOptionsParams,
     ProcessChartParams,
-    ServerSideStoreType
+    ServerSideStoreType,
+    ServerSideStoreParams,
+    GetServerSideStoreParamsParams
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

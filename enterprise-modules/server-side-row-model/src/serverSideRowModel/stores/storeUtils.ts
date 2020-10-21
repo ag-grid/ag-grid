@@ -11,7 +11,7 @@ import {
     IServerSideGetRowsRequest,
     RowNode
 } from "@ag-grid-community/core";
-import { StoreParams } from "../serverSideRowModel";
+import { SSRMParams } from "../serverSideRowModel";
 
 @Bean('ssrmCacheUtils')
 export class StoreUtils extends BeanStub {
@@ -35,7 +35,7 @@ export class StoreUtils extends BeanStub {
     }
 
     public loadFromDatasource(p: {
-        storeParams: StoreParams,
+        storeParams: SSRMParams,
         parentNode: RowNode,
         successCallback: () => void,
         failCallback: () => void,

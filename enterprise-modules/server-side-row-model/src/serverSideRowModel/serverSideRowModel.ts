@@ -35,15 +35,9 @@ import { ClientSideStore } from "./stores/clientSideStore";
 import { InfiniteStore } from "./stores/infiniteStore";
 import { NodeManager } from "./nodeManager";
 import { SortListener } from "./listeners/sortListener";
+import {StoreFactory} from "./stores/storeFactory";
 
-export function cacheFactory(params: StoreParams, parentNode: RowNode): IServerSideStore {
-    const CacheClass = params.storeType === ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
-    return new CacheClass(params, parentNode);
-}
-
-export interface StoreParams {
-    blockSize?: number;
-    storeType: ServerSideStoreType;
+export interface SSRMParams {
     sortModel: any;
     filterModel: any;
     maxBlocksInCache?: number;
@@ -68,11 +62,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
-    private storeParams: StoreParams;
+    private storeParams: SSRMParams;
 
     private logger: Logger;
 
@@ -187,7 +182,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();
-            this.rootNode.childrenCache = this.createBean(cacheFactory(this.storeParams, this.rootNode));
+            this.rootNode.childrenCache = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
 
@@ -214,7 +209,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }) as ColumnVO);
     }
 
-    private createStoreParams(): StoreParams {
+    private createStoreParams(): SSRMParams {
 
         const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
         const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
@@ -235,12 +230,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             maxBlocksInCache = undefined;
         }
 
-        let blockSize = this.gridOptionsWrapper.getCacheBlockSize();
-        if (blockSize == null) {
-            blockSize = 100;
-        }
-
-        const params: StoreParams = {
+        const params: SSRMParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
@@ -251,11 +241,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.sortListener.extractSortModel(),
 
-            storeType: this.getStoreType(),
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             maxBlocksInCache: maxBlocksInCache,
-            blockSize: blockSize,
             // blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight
         };
@@ -263,23 +251,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return params;
     }
 
-    private getStoreType(): ServerSideStoreType {
-        const storeType = this.gridOptionsWrapper.getServerSideStoreType();
-        switch (storeType) {
-            case ServerSideStoreType.Infinite :
-            case ServerSideStoreType.ClientSide :
-                return storeType;
-            case null :
-            case undefined :
-                return ServerSideStoreType.Infinite;
-            default :
-                const types = Object.keys(ServerSideStoreType).join(', ');
-                console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
-                return ServerSideStoreType.Infinite;
-        }
-    }
-
-    public getParams(): StoreParams {
+    public getParams(): SSRMParams {
         return this.storeParams;
     }
 

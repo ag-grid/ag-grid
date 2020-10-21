@@ -5,7 +5,7 @@ import {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
-    GetRowNodeIdFunc,
+    GetRowNodeIdFunc, GetServerSideStoreParamsParams,
     GridOptions, IsApplyServerSideTransaction,
     IsRowMaster,
     IsRowSelectable,
@@ -14,7 +14,7 @@ import {
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessDataFromClipboardParams,
+    ProcessDataFromClipboardParams, ServerSideStoreParams,
     TabToNextCellParams,
     TabToNextHeaderParams
 } from './entities/gridOptions';
@@ -659,6 +659,10 @@ export class GridOptionsWrapper {
 
     public getServerSideStoreType(): string | undefined {
         return this.gridOptions.serverSideStoreType;
+    }
+
+    public getServerSideStoreParamsFunc(): ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined {
+        return this.gridOptions.getServerSideStoreParams;
     }
 
     public getCreateChartContainerFunc(): ((params: ChartRef) => void) | undefined {

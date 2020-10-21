@@ -17,11 +17,12 @@ import {
     RowNode,
     RowNodeBlock,
     RowRenderer,
-    ValueService
+    ValueService,
+    ServerSideStoreParams
 } from "@ag-grid-community/core";
 import { StoreUtils } from "../stores/storeUtils";
 import { BlockUtils } from "./blockUtils";
-import { StoreParams } from "../serverSideRowModel";
+import { SSRMParams } from "../serverSideRowModel";
 import { InfiniteStore } from "../stores/infiniteStore";
 import { NodeManager } from "../nodeManager";
 
@@ -39,7 +40,8 @@ export class CacheBlock extends RowNodeBlock {
 
     private logger: Logger;
 
-    private readonly storeParams: StoreParams;
+    private readonly ssrmParams: SSRMParams;
+    private readonly storeParams: ServerSideStoreParams;
     private readonly startRow: number;
 
     private readonly level: number;
@@ -67,20 +69,22 @@ export class CacheBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-    constructor(blockNumber: number, parentRowNode: RowNode, storeParams: StoreParams, parentStore: InfiniteStore) {
+    constructor(blockNumber: number, parentRowNode: RowNode, ssrmParams: SSRMParams,
+                storeParams: ServerSideStoreParams, parentStore: InfiniteStore) {
         super(blockNumber);
 
+        this.ssrmParams = ssrmParams;
         this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = blockNumber * storeParams.blockSize!;
+        this.startRow = blockNumber * storeParams.cacheBlockSize!;
 
         this.parentStore = parentStore;
         this.level = parentRowNode.level + 1;
-        this.groupLevel = storeParams.rowGroupCols ? this.level < storeParams.rowGroupCols.length : undefined;
-        this.leafGroup = storeParams.rowGroupCols ? this.level === storeParams.rowGroupCols.length - 1 : false;
+        this.groupLevel = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : undefined;
+        this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
     }
 
     @PostConstruct
@@ -90,7 +94,7 @@ export class CacheBlock extends RowNodeBlock {
         this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         if (!this.usingTreeData && this.groupLevel) {
-            const groupColVo = this.storeParams.rowGroupCols[this.level];
+            const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
@@ -137,7 +141,7 @@ export class CacheBlock extends RowNodeBlock {
             state: {
                 blockNumber: this.getId(),
                 startRow: this.startRow,
-                endRow: this.startRow + this.storeParams.blockSize!,
+                endRow: this.startRow + this.storeParams.cacheBlockSize!,
                 pageStatus: this.getState()
             }
         };
@@ -181,7 +185,7 @@ export class CacheBlock extends RowNodeBlock {
     }
 
     private touchLastAccessed(): void {
-        this.lastAccessed = this.storeParams.lastAccessedSequence.next();
+        this.lastAccessed = this.ssrmParams.lastAccessedSequence.next();
     }
 
     protected processServerResult(params: LoadSuccessParams): void {
@@ -193,8 +197,8 @@ export class CacheBlock extends RowNodeBlock {
         this.destroyRowNodes();
 
         const storeRowCount = this.parentStore.getRowCount();
-        const startRow = this.getId() * this.storeParams.blockSize!;
-        const endRow = Math.min(startRow + this.storeParams.blockSize!, storeRowCount);
+        const startRow = this.getId() * this.storeParams.cacheBlockSize!;
+        const endRow = Math.min(startRow + this.storeParams.cacheBlockSize!, storeRowCount);
         const rowsToCreate = endRow - startRow;
 
         for (let i = 0; i < rowsToCreate; i++) {
@@ -246,9 +250,9 @@ export class CacheBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         this.cacheUtils.loadFromDatasource({
             startRow: this.startRow,
-            endRow: this.startRow + this.storeParams.blockSize!,
+            endRow: this.startRow + this.storeParams.cacheBlockSize!,
             parentNode: this.parentRowNode,
-            storeParams: this.storeParams,
+            storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),

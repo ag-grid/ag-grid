@@ -10,13 +10,15 @@ import {
     RowNode,
     Bean
 } from "@ag-grid-community/core";
-import { cacheFactory, ServerSideRowModel } from "../serverSideRowModel";
+import { ServerSideRowModel } from "../serverSideRowModel";
+import {StoreFactory} from "../stores/storeFactory";
 
 @Bean('ssrmExpandListener')
 export class ExpandListener extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     @PostConstruct
     private postConstruct(): void {
@@ -34,7 +36,7 @@ export class ExpandListener extends BeanStub {
                 this.createDetailNode(rowNode);
             } else if (_.missing(rowNode.childrenCache)) {
                 const storeParams = this.serverSideRowModel.getParams();
-                rowNode.childrenCache = this.createBean(cacheFactory(storeParams, rowNode));
+                rowNode.childrenCache = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
             rowNode.childrenCache = this.destroyBean(rowNode.childrenCache)!;
