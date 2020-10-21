@@ -336,8 +336,10 @@ export class SetFilter extends ProvidedFilter {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
+        let listItem: SetFilterListItem;
+
         if (value === SetFilter.SELECT_ALL_VALUE) {
-            const listItem = this.createBean(new SetFilterListItem(
+            listItem = this.createBean(new SetFilterListItem(
                 () => this.getSelectAllLabel(),
                 this.setFilterParams,
                 key => this.translateForSetFilter(key),
@@ -351,7 +353,7 @@ export class SetFilter extends ProvidedFilter {
             return listItem;
         }
 
-        const listItem = this.createBean(new SetFilterListItem(
+        listItem = this.createBean(new SetFilterListItem(
             value, this.setFilterParams, key => this.translateForSetFilter(key), this.valueModel.isValueSelected(value)));
 
         listItem.addEventListener(

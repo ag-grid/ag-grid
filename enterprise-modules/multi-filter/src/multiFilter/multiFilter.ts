@@ -339,7 +339,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged(index),
             doesRowPassOtherFilter: (node: RowNode) =>
-                doesRowPassOtherFilter!(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
+                doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
         const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
