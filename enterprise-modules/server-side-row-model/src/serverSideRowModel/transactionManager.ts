@@ -39,7 +39,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private loadingStrategy: LoadingStrategy;
 
     @PostConstruct
-    private addEventListeners(): void {
+    private postConstruct(): void {
+        // only want to be active if SSRM active, otherwise would be interfering with other row models
+        if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
+
         this.setupLoadingStrategy();
     }
 
