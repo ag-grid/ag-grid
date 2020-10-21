@@ -138,8 +138,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
         // we want to keep, which means we are left with blocks that we can potentially purge
-        const maxBlocksProvided = this.ssrmParams.maxBlocksInCache! > 0;
-        const blocksToKeep = maxBlocksProvided ? this.ssrmParams.maxBlocksInCache! - 1 : null;
+        const maxBlocksProvided = this.storeParams.maxBlocksInCache! > 0;
+        const blocksToKeep = maxBlocksProvided ? this.storeParams.maxBlocksInCache! - 1 : null;
         const emptyBlocksToKeep = InfiniteStore.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
         blocksForPurging.forEach((block: CacheBlock, index: number) => {

@@ -9,6 +9,7 @@ export class FilterListener extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 
