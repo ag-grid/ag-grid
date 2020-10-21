@@ -80,7 +80,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         console.warn(`ag-Grid: you should not call onFilterChanged() directly on the filter, please call
         gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
         a method that existed on an old version of the filters that was not intended for public use.`);
-        this.providedFilterParams.filterChangedCallback!();
+        this.providedFilterParams.filterChangedCallback();
     }
 
     public isFilterActive(): boolean {
@@ -289,7 +289,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback!({ afterFloatingFilter, afterDataChange });
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
         }
 
         const { closeOnApply } = this.providedFilterParams;
@@ -333,7 +333,7 @@ export abstract class ProvidedFilter extends ManagedFocusComponent implements IF
      */
     protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
-        this.providedFilterParams.filterModifiedCallback!();
+        this.providedFilterParams.filterModifiedCallback();
 
         if (this.applyActive) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
