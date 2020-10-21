@@ -12,21 +12,17 @@ const VanillaTemplate = ({ appLocation, options, scriptFiles, styleFiles, indexF
     return <html lang="en">
         <head>
             <ExampleStyle />
-
-            <Extras options={options} />
-
-            <script dangerouslySetInnerHTML={{ __html: `var __basePath = '${appLocation}';` }}></script>
-            <script src={options.enterprise ? enterpriseScriptPath : communityScriptPath}></script>
-
             <Styles files={styleFiles} />
+            <Extras options={options} />
         </head>
-
         <body>
             <div style={{ height: '100%', boxSizing: 'border-box' }} dangerouslySetInnerHTML={{ __html: indexFragment }}></div>
 
+            <script dangerouslySetInnerHTML={{ __html: `var __basePath = '${appLocation}';` }}></script>
+            <script src={options.enterprise ? enterpriseScriptPath : communityScriptPath}></script>
             <Scripts files={scriptFiles} />
         </body>
-    </html >;
+    </html>;
 };
 
 export default VanillaTemplate;

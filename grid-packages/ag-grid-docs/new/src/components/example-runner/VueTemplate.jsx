@@ -13,17 +13,15 @@ const VueTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
             <title>Vue example</title>
             <meta charSet="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <ExampleStyle />
+            <ExampleStyle rootId="app" />
             <Styles files={styleFiles} />
             <Extras options={options} />
-            <Scripts files={scriptFiles} />
         </head>
         <body>
-            <div id="app" style={{ height: '100%' }} dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
+            <div id="app" dangerouslySetInnerHTML={{ __html: `<my-component>Loading Vue example&hellip;</my-component>` }}></div>
 
-            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} options={options} />
-
-            <script dangerouslySetInnerHTML={{ __html: `System.import('${appLocation}main.js').catch(function(err) { console.error(err); });` }}></script>
+            <Scripts files={scriptFiles} />
+            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'main.js'} options={options} />
         </body>
     </html>;
 };

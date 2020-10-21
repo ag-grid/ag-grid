@@ -16,14 +16,12 @@ const ReactTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
             <ExampleStyle rootId="root" />
             <Styles files={styleFiles} />
             <Extras options={options} />
-            <Scripts files={scriptFiles} />
         </head>
         <body>
             <div id="root">Loading React example&hellip;</div>
 
-            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} options={options} />
-
-            <script dangerouslySetInnerHTML={{ __html: `System.import('${appLocation}index.jsx').catch(function(err) { console.error(err); });` }}></script>
+            <Scripts files={scriptFiles} />
+            <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'index.jsx'} options={options} />
         </body>
     </html>;
 };

@@ -76,7 +76,7 @@ const gridEnterpriseModulesMap = {
     /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
 };
 
-const SystemJs = ({ boilerplatePath, appLocation, options }) => {
+const SystemJs = ({ boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
     const systemJsPath = `${boilerplatePath}systemjs.prod.config.js`;
 
@@ -90,6 +90,7 @@ const SystemJs = ({ boilerplatePath, appLocation, options }) => {
 
         <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
         <script src={systemJsPath}></script>
+        <script dangerouslySetInnerHTML={{ __html: `System.import('${startFile}').catch(function(err) { console.error(err); });` }}></script>
     </>;
 };
 
