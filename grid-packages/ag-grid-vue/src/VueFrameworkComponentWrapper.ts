@@ -1,10 +1,9 @@
-import {BaseComponentWrapper, Bean, WrapableInterface} from 'ag-grid-community';
-import {AgGridVue} from './AgGridVue';
-import {VueComponentFactory} from './VueComponentFactory';
+import { BaseComponentWrapper, Bean, WrapableInterface } from 'ag-grid-community';
+import { AgGridVue} from './AgGridVue';
+import { VueComponentFactory } from './VueComponentFactory';
 
 interface VueWrapableInterface extends WrapableInterface {
     overrideProcessing(methodName: string): boolean;
-
     processMethod(methodName: string, args: IArguments): any;
 }
 
@@ -66,11 +65,15 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
     }
 
     public createComponent<T>(component: any, params: any): any {
-        return VueComponentFactory.createAndMountComponent(component, params, this.parent!);
+        const componentType = VueComponentFactory.getComponentType(this.parent!, component);
+        if (!componentType) {
+            return;
+        }
+        return VueComponentFactory.createAndMountComponent(params, componentType, this.parent!);
     }
 
     protected createMethodProxy(wrapper: VueWrapableInterface, methodName: string, mandatory: boolean): () => any {
-        return function () {
+        return function() {
             if (wrapper.overrideProcessing(methodName)) {
                 return wrapper.processMethod(methodName, arguments);
             }
@@ -92,26 +95,22 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
 }
 
 abstract class VueComponent<P, T> {
-    private componentInstance: any;
-    private mountedComponent: any;
+    private component: any;
 
     public getGui(): HTMLElement {
-        return this.componentInstance.$el;
+        return this.component.$el;
     }
 
     public destroy(): void {
-        this.mountedComponent.unmount();
+        this.component.$destroy();
     }
 
     public getFrameworkComponentInstance(): any {
-        return this.componentInstance;
+        return this.component;
     }
 
     protected init(params: P): void {
-        const {mountedComponent, componentInstance} = this.createComponent(params);
-
-        this.mountedComponent = mountedComponent;
-        this.componentInstance = componentInstance;
+        this.component = this.createComponent(params);
     }
 
     protected abstract createComponent(params: P): any;

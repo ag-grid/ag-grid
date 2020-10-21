@@ -1,10 +1,7 @@
+import Vue, { VueConstructor } from 'vue';
 import { AgGridVue } from './AgGridVue';
 export declare class VueComponentFactory {
-    private static getComponentDefinition;
-    private static createComponentParams;
-    static createAndMountComponent(component: any, params: any, parent: AgGridVue): {
-        mountedComponent: import("vue").App<Element>;
-        componentInstance: any;
-    } | undefined;
+    static getComponentType(parent: AgGridVue, component: VueConstructor): VueConstructor<Vue> | null;
+    static createAndMountComponent(params: any, componentType: any, parent: AgGridVue): any;
     private static searchForComponentInstance;
 }

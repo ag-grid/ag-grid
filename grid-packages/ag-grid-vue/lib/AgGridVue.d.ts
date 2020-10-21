@@ -1,9 +1,8 @@
-import { Vue } from 'vue-class-component';
+import { Vue } from 'vue-property-decorator';
 import { Module } from 'ag-grid-community';
 export declare class AgGridVue extends Vue {
-    static VERSION: string;
     private static ROW_DATA_EVENTS;
-    private static DATA_MODEL_ATTR_NAME;
+    private static kebabProperty;
     autoParamsRefresh: boolean;
     componentDependencies: string[];
     modules: Module[];
@@ -12,9 +11,7 @@ export declare class AgGridVue extends Vue {
     private gridReadyFired;
     private gridOptions;
     private emitRowModel;
-    render(): import("vue").VNode<import("vue").RendererNode, import("vue").RendererElement, {
-        [key: string]: any;
-    }>;
+    render(h: any): any;
     globalEventListener(eventType: string, event: any): void;
     processChanges(propertyName: string, currentValue: any, previousValue: any): void;
     mounted(): void;
