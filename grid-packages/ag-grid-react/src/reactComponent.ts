@@ -18,6 +18,7 @@ export class ReactComponent extends BaseReactComponent {
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
     private statelessComponent: boolean;
+    private statelessDomInsertedListener: null | (() => void)  = null;
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
 
@@ -28,6 +29,12 @@ export class ReactComponent extends BaseReactComponent {
         this.componentType = componentType;
         this.parentComponent = parentComponent;
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
+
+        if(this.isStatelessComponent()) {
+            this.statelessDomInsertedListener = () => {
+                this.removeStaticMarkup();
+            }
+        }
     }
 
     public getFrameworkComponentInstance(): any {
@@ -46,6 +53,10 @@ export class ReactComponent extends BaseReactComponent {
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
 
+        if(this.isStatelessComponent()) {
+            this.eParentElement.addEventListener('DOMNodeInserted', this.statelessDomInsertedListener as any, false);
+        }
+
         return new Promise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
@@ -54,11 +65,12 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
+        this.eParentElement.removeEventListener('DOMNodeInserted', this.statelessDomInsertedListener as any);
         return this.parentComponent.destroyPortal(this.portal as ReactPortal);
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
-        if (!this.statelessComponent) {
+        if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
@@ -82,18 +94,8 @@ export class ReactComponent extends BaseReactComponent {
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if (this.statelessComponent) {
-                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
-                // actual react component are visible at the same time
-                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
-                // static markup, otherwise just the next tick
-                if (this.staticRenderTime >= 2) {
-                    this.eParentElement.addEventListener('DOMNodeInserted', () => {
-                        this.removeStaticMarkup();
-                    }, false);
-                } else {
-                    setTimeout(() => this.removeStaticMarkup());
-                }
+            if (this.isStatelessComponent()) {
+                setTimeout(() => this.removeStaticMarkup());
             }
         });
     }
