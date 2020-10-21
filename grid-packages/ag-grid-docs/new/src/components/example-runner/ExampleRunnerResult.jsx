@@ -7,6 +7,7 @@ import { getAppLocation, getInternalFramework, getSourcePath } from './helpers';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
+import VueTemplate from './VueTemplate';
 
 const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false, isVisible }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
@@ -58,10 +59,15 @@ const ExampleRunnerResult = ({ pageName, name, framework, importType = 'modules'
             break;
         }
 
+        case 'vue': {
+            element = <VueTemplate appLocation={appLocation} />;
+            break;
+        }
+
         default: element =
             <html lang="en">
                 <body>
-                    <div>{name} -- {framework}</div>
+                    <div>An unknown framework "{framework}" was requested.</div>
                 </body>
             </html>;
             break;
