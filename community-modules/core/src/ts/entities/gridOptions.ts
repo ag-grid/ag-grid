@@ -262,7 +262,7 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
     serverSideAsyncTransactionLoadingStrategy?: string;
-    serverSideStoreType?: string;
+    serverSideStoreType?: ServerSideStoreType;
 
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
 

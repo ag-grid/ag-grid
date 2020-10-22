@@ -362,8 +362,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    public purgeStore(route: string[] = []): void {
-        this.executeOnStore(route, cache => cache.purgeStore());
+    public purgeStore(route: string[], suppressLoadingSpinner: boolean): void {
+        this.executeOnStore(route, cache => cache.purgeStore(suppressLoadingSpinner));
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

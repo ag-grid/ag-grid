@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
-        { field: "year", rowGroup: true, hide: true },
+        { field: "year", hide: true },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
@@ -15,19 +15,24 @@ var gridOptions = {
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
+        field: 'athlete'
     },
     // use the server-side row model
     rowModelType: 'serverSide',
 
+    cacheBlockSize: 10,
+    maxBlocksInCache: 2,
+
+    serverSideStoreType: 'clientSide',
     suppressAggFuncInHeader: true,
 
     animateRows: true,
     // debug: true,
 };
 
-
 function purgeCache(route) {
-    gridOptions.api.purgeServerSideCache(route);
+    var hideLoadingSpinner = document.querySelector('#hideLoadingSpinner').checked === true
+    gridOptions.api.purgeServerSideCache(route, hideLoadingSpinner);
 }
 
 function getBlockState() {
@@ -40,7 +45,19 @@ function ServerSideDatasource(server) {
         getRows: function(params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            var upperCaseResults = document.querySelector('#upperCaseServer').checked === true
+            var response = server.getData(params.request, upperCaseResults);
+
+            if (upperCaseResults) {
+                response.rows = response.rows.map(function(item) {
+                    var res = {};
+                    Object.assign(res, item);
+                    if (res.athlete) {
+                        res.athlete = res.athlete.toUpperCase();
+                    }
+                    return res;
+                });
+            }
 
             // adding delay to simulate real server call
             setTimeout(function() {

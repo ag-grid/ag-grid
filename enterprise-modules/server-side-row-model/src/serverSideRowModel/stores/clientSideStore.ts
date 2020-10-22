@@ -125,15 +125,17 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
     }
 
-    private initialiseRowNodes(): void {
+    private initialiseRowNodes(loadingRowsCount = 1): void {
         this.destroyRowNodes();
-        const loadingRowNode = this.blockUtils.createRowNode(
-            {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
-                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
-        );
-        this.allRowNodes.push(loadingRowNode);
-        this.nodesAfterSort.push(loadingRowNode);
-        this.nodesAfterFilter.push(loadingRowNode);
+        for (let i = 0; i<loadingRowsCount; i++) {
+            const loadingRowNode = this.blockUtils.createRowNode(
+                {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
+                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+            );
+            this.allRowNodes.push(loadingRowNode);
+            this.nodesAfterSort.push(loadingRowNode);
+            this.nodesAfterFilter.push(loadingRowNode);
+        }
     }
 
     public getBlockStateJson(): { id: string, state: any } {
@@ -501,8 +503,9 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
-    public purgeStore(): void {
-        this.initialiseRowNodes();
+    public purgeStore(suppressLoadingSpinner: boolean): void {
+        const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
+        this.initialiseRowNodes(loadingRowsToShow);
         this.setStateWaitingToLoad();
         this.rowNodeBlockLoader.checkBlockToLoad();
         this.fireStoreUpdatedEvent();

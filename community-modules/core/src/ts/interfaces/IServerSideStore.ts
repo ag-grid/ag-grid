@@ -21,7 +21,7 @@ export interface IServerSideStore {
     refreshAfterSort(params: RefreshSortParams): void;
     refreshAfterFilter(): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
-    purgeStore(): void;
+    purgeStore(suppressLoadingSpinner: boolean): void;
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;

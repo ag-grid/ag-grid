@@ -231,19 +231,22 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public purgeStore(suppressEvent = false): void {
-        this.getBlocksInOrder().forEach(block => this.destroyBlock(block));
+    public purgeStore(suppressLoadingSpinner: boolean): void {
+        this.resetStore();
+        this.fireCacheUpdatedEvent();
+    }
+
+    private resetStore(): void {
+
+        this.destroyAllBlocks();
         this.lastRowIndexKnown = false;
+
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
         if (this.rowCount === 0) {
             this.rowCount = InfiniteStore.INITIAL_ROW_COUNT;
-        }
-
-        if (!suppressEvent) {
-            this.fireCacheUpdatedEvent();
         }
     }
 
@@ -641,13 +644,13 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterFilter(): void {
-        this.purgeStore(true);
+        this.resetStore();
     }
 
     public refreshAfterSort(params: RefreshSortParams): void {
 
         if (params.sortAlwaysResets || params.valueColSortChanged || params.secondaryColSortChanged) {
-            this.purgeStore(true);
+            this.resetStore();
             return;
         }
 
@@ -655,7 +658,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         const grouping = level < this.ssrmParams.rowGroupCols.length;
 
         if (!grouping) {
-            this.purgeStore(true);
+            this.resetStore();
             return;
         }
 
@@ -663,7 +666,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         const sortingByThisGroup = params.changedColumnsInSort.indexOf(colIdThisGroup) > -1;
 
         if (sortingByThisGroup) {
-            this.purgeStore(true);
+            this.resetStore();
             return;
         }
 

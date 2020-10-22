@@ -93,6 +93,9 @@ function FakeServer(allData) {
     }
 
     function limitSql(request) {
+
+        if (request.endRow==null || request.startRow==null) { return ''; }
+
         var blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;

@@ -2,7 +2,7 @@ import { IRowModel } from "./iRowModel";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
 
 export interface IServerSideRowModel extends IRowModel {
-    purgeStore(route?: string[]): void;
+    purgeStore(route: string[], suppressLoadingSpinner: boolean): void;
     onRowHeightChanged(): void;
 }
 
