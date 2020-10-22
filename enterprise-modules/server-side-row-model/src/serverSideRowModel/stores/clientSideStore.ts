@@ -504,8 +504,10 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public purgeStore(suppressLoadingSpinner: boolean): void {
-        const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
-        this.initialiseRowNodes(loadingRowsToShow);
+        if (!suppressLoadingSpinner) {
+            const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
+            this.initialiseRowNodes(loadingRowsToShow);
+        }
         this.setStateWaitingToLoad();
         this.rowNodeBlockLoader.checkBlockToLoad();
         this.fireStoreUpdatedEvent();

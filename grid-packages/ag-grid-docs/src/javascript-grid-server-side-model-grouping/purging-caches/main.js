@@ -2,6 +2,7 @@ var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
         { field: "year", hide: true },
+        { field: "case" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
@@ -58,6 +59,10 @@ function ServerSideDatasource(server) {
                     return res;
                 });
             }
+
+            response.rows.forEach(function(item) {
+                item.case = upperCaseResults ? 'UPPER' : 'lower';
+            });
 
             // adding delay to simulate real server call
             setTimeout(function() {
