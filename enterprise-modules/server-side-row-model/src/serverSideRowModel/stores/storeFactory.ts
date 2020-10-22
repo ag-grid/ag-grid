@@ -36,6 +36,7 @@ export class StoreFactory {
         const storeType = this.getStoreType(userStoreParams);
         const cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
         const maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
+        const purgeClosedRowNodes = this.getPurgeClosedRowNodes(userStoreParams);
 
         const storeParams: ServerSideStoreParams = {
             storeType,
@@ -44,6 +45,10 @@ export class StoreFactory {
         };
 
         return storeParams;
+    }
+
+    private getPurgeClosedRowNodes(userStoreParams?: ServerSideStoreParams): boolean {
+        return true;
     }
 
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)

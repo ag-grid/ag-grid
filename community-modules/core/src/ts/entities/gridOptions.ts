@@ -775,11 +775,8 @@ export enum ServerSideStoreType {
 
 export interface ServerSideStoreParams {
     storeType?: ServerSideStoreType;
-    sortingAlwaysResets?: boolean;
     maxBlocksInCache?: number;
-    purgeClosedRowNodes?: boolean;
-    cacheBlockSize?: number | undefined;
-    blockLoadDebounceMillis?: number;
+    cacheBlockSize?: number;
 }
 
 export interface GetServerSideStoreParamsParams {
