@@ -22,6 +22,7 @@ import { GridCore } from "./gridCore";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
+import { Constants } from "./constants/constants";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -34,9 +35,6 @@ export class FocusController extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeController') private readonly rangeController: IRangeController;
-
-    private static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
-    private static FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
     private gridCore: GridCore;
     private focusedCellPosition: CellPosition | null;
@@ -63,16 +61,15 @@ export class FocusController extends BeanStub {
     }
 
     public onColumnEverythingChanged(): void {
-        // if the columns change, check and see if this column still exists. if it does,
-        // then we can keep the focused cell. if it doesn't, then we need to drop the focused
-        // cell.
-        if (this.focusedCellPosition) {
-            const col = this.focusedCellPosition.column;
-            const colFromColumnController = this.columnController.getGridColumn(col.getId());
+        // if the columns change, check and see if this column still exists. if it does, then
+        // we can keep the focused cell. if it doesn't, then we need to drop the focused cell.
+        if (!this.focusedCellPosition) { return; }
 
-            if (col !== colFromColumnController) {
-                this.clearFocusedCell();
-            }
+        const col = this.focusedCellPosition.column;
+        const colFromColumnController = this.columnController.getGridColumn(col.getId());
+
+        if (col !== colFromColumnController) {
+            this.clearFocusedCell();
         }
     }
 
@@ -264,8 +261,8 @@ export class FocusController extends BeanStub {
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged = false): HTMLElement[] {
-        const focusableString = FocusController.FOCUSABLE_SELECTOR;
-        let excludeString = FocusController.FOCUSABLE_EXCLUDE;
+        const focusableString = Constants.FOCUSABLE_SELECTOR;
+        let excludeString = Constants.FOCUSABLE_EXCLUDE;
 
         if (exclude) {
             excludeString += ', ' + exclude;
