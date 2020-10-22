@@ -36,7 +36,6 @@ export class StoreFactory {
         const storeType = this.getStoreType(userStoreParams);
         const cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
         const maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
-        const purgeClosedRowNodes = this.getPurgeClosedRowNodes(userStoreParams);
 
         const storeParams: ServerSideStoreParams = {
             storeType,
