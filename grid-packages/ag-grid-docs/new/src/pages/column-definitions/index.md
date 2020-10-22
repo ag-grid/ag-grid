@@ -133,7 +133,7 @@ For example, the following is an outline of the steps used when creating 'Col C'
 
 The following example demonstrates the different configuration properties in action.
 
-<example-runner name="column-definition" title="Column Definition Example" type="generated" options='{ "grid": { "height": "100%" }}'></example-runner>
+<grid-example title="Column Definition Example" name="column-definition" type="generated"></grid-example>
 
 ## Provided Column Types
 
@@ -177,4 +177,4 @@ Open the example in a new tab and observe the output in the dev console. Note th
 - Col 3 and Col 4 both use `field`. The grid appends `'_1'` to Col 4 to make the ID unique.
 - Col 5 and Col 6 have neither `colId` or `field` so the grid generates column IDs.
 
-<example-runner name="column-ids" title="Column IDs" type="generated"></example-runner>
+<grid-example title="Column IDs" name="column-ids" type="generated"></grid-example>

@@ -20,7 +20,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const renderAst = new rehypeReact({
     createElement: React.createElement,
     components: {
-      "example-runner": props => ExampleRunner({ ...props, framework, pageName })
+      'grid-example': props => ExampleRunner({ ...props, framework, pageName, library: 'grid' }),
+      'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' })
     },
   }).Compiler;
 

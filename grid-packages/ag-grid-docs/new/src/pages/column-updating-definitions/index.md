@@ -16,7 +16,7 @@ The example below demonstrates adding and removing columns from a grid. Note the
 
 - Selecting the buttons to toggle between including or excluding the medal columns.
 
-<example-runner name="add-remove-columns" title="Add & Remove Columns" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Add & Remove Columns" name="add-remove-columns" type="mixed" options='{ "modules": true }'></grid-example>
 
 In the example above, note that any state applied to any column (e.g. sort, filter, width, column position) will be kept
 if the column still exists after the new definitions are applied. For example try the following:
@@ -45,7 +45,7 @@ on all Columns.
 underlying value for that cell hasn't changed.
 - Note that any resizing, reordering, sorting etc of the Columns is kept intact between updates to the Column Definitions.
 
-<example-runner name="update-column-definition" title="Updating Column Definition" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Updating Column Definition" name="update-column-definition" type="mixed" options='{ "modules": true }'></grid-example>
 
 ## Changing Column State
 
@@ -102,7 +102,7 @@ The example below shows Column Definitions using **initial attributes**. Note th
 Initials', the columns state will not change.
 - Removing the columns first and then setting them again will use the initial values again.
 
-<example-runner name="changing-default" title="Updating Column Initial Attributes" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Updating Column Initial Attributes" name="changing-default" type="mixed" options='{ "modules": true }'></grid-example>
 
 The following example shows Column Definitions using **stateful attributes**. Note the following:
 
@@ -113,7 +113,7 @@ State', the columns state will change and the changes made via the UI will be lo
 done on another column is cleared down. Otherwise the grid would see the `sort` attribute as `undefined` which means the
 state should not be changed.
 
-<example-runner name="changing-state" title="Updating Column State" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Updating Column State" name="changing-state" type="mixed" options='{ "modules": true }'></grid-example>
 
 ## `null` vs `undefined`
 
@@ -140,7 +140,7 @@ property `applyColumnDefOrder=true`.
 The example below demonstrates applying the Column Definitions order to the grid Columns after new Column Definitions
 are set. Both buttons Medals First and Medals Last set the same Columns but in a different order.
 
-<example-runner name="col-def-order" title="Column Definition Order" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Column Definition Order" name="col-def-order" type="mixed" options='{ "modules": true }'></grid-example>
 
 ## Matching Columns
 
@@ -168,7 +168,7 @@ each time.
 - All other columns except Country are matched using the `field` attribute.
 - Country column is not matched as it's a different object instance and has not `colId` or `field` attributes.
 
-<example-runner name="matching-columns" title="Matching Columns" type="mixed" options='{ "modules": true }'></example-runner>
+<grid-example title="Matching Columns" name="matching-columns" type="mixed" options='{ "modules": true }'></grid-example>
 
 ## Column Events
 
@@ -178,7 +178,7 @@ Column Events will get raised when setting new Column Definitions that update th
 The example below demonstrates events getting raised based on Column Definition changes. The example logs event
 information to the console, so best open the example in a new tab and observe the dev console.
 
-<example-runner name="column-events" title="Column Events" type="mixed" options='{ "enterprise": true }'></example-runner>
+<grid-example title="Column Events" name="column-events" type="mixed" options='{ "enterprise": true }'></grid-example>
 
 To suppress events raised when invoking `applyColumnState()` set the grid property `suppressColumnStateEvents=true`.
 
@@ -203,7 +203,7 @@ Component refreshes itself and returns `true`.
 - Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to
 the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
 
-<example-runner name="refresh-headers" title="Refresh Headers" type="mixed"></example-runner>
+<grid-example title="Refresh Headers" name="refresh-headers" type="mixed"></grid-example>
 
 ## Column Definition Retrieval
 
