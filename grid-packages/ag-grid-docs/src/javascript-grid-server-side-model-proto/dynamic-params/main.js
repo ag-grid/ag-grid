@@ -33,7 +33,7 @@ var gridOptions = {
         var res = {
             storeType: topLevelRows ? 'clientSide' : 'infinite',
             cacheBlockSize: params.level==1 ? 5 : 2,
-            maxBlocksInCache: params.level==1 ? undefined : 2
+            maxBlocksInCache: params.level==1 ? 2 : undefined
         };
 
         return res;
