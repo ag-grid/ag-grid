@@ -13,3 +13,15 @@ export const getSourcePath = (pageName, name, internalFramework, importType) =>
 
 export const getAppLocation = (pageName, name, internalFramework, importType) =>
     `/static/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
+
+export const getFrameworkFiles = framework => {
+    if (framework === 'javascript') { return []; }
+
+    let files = ['systemjs.config.js'];
+
+    if (framework === 'angular') {
+        files.unshift('main.ts', 'systemjs-angular-loader.js');
+    }
+
+    return files;
+};

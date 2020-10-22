@@ -9,9 +9,9 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
-import { getInternalFramework, getSourcePath } from './helpers';
+import { getInternalFramework, getSourcePath, getFrameworkFiles } from './helpers';
 
-const updateFiles = (pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
+const updateFiles = (pageName, nodes, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
 
     const defaultFile = {
@@ -25,16 +25,32 @@ const updateFiles = (pageName, data, name, framework, useFunctionalReact, import
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const rootFolder = getSourcePath(pageName, name, internalFramework, importType);
-    const filesForExample = data.allFile.edges
-        .filter(edge => edge.node.relativePath.startsWith(rootFolder))
-        .map(edge => ({ path: edge.node.relativePath.replace(rootFolder, ''), publicURL: edge.node.publicURL }));
+
+    const filesForExample = nodes
+        .filter(node => node.relativePath.startsWith(rootFolder))
+        .map(node => ({
+            path: node.relativePath.replace(rootFolder, ''),
+            publicURL: node.publicURL,
+            isFramework: false
+        }));
+
+    getFrameworkFiles(framework).forEach(file => filesForExample.push({
+        path: file,
+        publicURL: `/example-runner/grid-${framework}-boilerplate/${file}`,
+        isFramework: true,
+    }));
 
     const files = {};
     const promises = [];
 
     filesForExample.forEach(f => {
         files[f.path] = null; // preserve ordering
-        promises.push(fetch(f.publicURL).then(response => response.text()).then(text => files[f.path] = text));
+
+        const promise = fetch(f.publicURL)
+            .then(response => response.text())
+            .then(source => files[f.path] = { source, isFramework: f.isFramework });
+
+        promises.push(promise);
     });
 
     Promise.all(promises).then(() => setFiles(files));
@@ -44,33 +60,44 @@ const CodeViewer = ({ pageName, name, framework, importType = 'modules', useFunc
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 
-    const data = useStaticQuery(graphql`
+    const { nodes } = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { eq: "examples" }, relativePath: { regex: "/.*\/examples\/.*/" } }) {
-            edges {
-                node {
-                    relativePath
-                    publicURL
-                }
+            nodes {
+                relativePath
+                publicURL
             }
         }
     }
-    `);
+    `).allFile;
 
     useEffect(
-        () => updateFiles(pageName, data, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
-        [data, name, framework, useFunctionalReact, importType]);
+        () => updateFiles(pageName, nodes, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
+        [nodes, name, framework, useFunctionalReact, importType]);
+
+    const keys = files ? Object.keys(files) : [];
+    const exampleFiles = keys.filter(key => !files[key].isFramework);
+    const frameworkFiles = keys.filter(key => files[key].isFramework);
 
     return <div className="code-viewer">
-        <div className="code-viewer__files">{files && Object.keys(files).map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}</div>
+        <div className="code-viewer__files">
+            {frameworkFiles.length > 0 && <div className="code-viewer__file-title">App</div>}
+            {exampleFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
+            {frameworkFiles.length > 0 &&
+                <>
+                    <div className="code-viewer__file-title">Framework</div>
+                    {frameworkFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
+                </>}
+        </div>
         <div className="code-viewer__code">
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && <FileView path={activeFile} code={files[activeFile]} />}
+            {files && activeFile && <FileView path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
 };
 
-const FileItem = ({ path, isActive, onClick }) => <div className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`} onClick={onClick}>{path}</div>;
+const FileItem = ({ path, isActive, onClick }) =>
+    <div className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`} onClick={onClick}>{path}</div>;
 
 const LanguageMap = {
     js: Prism.languages.javascript,

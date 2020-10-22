@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function (global) {
+(function(global) {
     var ANGULAR_VERSION = "10.0.0";
     var ANGULAR_CDK_VERSION = "10.0.0";
     var ANGULAR_MATERIAL_VERSION = "10.0.0";
@@ -39,15 +39,12 @@
             typescript: {
                 exports: "ts"
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         },
-        paths:
-            assign(
-                {
-                    // paths serve as alias
-                    "npm:": "https://unpkg.com/",
-                }, systemJsPaths)
-        ,
+        paths: {
+            // paths serve as alias
+            "npm:": "https://unpkg.com/"
+        },
         // RxJS makes a lot of requests to unpkg. This guy addressed it:
         // https://github.com/OasisDigital/rxjs-system-bundle.
         bundles: {
@@ -142,13 +139,13 @@
                 main: "./main.ts",
                 defaultExtension: "ts",
                 meta: {
-                    "./*.ts": {
+                    "*.ts": {
                         loader: boilerplatePath + "systemjs-angular-loader.js"
                     }
                 }
             },
             'ag-grid-angular': {
-                main: './bundles/ag-grid-angular.umd.js',
+                main: './dist/ag-grid-angular/bundles/ag-grid-angular.umd.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
@@ -160,9 +157,120 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./bundles/ag-grid-community-angular.umd.js",
+                main: "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
                 defaultExtension: "js"
             },
+            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
+            '@ag-grid-community/core/dist/cjs/utils': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            /* START OF MODULES - DO NOT DELETE */
+            '@ag-grid-community/all-modules': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-community/client-side-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-community/core': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-community/csv-export': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-community/infinite-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-community': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/all-modules': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/charts': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/clipboard': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/column-tool-panel': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/core': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/date-time-cell-editor': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/excel-export': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/filter-tool-panel': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/master-detail': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/menu': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/multi-filter': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/range-selection': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/rich-select': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/row-grouping': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/server-side-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/set-filter': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/side-bar': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/status-bar': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/viewport-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            /* END OF MODULES - DO NOT DELETE */
             rxjs: {
                 defaultExtension: false
             }

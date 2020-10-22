@@ -9,13 +9,14 @@
     background-image: linear-gradient(to bottom right, #0084e7, #0067b4);
     padding: 10px;
     border-radius: 5px 5px 0 0;
-    height: 3.2em;
+    height: 3.2rem;
 }
 
 .example-runner__title {
     flex: 1;
     font-weight: bold;
     color: white;
+    line-height: 2rem;
 }
 
 .example-runner__import-type,
@@ -26,4 +27,33 @@
         border-radius: 5px;
         margin-left: 10px;
     }
+}
+
+.example-runner__body {
+    display: flex;
+}
+
+.example-runner__menu {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgrey;
+    padding: 20px 0;
+}
+
+.example-runner__menu-item {
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    padding-top: 12px;
+    cursor: pointer;
+
+    &--selected {
+        color: white;
+        background-color: darkblue;
+    }
+}
+
+.example-runner__content {
+    flex: 1 1 auto;
+    overflow: hidden;
 }

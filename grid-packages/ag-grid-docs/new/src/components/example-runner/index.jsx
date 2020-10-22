@@ -1,9 +1,11 @@
+import './example-runner.scss';
 import React, { useState } from 'react';
 import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import VisibilitySensor from "react-visibility-sensor";
-import './example-runner.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
@@ -14,8 +16,6 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
             return <div className="example-runner">
                 <div className="example-runner__header">
                     <div className="example-runner__title">Example: {title}</div>
-                    <button onClick={() => setShowCode(false)}>Demo</button>&nbsp;
-                    <button onClick={() => setShowCode(true)}>Code</button>
                     {framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
@@ -27,27 +27,49 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                {!showCode &&
-                    <VisibilitySensor partialVisibility={true}>
-                        {({ isVisible }) =>
-                            <ExampleRunnerResult
-                                isVisible={isVisible}
-                                pageName={pageName}
-                                framework={framework}
-                                name={name}
-                                importType={exampleImportType}
-                                options={parsedOptions}
-                            />
+                <div className="example-runner__body">
+                    <div className="example-runner__menu">
+                        <div
+                            className={`example-runner__menu-item ${!showCode ? 'example-runner__menu-item--selected' : ''}`}
+                            onClick={() => setShowCode(false)}>
+                            <FontAwesomeIcon icon={faPlay} fixedWidth />
+                        </div>
+                        <div
+                            className={`example-runner__menu-item ${showCode ? 'example-runner__menu-item--selected' : ''}`}
+                            onClick={() => setShowCode(true)}>
+                            <FontAwesomeIcon icon={faCode} fixedWidth />
+                        </div>
+                        <div className='example-runner__menu-item'>
+                            <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                        </div>
+                        <div className='example-runner__menu-item'>
+                            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+                        </div>
+                    </div>
+                    <div className="example-runner__content">
+                        {!showCode &&
+                            <VisibilitySensor partialVisibility={true}>
+                                {({ isVisible }) =>
+                                    <ExampleRunnerResult
+                                        isVisible={isVisible}
+                                        pageName={pageName}
+                                        framework={framework}
+                                        name={name}
+                                        importType={exampleImportType}
+                                        options={parsedOptions}
+                                    />
+                                }
+                            </VisibilitySensor>
                         }
-                    </VisibilitySensor>
-                }
-                {showCode && <CodeViewer
-                    pageName={pageName}
-                    framework={framework}
-                    name={name}
-                    importType={exampleImportType}
-                    useFunctionalReact={useFunctionalReact} />}
-            </div >;
+                        {showCode && <CodeViewer
+                            pageName={pageName}
+                            framework={framework}
+                            name={name}
+                            importType={exampleImportType}
+                            useFunctionalReact={useFunctionalReact} />}
+                    </div>
+                </div>
+            </div>;
         }}
     </GlobalContextConsumer>;
 };

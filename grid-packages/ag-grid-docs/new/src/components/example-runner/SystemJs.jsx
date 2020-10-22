@@ -78,7 +78,7 @@ const gridEnterpriseModulesMap = {
 
 const SystemJs = ({ boilerplatePath, appLocation, startFile, options }) => {
     const { enterprise: isEnterprise } = options;
-    const systemJsPath = `${boilerplatePath}systemjs.prod.config.js`;
+    const systemJsPath = `${boilerplatePath}systemjs.config.js`;
 
     return <>
         <script dangerouslySetInnerHTML={{
