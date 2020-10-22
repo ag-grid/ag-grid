@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "24.1.0",
+  "version": "24.1.1",
   "license": "MIT",
   "peerDependencies": {
     "ag-grid-community": "~24.1.0",

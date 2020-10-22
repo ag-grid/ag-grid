@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "ng": "ng",
     "build": "ng build && npm run hash",

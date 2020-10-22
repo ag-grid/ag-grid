@@ -1,0 +1,17 @@
+export declare type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
+export declare enum PromiseStatus {
+    IN_PROGRESS = 0,
+    RESOLVED = 1
+}
+export declare class Promise<T> {
+    private status;
+    private resolution;
+    private waiters;
+    static all<T>(promises: Promise<T | null>[]): Promise<(T | null)[]>;
+    static resolve<T>(value?: T | null): Promise<T>;
+    constructor(callback: ResolveAndRejectCallback<T>);
+    then<V>(func: (result: T | null) => V): Promise<V>;
+    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z;
+    private onDone;
+    private onReject;
+}
