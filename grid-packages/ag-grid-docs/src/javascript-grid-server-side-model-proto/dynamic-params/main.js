@@ -23,7 +23,6 @@ var gridOptions = {
 
     // rowBuffer: 0,
     cacheBlockSize: 4,
-    maxBlocksInCache: 5,
 
     // use the server-side row model
     rowModelType: 'serverSide',
@@ -33,7 +32,8 @@ var gridOptions = {
 
         var res = {
             storeType: topLevelRows ? 'clientSide' : 'infinite',
-            cacheBlockSize: params.level==1 ? 5 : 2
+            cacheBlockSize: params.level==1 ? 5 : 2,
+            maxBlocksInCache: params.level==1 ? undefined : 2
         };
 
         return res;

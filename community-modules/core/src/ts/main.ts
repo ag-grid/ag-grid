@@ -162,7 +162,6 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
-export { CellRendererFactory } from "./rendering/cellRendererFactory";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
 export { RowComp } from "./rendering/row/rowComp";

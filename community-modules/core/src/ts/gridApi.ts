@@ -21,7 +21,6 @@ import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
-import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
@@ -150,7 +149,6 @@ export class GridApi {
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
