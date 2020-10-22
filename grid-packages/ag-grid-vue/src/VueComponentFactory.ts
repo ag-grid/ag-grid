@@ -82,7 +82,7 @@ export class VueComponentFactory {
         currentParent &&
         currentParent.$options &&
         (++depth < maxDepth)) {
-            componentInstance = (currentParent as any).$options.components![component as any];
+            componentInstance = currentParent.$options.components![component];
             currentParent = currentParent.$parent;
         }
 

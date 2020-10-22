@@ -4,6 +4,11 @@
 [![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
 [![npm](https://img.shields.io/npm/dt/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
 
+| Module              | SonarCloud Status |
+| --------------------|------------------:|
+| ag-grid-community   | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
+| ag-grid-enterprise  | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+
 # ag-Grid
 
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.

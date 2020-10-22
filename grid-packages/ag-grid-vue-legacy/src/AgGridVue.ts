@@ -134,7 +134,7 @@ export class AgGridVue extends Vue {
 
     private getRowData(): any[] {
         const rowData: any[] = [];
-        this.gridOptions!.api!.forEachNode((rowNode) => {
+        this.gridOptions.api!.forEachNode((rowNode) => {
             rowData.push(rowNode.data);
         });
         return rowData;

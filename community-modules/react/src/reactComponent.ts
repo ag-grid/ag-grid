@@ -89,7 +89,7 @@ export class ReactComponent extends BaseReactComponent {
         );
 
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
+        this.parentComponent.mountReactPortal(portal, this, (value: any) => {
             resolve(value);
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
@@ -111,7 +111,7 @@ export class ReactComponent extends BaseReactComponent {
 
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(className => _.addCssClass(this.eParentElement as HTMLElement, className));
+            parentContainerClasses.forEach(className => _.addCssClass(this.eParentElement, className));
         }
     }
 
