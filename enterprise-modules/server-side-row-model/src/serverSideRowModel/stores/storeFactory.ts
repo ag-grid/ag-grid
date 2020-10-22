@@ -46,10 +46,6 @@ export class StoreFactory {
         return storeParams;
     }
 
-    private getPurgeClosedRowNodes(userStoreParams?: ServerSideStoreParams): boolean {
-        return true;
-    }
-
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
         : number | undefined {
 
