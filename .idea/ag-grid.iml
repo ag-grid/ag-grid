@@ -5,6 +5,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/.github" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/node_modules.nosync" />

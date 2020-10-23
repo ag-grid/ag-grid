@@ -1,4 +1,4 @@
-// ag-grid-react v24.1.0
+// ag-grid-react v24.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -26,12 +26,18 @@ var ReactComponent = /** @class */ (function (_super) {
     function ReactComponent(reactComponent, parentComponent, componentType) {
         var _this = _super.call(this) || this;
         _this.portal = null;
+        _this.statelessDomInsertedListener = null;
         _this.staticMarkup = null;
         _this.staticRenderTime = 0;
         _this.reactComponent = reactComponent;
         _this.componentType = componentType;
         _this.parentComponent = parentComponent;
         _this.statelessComponent = ReactComponent.isStateless(_this.reactComponent);
+        if (_this.isStatelessComponent()) {
+            _this.statelessDomInsertedListener = function () {
+                _this.removeStaticMarkup();
+            };
+        }
         return _this;
     }
     ReactComponent.prototype.getFrameworkComponentInstance = function () {
@@ -47,17 +53,21 @@ var ReactComponent = /** @class */ (function (_super) {
         var _this = this;
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
+        if (this.isStatelessComponent()) {
+            this.eParentElement.addEventListener('DOMNodeInserted', this.statelessDomInsertedListener, false);
+        }
         return new ag_grid_community_1.Promise(function (resolve) { return _this.createReactComponent(params, resolve); });
     };
     ReactComponent.prototype.getGui = function () {
         return this.eParentElement;
     };
     ReactComponent.prototype.destroy = function () {
+        this.eParentElement.removeEventListener('DOMNodeInserted', this.statelessDomInsertedListener);
         return this.parentComponent.destroyPortal(this.portal);
     };
     ReactComponent.prototype.createReactComponent = function (params, resolve) {
         var _this = this;
-        if (!this.statelessComponent) {
+        if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
             params.ref = function (element) {
                 _this.componentInstance = element;
@@ -74,19 +84,8 @@ var ReactComponent = /** @class */ (function (_super) {
             resolve(value);
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if (_this.statelessComponent) {
-                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
-                // actual react component are visible at the same time
-                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
-                // static markup, otherwise just the next tick
-                if (_this.staticRenderTime >= 2) {
-                    _this.eParentElement.addEventListener('DOMNodeInserted', function () {
-                        _this.removeStaticMarkup();
-                    }, false);
-                }
-                else {
-                    setTimeout(function () { return _this.removeStaticMarkup(); });
-                }
+            if (_this.isStatelessComponent()) {
+                setTimeout(function () { return _this.removeStaticMarkup(); });
             }
         });
     };

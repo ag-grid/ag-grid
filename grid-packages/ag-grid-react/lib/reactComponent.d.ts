@@ -1,4 +1,4 @@
-// ag-grid-react v24.1.0
+// ag-grid-react v24.1.1
 import { ComponentType, Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from './baseReactComponent';
@@ -11,6 +11,7 @@ export declare class ReactComponent extends BaseReactComponent {
     private parentComponent;
     private portal;
     private statelessComponent;
+    private statelessDomInsertedListener;
     private staticMarkup;
     private staticRenderTime;
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType);

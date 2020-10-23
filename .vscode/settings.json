@@ -30,5 +30,5 @@
     "[scss]": {
         "editor.detectIndentation": false,
         "editor.tabSize": 4
-    },
+    }
 }

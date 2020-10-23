@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Component, ReactElement } from "react";
+import { Component } from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "@ag-grid-community/core";
 import { ColDef, ColGroupDef } from "@ag-grid-community/core";
