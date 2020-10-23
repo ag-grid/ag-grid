@@ -44,7 +44,7 @@
 	branch = latest
 [submodule "examples-grid/ag-grid-vue3-package-example"]
 	path = examples-grid/ag-grid-vue3-package-example
-	url = git@github.com:ag-grid/ag-grid-vue3-package-example.git
+	url = https://github.com/ag-grid/ag-grid-vue3-package-example.git
 [submodule "examples-grid/ag-grid-vue3-example"]
 	path = examples-grid/ag-grid-vue3-example
-	url = git@github.com:ag-grid/ag-grid-vue3-example.git
+	url = https://github.com/ag-grid/ag-grid-vue3-example.git
