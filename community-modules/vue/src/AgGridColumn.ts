@@ -1,4 +1,4 @@
-import {ColDef, ColDefUtil} from '@ag-grid-community/core';
+import { ColDef, ColDefUtil } from '@ag-grid-community/core';
 
 export class AgGridColumn {
     public static hasChildColumns(slots: any) {
@@ -44,8 +44,8 @@ export class AgGridColumn {
 
     private static assign(colDef: any, from: AgGridColumn): ColDef {
         // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function (r, o) {
-            Object.keys(o).forEach(function (k) {
+        return [from].reduce(function(r, o) {
+            Object.keys(o).forEach(function(k) {
                 r[k] = (o as any)[k];
             });
             return r;

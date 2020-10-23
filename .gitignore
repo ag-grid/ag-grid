@@ -52,13 +52,13 @@ grid-packages/ag-grid-enterprise/main.js
 grid-packages/ag-grid-vue/lib/**
 grid-packages/ag-grid-vue/main.js
 grid-packages/ag-grid-vue/main.d.ts
-grid-packages/ag-grid-vue-legacy/lib/**
-grid-packages/ag-grid-vue-legacy/main.js
-grid-packages/ag-grid-vue-legacy/main.d.ts
+grid-packages/ag-grid-vue3/lib/**
+grid-packages/ag-grid-vue3/main.js
+grid-packages/ag-grid-vue3/main.d.ts
 community-modules/vue/lib/**
 community-modules/vue/main.js
-community-modules/vue-legacy/lib/**
-community-modules/vue-legacy/main.js
+community-modules/vue3/lib/**
+community-modules/vue3/main.js
 
 grid-packages/ag-grid-angular/exports.d.ts
 grid-packages/ag-grid-angular/exports.js
