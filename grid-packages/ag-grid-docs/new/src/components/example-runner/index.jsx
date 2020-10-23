@@ -7,7 +7,7 @@ import VisibilitySensor from "react-visibility-sensor";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleInfo, openPlunker } from './helpers';
+import { doOnEnter, getExampleInfo, openPlunker } from './helpers';
 import { generateIndexHtml } from './index-html-generator';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
@@ -32,9 +32,9 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                     win.document.close();
                 };
 
-                openTabLink = <span onClick={openTab} onKeyDown={openTab} role="button" tabIndex="0">
+                openTabLink = <div onClick={openTab} onKeyDown={e => doOnEnter(e, openTab)} role="button" tabIndex="0">
                     <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                </span>;
+                </div>;
             }
 
             return <div className="example-runner">
@@ -56,7 +56,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         <div
                             className={`example-runner__menu-item ${!showCode ? 'example-runner__menu-item--selected' : ''}`}
                             onClick={() => setShowCode(false)}
-                            onKeyDown={() => setShowCode(false)}
+                            onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
                             role="button"
                             tabIndex="0">
                             <FontAwesomeIcon icon={faPlay} fixedWidth />
@@ -64,7 +64,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         <div
                             className={`example-runner__menu-item ${showCode ? 'example-runner__menu-item--selected' : ''}`}
                             onClick={() => setShowCode(true)}
-                            onKeyDown={() => setShowCode(true)}
+                            onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
                             role="button"
                             tabIndex="0">
                             <FontAwesomeIcon icon={faCode} fixedWidth />
@@ -75,7 +75,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         <div
                             className='example-runner__menu-item'
                             onClick={() => openPlunker(nodes, exampleInfo)}
-                            onKeyDown={() => openPlunker(nodes, exampleInfo)}
+                            onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
                             role="button"
                             tabIndex="0">
                             <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />

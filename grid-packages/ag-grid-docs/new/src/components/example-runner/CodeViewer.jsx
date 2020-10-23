@@ -9,7 +9,7 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { getExampleFiles } from './helpers';
+import { doOnEnter, getExampleFiles } from './helpers';
 
 const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
@@ -58,7 +58,7 @@ const FileItem = ({ path, isActive, onClick }) =>
     <div
         className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`}
         onClick={onClick}
-        onKeyDown={onClick}
+        onKeyDown={e => doOnEnter(e, onClick)}
         role="button"
         tabIndex="0">
         {path}

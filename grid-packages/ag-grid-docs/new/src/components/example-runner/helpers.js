@@ -114,3 +114,9 @@ export const openPlunker = (nodes, exampleInfo) => {
         document.body.removeChild(form);
     });
 };
+
+export const doOnEnter = (e, action) => {
+    if (e.key && e.key === 'Enter') {
+        action();
+    }
+};
