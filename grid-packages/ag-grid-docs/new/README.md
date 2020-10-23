@@ -5,7 +5,6 @@ This is the documentation site for AG-Grid, a statically-generated site using th
 ## Getting started
 
     npm i
-    npm i -g gatsby-cli
     npm start
 
 This will ensure the Gatsby CLI is installed, and run the website. You can then open it at http://localhost:8080. Any changes you make to the code will be hot-reloaded while you are in this develop mode.
@@ -14,10 +13,10 @@ This will ensure the Gatsby CLI is installed, and run the website. You can then 
 
 To build the site for deployment, run
 
-    gatsby build
+    npm build
 
-This will compile all the required assets and put them in the `public` folder ready for upload. Run `gatsby serve` if you want to test the website from these assets.
+This will compile all the required assets and put them in the `public` folder ready for upload. Run `npm run serve` if you want to test the website from these assets.
 
 This process will also update the indices for the Algolia search. For this to work, you will need to provide the required environment variables. Copy `.env.example` to `.env` and fill in the required values from your Algolia account.
 
-NOTE: when you have built the website, if you then run develop mode, it will serve any files that it finds in the `public` folder instead of using ones that are generated on-the-fly, which can interrupt hot-reloading (for example for pages generated from Markdown). Run `gatsby clean` before starting develop mode to ensure that everything works correctly.
+NOTE: when you have built the website, if you then run develop mode, it will serve any files that it finds in the `public` folder instead of using ones that are generated on-the-fly, which can interrupt hot-reloading (for example for pages generated from Markdown). `npm start` will clean before starting develop mode to ensure that everything works correctly.
