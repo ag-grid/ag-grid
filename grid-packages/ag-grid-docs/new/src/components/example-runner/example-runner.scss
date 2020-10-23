@@ -46,6 +46,11 @@
     text-align: center;
     padding-top: 12px;
     cursor: pointer;
+    color: darkblue;
+
+    a {
+        color: darkblue;
+    }
 
     &--selected {
         color: white;

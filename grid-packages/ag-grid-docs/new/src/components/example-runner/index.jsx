@@ -51,7 +51,9 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
                         <div className='example-runner__menu-item'>
-                            <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                            <a href={`${exampleInfo.appLocation}index.html`} target="_blank" rel="noreferrer">
+                                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                            </a>
                         </div>
                         <div
                             className='example-runner__menu-item'

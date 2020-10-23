@@ -8,17 +8,22 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const nodes = useExampleFileNodes();
-    const { pageName, name, framework } = exampleInfo;
+    const { name, appLocation: modulesLocation, framework } = exampleInfo;
     const generated = generateIndexHtml(nodes, exampleInfo, true);
-    const rootFolder = `public/example-runner/${pageName}/${name}/${framework}`;
 
     if (typeof window === 'undefined') {
         // generate code for the website to read at runtime
-        if (!fs.existsSync(rootFolder)) {
-            fs.mkdirSync(rootFolder, { recursive: true });
-        }
+        fs.writeFileSync(`public${modulesLocation}index.html`, generated);
 
-        fs.writeFileSync(`${rootFolder}/index.html`, generated);
+        const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
+
+        fs.writeFileSync(`public${packagesLocation}index.html`, generated);
+
+        if (framework === 'react') {
+            // need to ensure functional version is also generated
+            fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, generated);
+            fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, generated);
+        }
     }
 
     useEffect(() => {

@@ -12,8 +12,8 @@ const getInternalFramework = (framework, useFunctionalReact) => {
 
 export const getExampleInfo = (pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
-    const sourcePath = `${pageName}/examples/${name}/_gen/${importType}/${internalFramework}/`;
     const boilerplatePath = `/example-runner/grid-${framework}-boilerplate/`;
+    const sourcePath = `${pageName}/examples/${name}/_gen/${importType}/${internalFramework}/`;
     const appLocation = `/static/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
 
     return {
