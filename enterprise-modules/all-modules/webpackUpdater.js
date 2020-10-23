@@ -5,7 +5,7 @@ const frameworkModules = [
     'react',
     'angular',
     'vue',
-    'vue-legacy',
+    'vue3',
     'polymer'
 ];
 
