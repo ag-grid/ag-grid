@@ -2102,7 +2102,9 @@
     },
     "binCount": {
       "type": "number",
-      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting.",
+      "min": 1,
+      "max": 30
     },
     "bins": {
       "type": "number[][]",

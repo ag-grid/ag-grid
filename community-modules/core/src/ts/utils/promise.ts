@@ -1,6 +1,6 @@
 import { forEach } from './array';
 
-export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
+export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 export enum PromiseStatus {
     IN_PROGRESS, RESOLVED
@@ -9,12 +9,12 @@ export enum PromiseStatus {
 export class Promise<T> {
     private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
-    private waiters: ((value: T) => void)[] = [];
+    private waiters: ((value: T | null) => void)[] = [];
 
-    static all<T>(promises: Promise<T>[]): Promise<T[]> {
+    static all<T>(promises: Promise<T | null>[]): Promise<(T | null)[]> {
         return new Promise(resolve => {
             let remainingToResolve = promises.length;
-            const combinedValues = new Array<T>(remainingToResolve);
+            const combinedValues = new Array<T | null>(remainingToResolve);
 
             forEach(promises, (promise, index) => {
                 promise.then(value => {
@@ -29,7 +29,7 @@ export class Promise<T> {
         });
     }
 
-    static resolve<T>(value: T = null): Promise<T> {
+    static resolve<T>(value: T | null = null): Promise<T> {
         return new Promise<T>(resolve => resolve(value));
     }
 
@@ -37,7 +37,7 @@ export class Promise<T> {
         callback(value => this.onDone(value), params => this.onReject(params));
     }
 
-    public then<V>(func: (result: T) => V): Promise<V> {
+    public then<V>(func: (result: T | null) => V): Promise<V> {
         return new Promise(resolve => {
             if (this.status === PromiseStatus.RESOLVED) {
                 resolve(func(this.resolution));
@@ -51,7 +51,7 @@ export class Promise<T> {
         return this.status === PromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
     }
 
-    private onDone(value: T): void {
+    private onDone(value: T | null): void {
         this.status = PromiseStatus.RESOLVED;
         this.resolution = value;
 

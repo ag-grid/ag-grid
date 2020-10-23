@@ -9,15 +9,15 @@ import { Context } from "../../../context/context";
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
 
-    private dateComp: IDateComp;
-    private tempValue: Date;
+    private dateComp: IDateComp | null | undefined;
+    private tempValue: Date | null;
     private alive = true;
     private context: Context;
 
     constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
         this.context = context;
 
-        userComponentFactory.newDateComponent(dateComponentParams).then(dateComp => {
+        userComponentFactory.newDateComponent(dateComponentParams)!.then(dateComp => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
@@ -25,6 +25,8 @@ export class DateCompWrapper {
             }
 
             this.dateComp = dateComp;
+            if (!dateComp) { return; }
+
             eParent.appendChild(dateComp.getGui());
 
             if (dateComp.afterGuiAttached) {
@@ -42,11 +44,11 @@ export class DateCompWrapper {
         this.dateComp = this.context.destroyBean(this.dateComp);
     }
 
-    public getDate(): Date {
+    public getDate(): Date | null {
         return this.dateComp ? this.dateComp.getDate() : this.tempValue;
     }
 
-    public setDate(value: Date): void {
+    public setDate(value: Date | null): void {
         if (this.dateComp) {
             this.dateComp.setDate(value);
         } else {

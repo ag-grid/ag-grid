@@ -28,7 +28,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         const eGui = this.getGui();
 
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
         this.addDragSource();
 
         this.checkCompatibility();

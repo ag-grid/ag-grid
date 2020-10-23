@@ -1210,7 +1210,11 @@ export const histogram = Object.freeze({
     },
     binCount: {
         type: "number",
-        description: "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+        description: "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting.",
+        editor: NumberEditor,
+        default: 10,
+        min: 1,
+        max: 30,
     },
     bins: {
         type: "number[][]",

@@ -9,12 +9,12 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ShadowPanel} from "./shadowPanel";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
-import {initFillOpacitySlider, initLineOpacitySlider} from "../widgetInitialiser";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ShadowPanel } from "./shadowPanel";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
+import { initFillOpacitySlider, initLineOpacitySlider } from "../widgetInitialiser";
 
 export class AreaSeriesPanel extends Component {
 
@@ -23,6 +23,7 @@ export class AreaSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
+                <ag-slider ref="seriesLineDashSlider"></ag-slider>
                 <ag-slider ref="seriesLineOpacitySlider"></ag-slider>
                 <ag-slider ref="seriesFillOpacitySlider"></ag-slider>
             </ag-group-component>
@@ -31,6 +32,7 @@ export class AreaSeriesPanel extends Component {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
+    @RefSelector('seriesLineDashSlider') private seriesLineDashSlider: AgSlider;
     @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
     @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
@@ -55,6 +57,7 @@ export class AreaSeriesPanel extends Component {
         this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
+        this.initSeriesLineDash();
         this.initOpacity();
         this.initMarkersPanel();
         this.initShadowPanel();
@@ -84,6 +87,15 @@ export class AreaSeriesPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+    }
+
+    private initSeriesLineDash() {
+        this.seriesLineDashSlider
+            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
     }
 
     private initOpacity() {

@@ -68,9 +68,9 @@ export class AutoWidthCalculator extends BeanStub {
         return dummyContainerWidth + autoSizePadding;
     }
 
-    private getHeaderCellForColumn(column: Column): HTMLElement {
+    private getHeaderCellForColumn(column: Column): HTMLElement | null {
 
-        let comp: Component = null;
+        let comp: Component | null = null;
 
         // find the rendered header cell
         this.headerRootComp.forEachHeaderElement(headerElement => {
@@ -82,7 +82,7 @@ export class AutoWidthCalculator extends BeanStub {
             }
         });
 
-        return comp ? comp.getGui() : null;
+        return comp ? (comp as Component).getGui() : null;
     }
 
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {

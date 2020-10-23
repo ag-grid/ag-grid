@@ -9,6 +9,8 @@ import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/iRangeController';
 import { ChartModel } from './interfaces/IChartService';
+import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
@@ -222,15 +224,15 @@ export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
 export interface CellFocusedEvent extends AgGridEvent {
-    rowIndex: number;
-    column: Column;
-    rowPinned: string;
-    forceBrowserFocus: boolean;
+    rowIndex: number | null;
+    column: Column | null;
+    rowPinned?: string | null;
+    forceBrowserFocus?: boolean;
     // floating is for backwards compatibility, this is the same as rowPinned.
     // this is because the focus service doesn't keep references to rowNodes
     // as focused cell is identified by rowIndex - thus when the user re-orders
     // or filters, the focused cell stays with the index, but the node can change.
-    floating: string;
+    floating: string | null;
 }
 
 export interface ExpandCollapseAllEvent extends AgGridEvent {
@@ -271,7 +273,7 @@ export interface ColumnEvent extends AgGridEvent {
 
 export interface ColumnResizedEvent extends ColumnEvent {
     finished: boolean;
-    flexColumns: Column[];
+    flexColumns: Column[] | null;
 }
 
 export interface ColumnPivotChangedEvent extends ColumnEvent { }
@@ -281,11 +283,11 @@ export interface ColumnRowGroupChangedEvent extends ColumnEvent { }
 export interface ColumnValueChangedEvent extends ColumnEvent { }
 
 export interface ColumnMovedEvent extends ColumnEvent {
-    toIndex: number | undefined;
+    toIndex?: number;
 }
 
 export interface ColumnVisibleEvent extends ColumnEvent {
-    visible: boolean | undefined;
+    visible?: boolean;
 }
 
 export interface ColumnPinnedEvent extends ColumnEvent {
@@ -362,6 +364,10 @@ export interface CellValueChangedEvent extends CellEvent {
     source: string | undefined;
 }
 
+export interface AsyncTransactionsApplied extends AgGridEvent {
+    results: (RowNodeTransaction | ServerSideTransactionResult) [];
+}
+
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
 // is done and how these should be used before we fully document and share with the world.
 export interface ColumnRequestEvent extends AgGridEvent {
@@ -379,3 +385,5 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 }
 
 export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
+
+export interface StoreUpdatedEvent extends AgEvent {} // not documented

@@ -27,7 +27,9 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
 
     public init(params: ILoadingCellRendererParams): void {
         const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
-        this.eLoadingIcon.appendChild(eLoadingIcon);
+        if (eLoadingIcon) {
+            this.eLoadingIcon.appendChild(eLoadingIcon);
+        }
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');

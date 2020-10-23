@@ -19,7 +19,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         }
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public setValue(value?: string | null, silent?: boolean): this {
         const ret = super.setValue(value, silent);
 
         if (this.eInput.value !== value) {

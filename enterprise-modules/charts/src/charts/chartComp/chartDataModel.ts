@@ -22,8 +22,8 @@ import { ChartTranslator } from './chartTranslator';
 export interface ColState {
     column?: Column;
     colId: string;
-    displayName: string;
-    selected: boolean;
+    displayName: string | null;
+    selected?: boolean;
     order: number;
 }
 
@@ -64,7 +64,7 @@ export class ChartDataModel extends BeanStub {
     private chartThemeName: string;
     private datasource: ChartDatasource;
 
-    private detached = false;
+    private unlinked = false;
     private grouping = false;
     private columnNames: { [p: string]: string[]; } = {};
 
@@ -77,7 +77,7 @@ export class ChartDataModel extends BeanStub {
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
-        this.detached = !!params.unlinkChart;
+        this.unlinked = !!params.unlinkChart;
 
         // this is used to associate chart ranges with charts
         this.chartId = this.generateId();
@@ -121,7 +121,7 @@ export class ChartDataModel extends BeanStub {
     private isGroupActive() {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
         const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
-        return usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+        return usingTreeData || (groupedCols && groupedCols.length > 0);
     }
 
     public isGrouping(): boolean {
@@ -129,7 +129,7 @@ export class ChartDataModel extends BeanStub {
         const colId = this.getSelectedDimension().colId;
         const displayedGroupCols = this.columnController.getGroupDisplayColumns();
         const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
-        return this.isGroupActive() && groupDimensionSelected;
+        return !!this.isGroupActive() && groupDimensionSelected;
     }
 
     public isPivotActive(): boolean {
@@ -142,23 +142,23 @@ export class ChartDataModel extends BeanStub {
 
     public isPivotChart(): boolean {
         return this.pivotChart;
-    };
+    }
 
     public getChartId(): string {
         return this.chartId;
-    };
+    }
 
     public getValueColState(): ColState[] {
         return this.valueColState.map(this.displayNameMapper.bind(this));
-    };
+    }
 
     public getDimensionColState(): ColState[] {
         return this.dimensionColState;
-    };
+    }
 
     public getCellRanges(): CellRange[] {
-        return [this.dimensionCellRange, this.valueCellRange].filter(r => r);
-    };
+        return [this.dimensionCellRange!, this.valueCellRange!].filter(r => r);
+    }
 
     public getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
@@ -171,7 +171,7 @@ export class ChartDataModel extends BeanStub {
             rowStartPinned: startRow && startRow.rowPinned,
             rowEndIndex: endRow && endRow.rowIndex,
             rowEndPinned: endRow && endRow.rowPinned,
-            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
+            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [] as string[])
         };
     }
 
@@ -181,7 +181,7 @@ export class ChartDataModel extends BeanStub {
 
     public getChartType(): ChartType {
         return this.chartType;
-    };
+    }
 
     public setChartThemeName(chartThemeName: string): void {
         this.chartThemeName = chartThemeName;
@@ -193,27 +193,31 @@ export class ChartDataModel extends BeanStub {
 
     public isSuppressChartRanges(): boolean {
         return this.suppressChartRanges;
-    };
-
-    public isDetached(): boolean {
-        return this.detached;
-    };
-
-    public toggleDetached(): void {
-        this.detached = !this.detached;
     }
 
-    public getSelectedValueColState(): { colId: string; displayName: string; }[] {
+    public isUnlinked(): boolean {
+        return this.unlinked;
+    }
+
+    public toggleUnlinked(): void {
+        this.unlinked = !this.unlinked;
+    }
+
+    public getAggFunc(): string | IAggFunc | undefined {
+        return this.aggFunc;
+    }
+
+    public getSelectedValueColState(): { colId: string; displayName: string | null; }[] {
         return this.getValueColState().filter(cs => cs.selected);
-    };
+    }
 
     public getSelectedValueCols(): Column[] {
         return this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
-    };
+    }
 
     public getSelectedDimension(): ColState {
         return this.dimensionColState.filter(cs => cs.selected)[0];
-    };
+    }
 
     private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
         return {
@@ -231,7 +235,7 @@ export class ChartDataModel extends BeanStub {
             return _.convertToSet(this.columnController.getAllDisplayedColumns());
         }
 
-        let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
+        const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
         if (this.dimensionCellRange) {
             columns.push(...this.dimensionCellRange.columns);
@@ -244,7 +248,7 @@ export class ChartDataModel extends BeanStub {
         return _.convertToSet(columns);
     }
 
-    private getColDisplayName(col: Column): string {
+    private getColDisplayName(col: Column): string | null {
         return this.columnController.getDisplayNameForColumn(col, 'chart');
     }
 
@@ -274,8 +278,6 @@ export class ChartDataModel extends BeanStub {
                 // chart data type was specified explicitly
                 switch (chartDataType) {
                     case 'category':
-                        dimensionCols.add(col);
-                        return;
                     case 'time':
                         dimensionCols.add(col);
                         return;
@@ -349,7 +351,7 @@ export class ChartDataModel extends BeanStub {
     private displayNameMapper(col: ColState): ColState {
         const columnNames = this.columnNames[col.colId];
 
-        col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column);
+        col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column!);
 
         return col;
     }
@@ -396,7 +398,7 @@ export class ChartDataModel extends BeanStub {
 
         dimensionCols.forEach(column => {
             const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
-            let selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+            const selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
 
             this.dimensionColState.push({
                 column,
@@ -425,7 +427,7 @@ export class ChartDataModel extends BeanStub {
         valueCols.forEach(column => {
             // first time the value cell range is set, preserve the column order from the supplied range
             if (isInitialising && _.includes(this.referenceCellRange.columns, column)) {
-                column = valueColumnsFromReferenceRange.shift();
+                column = valueColumnsFromReferenceRange.shift()!;
             }
 
             this.valueColState.push({
@@ -501,24 +503,24 @@ export class ChartDataModel extends BeanStub {
 
         let selectedDimensionColState = updatedColState;
 
-        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
+        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column!)) {
             selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
         }
 
         if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column);
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column!);
         }
     }
 
     private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
         this.valueCellRange = undefined;
 
-        let selectedValueCols: Column[] = [];
+        const selectedValueCols: Column[] = [];
 
         valueCols.forEach(col => {
             if (updatedColState && updatedColState.colId === col.getColId()) {
                 if (updatedColState.selected) {
-                    selectedValueCols.push(updatedColState.column);
+                    selectedValueCols.push(updatedColState.column!);
                 }
             } else if (colsInRange.has(col)) {
                 selectedValueCols.push(col);
@@ -541,7 +543,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     private syncDimensionCellRange() {
-        const selectedDimension = this.getSelectedDimension()
+        const selectedDimension = this.getSelectedDimension();
         if (selectedDimension && selectedDimension.column) {
             this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
         }

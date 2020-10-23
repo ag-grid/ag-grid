@@ -33,16 +33,16 @@ export function getMaxSafeInteger(): number {
     return Number.MAX_SAFE_INTEGER || 9007199254740991;
 }
 
-export function cleanNumber(value: any): number {
+export function cleanNumber(value: any): number | null {
     if (typeof value === 'string') {
         value = parseInt(value, 10);
     }
 
     if (typeof value === 'number') {
         return Math.floor(value);
-    } else {
-        return null;
     }
+
+    return null;
 }
 
 export function decToHex(number: number, bytes: number): string {
@@ -75,6 +75,6 @@ export function formatNumberCommas(value: number): string {
     return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-export function sum(values: number[]) {
+export function sum(values: number[] | null) {
     return values == null ? null : values.reduce((total, value) => total + value, 0);
 }

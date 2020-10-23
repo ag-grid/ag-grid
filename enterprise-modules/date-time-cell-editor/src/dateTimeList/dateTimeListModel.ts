@@ -102,7 +102,7 @@ export class DateTimeListModel implements IDateTimeListModel {
         const paddingAtStart = modulo(options.columnForValue(firstValue), columnCount); // adds padding at start
         const periodLength = options.periodLength(firstValue);
         const lastValue = options.valueInPeriod(firstValue, periodLength - 1);
-        const itemsInLastColumn = modulo(options.columnForValue(lastValue), columnCount) + 1
+        const itemsInLastColumn = modulo(options.columnForValue(lastValue), columnCount) + 1;
         const paddingAtEnd = columnCount - itemsInLastColumn;
         const lastOffset = periodLength - 1 + paddingAtEnd;
         for (let i = -paddingAtStart; i <= lastOffset; i++) {
@@ -134,8 +134,7 @@ export class DateTimeListModel implements IDateTimeListModel {
 }
 
 // modulo function that, unline the JS % operator, is safe for negative numbers
-const modulo = (value: number, modulo: number) => ((value % modulo) + modulo) % modulo;
-
+const modulo = (value: number, mod: number) => ((value % mod) + mod) % mod;
 
 const splitArray = <T>(array: T[], chunkSize: number): T[][] => {
     const chunks: T[][] = [];

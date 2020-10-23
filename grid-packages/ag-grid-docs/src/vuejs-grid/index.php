@@ -27,6 +27,32 @@ include './intro.php';
     As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 </p>
 
+<note><p>We offer two versions of Vue support - one for Vue 2 and one for Vue 3.</p>The only difference in use is how you import the dependency:
+<table class="table content reference">
+    <tr>
+        <th>Version</th>
+        <th>Package Imports</th>
+        <th>Module Imports</th>
+    </tr>
+    <tr>
+        <td>Vue 2</td>
+        <td><code>@ag-grid-community/vue</code></td>
+        <td><code>ag-grid-vue</code></td>
+    </tr>
+    <tr>
+        <td>Vue 3</td>
+        <td><code>@ag-grid-community/vue3</code></td>
+        <td><code>ag-grid-vue3</code></td>
+    </tr>
+</table>
+
+    <p>If you unsure what import type to use you should use the package import type (i.e. <code>ag-grid-vue</code>/ <code>ag-grid-vue3</code>).</p>
+
+    <p>Our example all use Vue 2 by default.</p>
+
+    For more information on import types please refer to the documentation <a href="../javascript-grid-modules">here.</a>
+</note>
+
 <h2>Add ag-Grid to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.vuejs.org/">Vue CLI</a>.

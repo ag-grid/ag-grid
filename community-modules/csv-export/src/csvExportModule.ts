@@ -9,4 +9,3 @@ export const CsvExportModule: Module = {
     moduleName: ModuleNames.CsvExportModule,
     beans: [CsvCreator, Downloader, XmlFactory, GridSerializer, ZipContainer]
 };
-

@@ -7,7 +7,7 @@ import { padStart } from './number';
  * @param includeTime Whether to include the time in the serialised string
  * @param separator The separator to use between date parts
  */
-export function serialiseDate(date: Date, includeTime = true, separator = '-'): string | null {
+export function serialiseDate(date: Date | null, includeTime = true, separator = '-'): string | null {
     if (!date) { return null; }
 
     let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => padStart(part, 2)).join(separator);
@@ -22,10 +22,8 @@ export function serialiseDate(date: Date, includeTime = true, separator = '-'): 
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */
-export function parseDateTimeFromString(value: string): Date | null {
-    if (!value) {
-        return null;
-    }
+export function parseDateTimeFromString(value?: string | null): Date | null {
+    if (!value) { return null; }
 
     const [dateStr, timeStr] = value.split(' ');
 

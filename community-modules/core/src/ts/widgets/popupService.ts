@@ -1,4 +1,3 @@
-import { Constants } from "../constants/constants";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -14,7 +13,7 @@ import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 
 export interface PopupEventParams {
-    originalMouseEvent?: MouseEvent | Touch;
+    originalMouseEvent?: MouseEvent | Touch | null;
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
     keyboardEvent?: KeyboardEvent;
@@ -211,7 +210,7 @@ export class PopupService extends BeanStub {
     public positionPopupOverComponent(params: {
         type: string,
         eventSource: HTMLElement,
-        ePopup: HTMLElement | null,
+        ePopup: HTMLElement,
         column: Column,
         rowNode: RowNode,
         minWidth?: number,
@@ -237,10 +236,10 @@ export class PopupService extends BeanStub {
 
     private callPostProcessPopup(
         type: string,
-        ePopup?: HTMLElement,
-        eventSource?: HTMLElement,
-        mouseEvent?: MouseEvent | Touch,
-        column?: Column,
+        ePopup: HTMLElement,
+        eventSource?: HTMLElement | null,
+        mouseEvent?: MouseEvent | Touch | null,
+        column?: Column | null,
         rowNode?: RowNode
     ): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
@@ -258,7 +257,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopup(params: {
-        ePopup: HTMLElement | null,
+        ePopup: HTMLElement,
         minWidth?: number,
         minHeight?: number,
         nudgeX?: number,
@@ -284,8 +283,8 @@ export class PopupService extends BeanStub {
             y = this.keepYWithinBounds(params, y);
         }
 
-        params.ePopup!.style.left = `${x}px`;
-        params.ePopup!.style.top = `${y}px`;
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
     }
 
     public getActivePopups(): HTMLElement[] {
@@ -305,19 +304,19 @@ export class PopupService extends BeanStub {
         const style = getComputedStyle(popupParent);
         const bounds = popupParent.getBoundingClientRect();
         return {
-            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
-            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
-            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
-            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+            top: bounds.top + parseFloat(style.borderTopWidth!) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth!) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth!) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth!) || 0,
         };
     }
 
-    private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number; }, y: number): number {
+    private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number; }, y: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement!.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
 
         let minHeight = Math.min(200, parentRect.height);
@@ -325,12 +324,12 @@ export class PopupService extends BeanStub {
 
         if (params.minHeight && params.minHeight < minHeight) {
             minHeight = params.minHeight;
-        } else if (params.ePopup!.offsetHeight > 0) {
-            minHeight = params.ePopup!.clientHeight;
+        } else if (params.ePopup.offsetHeight > 0) {
+            minHeight = params.ePopup.clientHeight;
             diff = getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement!.scrollTop) : parentRect.height;
+        let heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
 
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
@@ -346,7 +345,7 @@ export class PopupService extends BeanStub {
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement!.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
         const ePopup = params.ePopup;
 
@@ -361,7 +360,7 @@ export class PopupService extends BeanStub {
             diff = getAbsoluteWidth(ePopup) - minWidth;
         }
 
-        let widthOfParent = isBody ? (getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
+        let widthOfParent = isBody ? (getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
 
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
@@ -385,14 +384,13 @@ export class PopupService extends BeanStub {
         let lastDiffTop = initialDiffTop;
 
         const topPx = params.ePopup.style.top;
-        const top = parseInt(topPx.substring(0, topPx.length - 1), 10);
+        const top = parseInt(topPx!.substring(0, topPx!.length - 1), 10);
 
         const intervalId = window.setInterval(() => {
+            const pRect = eParent.getBoundingClientRect();
+            const sRect = params.element.getBoundingClientRect();
 
-            const parentRect = eParent.getBoundingClientRect();
-            const sourceRect = params.element.getBoundingClientRect();
-
-            const currentDiffTop = parentRect.top - sourceRect.top;
+            const currentDiffTop = pRect.top - sRect.top;
             if (currentDiffTop != lastDiffTop) {
                 const newTop = top + initialDiffTop - currentDiffTop;
                 params.ePopup.style.top = `${newTop}px`;
@@ -410,9 +408,7 @@ export class PopupService extends BeanStub {
     }
 
     public addPopup(params: AddPopupParams): (params?: PopupEventParams) => void {
-
-        const {modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, anchorToElement} = params;
-
+        const { modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop, positionCallback, anchorToElement } = params;
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
@@ -480,8 +476,8 @@ export class PopupService extends BeanStub {
 
         let destroyPositionTracker: () => void;
 
-        const hidePopup = (params: PopupEventParams = {}) => {
-            const { mouseEvent, touchEvent, keyboardEvent } = params;
+        const hidePopup = (popupParams: PopupEventParams = {}) => {
+            const { mouseEvent, touchEvent, keyboardEvent } = popupParams;
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
@@ -650,9 +646,9 @@ export class PopupService extends BeanStub {
 
     public bringPopupToFront(ePopup: HTMLElement) {
         const parent = this.getPopupParent();
-        const popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
+        const popupList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
         const popupLen = popupList.length;
-        const alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
+        const alwaysOnTopList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
         const onTopLength = alwaysOnTopList.length;
         const eWrapper = this.getWrapper(ePopup);
 
@@ -665,13 +661,13 @@ export class PopupService extends BeanStub {
 
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
-                    (last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+                    last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
                 }
             } else if (pos !== popupLen - onTopLength - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
         } else if (pos !== popupLen - 1) {
-            (last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+            last(popupList).insertAdjacentElement('afterend', eWrapper);
         }
 
         const params = {

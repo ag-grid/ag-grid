@@ -221,7 +221,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
                 // multiple CDATA sections and split the characters between them.
                 + String(val).replace(cdataEndRegex, ']]' + cdataEnd + cdataStart + '>')
                 + cdataEnd;
-        }
+        };
         const convertBoolean = (val: boolean | string): string => {
             if (!val || val === '0' || val === 'false') { return '0'; }
             return '1';

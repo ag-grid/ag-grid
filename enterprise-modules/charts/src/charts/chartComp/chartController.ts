@@ -15,9 +15,10 @@ import {
     IRangeController,
     PostConstruct,
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
-import {ChartProxy} from "./chartProxies/chartProxy";
-import {getChartTheme} from "ag-charts-community";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartProxy } from "./chartProxies/chartProxy";
+import { getChartTheme } from "ag-charts-community";
+import { ChartModelType } from "@ag-grid-community/core/dist/cjs/interfaces/IChartService";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -47,7 +48,7 @@ export class ChartController extends BeanStub {
             }
         });
 
-        if (this.model.isDetached()) {
+        if (this.model.isUnlinked()) {
             if (this.rangeController) {
                 this.rangeController.setCellRanges([]);
             }
@@ -63,14 +64,14 @@ export class ChartController extends BeanStub {
     }
 
     public updateForGridChange(): void {
-        if (this.model.isDetached()) { return; }
+        if (this.model.isUnlinked()) { return; }
 
         this.model.updateCellRanges();
         this.setChartRange();
     }
 
     public updateForDataChange(): void {
-        if (this.model.isDetached()) { return; }
+        if (this.model.isUnlinked()) { return; }
 
         this.model.updateData();
         this.raiseChartUpdatedEvent();
@@ -88,7 +89,9 @@ export class ChartController extends BeanStub {
     }
 
     public getChartModel(): ChartModel {
+        const modelType: ChartModelType = this.model.isPivotChart() ? 'pivot' : 'range';
         return {
+            modelType,
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
             chartThemeName: this.getThemeName(),
@@ -97,7 +100,10 @@ export class ChartController extends BeanStub {
             chart: this.chartProxy.getChart(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
                 return this.chartProxy.getChartImageDataURL(params.type);
-            }
+            },
+            suppressChartRanges: this.model.isSuppressChartRanges(),
+            aggFunc: this.model.getAggFunc(),
+            unlinkChart: this.model.isUnlinked(),
         };
     }
 
@@ -159,7 +165,7 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange(silent = false): void {
-        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
+        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isUnlinked()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
 
@@ -170,9 +176,9 @@ export class ChartController extends BeanStub {
 
     public detachChartRange(): void {
         // when chart is detached it won't listen to changes from the grid
-        this.model.toggleDetached();
+        this.model.toggleUnlinked();
 
-        if (this.model.isDetached()) {
+        if (this.model.isUnlinked()) {
             // remove range from grid
             if (this.rangeController) {
                 this.rangeController.setCellRanges([]);
@@ -196,7 +202,7 @@ export class ChartController extends BeanStub {
     }
 
     public isChartLinked(): boolean {
-        return !this.model.isDetached();
+        return !this.model.isUnlinked();
     }
 
     private raiseChartUpdatedEvent(): void {

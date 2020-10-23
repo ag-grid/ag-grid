@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
-        { field: "sport", enableRowGroup: true, rowGroup: true, hide: true },
+        { field: 'country', enableRowGroup: true, rowGroup: true },
+        { field: "sport", enableRowGroup: true, rowGroup: true },
         { field: "year", minWidth: 100 },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
@@ -14,14 +14,15 @@ var gridOptions = {
         sortable: true
     },
     rowGroupPanelShow: 'always',
+    serverSideStoreType: 'clientSide',
     sideBar: ['columns'],
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
     },
 
-    rowBuffer: 0,
-    cacheBlockSize: 2,
+    // rowBuffer: 0,
+    // cacheBlockSize: 100,
     maxBlocksInCache: 5,
 
     // use the server-side row model

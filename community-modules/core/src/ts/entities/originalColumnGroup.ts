@@ -13,8 +13,8 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     private localEventService = new EventService();
 
-    private colGroupDef: ColGroupDef;
-    private originalParent: OriginalColumnGroup;
+    private colGroupDef: ColGroupDef | null;
+    private originalParent: OriginalColumnGroup | null;
 
     private children: OriginalColumnGroupChild[];
     private groupId: string;
@@ -25,10 +25,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     private level: number;
 
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number) {
+    constructor(colGroupDef: ColGroupDef | null, groupId: string, padding: boolean, level: number) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
-        this.expanded = colGroupDef && !!colGroupDef.openByDefault;
+        this.expanded = !!colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
         this.level = level;
     }
@@ -90,7 +90,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         return this.children;
     }
 
-    public getColGroupDef(): ColGroupDef {
+    public getColGroupDef(): ColGroupDef | null {
         return this.colGroupDef;
     }
 
@@ -101,20 +101,25 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
-        if (!this.children) {
-            return;
-        }
+        if (!this.children) { return; }
+
         this.children.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child);
             } else if (child instanceof OriginalColumnGroup) {
-                (child as OriginalColumnGroup).addLeafColumns(leafColumns);
+                child.addLeafColumns(leafColumns);
             }
         });
     }
 
     public getColumnGroupShow(): string | undefined {
-        return this.padding ? ColumnGroup.HEADER_GROUP_PADDING : this.colGroupDef.columnGroupShow;
+        if (this.padding) { return ColumnGroup.HEADER_GROUP_PADDING; }
+
+        const colGroupDef = this.colGroupDef;
+
+        if (!colGroupDef) { return; }
+
+        return colGroupDef.columnGroupShow;
     }
 
     // need to check that this group has at least one col showing when both expanded and contracted.

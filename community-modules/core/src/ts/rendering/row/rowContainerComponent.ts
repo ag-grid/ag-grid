@@ -19,7 +19,7 @@ export class RowContainerComponent {
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     private readonly eContainer: HTMLElement;
-    private readonly eViewport: HTMLElement;
+    private readonly eViewport: HTMLElement | undefined;
     private readonly eWrapper: HTMLElement;
 
     // full width containers only show when no children, because they float above the normal rows,
@@ -40,7 +40,7 @@ export class RowContainerComponent {
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
-    private lastPlacedElement: HTMLElement;
+    private lastPlacedElement: HTMLElement | null;
 
     constructor(params: RowContainerComponentParams) {
         this.eContainer = params.eContainer;
@@ -48,7 +48,7 @@ export class RowContainerComponent {
         if (params.eWrapper) {
             this.eWrapper = params.eWrapper;
         }
-        this.hideWhenNoChildren = params.hideWhenNoChildren;
+        this.hideWhenNoChildren = !!params.hideWhenNoChildren;
     }
 
     public setVerticalScrollPosition(verticalScrollPosition: number): void {
@@ -70,7 +70,7 @@ export class RowContainerComponent {
         return this.eContainer.querySelector(`[comp-id="${compId}"]`) as HTMLElement;
     }
 
-    public setHeight(height: number): void {
+    public setHeight(height: number | null): void {
         if (height == null) {
             this.eContainer.style.height = '';
             return;

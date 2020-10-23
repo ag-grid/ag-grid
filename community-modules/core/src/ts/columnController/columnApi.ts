@@ -4,8 +4,8 @@ import { ColumnController, ColumnState } from "./columnController";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import {Autowired, Bean, PreDestroy} from "../context/context";
-import {_} from "../utils";
+import { Autowired, Bean, PreDestroy } from "../context/context";
+import { _ } from "../utils";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -21,13 +21,13 @@ export class ColumnApi {
         this.columnController.sizeColumnsToFit(gridWidth, 'api');
     }
     public setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void { this.columnController.setColumnGroupOpened(group, newValue, 'api'); }
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this.columnController.getColumnGroup(name, instanceId); }
-    public getOriginalColumnGroup(name: string): OriginalColumnGroup { return this.columnController.getOriginalColumnGroup(name); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnController.getColumnGroup(name, instanceId); }
+    public getOriginalColumnGroup(name: string): OriginalColumnGroup | null { return this.columnController.getOriginalColumnGroup(name); }
 
     public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnController.getDisplayNameForColumn(column, location) || ''; }
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
 
-    public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
+    public getColumn(key: any): Column | null { return this.columnController.getPrimaryColumn(key); }
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnController.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
     public resetColumnState(): void { this.columnController.resetColumnState(false, 'api'); }
@@ -38,14 +38,14 @@ export class ColumnApi {
     public isPinning(): boolean { return this.columnController.isPinningLeft() || this.columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this.columnController.isPinningLeft(); }
     public isPinningRight(): boolean { return this.columnController.isPinningRight(); }
-    public getDisplayedColAfter(col: Column): Column { return this.columnController.getDisplayedColAfter(col); }
-    public getDisplayedColBefore(col: Column): Column { return this.columnController.getDisplayedColBefore(col); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.columnController.getDisplayedColAfter(col); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.columnController.getDisplayedColBefore(col); }
     public setColumnVisible(key: string | Column, visible: boolean): void { this.columnController.setColumnVisible(key, visible, 'api'); }
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnController.setColumnsVisible(keys, visible, 'api'); }
     public setColumnPinned(key: string | Column, pinned: string): void { this.columnController.setColumnPinned(key, pinned, 'api'); }
     public setColumnsPinned(keys: (string | Column)[], pinned: string): void { this.columnController.setColumnsPinned(keys, pinned, 'api'); }
 
-    public getAllColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+    public getAllColumns(): Column[] | null { return this.columnController.getAllPrimaryColumns(); }
     public getAllGridColumns(): Column[] { return this.columnController.getAllGridColumns(); }
     public getDisplayedLeftColumns(): Column[] { return this.columnController.getDisplayedLeftColumns(); }
     public getDisplayedCenterColumns(): Column[] { return this.columnController.getDisplayedCenterColumns(); }
@@ -77,7 +77,7 @@ export class ColumnApi {
 
     public setPivotMode(pivotMode: boolean): void { this.columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this.columnController.isPivotMode(); }
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
     public setValueColumns(colKeys: (string | Column)[]): void { this.columnController.setValueColumns(colKeys, 'api'); }
     public getValueColumns(): Column[] { return this.columnController.getValueColumns(); }
@@ -103,15 +103,15 @@ export class ColumnApi {
     public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getLeftDisplayedColumnGroups(); }
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getCenterDisplayedColumnGroups(); }
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getRightDisplayedColumnGroups(); }
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getAllDisplayedColumnGroups(); }
+    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null { return this.columnController.getAllDisplayedColumnGroups(); }
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnController.autoSizeColumn(key, skipHeader, 'api'); }
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnController.autoSizeColumns(keys, skipHeader, 'api'); }
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnController.autoSizeAllColumns(skipHeader, 'api'); }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnController.setSecondaryColumns(colDefs, 'api'); }
 
-    public getSecondaryColumns(): Column[] { return this.columnController.getSecondaryColumns(); }
-    public getPrimaryColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+    public getSecondaryColumns(): Column[] | null { return this.columnController.getSecondaryColumns(); }
+    public getPrimaryColumns(): Column[] | null { return this.columnController.getAllPrimaryColumns(); }
 
     @PreDestroy
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {

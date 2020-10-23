@@ -1,6 +1,6 @@
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import {GridPanel} from "../gridPanel/gridPanel";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 export interface IContextMenuFactory {
 

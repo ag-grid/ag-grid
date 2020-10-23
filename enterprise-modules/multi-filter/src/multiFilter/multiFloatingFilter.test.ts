@@ -21,8 +21,11 @@ function createFloatingFilter(filterParams: any = {}): MultiFloatingFilterComp {
         .mockReturnValueOnce(Promise.resolve(floatingFilter2));
 
     const params: IFloatingFilterParams = {
+        // @ts-ignore
         column: null,
+        // @ts-ignore
         api: null,
+        // @ts-ignore
         currentParentModel: null,
         parentFilterInstance: (callback: (filter: IFilterComp) => void) => callback(parentFilter),
         showParentFilter: () => { },
@@ -80,6 +83,7 @@ describe('onParentModelChanged', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
 
+        // @ts-ignore
         multiFloatingFilter.onParentModelChanged(null, event);
 
         expect(floatingFilter1.onParentModelChanged).toHaveBeenCalledTimes(1);
@@ -125,6 +129,7 @@ describe('onParentModelChanged', () => {
     it('shows first floating filter if no first filter is active', () => {
         const multiFloatingFilter = createFloatingFilter();
         const event = mock<FilterChangedEvent>();
+        // @ts-ignore
         multiFloatingFilter.onParentModelChanged(null, event);
 
         expect(floatingFilter1.getGui().className).toBe('');

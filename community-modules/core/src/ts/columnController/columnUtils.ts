@@ -36,7 +36,7 @@ export class ColumnUtils extends BeanStub {
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
 
-    public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
+    public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] | null {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
@@ -63,7 +63,7 @@ export class ColumnUtils extends BeanStub {
         return found ? result : null;
     }
 
-    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void {
+    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup | null) => void): void {
         if (!tree) { return; }
 
         tree.forEach((child: OriginalColumnGroupChild) => {
@@ -87,7 +87,7 @@ export class ColumnUtils extends BeanStub {
 
     }
 
-    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild) => void): void {
+    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild) => void): void {
         if (!tree) { return; }
 
         tree.forEach((child: ColumnGroupChild) => {

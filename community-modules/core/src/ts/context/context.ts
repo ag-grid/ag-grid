@@ -105,22 +105,22 @@ export class Context {
     }
 
     // tslint:disable-next-line
-    private createBeanWrapper(Bean: new () => Object): void {
-        const metaData = (Bean as any).__agBeanMetaData;
+    private createBeanWrapper(BeanClass: new () => Object): void {
+        const metaData = (BeanClass as any).__agBeanMetaData;
 
         if (!metaData) {
             let beanName: string;
-            if (Bean.prototype.constructor) {
-                beanName = getFunctionName(Bean.prototype.constructor);
+            if (BeanClass.prototype.constructor) {
+                beanName = getFunctionName(BeanClass.prototype.constructor);
             } else {
-                beanName = "" + Bean;
+                beanName = "" + BeanClass;
             }
             console.error(`Context item ${beanName} is not a bean`);
             return;
         }
 
         const beanEntry = {
-            bean: Bean,
+            bean: BeanClass,
             beanInstance: null as any,
             beanName: metaData.beanName
         };
@@ -336,7 +336,7 @@ export function Optional(name?: string): Function {
     };
 }
 
-function autowiredFunc(target: any, name: string, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number) {
+function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
     if (name === null) {
         console.error("ag-Grid: Autowired name should not be null");
         return;

@@ -26,13 +26,14 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
     constructor(config?: IAgLabel, className?: string, private readonly pickerIcon?: string, popupRole?: string) {
-        super(config, /* html */
-            `<div class="ag-picker-field" role="presentation">
+        super(config,
+            /* html */ `<div class="ag-picker-field" role="presentation">
                 <div ref="eLabel"></div>
                 <div ref="eWrapper"
                     class="ag-wrapper ag-picker-field-wrapper"
                     tabIndex="-1"
-                    ${popupRole ? `aria-haspopup="${popupRole}"` : ''}>
+                    ${popupRole ? `aria-haspopup="${popupRole}"` : ''}
+                >
                     <div ref="eDisplayField" class="ag-picker-field-display"></div>
                     <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
                 </div>
@@ -91,7 +92,10 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
         this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            this.eIcon.appendChild(createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper));
+            const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper);
+            if (icon) {
+                this.eIcon.appendChild(icon);
+            }
         }
     }
 

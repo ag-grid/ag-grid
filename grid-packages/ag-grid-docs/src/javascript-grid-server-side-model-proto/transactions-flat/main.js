@@ -8,30 +8,104 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
+  getRowNodeId: function(data) {return data.product; },
+  rowSelection: 'multiple',
+  serverSideStoreType: 'clientSide',
+  enableCellChangeFlash: true,
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
-  cacheBlockSize: 100,
+  // cacheBlockSize: 100,
   animateRows: true
 };
 
-var products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
+var products = ['Palm Oil','Rubber','Wool','Amber','Copper'];
+
+var newProductSequence = 0;
+
+var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
   'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
   'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
-function onButton() {
-  console.log('Remove Selected');
+function onRemoveSelected() {
+  var rowsToRemove = gridOptions.api.getSelectedRows();
+
+  var tx = {
+    remove: rowsToRemove
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
 }
 
-function onAdd() {
+function onRemoveRandom() {
+  var rowsToRemove = [];
+  var firstRow;
+
+  gridOptions.api.forEachNode(function(node) {
+    if (firstRow==null) {
+      firstRow = node.data;
+    }
+    // skip half the nodes at random
+    if (Math.random()<0.75) { return; }
+    rowsToRemove.push(node.data);
+  });
+
+  if (rowsToRemove.length==0 && firstRow!=null) {
+    rowsToRemove.push(firstRow);
+  }
+
   var tx = {
-    add: [
-      {
-        product: 'New Product ' + Math.random(),
-        value: getNextValue()
-      }
-    ]
+    remove: rowsToRemove
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onUpdateSelected() {
+  var rowsToUpdate = gridOptions.api.getSelectedRows();
+  rowsToUpdate.forEach(function(data) {
+    data.value = getNextValue();
+  });
+
+  var tx = {
+    update: rowsToUpdate
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onUpdateRandom() {
+  var rowsToUpdate = [];
+
+  gridOptions.api.forEachNode(function(node) {
+    // skip half the nodes at random
+    if (Math.random()>0.5) { return; }
+    var data = node.data;
+    data.value = getNextValue();
+    rowsToUpdate.push(data);
+  });
+
+  var tx = {
+    update: rowsToUpdate
+  };
+
+  gridOptions.api.applyServerSideTransaction(tx);
+}
+
+function onAdd(index) {
+  var newProductName = all_products[Math.floor(all_products.length*Math.random())];
+  var itemsToAdd = [];
+  for (var i = 0; i<5; i++) {
+    itemsToAdd.push(      {
+          product: newProductName + ' ' + newProductSequence++,
+          value: getNextValue()
+        }
+    );
+  }
+  var tx = {
+    addIndex: index,
+    add: itemsToAdd
   };
   gridOptions.api.applyServerSideTransaction(tx);
 }

@@ -162,7 +162,6 @@ describe('aggMax', () => {
         expect(result).toBe(BigInt(5645723));
     });
 
-
     it('returns max of valid numbers', () => {
         const result = max(createParams([35, 'foo', 634, undefined, -54, null, 65]));
 
@@ -220,7 +219,6 @@ describe('aggAvg', () => {
         expect(result.toString()).toBe('403088244');
     });
 
-
     it('returns average of valid elements', () => {
         const result = avg(createParams([5, 'foo', 18, undefined, 34, null]));
 
@@ -232,7 +230,6 @@ describe('aggAvg', () => {
 
         expect(result.toNumber()).toBe(22.5);
     });
-
 
     it('calculates average from group aggregation objects with bigints', () => {
         const result = avg(createParams([16, { count: 3, value: 12 }, { count: 4, value: BigInt(32) }]));

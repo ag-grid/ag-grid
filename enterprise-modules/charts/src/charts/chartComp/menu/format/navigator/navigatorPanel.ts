@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -7,10 +6,11 @@ import {
     Component,
     PostConstruct,
     RefSelector,
+    _
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ChartTranslator} from "../../../chartTranslator";
-import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartController } from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class NavigatorPanel extends Component {
 

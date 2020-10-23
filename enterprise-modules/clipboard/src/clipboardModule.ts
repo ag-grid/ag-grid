@@ -11,4 +11,3 @@ export const ClipboardModule: Module = {
         CsvExportModule
     ]
 };
-

@@ -1,4 +1,3 @@
-
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { BeanStub } from "../../context/beanStub";
 import { PostConstruct, Autowired } from "../../context/context";
@@ -71,7 +70,7 @@ export class SelectAllFeature extends BeanStub {
         this.updateStateOfCheckbox();
     }
 
-    private getNextCheckboxState(selectionCount: SelectionCount): boolean {
+    private getNextCheckboxState(selectionCount: SelectionCount): boolean | null {
         // if no rows, always have it unselected
         if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
             return false;
@@ -99,7 +98,7 @@ export class SelectAllFeature extends BeanStub {
         const selectionCount = this.getSelectionCount();
         const allSelected = this.getNextCheckboxState(selectionCount);
 
-        this.cbSelectAll.setValue(allSelected);
+        this.cbSelectAll.setValue(allSelected!);
         this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;

@@ -39,7 +39,7 @@ export class MouseEventService extends BeanStub {
         (this.eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
     }
 
-    public getRenderedCellForEvent(event: Event): CellComp {
+    public getRenderedCellForEvent(event: Event): CellComp | null {
         return getCellCompForEvent(this.gridOptionsWrapper, event);
     }
 
@@ -62,7 +62,7 @@ export class MouseEventService extends BeanStub {
         return false;
     }
 
-    public getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition {
+    public getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition | null {
         const cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getCellPosition() : null;
     }

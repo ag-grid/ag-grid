@@ -39,4 +39,8 @@ export class Constants {
 
     static SORT_ASC = 'asc';
     static SORT_DESC = 'desc';
+
+    static INPUT_SELECTOR = 'input, select, button, textarea';
+    static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+    static FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *';
 }

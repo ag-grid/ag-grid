@@ -27,7 +27,7 @@ export class DndSourceComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
-        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
         // we need to stop the event propagation here to avoid starting a range selection while dragging
         this.addGuiEventListener('mousedown', (e: MouseEvent) => {
             e.stopPropagation();
@@ -46,7 +46,7 @@ export class DndSourceComp extends Component {
         const isIE = isBrowserIE();
 
         if (!isIE) {
-            dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+            dragEvent.dataTransfer!.setDragImage(this.eCell, 0, 0);
         }
 
         // default behaviour is to convert data to json and set into drag component
@@ -55,10 +55,10 @@ export class DndSourceComp extends Component {
                 const jsonData = JSON.stringify(this.rowNode.data);
 
                 if (isIE) {
-                    dragEvent.dataTransfer.setData('text', jsonData);
+                    dragEvent.dataTransfer!.setData('text', jsonData);
                 } else {
-                    dragEvent.dataTransfer.setData('application/json', jsonData);
-                    dragEvent.dataTransfer.setData('text/plain', jsonData);
+                    dragEvent.dataTransfer!.setData('application/json', jsonData);
+                    dragEvent.dataTransfer!.setData('text/plain', jsonData);
                 }
 
             } catch (e) {

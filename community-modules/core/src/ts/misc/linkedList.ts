@@ -1,7 +1,7 @@
 export class LinkedList<T> {
 
-    private first: LinkedListItem<T> = null;
-    private last: LinkedListItem<T> = null;
+    private first: LinkedListItem<T> | null = null;
+    private last: LinkedListItem<T> | null = null;
 
     public add(item: T): void {
         const entry: LinkedListItem<T> = {
@@ -24,7 +24,7 @@ export class LinkedList<T> {
                 this.last = null;
             }
         }
-        return result.item;
+        return result!.item;
     }
 
     public isEmpty(): boolean {
@@ -34,5 +34,5 @@ export class LinkedList<T> {
 
 class LinkedListItem<T> {
     item: T;
-    next: LinkedListItem<T>;
+    next: LinkedListItem<T> | null;
 }

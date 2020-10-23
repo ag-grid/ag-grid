@@ -63,17 +63,13 @@ export class ComponentUtil {
     }
 
     public static getCallbackForEvent(eventName: string): string {
-        if (!eventName || eventName.length < 2) {
-            return eventName;
-        } else {
-            return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
-        }
+        if (!eventName || eventName.length < 2) { return eventName; }
+
+        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
     }
 
     public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void {
-        if (!changes) {
-            return;
-        }
+        if (!changes) { return; }
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
@@ -168,8 +164,8 @@ export class ComponentUtil {
         // copy changes into an event for dispatch
         const event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,
-            api: gridOptions.api,
-            columnApi: gridOptions.columnApi
+            api: gridOptions.api!,
+            columnApi: gridOptions.columnApi!
         };
 
         iterateObject(changes, (key: string, value: any) => {
@@ -180,25 +176,21 @@ export class ComponentUtil {
     }
 
     public static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        } else if (typeof value === 'string') {
+        if (typeof value === 'boolean') { return value; }
+
+        if (typeof value === 'string') {
             // for boolean, compare to empty String to allow attributes appearing with
             // no value to be treated as 'true'
             return value.toUpperCase() === 'TRUE' || value == '';
-        } else {
-            return false;
         }
+
+        return false;
     }
 
-    public static toNumber(value: any): number {
-        if (typeof value === 'number') {
-            return value;
-        } else if (typeof value === 'string') {
-            return Number(value);
-        } else {
-            return undefined;
-        }
+    public static toNumber(value: any): number | undefined {
+        if (typeof value === 'number') { return value; }
+
+        if (typeof value === 'string') { return Number(value); }
     }
 }
 

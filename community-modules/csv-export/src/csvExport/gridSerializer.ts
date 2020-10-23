@@ -73,7 +73,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
-    private groupColumns?: Column[] = [];
+    private groupColumns: Column[] | null | undefined = [];
 
     constructor(config: GridSerializingParams) {
         const {
@@ -114,7 +114,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             node && node.group
             && (
                 // in the group column if groups appear in regular grid cells
-                index === groupIndex && this.groupColumns.indexOf(column) !== -1
+                index === groupIndex && this.groupColumns!.indexOf(column) !== -1
                 // or the first cell in the row, if we're doing full width rows
                 || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode()))
             );
@@ -139,7 +139,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
 
-        return this.columnController.getDisplayNameForColumn(column, 'csv', true)        
+        return this.columnController.getDisplayNameForColumn(column, 'csv', true);
     }
 
     private createValueForGroupNode(node: RowNode): string {
@@ -192,8 +192,8 @@ export class GridSerializer extends BeanStub {
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
 
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const api = this.gridOptionsWrapper.getApi();
-        const columnApi = this.gridOptionsWrapper.getColumnApi();
+        const api = this.gridOptionsWrapper.getApi()!;
+        const columnApi = this.gridOptionsWrapper.getColumnApi()!;
         const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
         const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         const context = this.gridOptionsWrapper.getContext();
@@ -326,7 +326,7 @@ export class GridSerializer extends BeanStub {
             });
 
             if (params.getCustomContentBelowRow) {
-                const content = params.getCustomContentBelowRow({node, api, columnApi, context})
+                const content = params.getCustomContentBelowRow({node, api, columnApi, context});
                 if (content) {
                     gridSerializingSession.addCustomContent(content);
                 }
@@ -343,7 +343,7 @@ export class GridSerializer extends BeanStub {
             if (!columnGroup.getChildren) {
                 return;
             }
-            columnGroup.getChildren().forEach(it => directChildrenHeaderGroups.push(it));
+            columnGroup.getChildren()!.forEach(it => directChildrenHeaderGroups.push(it));
         });
 
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
@@ -370,7 +370,7 @@ export class GridSerializer extends BeanStub {
                     context: this.gridOptionsWrapper.getContext()
                 });
             } else {
-                name = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+                name = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
             gridRowIterator.onColumn(name || '', columnIndex++, columnGroup.getLeafColumns().length - 1);

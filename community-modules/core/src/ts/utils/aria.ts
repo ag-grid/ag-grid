@@ -31,11 +31,11 @@ export function getAriaSortState(column: Column): ColumnSortState {
 
 // ARIA ATTRIBUTE GETTERS
 export function getAriaLevel(element: HTMLElement): number {
-    return parseInt(element.getAttribute('aria-level'), 10);
+    return parseInt(element.getAttribute('aria-level')!, 10);
 }
 
 export function getAriaPosInSet(element: HTMLElement): number {
-    return parseInt(element.getAttribute('aria-posinset'), 10);
+    return parseInt(element.getAttribute('aria-posinset')!, 10);
 }
 
 // ARIA ATTRIBUTE SETTERS

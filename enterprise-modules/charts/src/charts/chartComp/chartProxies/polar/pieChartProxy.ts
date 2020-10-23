@@ -1,7 +1,7 @@
-import {AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart} from "ag-charts-community";
-import {AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {PolarChartProxy} from "./polarChartProxy";
+import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
+import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { PolarChartProxy } from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -20,7 +20,7 @@ export class PieChartProxy extends PolarChartProxy {
             title: seriesDefaults.title,
             label: {
                 ...seriesDefaults.label,
-                minRequiredAngle: seriesDefaults.label.minAngle
+                minRequiredAngle: seriesDefaults.label!.minAngle
             },
             callout: seriesDefaults.callout,
             shadow: seriesDefaults.shadow,
@@ -37,6 +37,8 @@ export class PieChartProxy extends PolarChartProxy {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
         } as PieSeriesOptions;
 
@@ -77,7 +79,7 @@ export class PieChartProxy extends PolarChartProxy {
         const { seriesDefaults } = this.chartOptions;
 
         let pieSeries = existingSeries;
-        let calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
+        const calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
@@ -99,7 +101,7 @@ export class PieChartProxy extends PolarChartProxy {
             }, 'pie.series');
         }
 
-        pieSeries.angleName = pieSeriesField.displayName;
+        pieSeries.angleName = pieSeriesField.displayName!;
         pieSeries.labelKey = params.category.id;
         pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;

@@ -14,7 +14,7 @@ import {
     PostConstruct,
     RefSelector, Component
 } from "@ag-grid-community/core";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ModelItemUtils } from "./modelItemUtils";
 
 export class ToolPanelColumnComp extends Component {
 
@@ -50,7 +50,7 @@ export class ToolPanelColumnComp extends Component {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
@@ -201,7 +201,7 @@ export class ToolPanelColumnComp extends Component {
         }
     }
 
-    public isSelected(): boolean {
+    public isSelected(): boolean | undefined {
         return this.cbSelect.getValue();
     }
 

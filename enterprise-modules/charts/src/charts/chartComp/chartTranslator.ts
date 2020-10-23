@@ -1,4 +1,4 @@
-import {Autowired, Bean, BeanStub, GridOptionsWrapper} from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, GridOptionsWrapper } from "@ag-grid-community/core";
 
 @Bean("chartTranslator")
 export class ChartTranslator extends BeanStub {
@@ -68,6 +68,7 @@ export class ChartTranslator extends BeanStub {
         xOffset: 'X Offset',
         yOffset: 'Y Offset',
         lineWidth: 'Line Width',
+        lineDash: 'Line Dash',
         normal: 'Normal',
         bold: 'Bold',
         italic: 'Italic',
@@ -100,6 +101,10 @@ export class ChartTranslator extends BeanStub {
         histogramTooltip: 'Histogram',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
+        chartSettingsToolbarTooltip: 'Menu',
+        chartLinkToolbarTooltip: 'Linked to Grid',
+        chartUnlinkToolbarTooltip: 'Unlinked from Grid',
+        chartDownloadToolbarTooltip: 'Download Chart',
     };
 
     public translate(toTranslate: string): string {

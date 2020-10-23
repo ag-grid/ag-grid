@@ -237,6 +237,8 @@ export interface BarSeriesOptions extends SeriesOptions {
     shadow: DropShadowOptions;
     label: BarSeriesLabelOptions;
     tooltip: TooltipOptions<BarTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 
 export interface HistogramSeriesOptions extends BarSeriesOptions {
@@ -253,6 +255,8 @@ export interface BarTooltipRendererParams extends CartesianTooltipRendererParams
 export interface LineSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
     tooltip: TooltipOptions<LineTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 
 export interface MarkerOptions {
@@ -287,6 +291,8 @@ export interface AreaSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
     shadow: DropShadowOptions;
     tooltip: TooltipOptions<AreaTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 
 export interface AreaTooltipRendererParams extends CartesianTooltipRendererParams {
@@ -298,6 +304,8 @@ export interface PieSeriesOptions extends SeriesOptions {
     callout: PieSeriesCalloutOptions;
     shadow: DropShadowOptions;
     tooltip: TooltipOptions<PieTooltipRendererParams>;
+    lineDash: number[];
+    lineDashOffset: number;
 }
 
 export interface PieSeriesLabelOptions extends SeriesLabelOptions {

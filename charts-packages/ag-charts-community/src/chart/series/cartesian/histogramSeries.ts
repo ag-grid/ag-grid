@@ -6,7 +6,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     HighlightStyle,
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams
+    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -106,7 +106,11 @@ export class HistogramBin {
     getY(areaPlot: boolean) {
         return areaPlot ? this.relativeHeight : this.aggregatedValue;
     }
-};
+}
+
+export class HistogramSeriesTooltip extends SeriesTooltip {
+    @reactive('change') renderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+}
 
 export class HistogramSeries extends CartesianSeries {
 
@@ -131,7 +135,11 @@ export class HistogramSeries extends CartesianSeries {
 
     private seriesItemEnabled = true;
 
+    /**
+     * @deprecated Use {@link tooltip.renderer} instead.
+     */
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
+    tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
     @reactive('dataChange') fill: string | undefined = undefined;
     @reactive('dataChange') stroke: string | undefined = undefined;
@@ -199,18 +207,18 @@ export class HistogramSeries extends CartesianSeries {
         return this._areaPlot;
     }
 
-    private _bins: [number, number][];
-    set bins(bins: [number, number][]) {
+    private _bins: [number, number][] | undefined = undefined;
+    set bins(bins: [number, number][] | undefined) {
         this._bins = bins;
 
         this.scheduleData();
     }
 
-    get bins(): [number, number][] {
+    get bins(): [number, number][] | undefined {
         return this._bins;
     }
 
-    private _aggregation: HistogramAggregation;
+    private _aggregation: HistogramAggregation = 'count';
     set aggregation(aggregation: HistogramAggregation) {
         this._aggregation = aggregation;
 
@@ -221,14 +229,14 @@ export class HistogramSeries extends CartesianSeries {
         return this._aggregation;
     }
 
-    private _binCount: number;
-    set binCount(binCount: number) {
+    private _binCount: number | undefined = undefined;
+    set binCount(binCount: number | undefined) {
         this._binCount = binCount;
 
         this.scheduleData();
     }
 
-    get binCount(): number {
+    get binCount(): number | undefined {
         return this._binCount;
     }
 
@@ -302,8 +310,8 @@ export class HistogramSeries extends CartesianSeries {
 
     protected highlightedDatum?: HistogramNodeDatum;
 
-    /*  during processData phase, used to unify different ways of the user specifying
-        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    // During processData phase, used to unify different ways of the user specifying
+    // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
     private deriveBins(): [number, number][] {
         const { bins, binCount } = this;
 
@@ -312,11 +320,10 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         if (bins && binCount) {
-            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+            console.warn('bins and bitCount are mutually exclusive properties.');
         }
 
         if (bins) {
-            // we have explicity set bins from user. Use those.
             return bins;
         }
 
@@ -354,15 +361,19 @@ export class HistogramSeries extends CartesianSeries {
 
         let currentBin = 0;
         const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
-        sortedData.forEach(datum => {
 
+        loop: for (let i = 0, ln = sortedData.length; i < ln; i++) {
+            const datum = sortedData[i];
             while (datum[xKey] > derivedBins[currentBin][1]) {
                 currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
+                const bin = derivedBins[currentBin];
+                if (!bin) {
+                    break loop;
+                }
+                bins.push(new HistogramBin(bin));
             }
-
             bins[currentBin].addDatum(datum);
-        });
+        }
 
         bins.forEach(b => b.calculateAggregatedValue(this._aggregation, this.yKey));
 
@@ -584,7 +595,8 @@ export class HistogramSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill: color, tooltipRenderer, aggregation } = this;
+        const { xName, yName, fill: color, tooltip, aggregation } = this;
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
         const title = `${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;

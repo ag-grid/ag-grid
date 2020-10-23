@@ -61,7 +61,7 @@ export interface ChartProxyParams {
 
 export interface FieldDefinition {
     colId: string;
-    displayName: string;
+    displayName: string | null;
 }
 
 export interface UpdateChartParams {
@@ -158,8 +158,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
 
-        let gridOptionsThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        let apiThemeOverrides: AgChartThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
+        const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
@@ -191,9 +191,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return _.includes(Object.keys(themes), themeName);
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides: AgChartThemeOverrides, apiThemeOverrides: AgChartThemeOverrides) {
-        if (!gridOptionsThemeOverrides) return apiThemeOverrides;
-        if (!apiThemeOverrides) return gridOptionsThemeOverrides;
+    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
+        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
@@ -243,7 +243,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             // due to series default refactoring it's possible for fills and strokes to have undefined values
             const invalidFills = _.includes(fillsOverridden, undefined);
             const invalidStrokes = _.includes(strokesOverridden, undefined);
-            if (invalidFills || invalidStrokes) return;
+            if (invalidFills || invalidStrokes) { return; }
 
             // both fills and strokes will need to be overridden
             this.customPalette = {
@@ -526,7 +526,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected destroyChart(): void {
         if (this.chart) {
             this.chart.destroy();
-            this.chart = undefined;
+            (this.chart as any) = undefined;
         }
     }
 }

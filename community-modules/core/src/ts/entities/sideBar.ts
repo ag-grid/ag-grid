@@ -40,7 +40,7 @@ export class SideBarDefParser {
         filters: SideBarDefParser.DEFAULT_FILTER_COMP
     };
 
-    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef {
+    static parse(toParse: SideBarDef | string | string[] | boolean): SideBarDef | null {
         if (!toParse) { return null; }
         if (toParse === true) {
             return {
@@ -86,11 +86,13 @@ export class SideBarDefParser {
         return result;
     }
 
-    static parseComponents(from: (ToolPanelDef | string)[]) : ToolPanelDef[] {
+    static parseComponents(from?: (ToolPanelDef | string)[]) : ToolPanelDef[] {
         const result:ToolPanelDef[] = [];
 
+        if (!from) { return result; }
+
         from.forEach((it: ToolPanelDef | string) => {
-            let toAdd: ToolPanelDef = null;
+            let toAdd: ToolPanelDef | null = null;
             if (typeof it === 'string') {
                 const lookupResult = SideBarDefParser.DEFAULT_BY_KEY [it];
                 if (! lookupResult) {

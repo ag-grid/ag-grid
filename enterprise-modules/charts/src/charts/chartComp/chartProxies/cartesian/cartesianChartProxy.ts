@@ -1,5 +1,5 @@
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
     CartesianChart,
     CategoryAxis,
@@ -12,8 +12,8 @@ import {
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
-import {ChartDataModel} from "../../chartDataModel";
-import {isDate} from "../../typeChecker";
+import { ChartDataModel } from "../../chartDataModel";
+import { isDate } from "../../typeChecker";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
 
@@ -66,7 +66,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
 
         const chartType = this.getStandaloneChartType();
-        let userThemeOverrideRotation = undefined;
+        let userThemeOverrideRotation;
 
         const commonRotation = _.get(themeOverrides, `common.axes.${axisType}.label.rotation`, undefined);
         const cartesianRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.label.rotation`, undefined);
@@ -93,7 +93,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         }
 
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
-        const axis = find(this.chart.axes, axis => axis.position === axisPosition);
+        const axis = find(this.chart.axes, currentAxis => currentAxis.position === axisPosition);
 
         if (axis) {
             axis.label.rotation = labelRotation;
@@ -208,11 +208,11 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         return options.xAxis;
     }
 
-    protected getXAxis(): ChartAxis {
+    protected getXAxis(): ChartAxis | undefined {
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Bottom);
     }
 
-    protected getYAxis(): ChartAxis {
+    protected getYAxis(): ChartAxis | undefined {
         return find(this.chart.axes, a => a.position === ChartAxisPosition.Left);
     }
 }

@@ -74,14 +74,14 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => stopPropagationForAgGrid(event));
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (params) => {
-            if (params.previousValue === undefined) { // indeterminate
-                const result = this.onUncheckedClicked(params.event || {});
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (clickParams) => {
+            if (clickParams.previousValue === undefined) { // indeterminate
+                const result = this.onUncheckedClicked(clickParams.event || {});
                 if (result === 0) {
                     this.onCheckedClicked();
                 }
-            } else if (params.selected) {
-                this.onUncheckedClicked(params.event || {});
+            } else if (clickParams.selected) {
+                this.onUncheckedClicked(clickParams.event || {});
             } else {
                 this.onCheckedClicked();
             }
@@ -91,7 +91,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
-        this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc()!;
         const checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
         if (checkboxVisibleIsDynamic) {
             this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
@@ -119,6 +119,6 @@ export class CheckboxSelectionComponent extends Component {
     private checkboxCallbackExists(): boolean {
         // column will be missing if groupUseEntireRow=true
         const colDef = this.column ? this.column.getColDef() : null;
-        return colDef && typeof colDef.checkboxSelection === 'function';
+        return !!colDef && typeof colDef.checkboxSelection === 'function';
     }
 }

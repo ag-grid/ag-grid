@@ -10,12 +10,12 @@ import {
     FilterManager,
     Column,
     IFilterDef,
-    _,
     IFilterParams,
     RowNode,
     AgGroupComponent,
     ContainerType,
     ManagedFocusComponent,
+    _
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
@@ -30,7 +30,7 @@ export interface IMultiFilterParams extends IFilterParams {
 
 export interface IMultiFilterModel {
     filterType: string;
-    filterModels: any[];
+    filterModels: any[] | null;
 }
 
 export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
@@ -39,10 +39,10 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
     private params: IMultiFilterParams;
     private filterDefs: IMultiFilterDef[] = [];
-    private filters: IFilterComp[] = [];
+    private filters: IFilterComp[] | null = [];
     private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
-    private filterChangedCallback: () => void;
+    private filterChangedCallback: (() => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
@@ -79,7 +79,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         });
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return Promise.all(filterPromises).then(filters => { this.filters = filters; this.refreshGui('columnMenu'); });
+        return Promise.all(filterPromises).then(filters => { this.filters = filters as IFilterComp[]; this.refreshGui('columnMenu'); });
     }
 
     private refreshGui(container: ContainerType): void {
@@ -88,7 +88,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         this.clearGui();
         this.destroyChildren();
 
-        _.forEach(this.filters, (filter, index) => {
+        _.forEach(this.filters!, (filter, index) => {
             if (index > 0) {
                 this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
             }
@@ -177,16 +177,16 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         group.toggleGroupExpand(false);
 
         if (filter.afterGuiAttached) {
-            const params: IAfterGuiAttachedParams = { container: this.lastOpenedInContainer, suppressFocus: true };
+            const params: IAfterGuiAttachedParams = { container: this.lastOpenedInContainer!, suppressFocus: true };
 
-            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached(params));
+            group.addManagedListener(group, AgGroupComponent.EVENT_EXPANDED, () => filter.afterGuiAttached!(params));
         }
 
         return group;
     }
 
     public isFilterActive(): boolean {
-        return _.some(this.filters, filter => filter.isFilterActive());
+        return _.some(this.filters!, filter => filter.isFilterActive());
     }
 
     public getLastActiveFilterIndex(): number | null {
@@ -196,7 +196,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
         let rowPasses = true;
 
-        this.filters.forEach(filter => {
+        this.filters!.forEach(filter => {
             if (!rowPasses || filter === filterToSkip || !filter.isFilterActive()) { return; }
 
             rowPasses = filter.doesFilterPass(params);
@@ -209,14 +209,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return 'multi';
     }
 
-    public getModelFromUi(): IMultiFilterModel {
+    public getModelFromUi(): IMultiFilterModel | null {
         if (!this.isFilterActive()) {
             return null;
         }
 
         const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
-            filterModels: _.map(this.filters, filter => {
+            filterModels: _.map(this.filters!, filter => {
                 const providedFilter = filter as ProvidedFilter;
 
                 if (filter.isFilterActive() && typeof providedFilter.getModelFromUi === 'function') {
@@ -230,14 +230,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return model;
     }
 
-    public getModel(): ProvidedFilterModel {
+    public getModel(): ProvidedFilterModel | null {
         if (!this.isFilterActive()) {
             return null;
         }
 
         const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
-            filterModels: _.map(this.filters, filter => {
+            filterModels: _.map(this.filters!, filter => {
                 if (filter.isFilterActive()) {
                     return filter.getModel();
                 }
@@ -250,14 +250,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     public setModel(model: IMultiFilterModel): Promise<void> {
-        const setFilterModel = (filter: IFilterComp, model: any) => {
+        const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new Promise<void>(resolve => {
-                const promise = filter.setModel(model);
+                const promise = filter.setModel(filterModel);
 
-                if (promise == null) {
+                if (!promise) {
                     resolve();
                 } else {
-                    (promise as Promise<void>).then(() => resolve());
+                    promise.then(() => resolve());
                 }
             });
         };
@@ -265,10 +265,10 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         let promises: Promise<void>[] = [];
 
         if (model == null) {
-            promises = _.map(this.filters, filter => setFilterModel(filter, null));
+            promises = _.map(this.filters!, filter => setFilterModel(filter, null))!;
         } else {
-            _.forEach(this.filters, (filter, index) => {
-                const filterModel = model.filterModels.length > index ? model.filterModels[index] : null;
+            _.forEach(this.filters!, (filter, index) => {
+                const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
 
                 promises.push(setFilterModel(filter, filterModel));
             });
@@ -278,7 +278,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     public getChildFilterInstance(index: number): IFilterComp {
-        return this.filters[index];
+        return this.filters![index];
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -287,7 +287,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         }
 
         const { filters } = this.params;
-        const suppressFocus = filters && _.some(filters, filter => filter.display && filter.display !== 'inline');
+        const suppressFocus = filters && _.some(filters, filter => filter.display! && filter.display !== 'inline');
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
 
@@ -306,12 +306,12 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     public destroy(): void {
-        _.forEach(this.filters, filter => {
+        _.forEach(this.filters!, filter => {
             filter.setModel(null);
             this.destroyBean(filter);
         });
 
-        this.filters.length = 0;
+        this.filters!.length = 0;
         this.destroyChildren();
 
         super.destroy();
@@ -320,7 +320,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]) {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
-        _.forEachReverse(this.filters, filter => {
+        _.forEachReverse(this.filters!, filter => {
             const func = (filter as T)[name];
 
             if (typeof func === 'function') {
@@ -329,13 +329,12 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         });
     }
 
-    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> {
+    private createFilter(filterDef: IFilterDef, index: number): Promise<IFilterComp> | null {
         const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
 
         let filterInstance: IFilterComp;
 
-        const filterParams: IFilterParams =
-        {
+        const filterParams: IFilterParams = {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: () => this.filterChanged(index),
@@ -346,14 +345,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
 
         if (filterPromise != null) {
-            return filterPromise.then(filter => filterInstance = filter);
+            return filterPromise.then(filter => filterInstance = filter!);
         }
 
         return filterPromise;
     }
 
     private filterChanged(index: number): void {
-        const changedFilter = this.filters[index];
+        const changedFilter = this.filters![index];
 
         _.removeFromArray(this.activeFilterIndices, index);
 
@@ -361,9 +360,9 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             this.activeFilterIndices.push(index);
         }
 
-        this.filterChangedCallback();
+        this.filterChangedCallback!();
 
-        _.forEach(this.filters, filter => {
+        _.forEach(this.filters!, filter => {
             if (filter === changedFilter) { return; }
 
             if (typeof filter.onAnyFilterChanged === 'function') {

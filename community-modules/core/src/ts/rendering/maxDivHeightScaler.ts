@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { getMaxDivHeight } from "../utils/browser";
 
@@ -91,7 +90,7 @@ export class MaxDivHeightScaler extends BeanStub {
         const newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
         if (this.offset === newOffsetFloor) { return; }
 
-        this.offset = newOffsetFloor;
+        this.offset = newOffsetFloor!;
         this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 

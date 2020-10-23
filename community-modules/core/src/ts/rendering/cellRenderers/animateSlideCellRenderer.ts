@@ -16,7 +16,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     private params: any;
 
     private eCurrent: HTMLElement;
-    private ePrevious: HTMLElement;
+    private ePrevious: HTMLElement | null;
 
     private lastValue: any;
 
@@ -57,18 +57,17 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // complex set of setTimeout below creates the animation
         window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            addCssClass(this.ePrevious, 'ag-value-slide-out-end');
+            addCssClass(this.ePrevious!, 'ag-value-slide-out-end');
         }, 50);
 
         window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            this.getGui().removeChild(this.ePrevious);
+            this.getGui().removeChild(this.ePrevious!);
             this.ePrevious = null;
         }, 3000);
     }
 
     public refresh(params: any): boolean {
-
         let value = params.value;
 
         if (missing(value)) {
@@ -76,13 +75,13 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }
 
         if (value === this.lastValue) {
-            return;
+            return false;
         }
 
         // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
         // with regards processingFilterChange
         if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
-            return;
+            return false;
         }
 
         this.addSlideAnimation();

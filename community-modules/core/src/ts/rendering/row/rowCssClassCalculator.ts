@@ -1,9 +1,9 @@
-import {exists} from "../../utils/generic";
-import {RowNode} from "../../entities/rowNode";
-import {pushAll} from "../../utils/array";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, Bean} from "../../context/context";
-import {StylingService} from "../../styling/stylingService";
+import { exists } from "../../utils/generic";
+import { RowNode } from "../../entities/rowNode";
+import { pushAll } from "../../utils/array";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Autowired, Bean } from "../../context/context";
+import { StylingService } from "../../styling/stylingService";
 
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
@@ -78,7 +78,7 @@ export class RowCssClassCalculator {
             classes.push('ag-row-dragging');
         }
 
-        pushAll(classes, this.processClassesFromGridOptions(params.rowNode));
+        pushAll(classes, this.processClassesFromGridOptions(params.rowNode)!);
         pushAll(classes, this.preProcessRowClassRules(params.rowNode, params.scope));
 
         // we use absolute position unless we are doing print layout
@@ -95,7 +95,7 @@ export class RowCssClassCalculator {
         return classes;
     }
 
-    public processClassesFromGridOptions(rowNode: RowNode): string[] {
+    public processClassesFromGridOptions(rowNode: RowNode): string[] | undefined {
         const res: string[] = [];
 
         const process = (rowCls: string | string[]) => {
@@ -158,9 +158,9 @@ export class RowCssClassCalculator {
                 colDef: undefined,
                 data: rowNode.data,
                 node: rowNode,
-                rowIndex: rowNode.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                rowIndex: rowNode.rowIndex!,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 $scope: scope,
                 context: this.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);

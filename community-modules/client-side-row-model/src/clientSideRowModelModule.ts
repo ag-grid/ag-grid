@@ -12,4 +12,3 @@ export const ClientSideRowModelModule: Module = {
     beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
     rowModels: {clientSide: ClientSideRowModel}
 };
-

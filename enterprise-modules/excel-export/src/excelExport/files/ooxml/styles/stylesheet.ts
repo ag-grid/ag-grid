@@ -298,8 +298,8 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
                 fonts,
                 fills,
                 borders,
-                cellStylesXfs, 
-                cellXfs, 
+                cellStylesXfs,
+                cellXfs,
                 cellStyles,
                 {
                     name: 'tableStyles',

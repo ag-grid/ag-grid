@@ -1,28 +1,24 @@
-import {Prop} from 'vue-property-decorator';
-import {h} from 'vue'
-import {Options, Vue} from 'vue-class-component';
+import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from 'ag-grid-community';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, kebabNameToAttrEventName, kebabProperty, Properties} from './Utils';
+import {getAgGridProperties, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
-import {markRaw, toRaw} from '@vue/reactivity';
 
 const [props, watch, model] = getAgGridProperties();
 
 @Bean('agGridVue')
-@Options({
+@Component({
     props,
     watch,
     model,
-    // emits: ['onGrid-ready' / 'grid-ready' / 'gridReady' doesn't work :-) ]
 })
 export class AgGridVue extends Vue {
 
-    public static VERSION = 'Vue 3+';
-
     private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
 
-    private static DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-changed'));
+    private static kebabProperty(property: string) {
+        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
 
     @Prop(Boolean)
     public autoParamsRefresh!: boolean;
@@ -41,7 +37,7 @@ export class AgGridVue extends Vue {
     private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
-    public render() {
+    public render(h: any) {
         return h('div');
     }
 
@@ -55,6 +51,15 @@ export class AgGridVue extends Vue {
         }
 
         this.updateModelIfUsed(eventType);
+
+        // only emit if someone is listening
+        // we allow both kebab and camelCase event listeners, so check for both
+        const kebabName = AgGridVue.kebabProperty(eventType);
+        if (this.$listeners[kebabName]) {
+            this.$emit(kebabName, event);
+        } else if (this.$listeners[eventType]) {
+            this.$emit(eventType, event);
+        }
     }
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
@@ -81,14 +86,11 @@ export class AgGridVue extends Vue {
         // we debounce the model update to prevent a flood of updates in the event there are many individual
         // cell/row updates
         this.emitRowModel = this.debounce(() => {
-            this.$emit(AgGridVue.DATA_MODEL_ATTR_NAME, Object.freeze(this.getRowData()));
+            this.$emit('data-model-changed', Object.freeze(this.getRowData()));
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-
-        // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
-        // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
@@ -138,7 +140,7 @@ export class AgGridVue extends Vue {
 
     private updateModelIfUsed(eventType: string) {
         if (this.gridReadyFired &&
-            this.$attrs[AgGridVue.DATA_MODEL_ATTR_NAME] &&
+            this.$listeners['data-model-changed'] &&
             AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
 
             if (this.emitRowModel) {
@@ -161,7 +163,7 @@ export class AgGridVue extends Vue {
     private skipChange(propertyName: string, currentValue: any, previousValue: any) {
         if (this.gridReadyFired &&
             propertyName === 'rowData' &&
-            this.$attrs[AgGridVue.DATA_MODEL_ATTR_NAME]) {
+            this.$listeners['data-model-changed']) {
             if (currentValue === previousValue) {
                 return true;
             }
@@ -186,7 +188,7 @@ export class AgGridVue extends Vue {
     private debounce(func: () => void, delay: number) {
         let timeout: number;
         return () => {
-            const later = function () {
+            const later = function() {
                 func();
             };
             window.clearTimeout(timeout);

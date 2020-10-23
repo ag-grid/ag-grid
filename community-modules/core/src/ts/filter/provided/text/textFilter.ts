@@ -14,15 +14,15 @@ import { Promise } from '../../../utils';
 import { forEach } from '../../../utils/array';
 
 export interface TextFilterModel extends ISimpleFilterModel {
-    filter?: string;
+    filter?: string | null;
 }
 
 export interface TextComparator {
-    (filter: string, gridValue: any, filterText: string): boolean;
+    (filter: string | null | undefined, gridValue: any, filterText: string | null): boolean;
 }
 
 export interface TextFormatter {
-    (from: string): string;
+    (from?: string | null): string | null;
 }
 
 export interface ITextFilterParams extends ISimpleFilterParams {
@@ -43,8 +43,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
 
-    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) =>
-        from == null ? null : from.toString().toLowerCase()
+    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => from == null ? null : from.toString().toLowerCase();
 
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
         switch (filter) {
@@ -80,7 +79,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         super('textFilter');
     }
 
-    public static cleanInput(value: string): string {
+    public static cleanInput(value?: string | null): string | null | undefined {
         const trimmedInput = value && value.trim();
 
         // trim the input, unless it is all whitespace (this is consistent with Excel behaviour)
@@ -91,7 +90,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return 500;
     }
 
-    private getCleanValue(inputField: AgInputTextField): string {
+    private getCleanValue(inputField: AgInputTextField): string | null | undefined {
         return TextFilter.cleanInput(makeNull(inputField.getValue()));
     }
 

@@ -14,12 +14,12 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {AgCartesianAxisOptions, ChartAxisPosition, find} from "ag-charts-community";
-import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartController } from "../../../chartController";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
@@ -99,7 +99,7 @@ export class AxisPanel extends Component {
                 .onValueChange(newValue => {
                     const chartProxy = this.getChartProxy();
 
-                    chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+                    chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
 
                     this.chartController.updateForDataChange();
                 });
@@ -116,6 +116,7 @@ export class AxisPanel extends Component {
 
     private initAxisLabels() {
         const chartProxy = this.getChartProxy();
+
         const initialFont = {
             family: chartProxy.getAxisProperty("label.fontFamily"),
             style: chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
@@ -125,15 +126,15 @@ export class AxisPanel extends Component {
         };
 
         const setFont = (font: Font) => {
-            const chartProxy = this.getChartProxy();
+            const proxy = this.getChartProxy();
 
-            if (font.family) { chartProxy.setAxisProperty("label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setAxisProperty("label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setAxisProperty("label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setAxisProperty("label.fontSize", font.size); }
-            if (font.color) { chartProxy.setAxisProperty("label.color", font.color); }
+            if (font.family) { proxy.setAxisProperty("label.fontFamily", font.family); }
+            if (font.weight) { proxy.setAxisProperty("label.fontWeight", font.weight); }
+            if (font.style) { proxy.setAxisProperty("label.fontStyle", font.style); }
+            if (font.size) { proxy.setAxisProperty("label.fontSize", font.size); }
+            if (font.color) { proxy.setAxisProperty("label.color", font.color); }
 
-            chartProxy.getChart().performLayout();
+            proxy.getChart().performLayout();
         };
 
         const params: FontPanelParams = {
@@ -165,10 +166,10 @@ export class AxisPanel extends Component {
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
             const chartProxy = this.getChartProxy();
             const chart = chartProxy.getChart();
-            const axis = find(chart.axes as AgCartesianAxisOptions[], axis => axis.position === axisPosition);
+            const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
 
             if (axis) {
-                axis.label.rotation = newValue;
+                axis.label!.rotation = newValue;
                 if (axis.position === ChartAxisPosition.Bottom) {
                     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue); // TODO: fix this
                 } else if (axis.position === ChartAxisPosition.Left) {

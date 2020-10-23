@@ -18,12 +18,6 @@
     "no-consecutive-blank-lines": false,
     "no-unused-expression": false,
     "max-classes-per-file": false,
-    "only-arrow-functions": false,
-    "semicolon": false,
-    "space-before-function-paren": false,
-    "trailing-comma": false,
-    "member-ordering": false,
-    "max-line-length": false,
-    "arrow-parens": false
+    "only-arrow-functions": false
   }
 }

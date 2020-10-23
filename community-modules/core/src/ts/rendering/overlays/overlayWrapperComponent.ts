@@ -61,7 +61,7 @@ export class OverlayWrapperComponent extends Component {
         this.showOverlay(workItem, LoadingType.NoRows);
     }
 
-    private showOverlay(workItem: Promise<ILoadingOverlayComp | INoRowsOverlayComp>, type: LoadingType): void {
+    private showOverlay(workItem: Promise<ILoadingOverlayComp | INoRowsOverlayComp> | null, type: LoadingType): void {
         if (this.inProgress) {
             return;
         }
@@ -71,17 +71,19 @@ export class OverlayWrapperComponent extends Component {
 
         this.inProgress = true;
 
-        workItem.then(comp => {
-            this.inProgress = false;
+        if (workItem) {
+            workItem.then(comp => {
+                this.inProgress = false;
 
-            this.eOverlayWrapper.appendChild(comp.getGui());
-            this.activeOverlay = comp;
+                this.eOverlayWrapper.appendChild(comp!.getGui());
+                this.activeOverlay = comp!;
 
-            if (this.destroyRequested) {
-                this.destroyRequested = false;
-                this.destroyActiveOverlay();
-            }
-        });
+                if (this.destroyRequested) {
+                    this.destroyRequested = false;
+                    this.destroyActiveOverlay();
+                }
+            });
+        }
 
         this.setDisplayed(true);
     }
@@ -96,7 +98,7 @@ export class OverlayWrapperComponent extends Component {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
+        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
 
         clearElement(this.eOverlayWrapper);
     }

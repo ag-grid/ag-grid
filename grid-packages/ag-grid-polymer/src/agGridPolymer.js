@@ -79,7 +79,7 @@ export default class AgGridPolymer extends PolymerElement {
             this._gridOptions = options;
             this.initialiseGrid();
         }
-    };
+    }
 
     initialiseGrid() {
         // prevent instantiating multiple grids
@@ -149,7 +149,7 @@ export default class AgGridPolymer extends PolymerElement {
         if (typeof this[callbackMethod] === 'function') {
             this[callbackMethod](browserEvent);
         }
-    };
+    }
 
     setDefaultPopupParent() {
         if (!this.defaultPopupParentSet &&

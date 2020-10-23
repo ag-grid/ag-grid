@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
 let savedState = columnApi.getColumnState();
 
 // restore the column state
-columnApi.applyColumnsState({ state: savedState });
+columnApi.applyColumnState({ state: savedState });
 SNIPPET
 ) ?>
 

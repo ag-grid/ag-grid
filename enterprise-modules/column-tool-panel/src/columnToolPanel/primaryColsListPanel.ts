@@ -16,12 +16,12 @@ import {
     VirtualListModel,
     PreDestroy
 } from "@ag-grid-community/core";
-import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
-import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
-import {ExpandState} from "./primaryColsHeaderPanel";
-import {ColumnModelItem } from "./columnModelItem";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
+import { ToolPanelColumnComp } from "./toolPanelColumnComp";
+import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
+import { ExpandState } from "./primaryColsHeaderPanel";
+import { ColumnModelItem } from "./columnModelItem";
+import { ModelItemUtils } from "./modelItemUtils";
 
 class ColumnModel implements VirtualListModel {
 
@@ -62,7 +62,7 @@ export class PrimaryColsListPanel extends Component {
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
 
-    private destroyColumnItemFuncs: (()=>void)[] = [];
+    private destroyColumnItemFuncs: (() => void)[] = [];
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -132,7 +132,6 @@ export class PrimaryColsListPanel extends Component {
         return columnComp;
     }
 
-
     public onColumnsChanged(): void {
         const pivotModeActive = this.columnController.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
@@ -143,7 +142,7 @@ export class PrimaryColsListPanel extends Component {
             this.buildTreeFromProvidedColumnDefs();
         }
 
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
@@ -160,7 +159,7 @@ export class PrimaryColsListPanel extends Component {
             return colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
         });
 
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
@@ -181,7 +180,7 @@ export class PrimaryColsListPanel extends Component {
         const recursivelyBuild = (tree: OriginalColumnGroupChild[], dept: number, parentList: ColumnModelItem[]): void => {
             tree.forEach(child => {
                 if (child instanceof OriginalColumnGroup) {
-                    createGroupItem(child as OriginalColumnGroup, dept, parentList);
+                    createGroupItem(child, dept, parentList);
                 } else {
                     createColumnItem(child as Column, dept, parentList);
                 }
@@ -189,7 +188,8 @@ export class PrimaryColsListPanel extends Component {
         };
 
         const createGroupItem = (columnGroup: OriginalColumnGroup, dept: number, parentList: ColumnModelItem[]): void => {
-            const skipThisGroup = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel;
+            const columnGroupDef = columnGroup.getColGroupDef();
+            const skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
             if (skipThisGroup) { return; }
 
             if (columnGroup.isPadding()) {
@@ -204,7 +204,7 @@ export class PrimaryColsListPanel extends Component {
             addListeners(item);
 
             recursivelyBuild(columnGroup.getChildren(), dept + 1, item.getChildren());
-        }
+        };
 
         const createColumnItem = (column: Column, dept: number, parentList: ColumnModelItem[]): void => {
             const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
@@ -214,7 +214,7 @@ export class PrimaryColsListPanel extends Component {
             const displayName = this.columnController.getDisplayNameForColumn(column, 'toolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
-        }
+        };
 
         this.destroyColumnTree();
         recursivelyBuild(columnTree, 0, this.allColsTree);
@@ -227,7 +227,7 @@ export class PrimaryColsListPanel extends Component {
     private flattenAndFilterModel(): void {
         this.displayedColsList = [];
 
-        const recursiveFunc = (item: ColumnModelItem)=> {
+        const recursiveFunc = (item: ColumnModelItem) => {
             if (!item.isPassesFilter()) { return; }
             this.displayedColsList.push(item);
             if (item.isGroup() && item.isExpanded()) {
@@ -256,20 +256,20 @@ export class PrimaryColsListPanel extends Component {
         }, 0);
     }
 
-    private forEachItem(callback: (item: ColumnModelItem)=>void): void {
+    private forEachItem(callback: (item: ColumnModelItem) => void): void {
         const recursiveFunc = (items: ColumnModelItem[]) => {
-            items.forEach( item => {
+            items.forEach(item => {
                 callback(item);
                 if (item.isGroup()) {
                     recursiveFunc(item.getChildren());
                 }
-            })
+            });
         };
         recursiveFunc(this.allColsTree);
     }
 
     public doSetExpandedAll(value: boolean): void {
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (item.isGroup()) {
                 item.setExpanded(value);
             }
@@ -284,11 +284,11 @@ export class PrimaryColsListPanel extends Component {
 
         const expandedGroupIds: string[] = [];
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (!item.isGroup()) { return; }
 
             const groupId = item.getColumnGroup().getId();
-            if (groupIds.indexOf(groupId)>=0) {
+            if (groupIds.indexOf(groupId) >= 0) {
                 item.setExpanded(expand);
                 expandedGroupIds.push(groupId);
             }
@@ -304,7 +304,7 @@ export class PrimaryColsListPanel extends Component {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             if (item.isExpanded()) {
                 expandedCount++;
@@ -335,7 +335,7 @@ export class PrimaryColsListPanel extends Component {
 
         const pivotMode = this.columnController.isPivotMode();
 
-        this.forEachItem( item => {
+        this.forEachItem(item => {
             if (item.isGroup()) { return; }
             if (!item.isPassesFilter()) { return; }
 
@@ -360,29 +360,31 @@ export class PrimaryColsListPanel extends Component {
 
         });
 
-        if (checkedCount > 0 && uncheckedCount > 0) return undefined;
+        if (checkedCount > 0 && uncheckedCount > 0) { return undefined; }
 
         return !(checkedCount === 0 || uncheckedCount > 0);
     }
 
     public setFilterText(filterText: string) {
         this.filterText = _.exists(filterText) ? filterText.toLowerCase() : null;
-        this.markFilteredColumns()
+        this.markFilteredColumns();
         this.flattenAndFilterModel();
     }
 
     private markFilteredColumns(): void {
 
         const passesFilter = (item: ColumnModelItem) => {
-            if (!_.exists(this.filterText)) return true;
+            if (!_.exists(this.filterText)) { return true; }
 
-            return item.getDisplayName() != null ? item.getDisplayName().toLowerCase().indexOf(this.filterText as string) >= 0 : true;
+            const displayName = item.getDisplayName();
+
+            return displayName == null || displayName.toLowerCase().indexOf(this.filterText) !== -1;
         };
 
         const recursivelyCheckFilter = (item: ColumnModelItem, parentPasses: boolean): boolean => {
             let atLeastOneChildPassed = false;
             if (item.isGroup()) {
-                let groupPasses = passesFilter(item);
+                const groupPasses = passesFilter(item);
                 item.getChildren().forEach(child => {
                     const childPasses = recursivelyCheckFilter(child, groupPasses || parentPasses);
                     if (childPasses) {

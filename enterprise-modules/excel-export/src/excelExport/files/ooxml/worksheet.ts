@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _ } from '@ag-grid-community/core';
+import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn } from '@ag-grid-community/core';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -11,10 +11,10 @@ const updateColMinMax = (col: ExcelColumn, min: number, range: number, prevCol?:
     }
     let currentMin = min;
     if (prevCol) {
-        currentMin = Math.max(currentMin, prevCol.min);
+        currentMin = Math.max(currentMin, prevCol.min!);
     }
     col.min = Math.max(col.min, currentMin);
-    col.max = Math.max(col.max, currentMin + range);
+    col.max = Math.max(col.max!, currentMin + range);
 };
 
 const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {

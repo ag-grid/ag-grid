@@ -115,12 +115,12 @@ export class AnimationFrameService extends BeanStub {
 
             if (p1Tasks.length) {
                 this.sortTaskList(p1TaskList);
-                task = p1Tasks.pop().task;
+                task = p1Tasks.pop()!.task;
             } else if (p2Tasks.length) {
                 this.sortTaskList(p2TaskList);
-                task = p2Tasks.pop().task;
+                task = p2Tasks.pop()!.task;
             } else if (destroyTasks.length) {
-                task = destroyTasks.pop();
+                task = destroyTasks.pop()!;
             } else {
                 this.cancelledTasks.clear();
                 break;
@@ -144,8 +144,8 @@ export class AnimationFrameService extends BeanStub {
         this.ticking = false;
         const event: AnimationQueueEmptyEvent = {
             type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            api: this.gridOptionsWrapper.getApi()
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            api: this.gridOptionsWrapper.getApi()!
         };
         this.eventService.dispatchEvent(event);
     }

@@ -209,7 +209,7 @@ interface AgBaseChartOptions {
     background?: {
         visible?: boolean;
         fill?: string;
-    },
+    };
     title?: AgChartCaptionOptions;
     subtitle?: AgChartCaptionOptions;
     tooltipClass?: string;

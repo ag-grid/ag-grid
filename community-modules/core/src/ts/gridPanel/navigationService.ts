@@ -1,4 +1,4 @@
-import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
+import { Autowired, Bean, Optional } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
@@ -38,7 +38,7 @@ export class NavigationService extends BeanStub {
         const alt = event.altKey;
         const ctrl = event.ctrlKey;
 
-        const currentCell: CellPosition = this.mouseEventService.getCellPositionForEvent(event);
+        const currentCell: CellPosition | null = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -126,8 +126,8 @@ export class NavigationService extends BeanStub {
         const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
         let scrollIndex = currentPageBottomRow;
 
-        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex).rowTop;
-        const nextCellPixel = currentCellPixel + pixelsInOnePage - pagingPixelOffset;
+        const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
+        const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         const pageLastRow = this.paginationProxy.getPageLastRow();
@@ -157,8 +157,8 @@ export class NavigationService extends BeanStub {
         const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
         let scrollIndex = currentPageTopRow;
 
-        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
-        const nextCellPixel = currentRowNode.rowTop + currentRowNode.rowHeight - pixelsInOnePage - pagingPixelOffset;
+        const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
+        const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         const firstRow = this.paginationProxy.getPageFirstRow();
@@ -176,7 +176,7 @@ export class NavigationService extends BeanStub {
     // scrollType - what position to put scroll index ie top/bottom
     // scrollColumn - what column to horizontally scroll to
     // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
-    private navigateTo(scrollIndex: number, scrollType: string, scrollColumn: Column, focusIndex: number, focusColumn: Column): void {
+    private navigateTo(scrollIndex: number, scrollType: string | null, scrollColumn: Column | null, focusIndex: number, focusColumn: Column): void {
         if (exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }

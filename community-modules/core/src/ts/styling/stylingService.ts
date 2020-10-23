@@ -16,10 +16,10 @@ export class StylingService extends BeanStub {
 
     public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
         if (isNonNullObject(classRules)) {
-            const classNames = Object.keys(classRules);
+            const classNames = Object.keys(classRules!);
             for (let i = 0; i < classNames.length; i++) {
                 const className = classNames[i];
-                const rule = classRules[className];
+                const rule = classRules![className];
                 let resultOfRule: any;
                 if (typeof rule === 'string') {
                     resultOfRule = this.expressionService.evaluate(rule, params);

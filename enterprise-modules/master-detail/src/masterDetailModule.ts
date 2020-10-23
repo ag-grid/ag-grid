@@ -12,4 +12,3 @@ export const MasterDetailModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

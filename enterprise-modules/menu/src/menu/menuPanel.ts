@@ -9,11 +9,8 @@ export class MenuPanel extends ManagedFocusComponent {
     }
 
     handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case KeyCode.ESCAPE: {
-                this.closePanel();
-                break;
-            }
+        if (e.keyCode === KeyCode.ESCAPE) {
+            this.closePanel();
         }
     }
 

@@ -52,17 +52,17 @@ export class AgDialog extends AgPanel {
     @Autowired('dragService') private dragService: DragService;
 
     private moveElement: HTMLElement;
-    private moveElementDragListener: DragListenerParams;
+    private moveElementDragListener: DragListenerParams | undefined;
     private resizable: ResizableStructure = {};
     private movable = false;
     private isMoving = false;
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
     private maximizeListeners: (() => void)[] = [];
-    private maximizeButtonComp: Component;
-    private maximizeIcon: HTMLElement;
-    private minimizeIcon: HTMLElement;
-    private resizeListenerDestroy: () => void | null = null;
+    private maximizeButtonComp: Component | undefined;
+    private maximizeIcon: HTMLElement | undefined;
+    private minimizeIcon: HTMLElement | undefined;
+    private resizeListenerDestroy: (() => void) | null | undefined = null;
 
     private resizerMap: {
         [key in ResizableSides]: MappedResizer
@@ -85,7 +85,7 @@ export class AgDialog extends AgPanel {
 
     protected postConstruct() {
         const eGui = this.getGui();
-        const { movable, resizable, maximizable } = this.config;
+        const { movable, resizable, maximizable } = this.config as DialogOptions;
 
         addCssClass(eGui, 'ag-dialog');
         this.moveElement = this.eTitleBar;
@@ -109,7 +109,7 @@ export class AgDialog extends AgPanel {
 
     protected renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal } = this.config;
+        const { alwaysOnTop, modal } = this.config as DialogOptions;
 
         this.close = this.popupService.addPopup({
             modal,
@@ -128,21 +128,21 @@ export class AgDialog extends AgPanel {
         const parser = new DOMParser();
         const resizers = parser.parseFromString(this.RESIZE_TEMPLATE, 'text/html').body;
 
-        eGui.appendChild(resizers.firstChild);
+        eGui.appendChild(resizers.firstChild!);
         this.createMap();
     }
 
     private createMap() {
         const eGui = this.getGui();
         this.resizerMap = {
-            topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') },
-            top: { element: eGui.querySelector('[ref=eTopResizer]') },
-            topRight: { element: eGui.querySelector('[ref=eTopRightResizer]') },
-            right: { element: eGui.querySelector('[ref=eRightResizer]') },
-            bottomRight: { element: eGui.querySelector('[ref=eBottomRightResizer]') },
-            bottom: { element: eGui.querySelector('[ref=eBottomResizer]') },
-            bottomLeft: { element: eGui.querySelector('[ref=eBottomLeftResizer]') },
-            left: { element: eGui.querySelector('[ref=eLeftResizer]') }
+            topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') as HTMLElement },
+            top: { element: eGui.querySelector('[ref=eTopResizer]') as HTMLElement },
+            topRight: { element: eGui.querySelector('[ref=eTopRightResizer]') as HTMLElement },
+            right: { element: eGui.querySelector('[ref=eRightResizer]') as HTMLElement },
+            bottomRight: { element: eGui.querySelector('[ref=eBottomRightResizer]') as HTMLElement },
+            bottom: { element: eGui.querySelector('[ref=eBottomResizer]') as HTMLElement },
+            bottomLeft: { element: eGui.querySelector('[ref=eBottomLeftResizer]') as HTMLElement },
+            left: { element: eGui.querySelector('[ref=eLeftResizer]') as HTMLElement }
         };
     }
 
@@ -172,11 +172,11 @@ export class AgDialog extends AgPanel {
         if (isHorizontal && movementX) {
             const direction = isLeft ? -1 : 1;
             const oldWidth = this.getWidth();
-            const newWidth = oldWidth + (movementX * direction);
+            const newWidth = oldWidth! + (movementX * direction);
             let skipWidth = false;
 
             if (isLeft) {
-                offsetLeft = oldWidth - newWidth;
+                offsetLeft = oldWidth! - newWidth;
                 if (this.position.x + offsetLeft <= 0 || newWidth <= this.minWidth) {
                     skipWidth = true;
                     offsetLeft = 0;
@@ -191,12 +191,12 @@ export class AgDialog extends AgPanel {
         if (isVertical && movementY) {
             const direction = isTop ? -1 : 1;
             const oldHeight = this.getHeight();
-            const newHeight = oldHeight + (movementY * direction);
+            const newHeight = oldHeight! + (movementY * direction);
             let skipHeight = false;
 
             if (isTop) {
-                offsetTop = oldHeight - newHeight;
-                if (this.position.y + offsetTop <= 0 || newHeight <= this.minHeight) {
+                offsetTop = oldHeight! - newHeight;
+                if (this.position.y + offsetTop <= 0 || newHeight <= this.minHeight!) {
                     skipHeight = true;
                     offsetTop = 0;
                 }
@@ -241,7 +241,7 @@ export class AgDialog extends AgPanel {
             e,
             isTop: true,
             anywhereWithin: true,
-            topBuffer: this.getHeight() - this.getBodyHeight()
+            topBuffer: this.getHeight()! - this.getBodyHeight()
         });
 
         this.offsetElement(x + movementX, y + movementY);
@@ -261,8 +261,8 @@ export class AgDialog extends AgPanel {
             this.setHeight(height);
             this.offsetElement(x, y);
         } else {
-            this.lastPosition.width = this.getWidth();
-            this.lastPosition.height = this.getHeight();
+            this.lastPosition.width = this.getWidth()!;
+            this.lastPosition.height = this.getHeight()!;
             this.lastPosition.x = this.position.x;
             this.lastPosition.y = this.position.y;
             this.offsetElement(0, 0);
@@ -275,8 +275,8 @@ export class AgDialog extends AgPanel {
     }
 
     private refreshMaximizeIcon() {
-        setDisplayed(this.maximizeIcon, !this.isMaximized);
-        setDisplayed(this.minimizeIcon, this.isMaximized);
+        setDisplayed(this.maximizeIcon!, !this.isMaximized);
+        setDisplayed(this.minimizeIcon!, this.isMaximized);
     }
 
     private clearMaximizebleListeners() {
@@ -321,7 +321,7 @@ export class AgDialog extends AgPanel {
             const val = !!r[s];
             const el = this.getResizerElement(s);
 
-            const params: DragListenerParams = this.resizerMap[s].dragSource || {
+            const params: DragListenerParams = this.resizerMap[s].dragSource! || {
                 eElement: el,
                 onDragStart: this.onResizeStart.bind(this),
                 onDragging: (e: MouseEvent) => this.onResize(e, s),
@@ -331,10 +331,10 @@ export class AgDialog extends AgPanel {
             if (!!this.resizable[s] !== val || (!this.isAlive() && !val)) {
                 if (val) {
                     this.dragService.addDragSource(params);
-                    el.style.pointerEvents = 'all';
+                    el!.style.pointerEvents = 'all';
                 } else {
                     this.dragService.removeDragSource(params);
-                    el.style.pointerEvents = 'none';
+                    el!.style.pointerEvents = 'none';
                 }
                 this.resizerMap[s].dragSource = val ? params : undefined;
             }
@@ -383,10 +383,10 @@ export class AgDialog extends AgPanel {
 
         const eGui = maximizeButtonComp.getGui();
 
-        eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper));
+        eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper)!);
         addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
 
-        eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper));
+        eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper)!);
         addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
         addCssClass(this.minimizeIcon, 'ag-hidden');
 
@@ -395,7 +395,7 @@ export class AgDialog extends AgPanel {
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(
-            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
+            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))!
         );
 
         this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {

@@ -568,6 +568,11 @@
                 "enterprise": true
               },
               {
+                "title": "Niall's Spike",
+                "url": "javascript-grid-server-side-model-proto/",
+                "enterprise": true
+              },
+              {
                 "title": "See Also",
                 "url": "",
                 "items": [

@@ -54,28 +54,28 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
     protected readonly column: Column;
-    protected readonly pinned: string;
+    protected readonly pinned: string | null;
 
-    private headerComp: IHeaderComp;
-    private headerCompGui: HTMLElement;
+    private headerComp: IHeaderComp | undefined;
+    private headerCompGui: HTMLElement | undefined;
 
     private headerCompVersion = 0;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
-    private sortable: boolean;
+    private sortable: boolean | null | undefined;
     private menuEnabled: boolean;
 
     private colDefVersion: number;
     private refreshFunctions: (() => void)[] = [];
 
-    private moveDragSource: DragSource;
-    private displayName: string;
+    private moveDragSource: DragSource | undefined;
+    private displayName: string | null;
     private draggable: boolean;
 
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    constructor(column: Column, pinned: string) {
+    constructor(column: Column, pinned: string | null) {
         super(HeaderWrapperComp.TEMPLATE);
         this.column = column;
         this.pinned = pinned;
@@ -130,7 +130,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.draggable = this.workOutDraggable();
     }
 
-    private calculateDisplayName(): string {
+    private calculateDisplayName(): string | null {
         return this.columnController.getDisplayNameForColumn(this.column, 'header', true);
     }
 
@@ -167,7 +167,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @PreDestroy
     private destroyHeaderComp(): void {
         if (this.headerComp) {
-            this.getGui().removeChild(this.headerCompGui);
+            this.getGui().removeChild(this.headerCompGui!);
             this.headerComp = this.destroyBean(this.headerComp);
             this.headerCompGui = undefined;
         }
@@ -275,7 +275,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const eGui = this.getGui();
 
         const updateSortableCssClass = () => {
-            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', this.sortable);
+            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!this.sortable);
         };
 
         const updateAriaSort = () => {
@@ -309,7 +309,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const params = this.createParams();
         const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
-        this.userComponentFactory.newHeaderComponent(params).then(callback);
+        this.userComponentFactory.newHeaderComponent(params)!.then(callback);
     }
 
     private createParams(): IHeaderParams {
@@ -374,7 +374,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         // we should still be allowed drag the column, even if it can't be moved, if the column
         // can be dragged to a rowGroup or pivot drop zone
-        return colCanMove || colDef.enableRowGroup || colDef.enablePivot;
+        return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
     }
 
     private attachDraggingToHeaderComp(): void {
@@ -385,7 +385,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
-            eElement: this.headerCompGui,
+            eElement: this.headerCompGui!,
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
@@ -496,13 +496,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         };
     }
 
-    private getTooltipText(): string {
+    private getTooltipText(): string | undefined {
         return this.getComponentHolder().headerTooltip;
     }
 
     private setupTooltip(): void {
-        let tooltipFeature: TooltipFeature;
-        let tooltipText: string;
+        let tooltipFeature: TooltipFeature | undefined;
+        let tooltipText: string | undefined;
 
         const usingBrowserTooltips = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
@@ -518,7 +518,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const addTooltip = () => {
             if (usingBrowserTooltips) {
-                this.getGui().setAttribute('title', tooltipText);
+                this.getGui().setAttribute('title', tooltipText!);
             } else {
                 tooltipFeature = this.createBean(new TooltipFeature(this));
             }

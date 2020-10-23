@@ -7,6 +7,12 @@ import { ColumnController } from "./columnController/columnController";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { SortOption } from "./rowNodes/rowNodeSorter";
+
+export interface SortModelItem {
+    colId: string;
+    sort: string;
+}
 
 @Bean('sortController')
 export class SortController extends BeanStub {
@@ -24,7 +30,6 @@ export class SortController extends BeanStub {
     }
 
     public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
-
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
             sort = null;
@@ -63,21 +68,13 @@ export class SortController extends BeanStub {
 
         // clear sort index on all cols not sorting
         const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex(undefined));
+        allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex());
     }
 
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
     public onSortChanged(): void {
         this.dispatchSortChangedEvents();
-    }
-
-    // used by server side row models, to send sorting to server
-    public getSortModel = () => {
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            colId: column.getColId(),
-            sort: column.getSort()
-        }));
     }
 
     public isSortActive(): boolean {
@@ -99,7 +96,7 @@ export class SortController extends BeanStub {
     private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!(columnToClear === columnToSkip)) {
+            if (columnToClear !== columnToSkip) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
@@ -108,8 +105,8 @@ export class SortController extends BeanStub {
     }
 
     private getNextSortDirection(column: Column): string | null {
-
         let sortingOrder: (string | null)[] | null | undefined;
+
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -123,10 +120,11 @@ export class SortController extends BeanStub {
             return null;
         }
 
-        const currentIndex = sortingOrder.indexOf(column.getSort());
+        const currentIndex = sortingOrder.indexOf(column.getSort()!);
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
         let result: string | null;
+
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -148,20 +146,23 @@ export class SortController extends BeanStub {
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex() - b.getSortIndex());
+        columnsWithSorting.sort((a: Column, b: Column) => a.getSortIndex()! - b.getSortIndex()!);
 
         return columnsWithSorting;
     }
 
-    // used by row controller, when doing the sorting
-    public getSortForRowController(): any[] {
-        return this.getColumnsWithSortingOrdered().map(column => {
-            const isAscending = column.getSort() === Constants.SORT_ASC;
+    // used by server side row models, to sent sort to server
+    public getSortModel(): any[] {
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            sort: column.getSort(),
+            colId: column.getId()
+        }));
+    }
 
-            return {
-                inverter: isAscending ? 1 : -1,
-                column
-            };
-        });
+    public getSortOptions(): SortOption[] {
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            sort: column.getSort()!,
+            column
+        }));
     }
 }

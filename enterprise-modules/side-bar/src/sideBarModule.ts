@@ -17,4 +17,3 @@ export const SideBarModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

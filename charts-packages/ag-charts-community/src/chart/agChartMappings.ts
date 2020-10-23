@@ -173,6 +173,7 @@ const chartMeta = {
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
     constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
     setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
+    nonSerializable: ['container', 'data']
 };
 
 const axisDefaults: any = {
@@ -243,6 +244,18 @@ const barLabelMapping: any = {
             defaults: {
                 ...labelDefaults,
                 formatter: undefined
+            }
+        }
+    }
+};
+
+const tooltipMapping: any = {
+    tooltip: {
+        meta: {
+            defaults: {
+                enabled: true,
+                renderer: undefined,
+                format: undefined
             }
         }
     }
@@ -365,6 +378,7 @@ const mappings: any = {
             column: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: false, // vertical bars
                         ...seriesDefaults,
@@ -372,12 +386,14 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         flipXY: true, // horizontal bars
                         ...seriesDefaults,
@@ -385,12 +401,14 @@ const mappings: any = {
                     }
                 },
                 highlightStyle: {},
+                ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
             },
             [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -402,12 +420,12 @@ const mappings: any = {
                         strokeOpacity: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -440,12 +458,12 @@ const mappings: any = {
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -464,6 +482,7 @@ const mappings: any = {
             [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         xKey: '',
@@ -477,12 +496,12 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         shadow: undefined,
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 marker: {
                     meta: {
@@ -502,6 +521,7 @@ const mappings: any = {
             [HistogramSeries.type]: {
                 meta: {
                     constructor: HistogramSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -515,13 +535,15 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         areaPlot: false,
+                        binCount: undefined,
+                        bins: undefined,
                         aggregation: 'sum',
-                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 label: {
                     meta: {
@@ -609,6 +631,7 @@ const mappings: any = {
             [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
+                    setAsIs: ['lineDash'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -630,6 +653,7 @@ const mappings: any = {
                         shadow: undefined
                     }
                 },
+                ...tooltipMapping,
                 highlightStyle: {},
                 title: {
                     meta: {

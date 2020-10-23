@@ -22,7 +22,7 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
-import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
+import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
@@ -48,6 +48,19 @@ export class ChartService extends BeanStub implements IChartService {
     public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
+    }
+
+    public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
+        if (!model) {
+            console.warn("ag-Grid - unable to restore chart as no chart model is provided");
+            return;
+        }
+
+        if (model.modelType && model.modelType === 'pivot') {
+            return this.createPivotChart(this.mapToPivotParams(model, chartContainer));
+        }
+
+        return this.createRangeChart(this.mapToRangeParam(model, chartContainer));
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
@@ -188,6 +201,29 @@ export class ChartService extends BeanStub implements IChartService {
     private getSelectedRange(): CellRange {
         const ranges = this.rangeController.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
+    }
+
+    private mapToRangeParam(model: ChartModel, chartContainer?: HTMLElement): CreateRangeChartParams {
+        return {
+            cellRange: model.cellRange,
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            suppressChartRanges: model.suppressChartRanges,
+            aggFunc: model.aggFunc,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: () => model.chartOptions
+        };
+    }
+
+    private mapToPivotParams(model: ChartModel, chartContainer?: HTMLElement): CreatePivotChartParams {
+        return {
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            unlinkChart: model.unlinkChart,
+            processChartOptions: () => model.chartOptions
+        };
     }
 
     @PreDestroy

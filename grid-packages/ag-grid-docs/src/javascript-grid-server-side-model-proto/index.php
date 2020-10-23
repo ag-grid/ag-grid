@@ -16,9 +16,16 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('No Infinite Scrolling', 'no-infinite-scrolling', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
-<h1>Flat</h1>
+<h1>Transaction Flat</h1>
 
 <?= grid_example('Transactions Flat', 'transactions-flat', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
+<h1>Transaction Hierarchy</h1>
+
+<?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h1>Dynamic Params</h1>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

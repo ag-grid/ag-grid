@@ -1,5 +1,5 @@
 import { EventService } from "../eventService";
-import { AgEvent, Events, RowEvent, RowGroupOpenedEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { SelectionController } from "../selectionController";
 import { Column } from "./column";
@@ -9,13 +9,12 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
-import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
-import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
+import { IServerSideStore } from "../interfaces/IServerSideStore";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -87,7 +86,7 @@ export class RowNode implements IEventEmitter {
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
-    public id: string;
+    public id: string | undefined;
 
     /** The group data */
     public groupData: any;
@@ -142,13 +141,13 @@ export class RowNode implements IEventEmitter {
     public childIndex: number;
 
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
-    public rowIndex: number;
+    public rowIndex: number | undefined;
 
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
     public rowPinned: string;
 
     /** If using quick filter, stores a string representation of the row for searching against */
-    public quickFilterAggregateText: string;
+    public quickFilterAggregateText: string | null;
 
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     public footer: boolean;
@@ -169,13 +168,13 @@ export class RowNode implements IEventEmitter {
     public allLeafChildren: RowNode[];
 
     /** Groups only - Children of this group */
-    public childrenAfterGroup: RowNode[];
+    public childrenAfterGroup: RowNode[] | null;
 
     /** Groups only - Filtered children of this group */
-    public childrenAfterFilter: RowNode[];
+    public childrenAfterFilter: RowNode[] | null;
 
     /** Groups only - Sorted children of this group */
-    public childrenAfterSort: RowNode[];
+    public childrenAfterSort: RowNode[] | null;
 
     /** Groups only - Number of children and grand children */
     public allChildrenCount: number | null;
@@ -184,7 +183,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any; } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
+    public childrenCache: IServerSideStore | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
@@ -193,7 +192,7 @@ export class RowNode implements IEventEmitter {
     public sibling: RowNode;
 
     /** The height, in pixels, of this row */
-    public rowHeight: number;
+    public rowHeight: number | null | undefined;
 
     /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
      * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
@@ -202,11 +201,11 @@ export class RowNode implements IEventEmitter {
     public rowHeightEstimated: boolean;
 
     /** The top pixel for this row */
-    public rowTop: number;
+    public rowTop: number | null;
 
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
      * it is used so new rows can animate in from their old position. */
-    public oldRowTop: number;
+    public oldRowTop: number | null;
 
     /** True if this node is a daemon. This means row is not part of the model. Can happen when then
      * the row is selected and then the user sets a different ID onto the node. The nodes is then
@@ -235,10 +234,23 @@ export class RowNode implements IEventEmitter {
 
     public highlighted: 'above' | 'below' | null = null;
 
-    private selected = false;
+    private selected: boolean | undefined = false;
     private eventService: EventService;
 
     public setData(data: any): void {
+        this.setDataCommon(data, false);
+    }
+
+    // similar to setRowData, however it is expected that the data is the same data item. this
+    // is intended to be used with Redux type stores, where the whole data can be changed. we are
+    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
+    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
+    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    public updateData(data: any): void {
+        this.setDataCommon(data, true);
+    }
+
+    private setDataCommon(data: any, update: boolean): void {
         const oldData = this.data;
 
         this.data = data;
@@ -246,7 +258,7 @@ export class RowNode implements IEventEmitter {
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, update);
 
         this.dispatchLocalEvent(event);
     }
@@ -277,24 +289,6 @@ export class RowNode implements IEventEmitter {
         };
     }
 
-    // similar to setRowData, however it is expected that the data is the same data item. this
-    // is intended to be used with Redux type stores, where the whole data can be changed. we are
-    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
-    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
-    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    public updateData(data: any): void {
-        const oldData = this.data;
-
-        this.data = data;
-        this.updateDataOnDetailNode();
-        this.checkRowSelectable();
-        this.updateDataOnDetailNode();
-
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
-
-        this.dispatchLocalEvent(event);
-    }
-
     public getRowIndexString(): string {
         if (this.rowPinned === Constants.PINNED_TOP) {
             return 't-' + this.rowIndex;
@@ -302,7 +296,7 @@ export class RowNode implements IEventEmitter {
             return 'b-' + this.rowIndex;
         }
 
-        return this.rowIndex.toString();
+        return this.rowIndex!.toString();
     }
 
     private createDaemonNode(): RowNode {
@@ -340,7 +334,7 @@ export class RowNode implements IEventEmitter {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         const shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
 
-        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
+        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc!(this) : true);
     }
 
     public setRowSelectable(newVal: boolean) {
@@ -352,7 +346,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setId(id: string): void {
+    public setId(id?: string): void {
         // see if user is providing the id's
         const getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
 
@@ -378,6 +372,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isPixelInRange(pixel: number): boolean {
+        if (!exists(this.rowTop) || !exists(this.rowHeight)) { return false; }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
     }
 
@@ -481,7 +476,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowIndex(rowIndex: number): void {
+    public setRowIndex(rowIndex?: number): void {
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
@@ -524,11 +519,11 @@ export class RowNode implements IEventEmitter {
             type: type,
             node: this,
             data: this.data,
-            rowIndex: this.rowIndex,
+            rowIndex: this.rowIndex!,
             rowPinned: this.rowPinned,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
     }
 
@@ -544,7 +539,7 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getPrimaryColumn(colKey);
+        const column = this.columnController.getPrimaryColumn(colKey)!;
         const oldValue = this.valueService.getValue(column, this);
 
         this.valueService.setValue(this, column, newValue);
@@ -552,7 +547,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getGridColumn(colKey);
+        const column = this.columnController.getGridColumn(colKey)!;
 
         if (missing(this.groupData)) { this.groupData = {}; }
 
@@ -576,7 +571,7 @@ export class RowNode implements IEventEmitter {
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(colId => {
-                const column = this.columnController.getGridColumn(colId);
+                const column = this.columnController.getGridColumn(colId)!;
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value, oldValue);
@@ -591,7 +586,7 @@ export class RowNode implements IEventEmitter {
         const newValue = (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
         if (newValue !== this.__hasChildren) {
-            this.__hasChildren = newValue;
+            this.__hasChildren = !!newValue;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HAS_CHILDREN_CHANGED));
             }
@@ -605,7 +600,7 @@ export class RowNode implements IEventEmitter {
         return this.__hasChildren;
     }
 
-    public isEmptyRowGroupNode(): boolean {
+    public isEmptyRowGroupNode(): boolean | undefined {
         return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
 
@@ -628,7 +623,7 @@ export class RowNode implements IEventEmitter {
         return this.hasChildren() || this.master ? true : false;
     }
 
-    public isSelected(): boolean {
+    public isSelected(): boolean | undefined {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
         if (this.footer) { return this.sibling.isSelected(); }
 
@@ -648,7 +643,7 @@ export class RowNode implements IEventEmitter {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
-        let newSelectedValue: boolean;
+        let newSelectedValue: boolean | undefined;
 
         if (this.childrenAfterGroup) {
             for (let i = 0; i < this.childrenAfterGroup.length; i++) {
@@ -831,7 +826,7 @@ export class RowNode implements IEventEmitter {
         return false;
     }
 
-    public selectThisNode(newValue: boolean): boolean {
+    public selectThisNode(newValue?: boolean): boolean {
 
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
@@ -856,7 +851,7 @@ export class RowNode implements IEventEmitter {
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         const children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
 
-        if (missing(children)) { return; }
+        if (missing(children)) { return 0; }
 
         let updatedCount = 0;
 
@@ -891,16 +886,16 @@ export class RowNode implements IEventEmitter {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode {
+    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode | null {
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;
-        let nodeToSwapIn: RowNode;
+        let nodeToSwapIn: RowNode | null = null;
 
         // if we are hiding groups, then if we are the first child, of the first child,
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
-            const parentRowNode = currentRowNode.parent;
+            const parentRowNode = currentRowNode.parent!;
             const firstChild = exists(parentRowNode) && currentRowNode.firstChild;
 
             if (firstChild) {

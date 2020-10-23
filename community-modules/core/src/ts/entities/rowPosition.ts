@@ -9,7 +9,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowPosition {
     rowIndex: number;
-    rowPinned: string | undefined;
+    rowPinned?: string | null;
 }
 
 @Bean('rowPositionUtils')
@@ -19,7 +19,7 @@ export class RowPositionUtils extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
-    public getFirstRow(): RowPosition {
+    public getFirstRow(): RowPosition | null {
         let rowIndex = 0;
         let rowPinned;
 
@@ -35,7 +35,7 @@ export class RowPositionUtils extends BeanStub {
         return rowPinned === undefined ? null : { rowIndex, rowPinned };
     }
 
-    public getLastRow(): RowPosition {
+    public getLastRow(): RowPosition | null {
         let rowIndex;
         let rowPinned;
 
@@ -73,7 +73,7 @@ export class RowPositionUtils extends BeanStub {
         // if only one missing
         if ((rowA && !rowB) || (!rowA && rowB)) { return false; }
         // otherwise compare (use == to compare rowPinned because it can be null or undefined)
-        return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned == rowB.rowPinned;
+        return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
     }
 
     // tests if this row selection is before the other row selection

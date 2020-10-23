@@ -9,7 +9,7 @@ import {
     RowNode,
     SelectionController,
     StageExecuteParams
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
@@ -51,7 +51,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     }
 
     private recursivelyAddToRowsToDisplay(
-        rowsToFlatten: RowNode[],
+        rowsToFlatten: RowNode[] | null,
         result: RowNode[],
         nextRowTop: NumberWrapper,
         skipLeafNodes: boolean,
@@ -64,8 +64,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
         const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
 
-        for (let i = 0; i < rowsToFlatten.length; i++) {
-            const rowNode = rowsToFlatten[i];
+        for (let i = 0; i < rowsToFlatten!.length; i++) {
+            const rowNode = rowsToFlatten![i];
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();
 
@@ -73,12 +73,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
             const isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
                 isParent &&
-                rowNode.childrenAfterGroup.length === 1;
+                rowNode.childrenAfterGroup!.length === 1;
 
             const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
                 isParent &&
-                rowNode.leafGroup && 
-                rowNode.childrenAfterGroup.length === 1;
+                rowNode.leafGroup &&
+                rowNode.childrenAfterGroup!.length === 1;
 
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
@@ -136,7 +136,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const footerNode = new RowNode();
         this.context.createBean(footerNode);
 
-        Object.keys(groupNode).forEach(function (key) {
+        Object.keys(groupNode).forEach(function(key) {
             (footerNode as any)[key] = (groupNode as any)[key];
         });
 

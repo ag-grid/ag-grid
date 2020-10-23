@@ -13,7 +13,6 @@ import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
@@ -31,11 +30,11 @@ import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
-import {RowCssClassCalculator} from "./row/rowCssClassCalculator";
-import {IRowModel} from "../interfaces/iRowModel";
-import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
-import {IServerSideRowModel} from "../interfaces/iServerSideRowModel";
-import {ResizeObserverService} from "../misc/resizeObserverService";
+import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
+import { IRowModel } from "../interfaces/iRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -63,7 +62,6 @@ export class Beans {
     @Optional('rangeController') public rangeController: IRangeController;
     @Autowired('focusController') public focusController: FocusController;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
-    @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') public stylingService: StylingService;

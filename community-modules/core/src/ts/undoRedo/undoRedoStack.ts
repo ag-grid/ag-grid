@@ -9,7 +9,7 @@ export interface CellValueChange {
 }
 
 export interface LastFocusedCell {
-    rowPinned?: string;
+    rowPinned?: string | null;
     rowIndex: number;
     columnId: string;
 }
@@ -45,7 +45,7 @@ export class UndoRedoStack {
         this.actionStack = new Array<UndoRedoAction>(this.maxStackSize);
     }
 
-    public pop(): UndoRedoAction {
+    public pop(): UndoRedoAction | undefined {
         return this.actionStack.pop();
     }
 

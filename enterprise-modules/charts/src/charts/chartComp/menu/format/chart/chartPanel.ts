@@ -7,10 +7,10 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {PaddingPanel} from "./paddingPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {BackgroundPanel} from "./backgroundPanel";
+import { ChartController } from "../../../chartController";
+import { PaddingPanel } from "./paddingPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 
 export class ChartPanel extends Component {

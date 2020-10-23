@@ -18,7 +18,7 @@ import {
     ColumnEventType, Component
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
-import {ModelItemUtils} from "./modelItemUtils";
+import { ModelItemUtils } from "./modelItemUtils";
 
 export class ToolPanelColumnGroupComp extends Component {
 
@@ -69,7 +69,7 @@ export class ToolPanelColumnGroupComp extends Component {
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
-        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
@@ -184,14 +184,14 @@ export class ToolPanelColumnGroupComp extends Component {
         const childColumns: Column[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
-            children.forEach( child => {
+            children.forEach(child => {
                 if (!child.isPassesFilter()) { return; }
                 if (child.isGroup()) {
                     extractCols(child.getChildren());
                 } else {
                     childColumns.push(child.getColumn());
                 }
-            })
+            });
         };
 
         extractCols(this.modelItem.getChildren());
@@ -232,7 +232,7 @@ export class ToolPanelColumnGroupComp extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        visibleLeafColumns.forEach( column => {
+        visibleLeafColumns.forEach(column => {
             if (!pivotMode && column.getColDef().lockVisible) { return; }
 
             if (this.isColumnChecked(column, pivotMode)) {
@@ -313,7 +313,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    public isSelected(): boolean {
+    public isSelected(): boolean | undefined {
         return this.cbSelect.getValue();
     }
 

@@ -7,9 +7,9 @@ import {
     DropShadowOptions,
     HighlightOptions
 } from "@ag-grid-community/core";
-import {AgChart, AreaSeries, CartesianChart, ChartTheme} from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
@@ -23,7 +23,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
-        const marker = { ...seriesDefaults.marker } as any;
+        const marker = { ...seriesDefaults.marker };
         if (marker.type) { // deprecated
             marker.shape = marker.type;
             delete marker.type;
@@ -79,7 +79,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             if (!areaSeries) {
                 const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker } as any;
+                const marker = { ...seriesDefaults.marker };
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
@@ -107,7 +107,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             areaSeries.xKey = params.category.id;
             areaSeries.xName = params.category.name;
             areaSeries.yKeys = params.fields.map(f => f.colId);
-            areaSeries.yNames = params.fields.map(f => f.displayName);
+            areaSeries.yNames = params.fields.map(f => f.displayName!);
             areaSeries.fills = fills;
             areaSeries.strokes = strokes;
         }
@@ -139,7 +139,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }, new Map<string, AreaSeries>());
 
         const data = this.transformData(params.data, params.category.id);
-        let previousSeries: AreaSeries | undefined = undefined;
+        let previousSeries: AreaSeries | undefined;
 
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);
@@ -151,12 +151,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
-                areaSeries.yNames = [f.displayName];
+                areaSeries.yNames = [f.displayName!];
                 areaSeries.fills = [fill];
                 areaSeries.strokes = [stroke];
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker } as any;
+                const marker = { ...seriesDefaults.marker };
                 if (marker.type) { // deprecated
                     marker.shape = marker.type;
                     delete marker.type;
@@ -178,7 +178,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
                 areaSeries = AgChart.createComponent(options, 'area.series');
 
-                chart.addSeriesAfter(areaSeries, previousSeries);
+                chart.addSeriesAfter(areaSeries!, previousSeries);
             }
 
             previousSeries = areaSeries;
@@ -205,11 +205,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 width: seriesDefaults.strokeWidth
             },
             marker: {
-                enabled: seriesDefaults.marker.enabled,
-                shape: seriesDefaults.marker.shape,
-                size: seriesDefaults.marker.size,
-                strokeWidth: seriesDefaults.marker.strokeWidth
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth
             },
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
         } as AreaSeriesOptions;
 

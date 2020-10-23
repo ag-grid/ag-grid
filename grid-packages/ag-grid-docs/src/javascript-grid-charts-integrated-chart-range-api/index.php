@@ -107,19 +107,23 @@ interface CreatePivotChartParams {
 <h2>Saving and Restoring Charts</h2>
 
 <p>
-    You can access models that represent rendered charts using the <code>getChartModels()</code> API. The models are returned in a format that can be
-    easily used with the other API methods to later recreate the chart. You can also retrieve a base64 encoded image rendered from the chart in the model.
+    A chart model that represent all the state information about the rendered charts can be obtained using <code>getChartModels()</code>.
+    These models are returned in a format that can be easily used with the other API methods to later restore the chart.
 </p>
 
 <snippet language="ts">
 function getChartModels(): ChartModel[];
 
 interface ChartModel {
+    modelType: ChartModelType; // 'range' | 'pivot';
     chartId: string;
-    cellRange: CellRangeParams;
     chartType: ChartType;
-    chartThemeName: string;
-    chartOptions: ChartOptions;
+    cellRange: CellRangeParams;
+    chartThemeName?: string;
+    chartOptions: ChartOptions<any>;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    unlinkChart?: boolean;
     chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
@@ -128,6 +132,24 @@ interface GetChartImageDataUrlParams {
     type?: string;
 }
 </snippet>
+
+<p>
+    Note from the snippet above it is also possible to retrieve a base64 encoded image rendered from the chart in the model
+    using <code>getChartImageDataURL</code>.
+</p>
+
+<p>
+    These models can then be supplied to the following grid api method to restore the charts:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+function restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef
+SNIPPET
+) ?>
+
+<p>
+    Note that an optional <code>chartContainer</code> can be specified when restoring a chart.
+</p>
 
 <h3>Example: Saving and Restoring Charts</h3>
 

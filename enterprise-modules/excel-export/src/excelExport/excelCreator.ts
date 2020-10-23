@@ -44,7 +44,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('zipContainer') zipContainer: ZipContainer;
 
-    private exportMode: string;
+    private exportMode: string | undefined;
 
     @PostConstruct
     public postConstruct(): void {
@@ -88,7 +88,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         let sheetName = 'ag-grid';
 
         if (_.exists(params.sheetName)) {
-            sheetName = _.utf8_encode(params.sheetName!.toString().substr(0, 31));
+            sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
 
         const config: ExcelGridSerializingParams = {
@@ -125,8 +125,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
                 node: node,
                 colDef: column.getColDef(),
                 rowIndex: rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 $scope: null,
                 context: this.gridOptionsWrapper.getContext()
             },
@@ -146,7 +146,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.gridOptionsWrapper.isSuppressExcelExport();
     }
 
-    private setExportMode(exportMode: string): void {
+    private setExportMode(exportMode?: string): void {
         this.exportMode = exportMode;
     }
 
@@ -162,7 +162,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const {zipContainer, xlsxFactory} = this;
 
         zipContainer.addFolders([
-            'xl/worksheets/', 
+            'xl/worksheets/',
             'xl/',
             'xl/theme/',
             'xl/_rels/',

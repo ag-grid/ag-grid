@@ -1,9 +1,9 @@
-import {RowNode} from "../../entities/rowNode";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import { RowNode } from "../../entities/rowNode";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class AngularRowUtils {
 
-    public static createChildScopeOrNull(rowNode: RowNode, parentScope: any, gridOptionsWrapper: GridOptionsWrapper): {scope: any, scopeDestroyFunc: () => void} {
+    public static createChildScopeOrNull(rowNode: RowNode, parentScope: any, gridOptionsWrapper: GridOptionsWrapper): {scope: any, scopeDestroyFunc: () => void} | null {
 
         const isAngularCompileRows = gridOptionsWrapper.isAngularCompileRows();
 
