@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { getExampleInfo, openPlunker } from './helpers';
+import { generateIndexHtml } from './index-html-generator';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
@@ -17,6 +18,24 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
         {({ exampleImportType, useFunctionalReact, set }) => {
             const exampleInfo =
                 getExampleInfo(pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
+            let openTabLink = <a href={`${exampleInfo.appLocation}index.html`} target="_blank" rel="noreferrer">
+                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+            </a>;
+
+            if (process.env.NODE_ENV === 'development') {
+                // as the files will not have been generated in development, we generate the HTML for the new tab here
+                const indexHtml = generateIndexHtml(nodes, exampleInfo, true);
+                const openTab = () => {
+                    const win = window.open(null, '_blank');
+                    win.document.write(indexHtml);
+                    win.document.close();
+                };
+
+                openTabLink = <span onClick={openTab} onKeyDown={openTab} role="button" tabIndex="0">
+                    <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
+                </span>;
+            }
 
             return <div className="example-runner">
                 <div className="example-runner__header">
@@ -51,9 +70,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
                         <div className='example-runner__menu-item'>
-                            <a href={`${exampleInfo.appLocation}index.html`} target="_blank" rel="noreferrer">
-                                <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
-                            </a>
+                            {openTabLink}
                         </div>
                         <div
                             className='example-runner__menu-item'
