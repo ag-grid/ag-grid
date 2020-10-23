@@ -55,7 +55,14 @@ const CodeViewer = ({ exampleInfo }) => {
 };
 
 const FileItem = ({ path, isActive, onClick }) =>
-    <div className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`} onClick={onClick}>{path}</div>;
+    <div
+        className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`}
+        onClick={onClick}
+        onKeyDown={onClick}
+        role="button"
+        tabIndex="0">
+        {path}
+    </div>;
 
 const LanguageMap = {
     js: Prism.languages.javascript,

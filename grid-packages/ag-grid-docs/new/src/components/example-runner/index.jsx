@@ -36,12 +36,18 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                     <div className="example-runner__menu">
                         <div
                             className={`example-runner__menu-item ${!showCode ? 'example-runner__menu-item--selected' : ''}`}
-                            onClick={() => setShowCode(false)}>
+                            onClick={() => setShowCode(false)}
+                            onKeyDown={() => setShowCode(false)}
+                            role="button"
+                            tabIndex="0">
                             <FontAwesomeIcon icon={faPlay} fixedWidth />
                         </div>
                         <div
                             className={`example-runner__menu-item ${showCode ? 'example-runner__menu-item--selected' : ''}`}
-                            onClick={() => setShowCode(true)}>
+                            onClick={() => setShowCode(true)}
+                            onKeyDown={() => setShowCode(true)}
+                            role="button"
+                            tabIndex="0">
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
                         <div className='example-runner__menu-item'>
@@ -49,7 +55,10 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         </div>
                         <div
                             className='example-runner__menu-item'
-                            onClick={() => openPlunker(nodes, exampleInfo)}>
+                            onClick={() => openPlunker(nodes, exampleInfo)}
+                            onKeyDown={() => openPlunker(nodes, exampleInfo)}
+                            role="button"
+                            tabIndex="0">
                             <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
                         </div>
                     </div>

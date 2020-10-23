@@ -8,7 +8,7 @@ import Search from './search';
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className="menu-section">
-        <div onClick={() => toggleActive()}>
+        <div onClick={() => toggleActive()} onKeyDown={() => toggleActive()} role="button" tabIndex="0">
             <FontAwesomeIcon icon={faChevronRight} fixedWidth rotation={isActive ? 90 : 0} />
             {title}
         </div>
@@ -43,7 +43,7 @@ const Menu = ({ currentFramework, currentPage }) => {
         if (sectionContainingPage) {
             setActiveSection(sectionContainingPage.title);
         }
-    }, [currentPage]);
+    }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className="menu">
         <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
