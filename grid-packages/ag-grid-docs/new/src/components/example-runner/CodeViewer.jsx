@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useStaticQuery, graphql } from "gatsby";
 import './code-viewer.scss';
+import React, { useEffect, useState } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
@@ -9,9 +8,10 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
-import { getInternalFramework, getSourcePath, getFrameworkFiles } from './helpers';
+import { useExampleFileNodes } from './use-example-file-nodes';
+import { getExampleFiles } from './helpers';
 
-const updateFiles = (pageName, nodes, name, framework, useFunctionalReact, importType, setFiles, setActiveFile) => {
+const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
 
     const defaultFile = {
@@ -19,61 +19,19 @@ const updateFiles = (pageName, nodes, name, framework, useFunctionalReact, impor
         'angular': 'app/app.component.ts'
     };
 
+    const { framework } = exampleInfo;
     const mainFile = defaultFile[framework] || 'main.js';
 
     setActiveFile(mainFile);
-
-    const internalFramework = getInternalFramework(framework, useFunctionalReact);
-    const rootFolder = getSourcePath(pageName, name, internalFramework, importType);
-
-    const filesForExample = nodes
-        .filter(node => node.relativePath.startsWith(rootFolder))
-        .map(node => ({
-            path: node.relativePath.replace(rootFolder, ''),
-            publicURL: node.publicURL,
-            isFramework: false
-        }));
-
-    getFrameworkFiles(framework).forEach(file => filesForExample.push({
-        path: file,
-        publicURL: `/example-runner/grid-${framework}-boilerplate/${file}`,
-        isFramework: true,
-    }));
-
-    const files = {};
-    const promises = [];
-
-    filesForExample.forEach(f => {
-        files[f.path] = null; // preserve ordering
-
-        const promise = fetch(f.publicURL)
-            .then(response => response.text())
-            .then(source => files[f.path] = { source, isFramework: f.isFramework });
-
-        promises.push(promise);
-    });
-
-    Promise.all(promises).then(() => setFiles(files));
+    getExampleFiles(nodes, exampleInfo).then(files => setFiles(files));
 };
 
-const CodeViewer = ({ pageName, name, framework, importType = 'modules', useFunctionalReact = false }) => {
+const CodeViewer = ({ exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
+    const nodes = useExampleFileNodes();
 
-    const { nodes } = useStaticQuery(graphql`
-    {
-        allFile(filter: { sourceInstanceName: { eq: "examples" }, relativePath: { regex: "/.*\/examples\/.*/" } }) {
-            nodes {
-                relativePath
-                publicURL
-            }
-        }
-    }
-    `).allFile;
-
-    useEffect(
-        () => updateFiles(pageName, nodes, name, framework, useFunctionalReact, importType, setFiles, setActiveFile),
-        [nodes, name, framework, useFunctionalReact, importType]);
+    useEffect(() => updateFiles(nodes, exampleInfo, setFiles, setActiveFile), [nodes, exampleInfo]);
 
     const keys = files ? Object.keys(files) : [];
     const exampleFiles = keys.filter(key => !files[key].isFramework);

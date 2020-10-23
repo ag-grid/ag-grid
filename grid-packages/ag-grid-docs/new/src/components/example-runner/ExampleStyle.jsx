@@ -1,7 +1,8 @@
 import React from 'react';
 
 const ExampleStyle = ({ rootId }) => <style media="only screen">
-    {`html, body${rootId ? `, #${rootId}` : ''} {
+    {`
+    html, body${rootId ? `, #${rootId}` : ''} {
         height: 100%;
         width: 100%;
         margin: 0;
@@ -20,7 +21,8 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
     body {
         padding: 1rem;
         overflow: auto;
-    }`}
+    }
+    `}
 </style>;
 
 export default ExampleStyle;

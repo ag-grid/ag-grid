@@ -5,10 +5,8 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const AngularTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
-    const boilerplatePath = '/example-runner/grid-angular-boilerplate/';
-
-    return <html lang="en">
+const AngularTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+    <html lang="en">
         <head>
             <title>Angular 2 example</title>
             <meta charSet="UTF-8" />
@@ -27,6 +25,5 @@ const AngularTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
             <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={boilerplatePath + 'main.ts'} options={options} />
         </body>
     </html>;
-};
 
 export default AngularTemplate;

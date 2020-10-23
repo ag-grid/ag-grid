@@ -5,10 +5,8 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const VueTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
-    const boilerplatePath = '/example-runner/grid-vue-boilerplate/';
-
-    return <html lang="en">
+const VueTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+    <html lang="en">
         <head>
             <title>Vue example</title>
             <meta charSet="UTF-8" />
@@ -24,6 +22,5 @@ const VueTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
             <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'main.js'} options={options} />
         </body>
     </html>;
-};
 
 export default VueTemplate;

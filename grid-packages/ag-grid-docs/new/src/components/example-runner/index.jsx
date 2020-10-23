@@ -6,13 +6,18 @@ import ExampleRunnerResult from './ExampleRunnerResult';
 import VisibilitySensor from "react-visibility-sensor";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { useExampleFileNodes } from './use-example-file-nodes';
+import { getExampleInfo, openPlunker } from './helpers';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
-    const parsedOptions = JSON.parse(options);
+    const nodes = useExampleFileNodes();
 
     return <GlobalContextConsumer>
         {({ exampleImportType, useFunctionalReact, set }) => {
+            const exampleInfo =
+                getExampleInfo(pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+
             return <div className="example-runner">
                 <div className="example-runner__header">
                     <div className="example-runner__title">Example: {title}</div>
@@ -42,7 +47,9 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         <div className='example-runner__menu-item'>
                             <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
                         </div>
-                        <div className='example-runner__menu-item'>
+                        <div
+                            className='example-runner__menu-item'
+                            onClick={() => openPlunker(nodes, exampleInfo)}>
                             <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
                         </div>
                     </div>
@@ -50,23 +57,11 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                         {!showCode &&
                             <VisibilitySensor partialVisibility={true}>
                                 {({ isVisible }) =>
-                                    <ExampleRunnerResult
-                                        isVisible={isVisible}
-                                        pageName={pageName}
-                                        framework={framework}
-                                        name={name}
-                                        importType={exampleImportType}
-                                        options={parsedOptions}
-                                    />
+                                    <ExampleRunnerResult isVisible={isVisible} exampleInfo={exampleInfo} />
                                 }
                             </VisibilitySensor>
                         }
-                        {showCode && <CodeViewer
-                            pageName={pageName}
-                            framework={framework}
-                            name={name}
-                            importType={exampleImportType}
-                            useFunctionalReact={useFunctionalReact} />}
+                        {showCode && <CodeViewer exampleInfo={exampleInfo} />}
                     </div>
                 </div>
             </div>;

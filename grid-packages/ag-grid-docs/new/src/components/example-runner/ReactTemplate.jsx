@@ -5,10 +5,8 @@ import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
 
-const ReactTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
-    const boilerplatePath = '/example-runner/grid-react-boilerplate/';
-
-    return <html lang="en">
+const ReactTemplate = ({ boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+    <html lang="en">
         <head>
             <title>React example</title>
             <meta charSet="UTF-8" />
@@ -24,6 +22,5 @@ const ReactTemplate = ({ appLocation, options, scriptFiles, styleFiles }) => {
             <SystemJs boilerplatePath={boilerplatePath} appLocation={appLocation} startFile={appLocation + 'index.jsx'} options={options} />
         </body>
     </html>;
-};
 
 export default ReactTemplate;
