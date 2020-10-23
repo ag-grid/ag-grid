@@ -1,27 +1,20 @@
 @import "~bootstrap/scss/bootstrap";
 
 body {
-    @extend .m-0;
-    @extend .p-0;
-    @extend .w-100;
-    @extend .h-100;
+    @extend .m-0, .p-0, .w-100, .h-100;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    -webkit-font-smoothing: antialiased;
 }
 
 .main_container {
-    @extend .container-fluid;
-    @extend .p-0;
-    @extend .vh-100;
-    @extend .d-flex;
-    @extend .flex-column;
+    @extend .container-fluid, .p-0, .vh-100, .d-flex, .flex-column;
 }
 
 .header {
-    @extend .d-flex;
+    @extend .d-flex, .p-3;
     justify-content: space-between;
-    background-image: linear-gradient(to top left, #0084e7, #00407f);
-    padding: 1rem;
+    background-image: linear-gradient(to top left, theme-color(primary), darken(theme-color(primary), 25%));
 }
 
 .header__logo {
@@ -34,36 +27,34 @@ body {
 }
 
 .content_viewport {
-    @extend .d-flex;
-    @extend .flex-grow-1;
+    @extend .d-flex, .flex-grow-1;
     overflow: hidden;
 }
 
 .main_menu {
     width: 300px;
     overflow: auto;
-    background-color: #efefef;
+    background-color: theme-color(light);
 }
 
 .content {
-    @extend .p-3;
-    flex: 1;
+    @extend .p-3, .flex-grow-1;
     overflow: auto;
 }
 
 .footer {
-    height: 100px;
+    @extend .p-3;
+    flex: none;
+    height: 60px;
     text-align: center;
-    padding: 1rem;
-    background-image: linear-gradient(to top left, #00407f, #0084e7);
+    background-image: linear-gradient(to top left, darken(theme-color(primary), 25%), theme-color(primary));
     color: white;
 }
 
 .note {
-    padding: 1rem;
-    background-color: lightyellow;
-    border: 1px solid orange;
-    margin-bottom: 1rem;
+    @extend .p-3, .mb-3;
+    background-color: lighten(theme-color(warning), 40%);
+    border: 1px solid theme-color(warning);
 
     p:last-child {
         margin-bottom: 0;
@@ -71,5 +62,5 @@ body {
 }
 
 a {
-    color: #0084e7;
+    color: theme-color(primary);
 }

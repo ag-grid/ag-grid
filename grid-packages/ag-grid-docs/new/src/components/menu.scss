@@ -2,23 +2,72 @@
 
 .menu {
     @extend .p-2;
-}
 
-.menu__sections {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
+    .menu__sections {
+        @extend .list-unstyled;
+        margin: 0;
+        padding: 0;
+    }
 
-.menu-section {
-    padding: 0.5rem;
+    .menu-section {
+        @extend .p-1;
+
+        > .menu-group {
+            @extend .pl-4;
+            > li > a {
+                color: theme-color(dark);
+                font-weight: 400;
+                font-size: 0.9rem;
+                &:hover {
+                    color: theme-color(primary);
+                }
+            }
+        }
+    }
 
     .fa-chevron-right {
-        margin-right: 0.5rem;
+        @extend .mr-1;
         transition: all 0.5s;
     }
-}
 
-.menu-group {
-    margin: 0.5rem auto;
+    div[role=button], a {
+        white-space: nowrap;
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline-color: theme-color(primary);
+            outline-width: 1px;
+            outline-style: solid;
+            outline-offset: 0.15rem;
+        }
+    }
+
+    div[role=button] {
+        color: theme-color(dark);
+        font-weight: 500;
+    }
+
+    a {
+        color: theme-color(secondary);
+        font-size: 0.85rem;
+        @extend .d-block, .my-1;
+        &:hover {
+            text-decoration: none;
+            color: theme-color(primary);
+        }
+    }
+
+    a[aria-current=page] {
+        color: theme-color(primary) !important;
+    }
+
+    .menu-group {
+        @extend .pl-2, .list-unstyled;
+    }
+
+    input:focus {
+        border-color: theme-color(primary);
+    }
 }
