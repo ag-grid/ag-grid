@@ -89,7 +89,7 @@ export interface PropertyChangedEvent extends AgEvent {
 }
 
 @Bean('gridOptionsWrapper')
-export class GridOptionsWrapper {
+export class GridOptionsWrapper<T = any> {
     private static MIN_COL_WIDTH = 10;
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
@@ -131,7 +131,7 @@ export class GridOptionsWrapper {
 
     private destroyed = false;
 
-    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
+    private agWire(@Qualifier('gridApi') gridApi: GridApi<T>, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
@@ -700,7 +700,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getBusinessKeyForNode;
     }
 
-    public getApi(): GridApi | undefined | null {
+    public getApi(): GridApi<T> | undefined | null {
         return this.gridOptions.api;
     }
 
@@ -1113,7 +1113,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
-    public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
+    public getRowNodeIdFunc(): GetRowNodeIdFunc<T> | undefined {
         return this.gridOptions.getRowNodeId;
     }
 

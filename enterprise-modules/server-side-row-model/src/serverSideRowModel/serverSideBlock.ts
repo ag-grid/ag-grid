@@ -22,7 +22,7 @@ import {
 
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
-export class ServerSideBlock extends RowNodeBlock {
+export class ServerSideBlock<T = any> extends RowNodeBlock<T> {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -41,7 +41,7 @@ export class ServerSideBlock extends RowNodeBlock {
     private params: ServerSideCacheParams;
     private parentCache: ServerSideCache;
 
-    private parentRowNode: RowNode;
+    private parentRowNode: RowNode<T>;
 
     private level: number;
     private groupLevel: boolean | undefined;
@@ -55,7 +55,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public static readonly DefaultBlockSize = 100;
 
-    constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
+    constructor(pageNumber: number, parentRowNode: RowNode<T>, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
         this.params = params;
         this.parentRowNode = parentRowNode;
@@ -112,7 +112,7 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.nodeIdPrefix;
     }
 
-    public getRow(displayRowIndex: number): RowNode | null {
+    public getRow(displayRowIndex: number): RowNode<T> | null {
         let bottomPointer = this.getStartRow();
 
         // the end row depends on whether all this block is used or not. if the virtual row count
@@ -164,7 +164,7 @@ export class ServerSideBlock extends RowNodeBlock {
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
         rowNode.stub = false;
 
-        if (_.exists(data)) {
+        if (_.exists(data)) { 
             // if the user is not providing id's, then we build an id based on the index.
             // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
             // we combine the index with the level and group key, so that the id is

@@ -5,14 +5,14 @@ import { Column } from "../../entities/column";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 
-export interface ICellRendererParams {
+export interface ICellRendererParams<T = any> {
     value: any;
     valueFormatted: any;
     getValue: () => any;
     setValue: (value: any) => void;
     formatValue: (value: any) => any;
-    data: any;
-    node: RowNode;
+    data: T;
+    node: RowNode<T>;
     colDef: ColDef;
     column: Column;
     $scope: any;

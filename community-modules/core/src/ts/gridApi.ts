@@ -124,7 +124,7 @@ export interface DetailGridInfo {
 }
 
 @Bean('gridApi')
-export class GridApi {
+export class GridApi<T = any> {
 
     @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;
@@ -139,7 +139,7 @@ export class GridApi {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('context') private context: Context;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowModel') private rowModel: IRowModel<T>;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusController') private focusController: FocusController;
@@ -160,7 +160,7 @@ export class GridApi {
     private gridCore: GridCore;
 
     private headerRootComp: HeaderRootComp;
-    private clientSideRowModel: IClientSideRowModel;
+    private clientSideRowModel: IClientSideRowModel<T>;
     private infiniteRowModel: IInfiniteRowModel;
 
     private serverSideRowModel: IServerSideRowModel;
@@ -184,7 +184,7 @@ export class GridApi {
     private init(): void {
         switch (this.rowModel.getType()) {
             case Constants.ROW_MODEL_TYPE_CLIENT_SIDE:
-                this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+                this.clientSideRowModel = this.rowModel as IClientSideRowModel<T>;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
                 this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
@@ -281,7 +281,7 @@ export class GridApi {
         }
     }
 
-    public setRowData(rowData: any[]) {
+    public setRowData(rowData: T[] | undefined) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
                 const transactionAndMap = this.immutableService.createTransactionForRowData(rowData);
@@ -511,7 +511,7 @@ export class GridApi {
         return this.filterManager.isQuickFilterPresent();
     }
 
-    public getModel(): IRowModel {
+    public getModel(): IRowModel<T> {
         return this.rowModel;
     }
 
@@ -571,7 +571,7 @@ export class GridApi {
         return this.animationFrameService.isQueueEmpty();
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode<T> {
         return this.rowModel.getRowNode(id);
     }
 
@@ -637,7 +637,7 @@ export class GridApi {
         this.selectionController.deselectIndex(index);
     }
 
-    public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
+    public selectNode(node: RowNode<T>, tryMulti: boolean = false, suppressEvents: boolean = false) {
         console.warn('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         if (suppressEvents) {
             console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
@@ -645,7 +645,7 @@ export class GridApi {
         node.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
     }
 
-    public deselectNode(node: RowNode, suppressEvents: boolean = false) {
+    public deselectNode(node: RowNode<T>, suppressEvents: boolean = false) {
         console.warn('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         if (suppressEvents) {
             console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
@@ -696,12 +696,12 @@ export class GridApi {
         return node.isSelected();
     }
 
-    public getSelectedNodesById(): { [nodeId: number]: RowNode; } {
+    public getSelectedNodesById(): { [nodeId: number]: RowNode<T>; } {
         console.error('ag-Grid: since version 3.4, getSelectedNodesById no longer exists, use getSelectedNodes() instead');
         return null;
     }
 
-    public getSelectedNodes(): RowNode[] {
+    public getSelectedNodes(): RowNode<T>[] {
         return this.selectionController.getSelectedNodes();
     }
 
@@ -735,21 +735,21 @@ export class GridApi {
         this.gridCore.ensureNodeVisible(comparator, position);
     }
 
-    public forEachLeafNode(callback: (rowNode: RowNode) => void) {
+    public forEachLeafNode(callback: (rowNode: RowNode<T>) => void) {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void) {
+    public forEachNode(callback: (rowNode: RowNode<T>, index: number) => void) {
         this.rowModel.forEachNode(callback);
     }
 
-    public forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void) {
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode<T>, index: number) => void) {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void) {
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode<T>, index: number) => void) {
         if (missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
@@ -997,7 +997,7 @@ export class GridApi {
         }
     }
 
-    public getValue(colKey: string | Column, rowNode: RowNode): any {
+    public getValue(colKey: string | Column, rowNode: RowNode<T>): any {
         let column = this.columnController.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnController.getGridColumn(colKey);
@@ -1316,7 +1316,7 @@ export class GridApi {
         this.updateRowData({ add: items, addIndex: index, update: null, remove: null });
     }
 
-    public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
+    public removeItems(rowNodes: RowNode<T>[], skipRefresh = false): void {
         console.warn('ag-Grid: removeItems() is deprecated, use updateRowData(transaction) instead.');
         const dataToRemove: any[] = rowNodes.map(rowNode => rowNode.data);
         this.updateRowData({ add: null, addIndex: null, update: null, remove: dataToRemove });

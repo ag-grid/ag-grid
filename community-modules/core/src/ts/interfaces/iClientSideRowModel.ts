@@ -5,10 +5,10 @@ import { RefreshModelParams } from './refreshModelParams';
 import { RowNode } from '../entities/rowNode';
 import { ChangedPath } from '../utils/changedPath';
 
-export interface IClientSideRowModel extends IRowModel {
-    updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null;
-    setRowData(rowData: any[]): void;
-    refreshModel(params: RefreshModelParams): void;
+export interface IClientSideRowModel<T = any> extends IRowModel<T> {
+    updateRowData(rowDataTran: RowDataTransaction<T>, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction<T> | null;
+    setRowData(rowData: T[] | undefined): void;
+    refreshModel(params: RefreshModelParams<T>): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNode(callback: (node: RowNode, index: number) => void): void;
@@ -16,14 +16,14 @@ export interface IClientSideRowModel extends IRowModel {
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
-    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction<T>) => void): void;
     flushAsyncTransactions(): void;
-    getRootNode(): RowNode;
+    getRootNode(): RowNode<T>;
     doAggregate(changedPath?: ChangedPath): void;
-    getTopLevelNodes(): RowNode[] | null;
+    getTopLevelNodes(): RowNode<T>[] | null;
     forEachPivotNode(callback: (node: RowNode, index: number) => void): void;
     ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
-    getLastHighlightedRowNode(): RowNode | null;
+    getLastHighlightedRowNode(): RowNode<T> | null;
 }

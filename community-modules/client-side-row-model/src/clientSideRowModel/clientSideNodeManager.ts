@@ -15,13 +15,13 @@ import {
     SelectionController
 } from "@ag-grid-community/core";
 
-export class ClientSideNodeManager {
+export class ClientSideNodeManager<T = any> {
 
     private static TOP_LEVEL = 0;
 
     private readonly columnApi: ColumnApi;
-    private readonly gridApi: GridApi;
-    private readonly rootNode: RowNode;
+    private readonly gridApi: GridApi<T>;
+    private readonly rootNode: RowNode<T>;
 
     private gridOptionsWrapper: GridOptionsWrapper;
     private context: Context;
@@ -42,8 +42,8 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
-                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
+    constructor(rootNode: RowNode<T>, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
+                columnController: ColumnController, gridApi: GridApi<T>, columnApi: ColumnApi,
                 selectionController: SelectionController) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
@@ -75,15 +75,15 @@ export class ClientSideNodeManager {
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 
-    public getCopyOfNodesMap(): {[id:string]: RowNode} {
+    public getCopyOfNodesMap(): {[id:string]: RowNode<T>} {
         return _.cloneObject(this.allNodesMap);
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode<T> {
         return this.allNodesMap[id];
     }
 
-    public setRowData(rowData: any[]): RowNode[] {
+    public setRowData(rowData: T[]): RowNode<T>[] {
         this.rootNode.childrenAfterFilter = null;
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
@@ -106,14 +106,14 @@ export class ClientSideNodeManager {
         this.rootNode.allLeafChildren = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null {
-        const rowNodeTransaction: RowNodeTransaction = {
+    public updateRowData(rowDataTran: RowDataTransaction<T>, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction<T> | null {
+        const rowNodeTransaction: RowNodeTransaction<T> = {
             remove: [],
             update: [],
             add: []
         };
 
-        const nodesToUnselect: RowNode[] = [];
+        const nodesToUnselect: RowNode<T>[] = [];
 
         this.executeAdd(rowDataTran, rowNodeTransaction);
         this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
@@ -128,7 +128,7 @@ export class ClientSideNodeManager {
         return rowNodeTransaction;
     }
 
-    private updateSelection(nodesToUnselect: RowNode[]): void {
+    private updateSelection(nodesToUnselect: RowNode<T>[]): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             nodesToUnselect.forEach(rowNode => {
@@ -152,7 +152,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeAdd(rowDataTran: RowDataTransaction<T>, rowNodeTransaction: RowNodeTransaction<T>): void {
         const {add, addIndex} = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
@@ -160,18 +160,18 @@ export class ClientSideNodeManager {
         if (useIndex) {
             // items get inserted in reverse order for index insertion
             add.reverse().forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item, addIndex);
+                const newRowNode: RowNode<T> = this.addRowNode(item, addIndex);
                 rowNodeTransaction.add.push(newRowNode);
             });
         } else {
             add.forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item);
+                const newRowNode: RowNode<T> = this.addRowNode(item);
                 rowNodeTransaction.add.push(newRowNode);
             });
         }
     }
 
-    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+    private executeRemove(rowDataTran: RowDataTransaction<T>, rowNodeTransaction: RowNodeTransaction<T>, nodesToUnselect: RowNode<T>[]): void {
         const {remove} = rowDataTran;
 
         if (_.missingOrEmpty(remove)) { return; }
@@ -204,7 +204,7 @@ export class ClientSideNodeManager {
         this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
     }
 
-    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
+    private executeUpdate(rowDataTran: RowDataTransaction<T>, rowNodeTransaction: RowNodeTransaction<T>, nodesToUnselect: RowNode<T>[]): void {
         const {update} = rowDataTran;
         if (_.missingOrEmpty(update)) { return; }
 
@@ -224,7 +224,7 @@ export class ClientSideNodeManager {
         });
     }
 
-    private addRowNode(data: any, index?: number): RowNode {
+    private addRowNode(data: T, index?: number): RowNode<T> {
         const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
 
         if (_.exists(index)) {
@@ -236,10 +236,10 @@ export class ClientSideNodeManager {
         return newNode;
     }
 
-    private lookupRowNode(data: any): RowNode {
+    private lookupRowNode(data: T): RowNode<T> {
         const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
-        let rowNode: RowNode;
+        let rowNode: RowNode<T>;
         if (_.exists(rowNodeIdFunc)) {
             // find rowNode using id
             const id: string = rowNodeIdFunc(data);
@@ -260,14 +260,14 @@ export class ClientSideNodeManager {
         return rowNode;
     }
 
-    private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {
+    private recursiveFunction(rowData: T[], parent: RowNode<T>, level: number): RowNode<T>[] {
         // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
         if (typeof rowData === 'string') {
             console.warn('ag-Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
 
-        const rowNodes: RowNode[] = [];
+        const rowNodes: RowNode<T>[] = [];
         rowData.forEach((dataItem) => {
             const node = this.createNode(dataItem, parent, level);
             rowNodes.push(node);

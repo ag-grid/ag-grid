@@ -27,7 +27,7 @@ import {
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 @Bean('rowModel')
-export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
+export class InfiniteRowModel<T = any> extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('gridOptionsWrapper') private readonly gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -144,7 +144,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return !!this.infiniteCache;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode<T>, lastInRange: RowNode<T>): RowNode<T>[] {
         return this.infiniteCache ? this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange) : [];
     }
 
@@ -249,12 +249,12 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    public getRow(rowIndex: number): RowNode | null {
+    public getRow(rowIndex: number): RowNode<T> | null {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
     }
 
-    public getRowNode(id: string): RowNode | null {
-        let result: RowNode | null = null;
+    public getRowNode(id: string): RowNode<T> | null {
+        let result: RowNode<T> | null = null;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;
@@ -263,7 +263,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         return result;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+    public forEachNode(callback: (rowNode: RowNode<T>, index: number) => void): void {
         if (this.infiniteCache) {
             this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
         }
