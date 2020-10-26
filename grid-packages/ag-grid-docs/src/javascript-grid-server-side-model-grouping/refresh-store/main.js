@@ -1,8 +1,8 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, hide: true },
-        { field: "year", hide: true },
-        { field: "case" },
+        { field: "country", rowGroup: true, enableRowGroup: true, hide: true },
+        { field: "year", rowGroup: true, enableRowGroup: true, hide: true },
+        { field: "version" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
@@ -27,13 +27,17 @@ var gridOptions = {
     serverSideStoreType: 'clientSide',
     suppressAggFuncInHeader: true,
 
+    rowGroupPanelShow: 'always',
+
     animateRows: true,
     // debug: true,
 };
 
-function purgeCache(route) {
-    var hideLoadingSpinner = document.querySelector('#hideLoadingSpinner').checked === true
-    gridOptions.api.purgeServerSideCache(route, hideLoadingSpinner);
+var versionCounter = 1;
+function refreshCache(route) {
+    versionCounter++;
+    var showLoading = document.querySelector('#showLoading').checked === true
+    gridOptions.api.refreshServerSideStore({route: route, showLoading: showLoading} );
 }
 
 function getBlockState() {
@@ -46,22 +50,13 @@ function ServerSideDatasource(server) {
         getRows: function(params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var upperCaseResults = document.querySelector('#upperCaseServer').checked === true
-            var response = server.getData(params.request, upperCaseResults);
+            var response = server.getData(params.request);
 
-            if (upperCaseResults) {
-                response.rows = response.rows.map(function(item) {
-                    var res = {};
-                    Object.assign(res, item);
-                    if (res.athlete) {
-                        res.athlete = res.athlete.toUpperCase();
-                    }
-                    return res;
-                });
-            }
-
-            response.rows.forEach(function(item) {
-                item.case = upperCaseResults ? 'UPPER' : 'lower';
+            response.rows = response.rows.map(function(item) {
+                var res = {};
+                Object.assign(res, item);
+                res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
+                return res;
             });
 
             // adding delay to simulate real server call

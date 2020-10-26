@@ -231,7 +231,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public purgeStore(suppressLoadingSpinner: boolean): void {
+    public refreshStore(showLoading: boolean): void {
         this.resetStore();
         this.fireCacheUpdatedEvent();
     }

@@ -191,7 +191,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+<?= grid_example('Refresh Store', 'refresh-store', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Preserving Group State</h2>
 

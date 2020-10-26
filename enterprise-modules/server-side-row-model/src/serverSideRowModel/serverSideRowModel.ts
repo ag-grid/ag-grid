@@ -27,7 +27,8 @@ import {
     RowNode,
     RowRenderer,
     SortController,
-    RefreshSortParams
+    RefreshSortParams,
+    RefreshStoreParams
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -362,8 +363,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
-    public purgeStore(route: string[], suppressLoadingSpinner: boolean): void {
-        this.executeOnStore(route, cache => cache.purgeStore(suppressLoadingSpinner));
+    public refreshStore(params: RefreshStoreParams = {}): void {
+        const route = params.route ? params.route : [];
+        this.executeOnStore(route, store => store.refreshStore(params.showLoading==true));
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

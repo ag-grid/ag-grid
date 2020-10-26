@@ -37,7 +37,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
+import {IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -1397,11 +1397,23 @@ export class GridApi {
         this.purgeServerSideCache(route);
     }
 
-    public purgeServerSideCache(route: string[] = [], suppressLoadingSpinner = false): void {
+    public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeStore(route, suppressLoadingSpinner);
+            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore() instead.`);
+            this.refreshServerSideStore({
+                route: route,
+                showLoading: true
+            });
         } else {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
+        }
+    }
+
+    public refreshServerSideStore(params: RefreshStoreParams): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.refreshStore(params);
+        } else {
+            console.warn(`ag-Grid: api.refreshServerSideStore is only available when rowModelType='enterprise'.`);
         }
     }
 

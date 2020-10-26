@@ -185,7 +185,7 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, RefreshSortParams } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";

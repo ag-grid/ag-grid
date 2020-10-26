@@ -503,8 +503,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
-    public purgeStore(suppressLoadingSpinner: boolean): void {
-        if (!suppressLoadingSpinner) {
+    public refreshStore(showLoading: boolean): void {
+        if (showLoading) {
             const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
             this.initialiseRowNodes(loadingRowsToShow);
         }
