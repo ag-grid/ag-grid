@@ -14,12 +14,12 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid
-    operations such as sorting or grouping, more data will be requested via the datasource.
+    The Server-Side Row Model (SSRM) requires a datasource to fetch rows for the grid. As the grid requires more
+    data (eg the user scrolls down and Infinite Scrolling is active) more data will be requested via the datasource.
 </p>
 
 <note>
-    The Server-Side Datasource does not impose any restrictions on the server-side technologies used. It is left up
+    The SSRM does not impose any restrictions on the server-side technologies used. It is left up
     to applications to decide how and where data is sourced for the grid.
 </note>
 
@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     When no row model is specified the grid will use the <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>
-    by default. To use the Server-Side Row Model instead, set the <code>rowModelType</code> as follows:
+    by default. To use the SSRM instead, set the <code>rowModelType</code> as follows:
 </p>
 
 <?= createSnippet("gridOptions.rowModelType = 'serverSide'") ?>
@@ -35,8 +35,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Implementing the Server-Side Datasource</h2>
 
 <p>
-    A datasource is used by the Server-Side Row Model to fetch rows for the grid. Applications are required to implement
-    a datasource that conforms to the <a href="#datasource-interface">Server-Side Datasource Interface</a>.
+    A datasource is used by the SSRM to fetch rows for the grid. Applications are required to implement
+    a datasource that conforms to the <a href="#datasource-interface">Server-Side Datasource</a> interface.
 </p>
 
 <p>The following snippet shows a simple datasource implementation:</p>
@@ -52,10 +52,13 @@ function createDatasource(server) {
 
             if (response.success) {
                 // supply rows for requested block to grid
-                params.successCallback(response.rows, response.lastRow);
+                params.success({
+                    data: response.rows,
+                    finalRowCount: response.lastRow
+                });
             } else {
                 // inform grid request failed
-                params.failCallback();
+                params.fail();
             }
         }
     };
@@ -70,27 +73,33 @@ SNIPPET
 </p>
 
 <p>
-    Rows fetched from the server are supplied to the grid via <code>params.successCallback(rows,lastRowIndex)</code>.
-    Note the <code>lastRowIndex</code> can be optionally supplied to the grid. If the server knows how many rows
-    are in the dataset, then <code>lastRowIndex</code> informs the grid of this number so the grid can adjust
-    the range of the vertical scrollbar to match the entire dataset contained on the server. Otherwise the
-    grid will assume the total number of rows is not known and the vertical scrollbar range will grow as
-    the user scrolls down (the default behaviour for infinite scroll).
+    Rows fetched from the server are supplied to the grid via <code>params.success()</code>.
+    Note the <code>lastRowIndex</code> can be optionally supplied to the grid.
 </p>
 
 <h2>Registering the Datasource</h2>
 
 <p>
-    The datasource is registered with the grid via the grid api as follows:
+    The datasource is registered with the grid via either a) the grid property <code>serverSideDatasoruce</code>
+    or b) the grid API.
 </p>
 
 <?= createSnippet(<<<SNIPPET
+
+// Create Datasource
 var myDatasource = createDatasource();
+
+// Option A - Register via Grid Property
+gridOptions = {
+    serverSideDatasource: myDatasource
+}
+
+// Optoin B - Register via API
 gridOptions.api.setServerSideDatasource(myDatasource);
 SNIPPET
 ) ?>
 
-<h2>Example: Infinite Scroll</h2>
+<h2>Simple Example</h2>
 
 <p>
     The example below demonstrates lazy-loading of data with an infinite scroll. Notice the following:
@@ -134,6 +143,7 @@ SNIPPET
 <p>The interface for the <code>params</code> is shown below:</p>
 
 <?= createSnippet(<<<SNIPPET
+
 interface IServerSideGetRowsParams {
     // details for the request, simple object, can be converted to JSON
     request: IServerSideGetRowsRequest;
@@ -142,13 +152,11 @@ interface IServerSideGetRowsParams {
     // this is NOT part of the request as it cannot be serialised to JSON (a rowNode has methods)
     parentNode: RowNode;
 
-    // success callback, pass the rows back the grid asked for.
-    // if the total row count is known, provide it via lastRow, so the
-    // grid can adjust the scrollbar accordingly.
-    successCallback(rowsThisPage: any[], lastRow: number): void;
+    // success callback
+    success(params: LoadSuccessParams): void;
 
     // fail callback, tell the grid the call failed so it can adjust its state
-    failCallback(): void;
+    fail(): void;
 
     // grid API
     api: GridApi;
@@ -169,10 +177,10 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 interface IServerSideGetRowsRequest {
-    // first row requested
+    // for Infinite Scroll only, first row requested
    startRow: number;
 
-   // last row requested
+   // for Infinite Scroll only, last row requested
    endRow: number;
 
    // row group columns
@@ -207,6 +215,63 @@ interface ColumnVO {
 }
 SNIPPET
 , 'ts') ?>
+
+<p>
+    In the example above, no sorting, filter, grouping or pivoting was active. This means the request didn't have any
+    information for these. The only attributes used in the above example were
+    <code>startRow</code> and <code>endRow</code>.
+</p>
+
+<h2>Success Callback</h2>
+
+<p>
+    The success callback passes rows to the grid with the following parameters:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// The success() callback uses the following params
+interface LoadSuccessParams {
+
+    // data retreived from the server
+    data: any[];
+
+    // the last row, if known
+    finalRowCount?: number;
+
+    // any extra info for the grid to associate with this load
+    info?: any;
+}
+SNIPPET
+, 'ts') ?>
+
+<p>
+    The <code>data</code> attribute provides the grid with the requested data.
+</p>
+
+<p>
+    The <code>finalRowCount</code> is used when Infinite Scrolling is turned on. When the total row count
+    is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This
+    then allows the user to scroll the full extend of the dataset and the grid will never ask for data
+    past the Final Row Count.
+
+    If the server knows how many rows are in the dataset, then <code>finalRowCount</code> informs the grid of
+    this number so the grid can adjust the range of the vertical scrollbar to match the entire dataset contained
+    on the server. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar
+    range will grow as the user scrolls down (the default behaviour for infinite scroll).
+</p>
+
+<p>
+    The <code>info</code> is additional data the application can pass to the grid about a particular load.
+    This is useful when doing <a href="../javascript-grid-server-side-model-high-frequency/">High
+    Frequency Updates</a> and explained further in that section.
+</p>
+
+<h2>Fail Callback</h2>
+
+<p>
+    The Fail Callback has no parameters. It informs the grid the request has failed - eg a network error.
+    It is important to inform the grid of failed requests as it limits the number of concurrent Datasource requests.
+</p>
 
 <h2>Next Up</h2>
 
