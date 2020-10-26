@@ -7,26 +7,25 @@ import {
     Index,
     Snippet,
 } from 'react-instantsearch-dom';
+import './searchResult.scss';
 
 const HitCount = connectStateResults(({ searchResults }) => {
     const hitCount = searchResults && searchResults.nbHits;
 
     return hitCount > 0 ? (
-        <div className="HitCount">
-            {hitCount} result{hitCount !== 1 ? `s` : ``}
+        <div className="hit-wrapper">
+            <div className="hit-count">Results: {hitCount}</div>
         </div>
     ) : null;
 });
 
 const PageHit = ({ hit }) => (
-    <div>
-        <Link to={hit.path}>
-            <h4>
-                <Highlight attribute="title" hit={hit} tagName="mark" />
-            </h4>
-        </Link>
+    <Link to={hit.path}>
+        <h4>
+            <Highlight attribute="title" hit={hit} tagName="mark" />
+        </h4>
         <Snippet attribute="text" hit={hit} tagName="mark" />
-    </div>
+    </Link>
 );
 
 const HitsInIndex = ({ index }) => (
@@ -36,8 +35,8 @@ const HitsInIndex = ({ index }) => (
     </Index>
 );
 
-const SearchResult = ({ indices, className }) => (
-    <div className={className}>
+const SearchResult = ({ indices, show }) => (
+    <div className="search-result" style={{ display: show ? 'block' : 'none' }}>
         {indices.map(index => (
             <HitsInIndex index={index} key={index.name} />
         ))}

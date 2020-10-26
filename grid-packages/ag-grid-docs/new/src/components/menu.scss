@@ -59,7 +59,7 @@
         }
     }
 
-    a[aria-current=page] {
+    a.active {
         color: theme-color(primary) !important;
     }
 

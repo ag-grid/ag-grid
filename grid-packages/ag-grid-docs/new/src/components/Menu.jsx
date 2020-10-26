@@ -4,7 +4,7 @@ import './menu.scss';
 import { Link } from 'gatsby';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import Search from './search';
+import Search from './search/Search';
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className="menu-section">
@@ -24,7 +24,7 @@ const MenuGroup = ({ group, currentFramework }) =>
 const MenuItem = ({ item, currentFramework }) =>
     <li key={item.title}>
         {item.url
-            ? <Link to={item.url}>{item.title}</Link>
+            ? <Link to={item.url} activeClassName="active">{item.title}</Link>
             : item.title
         }
         {item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
