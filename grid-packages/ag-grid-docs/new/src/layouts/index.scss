@@ -32,6 +32,7 @@ body {
 }
 
 .main_menu {
+    flex: none;
     width: 300px;
     overflow: auto;
     background-color: theme-color(light);

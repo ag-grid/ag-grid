@@ -5,16 +5,14 @@
 }
 
 .framework-selector__option {
-    @extend .p-1;
-    @extend .flex-grow-1;
-    @extend .mx-1;
+    @extend .p-1, .flex-grow-1, .mx-1;
     position: relative;
-    background-color: white;
+    background-color: theme-color(light);
     border-radius: 5px;
     height: 40px;
 
     &--selected {
-        box-shadow: 0px 0px 5px 2px white;
+        box-shadow: 0px 0px 5px 2px theme-color(light);
     }
 }
 

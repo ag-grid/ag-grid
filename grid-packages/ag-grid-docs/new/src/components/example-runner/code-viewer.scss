@@ -1,14 +1,14 @@
+@import "~bootstrap/scss/bootstrap";
+
 .code-viewer {
-    display: flex;
+    @extend .d-flex, .p-2;
     border: 0;
     height: 500px;
-    padding: 10px;
 
     &__files {
+        @extend .py-2;
         width: 200px;
-        margin: 20px 0;
-        padding: 20px 0;
-        background-color: lightblue;
+        background-color: transparentize(theme-color(secondary), .5);
         border-radius: 5px 0 0 5px;
     }
 
@@ -17,18 +17,26 @@
         padding: 10px;
         width: 200px;
 
+        &:focus {
+            outline: none;
+        }
+
         &--active {
-            color: white;
-            background-color: darkblue;
+            color: theme-color(light);
+            background-color: theme-color(dark);
+            outline: none;
+            &:focus {
+                outline: 1px solid theme-color(light);
+                outline-offset: -2px;
+            }
         }
     }
 
     &__file-title {
-        padding: 0 10px 5px 10px;
-        border-bottom: 1px solid grey;
-        margin-bottom: 10px;
-        font-size: 0.8rem;
-        color: grey;
+        @extend .py-1, .px-2;
+        border-bottom: 1px solid theme-color(light);
+        color: theme-color(primary);
+        font-weight: bold;
     }
 
     &__file + &__file-title {
