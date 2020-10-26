@@ -14,7 +14,7 @@ var gridOptions = {
         sortable: true
     },
     rowGroupPanelShow: 'always',
-    serverSideStoreType: 'clientSide',
+    serverSideStoreType: 'inMemory',
     sideBar: ['columns'],
     autoGroupColumnDef: {
         flex: 1,
@@ -31,7 +31,7 @@ var gridOptions = {
         var topLevelRows = params.level==0;
 
         var res = {
-            storeType: topLevelRows ? 'clientSide' : 'infinite',
+            storeType: topLevelRows ? 'inMemory' : 'infinite',
             cacheBlockSize: params.level==1 ? 5 : 2,
             maxBlocksInCache: params.level==1 ? 2 : undefined
         };

@@ -10,7 +10,7 @@ var gridOptions = {
   },
   getRowNodeId: function(data) {return data.product; },
   rowSelection: 'multiple',
-  serverSideStoreType: 'clientSide',
+  serverSideStoreType: 'inMemory',
   enableCellChangeFlash: true,
   columnDefs: columnDefs,
   // use the enterprise row model

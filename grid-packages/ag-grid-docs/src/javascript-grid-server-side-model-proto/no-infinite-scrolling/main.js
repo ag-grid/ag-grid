@@ -14,7 +14,7 @@ var gridOptions = {
         sortable: true
     },
     rowGroupPanelShow: 'always',
-    serverSideStoreType: 'clientSide',
+    serverSideStoreType: 'inMemory',
     sideBar: ['columns'],
     autoGroupColumnDef: {
         flex: 1,

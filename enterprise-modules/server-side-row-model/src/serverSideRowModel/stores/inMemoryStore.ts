@@ -31,7 +31,7 @@ import { StoreUtils } from "./storeUtils";
 import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
 
-export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
+export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -206,7 +206,7 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-        // filtering for ClientSideStore only words at lowest level details.
+        // filtering for InMemoryStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
             this.nodesAfterFilter = this.allRowNodes;
