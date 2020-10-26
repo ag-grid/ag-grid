@@ -14,7 +14,7 @@ export interface LoadCompleteEvent extends AgEvent {
     lastRow: number;
 }
 
-export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
+export abstract class RowNodeBlock<T = any> extends BeanStub implements IRowNodeBlock {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
@@ -33,7 +33,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     private readonly blockNumber: number;
     private readonly startRow: number;
     private readonly endRow: number;
-    public rowNodes: RowNode[];
+    public rowNodes: RowNode<T>[];
 
     private rowNodeCacheParams: RowNodeCacheParams;
 
@@ -48,7 +48,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     // local index is the same as the display index, so the override just calls
     // getRowUsingLocalIndex(). however for server side row model, they are different, hence
     // server side row model does logic before calling getRowUsingLocalIndex().
-    public abstract getRow(displayIndex: number): RowNode | null;
+    public abstract getRow(displayIndex: number): RowNode<T> | null;
 
     // returns the node id prefix, which is essentially the id of the cache
     // that the block belongs to. this is used for debugging purposes, where the
@@ -120,7 +120,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         return this.lastAccessed;
     }
 
-    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode<T> {
         if (!dontTouchLastAccessed) {
             this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
         }
@@ -160,19 +160,19 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         return this.state;
     }
 
-    public setRowNode(rowIndex: number, rowNode: RowNode): void {
+    public setRowNode(rowIndex: number, rowNode: RowNode<T>): void {
         const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
     }
 
-    public setBlankRowNode(rowIndex: number): RowNode {
+    public setBlankRowNode(rowIndex: number): RowNode<T> {
         const newRowNode = this.createBlankRowNode(rowIndex);
         const localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
     }
 
-    public setNewData(rowIndex: number, dataItem: any): RowNode {
+    public setNewData(rowIndex: number, dataItem: T): RowNode<T> {
         const newRowNode = this.setBlankRowNode(rowIndex);
 
         this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);

@@ -19,10 +19,10 @@ import {
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
-export class ViewportRowModel extends BeanStub implements IRowModel {
+export class ViewportRowModel<T = any> extends BeanStub implements IRowModel<T> {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridApi') private gridApi: GridApi<T>;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -32,7 +32,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     // datasource tells us this
     private rowCount = -1;
-    private rowNodesByIndex: {[index: number]: RowNode} = {};
+    private rowNodesByIndex: {[index: number]: RowNode<T>} = {};
     private rowHeight: number;
     private viewportDatasource: IViewportDatasource;
 
@@ -134,7 +134,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return Constants.ROW_MODEL_TYPE_VIEWPORT;
     }
 
-    public getRow(rowIndex: number): RowNode {
+    public getRow(rowIndex: number): RowNode<T> {
         if (!this.rowNodesByIndex[rowIndex]) {
             this.rowNodesByIndex[rowIndex] = this.createBlankRowNode(rowIndex);
         }
@@ -142,8 +142,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
-    public getRowNode(id: string): RowNode | null {
-        let result: RowNode | null = null;
+    public getRowNode(id: string): RowNode<T> | null {
+        let result: RowNode<T> | null = null;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;
@@ -191,7 +191,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return this.rowCount > 0;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode<T>, lastInRange: RowNode<T>): RowNode<T>[] {
         const firstIndex = _.missing(firstInRange) ? 0 : firstInRange.rowIndex;
         const lastIndex = lastInRange.rowIndex;
 
@@ -200,7 +200,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
         if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
 
-        const result: RowNode[] = [];
+        const result: RowNode<T>[] = [];
 
         const startIndex = firstIndex <= lastIndex ? firstIndex : lastIndex;
         const endIndex = firstIndex <= lastIndex ? lastIndex : firstIndex;
@@ -212,7 +212,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return result;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+    public forEachNode(callback: (rowNode: RowNode<T>, index: number) => void): void {
         let callbackCount = 0;
 
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {

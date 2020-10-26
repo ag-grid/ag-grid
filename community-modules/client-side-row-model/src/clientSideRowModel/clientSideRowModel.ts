@@ -44,7 +44,7 @@ export interface RowNodeMap {
 }
 
 @Bean('rowModel')
-export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
+export class ClientSideRowModel<T = any> extends BeanStub implements IClientSideRowModel<T> {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -55,7 +55,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridApi') private gridApi: GridApi<T>;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -68,11 +68,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
 
     // top most node of the tree. the children are the user provided data.
-    private rootNode: RowNode;
-    private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
-    private nodeManager: ClientSideNodeManager;
+    private rootNode: RowNode<T>;
+    private rowsToDisplay: RowNode<T>[]; // the rows mapped to rows to display
+    private nodeManager: ClientSideNodeManager<T>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null;
+    private lastHighlightedRow: RowNode<T> | null;
     private applyAsyncTransactionsTimeout: number;
 
     @PostConstruct
@@ -176,7 +176,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
+    private resetRowTops(rowNode: RowNode<T>, changedPath: ChangedPath): void {
         rowNode.clearRowTop();
         if (rowNode.hasChildren()) {
             if (rowNode.childrenAfterGroup) {
@@ -203,7 +203,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     // returns false if row was moved, otherwise true
-    public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
+    public ensureRowsAtPixel(rowNodes: RowNode<T>[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
 
@@ -229,7 +229,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return true;
     }
 
-    public highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void {
+    public highlightRowAtPixel(rowNode: RowNode<T> | null, pixel?: number): void {
         const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
@@ -376,7 +376,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return changedPath;
     }
 
-    public refreshModel(params: RefreshModelParams): void {
+    public refreshModel(params: RefreshModelParams<any>): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -451,13 +451,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode<T>, lastInRange: RowNode<T>): RowNode<T>[] {
         // if lastSelectedNode is missing, we start at the first row
         let firstRowHit = !lastInRange;
         let lastRowHit = false;
-        let lastRow: RowNode;
+        let lastRow: RowNode<T>;
 
-        const result: RowNode[] = [];
+        const result: RowNode<T>[] = [];
 
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
@@ -499,15 +499,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         console.error('ag-Grid: should never call setDatasource on clientSideRowController');
     }
 
-    public getTopLevelNodes(): RowNode[] | null {
+    public getTopLevelNodes(): RowNode<T>[] | null {
         return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     }
 
-    public getRootNode(): RowNode {
+    public getRootNode(): RowNode<T> {
         return this.rootNode;
     }
 
-    public getRow(index: number): RowNode {
+    public getRow(index: number): RowNode<T> {
         return this.rowsToDisplay[index];
     }
 
@@ -574,7 +574,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    public forEachNode(callback: (node: RowNode, index: number) => void): void {
+    public forEachNode(callback: (node: RowNode<T>, index: number) => void): void {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
     }
 
@@ -748,7 +748,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.nodeManager.getCopyOfNodesMap();
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode<T> {
         return this.nodeManager.getRowNode(id);
     }
 
@@ -828,7 +828,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.applyAsyncTransactionsTimeout = undefined;
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null {
+    public updateRowData(rowDataTran: RowDataTransaction<T>, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction<T> | null {
 
         this.valueCache.onDataChanged();
 

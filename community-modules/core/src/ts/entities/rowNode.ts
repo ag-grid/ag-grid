@@ -30,23 +30,23 @@ export interface SetSelectedParams {
     groupSelectsFiltered?: boolean;
 }
 
-export interface RowNodeEvent extends AgEvent {
-    node: RowNode;
+export interface RowNodeEvent<T = any> extends AgEvent {
+    node: RowNode<T>;
 }
 
-export interface DataChangedEvent extends RowNodeEvent {
-    oldData: any;
-    newData: any;
+export interface DataChangedEvent<T = any> extends RowNodeEvent<T> {
+    oldData: T;
+    newData: T;
     update: boolean;
 }
 
-export interface CellChangedEvent extends RowNodeEvent {
+export interface CellChangedEvent<T = any> extends RowNodeEvent<T> {
     column: Column;
     newValue: any;
     oldValue: any;
 }
 
-export class RowNode implements IEventEmitter {
+export class RowNode<T = any> implements IEventEmitter {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
     public static ID_PREFIX_TOP_PINNED = 't-';
@@ -79,7 +79,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowModel') private rowModel: IRowModel<T>;
     @Autowired('context') private context: Context;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -96,10 +96,10 @@ export class RowNode implements IEventEmitter {
     public aggData: any;
 
     /** The user provided data */
-    public data: any;
+    public data: T;
 
     /** The parent node to this node, or empty if top level */
-    public parent: RowNode | null;
+    public parent: RowNode<T> | null;
 
     /** How many levels this node is from the top */
     public level: number;
@@ -166,7 +166,7 @@ export class RowNode implements IEventEmitter {
     public stub: boolean;
 
     /** All user provided nodes */
-    public allLeafChildren: RowNode[];
+    public allLeafChildren: RowNode<T>[];
 
     /** Groups only - Children of this group */
     public childrenAfterGroup: RowNode[];
@@ -214,7 +214,7 @@ export class RowNode implements IEventEmitter {
      * a copy where daemon=true. */
     public daemon: boolean;
 
-    /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    /** True by default - can be overridden via gridOptions.isRowSelectable(RowNode) */
     public selectable = true;
 
     /** Used by the value service, stores values for a particular change detection turn. */
@@ -238,7 +238,7 @@ export class RowNode implements IEventEmitter {
     private selected = false;
     private eventService: EventService;
 
-    public setData(data: any): void {
+    public setData(data: T): void {
         const oldData = this.data;
 
         this.data = data;
@@ -246,7 +246,7 @@ export class RowNode implements IEventEmitter {
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, false);
 
         this.dispatchLocalEvent(event);
     }
@@ -260,7 +260,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
+    private createDataChangedEvent(newData: T, oldData: T, update: boolean): DataChangedEvent<T> {
         return {
             type: RowNode.EVENT_DATA_CHANGED,
             node: this,
@@ -282,7 +282,7 @@ export class RowNode implements IEventEmitter {
     // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
-    public updateData(data: any): void {
+    public updateData(data: T): void {
         const oldData = this.data;
 
         this.data = data;
@@ -290,7 +290,7 @@ export class RowNode implements IEventEmitter {
         this.checkRowSelectable();
         this.updateDataOnDetailNode();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, true);
 
         this.dispatchLocalEvent(event);
     }
@@ -321,7 +321,7 @@ export class RowNode implements IEventEmitter {
         return oldNode;
     }
 
-    public setDataAndId(data: any, id: string | undefined): void {
+    public setDataAndId(data: T, id: string | undefined): void {
         const oldNode = exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
 
@@ -331,7 +331,7 @@ export class RowNode implements IEventEmitter {
         this.selectionController.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, false);
 
         this.dispatchLocalEvent(event);
     }
@@ -891,7 +891,7 @@ export class RowNode implements IEventEmitter {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode {
+    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode<T> {
         let currentRowNode: RowNode = this;
         let isCandidate = true;
         let foundFirstChildPath = false;

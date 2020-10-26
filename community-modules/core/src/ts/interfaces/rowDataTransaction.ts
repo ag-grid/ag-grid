@@ -1,6 +1,6 @@
-export interface RowDataTransaction {
+export interface RowDataTransaction<T = any> {
     addIndex?: number;
-    add?: any[];
-    remove?: any[];
-    update?: any[];
+    add?: T[];
+    remove?: T[];
+    update?: T[];
 }

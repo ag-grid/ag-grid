@@ -34,17 +34,17 @@ import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
 
 @Bean('rowModel')
-export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
+export class ServerSideRowModel<T = any> extends BeanStub implements IServerSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridApi') private gridApi: GridApi<T>;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    private rootNode: RowNode;
+    private rootNode: RowNode<T>;
     private datasource: IServerSideDatasource | undefined;
 
     private rowHeight: number;
@@ -442,7 +442,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), numberSequence);
     }
 
-    public getRow(index: number): RowNode | null {
+    public getRow(index: number): RowNode<T> | null {
         if (this.cacheExists()) {
             return this.rootNode.childrenCache!.getRow(index);
         }
@@ -535,15 +535,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.executeOnCache(route, cache => cache.purgeCache());
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode<T>, lastInRange: RowNode<T>): RowNode<T>[] {
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
         return firstInRange.parent!.childrenCache!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
-    public getRowNode(id: string): RowNode | null {
-        let result: RowNode | null = null;
+    public getRowNode(id: string): RowNode<T> | null {
+        let result: RowNode<T> | null = null;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;
@@ -662,10 +662,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
     }
 
-    private createDetailNode(masterNode: RowNode): RowNode {
+    private createDetailNode(masterNode: RowNode<T>): RowNode<T> {
         if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
-        const detailNode = new RowNode();
+        const detailNode = new RowNode<T>();
 
         this.getContext().createBean(detailNode);
 
