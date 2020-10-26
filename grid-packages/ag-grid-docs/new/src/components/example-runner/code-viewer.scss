@@ -1,15 +1,15 @@
 @import "~bootstrap/scss/bootstrap";
 
 .code-viewer {
-    @extend .d-flex, .p-2;
+    @extend .d-flex;
     border: 0;
     height: 500px;
 
     &__files {
-        @extend .py-2;
+        @extend .mt-2, .ml-2, .py-2;
         width: 200px;
         background-color: transparentize(theme-color(secondary), .5);
-        border-radius: 5px 0 0 5px;
+        border-radius: 5px 0 0 0;
     }
 
     &__file {
