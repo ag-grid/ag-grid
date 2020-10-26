@@ -173,6 +173,10 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return this.rowRenderer.isRangeInRenderedViewport(startIndex!, endIndex);
     }
 
+    public removeDuplicateNode(id: string): void {
+        this.getBlocksInOrder().forEach( block => block.removeDuplicateNode(id) );
+    }
+
     private checkRowCount(block: CacheBlock, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
@@ -232,8 +236,20 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshStore(showLoading: boolean): void {
-        this.resetStore();
+        if (showLoading) {
+            this.resetStore();
+        } else {
+            this.refreshBlocks();
+        }
         this.fireCacheUpdatedEvent();
+    }
+
+    private refreshBlocks(): void {
+        this.getBlocksInOrder().forEach(block => {
+            block.refresh();
+        });
+        this.lastRowIndexKnown = false;
+        this.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     private resetStore(): void {

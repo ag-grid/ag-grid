@@ -24,7 +24,7 @@ var gridOptions = {
     cacheBlockSize: 10,
     maxBlocksInCache: 2,
 
-    serverSideStoreType: 'clientSide',
+    // serverSideStoreType: 'clientSide',
     suppressAggFuncInHeader: true,
 
     rowGroupPanelShow: 'always',
@@ -68,7 +68,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-            }, 200);
+            }, 1000);
         }
     };
 }

@@ -104,21 +104,8 @@ export class ClientSideStore extends RowNodeBlock implements IServerSideStore {
 
     @PreDestroy
     private destroyRowNodes(): void {
-        if (this.allRowNodes) {
-            this.allRowNodes.forEach(rowNode => {
-                if (rowNode.childrenCache) {
-                    this.destroyBean(rowNode.childrenCache);
-                    rowNode.childrenCache = null;
-                }
-                // this is needed, so row render knows to fade out the row, otherwise it
-                // sees row top is present, and thinks the row should be shown. maybe
-                // rowNode should have a flag on whether it is visible???
-                rowNode.clearRowTop();
-                if (rowNode.id != null) {
-                    this.nodeManager.removeNode(rowNode);
-                }
-            });
-        }
+        this.blockUtils.destroyRowNodes(this.allRowNodes);
+
         this.allRowNodes = [];
         this.nodesAfterSort = [];
         this.nodesAfterFilter = [];

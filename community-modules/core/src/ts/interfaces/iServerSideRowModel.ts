@@ -15,5 +15,4 @@ export interface IServerSideTransactionManager {
 export interface RefreshStoreParams {
     route?: string[];
     showLoading?: boolean;
-    loadNotVisible?: boolean;
 }
