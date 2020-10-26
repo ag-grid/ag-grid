@@ -10,7 +10,6 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
     "sourceMap": true,
     "types": [
       "webpack-env"

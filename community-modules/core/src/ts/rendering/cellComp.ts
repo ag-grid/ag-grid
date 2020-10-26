@@ -32,7 +32,7 @@ import { setAriaColIndex, setAriaSelected } from "../utils/aria";
 import { get, getValueUsingField } from "../utils/object";
 import { escapeString } from "../utils/string";
 import { exists, missing } from "../utils/generic";
-import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass } from "../utils/dom";
+import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass, isFocusableFormField } from "../utils/dom";
 import { last, areEqual, pushAll, includes } from "../utils/array";
 import { cssStyleObjectToMarkup } from "../utils/general";
 import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../utils/event";
@@ -1557,7 +1557,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell;
+            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
 
             this.focusCell(forceBrowserFocus);
         } else if (rangeController) {
@@ -1567,9 +1567,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsWidget(target)) {
-            return;
-        }
+        if (this.containsWidget(target)) { return; }
 
         if (rangeController) {
             const thisCell = this.cellPosition;

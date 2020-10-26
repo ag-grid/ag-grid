@@ -358,12 +358,20 @@
             "default": false,
             "description": "Set to <code>true</code> to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid."
         },
-        "suppressKeyboardEvent(params)": {
+        "suppressHeaderKeyboardEvent(params)": {
             "default": false,
-            "description": "Suppress the grid taking action for the relevant keyboard event.",
+            "description": "Suppress the grid taking action for the relevant keyboard event when a header is focused.",
             "more": {
                 "name": "Suppress Keyboard Events",
-                "url": "../javascript-grid-keyboard-navigation/#suppressKeyboardEvents"
+                "url": "../javascript-grid-keyboard-navigation/#suppressheaderkeyboardevent"
+            }
+        },
+        "suppressKeyboardEvent(params)": {
+            "default": false,
+            "description": "Suppress the grid taking action for the relevant keyboard event when a cell is focused.",
+            "more": {
+                "name": "Suppress Keyboard Events",
+                "url": "../javascript-grid-keyboard-navigation/#suppresskeyboardevent"
             }
         },
         "onCellClicked(params)": {

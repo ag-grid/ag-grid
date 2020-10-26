@@ -26,16 +26,7 @@ const watch = () => {
         compileSource);
 };
 
-const copyBuildArtefactsFromLegacy = () => {
-    const libCopy = gulp.src("../vue-legacy/lib/**/*")
-        .pipe(gulp.dest("./lib/legacy"));
-    const distCopy = gulp.src("../vue-legacy/dist/**/*")
-        .pipe(gulp.dest("./dist/legacy"));
 
-    return merge(libCopy, distCopy);
-};
-
-gulp.task('copy-build-artefacts-from-legacy', copyBuildArtefactsFromLegacy);
 gulp.task('compile-source', compileSource);
 gulp.task('watch', series('compile-source', watch));
-gulp.task('default', series('compile-source', 'copy-build-artefacts-from-legacy'));
+gulp.task('default', series('compile-source'));
