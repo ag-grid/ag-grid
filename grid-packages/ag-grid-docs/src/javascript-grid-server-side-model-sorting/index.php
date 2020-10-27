@@ -50,7 +50,7 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// Example IServerSideGetRowsRequest
+// Example request with sorting info
 {
     sortModel: [
         { colId: 'country', sort: 'asc' },
@@ -110,7 +110,7 @@ SNIPPET
 </p>
 
 <ul class="content">
-    <li>The grid is using the In Memory Store <code>serverSideStoreType = inMemory</code>.</li>
+    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
     <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
     <li>Rows are loaded once. All sorting is then subsequently done by the grid.</li>
 </ul>

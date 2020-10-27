@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">SSRM Filtering</h1>
 
 <p class="lead">
-    This section covers Filtering using the Server-Side Row Model.
+    This section covers Filtering using the Server-Side Row Model (SSRM).
 </p>
 
 <h2>Enabling Filtering</h2>
@@ -41,13 +41,14 @@ SNIPPET
     For more details on filtering configurations see the section on <a href="../javascript-grid-filtering/">Column Filtering</a>.
 </p>
 
-<h2>Filtering on the Server</h2>
+<h2>Infinite Store - Simple Filtering</h2>
 
 <p>
-    The actual filtering of rows is performed on the server when using the Server-Side Row Model. When a filter is applied
-    in the grid a request is made for more rows via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>. The
-    supplied params includes a request containing filter metadata contained in the <code>filterModel</code> property.
+    When using the Infinite Store, filtering of rows is performed on the server.
+    When a filter is applied
+    in the grid a request is made for more rows via the
+    <a href="../javascript-grid-server-side-model-datasource/">Datasource</a>.
+    The provided request contains filter metadata in the <code>filterModel</code> property.
 </p>
 
 <p>
@@ -55,7 +56,7 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// IServerSideGetRowsRequest
+// Example request with filter info
 {
     filterModel: {
         athlete: {
@@ -77,8 +78,9 @@ SNIPPET
 ) ?>
 
 <p>
-    Notice in the snippet above that the <code>filterModel</code> object contains a <code>'text'</code> and <code>'number'</code> filter. This filter
-    metadata can be used by the server to perform the actual filtering.
+    Notice in the snippet above that the <code>filterModel</code> object contains a
+    <code>'text'</code> and <code>'number'</code> filter. This filter metadata can be
+    used by the server to perform the actual filtering.
 </p>
 
 <p>
@@ -87,8 +89,9 @@ SNIPPET
 </p>
 
 <p>
-    The example below demonstrates server-side filtering using
-    <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>. Notice the following:
+    The example below demonstrates filtering using
+    <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>
+    and the Infinite Store. Notice the following:
 </p>
 
 <ul class="content">
@@ -110,18 +113,17 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'menu']]) ?>
+<?= grid_example('Infinite Simple', 'infinite-simple', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'menu']]) ?>
 
-<h2>Filtering with the Set Filter</h2>
+<h2>Infinite Store - Set Filtering</h2>
 
 <p>
-    The <a href="../javascript-grid-filter-set/">Set Filter</a> is the default filter used if <code>filter: true</code>.
+    Filtering using the <a href="../javascript-grid-set-filtering/">Set Filter</a> has a few
+    difference to filtering wih the simple filters.
 </p>
-
 <p>
-    Entries in the <code>filterModel</code> have a different format to the
-    <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
-    An example of the contents contained in the <code>filterModel</code> for the Set Filter is shown below:
+    Entries in the <code>filterModel</code> have a different format to the Simple Filters.
+    The following shows an example of a set filter where two items are selected:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -138,8 +140,6 @@ SNIPPET
 }
 SNIPPET
 ) ?>
-
-<p>The snippet above shows the <code>filterModel</code> for a single column with a Set Filter where two items are selected.</p>
 
 <p>
     When using the Server-Side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
@@ -181,7 +181,8 @@ SNIPPET
 </p>
 
 <p>
-    The example below demonstrates server-side filtering using the Set Filter. Notice the following:
+    The example below demonstrates server-side filtering using the Set Filter and the Infinite Row Store.
+    Note the following:
 </p>
 
 <ul class="content">
@@ -203,17 +204,47 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Infinite Set', 'infinite-set', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'setfilter', 'menu']]) ?>
 
 <!--<h2>Set Filter with Complex Object</h2>-->
 <!---->
 <?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
+<h2>In-Memory Store Filtering</h2>
+
+<p>
+    When using the In Memory Store, filtering of rows is performed by the grid. There is nothing
+    special to be done by the server.
+</p>
+
+<p>
+    The example below demonstrates the In Memory Store filtering. Note the following:
+</p>
+
+<ul class="content">
+    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
+    <li>Columns are set up with the following filters:
+        <ul>
+            <li>Athlete column has Text Filter.</li>
+            <li>County column has Set Filter.</li>
+            <li>Year column has Number Filter.</li>
+        </ul>
+    </li>
+    <li>Rows are loaded once. All filtering is then subsequently done by the grid.</li>
+</ul>
+
+<?= grid_example('In Memory Filtering', 'in-memory', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<p>
+    Note that the Set Filter is provided values in both the Infinite and In-Memory Row Stores.
+    Values are required for the Set Filter when used in the SSRM regardless of which row store is used.
+</p>
+
 <h2>Next Up</h2>
 
 <p>
     Continue to the next section to learn about
-    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>.
+    <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
