@@ -13,11 +13,11 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
         publicURL: {
             type: GraphQLString,
             args: {},
-            description: `Copy file to static directory and return public url to it`,
+            description: `Copy static files return public URLs`,
             resolve: async (file, fieldArgs, context) => {
                 const details = getNodeAndSavePathDependency(file.id, context.path);
 
-                let fileName = `${file.internal.contentDigest}/${details.base}`;
+                let fileName = `static/${file.internal.contentDigest}/${details.base}`;
 
                 if (file.relativeDirectory.indexOf('/examples/') >= 0) {
                     // handle example runner files separately to preserve the directory structure
@@ -25,12 +25,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                     fileName = `${rootDirectory}/${details.base}`;
                 }
 
-                const publicPath = path.join(
-                    process.cwd(),
-                    `public`,
-                    `static`,
-                    fileName
-                );
+                const publicPath = path.join(process.cwd(), `public`, fileName);
 
                 if (!fs.existsSync(publicPath)) {
                     fs.copy(
@@ -48,7 +43,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                     );
                 }
 
-                return `${pathPrefix}/static/${fileName}`;
+                return `${pathPrefix}/${fileName}`;
             },
         },
     };

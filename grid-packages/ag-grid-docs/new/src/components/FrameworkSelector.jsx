@@ -1,4 +1,4 @@
-import { Link } from 'gatsby';
+import { Link, withPrefix } from 'gatsby';
 import React from "react";
 import './framework-selector.scss';
 
@@ -13,7 +13,7 @@ export default function FrameworkSelector({ path, currentFramework }) {
                 <Link
                     to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}
                     className="framework-selector__thumbnail">
-                    <img src={`/fw-logos/${framework}.svg`} alt={framework} />
+                    <img src={withPrefix(`/fw-logos/${framework}.svg`)} alt={framework} />
                 </Link>
             </div>;
         })}

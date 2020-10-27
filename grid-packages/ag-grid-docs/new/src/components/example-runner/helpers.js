@@ -1,3 +1,4 @@
+import { withPrefix } from 'gatsby';
 import { generateIndexHtml } from './index-html-generator';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
@@ -14,7 +15,7 @@ export const getExampleInfo = (pageName, name, title, type, options, framework, 
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const boilerplatePath = `/example-runner/grid-${framework}-boilerplate/`;
     const sourcePath = `${pageName}/examples/${name}/_gen/${importType}/${internalFramework}/`;
-    const appLocation = `/static/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
+    const appLocation = `/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
 
     return {
         pageName,
@@ -56,7 +57,7 @@ export const getExampleFiles = (nodes, exampleInfo) => {
 
     getFrameworkFiles(framework).forEach(file => filesForExample.push({
         path: file,
-        publicURL: boilerplatePath + file,
+        publicURL: withPrefix(boilerplatePath + file),
         isFramework: true,
     }));
 

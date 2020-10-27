@@ -4,6 +4,7 @@ import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
+import { withPrefix } from 'gatsby';
 
 export const generateIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
     const { sourcePath, framework, options } = exampleInfo;
@@ -23,7 +24,10 @@ export const generateIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
     const scriptFiles = getExampleFileUrls('js', 'main.js');
     const styleFiles = getExampleFileUrls('css');
 
-    if (!isExecuting) {
+    if (isExecuting) {
+        appLocation = withPrefix(appLocation);
+        boilerplatePath = withPrefix(boilerplatePath);
+    } else {
         appLocation = './';
         boilerplatePath = '';
     }

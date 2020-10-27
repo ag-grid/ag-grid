@@ -9,6 +9,7 @@ import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, openPlunker } from './helpers';
 import { generateIndexHtml } from './index-html-generator';
+import { withPrefix } from 'gatsby';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
@@ -19,7 +20,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
             const exampleInfo =
                 getExampleInfo(pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
 
-            let openTabLink = <a href={`${exampleInfo.appLocation}index.html`} target="_blank" rel="noreferrer">
+            let openTabLink = <a href={withPrefix(`${exampleInfo.appLocation}index.html`)} target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
             </a>;
 

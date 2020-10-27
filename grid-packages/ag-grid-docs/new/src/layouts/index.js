@@ -1,16 +1,17 @@
+import './index.scss';
 import React from "react";
 import { Link } from 'gatsby';
 import { GlobalContextProvider } from '../components/GlobalContext';
 import FrameworkSelector from '../components/FrameworkSelector';
 import Menu from '../components/Menu';
-import './index.scss';
+import { getPageName } from '../utils/get-page-name';
 
 export const Layout = ({ path, children, pageContext: { framework, layout } }) => {
     if (layout === 'bare') {
         return children;
     }
 
-    const pageName = path.replace(`/${framework}/`, '');
+    const pageName = getPageName(path);
 
     return <GlobalContextProvider>
         <div className="main_container">

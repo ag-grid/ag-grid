@@ -8,6 +8,7 @@ import Styles from './Styles';
 const VanillaTemplate = ({ appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
+            <title>JavaScript example</title>
             <ExampleStyle />
             <Styles files={styleFiles} />
             <Extras options={options} />

@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 module.exports = {
+  pathPrefix: '/documentation',
   siteMetadata: {
     title: 'AG-Grid Documentation',
     author: 'AG-Grid'

@@ -5,11 +5,11 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
-    "build": "npx gatsby build",
+    "build": "npm run clean && npx gatsby build --prefix-paths",
     "develop": "npx gatsby -p 8080 develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run clean && npm run develop",
-    "serve": "npx gatsby serve",
+    "serve": "npx gatsby serve --prefix-paths",
     "clean": "npx gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },

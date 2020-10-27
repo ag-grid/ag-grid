@@ -1,3 +1,4 @@
+import './doc-page.scss';
 import React from "react";
 import { Helmet } from "react-helmet";
 import { graphql } from "gatsby";
@@ -5,16 +6,11 @@ import rehypeReact from "rehype-react";
 import ExampleRunner from '../components/example-runner';
 import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
-import './doc-page.scss';
+import { getPageName } from '../utils/get-page-name';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
-  let pageName = location.pathname.replace(`/${framework}/`, '');
-
-  if (pageName.substr(pageName.length - 1, 1) === '/') {
-    pageName = pageName.substring(0, pageName.length - 1);
-  }
-
+  const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
 
   const renderAst = new rehypeReact({

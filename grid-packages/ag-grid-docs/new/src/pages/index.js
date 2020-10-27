@@ -1,5 +1,6 @@
-import React from "react";
 import './index.scss';
+import React from 'react';
+import { Link, withPrefix } from 'gatsby';
 
 export default function Home() {
   return <div style={{ textAlign: 'center' }}>
@@ -10,9 +11,9 @@ export default function Home() {
     <div className="getting-started-cards">
       {['javascript', 'angular', 'react', 'vue'].map(framework => (
         <div key={framework} className="getting-started-card">
-          <img alt={framework} src={`fw-logos/${framework}.svg`} className="getting-started-card__logo" />
+          <img alt={framework} src={withPrefix(`/fw-logos/${framework}.svg`)} className="getting-started-card__logo" />
           <div ckass="getting-started-body">
-            <a href={`/${framework}/getting-started`} className="getting-started-card__button">Get started</a>
+            <Link to={`/${framework}/getting-started`} className="getting-started-card__button">Get started</Link>
           </div>
         </div>
       ))}
