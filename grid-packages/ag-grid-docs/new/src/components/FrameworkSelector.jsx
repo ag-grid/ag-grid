@@ -1,18 +1,18 @@
 import { Link, withPrefix } from 'gatsby';
 import React from "react";
-import './framework-selector.scss';
+import styles from './framework-selector.module.scss';
 
 export default function FrameworkSelector({ path, currentFramework }) {
     if (!currentFramework) { return null; }
 
-    return <div className="framework-selector">
+    console.log(styles);
+
+    return <div className={styles.frameworkSelector}>
         {['javascript', 'angular', 'react', 'vue'].map(framework => {
             const isSelected = framework === currentFramework;
 
-            return <div key={framework} className={`framework-selector__option ${isSelected ? 'framework-selector__option--selected' : ''}`}>
-                <Link
-                    to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}
-                    className="framework-selector__thumbnail">
+            return <div key={framework} className={`${styles.frameworkSelector__option} ${isSelected ? styles.frameworkSelector__optionSelected : ''}`}>
+                <Link to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}>
                     <img src={withPrefix(`/fw-logos/${framework}.svg`)} alt={framework} />
                 </Link>
             </div>;
