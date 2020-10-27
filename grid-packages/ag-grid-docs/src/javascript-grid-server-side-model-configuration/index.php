@@ -9,41 +9,10 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Server-Side Configuration</h1>
 
 <p class="lead">
-    This section covers the Server-Side Cache and configurations available in the Server-Side Row Model.
+    This section covers the Server-Side Row Model (SSRM) configuration options.
 </p>
 
-<p>
-    As many of the configurations available in the Server-Side Row Model relate to the Server-Side Cache it is important
-    to understand how the grid organises data obtained from the server into caches.
-</p>
-
-<h2>Server-Side Cache</h2>
-
-<p>
-    At the heart of the Server-Side Row Model lies the Server-Side Cache. There is a cache containing the top-level
-    rows (i.e. on the root node) and for each individual <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> level.
-</p>
-
-<p>
-    When the grid loads it will retrieve an initial number (as per configuration) of blocks containing rows. As the user
-    scrolls down, more blocks will be loaded via the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>.
-</p>
-
-<p>
-    The following illustration shows how the grid arranges rows into blocks which are in turn stored in a cache:
-</p>
-
-<p>
-    <img src="serverSideCache.png" width="75%" height="75%" style="border: 1px  grey"/>
-</p>
-
-<p>
-    To control the browser memory footprint, server-side blocks and their containing caches are lazy-loaded, and can
-    be configured to purge automatically or manually via API calls.
-</p>
-
-<h2>Configurations</h2>
+<h2>SSRM Grid Properties</h2>
 
 <p>
     Applications can fine-tune the Server-Side Row Model based on specific application requirements using the following

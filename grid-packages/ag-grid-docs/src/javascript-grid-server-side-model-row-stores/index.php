@@ -45,8 +45,10 @@ include '../documentation-main/documentation_header.php';
         <p>
             <b>Infinite Store</b>:
             Loads rows in blocks (eg 100 rows in a block, thus loading 100 rows at a time).
-            Blocks are loaded as the user scrolls down. This allows presenting big datasets
-            by only bringing back from the server what the user scrolls over.
+            Blocks are loaded as the user scrolls down and stored in a cache inside the
+            Infinite Store. Blocks that are no longer needed (the user has scrolled past the
+            blocks rows) are optionally purged from the cache, thus controlling the browser's
+            memory footprint.
         </p>
         <p>
             The name "Infinite Store" comes from the fact it provides
@@ -69,6 +71,13 @@ include '../documentation-main/documentation_header.php';
         </p>
     </li>
 </ul>
+
+<div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+    <img src="./in-memory-store-vs-infinite-store.svg" style="width: 80%;"/>
+    <div>Fig 2. Infinite vs In Memory Store</div>
+</div>
+
+
 
 <p>
     Set the store type using the grid property <code>serverSideStoreType</code>. Set to
@@ -112,12 +121,12 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('In Memory Store', 'in-memory-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
-<p>
+<note>
     At this point you might be wondering the advantage of the In Memory store with just using
     the standard <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>.
     The difference is when Row Grouping, the children of the row groups are loaded as the
     groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
-</p>
+</note>
 
 <h2>Row Stores and Grouping</h2>
 
@@ -128,12 +137,25 @@ include '../documentation-main/documentation_header.php';
 
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
     <img src="./multi-store.svg" style="width: 80%;"/>
-    <div>Fig 2. Node Store - Grouping</div>
+    <div>Fig 3. Node Store - Grouping</div>
 </div>
 
 <p>
     This means there can be any number of Row Stores existing inside the SSRM.
     Each time a Row Group is expanded, a new Row Store is created for that level.
+</p>
+
+<p>
+    The sections
+    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>
+    explains in detail this topic.
+</p>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about the
+    <a href="../javascript-grid-server-side-model-infinite-store/">Infinite Store</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

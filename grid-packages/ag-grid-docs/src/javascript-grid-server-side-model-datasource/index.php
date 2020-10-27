@@ -277,7 +277,7 @@ SNIPPET
 
 <p>
     Continue to the next section to learn about
-     <a href="../javascript-grid-server-side-model-configuration/">Server-Side Configuration</a>.
+     <a href="../javascript-grid-server-side-model-row-stores/">Row Stores</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

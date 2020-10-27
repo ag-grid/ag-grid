@@ -510,19 +510,7 @@
               {
                 "title": "Row Stores",
                 "url": "javascript-grid-server-side-model-row-stores/",
-                "enterprise": true,
-                "items": [
-                  {
-                    "title": "Infinite Store",
-                    "url": "javascript-grid-server-side-model-infinite-store/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "In Memory Store",
-                    "url": "javascript-grid-server-side-model-in-memory-store/",
-                    "enterprise": true
-                  }
-                ]
+                "enterprise": true
               },
               {
                 "title": "Configuration",
