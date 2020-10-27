@@ -182,7 +182,13 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         }
 
         this.destroyRowNodes();
-        const rowData = params.data ? params.data : [];
+
+        if (!params.rowData) {
+            const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
+            _.doOnce( () => console.warn(message, params), 'InMemoryStore.noData');
+        }
+
+        const rowData = params.rowData ? params.rowData : [];
         rowData.forEach(this.createDataNode.bind(this));
 
         this.filterAndSortNodes();

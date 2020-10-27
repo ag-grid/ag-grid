@@ -109,6 +109,11 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             _.assign(this.info, params.info);
         }
 
+        if (!params.rowData) {
+            const message = 'ag-Grid: "params.rowData" is missing from Server-Side Row Model success() callback. Please use the "rowData" attribute. If no data is returned, set an empty list.';
+            _.doOnce( () => console.warn(message, params), 'InfiniteStore.noData');
+        }
+
         const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
@@ -117,7 +122,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         this.checkRowCount(block, finalRowCount);
 
-        block.setData(params.data);
+        block.setData(params.rowData);
 
         // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
         // in the valid range. so we must remove these. this can happen if the datasource returns a

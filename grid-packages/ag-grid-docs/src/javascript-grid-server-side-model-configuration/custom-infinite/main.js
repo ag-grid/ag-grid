@@ -16,11 +16,20 @@ var gridOptions = {
     resizable: true,
   },
 
+  // to help with this example, no row buffer, so no rows drawn off screen
+  rowBuffer: 0,
+
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // adding a debounce to allow skipping over blocks while scrolling
-  blockLoadDebounceMillis: 1000,
+  // set to infinite, which is the default anyway
+  serverSideStoreType: 'infinite',
+
+  // fetch 10 rows at a time (default is 100)
+  cacheBlockSize: 50,
+
+  // only keep 4 blocks of rows (default is keep all rows)
+  maxBlocksInCache: 2,
 
   debug: true
 };
@@ -69,7 +78,7 @@ function createServerSideDatasource(server) {
         } else {
           params.fail();
         }
-      }, 100);
+      }, 1000);
     }
   };
 }
@@ -80,9 +89,8 @@ function createFakeServer(allData) {
       // take a slice of the total rows for requested block
       var rowsForBlock = allData.slice(request.startRow, request.endRow);
 
-      // when row count is known and 'blockLoadDebounceMillis' is set it is possible to
-      // quickly skip over blocks while scrolling
-      var lastRow = allData.length;
+      // here we are pretending we don't know the last row until we reach it!
+      var lastRow = getLastRowIndex(request, rowsForBlock);
 
       return {
         success: true,
@@ -91,4 +99,12 @@ function createFakeServer(allData) {
       };
     },
   };
+}
+
+function getLastRowIndex(request, results) {
+  if (!results) return undefined;
+  var currentLastRow = request.startRow + results.length;
+
+  // if on or after the last block, work out the last row, otherwise return 'undefined'
+  return currentLastRow < request.endRow ? currentLastRow : undefined;
 }

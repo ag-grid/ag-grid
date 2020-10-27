@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Stores</h1>
+<h1 class="heading-enterprise">SSRM Row Stores</h1>
 
 <p class="lead">
     Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of
@@ -155,7 +155,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Continue to the next section to learn about the
-    <a href="../javascript-grid-server-side-model-infinite-store/">Infinite Store</a>.
+    <a href="../javascript-grid-server-side-model-configuration/">SSRM Configuration</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

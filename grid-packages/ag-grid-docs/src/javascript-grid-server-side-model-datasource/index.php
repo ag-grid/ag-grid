@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Datasource</h1>
+<h1 class="heading-enterprise">SSRM Datasource</h1>
 
 <p class="lead">
     This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a
@@ -53,7 +53,7 @@ function createDatasource(server) {
             if (response.success) {
                 // supply rows for requested block to grid
                 params.success({
-                    data: response.rows,
+                    rowData: response.rows,
                     finalRowCount: response.lastRow
                 });
             } else {
@@ -233,7 +233,7 @@ SNIPPET
 interface LoadSuccessParams {
 
     // data retreived from the server
-    data: any[];
+    rowData: any[];
 
     // the last row, if known
     finalRowCount?: number;
@@ -245,7 +245,7 @@ SNIPPET
 , 'ts') ?>
 
 <p>
-    The <code>data</code> attribute provides the grid with the requested data.
+    The <code>rowData</code> attribute provides the grid with the requested data.
 </p>
 
 <p>

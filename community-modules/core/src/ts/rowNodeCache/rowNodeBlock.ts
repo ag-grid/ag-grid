@@ -7,7 +7,7 @@ export interface LoadCompleteEvent extends AgEvent {
 }
 
 export interface LoadSuccessParams {
-    data: any[];
+    rowData: any[];
     finalRowCount?: number;
     info?: any;
 }
@@ -76,7 +76,7 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {
-        this.successCommon(version, {data: rows, finalRowCount: lastRow});
+        this.successCommon(version, {rowData: rows, finalRowCount: lastRow});
     }
 
     protected successCommon(version: number, params: LoadSuccessParams) {
