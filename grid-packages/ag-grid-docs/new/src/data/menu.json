@@ -4,6 +4,7 @@
     "items": [
       {
         "title": "Getting Started",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Overview",
@@ -125,13 +126,14 @@
           {
             "title": "Polymer",
             "url": "../getting-started/",
-            "framework": "vanilla"
+            "framework": "polymer"
           }
         ]
       },
       {
         "title": "Interface / API",
         "icon": "icon-api",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Grid Interface",
@@ -193,6 +195,7 @@
       {
         "title": "Columns",
         "icon": "icon-columns",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Column Definitions",
@@ -311,6 +314,7 @@
       {
         "title": "Build & Tooling",
         "icon": "icon-information",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Community & Enterprise",
@@ -391,6 +395,7 @@
           {
             "title": "Themes",
             "url": "../styling/",
+            "matrixExcludeChildren": true,
             "showInCollapsed": true,
             "items": [
               {
@@ -497,6 +502,7 @@
             "url": "../server-side-model/",
             "showInCollapsed": true,
             "enterprise": true,
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Datasource",
@@ -683,6 +689,7 @@
                 "title": "Set Filter",
                 "url": "../filter-set/",
                 "enterprise": true,
+                "matrixExcludeChildren": true,
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -875,6 +882,7 @@
             "url": "../master-detail/",
             "enterprise": true,
             "showInCollapsed": true,
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Detail Grids",
@@ -1196,6 +1204,7 @@
             "url": "javascript-charts-overview/",
             "showInCollapsed": true,
             "hideChildren": true,
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Bar/Column",
@@ -1576,6 +1585,7 @@
       {
         "title": "Testing & Security",
         "icon": "icon-test",
+        "matrixExclude": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
