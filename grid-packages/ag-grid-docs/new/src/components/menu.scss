@@ -3,6 +3,19 @@
 .menu {
     @extend .p-2;
 
+    .enterprise-icon {
+        background-image: url('/images/enterprise.svg');
+        background-position-y: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        text-indent: -1000px;
+        width: 1rem;
+        height: 1rem;
+        background-size: contain;
+        @extend .ml-1;
+        vertical-align: middle;
+    }
+
     .menu__sections {
         @extend .list-unstyled;
         margin: 0;

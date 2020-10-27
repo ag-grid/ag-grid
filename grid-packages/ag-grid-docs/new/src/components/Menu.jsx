@@ -21,14 +21,20 @@ const MenuGroup = ({ group, currentFramework }) =>
         {group.items.filter(item => !item.framework || item.framework === currentFramework).map(item => <MenuItem key={item.title} item={item} currentFramework={currentFramework} />)}
     </ul>;
 
-const MenuItem = ({ item, currentFramework }) =>
-    <li key={item.title}>
-        {item.url
-            ? <Link to={item.url} activeClassName="active">{item.title}</Link>
-            : item.title
-        }
-        {item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
-    </li>;
+const MenuItem = ({ item, currentFramework }) => {
+    const enterpriseIcon = item.enterprise ? <div class="enterprise-icon">enterprise</div> : null;
+    const title = <span>{item.title}{enterpriseIcon}</span>;
+
+    return (
+        <li key={item.title}>
+            {item.url
+                ? <Link to={ item.url } activeClassName="active">{ title }</Link>
+                : title
+            }
+            {item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
+        </li>
+    );
+}
 
 const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
