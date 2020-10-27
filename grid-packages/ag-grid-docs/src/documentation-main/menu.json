@@ -508,8 +508,8 @@
                 "enterprise": true
               },
               {
-                "title": "Node Stores",
-                "url": "javascript-grid-server-side-model-node-stores/",
+                "title": "Row Stores",
+                "url": "javascript-grid-server-side-model-row-stores/",
                 "enterprise": true,
                 "items": [
                   {
