@@ -6,10 +6,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Filtering</h1>
+<h1 class="heading-enterprise">SSRM Filtering</h1>
 
 <p class="lead">
-    This section covers Server-Side Filtering using the Server-Side Row Model.
+    This section covers Filtering using the Server-Side Row Model.
 </p>
 
 <h2>Enabling Filtering</h2>

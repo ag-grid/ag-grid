@@ -151,7 +151,7 @@ export class InfiniteBlock extends RowNodeBlock {
         const rowNodesToRefresh: RowNode[] = [];
 
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
-            const data = params.data ? params.data[index] : undefined;
+            const data = params.rowData ? params.rowData[index] : undefined;
             if (rowNode.stub) {
                 rowNodesToRefresh.push(rowNode);
             }
