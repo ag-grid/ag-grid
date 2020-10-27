@@ -1,5 +1,3 @@
-@import "~bootstrap/scss/bootstrap";
-
 .search-result {
     @extend .card;
     position: absolute;
@@ -41,7 +39,8 @@
         font-size: 0.9rem;
     }
 
-    mark, .mark {
+    mark,
+    .mark {
         @extend .p-0;
         background-color: transparent;
         color: theme-color(dark);

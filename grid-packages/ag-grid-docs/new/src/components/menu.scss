@@ -1,5 +1,3 @@
-@import "~bootstrap/scss/bootstrap";
-
 .menu {
     @extend .p-2;
 
@@ -43,7 +41,8 @@
         transition: all 0.5s;
     }
 
-    div[role=button], a {
+    div[role="button"],
+    a {
         white-space: nowrap;
         &:focus {
             outline: none;
@@ -57,7 +56,7 @@
         }
     }
 
-    div[role=button] {
+    div[role="button"] {
         color: theme-color(dark);
         font-weight: 500;
     }

@@ -82,7 +82,12 @@ module.exports = {
       }
     },
     'gatsby-transformer-json',
-    'gatsby-plugin-sass',
+    {
+      resolve: 'gatsby-plugin-sass',
+      options: {
+        data: `@import './src/custom.scss';`
+      }
+    },
     'gatsby-plugin-styled-components',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',

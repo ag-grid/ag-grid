@@ -1,5 +1,3 @@
-@import "~bootstrap/scss/bootstrap";
-
 .example-runner {
     border: 1px solid darken(theme-color(light), 10%);
     border-radius: 5px;
@@ -54,7 +52,8 @@
         color: theme-color(dark);
     }
 
-    &:focus, * {
+    &:focus,
+    * {
         outline: none;
     }
 
