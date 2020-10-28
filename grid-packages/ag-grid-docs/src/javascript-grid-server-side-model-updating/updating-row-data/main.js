@@ -26,8 +26,8 @@ function isRowSelectable(rowNode) {
   return !rowNode.group;
 }
 
-function purgeCache() {
-  gridOptions.api.purgeServerSideCache([]);
+function refreshStore() {
+  gridOptions.api.refreshServerSideStore({showLoading: true});
 }
 
 function updateSelectedRows() {

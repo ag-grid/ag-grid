@@ -40,7 +40,7 @@ function onBtRemove() {
 
     window.rowDataServerSide.splice(selectedRow.rowIndex, 1);
 
-    gridOptions.api.purgeServerSideCache();
+    gridOptions.api.refreshServerSideStore();
 }
 
 function onBtAdd() {
@@ -55,7 +55,7 @@ function onBtAdd() {
     });
     newItemCount++;
 
-    gridOptions.api.purgeServerSideCache();
+    gridOptions.api.refreshServerSideStore();
 }
 
 
