@@ -11,4 +11,12 @@ include '../documentation-main/documentation_header.php';
 <p class="lead">
 </p>
 
+<h1>Transaction Flat</h1>
+
+<?= grid_example('Transactions Flat', 'transactions-flat', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h1>Transaction Hierarchy</h1>
+
+<?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>

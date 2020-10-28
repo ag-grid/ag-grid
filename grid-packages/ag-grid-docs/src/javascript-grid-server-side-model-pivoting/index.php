@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Pivoting</h1>
+<h1 class="heading-enterprise">SSRM Pivoting</h1>
 
 <p class="lead">
     In this section we add Server-Side Pivoting to create an example with the ability to 'Slice and Dice' data using
@@ -227,7 +227,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">Server-Side Pagination</a>.
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">SSRM Pagination</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

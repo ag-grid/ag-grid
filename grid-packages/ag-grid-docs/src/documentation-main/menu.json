@@ -533,7 +533,7 @@
                 "enterprise": true
               },
               {
-                "title": "Store Refresh",
+                "title": "Refresh",
                 "url": "javascript-grid-server-side-model-refresh/",
                 "enterprise": true
               },
@@ -563,11 +563,6 @@
                 "enterprise": true,
                 "items": [
                   {
-                    "title": "Updating Rows",
-                    "url": "javascript-grid-server-side-model-x/",
-                    "enterprise": true
-                  },
-                  {
                     "title": "Transactions",
                     "url": "javascript-grid-server-side-model-transactions/",
                     "enterprise": true
@@ -578,11 +573,6 @@
                     "enterprise": true
                   }
                 ]
-              },
-              {
-                "title": "Niall's Spike",
-                "url": "javascript-grid-server-side-model-proto/",
-                "enterprise": true
               },
               {
                 "title": "Row Height",

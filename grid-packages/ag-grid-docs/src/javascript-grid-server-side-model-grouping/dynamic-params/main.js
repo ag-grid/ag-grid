@@ -15,18 +15,44 @@ var gridOptions = {
     },
     rowGroupPanelShow: 'always',
     serverSideStoreType: 'inMemory',
-    sideBar: ['columns'],
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
     },
 
     // rowBuffer: 0,
-    // cacheBlockSize: 100,
-    maxBlocksInCache: 5,
+    cacheBlockSize: 4,
 
     // use the server-side row model
     rowModelType: 'serverSide',
+
+    getServerSideStoreParams: function(params) {
+
+        var noGroupingActive = params.rowGroupColumns.length==0;
+        var res;
+        if (noGroupingActive) {
+            res = {
+                // infinite scrolling
+                storeType: 'infinite',
+                // 100 rows per block
+                cacheBlockSize: 100,
+                // purge blocks that are not needed
+                maxBlocksInCache: 2
+            };
+        } else {
+            var topLevelRows = params.level==0;
+            res = {
+                storeType: topLevelRows ? 'inMemory' : 'infinite',
+                cacheBlockSize: params.level==1 ? 5 : 2,
+                maxBlocksInCache: -1 // never purge blocks
+            };
+        }
+
+        console.log('############## NEW STORE ##############');
+        console.log('getServerSideStoreParams, level = ' + params.level + ', result = ' + JSON.stringify(res));
+
+        return res;
+    },
 
     suppressAggFuncInHeader: true,
 
@@ -50,7 +76,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-            }, 1000);
+            }, 400);
         }
     };
 }

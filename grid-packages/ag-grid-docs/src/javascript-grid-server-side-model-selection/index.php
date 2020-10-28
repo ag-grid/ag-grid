@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Selection</h1>
+<h1 class="heading-enterprise">SSRM Row Selection</h1>
 
 <p class="lead">
     Selecting rows and groups in the Server-Side Row Model is supported.

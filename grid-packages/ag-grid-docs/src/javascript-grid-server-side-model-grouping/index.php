@@ -139,6 +139,108 @@ SNIPPET
     loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
 </p>
 
+<h2>Configure Stores</h2>
+
+<p>
+    By default, each store will have the same configuration (store type, block size etc). This configuration
+    is specified using grid properties (<code>serverSideStoreType</code>, <code>maxBlocksInCache</code> etc).
+</p>
+
+<p>
+    It is possible to have different configurations for different stores. For example if grouping, infinite scrolling
+    could be turned off at the top level but turned on at the lower levels.
+</p>
+
+<p>
+    This is done by implementing the grid callback <code>getServerSideStoreParams()</code>. It's interface
+    is as follows:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// functions takes params and also returns a different type of params
+function getServerSideStoreParams(params: GetServerSideStoreParamsParams): ServerSideStoreParams;
+
+// these params the function gets, gives details on where the store is getting created
+interface GetServerSideStoreParamsParams {
+
+    // the level of the store. top level is 0.
+    level: number;
+
+    // the Row Node for the group that got expanded, or undefined if top level (ie no parent)
+    parentRowNode?: RowNode;
+
+    // active Row Group Columns, if any
+    rowGroupColumns: Column[];
+
+    // active Pivot Columns, if any
+    pivotColumns: Column[];
+
+    // true if pivot mode is active
+    pivotMode: boolean;
+}
+
+// these params the function returns, it's configuration for the store about to be created
+interface ServerSideStoreParams {
+
+    // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
+    storeType?: ServerSideStoreType;
+
+    // how many blocks to keep in cach. if missing, defaults to grid options 'maxBlocksInCache'
+    maxBlocksInCache?: number;
+
+    // cache block size. if missing, defaults to grid options 'cacheBlockSize'
+    cacheBlockSize?: number;
+}
+
+// for storeType above, one of 'inMemory' or 'infinite'
+enum ServerSideStoreType {
+    InMemory = 'inMemory',
+    Infinite = 'infinite'
+}
+
+SNIPPET
+, 'ts') ?>
+
+<p>
+    The example below demonstrates the <code>getServerSideStoreParams()</code> callback. Note
+    the following:
+</p>
+
+<ul>
+    <li>
+        The grid is configured differently depending on whether grouping is active of not
+        by implementing the <code>getServerSideStoreParams()</code> callback. The callback
+        logs it's results to the dev console.
+    </li>
+    <li>
+        <p>
+            When grouping is active, the stores are configured as follows:
+        </p>
+        <ul>
+            <li>Level 0 - No Infinite Scroll</li>
+            <li>Level 1 - Infinite Scroll with block size of 5</li>
+            <li>Level 2 - Infinite Scroll with block size of 2</li>
+        </ul>
+        <p>
+            To observe, expand different levels of the data and notice when rows are read back
+            in blocks.
+        </p>
+    </li>
+    <li>
+        <p>
+            When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks
+            of rows in the store.
+        </p>
+        <p>
+            To observe this, remove all grouping and scroll down to load more blocks. Then
+            scroll back up to observe the initial blocks getting reloaded.
+        </p>
+    </li>
+</ul>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
+
 <h2>Providing Child Counts</h2>
 
 <p>
@@ -206,7 +308,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Server-Side Pivoting</a>.
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-refresh/">SSRM Refresh</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

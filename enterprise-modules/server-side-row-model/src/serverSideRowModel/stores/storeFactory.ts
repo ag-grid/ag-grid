@@ -99,7 +99,10 @@ export class StoreFactory {
 
         const params: GetServerSideStoreParamsParams = {
             level: parentNode.level + 1,
-            parentRowNode: parentNode.level >= 0 ? parentNode : undefined
+            parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
+            rowGroupColumns: this.columnController.getRowGroupColumns(),
+            pivotColumns: this.columnController.getPivotColumns(),
+            pivotMode: this.columnController.isPivotMode()
         };
 
         return callback(params);

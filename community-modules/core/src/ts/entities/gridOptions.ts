@@ -782,4 +782,7 @@ export interface ServerSideStoreParams {
 export interface GetServerSideStoreParamsParams {
     level: number;
     parentRowNode?: RowNode;
+    rowGroupColumns: Column[];
+    pivotColumns: Column[];
+    pivotMode: boolean;
 }
