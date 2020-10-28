@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
       getRows: function(params) {
         fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
           params.success({
-            data: result,
+            rowData: result,
             info: {serverVersion: serverVersion}
           });
         });

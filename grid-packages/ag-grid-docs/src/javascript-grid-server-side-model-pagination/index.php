@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Pagination</h1>
+<h1 class="heading-enterprise">SSRM Pagination</h1>
 
 <p class="lead">
     If you are dealing with large amounts of data, your applications may decide to use pagination

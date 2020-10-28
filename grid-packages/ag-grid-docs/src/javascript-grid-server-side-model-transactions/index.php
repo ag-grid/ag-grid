@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Transactions</h1>
+<h1 class="heading-enterprise">SSRM Transactions</h1>
 
 <p class="lead">
 </p>

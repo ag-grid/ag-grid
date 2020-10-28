@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Changing Columns</h1>
+<h1 class="heading-enterprise">SSRM Changing Columns</h1>
 
 <p class="lead">
     It is possible to add and remove columns to the Server-Side Row Model without having

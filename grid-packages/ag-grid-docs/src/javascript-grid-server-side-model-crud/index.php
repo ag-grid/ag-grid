@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side CRUD Operations</h1>
+<h1 class="heading-enterprise">SSRM Updating Data</h1>
 
 <p class="lead">
     Learn how to perform CRUD operations using the Server-Side Row Model.

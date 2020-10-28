@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Master Detail</h1>
+<h1 class="heading-enterprise">SSRM Master Detail</h1>
 
 <p class="lead">
     This section shows how the Server-Side Row Model can be configured with a Master / Detail view.
