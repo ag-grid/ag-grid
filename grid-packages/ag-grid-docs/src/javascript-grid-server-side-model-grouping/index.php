@@ -152,12 +152,13 @@ SNIPPET
 
 <p>
     By default, each store will have the same configuration (store type, block size etc). This configuration
-    is specified using grid properties (<code>serverSideStoreType</code>, <code>maxBlocksInCache</code> etc).
+    is specified using the grid properties <code>serverSideStoreType</code>, <code>maxBlocksInCache</code>
+    and <code>cacheBlockSize</code>.
 </p>
 
 <p>
-    It is possible to have different configurations for different stores. For example if grouping, infinite scrolling
-    could be turned off at the top level but turned on at the lower levels.
+    It is possible to have different configurations for different stores. For example if grouping, infinite
+    scrolling could be turned off at the top level but turned on at the lower levels.
 </p>
 
 <p>
