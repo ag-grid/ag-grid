@@ -1,0 +1,48 @@
+.doc-page-wrapper {
+    position: relative;
+}
+
+.doc-page {
+    margin-left: 1rem;
+    margin-right: calc(300px + 3rem);
+
+    h1 {
+        font-weight: 400;
+    }
+
+    h2 {
+        font-weight: 300;
+    }
+
+    h3 {
+        font-weight: 200;
+    }
+
+    h1:first-child + div > p:first-child {
+        font-size: 1.25rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 3rem;
+
+        th,
+        td {
+            border-bottom: 1px solid #dee2e6;
+            border-top: 1px solid #dee2e6;
+            padding: 0.5rem 1rem;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f9fcff;
+        }
+
+        tr:nth-child(2n) {
+            td {
+                background-color: #f9fcff;
+            }
+        }
+    }
+}

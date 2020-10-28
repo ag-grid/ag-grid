@@ -1,15 +1,15 @@
-import './example-runner.scss';
 import React, { useState } from 'react';
-import CodeViewer from './CodeViewer';
-import GlobalContextConsumer from '../GlobalContext';
-import ExampleRunnerResult from './ExampleRunnerResult';
+import { withPrefix } from 'gatsby';
 import VisibilitySensor from "react-visibility-sensor";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faCode, faWindowRestore, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import CodeViewer from './CodeViewer';
+import GlobalContextConsumer from '../GlobalContext';
+import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, openPlunker } from './helpers';
 import { generateIndexHtml } from './index-html-generator';
-import { withPrefix } from 'gatsby';
+import styles from './example-runner.module.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
     const [showCode, setShowCode] = useState(false);
@@ -38,9 +38,9 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                 </div>;
             }
 
-            return <div className="example-runner">
-                <div className="example-runner__header">
-                    <div className="example-runner__title">Example: {title}</div>
+            return <div className={styles.exampleRunner}>
+                <div className={styles.exampleRunner__header}>
+                    <div className={styles.exampleRunner__title}>Example: {title}</div>
                     {framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
@@ -52,10 +52,10 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                <div className="example-runner__body">
-                    <div className="example-runner__menu">
+                <div className={styles.exampleRunner__body}>
+                    <div className={styles.exampleRunner__menu}>
                         <div
-                            className={`example-runner__menu-item ${!showCode ? 'example-runner__menu-item--selected' : ''}`}
+                            className={`${styles.exampleRunner__menuItem} ${showCode ? '' : styles.exampleRunner__menuItemSelected}`}
                             onClick={() => setShowCode(false)}
                             onKeyDown={e => doOnEnter(e, () => setShowCode(false))}
                             role="button"
@@ -63,18 +63,18 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             <FontAwesomeIcon icon={faPlay} fixedWidth />
                         </div>
                         <div
-                            className={`example-runner__menu-item ${showCode ? 'example-runner__menu-item--selected' : ''}`}
+                            className={`${styles.exampleRunner__menuItem} ${showCode ? styles.exampleRunner__menuItemSelected : ''}`}
                             onClick={() => setShowCode(true)}
                             onKeyDown={e => doOnEnter(e, () => setShowCode(true))}
                             role="button"
                             tabIndex="0">
                             <FontAwesomeIcon icon={faCode} fixedWidth />
                         </div>
-                        <div className='example-runner__menu-item'>
+                        <div className={styles.exampleRunner__menuItem}>
                             {openTabLink}
                         </div>
                         <div
-                            className='example-runner__menu-item'
+                            className={styles.exampleRunner__menuItem}
                             onClick={() => openPlunker(nodes, exampleInfo)}
                             onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
                             role="button"
@@ -82,7 +82,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
                         </div>
                     </div>
-                    <div className="example-runner__content">
+                    <div className={styles.exampleRunner__content}>
                         {!showCode &&
                             <VisibilitySensor partialVisibility={true}>
                                 {({ isVisible }) =>
@@ -99,7 +99,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
 };
 
 const ImportTypeSelector = ({ importType, onChange }) => {
-    return <div className="example-runner__import-type">
+    return <div className={styles.exampleRunner__importType}>
         <select value={importType} onChange={onChange} onBlur={onChange}>
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
@@ -109,7 +109,7 @@ const ImportTypeSelector = ({ importType, onChange }) => {
 };
 
 const ReactVersionSelector = ({ useFunctionalReact, onChange }) => {
-    return <div className="react-version-selector">
+    return <div className={styles.reactVersionSelector}>
         <select value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
             <option value="false">Classes</option>
             <option value="true">Hooks</option>

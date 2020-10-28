@@ -1,12 +1,12 @@
-import './doc-page.scss';
-import React from "react";
-import { Helmet } from "react-helmet";
-import { graphql } from "gatsby";
-import rehypeReact from "rehype-react";
+import React from 'react';
+import { Helmet } from 'react-helmet';
+import { graphql } from 'gatsby';
+import rehypeReact from 'rehype-react';
 import ExampleRunner from '../components/example-runner';
 import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import { getPageName } from '../utils/get-page-name';
+import styles from './doc-page.module.scss';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -22,8 +22,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   }).Compiler;
 
   return (
-    <div className="doc-page-container">
-      <div className="doc-page">
+    <div className={styles.docPageWrapper}>
+      <div className={styles.docPage}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
         <h1>{page.frontmatter.title}</h1>
         {renderAst(ast)}

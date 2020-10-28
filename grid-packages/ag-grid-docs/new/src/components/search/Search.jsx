@@ -1,10 +1,10 @@
-import algoliasearch from "algoliasearch/lite";
-import { createRef, default as React, useState } from "react";
-import { InstantSearch } from "react-instantsearch-dom";
+import algoliasearch from 'algoliasearch/lite';
+import React, { createRef, useState } from 'react';
+import { InstantSearch } from 'react-instantsearch-dom';
 import SearchBox from './SearchBox';
 import SearchResult from './SearchResult';
-import useClickOutside from "./use-click-outside";
-import './search.scss';
+import useClickOutside from './use-click-outside';
+import styles from './search.module.scss';
 
 export default function Search({ indices }) {
     const rootRef = createRef();
@@ -18,7 +18,7 @@ export default function Search({ indices }) {
     useClickOutside(rootRef, () => setFocus(false));
 
     return (
-        <div className="search-form" ref={rootRef}>
+        <div className={styles.searchForm} ref={rootRef}>
             <InstantSearch
                 searchClient={searchClient}
                 indexName={indices[0].name}

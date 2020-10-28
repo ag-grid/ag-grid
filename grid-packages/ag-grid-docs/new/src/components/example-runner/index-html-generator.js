@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { withPrefix } from 'gatsby';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
-import { withPrefix } from 'gatsby';
 
 export const generateIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
     const { sourcePath, framework, options } = exampleInfo;

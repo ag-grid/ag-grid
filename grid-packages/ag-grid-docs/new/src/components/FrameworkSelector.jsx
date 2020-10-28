@@ -5,8 +5,6 @@ import styles from './framework-selector.module.scss';
 export default function FrameworkSelector({ path, currentFramework }) {
     if (!currentFramework) { return null; }
 
-    console.log(styles);
-
     return <div className={styles.frameworkSelector}>
         {['javascript', 'angular', 'react', 'vue'].map(framework => {
             const isSelected = framework === currentFramework;

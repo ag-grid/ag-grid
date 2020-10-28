@@ -1,0 +1,53 @@
+.search-result {
+    @extend .card;
+    position: absolute;
+    z-index: 99999;
+    width: 400px;
+    margin-top: 0.25rem;
+
+    &__hit-wrapper {
+        @extend .card-header, .p-1;
+        text-align: end;
+    }
+
+    &__hit-count {
+        @extend .badge, .badge-pill, .badge-primary;
+    }
+
+    &__hits {
+        &-list {
+            @extend .list-group, .list-group-flush;
+        }
+
+        &-item {
+            @extend .list-group-item, .list-group-item-action;
+            overflow: hidden;
+
+            &:hover {
+                background-color: lighten(theme-color(primary), 10%);
+
+                a {
+                    color: theme-color(light);
+                }
+            }
+
+            h4 {
+                font-size: 1rem;
+                font-weight: bold;
+            }
+        }
+    }
+
+    &__snippet {
+        white-space: normal;
+        font-size: 0.9rem;
+    }
+
+    mark,
+    &__mark {
+        @extend .p-0;
+        background-color: transparent;
+        color: theme-color(dark);
+        font-weight: bold;
+    }
+}

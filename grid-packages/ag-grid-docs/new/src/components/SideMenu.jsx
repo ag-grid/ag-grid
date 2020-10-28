@@ -1,12 +1,12 @@
 import React from 'react';
-import './side-menu.scss';
+import styles from './side-menu.module.scss';
 
-const SideMenu = ({ headings }) => {
-    return <ul className="side-nav">
-        {headings.map(heading => <li key={heading.id} className={`side-nav__item side-nav__item--level-${heading.depth}`}>
-            <a className="side-nav__link" href={`#${heading.id}`}>{heading.value.replace(/<(.*?)>/g, '')}</a>
-        </li>)}
+const SideMenu = ({ headings }) =>
+    <ul className={styles.sideNav}>
+        {headings.map(heading => <li key={heading.id} className={`sideNav__itemLevel${heading.depth}`}>
+            <a className={styles.sideNav__link} href={`#${heading.id}`}>{heading.value.replace(/<(.*?)>/g, '')}</a>
+        </li>
+        )}
     </ul>;
-};
 
 export default SideMenu;

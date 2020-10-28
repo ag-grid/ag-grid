@@ -1,4 +1,3 @@
-import './code-viewer.scss';
 import React, { useEffect, useState } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
@@ -10,6 +9,7 @@ import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-scss';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleFiles } from './helpers';
+import styles from './code-viewer.module.scss';
 
 const updateFiles = (nodes, exampleInfo, setFiles, setActiveFile) => {
     if (typeof window === 'undefined') { return; }
@@ -37,17 +37,17 @@ const CodeViewer = ({ exampleInfo }) => {
     const exampleFiles = keys.filter(key => !files[key].isFramework);
     const frameworkFiles = keys.filter(key => files[key].isFramework);
 
-    return <div className="code-viewer">
-        <div className="code-viewer__files">
-            {frameworkFiles.length > 0 && <div className="code-viewer__file-title">App</div>}
+    return <div className={styles.codeViewer}>
+        <div className={styles.codeViewer__files}>
+            {frameworkFiles.length > 0 && <div className={styles.codeViewer__fileTitle}>App</div>}
             {exampleFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
             {frameworkFiles.length > 0 &&
                 <>
-                    <div className="code-viewer__file-title">Framework</div>
+                    <div className={styles.codeViewer__fileTitle}>Framework</div>
                     {frameworkFiles.map(path => <FileItem key={path} path={path} isActive={activeFile === path} onClick={() => setActiveFile(path)} />)}
                 </>}
         </div>
-        <div className="code-viewer__code">
+        <div className={styles.codeViewer__code}>
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
             {files && activeFile && <FileView path={activeFile} code={files[activeFile].source} />}
         </div>
@@ -56,7 +56,7 @@ const CodeViewer = ({ exampleInfo }) => {
 
 const FileItem = ({ path, isActive, onClick }) =>
     <div
-        className={`code-viewer__file ${isActive ? 'code-viewer__file--active' : ''}`}
+        className={`${styles.codeViewer__file} ${isActive ? styles.codeViewer__fileActive : ''}`}
         onClick={onClick}
         onKeyDown={e => doOnEnter(e, onClick)}
         role="button"

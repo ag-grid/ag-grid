@@ -1,0 +1,33 @@
+.ais-Hits-list {
+    @extend .list-group, .list-group-flush;
+}
+
+.ais-Hits-item {
+    @extend .list-group-item, .list-group-item-action;
+    overflow: hidden;
+
+    a {
+        color: theme-color(secondary);
+        font-size: 0.85rem;
+        @extend .d-block, .my-1;
+    }
+
+    &:hover {
+        background-color: lighten(theme-color(primary), 10%);
+
+        a {
+            text-decoration: none;
+            color: theme-color(light);
+        }
+    }
+
+    h4 {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}
+
+.ais-Snippet {
+    white-space: normal;
+    font-size: 0.9rem;
+}

@@ -7,14 +7,14 @@
     @extend .flex-grow-1;
     @extend .m-3;
     @extend .p-4;
-}
 
-.getting-started-card__logo {
-    @extend .my-5;
-    height: 100px;
-}
+    &__logo {
+        @extend .my-5;
+        height: 100px;
+    }
 
-.getting-started-card__button {
-    @extend .btn;
-    @extend .btn-primary;
+    &__button {
+        @extend .btn;
+        @extend .btn-primary;
+    }
 }

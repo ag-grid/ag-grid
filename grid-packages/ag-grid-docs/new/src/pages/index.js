@@ -1,6 +1,6 @@
-import './index.scss';
 import React from 'react';
 import { Link, withPrefix } from 'gatsby';
+import styles from './index.module.scss';
 
 export default function Home() {
   return <div style={{ textAlign: 'center' }}>
@@ -8,12 +8,12 @@ export default function Home() {
 
     <p>Which framework would you like to learn?</p>
 
-    <div className="getting-started-cards">
+    <div className={styles.gettingStartedCards}>
       {['javascript', 'angular', 'react', 'vue'].map(framework => (
-        <div key={framework} className="getting-started-card">
-          <img alt={framework} src={withPrefix(`/fw-logos/${framework}.svg`)} className="getting-started-card__logo" />
-          <div ckass="getting-started-body">
-            <Link to={`/${framework}/getting-started`} className="getting-started-card__button">Get started</Link>
+        <div key={framework} className={styles.gettingStartedCard}>
+          <img alt={framework} src={withPrefix(`/fw-logos/${framework}.svg`)} className={styles.gettingStartedCard__logo} />
+          <div>
+            <Link to={`/${framework}/getting-started`} className={styles.gettingStartedCard__button}>Get started</Link>
           </div>
         </div>
       ))}

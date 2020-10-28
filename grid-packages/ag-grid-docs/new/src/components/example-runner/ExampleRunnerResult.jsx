@@ -1,8 +1,8 @@
-import './example-runner-result.scss';
 import React, { useEffect, useState } from 'react';
 import fs from 'fs';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { generateIndexHtml } from './index-html-generator';
+import styles from './example-runner-result.module.scss';
 
 const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
@@ -45,7 +45,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         }
     }, [shouldExecute, generated]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return <iframe ref={iframeRef} title={name} className="example-runner-result"></iframe>;
+    return <iframe ref={iframeRef} title={name} className={styles.exampleRunnerResult}></iframe>;
 };
 
 export default ExampleRunnerResult;

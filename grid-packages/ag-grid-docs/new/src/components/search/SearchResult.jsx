@@ -1,5 +1,5 @@
 import { Link } from 'gatsby';
-import { default as React } from 'react';
+import React from 'react';
 import {
     connectStateResults,
     Highlight,
@@ -7,14 +7,15 @@ import {
     Index,
     Snippet,
 } from 'react-instantsearch-dom';
-import './searchResult.scss';
+import styles from './search-result.module.scss';
+import './search-result.scss';
 
 const HitCount = connectStateResults(({ searchResults }) => {
     const hitCount = searchResults && searchResults.nbHits;
 
     return hitCount > 0 ? (
-        <div className="hit-wrapper">
-            <div className="hit-count">Results: {hitCount}</div>
+        <div className={styles.searchResult__hitWrapper}>
+            <div className={styles.searchResult__hitCount}>Results: {hitCount}</div>
         </div>
     ) : null;
 });
@@ -31,12 +32,12 @@ const PageHit = ({ hit }) => (
 const HitsInIndex = ({ index }) => (
     <Index indexName={index.name}>
         <HitCount />
-        <Hits className="Hits" hitComponent={PageHit} />
+        <Hits hitComponent={PageHit} />
     </Index>
 );
 
 const SearchResult = ({ indices, show }) => (
-    <div className="search-result" style={{ display: show ? 'block' : 'none' }}>
+    <div className={styles.searchResult} style={{ display: show ? 'block' : 'none' }}>
         {indices.map(index => (
             <HitsInIndex index={index} key={index.name} />
         ))}
