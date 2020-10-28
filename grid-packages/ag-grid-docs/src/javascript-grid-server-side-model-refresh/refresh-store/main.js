@@ -21,16 +21,12 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    cacheBlockSize: 10,
-    maxBlocksInCache: 2,
-
-    // serverSideStoreType: 'clientSide',
     suppressAggFuncInHeader: true,
 
     rowGroupPanelShow: 'always',
 
     animateRows: true,
-    // debug: true,
+    debug: true,
 };
 
 var versionCounter = 1;

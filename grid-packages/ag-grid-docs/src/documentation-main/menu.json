@@ -533,6 +533,11 @@
                 "enterprise": true
               },
               {
+                "title": "Store Refresh",
+                "url": "javascript-grid-server-side-model-refresh/",
+                "enterprise": true
+              },
+              {
                 "title": "Pivoting",
                 "url": "javascript-grid-server-side-model-pivoting/",
                 "enterprise": true
@@ -557,11 +562,6 @@
                 "url": "javascript-grid-server-side-model-crud/",
                 "enterprise": true,
                 "items": [
-                  {
-                    "title": "Refresh",
-                    "url": "javascript-grid-server-side-model-x/",
-                    "enterprise": true
-                  },
                   {
                     "title": "Updating Rows",
                     "url": "javascript-grid-server-side-model-x/",

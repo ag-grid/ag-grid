@@ -6,10 +6,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Grouping</h1>
+<h1 class="heading-enterprise">SSRM Row Grouping</h1>
 
 <p class="lead">
-    This section covers Server-Side Row Grouping.
+    This section covers Row Grouping in the Server-Side Row Model (SSRM).
 </p>
 
 <h2>Enabling Row Grouping</h2>
@@ -42,7 +42,7 @@ SNIPPET
     The actual grouping of rows is performed on the server when using the Server-Side Row Model. When the grid needs
     more rows it makes a request via <code>getRows(params)</code> on the
     <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a> with
-    metadata containing pivoting details.
+    metadata containing grouping details.
 </p>
 
 <p>
@@ -65,10 +65,9 @@ SNIPPET
 
 <p>
     Note in the snippet above that <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping
-    on, e.g. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, e.g. <code>['Argentina', 2012]</code>.
+    on, e.g. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, e.g.
+    <code>['Argentina', '2012']</code>.
 </p>
-
-<h2>Example: Server-Side Row Grouping</h2>
 
 <p>
     The example below demonstrates server-side Row Grouping. Note the following:
@@ -76,7 +75,16 @@ SNIPPET
 
 <ul class="content">
     <li>
-        <b>Country</b> and <b>Sport</b> columns have <code>rowGroup=true</code> defined on their column definitions.
+        The Infinite Store is used (the default).
+    </li>
+    <li>
+        The store block size is set to 5 by setting the grid property <code>cacheBlockSize = 5</code>.
+        It can then be observed that rows are loaded in blocks at all levels. For example if you expand
+        United States row, the children rows are loaded in blocks using Infinite Scrolling.
+    </li>
+    <li>
+        Country and Sport columns have <code>rowGroup=true</code> defined on their column definitions.
+        This tells the grid there is two levels of grouping, one for Country and one for Sport.
     </li>
     <li>
         The <code>rowGroupCols</code> and <code>groupKeys</code> properties in the request are used by the server
@@ -101,8 +109,20 @@ SNIPPET
     </p>
 </note>
 
+<h2>In-Memory vs Infinite Store</h2>
 
-<h2>Group Caches</h2>
+<p>
+    The Row Grouping mechanics are almost identical with the In-Memory Store and Infinite Store. The difference
+    is that when using the Infinite Store, data will be requested in blocks and can have sorting and
+    filtering information.
+</p>
+
+<p>
+    All the examples presented in this section use the Infinite Store as it covers all the semantics found
+    when using the In-Memory Store.
+</p>
+
+<h2>Group Stores</h2>
 
 <p>
     The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-Side Cache</a> has already
@@ -142,110 +162,6 @@ SNIPPET
 ) ?>
 
 <?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
-
-<h2>Purging Groups</h2>
-
-<p>
-    The grid has the following API to allow you to interact with the server-side cache.
-</p>
-
-<table class="table reference">
-    <tr>
-        <th>Method</th>
-        <th>Description</th>
-    </tr>
-    <tr id="api-purge-virtual-page-cache">
-        <th>purgeServerSideCache(route)</th>
-        <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
-                purge a child cache, pass in the string of keys to get to the child cache.
-                For example, to purge the cache two levels down under 'Canada' and then '2002', pass
-                in the string array <code>['Canada','2002']</code>. If you purge a cache, then all row nodes
-                for that cache will be reset to the closed state, and all child caches will be destroyed.</p></td>
-    </tr>
-    <tr id="api-get-virtual-page-state">
-        <th>getCacheBlockState()</th>
-        <td>
-            Returns an object representing the state of the cache. This is useful for debugging and understanding
-            how the cache is working.</td>
-    </tr>
-</table>
-
-<p>
-    Below shows the API in action. The following can be noted:
-</p>
-
-<ul class="content">
-    <li>
-        Button <b>Purge Everything</b> purges the top level cache.
-    </li>
-    <li>
-        Button <b>Purge [Canada]</b> purges the Canada cache only. To see this in action, make sure you have
-        Canada expanded.
-    </li>
-    <li>
-        Button <b>Purge [Canada,2002]</b> purges the 2002 cache under Canada only. To see this in action, make
-        sure you have Canada and then 2002 expanded.
-    </li>
-    <li>
-        Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
-    </li>
-</ul>
-
-<?= grid_example('Refresh Store', 'refresh-store', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
-
-<h2>Preserving Group State</h2>
-
-<p>
-    It may be necessary to expand groups to a desired initial state or to restore the grid to a previous state after
-    purging / reloading data.
-</p>
-
-<p>
-    This can be achieved by expanding row nodes as blocks are loaded in the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>. The following
-    snippet outlines a possible approach:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-function getRows(params) {
-    // 1) get data from server
-    var response = getServerResponse(params.request);
-
-    // 2) call the success callback
-    params.successCallback(response.rowsThisBlock, response.lastRow);
-
-    // 3) to preserve group state we expand any previously expanded groups for this block
-    rowsInThisBlock.forEach(function(row) {
-        if (expandedGroupIds.indexOf(row.id) > -1) {
-            gridOptions.api.getRowNode(row.id).setExpanded(true);
-        }
-    });
-}
-SNIPPET
-) ?>
-
-<p>
-    Notice that in step 3, newly loaded row nodes for the current block are expanded if they are defined in <code>expandedGroupIds</code>,
-    which is an array of group keys maintained by the application. This will have a cascading effect as expanding a
-    group will cause new block(s) to load.
-</p>
-
-<p>
-    In order to easily look up group row nodes, implementing the following callback is recommended: <code>gridOptions.getRowNodeId()</code>.
-</p>
-
-<p>
-    In the example below, the following can be noted:
-</p>
-
-<ul>
-    <li>The grid has an initial expanded group state where:
-        <code>expandedGroupIds = ['Russia', "Russia-2002", "Ireland", 'Ireland-2008']</code></li>
-    <li>The group state is updated in <code>expandedGroupIds</code> by using listening to the grid event: <code>RowGroupOpened</code>.</li>
-    <li>Clicking the 'Purge Caches' button reloads data. Notice that the group state has been preserved.</li>
-</ul>
-
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Complex Columns</h2>
 

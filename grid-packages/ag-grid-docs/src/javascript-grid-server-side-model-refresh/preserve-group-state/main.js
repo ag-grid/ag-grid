@@ -36,8 +36,8 @@ var gridOptions = {
     // debug: true,
 };
 
-function purgeCache() {
-    gridOptions.api.purgeServerSideCache([]);
+function refresh() {
+    gridOptions.api.refreshServerSideStore({route: [], showLoading: true} );
 }
 
 function onRowGroupOpened(params) {
@@ -66,7 +66,7 @@ function ServerSideDatasource(server) {
                     var rowsWithIds = addGroupIdsToRows(params.request, response.rows);
 
                     // call the success callback
-                    params.successCallback(rowsWithIds, response.lastRow);
+                    params.success({rowData: rowsWithIds, finalRowCount: response.lastRow});
 
                     // to preserve group state we expand any previously expanded groups for this block
                     rowsWithIds.forEach(function(row) {
