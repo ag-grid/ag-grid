@@ -6,7 +6,7 @@
   "license": "0BSD",
   "scripts": {
     "build": "npm run clean && npx gatsby build --prefix-paths",
-    "develop": "npx gatsby -p 8080 develop",
+    "develop": "npx gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run clean && npm run develop",
     "serve": "npx gatsby serve --prefix-paths",

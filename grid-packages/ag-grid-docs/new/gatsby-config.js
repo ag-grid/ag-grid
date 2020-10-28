@@ -31,12 +31,6 @@ module.exports = {
       }
     },
     {
-      resolve: `gatsby-transformer-rehype`,
-      options: {
-        filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
-      },
-    },
-    {
       resolve: 'gatsby-source-filesystem',
       options: {
         name: 'data',
@@ -89,6 +83,12 @@ module.exports = {
           'gatsby-remark-prismjs',
         ]
       }
+    },
+    {
+      resolve: `gatsby-transformer-rehype`,
+      options: {
+        filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
+      },
     },
     'gatsby-transformer-json',
     {

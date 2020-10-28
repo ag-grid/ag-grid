@@ -9,12 +9,14 @@ var gridOptions = {
         { field: 'silver', filter: 'agNumberColumnFilter' },
         { field: 'bronze', filter: 'agNumberColumnFilter' },
     ],
+
     defaultColDef: {
         flex: 1,
         minWidth: 200,
         resizable: true,
         floatingFilter: true,
     }
+
 };
 
 // setup the grid after the page has finished loading
