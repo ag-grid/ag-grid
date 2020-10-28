@@ -21,6 +21,12 @@ body {
     &.note &-heading {
         @extend .h4, .alert-heading;
     }
+
+    &.note &-body {
+        :last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 a {
