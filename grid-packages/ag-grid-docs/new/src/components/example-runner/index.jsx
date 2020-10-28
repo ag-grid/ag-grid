@@ -39,7 +39,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
             }
 
             return <div className={styles.exampleRunner}>
-                <div className={styles.exampleRunner__header}>
+                <div className={`form-inline ${styles.exampleRunner__header}`}>
                     <div className={styles.exampleRunner__title}>Example: {title}</div>
                     {framework === 'react' &&
                         <ReactVersionSelector
@@ -99,8 +99,8 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
 };
 
 const ImportTypeSelector = ({ importType, onChange }) => {
-    return <div className={styles.exampleRunner__importType}>
-        <select value={importType} onChange={onChange} onBlur={onChange}>
+return <div className={`form-group ${styles.exampleRunner__importType}`}>
+        <select className="form-control" style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
             )}
@@ -109,8 +109,8 @@ const ImportTypeSelector = ({ importType, onChange }) => {
 };
 
 const ReactVersionSelector = ({ useFunctionalReact, onChange }) => {
-    return <div className={styles.reactVersionSelector}>
-        <select value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
+    return <div className={`form-group ${styles.reactVersionSelector}`}>
+        <select className="form-control" style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
             <option value="false">Classes</option>
             <option value="true">Hooks</option>
         </select>
