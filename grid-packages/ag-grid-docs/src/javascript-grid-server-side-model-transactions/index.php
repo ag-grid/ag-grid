@@ -16,12 +16,13 @@ include '../documentation-main/documentation_header.php';
 <p>
     Transactions for the Server Side Row Model (SSRM) work similarly to
     <a href="../javascript-grid-data-update-transactions">Client Side Row Model Transactions</a>.
-    The API's are almost identical. However there are some important differences and as such
-    the API's are not shared.
+    The API's are almost identical. However there are some important differences (such as the
+    SSRM requiring a 'route') and as such the API's are not shared.
 </p>
 
 <p>
-    Here is some code snippets demonstrating how to use the API:
+    Applying a SSRM transaction is done using the grid API applyServerSideTransaction().
+    Here are some introductory code snippets demonstrating how to use the API:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -83,8 +84,7 @@ SNIPPET
 <h2>Transaction API</h2>
 
 <p>
-    Applying a transaction is done using the grid API <code>applyServerSideTransaction()</code>.
-    It's signature is as follows:
+    The full signature of the grid API <code>applyServerSideTransaction()</code> is as follows:
 </p>
 
 <?= createSnippet(<<<SNIPPET
