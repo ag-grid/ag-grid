@@ -5,13 +5,21 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-.note {
-    @extend .p-3, .mb-3;
-    background-color: lighten(theme-color(warning), 40%);
-    border: 1px solid theme-color(warning);
+.custom-block {
+    &.note {
+        @extend .alert, .alert-primary;
 
-    p:last-child {
-        margin-bottom: 0;
+        &.warning {
+            @extend .alert-warning;
+        }
+    
+        &.info {
+            @extend .alert-info;
+        }
+    }
+
+    &.note &-heading {
+        @extend .h4, .alert-heading;
     }
 }
 

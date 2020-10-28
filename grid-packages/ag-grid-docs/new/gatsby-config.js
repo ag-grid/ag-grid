@@ -53,6 +53,15 @@ module.exports = {
               blocks: {
                 note: {
                   classes: 'note',
+                  title: 'optional',
+                },
+                'note-warning': {
+                  classes: 'note warning',
+                  title: 'optional'
+                },
+                'note-info': {
+                  classes: 'note info',
+                  title: 'optional'
                 },
                 'only-javascript': {
                   classes: 'javascript-only-section',

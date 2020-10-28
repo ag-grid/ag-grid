@@ -56,5 +56,20 @@ Framework-dependent text:
 
 You should go and check out [this page](./column-definitions/)
 
+[[note | Note With Title]]
+| Make sure you don't do anything bad!
+
 [[note]]
+| Make sure you don't do anything bad!
+
+[[note-warning | Warning Note With Title]]
+| Make sure you don't do anything bad!
+
+[[note-warning]]
+| Make sure you don't do anything bad!
+
+[[note-info | Info Note With Title]]
+| Make sure you don't do anything bad!
+
+[[note-info]]
 | Make sure you don't do anything bad!
