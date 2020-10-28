@@ -24,14 +24,18 @@ include '../documentation-main/documentation_header.php';
 <p>
     There is at least one Row Store inside the grid for storing top level rows.
     The diagram below shows a SSRM with one Row Store. That means there is either no grouping
-    present (no rows to expand), or there are groups present but no groups are yet opened
-    (so the children are yet to be lazy loaded).
+    present (no rows to expand).
 </p>
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
     <img src="./single-store.svg" style="width: 40%;"/>
     <div>Fig 1. Node Store - No Grouping</div>
 </div>
+
+<p>
+    If there were groups expanded, there would be multiple row stores
+    which is explained later.
+</p>
 
 <h2>Row Store Types</h2>
 
@@ -128,28 +132,80 @@ include '../documentation-main/documentation_header.php';
     groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
 </note>
 
-<h2>Row Stores and Grouping</h2>
+
+<h2>Infinite vs In Memory</h2>
 
 <p>
-    When grouping and a group is expanded, a new Row Store is created to store the
-    child rows of the opened group.
-</p>
-
-<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
-    <img src="./multi-store.svg" style="width: 80%;"/>
-    <div>Fig 3. Node Store - Grouping</div>
-</div>
-
-<p>
-    This means there can be any number of Row Stores existing inside the SSRM.
-    Each time a Row Group is expanded, a new Row Store is created for that level.
+    So when is it best to use Infinite Store? And when is it best to use In Memory Store?
 </p>
 
 <p>
-    The sections
-    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>
-    explains in detail this topic.
+    Use In Memory Store when all of the data comfortable fit's inside the browsers memory.
+    It is possible to present big data inside an application using a combination of In Memory
+    Store and Row Grouping. For example a dataset could have 10 million rows, however due to
+    grouping only 200 rows are brought back at any group level - in this case In Memory Store
+    would work fine.
 </p>
+
+<p>
+    Use Infinite Store when all of the data at a particular group level will not comfortably
+    fit inside the browsers memory. For example a dataset with 10 million rows with no grouping
+    applied would not fit inside a browsers memory, thus Infinite Store would be needed to view it.
+</p>
+
+<h2>Infinite Store Restrictions</h2>
+
+<p>
+    The Infinite Store comes with one advantage - it can manage an very large (infinite?) amount of data.
+    However it comes with the following restrictions.
+</p>
+
+<ul>
+    <li>
+        <h3>In Grid Sorting</h3>
+        <p>
+            Because data is read back in blocks from the Infinite Store, the grid cannot sort the data,
+            as it does not have all the data loaded.
+        </p>
+
+    </li>
+    <li>
+        <h3>In Grid Filtering</h3>
+        <p>
+            Because data is read back in blocks from the Infinite Store, the grid cannot filter the data,
+            as it does not have all the data loaded.
+        </p>
+
+    </li>
+    <li>
+        <h3>Live Data</h3>
+        <p>
+            If data is live with regards inserts and deletes, this will cause problems with the
+            Infinite Store. This is because data is read back from the server in blocks.
+            If the data is changing such that the data in each block changes,
+            then the Infinite Store will get incorrect rows. For example consider the following
+            scenario:
+        </p>
+
+        <ol class="content">
+            <li>The grid asks for rows 0 to 99 (i.e. first block of 100 rows) and these get read from a database.</li>
+            <li>Another application inserts a row at index 50.</li>
+            <li>The grid asks for rows 100 to 199 (the second block of 100 rows) and again these get read from the database.</li>
+        </ol>
+
+        <p>
+            In this scenario the grid will have the last row in the first block appear again as the first row in the second
+            block. This is because the row was at index 99 before the insert and then at index 100 after the insert.
+        </p>
+
+        <p>
+            If data is changing such that row indexes will change and result in duplicate or missing rows across
+            blocks, then it is best either avoid the Infinite Store or use a snapshot of data to prevent data
+            updates.
+        </p>
+
+    </li>
+</ul>
 
 <h2>Next Up</h2>
 

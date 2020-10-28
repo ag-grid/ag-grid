@@ -109,34 +109,43 @@ SNIPPET
     </p>
 </note>
 
+<h2>Grouping and Row Stores</h2>
+
+<p>
+    When grouping and a group is expanded, a new Row Store is created to store the
+    child rows of the opened group. The diagram below shows what the Row Stores
+    could look like with Row Grouping, where two top level Row Groups are open.
+</p>
+
+<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
+    <img src="./multi-store.svg" style="width: 80%;"/>
+    <div>Fig 1. Node Store - Grouping</div>
+</div>
+
+<p>
+    This means there can be any number of Row Stores existing inside the SSRM.
+    Each time a Row Group is expanded, a new Row Store is created for that level.
+</p>
+
+<p>
+    The sections
+    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>
+    explains in detail this topic.
+</p>
+
+
+
 <h2>In-Memory vs Infinite Store</h2>
 
 <p>
     The Row Grouping mechanics are almost identical with the In-Memory Store and Infinite Store. The difference
-    is that when using the Infinite Store, data will be requested in blocks and can have sorting and
-    filtering information.
+    is that when using the Infinite Store, data will be requested in blocks and could be requested to have
+    sorting and / or filtering applied.
 </p>
 
 <p>
     All the examples presented in this section use the Infinite Store as it covers all the semantics found
-    when using the In-Memory Store.
-</p>
-
-<h2>Group Stores</h2>
-
-<p>
-    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-Side Cache</a> has already
-    been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
-    illustrated in the following diagram:
-</p>
-
-<p>
-    <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
-</p>
-
-<p>
-    When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-    loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
+    when using both store types.
 </p>
 
 <h2>Configure Stores</h2>
@@ -208,9 +217,11 @@ SNIPPET
 
 <ul>
     <li>
-        The grid is configured differently depending on whether grouping is active of not
-        by implementing the <code>getServerSideStoreParams()</code> callback. The callback
-        logs it's results to the dev console.
+        <p>
+            The grid is configured differently depending on whether grouping is active of not
+            by implementing the <code>getServerSideStoreParams()</code> callback. The callback
+            logs it's results to the dev console.
+        </p>
     </li>
     <li>
         <p>
@@ -221,6 +232,7 @@ SNIPPET
             <li>Level 1 - Infinite Scroll with block size of 5</li>
             <li>Level 2 - Infinite Scroll with block size of 2</li>
         </ul>
+        <p></p>
         <p>
             To observe, expand different levels of the data and notice when rows are read back
             in blocks.
