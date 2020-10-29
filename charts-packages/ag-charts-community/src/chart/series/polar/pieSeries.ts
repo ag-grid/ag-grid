@@ -20,6 +20,7 @@ import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 
 export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
@@ -495,9 +496,10 @@ export class PieSeries extends PolarSeries {
         }
     }
 
-    fireNodeClickEvent(datum: PieNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): void {
         this.fireEvent<PieSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,

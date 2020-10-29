@@ -22,6 +22,7 @@ import { reactive, TypedEvent } from "../../../util/observable";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: BarSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -399,9 +400,10 @@ export class BarSeries extends CartesianSeries {
         }
     }
 
-    fireNodeClickEvent(datum: BarNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): void {
         this.fireEvent<BarSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,

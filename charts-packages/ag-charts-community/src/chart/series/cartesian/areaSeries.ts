@@ -28,6 +28,7 @@ interface AreaSelectionDatum {
 
 export interface AreaSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: AreaSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -529,9 +530,10 @@ export class AreaSeries extends CartesianSeries {
         return this.markerSelectionData;
     }
 
-    fireNodeClickEvent(datum: MarkerSelectionDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): void {
         this.fireEvent<AreaSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,
