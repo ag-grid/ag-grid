@@ -84,7 +84,7 @@ SNIPPET
 
 <?= grid_example('High Frequency Flat', 'high-frequency-flat', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
-<h2>Finished Event</h2>
+<h2>Flushed Event</h2>
 
 <p>
     When transactions are applied, the event <code>asyncTransactionsApplied</code> event is fired.

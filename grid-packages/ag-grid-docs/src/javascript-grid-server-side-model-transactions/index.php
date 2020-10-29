@@ -167,6 +167,45 @@ SNIPPET
     reference.
 </p>
 
+<h2>Cancelling Transactions</h2>
+
+<p>
+    Before a transaction is applied, the grid calls the <code>isApplyServerSideTransaction()</code>
+    callback to give the application one last chance to cancel the transaction.
+</p>
+
+<p>
+    The signature of the callback is as follows:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+function isApplyServerSideTransaction(params: IsApplyServerSideTransactionParams): boolean;
+
+interface IsApplyServerSideTransactionParams {
+
+    // the trnasction getting applied
+    transaction: ServerSideTransaction,
+
+    // the parent RowNode, if transaction is applied to a group
+    parentNode: RowNode,
+
+    // store info, if any, as passed via the success() callback when loading data
+    storeInfo: any
+}
+SNIPPET
+) ?>
+
+<p>
+    If the callback returns <code>true</code>, the transaction is applied as normal
+    and the Transaction Status <code>Applied</code> is returned.
+    If the callback returns <code>false</code>, the transaction is discarded and the
+    Transaction Status <code>Cancelled</code> is returned.
+</p>
+
+<p>
+    Cancelling transactions is demonstrated in the example <a href="#targeting-stores">Targeting Stores</a>.
+</p>
+
 <h2 id="targeting-stores">Targeting Stores</h2>
 
 <p>
@@ -185,12 +224,18 @@ SNIPPET
 
 <ul>
     <li>
-        The buttons <b>New Palm Oil</b> and <b>New Rubber</b> will add one row to each group accordingly
-        and print the result to the console.
+        The button <b>New Palm Oil</b> will add one row to the Palm Oil group
+        and print the result to the console. The group must be open for the add to happen.
+    </li>
+    <li>
+        The button <b>New Rubber</b> will attempt to add one row to the Rubber group, however
+        the transaction will be cancelled due to the logic in <code>isApplyServerSideTransaction()</code>
+        callback.
     </li>
     <li>
         The button <b>New Wool & Amber</b> will add one item to each group. Note that two transactions are
         require to achieve this, one for each group, and print the results to the console.
+        The groups must be open for the add to happen.
     </li>
     <li>
         The button <b>New Product</b> will attempt to add an item to the top level, however it will fail

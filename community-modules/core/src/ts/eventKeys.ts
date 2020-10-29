@@ -46,7 +46,7 @@ export class Events {
     public static EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
 
     /** Async Transactions Executed */
-    public static EVENT_ASYNC_TRANSACTIONS_APPLIED = 'asyncTransactionsApplied';
+    public static EVENT_ASYNC_TRANSACTIONS_FLUSHED = 'asyncTransactionsFlushed';
 
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';

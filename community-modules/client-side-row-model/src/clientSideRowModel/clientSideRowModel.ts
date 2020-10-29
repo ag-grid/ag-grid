@@ -29,7 +29,7 @@ import {
     SelectionController,
     ValueCache,
     ValueService,
-    AsyncTransactionsApplied
+    AsyncTransactionsFlushed
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -816,10 +816,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         if (rowNodeTrans.length > 0) {
-            const event: AsyncTransactionsApplied = {
+            const event: AsyncTransactionsFlushed = {
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
+                type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: rowNodeTrans
             };
             this.eventService.dispatchEvent(event);

@@ -56,14 +56,14 @@ var gridOptions = {
   },
   isApplyServerSideTransaction: function(params) {
     var transactionVersion = params.transaction.serverVersion;
-    var dataLoadedVersion = params.info.serverVersion;
+    var dataLoadedVersion = params.storeInfo.serverVersion;
     var transactionCreatedSinceInitialLoad = transactionVersion > dataLoadedVersion;
     if (!transactionCreatedSinceInitialLoad) {
       console.log('cancelling transaction');
     }
     return transactionCreatedSinceInitialLoad;
   },
-  onAsyncTransactionsApplied: function(e) {
+  onAsyncTransactionsFlushed: function(e) {
     var summary = {};
     e.results.forEach(function(result) {
       var status = result.status;
@@ -72,7 +72,7 @@ var gridOptions = {
       }
       summary[status]++;
     });
-    console.log('onAsyncTransactionsApplied: ' + JSON.stringify(summary));
+    console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
   },
   asyncTransactionWaitMillis: 500,
   purgeClosedRowNodes: true,

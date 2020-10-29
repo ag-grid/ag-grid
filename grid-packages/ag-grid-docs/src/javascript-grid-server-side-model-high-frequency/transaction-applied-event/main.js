@@ -8,7 +8,7 @@ var gridOptions = {
     width: 250,
     resizable: true
   },
-  onAsyncTransactionsApplied: function(e) {
+  onAsyncTransactionsFlushed: function(e) {
     var summary = {};
     e.results.forEach(function(result) {
       var status = result.status;
@@ -17,7 +17,7 @@ var gridOptions = {
       }
       summary[status]++;
     });
-    console.log('onAsyncTransactionsApplied: ' + JSON.stringify(summary));
+    console.log('onAsyncTransactionsFlushed: ' + JSON.stringify(summary));
   },
   getRowNodeId: function(data) {return data.product; },
   rowSelection: 'multiple',

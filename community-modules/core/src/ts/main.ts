@@ -289,6 +289,8 @@ export {
 } from "./entities/colDef";
 export {
     GridOptions,
+    IsApplyServerSideTransactionParams,
+    IsApplyServerSideTransaction,
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetChartToolbarItemsParams,

@@ -360,7 +360,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
             const params = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                info: this.info
+                storeInfo: this.info
             };
             const apply = applyCallback(params);
             if (!apply) {
