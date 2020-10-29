@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
+import { localPrefix, agGridVersion } from './consts';
+import { isDevelopment } from './helpers';
 import Scripts from './Scripts';
 import Styles from './Styles';
 
@@ -10,17 +12,21 @@ const VanillaTemplate = ({ appLocation, options, scriptFiles, styleFiles, indexF
         <head>
             <title>JavaScript example</title>
             <ExampleStyle />
-            <Styles files={styleFiles} />
+            <VanillaStyles files={styleFiles} />
             <Extras options={options} />
         </head>
-        <Body appLocation={appLocation} options={options} scriptFiles={scriptFiles} indexFragment={indexFragment} />
+        <VanillaBody appLocation={appLocation} options={options} scriptFiles={scriptFiles} indexFragment={indexFragment} />
     </html>;
 
 // we have to use this function to avoid a wrapping div around the fragment
-const Body = ({ appLocation, options, scriptFiles, indexFragment }) => {
-    const agGridVersion = '24.1.0';
-    const communityScriptPath = `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js`;
-    const enterpriseScriptPath = `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.min.js`;
+const VanillaBody = ({ appLocation, options, scriptFiles, indexFragment }) => {
+    const communityScriptPath = isDevelopment() ?
+        `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js` :
+        `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js`;
+
+    const enterpriseScriptPath = isDevelopment() ?
+        `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js` :
+        `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.min.js`;
 
     const bodySuffix = ReactDOMServer.renderToStaticMarkup(
         <>
@@ -31,6 +37,21 @@ const Body = ({ appLocation, options, scriptFiles, indexFragment }) => {
     );
 
     return <body dangerouslySetInnerHTML={{ __html: `${indexFragment}\n${bodySuffix}` }}></body>;
+};
+
+const VanillaStyles = ({ files }) => {
+    if (!isDevelopment()) { return <Styles files={files} />; }
+
+    const themeFiles = ['alpine-dark', 'alpine', 'balham-dark', 'balham', 'material', 'fresh', 'dark', 'blue', 'bootstrap'];
+
+    const cssFiles = [
+        'ag-grid.css',
+        ...themeFiles.map(theme => `ag-theme-${theme}.css`)
+    ];
+
+    const cssPaths = cssFiles.map(file => `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`);
+
+    return <Styles files={[...cssPaths, ...files]} />;
 };
 
 export default VanillaTemplate;

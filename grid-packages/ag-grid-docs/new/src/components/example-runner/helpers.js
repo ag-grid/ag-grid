@@ -37,6 +37,10 @@ const getFrameworkFiles = framework => {
 
     let files = ['systemjs.config.js'];
 
+    if (isDevelopment()) {
+        files.push('systemjs.config.dev.js');
+    }
+
     if (framework === 'angular') {
         files.unshift('main.ts', 'systemjs-angular-loader.js');
     }
@@ -121,3 +125,5 @@ export const doOnEnter = (e, action) => {
         action();
     }
 };
+
+export const isDevelopment = () => process.env.NODE_ENV === 'development';

@@ -7,7 +7,7 @@ import CodeViewer from './CodeViewer';
 import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { doOnEnter, getExampleInfo, openPlunker } from './helpers';
+import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers';
 import { generateIndexHtml } from './index-html-generator';
 import styles from './example-runner.module.scss';
 
@@ -24,7 +24,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                 <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
             </a>;
 
-            if (process.env.NODE_ENV === 'development') {
+            if (isDevelopment()) {
                 // as the files will not have been generated in development, we generate the HTML for the new tab here
                 const indexHtml = generateIndexHtml(nodes, exampleInfo, true);
                 const openTab = () => {
@@ -99,7 +99,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
 };
 
 const ImportTypeSelector = ({ importType, onChange }) => {
-return <div className={`form-group ${styles.exampleRunner__importType}`}>
+    return <div className={`form-group ${styles.exampleRunner__importType}`}>
         <select className="form-control" style={{ width: 120 }} value={importType} onChange={onChange} onBlur={onChange}>
             {['packages', 'modules'].map(type =>
                 <option key={type} value={type}>{type[0].toUpperCase()}{type.substring(1)}</option>
