@@ -3,6 +3,7 @@ import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
 import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
 import {SortModelItem} from "../sortController";
+import {ServerSideStoreType} from "../entities/gridOptions";
 
 export interface IServerSideStore {
 
@@ -26,6 +27,7 @@ export interface IServerSideStore {
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;
     getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
+    addStoreStates(result: ServerSideStoreState[]): void;
 }
 
 export interface RefreshSortParams {
@@ -35,4 +37,14 @@ export interface RefreshSortParams {
     secondaryColSortChanged: boolean;
     sortAlwaysResets: boolean;
     changedColumnsInSort: string[];
+}
+
+export interface ServerSideStoreState {
+    type: ServerSideStoreType;
+    route: string[];
+    rowCount: number;
+    lastRowIndexKnown?: boolean;
+    info?: any;
+    maxBlocksInCache?: number;
+    cacheBlockSize?: number;
 }

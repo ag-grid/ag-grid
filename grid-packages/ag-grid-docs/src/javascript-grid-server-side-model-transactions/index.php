@@ -166,11 +166,42 @@ SNIPPET
     reference.
 </p>
 
-<h2>Targeting Stores</h2>
+<h2 id="targeting-stores">Targeting Stores</h2>
 
 <p>
+    When updating grouped data, a transaction needs to be targeted against the group. This is done by
+    using the transaction's <code>route</code> attribute.
 </p>
+
+<p>
+    If you require to update more than one store (ie update more than one group level), then a transaction
+    needs to be applied for each individual store (group level) to update.
+</p>
+
+<p>
+    The example below demonstrates applying transactions to a store with groups. Note the following:
+</p>
+
+<ul>
+    <li>
+        The buttons <b>New Palm Oil</b> and <b>New Rubber</b> will add one row to each group accordingly
+        and print the result to the console.
+    </li>
+    <li>
+        The button <b>New Wool & Amber</b> will add one item to each group. Note that two transactions are
+        require to achieve this, one for each group, and print the results to the console.
+    </li>
+    <li>
+        The button <b>New Product</b> will attempt to add an item to the top level, however it will fail
+        as the top level has been configured to use an Infinite store.
+    </li>
+    <li>
+        The button <b>Store State</b> will print to the console the state of the existing stores.
+    </li>
+</ul>
 
 <?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+
+
+    <?php include '../documentation-main/documentation_footer.php';?>

@@ -64,6 +64,7 @@ import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import {ServerSideStoreState} from "./interfaces/IServerSideStore";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -1405,7 +1406,7 @@ export class GridApi {
                 showLoading: true
             });
         } else {
-            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);
         }
     }
 
@@ -1413,7 +1414,16 @@ export class GridApi {
         if (this.serverSideRowModel) {
             this.serverSideRowModel.refreshStore(params);
         } else {
-            console.warn(`ag-Grid: api.refreshServerSideStore is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.`);
+        }
+    }
+
+    public getServerSideStoreState(): ServerSideStoreState[] {
+        if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getStoreState();
+        } else {
+            console.warn(`ag-Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.`);
+            return [];
         }
     }
 

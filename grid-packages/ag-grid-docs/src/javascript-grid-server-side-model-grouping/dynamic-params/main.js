@@ -60,6 +60,14 @@ var gridOptions = {
     // debug: true,
 };
 
+function onBtStoreState() {
+    var storeState = gridOptions.api.getServerSideStoreState();
+    console.log('Store States:');
+    storeState.forEach(function(state, index) {
+        console.log(index + ' - ' + JSON.stringify(state).replace(/"/g, '').replace(/,/g, ", "));
+    });
+}
+
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {

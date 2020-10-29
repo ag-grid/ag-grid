@@ -148,7 +148,47 @@ SNIPPET
     when using both store types.
 </p>
 
-<h2>Configure Stores</h2>
+<h2>Store State</h2>
+
+<p>
+    For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns
+    info on all existing <a href="../javascript-grid-server-side-model-row-stores/">Row Stores</a>.
+    This is good for learning purposes, as you can see details about the store such as the store type
+    and it's route.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+function getServerSideStoreState(): ServerSideStoreState[];
+
+interface ServerSideStoreState {
+    // store type, 'infinite' or 'inMemory'
+    type: ServerSideStoreType;
+
+    // the route that identifies this store
+    route: string[];
+
+    // how many rows the store has. this includes 'loading rows'
+    rowCount: number;
+
+    // any extra info provided to the store, when data was loaded
+    info?: any;
+
+    // for infinite store only, whether the last row index is known
+    lastRowIndexKnown?: boolean;
+    // for infinite store only, max blocks allowed in the store
+    maxBlocksInCache?: number;
+    // for infinite store only, the size (number of rows) of each block
+    cacheBlockSize?: number;
+}
+SNIPPET
+) ?>
+
+<p>
+    The example <a href="#configuring-stores">Configuring Stores</a> demonstrates the
+    <code>getServerSideStoreState()</code> API.
+</p>
+
+<h2 id="configuring-stores">Configure Stores</h2>
 
 <p>
     By default, each store will have the same configuration (store type, block size etc). This configuration
@@ -247,6 +287,12 @@ SNIPPET
         <p>
             To observe this, remove all grouping and scroll down to load more blocks. Then
             scroll back up to observe the initial blocks getting reloaded.
+        </p>
+    </li>
+    <li>
+        <p>
+            Clicking <b>Store State</b> will print the state of all stores to the console
+            using the API <code>getServerSideStoreState()</code>.
         </p>
     </li>
 </ul>

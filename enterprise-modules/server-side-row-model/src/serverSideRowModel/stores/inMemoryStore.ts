@@ -24,7 +24,9 @@ import {
     FilterManager,
     SelectionChangedEvent,
     RefreshSortParams,
-    ServerSideStoreParams
+    ServerSideStoreParams,
+    ServerSideStoreState,
+    ServerSideStoreType
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -33,7 +35,7 @@ import { NodeManager } from "../nodeManager";
 
 export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
-    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
+    @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -133,7 +135,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     protected loadFromDatasource(): void {
-        this.cacheUtils.loadFromDatasource({
+        this.storeUtils.loadFromDatasource({
             startRow: undefined,
             endRow: undefined,
             parentNode: this.parentRowNode,
@@ -315,14 +317,14 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getChildStore(keys: string[]): IServerSideStore | null {
-        return this.cacheUtils.getChildStore(keys, this, (key: string) => {
+        return this.storeUtils.getChildStore(keys, this, (key: string) => {
             const rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.key === key);
 
             return rowNode!;
         });
     }
 
-    private forEachChildStore(callback: (childStore: IServerSideStore) => void): void {
+    private forEachChildStoreShallow(callback: (childStore: IServerSideStore) => void): void {
         this.allRowNodes.forEach(rowNode => {
             const childStore = rowNode.childrenCache;
             if (childStore) {
@@ -333,12 +335,12 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterFilter(): void {
         this.filterAndSortNodes();
-        this.forEachChildStore(store => store.refreshAfterFilter());
+        this.forEachChildStoreShallow(store => store.refreshAfterFilter());
     }
 
     public refreshAfterSort(params: RefreshSortParams): void {
         this.sortRowNodes();
-        this.forEachChildStore(store => store.refreshAfterSort(params));
+        this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
@@ -494,6 +496,16 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         }
 
         return rowNode;
+    }
+
+    public addStoreStates(result: ServerSideStoreState[]): void {
+        result.push({
+            type: ServerSideStoreType.InMemory,
+            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            rowCount: this.allRowNodes.length,
+            info: this.info
+        });
+        this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
     }
 
     public refreshStore(showLoading: boolean): void {

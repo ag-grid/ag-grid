@@ -22,7 +22,9 @@ import {
     LoadSuccessParams,
     ColumnController,
     ServerSideStoreParams,
-    RefreshSortParams
+    RefreshSortParams,
+    ServerSideStoreState,
+    ServerSideStoreType
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -43,7 +45,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
+    @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('columnController') private columnController: ColumnController;
 
     private readonly ssrmParams: SSRMParams;
@@ -606,6 +608,19 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
     }
 
+    public addStoreStates(result: ServerSideStoreState[]): void {
+        result.push({
+            type: ServerSideStoreType.Infinite,
+            route: this.storeUtils.createGroupKeys(this.parentRowNode),
+            rowCount: this.rowCount,
+            lastRowIndexKnown: this.lastRowIndexKnown,
+            info: this.info,
+            maxBlocksInCache: this.storeParams.maxBlocksInCache,
+            cacheBlockSize: this.storeParams.cacheBlockSize
+        });
+        this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
+    }
+
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): CacheBlock {
 
         const block = this.createBean(new CacheBlock(
@@ -650,7 +665,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             return nextNode!;
         };
 
-        return this.cacheUtils.getChildStore(keys, this, findNodeCallback);
+        return this.storeUtils.getChildStore(keys, this, findNodeCallback);
     }
 
     public isPixelInRange(pixel: number): boolean {
@@ -689,15 +704,19 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         // call refreshAfterSort on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
+        this.forEachChildStoreShallow(store=>store.refreshAfterSort(params));
+    }
+
+    private forEachChildStoreShallow(callback: (childStore: IServerSideStore)=>void): void {
         this.getBlocksInOrder().forEach(block => {
             if (block.isGroupLevel()) {
-                const callback = (rowNode: RowNode) => {
+                const innerCallback = (rowNode: RowNode) => {
                     const nextCache = rowNode.childrenCache;
                     if (nextCache) {
-                        nextCache.refreshAfterSort(params);
+                        callback(nextCache);
                     }
                 };
-                block.forEachNodeShallow(callback, new NumberSequence());
+                block.forEachNodeShallow(innerCallback, new NumberSequence());
             }
         });
     }

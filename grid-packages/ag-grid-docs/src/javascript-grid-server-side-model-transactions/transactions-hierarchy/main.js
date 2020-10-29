@@ -84,6 +84,14 @@ function onBtNewProduct() {
   console.log('New Product, result = ' + res.status);
 }
 
+function onBtStoreState() {
+  var storeState = gridOptions.api.getServerSideStoreState();
+  console.log('Store States:');
+  storeState.forEach(function(state, index) {
+    console.log(index + ' - ' + JSON.stringify(state).replace(/"/g, '').replace(/,/g, ", "));
+  });
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');

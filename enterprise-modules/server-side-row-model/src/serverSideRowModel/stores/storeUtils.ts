@@ -20,7 +20,7 @@ export class StoreUtils extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private createGroupKeys(groupNode: RowNode): string[] {
+    public createGroupKeys(groupNode: RowNode): string[] {
         const keys: string[] = [];
 
         let pointer: RowNode | null = groupNode;
