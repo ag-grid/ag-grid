@@ -148,45 +148,6 @@ SNIPPET
     when using both store types.
 </p>
 
-<h2>Store State</h2>
-
-<p>
-    For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns
-    info on all existing <a href="../javascript-grid-server-side-model-row-stores/">Row Stores</a>.
-    This is good for learning purposes, as you can see details about the store such as the store type
-    and it's route.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-function getServerSideStoreState(): ServerSideStoreState[];
-
-interface ServerSideStoreState {
-    // store type, 'infinite' or 'inMemory'
-    type: ServerSideStoreType;
-
-    // the route that identifies this store
-    route: string[];
-
-    // how many rows the store has. this includes 'loading rows'
-    rowCount: number;
-
-    // any extra info provided to the store, when data was loaded
-    info?: any;
-
-    // for infinite store only, whether the last row index is known
-    lastRowIndexKnown?: boolean;
-    // for infinite store only, max blocks allowed in the store
-    maxBlocksInCache?: number;
-    // for infinite store only, the size (number of rows) of each block
-    cacheBlockSize?: number;
-}
-SNIPPET
-) ?>
-
-<p>
-    The example <a href="#configuring-stores">Configuring Stores</a> demonstrates the
-    <code>getServerSideStoreState()</code> API.
-</p>
 
 <h2 id="configuring-stores">Configure Stores</h2>
 
@@ -299,6 +260,93 @@ SNIPPET
 
 <?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
+
+<h2>Store State & Info</h2>
+
+<p>
+    For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns
+    info on all existing <a href="../javascript-grid-server-side-model-row-stores/">Row Stores</a>.
+    This is good for learning purposes, as you can see details about the store such as the store type
+    and it's route.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+function getServerSideStoreState(): ServerSideStoreState[];
+
+interface ServerSideStoreState {
+    // store type, 'infinite' or 'inMemory'
+    type: ServerSideStoreType;
+
+    // the route that identifies this store
+    route: string[];
+
+    // how many rows the store has. this includes 'loading rows'
+    rowCount: number;
+
+    // any extra info provided to the store, when data was loaded
+    info?: any;
+
+    // for infinite store only, whether the last row index is known
+    lastRowIndexKnown?: boolean;
+    // for infinite store only, max blocks allowed in the store
+    maxBlocksInCache?: number;
+    // for infinite store only, the size (number of rows) of each block
+    cacheBlockSize?: number;
+}
+SNIPPET
+) ?>
+
+<p>
+    Inspecting the Store State can be useful, for example when wanting to know what Route to use
+    when providing <a href="../javascript-grid-server-side-model-transactions/">Transactions</a>
+    or doing a <a href="../javascript-grid-server-side-model-refresh/">Store Refresh</a>.
+</p>
+
+<p>
+    It is also possible to attach info to each store as data is loaded. This is done through the <code>success()</code>
+    callback when rows are fetched.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Example - providing info to a store
+MyDatasource.prototype.getRows = function(params) {
+
+    // get the rows to return
+    let myRowsFromServer = ....
+
+    // pass rows back along with any additional store info
+    params.success({rowData: myRowsFromServer, info: {a: 22, b: 55});
+}
+SNIPPET
+) ?>
+
+<p>
+    The info object is merged into the Store Info (which is initially an empty object) and then available
+    in the following locations:
+</p>
+<ol>
+    <li>
+        Included in the Store State returned from <code>getServerSideStoreState()</code>.
+    </li>
+    <li>
+        Included in the params to <code>isApplyServerSideTransaction()</code>. This method
+        is explained in xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx??????.
+    </li>
+</ol>
+
+<p>
+    If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
+    as they are merged on top of the existing values.
+    Rows can be loaded multiple times if a) the store is
+    <a href="../javascript-grid-server-side-model-refresh/">Refreshed</a> or b) Infinite Store is used (as each block
+    load will get the opportunity to add info data).
+</p>
+
+<p>
+    The example below shows <code>isApplyServerSideTransaction()</code> and also Store Info in action.
+</p>
+
+<?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Providing Child Counts</h2>
 

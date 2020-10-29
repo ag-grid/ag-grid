@@ -60,6 +60,14 @@ var gridOptions = {
     // debug: true,
 };
 
+function onBtStoreState() {
+    var storeState = gridOptions.api.getServerSideStoreState();
+    console.log('Store States:');
+    storeState.forEach(function(state, index) {
+        console.log(index + ' - ' + JSON.stringify(state).replace(/"/g, '').replace(/,/g, ", "));
+    });
+}
+
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
@@ -71,7 +79,11 @@ function ServerSideDatasource(server) {
             setTimeout(function() {
                 if (response.success) {
                     // call the success callback
-                    params.successCallback(response.rows, response.lastRow);
+                    params.success({
+                        rowData: response.rows,
+                        finalRowCount: response.lastRow,
+                        info: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
+                    });
                 } else {
                     // inform the grid request failed
                     params.failCallback();
