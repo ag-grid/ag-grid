@@ -633,10 +633,6 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        _.doOnce(() => {
-            console.warn(`ag-Grid: cannot apply Server Side Transaction to a store that has Infinite Scrolling turned on. Please set blockSize=null to disable Infinite Scrolling for the store.`);
-        }, 'cacheStore.applyTransaction');
-
         return {status: ServerSideTransactionResultStatus.StoreWrongType};
     }
 

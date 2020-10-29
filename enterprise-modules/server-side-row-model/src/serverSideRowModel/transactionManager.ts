@@ -164,6 +164,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         if (res) {
             this.valueCache.onDataChanged();
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };
         }
