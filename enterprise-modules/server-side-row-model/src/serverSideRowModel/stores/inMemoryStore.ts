@@ -179,8 +179,8 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     protected processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
-        if (params.info) {
-            _.assign(this.info, params.info);
+        if (params.storeInfo) {
+            _.assign(this.info, params.storeInfo);
         }
 
         this.destroyRowNodes();

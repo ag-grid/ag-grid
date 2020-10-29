@@ -239,7 +239,7 @@ interface LoadSuccessParams {
     finalRowCount?: number;
 
     // any extra info for the grid to associate with this load
-    info?: any;
+    storeInfo?: any;
 }
 SNIPPET
 , 'ts') ?>

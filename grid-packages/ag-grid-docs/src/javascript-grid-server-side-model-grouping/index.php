@@ -315,7 +315,7 @@ MyDatasource.prototype.getRows = function(params) {
     let myRowsFromServer = ....
 
     // pass rows back along with any additional store info
-    params.success({rowData: myRowsFromServer, info: {a: 22, b: 55});
+    params.success({rowData: myRowsFromServer, storeInfo: {a: 22, b: 55});
 }
 SNIPPET
 ) ?>
@@ -330,7 +330,9 @@ SNIPPET
     </li>
     <li>
         Included in the params to <code>isApplyServerSideTransaction()</code>. This method
-        is explained in xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx??????.
+        is explained in
+        <a href="../javascript-grid-server-side-model-transactions/#cancelling-transactions">
+            Cancelling Transactions</a>.
     </li>
 </ol>
 

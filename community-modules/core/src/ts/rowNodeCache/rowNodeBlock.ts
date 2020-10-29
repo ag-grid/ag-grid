@@ -9,7 +9,7 @@ export interface LoadCompleteEvent extends AgEvent {
 export interface LoadSuccessParams {
     rowData: any[];
     finalRowCount?: number;
-    info?: any;
+    storeInfo?: any;
 }
 
 export abstract class RowNodeBlock extends BeanStub {

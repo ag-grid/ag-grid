@@ -107,8 +107,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.finalRowCount}`);
 
-        if (params.info) {
-            _.assign(this.info, params.info);
+        if (params.storeInfo) {
+            _.assign(this.info, params.storeInfo);
         }
 
         if (!params.rowData) {

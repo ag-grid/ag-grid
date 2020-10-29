@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
           params.success({
             rowData: result,
-            info: {serverVersion: serverVersion}
+            storeInfo: {serverVersion: serverVersion}
           });
         });
       }

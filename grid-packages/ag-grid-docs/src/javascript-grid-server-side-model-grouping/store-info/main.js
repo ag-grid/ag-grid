@@ -82,7 +82,7 @@ function ServerSideDatasource(server) {
                     params.success({
                         rowData: response.rows,
                         finalRowCount: response.lastRow,
-                        info: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
+                        storeInfo: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
                     });
                 } else {
                     // inform the grid request failed
