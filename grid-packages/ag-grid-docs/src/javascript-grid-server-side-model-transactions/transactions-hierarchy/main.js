@@ -24,7 +24,7 @@ var gridOptions = {
   isApplyServerSideTransaction: function(params) {
     var route = params.transaction.route;
     // cancel all transactions against rubber
-    const isRubberRoute = route && route[0] && route[0] == 'Rubber';
+    var isRubberRoute = route && route[0] && route[0] == 'Rubber';
     return !isRubberRoute;
   },
 };

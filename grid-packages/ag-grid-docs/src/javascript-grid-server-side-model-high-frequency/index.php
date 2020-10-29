@@ -129,6 +129,13 @@ SNIPPET
     <code>serverSideAsyncTransactionLoadingStrategy=true</code>.
 </p>
 
+<p>
+    The transactions will get applied to the store in the order they were provided to the grid.
+    The order will not get mixed up due to retrying. However transactions applied to other stores (e.g.
+    grouping is active and other Row Stores have loaded) will go ahead as normal. Loading only delays
+    transactions for the loading stores.
+</p>
+mentios waitint to load...
 
 
 <h2>Timing Considerations</h2>
