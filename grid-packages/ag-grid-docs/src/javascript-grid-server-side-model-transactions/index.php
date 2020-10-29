@@ -10,7 +10,8 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     Transaction Updates allow adding, removing or updating large numbers of rows inside the grid in an
-    efficient manner.
+    efficient manner. Transactions work with the
+    <a href="../javascript-grid-server-side-model-row-stores/">InMemory Store</a> only.
 </p>
 
 <p>
@@ -203,5 +204,13 @@ SNIPPET
 <?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 
+<h2>Transactions and Infinite Store</h2>
+
+<p>
+    Transaction Updates work with the SSRM and InMemory Store only. For SSRM and Infinite Store,
+    Transactions are not allowed. Instead either move your application to use InMemory Store or
+    us <a href="../javascript-grid-server-side-model-refresh/">Store Refresh</a> to have the
+    grid data update.
+</p>
 
     <?php include '../documentation-main/documentation_footer.php';?>
