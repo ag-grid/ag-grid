@@ -135,7 +135,14 @@ SNIPPET
     grouping is active and other Row Stores have loaded) will go ahead as normal. Loading only delays
     transactions for the loading stores.
 </p>
-mentios waitint to load...
+
+<p>
+    This only applies to loading stores. If the grid is limiting the number of concurrent
+    loads (property <code>maxConcurrentDatasourceRequests</code> is set) then it's possible
+    Stores are waiting to load. If they are waiting to load, transactions for updates will all
+    be discarded as no race condition is possible.
+</p>
+
 
 
 <h2>Timing Considerations</h2>

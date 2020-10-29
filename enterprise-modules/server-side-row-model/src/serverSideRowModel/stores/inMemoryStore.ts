@@ -32,6 +32,7 @@ import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
 import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
+import {TransactionManager} from "../transactionManager";
 
 export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
@@ -45,6 +46,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('transactionManager') private transactionManager: TransactionManager;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
@@ -196,6 +198,14 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         this.filterAndSortNodes();
 
         this.fireStoreUpdatedEvent();
+
+        // we want to update the store with any outstanding transactions straight away,
+        // as otherwise if waitTimeMillis is large (eg 5s), then the user could be looking
+        // at old data for a few seconds before the transactions is applied, which isn't what
+        // you would expect when we advertise 'transaction is applied when data is loaded'.
+        // we do this in a timeout as flushAsyncTransactions expects the grid to be in a settled
+        // state, not in the middle of loading rows! keeps the VM Turns more simple and deterministic.
+        window.setTimeout(()=>this.transactionManager.flushAsyncTransactions(), 0);
     }
 
     private filterAndSortNodes(): void {
