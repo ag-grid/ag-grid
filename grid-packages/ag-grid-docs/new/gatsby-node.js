@@ -4,6 +4,9 @@ const { createFilePath } = require('gatsby-source-filesystem');
 const { GraphQLString } = require('gatsby/graphql');
 const fs = require('fs-extra');
 
+/* We override this to allow us to specify the directory structure of the example files, so that we can reference
+ * them correctly in the examples. By default, Gatsby includes a cache-busting hash of the file which would cause
+ * problems if we included it. It does mean that example files could be held in the cache though. */
 exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, pathPrefix = `` }) => {
     if (type.name !== `File`) {
         return {};
@@ -49,6 +52,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
     };
 };
 
+/* We add the path onto markdown nodes which allows us to then find the relevant file when generating pages */
 exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
     if (node.internal.type === 'MarkdownRemark') {
         const filePath = createFilePath({ node, getNode });
@@ -61,14 +65,15 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
     }
 };
 
+/* This allows us to use different layouts for different pages */
 exports.onCreatePage = ({ page, actions: { createPage } }) => {
-    // this allows us to use different layouts for different pages
     if (page.path.match(/example-runner/)) {
         page.context.layout = 'bare';
         createPage(page);
     }
 };
 
+/* This creates pages for each framework from all of the markdown files, using the doc-page template */
 exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => {
     const docPageTemplate = path.resolve(`src/templates/doc-page.js`);
 
@@ -102,11 +107,13 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     });
 };
 
-// Enable development support for serving HTML from `./static` folder
+/* This allows HTML files from the static folder to be served in development mode */
 exports.onCreateDevServer = ({ app }) => {
     app.use(express.static(`public`));
 };
 
+/* We use fs to write some files during the build, but fs is only available at compile time. This allows the site to
+ * load at runtime by providing a dummy fs */
 exports.onCreateWebpackConfig = ({ actions }) => {
     actions.setWebpackConfig({
         node: {

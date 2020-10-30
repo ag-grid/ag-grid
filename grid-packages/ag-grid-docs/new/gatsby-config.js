@@ -8,6 +8,13 @@ module.exports = {
   },
   plugins: [
     {
+      // this allows IE11 to work in develop mode
+      resolve: 'gatsby-plugin-compile-es6-packages',
+      options: {
+        modules: ['popper.js', 'query-string', 'split-on-first']
+      }
+    },
+    {
       resolve: 'gatsby-plugin-page-creator',
       options: {
         path: `${__dirname}/src/pages`,
