@@ -46,6 +46,20 @@ include '../documentation-main/documentation_header.php';
     again for Async Transactions.
 </p>
 
+<?= createSnippet(<<<SNIPPET
+// Standard Sync for regular updates
+public applyServerSideTransaction(
+                    transaction: ServerSideTransaction
+            ) : ServerSideTransactionResult;
+
+// Async apply for High Frequency Updates
+public applyServerSideTransactionAsync(
+                    transaction: ServerSideTransaction,
+                    callback?: (res: ServerSideTransactionResult) => void
+            ): void;
+SNIPPET
+) ?>
+
 <p>
     Below shows a simple example using Async Transactions. Note the following:
 </p>
@@ -100,10 +114,10 @@ SNIPPET
 <?= grid_example('Transaction Flushed Event', 'transaction-flushed-event', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 
-<h3>Retry Transactions</h3>
+<h2 id="retrying-transactions">Retrying Transactions</h2>
 
 <p>
-    The Retry Transactions feature guards against Lost Updates.
+    The Retrying Transactions feature guards against Lost Updates.
     Lost updates refers to new data created in the server's data store that due to the order of data
     getting read and the transaction applied, the record ends up missing in the grid.
 </p>
@@ -139,7 +153,8 @@ SNIPPET
     </li>
     <li>
         While a refresh is underway, add records using the <b>Add</b> button. This will add records
-        to the server that will be missing in the row data the grid receives.
+        to the server that will be missing in the row data the grid receives. The transactions
+        will be applied after the data load is complete.
     </li>
     <li>
         Note the console - after rows are loaded, transactions that were received during
@@ -158,79 +173,183 @@ SNIPPET
 </p>
 
 
-<h2>Race Conditions</h2>
+<h2 id="cancelling-transactions">Cancelling Transactions</h2>
 
 <p>
-    Because the SSRM loads rows asynchronously and Async Transactions are applied asynchronously, there can
-    be race conditions resulting in Lost Updates and Duplicate Entries that your application may need to
-    guard against.
-</p>
-
-<h2>Duplicate Records</h2>
-
-<p>
+    The Cancelling Transactions feature guards against Duplicate Records.
     Duplicate records is the inverse of Lost Update. It results in records duplicating.
 </p>
 
 <p>
     Duplicate records occur when data is read from the server includes a new record (it's just in time), but
     the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied).
-    This results in the record appear twice.
+    This results in the record appearing twice.
 </p>
 
-
-<h2>======</h2>
-
-
 <p>
-    Applying Transactions asynchronously is done by using the grid API <code>cancelTx()</code> and some
-    logic that is provided by your application.
+    Before a transaction is applied, the grid calls the <code>isApplyServerSideTransaction()</code>
+    callback to give the application one last chance to cancel the transaction.
 </p>
-<p>
-    The suggested mechanism is to use versioned (or timesampted) data. When row data is loaded, the application
-    could provide a data version as storeInfo.
 
-    The signature is similar to <code>applyServerSideTransaction</code> except the result is returned asynchronously
-    via a callback.
+<p>
+    The signature of the callback is as follows:
 </p>
 
 <?= createSnippet(<<<SNIPPET
-// Standard Sync for regular updates
-public applyServerSideTransaction(
-                    transaction: ServerSideTransaction
-            ) : ServerSideTransactionResult | undefined;
+function isApplyServerSideTransaction(params: IsApplyServerSideTransactionParams): boolean;
 
-// Async apply for High Frequency Updates
-public applyServerSideTransactionAsync(
-                    transaction: ServerSideTransaction,
-                    callback?: (res: ServerSideTransactionResult) => void
-): void;
+interface IsApplyServerSideTransactionParams {
+
+    // the trnasction getting applied
+    transaction: ServerSideTransaction,
+
+    // the parent RowNode, if transaction is applied to a group
+    parentNode: RowNode,
+
+    // store info, if any, as passed via the success() callback when loading data
+    storeInfo: any
+}
 SNIPPET
 ) ?>
 
-
-<h2>Timing Considerations</h2>
-
 <p>
-    For example, the grid can request row data from the server. While the grid is waiting for the row data to be provided,
-    a transaction could be applied to insert one new record. When the row data does finally come in,
-    it is possible the new record is missing and needs to be inserted (the transaction is applied) or the row data already
-    has the record (it was read from the database after the record was created) and as such the transaction should
-    be discarded.
+    If the callback returns <code>true</code>, the transaction is applied as normal
+    and the Transaction Status <code>Applied</code> is returned.
+    If the callback returns <code>false</code>, the transaction is discarded and the
+    Transaction Status <code>Cancelled</code> is returned.
 </p>
 
 <p>
-    It is up to your application to cancel transactions that should not be applied due to race conditions.
-    This is done using the <code></code>
+    The suggested mechanism is to use versioned (or timesampted) data. When row data is loaded, the application
+    could provide a data version as
+    <a href="../javascript-grid-server-side-model-grouping/#store-state-info/">Store Info</a>.
 </p>
-
-<h2>Big Data Example</h2>
 
 <p>
-    The above examples use small datasets to help the
+    The example is configured to demonstrate this. Note the following:
 </p>
+<ul>
+    <li>
+        Use the <b>Refresh</b> button to get the grid to refresh.
+    </li>
+    <li>
+        The Datasource reads (takes a copy) of the server data, but waits 2 seconds first
+        before reading. This mimics a slow network on the way to the server.
+    </li>
+    <li>
+        While a refresh is underway, add records using the <b>Add</b> button. This will add records
+        to the server that will be existing in the row data the grid receives. The transactions
+        will be applied after the data load is complete.
+    </li>
+    <li>
+        A version is applied to the server. This version attached to both Store Info and
+        also the Transaction.
+    </li>
+    <li>
+        Note the console - after rows are loaded, transactions that were received during
+        the load are applied after the load. This means the grid will show new records even
+        though they were missing form teh loaded row data.
+    </li>
+</ul>
+
+<?= grid_example('Cancel Transactions', 'cancel-transactions', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h2>Race Conditions</h2>
+
+<p>
+    Race conditions occur because of the asynchronous nature of loading data and applying transactions.
+    Race conditions result in lost updates and duplicated records.
+</p>
+<p>
+    Lost updates are catered for by the grid by retrying transactions when Row Stores are loading
+    explained in <a href="#retrying-transactions">Retry Transactions</a> above.
+</p>
+<p>
+    Duplicate records need to be catered for by your application using the
+    <a href="#cancelling-transactions">Cancelling Transactions</a> feature explained above.
+</p>
+
+<h2>Big Example</h2>
+
+<p>
+    The above explains all the finer details of using Async Transactions. Below presents
+    an example bringing it all together with a larger dataset, grouping and streaming updates
+    from the server.
+</p>
+
+<p>
+    The example presents a simplified trading hierarchy, typically found inside a financial
+    institution.
+    The example data initially has 28 products, with each product containing 5 portfolios each,
+    each portfolio containing 5 books and each book containing 5 trades. So the data
+    has 28 products, 150 portfolios, 700 books and 3,500 trades. This data size is small comparable
+    to what the grid can handle, or what's typical for large financial institutions, however
+    it's kept to moderate size as the server is mocked in the example.
+</p>
+<p>
+    As far as the grid is concerned,
+    it is lazy loading data based on what groups the user has expanded, so it doesn't matter from
+    the grids perspective how big the dataset is on the server.
+</p>
+
+<p>
+    In theory there no limit to the number of groupings or data size allowed.
+    It's common for financial institutions to use the grid to show trading hierarchies with
+    10 or more levels in the hierarchy with 60,000 to 100,000 books.
+</p>
+
+<p>
+    In the example, note the following:
+</p>
+<ul>
+    <li>
+        The data has three levels of grouping over columns Product, Portfolio and Book.
+    </li>
+    <li>
+        The SSRM uses the InMemory store for all group levels.
+    </li>
+    <li>
+        The grid property <code>asyncTransactionWaitMillis = 500</code>, which means all
+        Async Transactions will get applied after 500ms. In applications, a lower number
+        would typically be used to give more instant feedback to the user. However
+        this example slows it down to save clutter in the dev console and make the example
+        easier to follow.
+    </li>
+    <li>
+        The button One Transaction apply one Async Transaction to the top most group
+        when data is un-sorted (Palm Oil -> Aggressive -> LB-0-0-0). When this
+        route is expanded, adding the trade can be observed.
+    </li>
+    <li>
+        The buttons Start Feed and Stop Feed start and stop live updates happening
+        on the server.
+    </li>
+    <li>
+        The example registers for live updates with the fake server. In a real world
+        example, live updates would probably be delivered using web sockets and how
+        it is managed on the server would be the responsibility of your server technology.
+    </li>
+    <li>
+        The fake server makes use of a version counter. The version at the time of data
+        reads is provided to the grid as Store Data. The version of the data at the time
+        of record creation is passed alongside the grid's transactions.
+    </li>
+    <li>
+        There are no problem with race conditions as the grid will retry transactions
+        automatically when transactions are applied against loading Row Stores, and
+        the callback <code>isApplyServerSideTransaction()</code> is implemented to
+        discard old transactions.
+    </li>
+    <li>
+        All columns are sortable. The sorting is done by the grid without needing to request
+        data again from the server.
+    </li>
+    <li>
+        Column Deal Type has a filter associated with it. The filter is done by the grid without
+        needing to request data again from the server.
+    </li>
+</ul>
 
 <?= grid_example('High Frequency Hierarchy', 'high-frequency-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -20,13 +20,7 @@ var gridOptions = {
     return {
       storeType: type
     };
-  },
-  isApplyServerSideTransaction: function(params) {
-    var route = params.transaction.route;
-    // cancel all transactions against rubber
-    var isRubberRoute = route && route[0] && route[0] == 'Rubber';
-    return !isRubberRoute;
-  },
+  }
 };
 
 var productsNames = ['Palm Oil','Rubber','Wool','Amber','Copper'];
