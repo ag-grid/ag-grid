@@ -68,7 +68,9 @@ document.addEventListener('DOMContentLoaded', function() {
     getRows: function(params) {
       var rowData = allServerSideData.slice();
       console.log('getRows: found ' + rowData.length + ' records on server.');
-      setTimeout(params.success.bind(params, {rowData: rowData}), 2000);
+      setTimeout(function() {
+        params.success({rowData: rowData});
+      }, 2000);
     }
   };
 

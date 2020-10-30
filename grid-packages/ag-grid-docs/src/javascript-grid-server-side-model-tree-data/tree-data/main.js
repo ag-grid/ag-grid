@@ -99,7 +99,7 @@ function createServerSideDatasource(fakeServer) {
         var rows = this.fakeServer.getData(params.request);
 
         setTimeout(function () {
-            params.successCallback(rows, rows.length);
+            params.success({rowData: rows, rowCount: rows.length});
         }, 200);
     };
 

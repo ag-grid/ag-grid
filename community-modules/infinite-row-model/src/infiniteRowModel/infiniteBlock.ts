@@ -162,7 +162,7 @@ export class InfiniteBlock extends RowNodeBlock {
             this.rowRenderer.redrawRows(rowNodesToRefresh);
         }
 
-        const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
+        const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
 
         this.parentCache.pageLoaded(this, finalRowCount);
     }

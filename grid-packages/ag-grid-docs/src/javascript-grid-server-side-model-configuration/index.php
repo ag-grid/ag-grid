@@ -88,7 +88,7 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>
-        The response from the server sets the <code>finalRowCount</code> property so that the
+        The response from the server sets the <code>rowCount</code> property so that the
         vertical scrollbars bounds are set such that the entire dataset can be scrolled through.
         In other words, infinite scrolling is turned off, however rows are still loaded in blocks.
     </li>

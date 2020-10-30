@@ -77,7 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var dataSource = {
     getRows: function(params) {
       var rowData = allServerSideData.slice();
-      setTimeout(params.success.bind(params, {rowData: rowData}), 200);
+      setTimeout(function() {
+        params.success({rowData: rowData});
+      }, 200);
     }
   };
 

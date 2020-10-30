@@ -54,7 +54,7 @@ function createDatasource(server) {
                 // supply rows for requested block to grid
                 params.success({
                     rowData: response.rows,
-                    finalRowCount: response.lastRow
+                    rowCount: response.lastRow
                 });
             } else {
                 // inform grid request failed
@@ -74,7 +74,7 @@ SNIPPET
 
 <p>
     Rows fetched from the server are supplied to the grid via <code>params.success()</code>.
-    Note the <code>lastRowIndex</code> can be optionally supplied to the grid.
+    Note the <code>rowCount</code> can be optionally supplied to the grid.
 </p>
 
 <h2>Registering the Datasource</h2>
@@ -236,7 +236,7 @@ interface LoadSuccessParams {
     rowData: any[];
 
     // the last row, if known
-    finalRowCount?: number;
+    rowCount?: number;
 
     // any extra info for the grid to associate with this load
     storeInfo?: any;
@@ -249,14 +249,10 @@ SNIPPET
 </p>
 
 <p>
-    The <code>finalRowCount</code> is used when Infinite Scrolling is turned on. When the total row count
+    The <code>rowCount</code> is used when Infinite Scrolling is turned on. When the total row count
     is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This
     then allows the user to scroll the full extend of the dataset and the grid will never ask for data
-    past the Final Row Count.
-
-    If the server knows how many rows are in the dataset, then <code>finalRowCount</code> informs the grid of
-    this number so the grid can adjust the range of the vertical scrollbar to match the entire dataset contained
-    on the server. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar
+    past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar
     range will grow as the user scrolls down (the default behaviour for infinite scroll).
 </p>
 

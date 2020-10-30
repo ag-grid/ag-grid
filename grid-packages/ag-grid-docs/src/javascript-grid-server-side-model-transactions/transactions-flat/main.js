@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
           });
 
           // call the success callback
-          params.successCallback(rows, rows.length);
+          params.success({rowData: rows, rowCount: rows.length});
         }, 500);
       }
     };

@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
 
           if (params.request.groupKeys.length==0) {
-            params.success({rowData: products.slice(), finalRowCount: products.length});
+            params.success({rowData: products.slice(), rowCount: products.length});
           } else {
             var key = params.request.groupKeys[0];
             var foundProduct;

@@ -121,21 +121,17 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
-
-    var dataSource = {
-      getRows: function(params) {
-        fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
-          params.success({
-            rowData: result,
-            storeInfo: {serverVersion: serverVersion}
-          });
+  var dataSource = {
+    getRows: function(params) {
+      fakeServer.getData(params.request, params.parentNode.data, function(result, serverVersion) {
+        params.success({
+          rowData: result,
+          storeInfo: {serverVersion: serverVersion}
         });
-      }
-    };
+      });
+    }
+  };
 
-    gridOptions.api.setServerSideDatasource(dataSource);
-
-    fakeServer.addUpdateListener(processUpdateFromFakeServer);
-  });
+  gridOptions.api.setServerSideDatasource(dataSource);
+  fakeServer.addUpdateListener(processUpdateFromFakeServer);
 });

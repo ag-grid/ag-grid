@@ -48,10 +48,10 @@ function ServerSideDatasource(server) {
             setTimeout(function() {
                 if (response.success) {
                     // call the success callback
-                    params.successCallback(resultsWithComplexObjects, response.lastRow);
+                    params.success({rowData: resultsWithComplexObjects, rowCount: response.lastRow});
                 } else {
                     // inform the grid request failed
-                    params.failCallback();
+                    params.fail();
                 }
             }, 200);
         }

@@ -9,7 +9,7 @@ function createServerSideDatasource(fakeServer, gridOptions) {
         var that = this;
         this.fakeServer.getData(params.request,
             function successCallback(resultForGrid, lastRow, secondaryColDefs) {
-                params.successCallback(resultForGrid, lastRow);
+                params.success({rowData: resultForGrid, rowCount: lastRow});
                 that.setSecondaryColsIntoGrid(secondaryColDefs);
             });
     };

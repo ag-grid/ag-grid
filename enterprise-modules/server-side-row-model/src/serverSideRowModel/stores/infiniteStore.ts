@@ -105,7 +105,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     public onBlockLoaded(block: CacheBlock, params: LoadSuccessParams): void {
 
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.finalRowCount}`);
+        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
         if (params.storeInfo) {
             _.assign(this.info, params.storeInfo);
@@ -116,7 +116,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             _.doOnce( () => console.warn(message, params), 'InfiniteStore.noData');
         }
 
-        const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
+        const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
