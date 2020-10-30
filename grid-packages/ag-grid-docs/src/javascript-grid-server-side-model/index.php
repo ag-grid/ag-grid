@@ -9,15 +9,27 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Server-Side Row Model</h1>
 
 <p class="lead">
-    This section gives an overview of the Server-Side Row Model and provides guidance on when it should be used.
+    This section gives an overview of the Server-Side Row Model (SSRM) and provides guidance on when it should be used.
 </p>
 
 <? enterprise_feature("Server-Side Row Model"); ?>
 
 <p>
-    The Server-Side Row Model allows applications to work with very large datasets by delegating grid operations such
-    as grouping, sorting and pivoting to the server. The data is then lazy-loaded from the server in blocks as
-    the user browses through the data. This is demonstrated below:
+    The Server-Side Row Model (SSRM) allows applications to work with very large datasets. This is done by
+    lazy-loading data from the server via the following mechanisms:
+</p>
+
+<ol>
+    <li>Lazy loading child records from group rows as group rows are expanded.</li>
+    <li>Infinite scrolling through data, loading more data as the application scrolls.</li>
+</ol>
+
+<p>
+    As a result operations such as sorting, filtering, grouping and pivoting can be delegated to the server.
+</p>
+
+<p>
+    Using the SSRM to view a large dataset is demonstrated below:
 </p>
 
 <div class="animated-example">
@@ -25,7 +37,7 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Before diving into the details of how to use the Server-Side Row Model, the next section provides an overview and
+    Before diving into the details of how to use the SSRM, the next section provides an overview and
     explains when it should be used instead of the default <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a>.
 </p>
 
@@ -69,41 +81,43 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    This is precisely the problem the Server-Side Row Model addresses, along with delegating server-side operations
+    This is precisely the problem the SSRM addresses, along with delegating server-side operations
     such as filtering, sorting, grouping and pivoting.
 </p>
 
 <p>
-    The following diagram shows the approach used by the Server-Side Row Model. Here there are 10 million records,
+    The following diagram shows the approach used by the SSRM. Here there are 10 million records,
     however the number of records is only constrained by the limits of the server-side:
 </p>
 
 <p><img src="enterprise-row-model.png" alt="enterprise-row-model" width="90%" /></p>
 
 <p>
-    As the user performs operations such as sorting and grouping, the grid issues requests to the server that contains
-    all the necessary metadata required, including which portion of data should be returned based on the user's position in
-    the dataset.
-</p>
-
-<p>
-    The browser will never run out of heap space as the grid will automatically purge out-of-range records.
+    As the user performs operations such as expanding groups, the grid issues requests to the server for more data.
 </p>
 
 <h2>Features</h2>
 
 <p>
     You may benefit from the combination of all these features or just be interested in a subset. The features of the
-    Server-Side Row Model are:
+    SSRM are:
 </p>
 
 <ul class="content">
     <li>
         <b>Lazy-Loading of Groups:</b> The grid will load the top level rows only. Children
-        of groups are only loaded when the user expands the group. Some applications may use
-        the Server-Side Row Model for this one feature alone e.g. you might have a managers database table,
-        you can display a list of all managers, then click 'expand' on the manager and the grid
-        will then request to get the 'employees' for that manager.
+        of groups are only loaded when the user expands the group.
+    </li>
+    <li>
+        <p>
+            <b>Infinite Scrolling:</b> When active, rows are read back from the server in blocks to provide the experience
+            of infinite scrolling. This allows viewing very large datasets in the browser by
+            only bringing back data one block at a time.
+        </p>
+        <p>
+            Using Infinite Scrolling is an optional feature. It is possible to bring back all the data for a particular
+            group level and then allow the grid to do Sorting and Filtering of the data in the browsers memory.
+        </p>
     </li>
     <li>
         <b>Server-Side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
@@ -112,19 +126,10 @@ include '../documentation-main/documentation_header.php';
         on the returned manager record, to say how many employees a manager manages.
     </li>
     <li>
-        <b>Infinite Scrolling:</b> Rows are read back from the server in blocks to provide the experience
-        of infinite scrolling. This happens at each grouping level
-        (i.e. the top level rows are brought back in blocks, then when you expand a group, the children
-        of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
-        only bringing back data one block at a time. This feature re-uses the logic from the
-        <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
-        how that row model works will help you in understanding this part of the Server-Side Row Model.
-    </li>
-    <li>
         <b>Slice and Dice:</b> Assuming your server-side can build the data query, you can allow the user
-        to use the ag-Grid UI to drag columns around to select what columns you want to group by and aggregate
+        to use the Grid UI to drag columns around to select what columns you want to group by and aggregate
         on. What the user selects will then be forwarded to your datasource as part of the request. This feature
-        is advanced and will require some difficult server-side coding from you, however if done correctly then
+        is advanced and will require some difficult server-side coding from you, however when done
         your users will have an experience of slicing and dicing large data in real time, something previously
         only available in expensive reporting tools, which you can now embed into your JavaScript application.
     </li>
@@ -158,7 +163,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    To get started using the Server-Side Row Model see the next section on: <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>.
+    To get started using the SSRM see the next section on: <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

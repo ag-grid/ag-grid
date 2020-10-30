@@ -11,7 +11,7 @@ import {
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
     ValueCache,
-    AsyncTransactionsApplied
+    AsyncTransactionsFlushed
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "./serverSideRowModel";
 
@@ -137,10 +137,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         }
 
         if (resultsForEvent.length > 0) {
-            const event: AsyncTransactionsApplied = {
+            const event: AsyncTransactionsFlushed = {
                 api: this.gridOptionsWrapper.getApi()!,
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                type: Events.EVENT_ASYNC_TRANSACTIONS_APPLIED,
+                type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: resultsForEvent
             };
             this.eventService.dispatchEvent(event);
@@ -164,6 +164,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
         if (res) {
             this.valueCache.onDataChanged();
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
+            return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };
         }

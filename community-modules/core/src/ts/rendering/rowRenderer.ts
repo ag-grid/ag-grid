@@ -758,7 +758,8 @@ export class RowRenderer extends BeanStub {
         const indexesToDraw = createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
         const checkRowToDraw = (indexStr: string, rowComp: RowComp) => {
-            const index = Number(indexStr);
+            const index = rowComp.getRowNode().rowIndex;
+            if (index==null) { return; }
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
                 if (this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);

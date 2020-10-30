@@ -12,6 +12,7 @@ import {
     ValueService,
     NumberSequence
 } from "@ag-grid-community/core";
+import {NodeManager} from "../nodeManager";
 
 @Bean('ssrmBlockUtils')
 export class BlockUtils extends BeanStub {
@@ -19,6 +20,7 @@ export class BlockUtils extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private rowHeight: number;
     private usingTreeData: boolean;
@@ -54,6 +56,26 @@ export class BlockUtils extends BeanStub {
         }
 
         return rowNode;
+    }
+
+    public destroyRowNodes(rowNodes: RowNode[]): void {
+        if (rowNodes) {
+            rowNodes.forEach(this.destroyRowNode.bind(this));
+        }
+    }
+
+    public destroyRowNode(rowNode: RowNode): void {
+        if (rowNode.childrenCache) {
+            this.destroyBean(rowNode.childrenCache);
+            rowNode.childrenCache = null;
+        }
+        // this is needed, so row render knows to fade out the row, otherwise it
+        // sees row top is present, and thinks the row should be shown. maybe
+        // rowNode should have a flag on whether it is visible???
+        rowNode.clearRowTop();
+        if (rowNode.id != null) {
+            this.nodeManager.removeNode(rowNode);
+        }
     }
 
     public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string): void {

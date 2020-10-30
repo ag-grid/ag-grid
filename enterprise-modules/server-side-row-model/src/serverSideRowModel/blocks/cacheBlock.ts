@@ -57,6 +57,9 @@ export class CacheBlock extends RowNodeBlock {
 
     private lastAccessed: number;
 
+    // when user is provide the id's, we also keep a map of ids to row nodes for convenience
+    private allNodesMap: {[id:string]: RowNode};
+
     public rowNodes: RowNode[];
 
     private displayIndexStart: number | undefined;
@@ -211,30 +214,47 @@ export class CacheBlock extends RowNodeBlock {
                 const data = rows[i];
                 const defaultId = this.nodeIdPrefix + (this.startRow + i);
                 this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                const newId = rowNode.id;
+                this.parentStore.removeDuplicateNode(newId!);
                 this.nodeManager.addRowNode(rowNode);
+                this.allNodesMap[rowNode.id!] = rowNode;
             }
             this.rowNodes.push(rowNode);
         }
     }
 
+    // to safeguard the grid against duplicate nodes, when a row is loaded, we check
+    // for another row in the same cache. if another row does exist, we delete it.
+    // this covers for when user refreshes the store (which typically happens after a
+    // data change) and the same row ends up coming back in a different block, and the
+    // new block finishes refreshing before the old block has finished refreshing.
+    public removeDuplicateNode(id: string): void {
+        const rowNode = this.allNodesMap[id];
+        if (!rowNode) { return; }
+
+        this.blockUtils.destroyRowNode(rowNode);
+
+        const index = this.rowNodes.indexOf(rowNode);
+
+        const stubRowNode = this.blockUtils.createRowNode(
+            {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
+                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+        );
+
+        this.rowNodes[index] = stubRowNode;
+    }
+
+    public refresh(): void {
+        if (this.getState()!==RowNodeBlock.STATE_WAITING_TO_LOAD) {
+            this.setStateWaitingToLoad();
+        }
+    }
+
     @PreDestroy
     private destroyRowNodes(): void {
-        if (this.rowNodes) {
-            this.rowNodes.forEach(rowNode => {
-                if (rowNode.childrenCache) {
-                    this.destroyBean(rowNode.childrenCache);
-                    rowNode.childrenCache = null;
-                }
-                // this is needed, so row render knows to fade out the row, otherwise it
-                // sees row top is present, and thinks the row should be shown. maybe
-                // rowNode should have a flag on whether it is visible???
-                rowNode.clearRowTop();
-                if (rowNode.id != null) {
-                    this.nodeManager.removeNode(rowNode);
-                }
-            });
-        }
+        this.blockUtils.destroyRowNodes(this.rowNodes);
         this.rowNodes = [];
+        this.allNodesMap = {};
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {

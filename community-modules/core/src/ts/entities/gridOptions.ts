@@ -14,7 +14,7 @@ import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {
-    AsyncTransactionsApplied,
+    AsyncTransactionsFlushed,
     BodyScrollEvent,
     CellClickedEvent,
     CellContextMenuEvent,
@@ -262,7 +262,7 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
     serverSideAsyncTransactionLoadingStrategy?: string;
-    serverSideStoreType?: string;
+    serverSideStoreType?: ServerSideStoreType;
 
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
 
@@ -584,7 +584,7 @@ export interface GridOptions {
 
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
-    onAsyncTransactionsApplied?(event: AsyncTransactionsApplied): void;
+    onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
@@ -617,10 +617,13 @@ export interface IsServerSideGroup {
 }
 
 export interface IsApplyServerSideTransaction {
-    (params: {
-        transaction: ServerSideTransaction,
-        parentNode: RowNode
-    }): boolean;
+    (params: IsApplyServerSideTransactionParams): boolean;
+}
+
+export interface IsApplyServerSideTransactionParams {
+    transaction: ServerSideTransaction,
+    parentNode: RowNode,
+    storeInfo: any
 }
 
 export interface GetServerSideGroupKey {
@@ -769,7 +772,7 @@ export interface ChartRef {
 }
 
 export enum ServerSideStoreType {
-    ClientSide = 'clientSide',
+    InMemory = 'inMemory',
     Infinite = 'infinite'
 }
 
@@ -782,4 +785,7 @@ export interface ServerSideStoreParams {
 export interface GetServerSideStoreParamsParams {
     level: number;
     parentRowNode?: RowNode;
+    rowGroupColumns: Column[];
+    pivotColumns: Column[];
+    pivotMode: boolean;
 }

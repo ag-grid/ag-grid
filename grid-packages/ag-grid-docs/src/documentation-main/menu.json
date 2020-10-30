@@ -508,6 +508,11 @@
                 "enterprise": true
               },
               {
+                "title": "Row Stores",
+                "url": "javascript-grid-server-side-model-row-stores/",
+                "enterprise": true
+              },
+              {
                 "title": "Configuration",
                 "url": "javascript-grid-server-side-model-configuration/",
                 "enterprise": true
@@ -528,6 +533,11 @@
                 "enterprise": true
               },
               {
+                "title": "Refresh",
+                "url": "javascript-grid-server-side-model-refresh/",
+                "enterprise": true
+              },
+              {
                 "title": "Pivoting",
                 "url": "javascript-grid-server-side-model-pivoting/",
                 "enterprise": true
@@ -543,6 +553,28 @@
                 "enterprise": true
               },
               {
+                "title": "Changing Columns",
+                "url": "javascript-grid-server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Updating Data",
+                "url": "javascript-grid-server-side-model-updating/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Transactions",
+                    "url": "javascript-grid-server-side-model-transactions/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "High Frequency",
+                    "url": "javascript-grid-server-side-model-high-frequency/",
+                    "enterprise": true
+                  }
+                ]
+              },
+              {
                 "title": "Row Height",
                 "url": "javascript-grid-server-side-model-row-height/",
                 "enterprise": true
@@ -555,21 +587,6 @@
               {
                 "title": "Tree Data",
                 "url": "javascript-grid-server-side-model-tree-data/",
-                "enterprise": true
-              },
-              {
-                "title": "Changing Columns",
-                "url": "javascript-grid-server-side-model-changing-columns/",
-                "enterprise": true
-              },
-              {
-                "title": "CRUD",
-                "url": "javascript-grid-server-side-model-crud/",
-                "enterprise": true
-              },
-              {
-                "title": "Niall's Spike",
-                "url": "javascript-grid-server-side-model-proto/",
                 "enterprise": true
               },
               {

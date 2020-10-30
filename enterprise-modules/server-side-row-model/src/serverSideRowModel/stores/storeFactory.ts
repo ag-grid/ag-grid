@@ -10,9 +10,9 @@ import {
     ServerSideStoreType,
     ColumnController
 } from "@ag-grid-community/core";
-import {ClientSideStore} from "./clientSideStore";
 import {InfiniteStore} from "./infiniteStore";
 import {SSRMParams} from "../serverSideRowModel";
+import {InMemoryStore} from "./inMemoryStore";
 
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.storeType === ServerSideStoreType.ClientSide ? ClientSideStore : InfiniteStore;
+        const CacheClass = storeParams.storeType === ServerSideStoreType.InMemory ? InMemoryStore : InfiniteStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
@@ -49,7 +49,7 @@ export class StoreFactory {
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
         : number | undefined {
 
-        if (storeType==ServerSideStoreType.ClientSide) { return undefined; }
+        if (storeType==ServerSideStoreType.InMemory) { return undefined; }
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache!=null)
             ? userStoreParams.maxBlocksInCache
@@ -79,7 +79,7 @@ export class StoreFactory {
     }
 
     private getBlockSize(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): number | undefined {
-        if (storeType==ServerSideStoreType.ClientSide) { return undefined; }
+        if (storeType==ServerSideStoreType.InMemory) { return undefined; }
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize!=null)
             ? userStoreParams.cacheBlockSize
@@ -99,7 +99,10 @@ export class StoreFactory {
 
         const params: GetServerSideStoreParamsParams = {
             level: parentNode.level + 1,
-            parentRowNode: parentNode.level >= 0 ? parentNode : undefined
+            parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
+            rowGroupColumns: this.columnController.getRowGroupColumns(),
+            pivotColumns: this.columnController.getPivotColumns(),
+            pivotMode: this.columnController.isPivotMode()
         };
 
         return callback(params);
@@ -113,7 +116,7 @@ export class StoreFactory {
 
         switch (storeType) {
             case ServerSideStoreType.Infinite :
-            case ServerSideStoreType.ClientSide :
+            case ServerSideStoreType.InMemory :
                 return storeType;
             case null :
             case undefined :

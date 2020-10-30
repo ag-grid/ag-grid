@@ -6,10 +6,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Grouping</h1>
+<h1 class="heading-enterprise">SSRM Row Grouping</h1>
 
 <p class="lead">
-    This section covers Server-Side Row Grouping.
+    This section covers Row Grouping in the Server-Side Row Model (SSRM).
 </p>
 
 <h2>Enabling Row Grouping</h2>
@@ -42,7 +42,7 @@ SNIPPET
     The actual grouping of rows is performed on the server when using the Server-Side Row Model. When the grid needs
     more rows it makes a request via <code>getRows(params)</code> on the
     <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a> with
-    metadata containing pivoting details.
+    metadata containing grouping details.
 </p>
 
 <p>
@@ -65,10 +65,9 @@ SNIPPET
 
 <p>
     Note in the snippet above that <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping
-    on, e.g. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, e.g. <code>['Argentina', 2012]</code>.
+    on, e.g. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, e.g.
+    <code>['Argentina', '2012']</code>.
 </p>
-
-<h2>Example: Server-Side Row Grouping</h2>
 
 <p>
     The example below demonstrates server-side Row Grouping. Note the following:
@@ -76,7 +75,16 @@ SNIPPET
 
 <ul class="content">
     <li>
-        <b>Country</b> and <b>Sport</b> columns have <code>rowGroup=true</code> defined on their column definitions.
+        The Infinite Store is used (the default).
+    </li>
+    <li>
+        The store block size is set to 5 by setting the grid property <code>cacheBlockSize = 5</code>.
+        It can then be observed that rows are loaded in blocks at all levels. For example if you expand
+        United States row, the children rows are loaded in blocks using Infinite Scrolling.
+    </li>
+    <li>
+        Country and Sport columns have <code>rowGroup=true</code> defined on their column definitions.
+        This tells the grid there is two levels of grouping, one for Country and one for Sport.
     </li>
     <li>
         The <code>rowGroupCols</code> and <code>groupKeys</code> properties in the request are used by the server
@@ -101,23 +109,246 @@ SNIPPET
     </p>
 </note>
 
-
-<h2>Group Caches</h2>
+<h2>Grouping and Row Stores</h2>
 
 <p>
-    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-Side Cache</a> has already
-    been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
-    illustrated in the following diagram:
+    When grouping and a group is expanded, a new Row Store is created to store the
+    child rows of the opened group. The diagram below shows what the Row Stores
+    could look like with Row Grouping, where two top level Row Groups are open.
+</p>
+
+<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
+    <img src="./multi-store.svg" style="width: 80%;"/>
+    <div>Fig 1. Node Store - Grouping</div>
+</div>
+
+<p>
+    This means there can be any number of Row Stores existing inside the SSRM.
+    Each time a Row Group is expanded, a new Row Store is created for that level.
 </p>
 
 <p>
-    <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
+    The sections
+    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>
+    explains in detail this topic.
+</p>
+
+
+
+<h2>In-Memory vs Infinite Store</h2>
+
+<p>
+    The Row Grouping mechanics are almost identical with the In-Memory Store and Infinite Store. The difference
+    is that when using the Infinite Store, data will be requested in blocks and could be requested to have
+    sorting and / or filtering applied.
 </p>
 
 <p>
-    When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-    loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
+    All the examples presented in this section use the Infinite Store as it covers all the semantics found
+    when using both store types.
 </p>
+
+
+<h2 id="configuring-stores">Configure Stores</h2>
+
+<p>
+    By default, each store will have the same configuration (store type, block size etc). This configuration
+    is specified using the grid properties <code>serverSideStoreType</code>, <code>maxBlocksInCache</code>
+    and <code>cacheBlockSize</code>.
+</p>
+
+<p>
+    It is possible to have different configurations for different stores. For example if grouping, infinite
+    scrolling could be turned off at the top level but turned on at the lower levels.
+</p>
+
+<p>
+    This is done by implementing the grid callback <code>getServerSideStoreParams()</code>. It's interface
+    is as follows:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// functions takes params and also returns a different type of params
+function getServerSideStoreParams(params: GetServerSideStoreParamsParams): ServerSideStoreParams;
+
+// these params the function gets, gives details on where the store is getting created
+interface GetServerSideStoreParamsParams {
+
+    // the level of the store. top level is 0.
+    level: number;
+
+    // the Row Node for the group that got expanded, or undefined if top level (ie no parent)
+    parentRowNode?: RowNode;
+
+    // active Row Group Columns, if any
+    rowGroupColumns: Column[];
+
+    // active Pivot Columns, if any
+    pivotColumns: Column[];
+
+    // true if pivot mode is active
+    pivotMode: boolean;
+}
+
+// these params the function returns, it's configuration for the store about to be created
+interface ServerSideStoreParams {
+
+    // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
+    storeType?: ServerSideStoreType;
+
+    // how many blocks to keep in cach. if missing, defaults to grid options 'maxBlocksInCache'
+    maxBlocksInCache?: number;
+
+    // cache block size. if missing, defaults to grid options 'cacheBlockSize'
+    cacheBlockSize?: number;
+}
+
+// for storeType above, one of 'inMemory' or 'infinite'
+enum ServerSideStoreType {
+    InMemory = 'inMemory',
+    Infinite = 'infinite'
+}
+
+SNIPPET
+, 'ts') ?>
+
+<p>
+    The example below demonstrates the <code>getServerSideStoreParams()</code> callback. Note
+    the following:
+</p>
+
+<ul>
+    <li>
+        <p>
+            The grid is configured differently depending on whether grouping is active of not
+            by implementing the <code>getServerSideStoreParams()</code> callback. The callback
+            logs it's results to the dev console.
+        </p>
+    </li>
+    <li>
+        <p>
+            When grouping is active, the stores are configured as follows:
+        </p>
+        <ul>
+            <li>Level 0 - No Infinite Scroll</li>
+            <li>Level 1 - Infinite Scroll with block size of 5</li>
+            <li>Level 2 - Infinite Scroll with block size of 2</li>
+        </ul>
+        <p></p>
+        <p>
+            To observe, expand different levels of the data and notice when rows are read back
+            in blocks.
+        </p>
+    </li>
+    <li>
+        <p>
+            When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks
+            of rows in the store.
+        </p>
+        <p>
+            To observe this, remove all grouping and scroll down to load more blocks. Then
+            scroll back up to observe the initial blocks getting reloaded.
+        </p>
+    </li>
+    <li>
+        <p>
+            Clicking <b>Store State</b> will print the state of all stores to the console
+            using the API <code>getServerSideStoreState()</code>.
+        </p>
+    </li>
+</ul>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
+
+<h2>Store State & Info</h2>
+
+<p>
+    For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns
+    info on all existing <a href="../javascript-grid-server-side-model-row-stores/">Row Stores</a>.
+    This is good for learning purposes, as you can see details about the store such as the store type
+    and it's route.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+function getServerSideStoreState(): ServerSideStoreState[];
+
+interface ServerSideStoreState {
+    // store type, 'infinite' or 'inMemory'
+    type: ServerSideStoreType;
+
+    // the route that identifies this store
+    route: string[];
+
+    // how many rows the store has. this includes 'loading rows'
+    rowCount: number;
+
+    // any extra info provided to the store, when data was loaded
+    info?: any;
+
+    // for infinite store only, whether the last row index is known
+    lastRowIndexKnown?: boolean;
+    // for infinite store only, max blocks allowed in the store
+    maxBlocksInCache?: number;
+    // for infinite store only, the size (number of rows) of each block
+    cacheBlockSize?: number;
+}
+SNIPPET
+) ?>
+
+<p>
+    Inspecting the Store State can be useful, for example when wanting to know what Route to use
+    when providing <a href="../javascript-grid-server-side-model-transactions/">Transactions</a>
+    or doing a <a href="../javascript-grid-server-side-model-refresh/">Store Refresh</a>.
+</p>
+
+<p>
+    It is also possible to attach info to each store as data is loaded. This is done through the <code>success()</code>
+    callback when rows are fetched.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Example - providing info to a store
+MyDatasource.prototype.getRows = function(params) {
+
+    // get the rows to return
+    let myRowsFromServer = ....
+
+    // pass rows back along with any additional store info
+    params.success({rowData: myRowsFromServer, storeInfo: {a: 22, b: 55});
+}
+SNIPPET
+) ?>
+
+<p>
+    The info object is merged into the Store Info (which is initially an empty object) and then available
+    in the following locations:
+</p>
+<ol>
+    <li>
+        Included in the Store State returned from <code>getServerSideStoreState()</code>.
+    </li>
+    <li>
+        Included in the params to <code>isApplyServerSideTransaction()</code>. This method
+        is explained in
+        <a href="../javascript-grid-server-side-model-transactions/#cancelling-transactions">
+            Cancelling Transactions</a>.
+    </li>
+</ol>
+
+<p>
+    If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
+    as they are merged on top of the existing values.
+    Rows can be loaded multiple times if a) the store is
+    <a href="../javascript-grid-server-side-model-refresh/">Refreshed</a> or b) Infinite Store is used (as each block
+    load will get the opportunity to add info data).
+</p>
+
+<p>
+    The example below shows <code>isApplyServerSideTransaction()</code> and also Store Info in action.
+</p>
+
+<?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Providing Child Counts</h2>
 
@@ -142,110 +373,6 @@ SNIPPET
 ) ?>
 
 <?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
-
-<h2>Purging Groups</h2>
-
-<p>
-    The grid has the following API to allow you to interact with the server-side cache.
-</p>
-
-<table class="table reference">
-    <tr>
-        <th>Method</th>
-        <th>Description</th>
-    </tr>
-    <tr id="api-purge-virtual-page-cache">
-        <th>purgeServerSideCache(route)</th>
-        <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
-                purge a child cache, pass in the string of keys to get to the child cache.
-                For example, to purge the cache two levels down under 'Canada' and then '2002', pass
-                in the string array <code>['Canada','2002']</code>. If you purge a cache, then all row nodes
-                for that cache will be reset to the closed state, and all child caches will be destroyed.</p></td>
-    </tr>
-    <tr id="api-get-virtual-page-state">
-        <th>getCacheBlockState()</th>
-        <td>
-            Returns an object representing the state of the cache. This is useful for debugging and understanding
-            how the cache is working.</td>
-    </tr>
-</table>
-
-<p>
-    Below shows the API in action. The following can be noted:
-</p>
-
-<ul class="content">
-    <li>
-        Button <b>Purge Everything</b> purges the top level cache.
-    </li>
-    <li>
-        Button <b>Purge [Canada]</b> purges the Canada cache only. To see this in action, make sure you have
-        Canada expanded.
-    </li>
-    <li>
-        Button <b>Purge [Canada,2002]</b> purges the 2002 cache under Canada only. To see this in action, make
-        sure you have Canada and then 2002 expanded.
-    </li>
-    <li>
-        Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
-    </li>
-</ul>
-
-<?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
-
-<h2>Preserving Group State</h2>
-
-<p>
-    It may be necessary to expand groups to a desired initial state or to restore the grid to a previous state after
-    purging / reloading data.
-</p>
-
-<p>
-    This can be achieved by expanding row nodes as blocks are loaded in the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>. The following
-    snippet outlines a possible approach:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-function getRows(params) {
-    // 1) get data from server
-    var response = getServerResponse(params.request);
-
-    // 2) call the success callback
-    params.successCallback(response.rowsThisBlock, response.lastRow);
-
-    // 3) to preserve group state we expand any previously expanded groups for this block
-    rowsInThisBlock.forEach(function(row) {
-        if (expandedGroupIds.indexOf(row.id) > -1) {
-            gridOptions.api.getRowNode(row.id).setExpanded(true);
-        }
-    });
-}
-SNIPPET
-) ?>
-
-<p>
-    Notice that in step 3, newly loaded row nodes for the current block are expanded if they are defined in <code>expandedGroupIds</code>,
-    which is an array of group keys maintained by the application. This will have a cascading effect as expanding a
-    group will cause new block(s) to load.
-</p>
-
-<p>
-    In order to easily look up group row nodes, implementing the following callback is recommended: <code>gridOptions.getRowNodeId()</code>.
-</p>
-
-<p>
-    In the example below, the following can be noted:
-</p>
-
-<ul>
-    <li>The grid has an initial expanded group state where:
-        <code>expandedGroupIds = ['Russia', "Russia-2002", "Ireland", 'Ireland-2008']</code></li>
-    <li>The group state is updated in <code>expandedGroupIds</code> by using listening to the grid event: <code>RowGroupOpened</code>.</li>
-    <li>Clicking the 'Purge Caches' button reloads data. Notice that the group state has been preserved.</li>
-</ul>
-
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Complex Columns</h2>
 
@@ -290,7 +417,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Server-Side Pivoting</a>.
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-refresh/">SSRM Refresh</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -22,12 +22,15 @@ var gridOptions = {
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
+        field: 'athlete'
     },
 
     // use the server-side row model
     rowModelType: 'serverSide',
 
     suppressAggFuncInHeader: true,
+
+    cacheBlockSize: 5,
 
     animateRows: true,
     // debug: true,
@@ -49,7 +52,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-            }, 200);
+            }, 1000);
         }
     };
 }

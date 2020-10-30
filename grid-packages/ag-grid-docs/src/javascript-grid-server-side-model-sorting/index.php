@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Sorting</h1>
+<h1 class="heading-enterprise">SSRM Sorting</h1>
 
 <p class="lead">
     This section covers Server-Side Sorting using the Server-Side Row Model.
@@ -36,13 +36,13 @@ SNIPPET
     For more details on sorting configurations see the section on <a href="../javascript-grid-sorting/">Row Sorting</a>.
 </p>
 
-<h2>Sorting on the Server</h2>
+<h2>Infinite Store Sorting</h2>
 
 <p>
-    The actual sorting of rows is performed on the server when using the Server-Side Row Model. When a sort is applied
-    in the grid a request is made for more rows via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>. The
-    supplied params includes a request containing sort metadata contained in the <code>sortModel</code> property.
+    When using the Infinite Store, sorting of rows is performed on the server. When a sort is applied
+    in the grid a request is made for more rows via the
+    <a href="../javascript-grid-server-side-model-datasource/">Datasource</a>.
+    The provided request contains sort metadata in the <code>sortModel</code> property.
 </p>
 
 <p>
@@ -50,7 +50,7 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-//IServerSideGetRowsRequest
+// Example request with sorting info
 {
     sortModel: [
         { colId: 'country', sort: 'asc' },
@@ -67,22 +67,24 @@ SNIPPET
     active sorts in the grid. The column ID and sort type can then be used by the server to perform the actual sorting.
 </p>
 
-<h3>Example: Server-Side Sorting</h3>
-
 <p>
-    The example below demonstrates server-side sorting. Notice the following:
+    The example below demonstrates soring using the SSRM and the Infinite Store. Note the following:
 </p>
 
 <ul class="content">
-    <li>Try single / multi column (using <code>Shift</code> key) sorting by clicking on column headers.</li>
-    <li>All columns have sorting enabled using the <code>defaultColDef</code> grid options property with
-        <code>sortable=true</code>.
-    </li>
+    <li>The grid is using the Infinite Row Store (the default store).</li>
+    <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
     <li>The server uses the metadata contained in the <code>sortModel</code> to sort the rows.</li>
     <li>Open the browser's dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
+    <li>Try single / multi column (using <code>Shift</code> key) sorting by clicking on column headers.</li>
 </ul>
 
-<?= grid_example('Server-Side Sorting', 'sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+<?= grid_example('Infinite Sorting', 'infinite-sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
+<note>
+    When using the Infinite Store, it is not possible for the grid to sort the data as it
+    doesn't not have all the data loaded to sort.
+</note>
 
 <note>
     <p><strong>Fake Server Implementation</strong></p>
@@ -96,11 +98,30 @@ SNIPPET
     </p>
 </note>
 
+<h2>In Memory Store Sorting</h2>
+
+<p>
+    When using the In Memory Store, sorting of rows is performed by the grid. There is nothing
+    special to be done by the server.
+</p>
+
+<p>
+    The example below demonstrates the In Memory Store sorting. Note the following:
+</p>
+
+<ul class="content">
+    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
+    <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
+    <li>Rows are loaded once. All sorting is then subsequently done by the grid.</li>
+</ul>
+
+<?= grid_example('In Memory Sorting', 'in-memory-sorting', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
 <h2>Next Up</h2>
 
 <p>
     Continue to the next section to learn about
-    <a href="../javascript-grid-server-side-model-filtering/">Server-Side Filtering</a>.
+    <a href="../javascript-grid-server-side-model-filtering/">SSRM Filtering</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

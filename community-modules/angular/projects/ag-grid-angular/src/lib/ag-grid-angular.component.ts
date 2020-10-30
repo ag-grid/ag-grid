@@ -433,7 +433,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnResized: EventEmitter<any> = new EventEmitter<any>();
     @Output() public displayedColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public virtualColumnsChanged: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public asyncTransactionsApplied: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public asyncTransactionsFlushed: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowGroupOpened: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDataUpdated: EventEmitter<any> = new EventEmitter<any>();

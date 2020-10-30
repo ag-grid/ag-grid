@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Tree Data</h1>
+<h1 class="heading-enterprise">SSRM Tree Data</h1>
 
 <p class="lead">
     This section shows how Tree Data can be used with the Server-Side Row Model.

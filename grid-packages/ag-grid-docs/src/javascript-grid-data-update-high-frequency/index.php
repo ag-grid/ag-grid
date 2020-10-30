@@ -107,7 +107,7 @@ SNIPPET
         Transactions getting added and executed is logged to the console.
     </li>
     <li>
-        The example listens on event <code>asyncTransactionsApplied</code> and logs how many
+        The example listens on event <code>asyncTransactionsFlushed</code> and logs how many
         transactions got applied.
     </li>
 </ul>

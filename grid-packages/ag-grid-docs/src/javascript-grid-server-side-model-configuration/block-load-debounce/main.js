@@ -19,18 +19,10 @@ var gridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // fetch 200 rows at a time (default is 100)
-  cacheBlockSize: 200,
-
-  // only keep 10 blocks of rows (default is all rows cached)
-  maxBlocksInCache: 10,
-
   // adding a debounce to allow skipping over blocks while scrolling
-  blockLoadDebounceMillis: 100,
+  blockLoadDebounceMillis: 1000,
 
-  debug: true,
-
-  animateRows: true,
+  debug: true
 };
 
 // setup the grid after the page has finished loading
@@ -73,11 +65,11 @@ function createServerSideDatasource(server) {
       setTimeout(function () {
         if (response.success) {
           // supply rows for requested block to grid
-          params.successCallback(response.rows, response.lastRow);
+          params.success({rowData: response.rows, finalRowCount: response.lastRow});
         } else {
-          params.failCallback();
+          params.fail();
         }
-      }, 500);
+      }, 100);
     }
   };
 }

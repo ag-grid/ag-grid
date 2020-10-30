@@ -185,8 +185,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore, RefreshSortParams } from "./interfaces/IServerSideStore";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore, RefreshSortParams, ServerSideStoreState } from "./interfaces/IServerSideStore";
 
 export { ISideBar } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -289,6 +289,8 @@ export {
 } from "./entities/colDef";
 export {
     GridOptions,
+    IsApplyServerSideTransactionParams,
+    IsApplyServerSideTransaction,
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetChartToolbarItemsParams,

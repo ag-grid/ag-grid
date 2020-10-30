@@ -37,7 +37,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel, IServerSideTransactionManager } from "./interfaces/iServerSideRowModel";
+import {IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
@@ -64,6 +64,7 @@ import { doOnce } from "./utils/function";
 import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
+import {ServerSideStoreState} from "./interfaces/IServerSideStore";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -1397,11 +1398,32 @@ export class GridApi {
         this.purgeServerSideCache(route);
     }
 
-    public purgeServerSideCache(route?: string[]): void {
+    public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            this.serverSideRowModel.purgeStore(route);
+            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore() instead.`);
+            this.refreshServerSideStore({
+                route: route,
+                showLoading: true
+            });
         } else {
-            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);
+        }
+    }
+
+    public refreshServerSideStore(params: RefreshStoreParams): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.refreshStore(params);
+        } else {
+            console.warn(`ag-Grid: api.refreshServerSideStore is only available when rowModelType='serverSide'.`);
+        }
+    }
+
+    public getServerSideStoreState(): ServerSideStoreState[] {
+        if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getStoreState();
+        } else {
+            console.warn(`ag-Grid: api.getServerSideStoreState is only available when rowModelType='serverSide'.`);
+            return [];
         }
     }
 

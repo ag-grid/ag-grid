@@ -6,44 +6,13 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Configuration</h1>
+<h1 class="heading-enterprise">SSRM Configuration</h1>
 
 <p class="lead">
-    This section covers the Server-Side Cache and configurations available in the Server-Side Row Model.
+    This section covers the Server-Side Row Model (SSRM) configuration options.
 </p>
 
-<p>
-    As many of the configurations available in the Server-Side Row Model relate to the Server-Side Cache it is important
-    to understand how the grid organises data obtained from the server into caches.
-</p>
-
-<h2>Server-Side Cache</h2>
-
-<p>
-    At the heart of the Server-Side Row Model lies the Server-Side Cache. There is a cache containing the top-level
-    rows (i.e. on the root node) and for each individual <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> level.
-</p>
-
-<p>
-    When the grid loads it will retrieve an initial number (as per configuration) of blocks containing rows. As the user
-    scrolls down, more blocks will be loaded via the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>.
-</p>
-
-<p>
-    The following illustration shows how the grid arranges rows into blocks which are in turn stored in a cache:
-</p>
-
-<p>
-    <img src="serverSideCache.png" width="75%" height="75%" style="border: 1px  grey"/>
-</p>
-
-<p>
-    To control the browser memory footprint, server-side blocks and their containing caches are lazy-loaded, and can
-    be configured to purge automatically or manually via API calls.
-</p>
-
-<h2>Configurations</h2>
+<h2>SSRM Grid Properties</h2>
 
 <p>
     Applications can fine-tune the Server-Side Row Model based on specific application requirements using the following
@@ -52,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 
 <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'serverSideRowModel') ?>
 
-<h2>Cache Debugging</h2>
+<h2>Debug Info</h2>
 
 <p>
     When experimenting with different configurations it is useful to enable debug mode as follows:
@@ -75,25 +44,59 @@ include '../documentation-main/documentation_header.php';
 
 <p>This can be very useful when debugging issues on the server.</p>
 
-<h2>Example: Block Loading Debounce</h2>
+<h2>Custom Infinite Store</h2>
 
 <p>
-    The example below demonstrates a number of the configurations listed in this section and shows how adding a debounce
-    to block loading allows for quick scrolling over rows. Note the following:
+    The example below shows a customised SSRM using the Infinite Store.
+    Note the following:
+</p>
+
+<ul>
+    <li>
+        The grid property <code>serverSideStoreType = infinite</code>,
+        which gets the Infinite Store to be used. The grid loads rows one block at a time
+        as the user scrolsl down.
+    </li>
+    <li>
+        The grid property <code>cacheBlockSize = 50</code>. This sets the block
+        size to 50, thus rows are read back 50 at a time.
+    </li>
+    <li>
+        The grid property <code>maxBlocksInCache = 2</code>. This means the grid
+        will keep two blocks in memory only. To see this in action, scroll past row 100 (which will
+        require a third block to be loaded), then quickly scroll back to the start and you will
+        observe the first block needs to be reloaded.
+    </li>
+    <li>
+        The grid property <code>rowBuffer = 0</code>. This means the grid will not render
+        any rows outside the vertical scroll. This is good for demonstrating this example,
+        as otherwise the loading could appear outside of the visible area and make the example
+        more difficult to understand. See
+        <a href="../javascript-grid-dom-virtualisation/">DOM Virtualisation</a> for more information
+        on setting the <code>rowBuffer</code> property.
+    </li>
+</ul>
+
+<?= grid_example('Custom Infinite', 'custom-infinite', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h2>Custom Loading Debounce</h2>
+
+<p>
+    The example below demonstrates debouncing the block loading.
+    Note the following:
 </p>
 
 <ul class="content">
-    <li><code>cacheBlockSize=200</code> - fetches 200 rows per request instead of 100 by default.</li>
     <li>
-        <code>maxBlocksInCache=10</code> - once a cache contains 10 blocks the oldest blocks will be
-        purged to ensure the cache is constrained to 10 blocks. By default all blocks are kept.
+        The response from the server sets the <code>finalRowCount</code> property so that the
+        vertical scrollbars bounds are set such that the entire dataset can be scrolled through.
+        In other words, infinite scrolling is turned off, however rows are still loaded in blocks.
     </li>
     <li>
-        <code>blockLoadDebounceMillis=100</code> - loading of blocks is delayed by <code>100ms</code>. This
-        allows for skipping over blocks when scrolling to advanced positions. Note that the last row index
-        should be supplied in <code>successCallback(rows, lastRow)</code> so that the scrollbars are sized correctly.
+        <code>blockLoadDebounceMillis = 1000</code> - loading of blocks is delayed by <code>1000ms</code>. This
+        allows for skipping over blocks when scrolling to advanced positions.
     </li>
-    <li><code>debug=true</code> - open the browser's dev console to view the cache status and block details.</li>
+    <li>The grid property <code>debug = true</code>. This means the browser's dev console will show loading block details.</li>
 </ul>
 
 <?= grid_example('Block Loading Debounce', 'block-load-debounce', 'generated', ['enterprise' => true, 'modules' => ['serverside', 'menu', 'columnpanel']]) ?>

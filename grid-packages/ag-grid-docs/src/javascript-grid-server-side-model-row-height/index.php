@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Height</h1>
+<h1 class="heading-enterprise">SSRM Row Height</h1>
 
 <p class="lead">
     Learn how to set Row Height when using the Server-Side Row Model.

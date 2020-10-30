@@ -539,26 +539,29 @@
         "meta": {
             "displayName": "Row Model: Server-Side"
         },
+        "serverSideStoreType": {
+            "description": "Whether to use Infinite Store or In Memory Store for storing rows.",
+            "options": [
+                "infinite",
+                "inMemory"
+            ]
+        },
         "cacheBlockSize": {
             "default": 100,
-            "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time."
+            "description": "Infinite Store Only - How many rows for each block in the cache, i.e. how many rows returned from the server at a time."
         },
         "maxBlocksInCache": {
-            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible - in case this property is set to low."
-        },
-        "cacheOverflowSize": {
-            "default": 1,
-            "description": "When infinite scrolling is active, this says how many rows beyond the current last row the scrolls should allow to scroll. For example, if 200 rows already loaded from server, and <code>cacheOverflowSize</code> is <code>50</code>, the scroll will allow scrolling to row 250."
+            "description": "Infinite Store Only - how many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible - in case this property is set to low."
         },
         "maxConcurrentDatasourceRequests": {
             "default": 1,
             "description": "How many requests to hit the server with concurrently. If the max is reached, requests are queued."
         },
         "blockLoadDebounceMillis": {
-            "description": "Prevents blocks loading until scrolling has stopped for the specified number of milliseconds. When row count (i.e. lastRowIndex) is known, setting this property will enable skipping over blocks when scrolling."
+            "description": "How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Infinite Store blocks, as it prevents blocks loading until scrolling has settled."
         },
         "purgeClosedRowNodes": {
-            "description": "When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
+            "description": "When enabled, closing group rows will destroy Row Stores beneath closed rows. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
         },
         "serverSideSortingAlwaysResets": {
             "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."

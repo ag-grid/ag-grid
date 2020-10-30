@@ -364,7 +364,7 @@ export interface CellValueChangedEvent extends CellEvent {
     source: string | undefined;
 }
 
-export interface AsyncTransactionsApplied extends AgGridEvent {
+export interface AsyncTransactionsFlushed extends AgGridEvent {
     results: (RowNodeTransaction | ServerSideTransactionResult) [];
 }
 
