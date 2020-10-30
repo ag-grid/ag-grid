@@ -40,6 +40,7 @@ export class PieChartProxy extends PolarChartProxy {
             lineDash: seriesDefaults.lineDash,
             lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
 
         return options;

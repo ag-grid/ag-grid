@@ -38,10 +38,10 @@ export interface AgChartThemeOverrides {
 }
 
 export interface AgCartesianAxesTheme {
-    number?: AgNumberAxisOptions;
-    category?: AgCategoryAxisOptions;
-    groupedCategory?: AgGroupedCategoryAxisOptions;
-    time?: AgTimeAxisOptions;
+    number?: Omit<AgNumberAxisOptions, 'type'>;
+    category?: Omit<AgCategoryAxisOptions, 'type'>;
+    groupedCategory?: Omit<AgGroupedCategoryAxisOptions, 'type'>;
+    time?: Omit<AgTimeAxisOptions, 'type'>;
 }
 
 export interface AgCartesianSeriesTheme {

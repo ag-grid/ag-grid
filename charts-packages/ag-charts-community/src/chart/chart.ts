@@ -14,6 +14,7 @@ import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
+import { isTouchDevice } from "../util/touch";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -770,8 +771,9 @@ export abstract class Chart extends Observable {
 
     private lastPick?: {
         datum: SeriesNodeDatum,
-        node?: Shape // we may not always have an associated node, for example
-                     // when line series are rendered without markers
+        node?: Shape, // We may not always have an associated node, for example
+                      // when line series are rendered without markers.
+        event?: MouseEvent
     };
 
     // Provided x/y are in canvas coordinates.
@@ -830,13 +832,14 @@ export abstract class Chart extends Observable {
             nodeDatum = node.datum as SeriesNodeDatum;
             if (lastPick && lastPick.datum === nodeDatum) {
                 lastPick.node = node;
+                lastPick.event = event;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
             if ((!node.datum.point || !tooltipTracking)) {
                 if (!lastPick // cursor moved from empty space to a node
                     || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
+                    this.onSeriesDatumPick(event, node.datum, node, event);
                 } else if (pick.series.tooltip.enabled) { // cursor moved within the same node
                     this.showTooltip(event);
                 }
@@ -890,9 +893,9 @@ export abstract class Chart extends Observable {
     private checkSeriesNodeClick() {
         const { lastPick } = this;
 
-        if (lastPick && lastPick.node) {
-            const { datum } = lastPick;
-            datum.series.fireNodeClickEvent(datum);
+        if (lastPick && lastPick.event && lastPick.node) {
+            const { event, datum } = lastPick;
+            datum.series.fireNodeClickEvent(event, datum);
         }
     }
 
@@ -916,15 +919,15 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
+    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent) {
         if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
         }
 
         this.lastPick = {
             datum,
-            node
+            node,
+            event
         };
 
         this.highlightDatum(datum);

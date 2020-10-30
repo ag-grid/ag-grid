@@ -22,6 +22,7 @@ interface ScatterNodeDatum extends SeriesNodeDatum {
 
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
+    readonly event: MouseEvent;
     readonly series: ScatterSeries;
     readonly datum: any;
     readonly xKey: string;
@@ -209,9 +210,10 @@ export class ScatterSeries extends CartesianSeries {
         return this.nodeData;
     }
 
-    fireNodeClickEvent(datum: ScatterNodeDatum): void {
+    fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void {
         this.fireEvent<ScatterSeriesNodeClickEvent>({
             type: 'nodeClick',
+            event,
             series: this,
             datum: datum.seriesDatum,
             xKey: this.xKey,

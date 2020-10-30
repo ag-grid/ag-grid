@@ -148,7 +148,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             },
             lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
             lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
         } as LineSeriesOptions;
 
         return options;

@@ -51,6 +51,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 strokeWidth: seriesDefaults.marker!.strokeWidth
             },
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners,
             paired: true
         } as ScatterSeriesOptions;
 
