@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           // call the success callback
           params.successCallback(rows, rows.length);
-        }, 500);
+        }, 200);
       }
     };
 

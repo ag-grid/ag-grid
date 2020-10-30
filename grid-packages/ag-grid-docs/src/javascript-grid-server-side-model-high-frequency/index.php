@@ -17,7 +17,8 @@ include '../documentation-main/documentation_header.php';
     When a transaction is applied to the grid, it results in the grid re-rendering it's rows to cater
     for the new values. In addition to this, if the transactions are getting applied in different JavaScript
     VM turns (which is often the case when data updates are streamed), each VM turn will result in a
-    browser redraw, which could otherwise not happen.
+    browser redraw. If you are receiving 10's of updates a second, this will probalby kill your applications
+    performance. Hence the need for Async Transactions.
 </p>
 
 <h2>Async Transactions</h2>
@@ -33,39 +34,16 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Applying Transactions asynchronously is done by using the grid API <code>cancelTx()</code> and some
-    logic that is provided by your application.
-</p>
-<p>
-    The suggested mechanism is to use versioned (or timesampted) data. When row data is loaded, the application
-    could provide a data version as storeInfo.
-
-    The signature is similar to <code>applyServerSideTransaction</code> except the result is returned asynchronously
-    via a callback.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// Standard Sync for regular updates
-public applyServerSideTransaction(
-                    transaction: ServerSideTransaction
-            ) : ServerSideTransactionResult | undefined;
-
-// Async apply for High Frequency Updates
-public applyServerSideTransactionAsync(
-                    transaction: ServerSideTransaction,
-                    callback?: (res: ServerSideTransactionResult) => void
-            ): void;
-SNIPPET
-) ?>
-
-<p>
-    The transaction interface <code>ServerSideTransaction</code> and the result interface
-    <code>ServerSideTransactionResult</code> across the sync and async variants are the same.
-</p>
-
-<p>
     The amount of time which the grid waits before applying the transaction is set via the grid
-    property <code>asyncTransactionWaitMillis</code> and defaults to 50ms.
+    property <code>asyncTransactionWaitMillis</code> and defaults to 50ms. Transactions are also
+    applied after any rows are loaded.
+</p>
+
+<p>
+    The transaction interfaces <code>ServerSideTransaction</code> and
+    <code>ServerSideTransactionResult</code> used in
+    <a href="../javascript-grid-server-side-model-transactions/#transaction-api">SSRM Transactions</a> are used
+    again for Async Transactions.
 </p>
 
 <p>
@@ -86,6 +64,9 @@ SNIPPET
     <li>
         Clicking <b>Flush</b> will apply all waiting Transactions.
     </li>
+    <li>
+        Row data finished loading will also apply (flush) all waiting Transactions.
+    </li>
 </ul>
 
 <?= grid_example('High Frequency Flat', 'high-frequency-flat', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
@@ -93,18 +74,33 @@ SNIPPET
 <h2>Flushed Event</h2>
 
 <p>
-    When transactions are applied, the event <code>asyncTransactionsApplied</code> event is fired.
+    When Async Transactions are applied, the event <code>asyncTransactionsFlushed</code> event is fired.
     The event contains all of the <code>ServerSideTransactionResult</code> objects of all attempted
     transactions.
 </p>
+
+<?= createSnippet(<<<SNIPPET
+interface AsyncTransactionsFlushed {
+
+    type: string; // always 'asyncTransactionsFlushed'
+    api: GridApi; // the grid's API
+    columnApi: ColumnApi; // the grid's Column API
+
+    // array of result objects. for SSRM it's always list of ServerSideTransactionResult.
+    // for Client-side Row Model it's list of RowNodeTransaction.
+    results: (RowNodeTransaction | ServerSideTransactionResult) [];
+}
+SNIPPET
+) ?>
 
 <p>
     The example below listens for this event and prints a summary of the result objects to the console.
 </p>
 
-<?= grid_example('Transaction Applied Event', 'transaction-applied-event', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Transaction Flushed Event', 'transaction-flushed-event', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
-<h2>Retry Transactions</h2>
+
+<h3>Retry Transactions</h3>
 
 <p>
     When a Row Store is loading and a transaction is applied asynchronously, the grid can optionally wait for the
@@ -112,11 +108,7 @@ SNIPPET
 </p>
 
 <p>
-    This removes the possibility of lost updates. For example suppose the grid's Row Store has requested row data.
-    While the Row Store is waiting for the row data to be loaded, a new record is created and a transaction is applied to
-    the grid to insert the new record. If a) the transaction is applied before the Row Store has finished loading
-    and b) the record was created after the row data was read from the server-side data store - then the record
-    will not end up in the Row Store's data, and hence be missing from the grid.
+    To do this,
 </p>
 
 <p>
@@ -144,13 +136,86 @@ SNIPPET
 </p>
 
 
-
-<h2>Timing Considerations</h2>
+<h2>Race Conditions</h2>
 
 <p>
     Because the SSRM loads rows asynchronously and Async Transactions are applied asynchronously, there can
-    be race conditions with your application that need to be guarded against.
+    be race conditions resulting in Lost Updates and Duplicate Entries that your application may need to
+    guard against.
 </p>
+
+<ul>
+    <li>
+        <h3>Lost Updates</h3>
+
+        <p>
+            Lost updates refers to new data created in the server's data store that due to the order of data
+            getting read and the transaction applied, the record ends up missing in the grid.
+        </p>
+
+        <p>
+            Lost updates occur when data is read from the server is missing a record (as it's to early), but
+            the transaction for the new record is attempted before the Row Store finishes loading (transaction is
+            discarded).
+        </p>
+
+        <p>
+            For example suppose the grid's Row Store has requested row data.
+            While the Row Store is waiting for the row data to be loaded, a new record is created in the server's data store
+            and a transaction is applied to the grid to insert the new record.
+            If a) the transaction is applied before the Row Store has finished loading (the transaction is discarded)
+            and b) the record was created after the row data was read from the server's data store - then the record
+            will not end up in the Row Store's data, and hence be missing from the grid.
+        </p>
+
+    </li>
+    <li>
+        <h3>Duplicate Records</h3>
+
+        <p>
+            Duplicate records is the inverse of Lost Update. It results in records duplicating.
+        </p>
+
+        <p>
+            Duplicate records occur when data is read from the server includes a new record (it's just in time), but
+            the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied).
+            This results in the record appear twice.
+        </p>
+
+    </li>
+</ul>
+
+<h2>======</h2>
+
+
+<p>
+    Applying Transactions asynchronously is done by using the grid API <code>cancelTx()</code> and some
+    logic that is provided by your application.
+</p>
+<p>
+    The suggested mechanism is to use versioned (or timesampted) data. When row data is loaded, the application
+    could provide a data version as storeInfo.
+
+    The signature is similar to <code>applyServerSideTransaction</code> except the result is returned asynchronously
+    via a callback.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Standard Sync for regular updates
+public applyServerSideTransaction(
+                    transaction: ServerSideTransaction
+            ) : ServerSideTransactionResult | undefined;
+
+// Async apply for High Frequency Updates
+public applyServerSideTransactionAsync(
+                    transaction: ServerSideTransaction,
+                    callback?: (res: ServerSideTransactionResult) => void
+): void;
+SNIPPET
+) ?>
+
+
+<h2>Timing Considerations</h2>
 
 <p>
     For example, the grid can request row data from the server. While the grid is waiting for the row data to be provided,

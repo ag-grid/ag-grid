@@ -20,11 +20,6 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-enum LoadingStrategy {
-    ApplyAfterLoaded = 'applyAfterLoaded',
-    DoNotApply = 'doNotApply'
-}
-
 @Bean('serverSideTransactionManager')
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
 
@@ -36,36 +31,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] | null;
 
-    private loadingStrategy: LoadingStrategy;
-
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
-
-        this.setupLoadingStrategy();
-    }
-
-    private setupLoadingStrategy(): void {
-        const loadingStrategy = this.gridOptionsWrapper.getServerSideAsyncTransactionLoadingStrategy();
-
-        // default is 'Skip'
-        if (loadingStrategy == null) {
-            this.loadingStrategy = LoadingStrategy.DoNotApply;
-            return;
-        }
-
-        switch (loadingStrategy) {
-            case LoadingStrategy.ApplyAfterLoaded:
-            case LoadingStrategy.DoNotApply:
-                this.loadingStrategy = loadingStrategy;
-                break;
-            default:
-                const strategies = Object.keys(LoadingStrategy).join(', ');
-                console.warn(`ag-Grid: Invalid loading strategy: ${loadingStrategy}, should be one of [${strategies}]`);
-                this.loadingStrategy = LoadingStrategy.DoNotApply;
-                break;
-        }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
@@ -102,7 +71,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
             resultsForEvent.push(result);
 
-            const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy == LoadingStrategy.ApplyAfterLoaded;
+            const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading;
             if (retryTransaction) {
                 transactionsToRetry.push(txWrapper);
                 return;

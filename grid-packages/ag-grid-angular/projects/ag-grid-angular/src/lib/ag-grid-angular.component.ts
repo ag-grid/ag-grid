@@ -202,7 +202,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotRowTotals : any = undefined;
     @Input() public pivotPanelShow : any = undefined;
     @Input() public fillHandleDirection : any = undefined;
-    @Input() public serverSideAsyncTransactionLoadingStrategy : any = undefined;
     @Input() public serverSideStoreType : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;

@@ -656,10 +656,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getServerSideAsyncTransactionLoadingStrategy(): string | undefined {
-        return this.gridOptions.serverSideAsyncTransactionLoadingStrategy;
-    }
-
     public getServerSideStoreType(): string | undefined {
         return this.gridOptions.serverSideStoreType;
     }
