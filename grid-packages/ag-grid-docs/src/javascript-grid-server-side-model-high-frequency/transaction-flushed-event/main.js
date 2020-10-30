@@ -38,15 +38,23 @@ var all_products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','T
   'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
   'Cotton No.2','Sugar No.11','Sugar No.14'];
 
+var allServerSideData = [];
+products.forEach( function(product, index) {
+  allServerSideData.push({
+    product: product,
+    value: Math.floor(Math.random()*10000)
+  })
+});
+
 function onBtAdd() {
   var newProductName = all_products[Math.floor(all_products.length*Math.random())];
-  var itemsToAdd = [];
-  itemsToAdd.push({
-        product: newProductName + ' ' + newProductSequence++,
-        value: getNextValue()
-      });
+  var newItem = {
+    product: newProductName + ' ' + newProductSequence++,
+    value: Math.floor(Math.random()*10000)
+  };
+  allServerSideData.push(newItem)
   var tx = {
-    add: itemsToAdd
+    add: [newItem]
   };
   gridOptions.api.applyServerSideTransactionAsync(tx);
 }
@@ -66,28 +74,12 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+  var dataSource = {
+    getRows: function(params) {
+      var rowData = allServerSideData.slice();
+      setTimeout(params.success.bind(params, {rowData: rowData}), 200);
+    }
+  };
 
-    var dataSource = {
-      getRows: function(params) {
-
-        // To make the demo look real, wait for 500ms before returning
-        setTimeout(function() {
-
-          var rows = [];
-          products.forEach( function(product, index) {
-            rows.push({
-              product: product,
-              value: getNextValue()
-            })
-          });
-
-          // call the success callback
-          params.successCallback(rows, rows.length);
-        }, 500);
-      }
-    };
-
-    gridOptions.api.setServerSideDatasource(dataSource);
-  });
+  gridOptions.api.setServerSideDatasource(dataSource);
 });

@@ -103,6 +103,18 @@ SNIPPET
 <h3>Retry Transactions</h3>
 
 <p>
+    The Retry Transactions feature guards against Lost Updates.
+    Lost updates refers to new data created in the server's data store that due to the order of data
+    getting read and the transaction applied, the record ends up missing in the grid.
+</p>
+
+<p>
+    Lost updates occur when data is read from the server is missing a record (as it's to early), but
+    the transaction for the new record is attempted before the Row Store finishes loading (transaction is
+    discarded).
+</p>
+
+<p>
     When a Row Store is loading and a transaction is applied asynchronously, the grid will wait for the
     Row Store to be loaded and then apply the transaction.
 </p>
@@ -116,8 +128,25 @@ SNIPPET
 
 <p>
     The example is configured to demonstrate this. Note the following:
-
 </p>
+<ul>
+    <li>
+        Use the <b>Refresh</b> button to get the grid to refresh.
+    </li>
+    <li>
+        The Datasource reads (takes a copy) of the server data, but then waits 2 seconds before
+        returning the data, to mimic a slow network on the data return.
+    </li>
+    <li>
+        While a refresh is underway, add records using the <b>Add</b> button. This will add records
+        to the server that will be missing in the row data the grid receives.
+    </li>
+    <li>
+        Note the console - after rows are loaded, transactions that were received during
+        the load are applied after the load. This means the grid will show new records even
+        though they were missing form teh loaded row data.
+    </li>
+</ul>
 
 <?= grid_example('Retry Transactions', 'retry-transactions', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
@@ -137,46 +166,18 @@ SNIPPET
     guard against.
 </p>
 
-<ul>
-    <li>
-        <h3>Lost Updates</h3>
+<h2>Duplicate Records</h2>
 
-        <p>
-            Lost updates refers to new data created in the server's data store that due to the order of data
-            getting read and the transaction applied, the record ends up missing in the grid.
-        </p>
+<p>
+    Duplicate records is the inverse of Lost Update. It results in records duplicating.
+</p>
 
-        <p>
-            Lost updates occur when data is read from the server is missing a record (as it's to early), but
-            the transaction for the new record is attempted before the Row Store finishes loading (transaction is
-            discarded).
-        </p>
+<p>
+    Duplicate records occur when data is read from the server includes a new record (it's just in time), but
+    the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied).
+    This results in the record appear twice.
+</p>
 
-        <p>
-            For example suppose the grid's Row Store has requested row data.
-            While the Row Store is waiting for the row data to be loaded, a new record is created in the server's data store
-            and a transaction is applied to the grid to insert the new record.
-            If a) the transaction is applied before the Row Store has finished loading (the transaction is discarded)
-            and b) the record was created after the row data was read from the server's data store - then the record
-            will not end up in the Row Store's data, and hence be missing from the grid.
-        </p>
-
-    </li>
-    <li>
-        <h3>Duplicate Records</h3>
-
-        <p>
-            Duplicate records is the inverse of Lost Update. It results in records duplicating.
-        </p>
-
-        <p>
-            Duplicate records occur when data is read from the server includes a new record (it's just in time), but
-            the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied).
-            This results in the record appear twice.
-        </p>
-
-    </li>
-</ul>
 
 <h2>======</h2>
 
