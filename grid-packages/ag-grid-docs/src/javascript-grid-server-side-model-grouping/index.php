@@ -261,7 +261,7 @@ SNIPPET
 <?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 
-<h2>Store State & Info</h2>
+<h2>Store State & Store Info</h2>
 
 <p>
     For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns
