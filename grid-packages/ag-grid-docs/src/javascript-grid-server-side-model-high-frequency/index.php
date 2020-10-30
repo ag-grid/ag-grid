@@ -103,22 +103,8 @@ SNIPPET
 <h3>Retry Transactions</h3>
 
 <p>
-    When a Row Store is loading and a transaction is applied asynchronously, the grid can optionally wait for the
+    When a Row Store is loading and a transaction is applied asynchronously, the grid will wait for the
     Row Store to be loaded and then apply the transaction.
-</p>
-
-<p>
-    To do this,
-</p>
-
-<p>
-    The way to get around this is for the grid to retry transactions that came in during loading after the data
-    is loaded.
-</p>
-
-<p>
-    To retry transactions on loading stores after the store has loaded, set the grid property
-    <code>serverSideAsyncTransactionLoadingStrategy=true</code>.
 </p>
 
 <p>
@@ -129,10 +115,17 @@ SNIPPET
 </p>
 
 <p>
+    The example is configured to demonstrate this. Note the following:
+
+</p>
+
+<?= grid_example('Retry Transactions', 'retry-transactions', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<p>
     This only applies to loading stores. If the grid is limiting the number of concurrent
     loads (property <code>maxConcurrentDatasourceRequests</code> is set) then it's possible
     Stores are waiting to load. If they are waiting to load, transactions for updates will all
-    be discarded as no race condition is possible.
+    be discarded as no race condition (see below) is possible.
 </p>
 
 

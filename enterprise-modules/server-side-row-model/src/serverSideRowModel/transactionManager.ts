@@ -20,7 +20,7 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-@Bean('serverSideTransactionManager')
+@Bean('ssrmTransactionManager')
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
 
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;

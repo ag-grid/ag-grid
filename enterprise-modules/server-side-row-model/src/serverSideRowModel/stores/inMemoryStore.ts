@@ -46,7 +46,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('transactionManager') private transactionManager: TransactionManager;
+    @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
