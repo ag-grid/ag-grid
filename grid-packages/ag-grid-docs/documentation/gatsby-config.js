@@ -56,11 +56,11 @@ module.exports = {
                   classes: 'note',
                   title: 'optional',
                 },
-                'note-warning': {
+                'warning': {
                   classes: 'note warning',
                   title: 'optional'
                 },
-                'note-info': {
+                'info': {
                   classes: 'note info',
                   title: 'optional'
                 },
@@ -79,7 +79,12 @@ module.exports = {
               },
             },
           },
-          'gatsby-remark-component',
+          {
+            resolve: 'gatsby-remark-component',
+            options: {
+              components: ['grid-example', 'chart-example']
+            }
+          },
           {
             resolve: `gatsby-remark-autolink-headers`,
             options: {

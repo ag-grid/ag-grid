@@ -62,14 +62,14 @@ You should go and check out [this page](./column-definitions/)
 [[note]]
 | Make sure you don't do anything bad!
 
-[[note-warning | Warning Note With Title]]
+[[warning | Warning Note With Title]]
 | Make sure you don't do anything bad!
 
-[[note-warning]]
+[[warning]]
 | Make sure you don't do anything bad!
 
-[[note-info | Info Note With Title]]
+[[info | Info Note With Title]]
 | Make sure you don't do anything bad!
 
-[[note-info]]
+[[info]]
 | Make sure you don't do anything bad!
