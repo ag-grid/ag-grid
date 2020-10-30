@@ -7,8 +7,8 @@ import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
 
 export const generateIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
-    const { sourcePath, framework, options } = exampleInfo;
-    let { boilerplatePath, appLocation } = exampleInfo;
+    const { sourcePath, options } = exampleInfo;
+    let { boilerplatePath, appLocation, framework } = exampleInfo;
 
     const getFileUrl = file => isExecuting ?
         file.publicURL : file.relativePath.replace(sourcePath, '').replace(boilerplatePath, '');
@@ -35,15 +35,22 @@ export const generateIndexHtml = (nodes, exampleInfo, isExecuting = false) => {
     let element;
 
     switch (framework) {
-        case 'javascript':
+        case 'javascript': {
+            const indexHtml = getExampleFile('index.html');
+
+            if (!indexHtml) {
+                throw new Error(`Could not find index.html for "${exampleInfo.name}" example`);
+            }
+
             element = <VanillaTemplate
                 appLocation={appLocation}
                 options={options}
-                indexFragment={getExampleFile('index.html').childHtmlRehype.html}
+                indexFragment={indexHtml.childHtmlRehype.html}
                 scriptFiles={[...scriptFiles, getFileUrl(getExampleFile('main.js'))]}
                 styleFiles={styleFiles} />;
 
             break;
+        }
 
         case 'angular':
         case 'react':

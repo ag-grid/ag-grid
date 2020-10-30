@@ -41,12 +41,12 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
             return <div className={styles.exampleRunner}>
                 <div className={`form-inline ${styles.exampleRunner__header}`}>
                     <div className={styles.exampleRunner__title}>Example: {title}</div>
-                    {framework === 'react' &&
+                    {exampleInfo.framework === 'react' &&
                         <ReactVersionSelector
                             useFunctionalReact={useFunctionalReact}
                             onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
-                    {framework !== 'javascript' &&
+                    {exampleInfo.framework !== 'javascript' &&
                         <ImportTypeSelector
                             importType={exampleImportType}
                             onChange={event => set({ exampleImportType: event.target.value })} />
