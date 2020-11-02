@@ -36,14 +36,32 @@ export class StoreFactory {
         const storeType = this.getStoreType(userStoreParams);
         const cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
         const maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
+        const serverSideSort = this.getServerSideSort(storeType, userStoreParams);
 
         const storeParams: ServerSideStoreParams = {
             storeType,
             cacheBlockSize,
-            maxBlocksInCache
+            maxBlocksInCache,
+            serverSideSort
         };
 
         return storeParams;
+    }
+
+    private getServerSideSort(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): boolean | undefined {
+        if (storeType==ServerSideStoreType.Infinite) { return true; }
+
+        if (userStoreParams && userStoreParams.serverSideSort!=null) {
+            return userStoreParams.serverSideSort==true;
+        }
+
+        const gridOptionsValue = this.gridOptionsWrapper.isServerSideServerSideSort();
+        if (gridOptionsValue!=null) {
+            return gridOptionsValue;
+        }
+
+        // default for InMemory store is 'true'
+        return true;
     }
 
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)

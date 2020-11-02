@@ -16,7 +16,8 @@ var gridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'inMemory'
+  serverSideStoreType: 'inMemory',
+  animateRows: true
 };
 
 // setup the grid after the page has finished loading

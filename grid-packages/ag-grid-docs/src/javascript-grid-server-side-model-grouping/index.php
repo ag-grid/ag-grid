@@ -196,11 +196,17 @@ interface ServerSideStoreParams {
     // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
     storeType?: ServerSideStoreType;
 
-    // how many blocks to keep in cach. if missing, defaults to grid options 'maxBlocksInCache'
+    // For Infinite Store only. How many blocks to keep in cach.
+    // If missing, defaults to grid options 'maxBlocksInCache'
     maxBlocksInCache?: number;
 
-    // cache block size. if missing, defaults to grid options 'cacheBlockSize'
+    // For Infinite Store only. Cache block size.
+    // If missing, defaults to grid options 'cacheBlockSize'
     cacheBlockSize?: number;
+
+    // For InMemory only. Set to true to have sorting done on the server side.
+    // If missing, defaults to grid options 'serverSideServerSideSort'
+    serverSideSort?: boolean;
 }
 
 // for storeType above, one of 'inMemory' or 'infinite'

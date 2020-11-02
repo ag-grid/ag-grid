@@ -680,24 +680,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterSort(params: RefreshSortParams): void {
-
-        if (params.sortAlwaysResets || params.valueColSortChanged || params.secondaryColSortChanged) {
-            this.resetStore();
-            return;
-        }
-
-        const level = this.parentRowNode.level + 1;
-        const grouping = level < this.ssrmParams.rowGroupCols.length;
-
-        if (!grouping) {
-            this.resetStore();
-            return;
-        }
-
-        const colIdThisGroup = this.ssrmParams.rowGroupCols[level].id;
-        const sortingByThisGroup = params.changedColumnsInSort.indexOf(colIdThisGroup) > -1;
-
-        if (sortingByThisGroup) {
+        if (this.storeUtils.isServerSideSortNeeded(this.parentRowNode, this.ssrmParams, params)) {
             this.resetStore();
             return;
         }
