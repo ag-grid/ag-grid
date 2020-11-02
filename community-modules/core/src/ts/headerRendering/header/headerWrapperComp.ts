@@ -88,8 +88,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.updateState();
 
-        this.appendHeaderComp();
-
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -114,6 +112,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+
+        this.appendHeaderComp();
     }
 
     private onColumnValueChanged(): void {
@@ -334,7 +334,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             },
             api: this.gridApi,
             columnApi: this.columnApi,
-            context: this.gridOptionsWrapper.getContext()
+            context: this.gridOptionsWrapper.getContext(),
+            eGridHeader: this.getGui()
         } as IHeaderParams;
         return params;
     }

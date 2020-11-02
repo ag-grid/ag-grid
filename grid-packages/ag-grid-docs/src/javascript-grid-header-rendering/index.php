@@ -163,6 +163,13 @@ interface IHeaderCompParams {
     // in your header if this is true.
     enableMenu: boolean;
 
+    // the header the grid provides. the custom header component is a child of the grid provided
+    // header. the grid's header component is what contains the grid managed functionality such as
+    // resizing, keyboard navigation etc. this is provided should you want to make changes to this
+    // cell, eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating
+    // to the header).
+    eGridHeader: HTMLElement;
+
     // callback to progress the sort for this column.
     // the grid will decide the next sort direction eg ascending, descending or 'no sort'.
     // pass multiSort=true if you want to do a multi sort (eg user has shift held down when
