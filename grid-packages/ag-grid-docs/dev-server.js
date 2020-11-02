@@ -11,7 +11,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const { generateExamples } = require('./example-generator');
-const { generateExamples: generateExamplesNew } = require('./example-generator-new');
+const { generateExamples: generateDocumentationExamples } = require('./example-generator-documentation');
 const { updateBetweenStrings, getAllModules } = require('./utils');
 const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
 
@@ -244,24 +244,24 @@ function regenerateExamplesForFileChange(file) {
     }
 }
 
-function regenerateExamplesNewForFileChange(file) {
+function regenerateDocumentationExamplesForFileChange(file) {
     let scope;
 
     try {
-        scope = file.replace(/\\/g, '/').match(/new\/src\/pages\/([^\/]+)\//)[1];
+        scope = file.replace(/\\/g, '/').match(/documentation\/src\/pages\/([^\/]+)\//)[1];
     } catch (e) {
         throw new Error(`'${exampleDirMatch}' could not extract the example dir from '${file}'. Fix the regexp in dev-server.js`);
     }
 
     if (scope) {
-        generateExamplesNew(scope, file);
+        generateDocumentationExamples(scope, file);
     }
 }
 
 function watchAndGenerateExamples() {
     if (moduleChanged('.')) {
         generateExamples();
-        generateExamplesNew();
+        generateDocumentationExamples();
 
         const npm = WINDOWS ? 'npm.cmd' : 'npm';
         cp.spawnSync(npm, ['run', 'hash']);
@@ -270,7 +270,7 @@ function watchAndGenerateExamples() {
     }
 
     chokidar.watch([`./src/**/*.{php,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
-    chokidar.watch([`./new/src/pages/**/examples/**/*.{md,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesNewForFileChange);
+    chokidar.watch([`./documentation/src/pages/**/examples/**/*.{md,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateDocumentationExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -797,5 +797,5 @@ const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {
     generateExamples(exampleDir);
-    generateExamplesNew(exampleDir);
+    generateDocumentationExamples(exampleDir);
 }

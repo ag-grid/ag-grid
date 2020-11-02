@@ -88,8 +88,8 @@ function getFileContents(path) {
 }
 
 function forEachExample(done, name, regex, generateExample, scope = '*', trigger) {
-    const pattern = trigger && trigger.endsWith('.md') ? trigger : `new/src/pages/${scope}/*.md`;
-    const specificExample = trigger && (matches = /new\/src\/pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
+    const pattern = trigger && trigger.endsWith('.md') ? trigger : `documentation/src/pages/${scope}/*.md`;
+    const specificExample = trigger && (matches = /documentation\/src\/pages\/[^\/]+\/examples\/([^\/]+)\//.exec(trigger)) && matches[1];
 
     glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
@@ -97,7 +97,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         files.forEach(file => {
             const contents = getFileContents(file);
-            const section = path.dirname(file).replace('new/src/pages/', '');
+            const section = path.dirname(file).replace('documentation/src/pages/', '');
 
             let matches;
 
@@ -116,7 +116,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         examplesToProcess.forEach(({ file, section, example, options, type }) => {
             try {
-                const examplePath = path.join('./new/src/pages', section, 'examples', example);
+                const examplePath = path.join('./documentation/src/pages', section, 'examples', example);
 
                 if (processedExamples.has(examplePath)) { return; }
 
@@ -377,11 +377,11 @@ module.exports.generateChartExamples = (scope, trigger, done) => {
 module.exports.generateExamples = (scope, trigger) => {
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);
-        console.log(`\u27F3 Re-generating affected examples (new)...`);
+        console.log(`\u27F3 Re-generating affected documentation examples...`);
     } else if (scope) {
-        console.log(`\u27F3 Generating examples for ${scope} (new)...`);
+        console.log(`\u27F3 Generating documentation examples for ${scope}...`);
     } else {
-        console.log(`\u27F3 Generating all examples (new)...`);
+        console.log(`\u27F3 Generating all documentation examples...`);
     }
 
     module.exports.generateGridExamples(scope, trigger);

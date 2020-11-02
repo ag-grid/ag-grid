@@ -19,7 +19,7 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const { updateBetweenStrings, getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const { generateGridExamples, generateChartExamples } = require('./example-generator-new');
+const { generateGridExamples, generateChartExamples } = require('./example-generator-documentation');
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
