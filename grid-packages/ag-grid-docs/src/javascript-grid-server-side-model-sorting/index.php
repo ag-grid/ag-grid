@@ -107,7 +107,7 @@ SNIPPET
 </p>
 
 <p>
-    To change to server sorting, set the property <code>serverSideServerSideSort = true</code>. This property
+    To change to server sorting, set the property <code>serverSideSort = true</code>. This property
     is only applicable if using the In Memory Store. The Infinite Store always sorts on the server side.
 </p>
 
@@ -134,7 +134,7 @@ SNIPPET
 <ul class="content">
     <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
     <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
-    <li>The grid property <code>serverSideServerSideSort = true</code>, to tell the grid the sorting is done on the server.</li>
+    <li>The grid property <code>serverSideSort = true</code>, to tell the grid the sorting is done on the server.</li>
     <li>Rows are loaded every time sorting changes.</li>
 </ul>
 

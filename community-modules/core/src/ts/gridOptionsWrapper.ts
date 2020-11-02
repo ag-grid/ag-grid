@@ -1118,8 +1118,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.isServerSideGroup;
     }
 
-    public isServerSideServerSideSort(): boolean {
-        return isTrue(this.gridOptions.serverSideServerSideSort);
+    public isServerSideSort(): boolean {
+        return isTrue(this.gridOptions.serverSideSort);
+    }
+
+    public isServerSideFilter(): boolean {
+        return isTrue(this.gridOptions.serverSideFilter);
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {

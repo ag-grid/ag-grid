@@ -231,6 +231,13 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
+
+        // if doing server side filtering, nothing to do here
+        if (this.storeParams.serverSideFilter) {
+            this.nodesAfterFilter = this.allRowNodes;
+            return;
+        }
+
         // filtering for InMemoryStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
@@ -351,6 +358,12 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(): void {
+
+        if (this.storeParams.serverSideFilter) {
+            this.refreshStore(true);
+            return;
+        }
+
         this.filterAndSortNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterFilter());
     }

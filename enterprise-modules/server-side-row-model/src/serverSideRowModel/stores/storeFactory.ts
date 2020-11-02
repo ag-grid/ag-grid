@@ -37,12 +37,14 @@ export class StoreFactory {
         const cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
         const maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
         const serverSideSort = this.getServerSideSort(storeType, userStoreParams);
+        const serverSideFilter = this.getServerSideFilter(storeType, userStoreParams);
 
         const storeParams: ServerSideStoreParams = {
             storeType,
             cacheBlockSize,
             maxBlocksInCache,
-            serverSideSort
+            serverSideSort,
+            serverSideFilter
         };
 
         return storeParams;
@@ -52,16 +54,22 @@ export class StoreFactory {
         if (storeType==ServerSideStoreType.Infinite) { return true; }
 
         if (userStoreParams && userStoreParams.serverSideSort!=null) {
-            return userStoreParams.serverSideSort==true;
+            return userStoreParams.serverSideSort===true;
         }
 
-        const gridOptionsValue = this.gridOptionsWrapper.isServerSideServerSideSort();
-        if (gridOptionsValue!=null) {
-            return gridOptionsValue;
+        // default for InMemory store is 'false'
+        return this.gridOptionsWrapper.isServerSideSort();
+    }
+
+    private getServerSideFilter(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): boolean | undefined {
+        if (storeType==ServerSideStoreType.Infinite) { return true; }
+
+        if (userStoreParams && userStoreParams.serverSideFilter!=null) {
+            return userStoreParams.serverSideFilter===true;
         }
 
-        // default for InMemory store is 'true'
-        return true;
+        // default for InMemory store is 'false'
+        return this.gridOptionsWrapper.isServerSideFilter();
     }
 
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
