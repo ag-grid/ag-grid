@@ -8,7 +8,7 @@ Under normal operation, ag-Grid will render each row as a horizontal list of cel
 | You may be wondering what full width rows are useful for. Their usage is very rare and most
 | applications will not use them. If you cannot think of a use case for it, then don't worry, 
 | do not use it. Full width rows were initially introduced into ag-Grid to support 
-| [Master / Detail](../master-detail) before the grid provided direct support for master / detail. 
+| [Master / Detail](./master-detail) before the grid provided direct support for master / detail. 
 | Now that master / detail is directly supported, the usefulness of full width is reduced.
 
 ## Simple Example of Full Width Rows
@@ -38,7 +38,7 @@ To use `fullWidth`, you must:
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
 
 The cell renderer can be any ag-Grid cell renderer. Refer to
-[Cell Rendering](../cell-rendering-components/) on how to build cell renderers.
+[Cell Rendering](./cell-rendering-components/) on how to build cell renderers.
 The cell renderer for `fullWidth` has one difference to normal cell renderers: the parameters passed
 are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular
 column. Instead you should work off the data parameter, which represents the value for the entire row.
