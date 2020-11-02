@@ -260,7 +260,7 @@
           {
             "title": "Row Sorting",
             "box-title": "Sorting",
-            "url": "../sorting/",
+            "url": "../row-sorting/",
             "showInCollapsed": true
           },
           {
@@ -290,7 +290,7 @@
           {
             "title": "Row Animation",
             "box-title": "Animation",
-            "url": "../animation/",
+            "url": "../row-animation/",
             "showInCollapsed": true
           },
           {
