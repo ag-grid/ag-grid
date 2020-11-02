@@ -205,8 +205,12 @@ interface ServerSideStoreParams {
     cacheBlockSize?: number;
 
     // For InMemory only. Set to true to have sorting done on the server side.
-    // If missing, defaults to grid options 'serverSideServerSideSort'
+    // If missing, defaults to grid options 'serverSideSort'
     serverSideSort?: boolean;
+
+    // For InMemory only. Set to true to have filtering done on the server side.
+    // If missing, defaults to grid options 'serverSideFilter'
+    serverSideFilter?: boolean;
 }
 
 // for storeType above, one of 'inMemory' or 'infinite'
