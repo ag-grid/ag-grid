@@ -57,7 +57,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
-    serverSideFilteringAlwaysResets: true,
     pivotPanelShow: 'always',
     animateRows: true,
     debug: true,
