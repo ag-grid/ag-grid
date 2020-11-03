@@ -126,8 +126,8 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
             this.allRowNodes.push(loadingRowNode);
-            this.nodesAfterSort.push(loadingRowNode);
             this.nodesAfterFilter.push(loadingRowNode);
+            this.nodesAfterSort.push(loadingRowNode);
         }
     }
 
