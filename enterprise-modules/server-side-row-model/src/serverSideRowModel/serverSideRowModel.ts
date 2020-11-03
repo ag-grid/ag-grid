@@ -27,7 +27,7 @@ import {
     RowNode,
     RowRenderer,
     SortController,
-    RefreshSortParams,
+    StoreRefreshAfterParams,
     RefreshStoreParams,
     ServerSideStoreState
 } from "@ag-grid-community/core";
@@ -161,7 +161,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(params: RefreshSortParams): void {
+    public refreshAfterSort(newSortModel: any, params: StoreRefreshAfterParams): void {
+        if (this.storeParams) {
+            this.storeParams.sortModel = newSortModel;
+        }
+
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
 
@@ -274,19 +278,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return rootStore.getRowUsingDisplayIndex(index);
     }
 
-    public updateSortModel(newSortModel: any): void {
-        if (this.storeParams) {
-            this.storeParams.sortModel = newSortModel;
-        }
-    }
-
-    public refreshStoreAfterFilter(newFilterModel: any): void {
+    public refreshAfterFilter(newFilterModel: any, params: StoreRefreshAfterParams): void {
         if (this.storeParams) {
             this.storeParams.filterModel = newFilterModel;
         }
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
-        rootStore.refreshAfterFilter();
+        rootStore.refreshAfterFilter(params);
 
         this.onStoreUpdated();
     }

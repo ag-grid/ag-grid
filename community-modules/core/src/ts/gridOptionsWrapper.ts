@@ -1118,14 +1118,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.isServerSideGroup;
     }
 
-    public isServerSideSort(): boolean {
-        return isTrue(this.gridOptions.serverSideSort);
-    }
-
-    public isServerSideFilter(): boolean {
-        return isTrue(this.gridOptions.serverSideFilter);
-    }
-
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
         return this.gridOptions.getServerSideGroupKey;
     }
@@ -1226,6 +1218,10 @@ export class GridOptionsWrapper {
 
     public isServerSideSortingAlwaysResets() {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
+    }
+
+    public isServerSideFilteringAlwaysResets() {
+        return isTrue(this.gridOptions.serverSideFilteringAlwaysResets);
     }
 
     public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {

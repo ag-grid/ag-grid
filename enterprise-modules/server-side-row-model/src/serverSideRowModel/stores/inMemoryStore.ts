@@ -23,7 +23,7 @@ import {
     LoadSuccessParams,
     FilterManager,
     SelectionChangedEvent,
-    RefreshSortParams,
+    StoreRefreshAfterParams,
     ServerSideStoreParams,
     ServerSideStoreState,
     ServerSideStoreType
@@ -126,8 +126,8 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
             this.allRowNodes.push(loadingRowNode);
-            this.nodesAfterSort.push(loadingRowNode);
             this.nodesAfterFilter.push(loadingRowNode);
+            this.nodesAfterSort.push(loadingRowNode);
         }
     }
 
@@ -217,12 +217,10 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     private sortRowNodes(): void {
 
-        const sortingOnServerSide = this.storeParams.serverSideSort;
-
         const sortOptions = this.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
 
-        if (sortingOnServerSide || noSortApplied) {
+        if (noSortApplied) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
@@ -231,12 +229,6 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-
-        // if doing server side filtering, nothing to do here
-        if (this.storeParams.serverSideFilter) {
-            this.nodesAfterFilter = this.allRowNodes;
-            return;
-        }
 
         // filtering for InMemoryStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
@@ -323,7 +315,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         if (pixel <= this.topPx) { return this.nodesAfterSort[0].rowIndex!; }
         if (pixel >= (this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length - 1].rowIndex!; }
 
-        let res: number | undefined;
+        let res: number | undefined = undefined;
         this.nodesAfterSort.forEach(rowNode => {
             const res2 = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             if (res2 != null) {
@@ -357,28 +349,18 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
-    public refreshAfterFilter(): void {
-
-        if (this.storeParams.serverSideFilter) {
+    public refreshAfterFilter(params: StoreRefreshAfterParams): void {
+        if (params.alwaysReset) {
             this.refreshStore(true);
             return;
         }
 
         this.filterAndSortNodes();
-        this.forEachChildStoreShallow(store => store.refreshAfterFilter());
+        this.forEachChildStoreShallow(store=>store.refreshAfterFilter(params));
     }
 
-    public refreshAfterSort(params: RefreshSortParams): void {
-
-        if (this.storeParams.serverSideSort) {
-            if (this.storeUtils.isServerSideSortNeeded(this.parentRowNode, this.ssrmParams, params)) {
-                this.refreshStore(true);
-                return;
-            }
-        } else {
-            this.sortRowNodes();
-        }
-
+    public refreshAfterSort(params: StoreRefreshAfterParams): void {
+        this.sortRowNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
 

@@ -36,40 +36,14 @@ export class StoreFactory {
         const storeType = this.getStoreType(userStoreParams);
         const cacheBlockSize = this.getBlockSize(storeType, userStoreParams);
         const maxBlocksInCache = this.getMaxBlocksInCache(storeType, ssrmParams, userStoreParams);
-        const serverSideSort = this.getServerSideSort(storeType, userStoreParams);
-        const serverSideFilter = this.getServerSideFilter(storeType, userStoreParams);
 
         const storeParams: ServerSideStoreParams = {
             storeType,
             cacheBlockSize,
-            maxBlocksInCache,
-            serverSideSort,
-            serverSideFilter
+            maxBlocksInCache
         };
 
         return storeParams;
-    }
-
-    private getServerSideSort(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): boolean | undefined {
-        if (storeType==ServerSideStoreType.Infinite) { return true; }
-
-        if (userStoreParams && userStoreParams.serverSideSort!=null) {
-            return userStoreParams.serverSideSort===true;
-        }
-
-        // default for InMemory store is 'false'
-        return this.gridOptionsWrapper.isServerSideSort();
-    }
-
-    private getServerSideFilter(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): boolean | undefined {
-        if (storeType==ServerSideStoreType.Infinite) { return true; }
-
-        if (userStoreParams && userStoreParams.serverSideFilter!=null) {
-            return userStoreParams.serverSideFilter===true;
-        }
-
-        // default for InMemory store is 'false'
-        return this.gridOptionsWrapper.isServerSideFilter();
     }
 
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)

@@ -59,7 +59,7 @@ export class PropertyKeys {
         'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
-        'serverSideSort','serverSideFilter'
+        'serverSideFilteringAlwaysResets'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

@@ -22,7 +22,7 @@ import {
     LoadSuccessParams,
     ColumnController,
     ServerSideStoreParams,
-    RefreshSortParams,
+    StoreRefreshAfterParams,
     ServerSideStoreState,
     ServerSideStoreType
 } from "@ag-grid-community/core";
@@ -675,12 +675,12 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return pixel >= this.cacheTopPixel && pixel < (this.cacheTopPixel + this.cacheHeightPixels);
     }
 
-    public refreshAfterFilter(): void {
+    public refreshAfterFilter(params: StoreRefreshAfterParams): void {
         this.resetStore();
     }
 
-    public refreshAfterSort(params: RefreshSortParams): void {
-        if (this.storeUtils.isServerSideSortNeeded(this.parentRowNode, this.ssrmParams, params)) {
+    public refreshAfterSort(params: StoreRefreshAfterParams): void {
+        if (this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.resetStore();
             return;
         }
