@@ -7,6 +7,7 @@ import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import { getPageName } from '../utils/get-page-name';
 import styles from './doc-page.module.scss';
+import { ApiDocumentation } from '../components/ApiDocumentation';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -17,7 +18,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     createElement: React.createElement,
     components: {
       'grid-example': props => ExampleRunner({ ...props, framework, pageName, library: 'grid' }),
-      'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' })
+      'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
+      'api-documentation': props => ApiDocumentation({ ...props, pageName, config: props.config ? JSON.parse(props.config) : {} })
     },
   }).Compiler;
 

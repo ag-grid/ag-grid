@@ -1,0 +1,21 @@
+.breadcrumbs {
+    margin-bottom: 1rem;
+
+    a {
+        color: theme-color(primary);
+    }
+}
+
+.reference {
+    &__name {
+        code {
+            font-weight: bold;
+            color: inherit;
+            word-break: keep-all;
+        }
+    }
+
+    &__required {
+        color: red;
+    }
+}

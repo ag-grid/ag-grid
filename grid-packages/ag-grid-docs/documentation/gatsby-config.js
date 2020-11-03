@@ -82,7 +82,7 @@ module.exports = {
           {
             resolve: 'gatsby-remark-component',
             options: {
-              components: ['grid-example', 'chart-example']
+              components: ['grid-example', 'chart-example', 'api-documentation']
             }
           },
           {

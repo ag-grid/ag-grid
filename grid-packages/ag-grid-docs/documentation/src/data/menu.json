@@ -142,23 +142,23 @@
             "items": [
               {
                 "title": "Grid Properties",
-                "url": "../properties/",
+                "url": "../grid-properties/",
                 "showInCollapsed": true
               },
               {
                 "title": "Grid API",
-                "url": "../api/",
+                "url": "../grid-api/",
                 "showInCollapsed": true
               },
               {
                 "title": "Grid Events",
                 "box-title": "Events",
-                "url": "../events/",
+                "url": "../grid-events/",
                 "showInCollapsed": true
               },
               {
                 "title": "Grid Callbacks",
-                "url": "../callbacks/",
+                "url": "../grid-callbacks/",
                 "showInCollapsed": true
               },
               {
@@ -1201,192 +1201,192 @@
         "items": [
           {
             "title": "Overview",
-            "url": "javascript-charts-overview/",
+            "url": "../charts-overview/",
             "showInCollapsed": true,
             "hideChildren": true,
             "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Bar/Column",
-                "url": "javascript-charts-overview/#bar-column",
+                "url": "../charts-overview/#bar-column",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Bar",
-                    "url": "javascript-charts-overview/simple-bar.php"
+                    "url": "../charts-overview/simple-bar.php"
                   },
                   {
                     "title": "Grouped Bar",
-                    "url": "javascript-charts-overview/grouped-bar.php"
+                    "url": "../charts-overview/grouped-bar.php"
                   },
                   {
                     "title": "Stacked Bar",
-                    "url": "javascript-charts-overview/stacked-bar.php"
+                    "url": "../charts-overview/stacked-bar.php"
                   },
                   {
                     "title": "100% Stacked Bar",
-                    "url": "javascript-charts-overview/100--stacked-bar.php"
+                    "url": "../charts-overview/100--stacked-bar.php"
                   },
                   {
                     "title": "Bar With Labels",
-                    "url": "javascript-charts-overview/bar-with-labels.php"
+                    "url": "../charts-overview/bar-with-labels.php"
                   },
                   {
                     "title": "Simple Column",
-                    "url": "javascript-charts-overview/simple-column.php"
+                    "url": "../charts-overview/simple-column.php"
                   },
                   {
                     "title": "Grouped Column",
-                    "url": "javascript-charts-overview/grouped-column.php"
+                    "url": "../charts-overview/grouped-column.php"
                   },
                   {
                     "title": "Stacked Column",
-                    "url": "javascript-charts-overview/stacked-column.php"
+                    "url": "../charts-overview/stacked-column.php"
                   },
                   {
                     "title": "100% Stacked Column",
-                    "url": "javascript-charts-overview/100--stacked-column.php"
+                    "url": "../charts-overview/100--stacked-column.php"
                   },
                   {
                     "title": "Column With Negative Values",
-                    "url": "javascript-charts-overview/column-with-negative-values.php"
+                    "url": "../charts-overview/column-with-negative-values.php"
                   }
                 ]
               },
               {
                 "title": "Pie/Doughnut",
-                "url": "javascript-charts-overview/#pie-doughnut",
+                "url": "../charts-overview/#pie-doughnut",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Pie",
-                    "url": "javascript-charts-overview/simple-pie.php"
+                    "url": "../charts-overview/simple-pie.php"
                   },
                   {
                     "title": "Simple Doughnut",
-                    "url": "javascript-charts-overview/simple-doughnut.php"
+                    "url": "../charts-overview/simple-doughnut.php"
                   }
                 ]
               },
               {
                 "title": "Line",
-                "url": "javascript-charts-overview/#line",
+                "url": "../charts-overview/#line",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Line",
-                    "url": "javascript-charts-overview/simple-line.php"
+                    "url": "../charts-overview/simple-line.php"
                   },
                   {
                     "title": "Line With Gaps",
-                    "url": "javascript-charts-overview/line-with-gaps.php"
+                    "url": "../charts-overview/line-with-gaps.php"
                   }
                 ]
               },
               {
                 "title": "Scatter/Bubble",
-                "url": "javascript-charts-overview/#scatter-bubble",
+                "url": "../charts-overview/#scatter-bubble",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Scatter",
-                    "url": "javascript-charts-overview/simple-scatter.php"
+                    "url": "../charts-overview/simple-scatter.php"
                   },
                   {
                     "title": "Simple Bubble",
-                    "url": "javascript-charts-overview/simple-bubble.php"
+                    "url": "../charts-overview/simple-bubble.php"
                   },
                   {
                     "title": "Bubble With Negative Values",
-                    "url": "javascript-charts-overview/bubble-with-negative-values.php"
+                    "url": "../charts-overview/bubble-with-negative-values.php"
                   },
                   {
                     "title": "Bubble With Categories",
-                    "url": "javascript-charts-overview/bubble-with-categories.php"
+                    "url": "../charts-overview/bubble-with-categories.php"
                   }
                 ]
               },
               {
                 "title": "Area",
-                "url": "javascript-charts-overview/#area",
+                "url": "../charts-overview/#area",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Area",
-                    "url": "javascript-charts-overview/simple-area.php"
+                    "url": "../charts-overview/simple-area.php"
                   },
                   {
                     "title": "Stacked Area",
-                    "url": "javascript-charts-overview/stacked-area.php"
+                    "url": "../charts-overview/stacked-area.php"
                   },
                   {
                     "title": "100% Stacked Area",
-                    "url": "javascript-charts-overview/100--stacked-area.php"
+                    "url": "../charts-overview/100--stacked-area.php"
                   },
                   {
                     "title": "Area With Negative Values",
-                    "url": "javascript-charts-overview/area-with-negative-values.php"
+                    "url": "../charts-overview/area-with-negative-values.php"
                   }
                 ]
               },
               {
                 "title": "Histogram",
-                "url": "javascript-charts-overview/#histogram",
+                "url": "../charts-overview/#histogram",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Simple Histogram",
-                    "url": "javascript-charts-overview/simple-histogram.php"
+                    "url": "../charts-overview/simple-histogram.php"
                   },
                   {
                     "title": "Histogram with specified bins",
-                    "url": "javascript-charts-overview/histogram-with-specified-bins.php"
+                    "url": "../charts-overview/histogram-with-specified-bins.php"
                   },
                   {
                     "title": "XY Histogram with Mean Aggregation",
-                    "url": "javascript-charts-overview/xy-histogram-with-mean-aggregation.php"
+                    "url": "../charts-overview/xy-histogram-with-mean-aggregation.php"
                   }
                 ]
               },
               {
                 "title": "Feature Highlights",
-                "url": "javascript-charts-overview/#feature-highlights",
+                "url": "../charts-overview/#feature-highlights",
                 "disableActive": true,
                 "hideChildren": true,
                 "items": [
                   {
                     "title": "Time Axis With Irregular Intervals",
-                    "url": "javascript-charts-overview/time-axis-with-irregular-intervals.php"
+                    "url": "../charts-overview/time-axis-with-irregular-intervals.php"
                   },
                   {
                     "title": "Real-Time Data Updates",
-                    "url": "javascript-charts-overview/real-time-data-updates.php"
+                    "url": "../charts-overview/real-time-data-updates.php"
                   },
                   {
                     "title": "Combination of Different Series Types",
-                    "url": "javascript-charts-overview/combination-of-different-series-types.php"
+                    "url": "../charts-overview/combination-of-different-series-types.php"
                   },
                   {
                     "title": "Chart Customisation",
-                    "url": "javascript-charts-overview/chart-customisation.php"
+                    "url": "../charts-overview/chart-customisation.php"
                   },
                   {
                     "title": "Custom Marker Shapes",
-                    "url": "javascript-charts-overview/custom-marker-shapes.php"
+                    "url": "../charts-overview/custom-marker-shapes.php"
                   },
                   {
                     "title": "Custom Tooltips",
-                    "url": "javascript-charts-overview/custom-tooltips.php"
+                    "url": "../charts-overview/custom-tooltips.php"
                   },
                   {
                     "title": "Per-Marker Customisation",
-                    "url": "javascript-charts-overview/per-marker-customisation.php"
+                    "url": "../charts-overview/per-marker-customisation.php"
                   }
                 ]
               }
@@ -1398,7 +1398,7 @@
             "items": [
               {
                 "title": "Vanilla JavaScript",
-                "url": "javascript-charts/"
+                "url": "../charts/"
               },
               {
                 "title": "Angular",
@@ -1422,17 +1422,17 @@
               {
                 "title": "Options Reference",
                 "showInCollapsed": true,
-                "url": "javascript-charts-api/"
+                "url": "../charts-api/"
               },
               {
                 "title": "Themes Reference",
                 "showInCollapsed": true,
-                "url": "javascript-charts-api-themes/"
+                "url": "../charts-api-themes/"
               },
               {
                 "title": "Explorer",
                 "showInCollapsed": true,
-                "url": "javascript-charts-api-explorer/"
+                "url": "../charts-api-explorer/"
               }
             ]
           },
@@ -1442,27 +1442,27 @@
             "items": [
               {
                 "title": "Line",
-                "url": "javascript-charts-line-series/"
+                "url": "../charts-line-series/"
               },
               {
                 "title": "Bar/Column",
-                "url": "javascript-charts-bar-series/"
+                "url": "../charts-bar-series/"
               },
               {
                 "title": "Histogram",
-                "url": "javascript-charts-histogram-series/"
+                "url": "../charts-histogram-series/"
               },
               {
                 "title": "Area",
-                "url": "javascript-charts-area-series/"
+                "url": "../charts-area-series/"
               },
               {
                 "title": "Scatter/Bubble",
-                "url": "javascript-charts-scatter-series/"
+                "url": "../charts-scatter-series/"
               },
               {
                 "title": "Pie/Doughnut",
-                "url": "javascript-charts-pie-series/"
+                "url": "../charts-pie-series/"
               }
             ]
           },
@@ -1472,39 +1472,39 @@
             "items": [
               {
                 "title": "Layout",
-                "url": "javascript-charts-layout/"
+                "url": "../charts-layout/"
               },
               {
                 "title": "Legend",
-                "url": "javascript-charts-legend/"
+                "url": "../charts-legend/"
               },
               {
                 "title": "Themes",
-                "url": "javascript-charts-themes/"
+                "url": "../charts-themes/"
               },
               {
                 "title": "Navigator",
-                "url": "javascript-charts-navigator/"
+                "url": "../charts-navigator/"
               },
               {
                 "title": "Markers",
-                "url": "javascript-charts-markers/"
+                "url": "../charts-markers/"
               },
               {
                 "title": "Formatters",
-                "url": "javascript-charts-formatters/"
+                "url": "../charts-formatters/"
               },
               {
                 "title": "Tooltips",
-                "url": "javascript-charts-tooltips/"
+                "url": "../charts-tooltips/"
               },
               {
                 "title": "Axes",
-                "url": "javascript-charts-axis/"
+                "url": "../charts-axis/"
               },
               {
                 "title": "Events",
-                "url": "javascript-charts-events/"
+                "url": "../charts-events/"
               }
             ]
           }

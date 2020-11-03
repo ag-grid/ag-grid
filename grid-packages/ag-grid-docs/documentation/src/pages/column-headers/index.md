@@ -9,12 +9,12 @@ features, such as sorting, filtering and a column menu. This page explains how y
 
 These properties can be used to change the different heights used in the headers.
 
-<?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'headers') ?>
+<api-documentation source="grid-properties/properties.json" section="headers"></api-documentation>
 
 All these properties also have setter methods that can be called from the API and will change the header
 heights dynamically.
 
-<?php createDocumentationFromFile('../javascript-grid-api/api.json', 'headers') ?>
+<api-documentation source="grid-api/api.json" section="headers"></api-documentation>
 
 ## Text Orientation
 
