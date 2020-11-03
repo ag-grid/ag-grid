@@ -8,10 +8,10 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const nodes = useExampleFileNodes();
-    const { name, appLocation: modulesLocation, framework } = exampleInfo;
+    const { name, appLocation: modulesLocation, framework, type } = exampleInfo;
     const generated = generateIndexHtml(nodes, exampleInfo, true);
 
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' && (type === 'generated' || type === 'mixed')) {
         // generate code for the website to read at runtime
         fs.writeFileSync(`public${modulesLocation}index.html`, generated);
 
