@@ -210,20 +210,12 @@ SNIPPET
 <!---->
 <?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
-<h2>In-Memory Store Filtering</h2>
+<h2>In Memory Store Filtering</h2>
 
 <p>
-    By default, when using the In Memory Store, filtering of rows is performed by the grid. There is nothing
-    special to be done by the server. However you also have the option to filter on the sever side, if this
-    is something you wish to do.
+    When using the In Memory Store, filtering of rows is performed by the grid. There is nothing
+    special to be done by the server.
 </p>
-
-<p>
-    To change to server filtering, set the property <code>serverSideFilter = true</code>. This property
-    is only applicable if using the In Memory Store. The Infinite Store always filters on the server side.
-</p>
-
-<h3>Grid Filtering</h3>
 
 <p>
     The example below demonstrates the In Memory Store filtering inside the grid. Note the following:
@@ -247,27 +239,6 @@ SNIPPET
     Note that the Set Filter is provided values in both the Infinite and In-Memory Row Stores.
     Values are required for the Set Filter when used in the SSRM regardless of which row store is used.
 </p>
-
-<h3>Server Side Filtering</h3>
-
-<p>
-    The example below demonstrates the In Memory Store filtering inside the grid. Note the following:
-</p>
-
-<ul class="content">
-    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
-    <li>Columns are set up with the following filters:
-        <ul>
-            <li>Athlete column has Text Filter.</li>
-            <li>County column has Set Filter.</li>
-            <li>Year column has Number Filter.</li>
-        </ul>
-    </li>
-    <li>The grid property <code>serverSideFilter = true</code>, to tell the grid the filtering is done on the server.</li>
-    <li>Rows are loaded every time the filtering changes and filtering is done on the server only.</li>
-</ul>
-
-<?= grid_example('In Memory - Server Side', 'in-memory-server-side', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Next Up</h2>
 

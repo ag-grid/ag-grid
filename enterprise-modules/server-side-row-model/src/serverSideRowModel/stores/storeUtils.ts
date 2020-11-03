@@ -9,8 +9,9 @@ import {
     GridOptionsWrapper,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
+    StoreRefreshAfterParams,
     RowNode,
-    RefreshSortParams
+    ColumnVO
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 
@@ -95,24 +96,21 @@ export class StoreUtils extends BeanStub {
         return null;
     }
 
-    public isServerSideSortNeeded(parentRowNode: RowNode, ssrmParams: SSRMParams, params: RefreshSortParams): boolean {
-        if (params.sortAlwaysResets || params.valueColSortChanged || params.secondaryColSortChanged) {
+    public isServerRefreshNeeded(parentRowNode: RowNode, rowGroupCols: ColumnVO[], params: StoreRefreshAfterParams): boolean {
+        if (params.alwaysReset || params.valueColChanged || params.secondaryColChanged) {
             return true;
         }
 
         const level = parentRowNode.level + 1;
-        const grouping = level < ssrmParams.rowGroupCols.length;
+        const grouping = level < rowGroupCols.length;
+        const leafNodes = !grouping;
 
-        if (!grouping) {
-            return true;
-        }
+        if (leafNodes) { return true; }
 
-        const colIdThisGroup = ssrmParams.rowGroupCols[level].id;
-        const sortingByThisGroup = params.changedColumnsInSort.indexOf(colIdThisGroup) > -1;
+        const colIdThisGroup = rowGroupCols[level].id;
+        const actionOnThisGroup = params.changedColumns.indexOf(colIdThisGroup) > -1;
 
-        if (sortingByThisGroup) {
-            return true;
-        }
+        if (actionOnThisGroup) { return true; }
 
         return false;
     }

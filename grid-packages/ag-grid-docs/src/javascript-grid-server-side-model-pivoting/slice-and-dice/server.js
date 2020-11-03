@@ -125,11 +125,14 @@ function createFakeServer(data) {
         // we mimic finding the last row. if the request exceeds the length of the
         // list, then we assume the last row is found. this would be similar to hitting
         // a database, where we have gone past the last row.
-        var lastRowFound = (rowData.length <= request.endRow);
-        var lastRow = lastRowFound ? rowData.length : null;
+        var lastRow;
+        if (request.startRow != null && request.endRow != null) {
+            var lastRowFound = (rowData.length <= request.endRow);
+            lastRow = lastRowFound ? rowData.length : null;
 
-        // only return back the rows that the user asked for
-        rowData = rowData.slice(request.startRow, request.endRow);
+            // only return back the rows that the user asked for
+            rowData = rowData.slice(request.startRow, request.endRow);
+        }
 
         // so that the example behaves like a server side call, we put
         // it in a timeout to a) give a delay and b) make it asynchronous

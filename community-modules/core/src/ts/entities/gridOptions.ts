@@ -261,9 +261,8 @@ export interface GridOptions {
 
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
+    serverSideFilteringAlwaysResets?: boolean;
     serverSideStoreType?: ServerSideStoreType;
-    serverSideSort?: boolean;
-    serverSideFilter?: boolean;
 
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
 
@@ -781,8 +780,6 @@ export interface ServerSideStoreParams {
     storeType?: ServerSideStoreType;
     maxBlocksInCache?: number;
     cacheBlockSize?: number;
-    serverSideSort?: boolean;
-    serverSideFilter?: boolean;
 }
 
 export interface GetServerSideStoreParamsParams {

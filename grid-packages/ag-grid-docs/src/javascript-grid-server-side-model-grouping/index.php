@@ -203,14 +203,6 @@ interface ServerSideStoreParams {
     // For Infinite Store only. Cache block size.
     // If missing, defaults to grid options 'cacheBlockSize'
     cacheBlockSize?: number;
-
-    // For InMemory only. Set to true to have sorting done on the server side.
-    // If missing, defaults to grid options 'serverSideSort'
-    serverSideSort?: boolean;
-
-    // For InMemory only. Set to true to have filtering done on the server side.
-    // If missing, defaults to grid options 'serverSideFilter'
-    serverSideFilter?: boolean;
 }
 
 // for storeType above, one of 'inMemory' or 'infinite'
@@ -423,6 +415,55 @@ SNIPPET
 </p>
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+
+<h2>Sorting & Filtering</h2>
+
+<table class="table content reference">
+    <tr>
+        <th>Store Type</th>
+        <th>Event</th>
+        <th>Result</th>
+    </tr>
+    <tr>
+        <td>Infinite</td>
+        <td>Filter Changed</td>
+        <td>
+            Always Reload
+        </td>
+    </tr>
+    <tr>
+        <td>Infinite</td>
+        <td>Sort Changed</td>
+        <td>
+            <ul>
+                <li>Non-group levels always reload.</li>
+                <li>
+                    Group levels reload if sort changed in:
+                    <ul>
+                        <li>Any value col</li>
+                        <li>Any secondary col</li>
+                        <li>Column used for this levels group</li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>In Memory</td>
+        <td>Filter Changed</td>
+        <td>
+            Filter as normal inside the grid, no reloads.
+            (Filter only works at non-group levels)
+        </td>
+    </tr>
+    <tr>
+        <td>In Memory</td>
+        <td>Sort Changed</td>
+        <td>
+            Sort as normal inside the grid, no reloads.
+        </td>
+    </tr>
+</table>
 
 <h2>Next Up</h2>
 

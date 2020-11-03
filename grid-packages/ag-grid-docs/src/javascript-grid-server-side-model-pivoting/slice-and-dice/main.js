@@ -28,7 +28,7 @@ var columnDefs = [
     },
     {
         field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
-        filterParams: { values: ['2000', '2004', '2008', '2012'] }
+        filterParams: { values: ['2000', '2002', '2004', '2006', '2008', '2010', '2012'] }
     },
     { field: "sport", enableRowGroup: true, enablePivot: true, filter: false },
     { field: "gold", aggFunc: 'sum', filter: false, enableValue: true },
@@ -56,7 +56,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
+    serverSideStoreType: 'inMemory',
     rowGroupPanelShow: 'always',
+    serverSideFilteringAlwaysResets: true,
     pivotPanelShow: 'always',
     animateRows: true,
     debug: true,
@@ -103,10 +105,10 @@ function createCustomAgeFilter() {
         '    <input type="radio" name="ageFilterValue" ref="btAll" checked/> All' +
         '  </label>' +
         '  <label>' +
-        '    <input type="radio" name="ageFilterValue" ref="bt18"/> 18' +
+        '    <input type="radio" name="ageFilterValue" ref="bt20"/> 20' +
         '  </label>' +
         '  <label>' +
-        '    <input type="radio" name="ageFilterValue" ref="bt20"/> 20' +
+        '    <input type="radio" name="ageFilterValue" ref="bt22"/> 22' +
         '  </label>' +
         '</div>' +
         '' +
@@ -121,8 +123,8 @@ function createCustomAgeFilter() {
         // var that = this;
 
         this.eGui.querySelector('[ref="btAll"]').addEventListener('change', this.onSelection.bind(this, null));
-        this.eGui.querySelector('[ref="bt18"]').addEventListener('change', this.onSelection.bind(this, 18));
         this.eGui.querySelector('[ref="bt20"]').addEventListener('change', this.onSelection.bind(this, 20));
+        this.eGui.querySelector('[ref="bt22"]').addEventListener('change', this.onSelection.bind(this, 22));
     };
 
     CustomAgeFilter.prototype.onSelection = function(value) {
@@ -138,8 +140,10 @@ function createCustomAgeFilter() {
         return this.filterValue !== null;
     };
 
-    CustomAgeFilter.prototype.doesFilterPass = function() {
+    CustomAgeFilter.prototype.doesFilterPass = function(params) {
         // not needed for server side filtering
+        var value = this.params.valueGetter(params);
+        return value == this.filterValue;
     };
 
     CustomAgeFilter.prototype.getModel = function() {
@@ -157,12 +161,12 @@ function createCustomAgeFilter() {
 
     // not needed for this example
     CustomAgeFilter.prototype.setModel = function(model) {
-        if (model && model.filter === 18) {
-            this.eGui.querySelector('[ref="bt18"]').checked = true;
-            this.filterValue = 18;
-        } else if (model && model.filter === 20) {
+        if (model && model.filter === 20) {
             this.eGui.querySelector('[ref="bt20"]').checked = true;
             this.filterValue = 20;
+        } else if (model && model.filter === 22) {
+            this.eGui.querySelector('[ref="bt22"]').checked = true;
+            this.filterValue = 22;
         } else {
             this.eGui.querySelector('[ref="btAll"]').checked = true;
             this.filterValue = null;

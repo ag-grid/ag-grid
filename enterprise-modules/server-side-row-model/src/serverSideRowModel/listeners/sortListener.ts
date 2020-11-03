@@ -11,9 +11,10 @@ import {
     SortController,
     Column,
     SortModelItem,
-    RefreshSortParams
+    StoreRefreshAfterParams
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
+import {ListenerUtils} from "./listenerUtils";
 
 @Bean('ssrmSortService')
 export class SortListener extends BeanStub {
@@ -22,6 +23,7 @@ export class SortListener extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
     @PostConstruct
     private postConstruct(): void {
@@ -87,53 +89,20 @@ export class SortListener extends BeanStub {
         const newSortModel = this.extractSortModel();
         const oldSortModel = storeParams.sortModel;
 
-        this.serverSideRowModel.updateSortModel(newSortModel);
+        const changedColumns = this.findChangedColumnsInSort(newSortModel, oldSortModel);
+        const valueColChanged = this.listenerUtils.isSortingWithValueColumn(changedColumns);
+        const secondaryColChanged = this.listenerUtils.isSortingWithSecondaryColumn(changedColumns);
 
-        const changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
-        const valueColSortChanged = this.isSortingWithValueColumn(changedColumnsInSort);
-        const secondaryColSortChanged = this.isSortingWithSecondaryColumn(changedColumnsInSort);
+        const alwaysReset = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
 
-        const sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-
-        const params: RefreshSortParams = {
-            oldSortModel,
-            newSortModel,
-            valueColSortChanged,
-            secondaryColSortChanged,
-            sortAlwaysResets,
-            changedColumnsInSort
+        const params: StoreRefreshAfterParams = {
+            valueColChanged,
+            secondaryColChanged,
+            alwaysReset,
+            changedColumns
         };
 
-        this.serverSideRowModel.refreshAfterSort(params);
-    }
-
-
-    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) {
-            return false;
-        }
-
-        const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
-
-        for (let i = 0; i < changedColumnsInSort.length; i++) {
-            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
-                return true;
-            }
-        }
-
-        return false;
+        this.serverSideRowModel.refreshAfterSort(newSortModel, params);
     }
 
     // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,

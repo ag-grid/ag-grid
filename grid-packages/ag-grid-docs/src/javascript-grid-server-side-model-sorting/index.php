@@ -101,17 +101,9 @@ SNIPPET
 <h2>In Memory Store</h2>
 
 <p>
-    By default, when using the In Memory Store, sorting of rows is performed by the grid. There is nothing
-    special to be done by the server. However you also have the option to sort on the sever side, if this
-    is something you wish to do.
+    When using the In Memory Store, sorting of rows is performed by the grid. There is nothing
+    special to be done by the server.
 </p>
-
-<p>
-    To change to server sorting, set the property <code>serverSideSort = true</code>. This property
-    is only applicable if using the In Memory Store. The Infinite Store always sorts on the server side.
-</p>
-
-<h3>Grid Sorting</h3>
 
 <p>
     The example below demonstrates the In Memory Store sorting inside the grid. Note the following:
@@ -124,21 +116,6 @@ SNIPPET
 </ul>
 
 <?= grid_example('In Memory Sorting', 'in-memory-sorting', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
-
-<h3>Server Side Sorting</h3>
-
-<p>
-    The example below demonstrates the In Memory Store sorting on the server side. Note the following:
-</p>
-
-<ul class="content">
-    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
-    <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
-    <li>The grid property <code>serverSideSort = true</code>, to tell the grid the sorting is done on the server.</li>
-    <li>Rows are loaded every time sorting changes.</li>
-</ul>
-
-<?= grid_example('In Memory - Server Side Sorting', 'in-memory-sorting-server-side', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Next Up</h2>
 
