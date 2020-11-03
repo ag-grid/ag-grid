@@ -15,13 +15,20 @@ module.exports = {
       }
     },
     {
+      resolve: `gatsby-transformer-rehype`,
+      options: {
+        filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
+      },
+    },
+    'gatsby-transformer-json',
+    'gatsby-plugin-layout',
+    {
       resolve: 'gatsby-plugin-page-creator',
       options: {
         path: `${__dirname}/src/pages`,
         ignore: ['**/examples/**'],
       },
     },
-    'gatsby-plugin-layout',
     {
       resolve: 'gatsby-source-filesystem',
       options: {
@@ -97,19 +104,11 @@ module.exports = {
       }
     },
     {
-      resolve: `gatsby-transformer-rehype`,
-      options: {
-        filter: node => node.sourceInstanceName === 'examples' && node.base.endsWith('.html'),
-      },
-    },
-    'gatsby-transformer-json',
-    {
       resolve: 'gatsby-plugin-sass',
       options: {
         data: `@import './src/custom.scss';`
       }
     },
-    'gatsby-plugin-styled-components',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     {
