@@ -56,7 +56,6 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
-    serverSideStoreType: 'inMemory',
     rowGroupPanelShow: 'always',
     serverSideFilteringAlwaysResets: true,
     pivotPanelShow: 'always',
