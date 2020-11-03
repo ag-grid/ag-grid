@@ -360,6 +360,11 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
+        if (params.alwaysReset) {
+            this.refreshStore(true);
+            return;
+        }
+
         this.sortRowNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
