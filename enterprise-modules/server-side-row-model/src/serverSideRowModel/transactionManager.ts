@@ -20,12 +20,7 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-enum LoadingStrategy {
-    ApplyAfterLoaded = 'applyAfterLoaded',
-    DoNotApply = 'doNotApply'
-}
-
-@Bean('serverSideTransactionManager')
+@Bean('ssrmTransactionManager')
 export class TransactionManager extends BeanStub implements IServerSideTransactionManager {
 
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -34,46 +29,19 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
     private asyncTransactionsTimeout: number | undefined;
-    private asyncTransactions: AsyncTransactionWrapper[] | null;
-
-    private loadingStrategy: LoadingStrategy;
+    private asyncTransactions: AsyncTransactionWrapper[] = [];
 
     @PostConstruct
     private postConstruct(): void {
         // only want to be active if SSRM active, otherwise would be interfering with other row models
         if (!this.gridOptionsWrapper.isRowModelServerSide()) { return; }
-
-        this.setupLoadingStrategy();
-    }
-
-    private setupLoadingStrategy(): void {
-        const loadingStrategy = this.gridOptionsWrapper.getServerSideAsyncTransactionLoadingStrategy();
-
-        // default is 'Skip'
-        if (loadingStrategy == null) {
-            this.loadingStrategy = LoadingStrategy.DoNotApply;
-            return;
-        }
-
-        switch (loadingStrategy) {
-            case LoadingStrategy.ApplyAfterLoaded:
-            case LoadingStrategy.DoNotApply:
-                this.loadingStrategy = loadingStrategy;
-                break;
-            default:
-                const strategies = Object.keys(LoadingStrategy).join(', ');
-                console.warn(`ag-Grid: Invalid loading strategy: ${loadingStrategy}, should be one of [${strategies}]`);
-                this.loadingStrategy = LoadingStrategy.DoNotApply;
-                break;
-        }
     }
 
     public applyTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
         if (this.asyncTransactionsTimeout == null) {
-            this.asyncTransactions = [];
             this.scheduleExecuteAsync();
         }
-        this.asyncTransactions!.push({ transaction: transaction, callback: callback });
+        this.asyncTransactions.push({ transaction: transaction, callback: callback });
     }
 
     private scheduleExecuteAsync(): void {
@@ -84,6 +52,8 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     private executeAsyncTransactions(): void {
+        if (!this.asyncTransactions) { return; }
+
         const resultFuncs: (() => void)[] = [];
         const resultsForEvent: ServerSideTransactionResult[] = [];
 
@@ -102,7 +72,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
             resultsForEvent.push(result);
 
-            const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading && this.loadingStrategy == LoadingStrategy.ApplyAfterLoaded;
+            const retryTransaction = result.status == ServerSideTransactionResultStatus.StoreLoading;
             if (retryTransaction) {
                 transactionsToRetry.push(txWrapper);
                 return;
@@ -123,13 +93,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
             }, 0);
         }
 
-        if (transactionsToRetry.length > 0) {
-            this.scheduleExecuteAsync();
-            this.asyncTransactions = transactionsToRetry;
-        } else {
-            this.asyncTransactions = null;
-            this.asyncTransactionsTimeout = undefined;
-        }
+        this.asyncTransactionsTimeout = undefined;
+
+        // this will be empty list if nothing to retry
+        this.asyncTransactions = transactionsToRetry;
 
         if (atLeastOneTransactionApplied) {
             this.valueCache.onDataChanged();
@@ -148,10 +115,11 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     }
 
     public flushAsyncTransactions(): void {
-        if (this.asyncTransactionsTimeout != null) {
+        // the timeout could be missing, if we are flushing due to row data loaded
+        if (this.asyncTransactionsTimeout!=null) {
             clearTimeout(this.asyncTransactionsTimeout);
-            this.executeAsyncTransactions();
         }
+        this.executeAsyncTransactions();
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {

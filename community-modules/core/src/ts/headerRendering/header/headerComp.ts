@@ -26,6 +26,7 @@ export interface IHeaderParams {
     progressSort: (multiSort?: boolean) => void;
     setSort: (sort: string, multiSort?: boolean) => void;
     columnApi: ColumnApi;
+    eGridHeader: HTMLElement;
     api: GridApi;
     context: any;
     template: string;

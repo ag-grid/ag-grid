@@ -81,7 +81,7 @@ function ServerSideDatasource(server) {
                     // call the success callback
                     params.success({
                         rowData: response.rows,
-                        finalRowCount: response.lastRow,
+                        rowCount: response.lastRow,
                         storeInfo: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
                     });
                 } else {

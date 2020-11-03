@@ -20,13 +20,7 @@ var gridOptions = {
     return {
       storeType: type
     };
-  },
-  isApplyServerSideTransaction: function(params) {
-    var route = params.transaction.route;
-    // cancel all transactions against rubber
-    var isRubberRoute = route && route[0] && route[0] == 'Rubber';
-    return !isRubberRoute;
-  },
+  }
 };
 
 var productsNames = ['Palm Oil','Rubber','Wool','Amber','Copper'];
@@ -111,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
 
           if (params.request.groupKeys.length==0) {
-            params.success({rowData: products.slice(), finalRowCount: products.length});
+            params.success({rowData: products.slice(), rowCount: products.length});
           } else {
             var key = params.request.groupKeys[0];
             var foundProduct;

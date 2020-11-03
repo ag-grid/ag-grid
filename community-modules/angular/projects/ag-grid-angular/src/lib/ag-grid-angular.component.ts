@@ -202,7 +202,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotRowTotals : any = undefined;
     @Input() public pivotPanelShow : any = undefined;
     @Input() public fillHandleDirection : any = undefined;
-    @Input() public serverSideAsyncTransactionLoadingStrategy : any = undefined;
     @Input() public serverSideStoreType : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
@@ -417,6 +416,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public applyColumnDefOrder : any = undefined;
     @Input() public debounceVerticalScrollbar : any = undefined;
     @Input() public detailRowAutoHeight : any = undefined;
+    @Input() public serverSideSort : any = undefined;
+    @Input() public serverSideFilter : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

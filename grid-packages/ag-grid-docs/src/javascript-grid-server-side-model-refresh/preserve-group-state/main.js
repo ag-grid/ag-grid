@@ -66,7 +66,7 @@ function ServerSideDatasource(server) {
                     var rowsWithIds = addGroupIdsToRows(params.request, response.rows);
 
                     // call the success callback
-                    params.success({rowData: rowsWithIds, finalRowCount: response.lastRow});
+                    params.success({rowData: rowsWithIds, rowCount: response.lastRow});
 
                     // to preserve group state we expand any previously expanded groups for this block
                     rowsWithIds.forEach(function(row) {
@@ -76,7 +76,7 @@ function ServerSideDatasource(server) {
                     });
                 } else {
                     // inform the grid request failed
-                    params.failCallback();
+                    params.fail();
                 }
             }, 200);
         }

@@ -46,12 +46,13 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('transactionManager') private transactionManager: TransactionManager;
+    @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
 
     private readonly level: number;
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
     private readonly ssrmParams: SSRMParams;
+    private readonly storeParams: ServerSideStoreParams;
     private readonly parentRowNode: RowNode;
 
     private nodeIdSequence: NumberSequence = new NumberSequence();
@@ -82,6 +83,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.ssrmParams = ssrmParams;
+        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
         this.level = parentRowNode.level + 1;
         this.groupLevel = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : undefined;
@@ -214,16 +216,28 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private sortRowNodes(): void {
+
+        const sortingOnServerSide = this.storeParams.serverSideSort;
+
         const sortOptions = this.sortController.getSortOptions();
-        const noSort = !sortOptions || sortOptions.length == 0;
-        if (noSort) {
+        const noSortApplied = !sortOptions || sortOptions.length == 0;
+
+        if (sortingOnServerSide || noSortApplied) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
+
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
     }
 
     private filterRowNodes(): void {
+
+        // if doing server side filtering, nothing to do here
+        if (this.storeParams.serverSideFilter) {
+            this.nodesAfterFilter = this.allRowNodes;
+            return;
+        }
+
         // filtering for InMemoryStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
@@ -344,12 +358,27 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(): void {
+
+        if (this.storeParams.serverSideFilter) {
+            this.refreshStore(true);
+            return;
+        }
+
         this.filterAndSortNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterFilter());
     }
 
     public refreshAfterSort(params: RefreshSortParams): void {
-        this.sortRowNodes();
+
+        if (this.storeParams.serverSideSort) {
+            if (this.storeUtils.isServerSideSortNeeded(this.parentRowNode, this.ssrmParams, params)) {
+                this.refreshStore(true);
+                return;
+            }
+        } else {
+            this.sortRowNodes();
+        }
+
         this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
 

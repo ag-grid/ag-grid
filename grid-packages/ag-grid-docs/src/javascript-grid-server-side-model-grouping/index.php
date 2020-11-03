@@ -196,11 +196,21 @@ interface ServerSideStoreParams {
     // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
     storeType?: ServerSideStoreType;
 
-    // how many blocks to keep in cach. if missing, defaults to grid options 'maxBlocksInCache'
+    // For Infinite Store only. How many blocks to keep in cach.
+    // If missing, defaults to grid options 'maxBlocksInCache'
     maxBlocksInCache?: number;
 
-    // cache block size. if missing, defaults to grid options 'cacheBlockSize'
+    // For Infinite Store only. Cache block size.
+    // If missing, defaults to grid options 'cacheBlockSize'
     cacheBlockSize?: number;
+
+    // For InMemory only. Set to true to have sorting done on the server side.
+    // If missing, defaults to grid options 'serverSideSort'
+    serverSideSort?: boolean;
+
+    // For InMemory only. Set to true to have filtering done on the server side.
+    // If missing, defaults to grid options 'serverSideFilter'
+    serverSideFilter?: boolean;
 }
 
 // for storeType above, one of 'inMemory' or 'infinite'
@@ -261,7 +271,7 @@ SNIPPET
 <?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 
-<h2>Store State & Info</h2>
+<h2>Store State & Store Info</h2>
 
 <p>
     For debugging purposes, the grid has the API <code>getServerSideStoreState()</code> which returns

@@ -128,7 +128,7 @@ export abstract class Series extends Observable {
         return [];
     }
 
-    fireNodeClickEvent(datum: SeriesNodeDatum): void {}
+    fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void {}
 
     /**
      * @private

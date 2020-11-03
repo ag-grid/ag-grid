@@ -656,10 +656,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
-    public getServerSideAsyncTransactionLoadingStrategy(): string | undefined {
-        return this.gridOptions.serverSideAsyncTransactionLoadingStrategy;
-    }
-
     public getServerSideStoreType(): string | undefined {
         return this.gridOptions.serverSideStoreType;
     }
@@ -1120,6 +1116,14 @@ export class GridOptionsWrapper {
 
     public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined {
         return this.gridOptions.isServerSideGroup;
+    }
+
+    public isServerSideSort(): boolean {
+        return isTrue(this.gridOptions.serverSideSort);
+    }
+
+    public isServerSideFilter(): boolean {
+        return isTrue(this.gridOptions.serverSideFilter);
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {

@@ -7,7 +7,7 @@ export class PropertyKeys {
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate',
         'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
         'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'serverSideAsyncTransactionLoadingStrategy', 'serverSideStoreType'
+        'serverSideStoreType'
     ];
 
     public static OBJECT_PROPERTIES = [
@@ -58,7 +58,8 @@ export class PropertyKeys {
         'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
         'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
-        'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight'
+        'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
+        'serverSideSort','serverSideFilter'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

@@ -97,7 +97,7 @@ function createServerSideDatasource(fakeServer) {
         var allRows = this.fakeServer.getData(request);
         var resultsForBlock = allRows.slice(request.startRow, request.endRow);
         setTimeout(function () {
-            params.successCallback(resultsForBlock, allRows.length);
+            params.successCallback({rowData: resultsForBlock, rowCount: allRows.length});
         }, 500);
     };
 

@@ -52,9 +52,9 @@ function createServerSideDatasource(server) {
       setTimeout(function () {
         if (response.success) {
           // supply rows for requested block to grid
-          params.successCallback(response.rows, response.lastRow);
+          params.success({rowData: response.rows, rowCount: response.lastRow});
         } else {
-          params.failCallback();
+          params.fail();
         }
       }, 500);
     }

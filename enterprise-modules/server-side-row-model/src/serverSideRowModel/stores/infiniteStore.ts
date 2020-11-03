@@ -105,7 +105,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
 
     public onBlockLoaded(block: CacheBlock, params: LoadSuccessParams): void {
 
-        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.finalRowCount}`);
+        this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
         if (params.storeInfo) {
             _.assign(this.info, params.storeInfo);
@@ -116,7 +116,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             _.doOnce( () => console.warn(message, params), 'InfiniteStore.noData');
         }
 
-        const finalRowCount = params.finalRowCount != null && params.finalRowCount >= 0 ? params.finalRowCount : undefined;
+        const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
 
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
@@ -680,24 +680,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
     }
 
     public refreshAfterSort(params: RefreshSortParams): void {
-
-        if (params.sortAlwaysResets || params.valueColSortChanged || params.secondaryColSortChanged) {
-            this.resetStore();
-            return;
-        }
-
-        const level = this.parentRowNode.level + 1;
-        const grouping = level < this.ssrmParams.rowGroupCols.length;
-
-        if (!grouping) {
-            this.resetStore();
-            return;
-        }
-
-        const colIdThisGroup = this.ssrmParams.rowGroupCols[level].id;
-        const sortingByThisGroup = params.changedColumnsInSort.indexOf(colIdThisGroup) > -1;
-
-        if (sortingByThisGroup) {
+        if (this.storeUtils.isServerSideSortNeeded(this.parentRowNode, this.ssrmParams, params)) {
             this.resetStore();
             return;
         }

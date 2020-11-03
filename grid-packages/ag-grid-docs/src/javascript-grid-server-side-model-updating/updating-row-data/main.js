@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var response = getMockServerResponse(params.request);
 
           // call the success callback
-          params.successCallback(response.rowsThisBlock, response.lastRow);
+          params.success({rowData: response.rowsThisBlock, rowCount: response.lastRow});
         }, 500);
       }
     };

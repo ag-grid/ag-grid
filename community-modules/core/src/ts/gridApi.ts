@@ -156,7 +156,7 @@ export class GridApi {
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
-    @Optional('serverSideTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
+    @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;

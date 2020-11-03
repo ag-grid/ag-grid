@@ -69,7 +69,7 @@ function createMyDataSource(data) {
         // take a slice of the total rows
         var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
         // call the success callback
-        params.successCallback(rowsThisPage, window.rowDataServerSide.length);
+        params.success({rowData: rowsThisPage, rowCount: window.rowDataServerSide.length});
     };
 
     return new MyDatasource();
