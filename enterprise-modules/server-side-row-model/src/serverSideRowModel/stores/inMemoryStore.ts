@@ -285,7 +285,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.allRowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
-            const childCache = rowNode.childrenCache;
+            const childCache = rowNode.childStore;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -342,7 +342,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     private forEachChildStoreShallow(callback: (childStore: IServerSideStore) => void): void {
         this.allRowNodes.forEach(rowNode => {
-            const childStore = rowNode.childrenCache;
+            const childStore = rowNode.childStore;
             if (childStore) {
                 callback(childStore);
             }

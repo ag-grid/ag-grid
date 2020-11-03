@@ -164,8 +164,8 @@ export class CacheBlock extends RowNodeBlock {
 
             // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
-            if (includeChildren && rowNode.childrenCache) {
-                const childStore = rowNode.childrenCache;
+            if (includeChildren && rowNode.childStore) {
+                const childStore = rowNode.childStore;
                 childStore.forEachNodeDeep(callback, sequence);
             }
         });

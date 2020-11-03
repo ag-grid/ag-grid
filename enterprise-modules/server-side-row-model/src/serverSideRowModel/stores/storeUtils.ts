@@ -89,7 +89,7 @@ export class StoreUtils extends BeanStub {
 
         if (nextNode) {
             const keyListForNextLevel = keys.slice(1, keys.length);
-            const nextStore = nextNode.childrenCache;
+            const nextStore = nextNode.childStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
         }
 

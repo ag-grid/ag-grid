@@ -589,8 +589,8 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
             // we want the index of the last displayed node, not just the top level node, so if the last top level node
             // is open, we get the index of the last displayed child node.
             let lastDisplayedNodeIndexInBlockBefore: number;
-            if (lastRowNode.expanded && lastRowNode.childrenCache) {
-                const serverSideCache = lastRowNode.childrenCache;
+            if (lastRowNode.expanded && lastRowNode.childStore) {
+                const serverSideCache = lastRowNode.childStore;
                 lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd()! - 1;
             } else if (lastRowNode.expanded && lastRowNode.detailNode) {
                 lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex!;
@@ -694,7 +694,7 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => {
             if (block.isGroupLevel()) {
                 const innerCallback = (rowNode: RowNode) => {
-                    const nextCache = rowNode.childrenCache;
+                    const nextCache = rowNode.childStore;
                     if (nextCache) {
                         callback(nextCache);
                     }
