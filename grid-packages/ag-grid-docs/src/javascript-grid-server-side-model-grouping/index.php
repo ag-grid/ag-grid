@@ -380,7 +380,7 @@ SNIPPET
 
 <p>
     When a sort is applied to a grouped grid using the SSRM, the grid will behave differently
-    depending on what store is used. How it behaves is asd follows:
+    depending on what store is used. How it behaves is as follows:
 </p>
 
 <ul>
@@ -407,6 +407,10 @@ SNIPPET
     </li>
 </ul>
 
+<p>
+    It is possible to force the grid to always refresh (reload data) after a sort changes. Do this by setting
+    grid property <code>serverSideSortingAlwaysResets=true</code>.
+</p>
 
 
 <h2>Filtering</h2>
@@ -431,6 +435,11 @@ SNIPPET
         </p>
     </li>
 </ul>
+
+<p>
+    It is possible to force the grid to always refresh (reload data) after a filter changes. Do this by setting
+    grid property <code>serverSideFilteringAlwaysResets=true</code>.
+</p>
 
 <h2>Complex Columns</h2>
 
