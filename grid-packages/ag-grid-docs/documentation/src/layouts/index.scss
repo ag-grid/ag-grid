@@ -12,7 +12,7 @@ body {
         &.warning {
             @extend .alert-warning;
         }
-    
+
         &.info {
             @extend .alert-info;
         }
@@ -31,4 +31,21 @@ body {
 
 a {
     color: theme-color(primary);
+}
+
+.event-hierarchy {
+    font-size: 0.8rem;
+    font-weight: bold;
+    white-space: pre-wrap;
+    width: 100%;
+
+    &__property {
+        color: darkgreen;
+        font-weight: normal;
+    }
+
+    &__attribute {
+        color: darkorchid;
+        font-weight: bold;
+    }
 }

@@ -2,8 +2,7 @@
 title: "Column Headers"
 ---
 
-Each column has a header at the top that typically displays the column name and has access to column
-features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
+Each column has a header at the top that typically displays the column name and has access to column features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
 
 ## Header Height
 
@@ -11,16 +10,13 @@ These properties can be used to change the different heights used in the headers
 
 <api-documentation source="grid-properties/properties.json" section="headers"></api-documentation>
 
-All these properties also have setter methods that can be called from the API and will change the header
-heights dynamically.
+All these properties also have setter methods that can be called from the API and will change the header heights dynamically.
 
 <api-documentation source="grid-api/api.json" section="headers"></api-documentation>
 
 ## Text Orientation
 
-By default, the text label for the header is display horizontally, i.e. as normal readable text.
-To display the text in another orientation you have to provide your own CSS to change the orientation
-and also provide the adequate header heights using the appropriate grid property.
+By default, the text label for the header is display horizontally, i.e. as normal readable text. To display the text in another orientation you have to provide your own CSS to change the orientation and also provide the adequate header heights using the appropriate grid property.
 
 ### Example: Header Height and Text Orientation
 
@@ -44,8 +40,7 @@ pivotGroupHeaderHeight: 50,
 /* Pivoting, requires turning on pivot mode. Group columns */
 pivotGroupHeaderHeight: 100,
 ```
-- The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style
-is slightly different depending if pivoting or not:
+- The grouped column header `Athlete Details` has a specific style applied to it to make it bigger. Note that the style is slightly different depending if pivoting or not:
 
 ```css
 .ag-pivot-off .ag-header-group-cell {
@@ -122,17 +117,13 @@ is slightly different depending if pivoting or not:
 
 ## Dynamic Header Heights
 
-As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
-Note how if the value is set to `null`, it might reuse other values. To see all the interactions check the properties
-descriptions at the top of the page.
+As you can see in the example below, if you change any of the header heights, this change will be reflected automatically. Note how if the value is set to `null`, it might reuse other values. To see all the interactions check the properties descriptions at the top of the page.
 
 <grid-example title='Dynamic Header Height' name='dynamic-height' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Custom Header
-<p>
-    Header templates are meant to be used for simple UI customisation, if you need to have more control over the
-    header check how to create your own <a href="../javascript-grid-header-rendering/">Header Components</a>.
-</p>
+
+Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](../header-rendering/).
 
 ## Header Tooltips
 
@@ -147,9 +138,7 @@ The example below shows header tooltips. Note the following:
 
 ## Header Templates
 
-You can provide a header template used by the default header component for simple layout changes. If you
-want to change the behaviour, please look at creating your own [Custom Header Component](./header-rendering/).
-The template for the default header is specified in `columnDef.headerComponentParams.template`.
+You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](./header-rendering/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
 
 This is the default template used in ag-Grid:
 
@@ -179,17 +168,14 @@ When you provide your own template, everything should work as expected as long a
 | `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
 | `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
 
-The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element
-out of your template, the functionality will not be added. For example if you do not specify `eLabel`
-then the column will not react to click events for sorting.
+The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 [[note]]
 | Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](./icons/).
 
 ### Example: Simple Header Templates
 
-In the following example you can see how we are reusing the default grid template to change the layout of
-the elements.
+In the following example you can see how we are reusing the default grid template to change the layout of the elements.
 
 ```js
 defaultColDef: {
