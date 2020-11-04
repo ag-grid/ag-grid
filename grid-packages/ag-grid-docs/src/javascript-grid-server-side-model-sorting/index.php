@@ -98,30 +98,30 @@ SNIPPET
     </p>
 </note>
 
-<h2>In Memory Store</h2>
+<h2>Full Store</h2>
 
 <p>
-    When using the In Memory Store, sorting of rows is performed by the grid. There is nothing
+    When using the Full Store, sorting of rows is performed by the grid. There is nothing
     special to be done by the server.
 </p>
 
 <p>
-    The example below demonstrates the In Memory Store sorting inside the grid. Note the following:
+    The example below demonstrates the Full Store sorting inside the grid. Note the following:
 </p>
 
 <ul class="content">
-    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
+    <li>The grid is using the Full Store by setting the grid property <code>serverSideStoreType = full</code>.</li>
     <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
     <li>Rows are loaded once. All sorting is then subsequently done by the grid.</li>
 </ul>
 
-<?= grid_example('In Memory Sorting', 'in-memory-sorting', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Full Store Sorting', 'full-sorting', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <h2>Next Up</h2>
 
 <p>
     Continue to the next section to learn about
-    <a href="../javascript-grid-server-side-model-filtering/">SSRM Filtering</a>.
+    <a href="../javascript-grid-server-side-model-filtering/">Filtering</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -16,7 +16,7 @@ var gridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'inMemory'
+  serverSideStoreType: 'full'
 };
 
 // setup the grid after the page has finished loading

@@ -37,7 +37,7 @@ SNIPPET
     For more configuration details see the section on <a href="../javascript-grid-pagination">Pagination</a>.
 </p>
 
-<h2>Pagination on the Server</h2>
+<h2>Server Pagination</h2>
 
 <p>
     The actual pagination of rows is performed on the server when using the Server-Side Row Model. When the grid needs
@@ -71,8 +71,6 @@ SNIPPET
         Implementing the Server-Side Datasource</a> for more details.
 </p>
 
-<h2>Example: Server-Side Pagination</h2>
-
 <p>
     The example below demonstrates server-side Pagination. Note the following:
 </p>
@@ -102,7 +100,7 @@ SNIPPET
 
 <?= grid_example('Pagination', 'pagination', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql'], 'modules' => ['serverside', 'menu', 'columnpanel']]) ?>
 
-<h2>Pagination with Groups</h2>
+<h2>Groups</h2>
 
 <p>
     When grouping, pagination splits rows according to top-level groups only. This has the following implications:
@@ -144,7 +142,7 @@ SNIPPET
 
 <?= grid_example('Pagination with Groups', 'pagination-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
-<h2>Pagination with Child Rows</h2>
+<h2>Child Rows</h2>
 
 <p>
     If it is desired to keep the row count exactly at the page size, then set grid property
@@ -186,8 +184,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-selection/">Row Selection</a>
-    using the Server-Side Row Model.
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-selection/">Row Selection</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

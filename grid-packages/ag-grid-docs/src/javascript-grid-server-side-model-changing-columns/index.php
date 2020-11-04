@@ -44,8 +44,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-crud/">CRUD Operations</a>
-    using the Server-Side Row Model.
+    Continue to the next section to learn how to <a href="../javascript-grid-server-side-model-updating/">Update Data</a> with the SSRM.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

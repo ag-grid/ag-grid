@@ -265,7 +265,7 @@ SNIPPET
 
 <p>
     Continue to the next section to learn how to work with
-    <a href="../javascript-grid-server-side-model-tree-data/">Tree Data</a> when using the Server-Side Row Model.
+    <a href="../javascript-grid-server-side-model-tree-data/">Tree Data</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

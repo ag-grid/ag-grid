@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Server-Side Row Model - Row Stores";
-$pageDescription = "Node Stores are using by the Server-Side Row Model. The In Memory allows in-browser Sorting and Filtering, the Infinite allows Infinite Scrolling";
+$pageDescription = "Node Stores are using by the Server-Side Row Model. The Full allows in-browser Sorting and Filtering, the Infinite allows Infinite Scrolling";
 $pageKeywords = "ag-Grid Server-Side Node Stores";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     Inside the Server-Side Row Model (SSRM), rows are stored in Row Stores. There are two types of
-    Row Stores: 1) Infinite Store and 2) In Memory Store. This section explains more on these two
+    Row Stores: 1) Infinite Store and 2) Full Store. This section explains more on these two
     different Row Store types.
 </p>
 
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
     </li>
     <li>
         <p>
-            <b>In Memory Store</b>:
+            <b>Full Store</b>:
             Loads rows all at once (eg if 500 children when you expand a group, it loads
             all 500 children). This allows sorting and filtering inside the grid (a server
             request isn't required to sort and filter) and also provides the option of
@@ -70,22 +70,23 @@ include '../documentation-main/documentation_header.php';
             <a href="../javascript-grid-server-side-model-transactions/">Transactions</a>).
         </p>
         <p>
-            The name "In Memory Store" comes from the fact all data is loaded into the client's
-            memory, and not in blocks.
+            The name "Full Store" comes from the fact all data is loaded into the store,
+            and not in blocks. The store is full of rows, no more rows will be loaded
+            after the initial load.
         </p>
     </li>
 </ul>
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
     <img src="./in-memory-store-vs-infinite-store.svg" style="width: 80%;"/>
-    <div>Fig 2. Infinite vs In Memory Store</div>
+    <div>Fig 2. Infinite vs Full Store</div>
 </div>
 
 
 
 <p>
     Set the store type using the grid property <code>serverSideStoreType</code>. Set to
-    <code>inMemory</code> to use the In Memory Store and <code>infinite</code> to use
+    <code>full</code> to use the Full Store and <code>infinite</code> to use
     the Infinite Store. If not set, the Infinite Store is used.
 </p>
 
@@ -108,7 +109,7 @@ include '../documentation-main/documentation_header.php';
 <?= grid_example('Infinite Store', 'infinite-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <p>
-    Below shows a simple example using In Memory Store. Note the following:
+    Below shows a simple example using Full Store. Note the following:
 </p>
 <ul>
     <li>
@@ -123,27 +124,27 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('In Memory Store', 'in-memory-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Full Store', 'full-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <note>
-    At this point you might be wondering the advantage of the In Memory store with just using
+    At this point you might be wondering the advantage of the Full store with just using
     the standard <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>.
     The difference is when Row Grouping, the children of the row groups are loaded as the
     groups are expanded. For Client-Side Row Model, all data needs to be loaded up front.
 </note>
 
 
-<h2>Infinite vs In Memory</h2>
+<h2>Infinite vs Full</h2>
 
 <p>
-    So when is it best to use Infinite Store? And when is it best to use In Memory Store?
+    So when is it best to use Infinite Store? And when is it best to use Full Store?
 </p>
 
 <p>
-    Use In Memory Store when all of the data comfortable fit's inside the browsers memory.
-    It is possible to present big data inside an application using a combination of In Memory
+    Use Full Store when all of the data comfortable fit's inside the browsers memory.
+    It is possible to present big data inside an application using a combination of Full
     Store and Row Grouping. For example a dataset could have 10 million rows, however due to
-    grouping only 200 rows are brought back at any group level - in this case In Memory Store
+    grouping only 200 rows are brought back at any group level - in this case Full Store
     would work fine.
 </p>
 
@@ -210,8 +211,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about the
-    <a href="../javascript-grid-server-side-model-configuration/">SSRM Configuration</a>.
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-configuration/">Configuration</a>
+    of the SSRM.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

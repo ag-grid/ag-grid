@@ -145,11 +145,4 @@ SNIPPET
 
 <?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
-<h2>Next Up</h2>
-
-<p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-changing-columns/">Changing Columns</a>
-    using the Server-Side Row Model.
-</p>
-
 <?php include '../documentation-main/documentation_footer.php';?>

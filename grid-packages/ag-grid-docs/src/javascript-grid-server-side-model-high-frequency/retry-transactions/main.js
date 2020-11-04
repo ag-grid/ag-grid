@@ -21,7 +21,7 @@ var gridOptions = {
   },
   getRowNodeId: function(data) {return data.product; },
   rowModelType: 'serverSide',
-  serverSideStoreType: 'inMemory',
+  serverSideStoreType: 'full',
   columnDefs: columnDefs
 };
 

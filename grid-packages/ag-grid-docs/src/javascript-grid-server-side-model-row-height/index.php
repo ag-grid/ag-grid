@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Continue to the next section to learn how to combine
-    <a href="../javascript-grid-server-side-model-master-detail/">Master Detail</a> with the Server-Side Row Model.
+    <a href="../javascript-grid-server-side-model-master-detail/">Master Detail</a> with the SSRM.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

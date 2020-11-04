@@ -11,12 +11,12 @@ var gridOptions = {
   },
   getRowNodeId: function(data) {return data.id; },
   rowModelType: 'serverSide',
-  serverSideStoreType: 'inMemory',
+  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   animateRows: true,
   purgeClosedRowNodes: true,
   getServerSideStoreParams: function(params) {
-    var type = params.level == 0 ? 'infinite' : 'inMemory';
+    var type = params.level == 0 ? 'infinite' : 'full';
     return {
       storeType: type
     };

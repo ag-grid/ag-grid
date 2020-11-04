@@ -139,5 +139,11 @@ SNIPPET
 
 <?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Pivoting</a>.
+</p>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

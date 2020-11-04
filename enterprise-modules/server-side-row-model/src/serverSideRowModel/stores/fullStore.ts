@@ -34,7 +34,7 @@ import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
 import {TransactionManager} from "../transactionManager";
 
-export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
+export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -191,7 +191,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
         if (!params.rowData) {
             const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            _.doOnce( () => console.warn(message, params), 'InMemoryStore.noData');
+            _.doOnce( () => console.warn(message, params), 'FullStore.noData');
         }
 
         const rowData = params.rowData ? params.rowData : [];
@@ -230,7 +230,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     private filterRowNodes(): void {
 
-        // filtering for InMemoryStore only words at lowest level details.
+        // filtering for InFullStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
             this.nodesAfterFilter = this.allRowNodes;
@@ -526,7 +526,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
-            type: ServerSideStoreType.InMemory,
+            type: ServerSideStoreType.Full,
             route: this.storeUtils.createGroupKeys(this.parentRowNode),
             rowCount: this.allRowNodes.length,
             info: this.info

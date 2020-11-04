@@ -210,19 +210,19 @@ SNIPPET
 <!---->
 <?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
-<h2>In Memory Store Filtering</h2>
+<h2>Full Store Filtering</h2>
 
 <p>
-    When using the In Memory Store, filtering of rows is performed by the grid. There is nothing
+    When using the Full Store, filtering of rows is performed by the grid. There is nothing
     special to be done by the server.
 </p>
 
 <p>
-    The example below demonstrates the In Memory Store filtering inside the grid. Note the following:
+    The example below demonstrates the Full Store filtering inside the grid. Note the following:
 </p>
 
 <ul class="content">
-    <li>The grid is using the In Memory Store by setting the grid property <code>serverSideStoreType = inMemory</code>.</li>
+    <li>The grid is using the Full Store by setting the grid property <code>serverSideStoreType = full</code>.</li>
     <li>Columns are set up with the following filters:
         <ul>
             <li>Athlete column has Text Filter.</li>
@@ -233,10 +233,10 @@ SNIPPET
     <li>Rows are loaded once. All filtering is then subsequently done by the grid.</li>
 </ul>
 
-<?= grid_example('In Memory Filtering', 'in-memory', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Full Store Filtering', 'full', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <p>
-    Note that the Set Filter is provided values in both the Infinite and In-Memory Row Stores.
+    Note that the Set Filter is provided values in both the Infinite and Full Stores.
     Values are required for the Set Filter when used in the SSRM regardless of which row store is used.
 </p>
 
