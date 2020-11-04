@@ -94,11 +94,11 @@ If using Row Spanning, be aware of the following:
 - Responsibility is with the developer to not span past the last row. This is especially true if sorting and filtering (e.g. a cell may span outside the grid after the data is sorted and the cell's row ends up at the bottom of the grid).
 
 - Responsibility is with the developer to apply a background style to spanning cells so that overwritten cells cannot be seen.
-    
+
 - Overwritten cells will still exist, but will not be visible. This means cell navigation will go to the other cells - e.g. if a row spanned cell has focus, and the user hits the 'arrow down' key, the focus will go to a hidden cell.
-    
+
 - Row span does not work with dynamic row height or auto-height. The row span assumes default row height is used when calculating how high the cell should be.
 
 - Sorting and filtering will provide strange results when row spanning. For example a cell may span 4 rows, however applying a filter or a sort will probably change the requirements of what rows should be spanned.
-    
-- [Range Selection](./range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.
+
+- [Range Selection](../range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.

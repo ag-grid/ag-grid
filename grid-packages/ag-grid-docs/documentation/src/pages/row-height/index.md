@@ -5,9 +5,8 @@ title: "Row Height"
 By default, the grid will display rows with a height of `25px`. You can change this for each row
 individually to give each row a different height.
 
-
 [[note]]
-| You cannot use variable row height when using [Viewport Row Model](./javascript-grid-viewport/).
+| You cannot use variable row height when using [Viewport Row Model](../viewport/).
 | This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
 
 ## rowHeight Property
@@ -15,20 +14,17 @@ individually to give each row a different height.
 To change the row height for the whole grid, set the property `rowHeight` to a positive number.
 For example, to set the height to 50px, do the following:
 
-
 ```js
 gridOptions.rowHeight = 50;
 ```
 
 Changing the property will set a new row height for all rows, including pinned rows top and bottom.
 
-
 ## getRowHeight Callback
 
 To change the row height so that each row can have a different height,
 implement the `getRowHeight()` callback. For example, to set the height
 to 50px for all non-pinned rows and 25px for pinned rows, do the following:
-
 
 ```js
 gridOptions.getRowHeight = function(params) {
@@ -38,12 +34,10 @@ gridOptions.getRowHeight = function(params) {
 
 The params object passed to the callback has the following values:
 
-
-- **node:** The [rowNode](./row-node/) in question.
+- **node:** The [rowNode](../row-object/) in question.
 - **data:** The data for the row.
-- **api:** The [grid API](./api/).
-- **context:** The [grid context](./context/).
-
+- **api:** The [grid API](../grid-api/).
+- **context:** The [grid context](../context/).
 
 The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight()` callback to achieve this.
 
@@ -57,14 +51,12 @@ The example below has `wrapText=true` set on the **Latin Text** column.
 Behind the scenes, this results in the CSS property `white-space: normal`
 being applied to the cell, which causes the text to wrap.
 
-
 <grid-example title='Row Height Complex' name='row-height-complex' type='generated'></grid-example>
 
 [[note]]
-| If you are providing a custom [Cell Renderer Component](./cell-rendering-components/),
+| If you are providing a custom [Cell Renderer Component](../cell-rendering-components/),
 | you can implement text wrapping in the custom component in your own way. The property `wrapText`
 | is intended to be used when you are not using a custom Cell Renderer.
-
 
 ## Auto Row Height
 
@@ -76,7 +68,7 @@ that column to determine the line height.
 
 `autoHeight` is typically used with `wrapText`.
 If `wrapText` is not set, and no custom
-[Cell Renderer Component](./cell-rendering-components/)
+[Cell Renderer Component](../cell-rendering-components/)
 is used, then the cell will display all it's contents on one line. This is probably not
 the intention if using Auto Row Height.
 

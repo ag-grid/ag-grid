@@ -12,7 +12,7 @@ With the release of ag-Grid version 23, we have undertaken a major rewrite of th
     - Test your theme to ensure that all the customisations you have made still look correct.
     - If everything still looks correct then you do not need to change your theme code. However you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from `.../sass/ag-theme-$name.scss` to `.../sass/legacy/ag-theme-$name-v22-compat.scss`).
     - If anything does not work as expected, read this migration guide to establish what you need to change.
-    
+
 - If you have a large custom theme that extends any of our provided themes, but contains many CSS rules that extensively change the appearance so that it looks very different from the base theme, then consider updating your theme to extend ag-theme-base. This will provide the most stable long term base for your theme. See [this demo](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-extending-base) for an example of a custom theme extending the base theme.
 
 - If you are using one of the original grid themes: "fresh", "dark", "blue" or "bootstrap":
@@ -71,7 +71,7 @@ These variables correspond to parameters with different names. Where possible, t
 
 ### 3. Variables removed with no equivalent parameter
 
-We have removed variables where it is trivial to achieve the same effect using a CSS selector. Instead of using a parameter, 
+We have removed variables where it is trivial to achieve the same effect using a CSS selector. Instead of using a parameter,
 create a CSS rule to apply your desired effect. For example:
 
 ```scss
@@ -130,7 +130,7 @@ Here is a full list of removed variables. Some have suggested replacements docum
 
 ### 4. Renamed CSS classes
 
-Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names. In `$ag-compatibility-mode: "legacy:"` these will be automatically aliased to the new names. 
+Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names. In `$ag-compatibility-mode: "legacy:"` these will be automatically aliased to the new names.
 If you want to achieve this aliasing without the rest of legacy compatibility mode, you can disable compatibility mode and add the line `@include ag-v22-to-v23-alias-renamed-classes();` to your custom theme.
 
 Note: some of the css class name changes made in v23 are not simple renames, and so aren't covered by the mixin. This is especially true within the Filters Tool Panel. After using the mixin, test your theme and add/edit css rules as necessary.
@@ -209,7 +209,7 @@ We have implemented a backwards compatibility mode that will enable some apps to
 
 - Enter "legacy" compatibility mode if this is right for your app (see below).
 
-- Switch to the new mechanism for configuring themes. Change your theme import from `.../sass/ag-theme-$name.scss` to `.../sass/ag-theme-$name-mixin.scss` and call the theme mixin. See [themes documentation](./themes-provided/) sample code. You will need to convert all the `$ag-*` global variables you have defined to theme parameters.
+- Switch to the new mechanism for configuring themes. Change your theme import from `.../sass/ag-theme-$name.scss` to `.../sass/ag-theme-$name-mixin.scss` and call the theme mixin. See [themes documentation](../themes-provided/) sample code. You will need to convert all the `$ag-*` global variables you have defined to theme parameters.
 
 
 To enable "legacy" mode, define the `$ag-compatibility-mode` variable:

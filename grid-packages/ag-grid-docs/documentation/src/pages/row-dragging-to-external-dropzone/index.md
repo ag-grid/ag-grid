@@ -2,7 +2,7 @@
 title: "Row Dragging to an External DropZone"
 ---
 
-Row Dragging to an External DropZone is concerned with moving rows from the grid to different components within the same application. When using row drag with an external DropZone, the data is moved or copied around using the grid events; this is in contrast to standard [Drag &amp; Drop](./drag-and-drop/) which uses browser events.
+Row Dragging to an External DropZone is concerned with moving rows from the grid to different components within the same application. When using row drag with an external DropZone, the data is moved or copied around using the grid events; this is in contrast to standard [Drag &amp; Drop](../drag-and-drop/) which uses browser events.
 
 The Row Drag to an External DropZone uses the grid's internal Managed Row Dragging system combined with row selection
 to create a seamless data drag and drop experience.
@@ -28,9 +28,9 @@ interface RowDropZoneParams {
 ```
 
 [[note]]
-| If you read the [Managed Dragging](./row-dragging/#managed-dragging) section of the Row Dragging
-| documentation you probably noticed that when you `sort`, `filter` and 
-| `rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this 
+| If you read the [Managed Dragging](../row-dragging/#managed-dragging) section of the Row Dragging
+| documentation you probably noticed that when you `sort`, `filter` and
+| `rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this
 | rule is when you register external drop zones using `addRowDropZone`. In this case, you
 | will be able to drag from one container to another, but will not be able to drag the rows within the
 | grid.
@@ -65,15 +65,14 @@ In the example below, note the following:
 
 - You can move rows inside the grid.
 - You can move rows to the container on the right hand side.
-- Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](./row-dragging/#suppress-move-when-dragging)
-
+- Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](../row-dragging/#suppress-move-when-dragging)
 
 <grid-example title='Simple' name='simple' type='generated'></grid-example>
 
 ## Dragging Between Grids
 
 It is possible to use a generic `DropZone` to Drag and Drop rows from one grid to another. However, this approach will treat the target grid as a generic `HTMLElement` and adding the rows should be handled by the `onDragStop` callback. If you wish the grid to manage the Drag and Drop across grids and also handle where the record should be dropped, take a look at
-[Row Dragging - Between Grids](./row-dragging-to-grid)
+[Row Dragging - Between Grids](../row-dragging-to-grid/)
 
 In the example below, note the following:
 

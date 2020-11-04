@@ -22,8 +22,8 @@ gridOptions: {
 }
 ```
 
-To enable sorting for all columns, set sorting in the [default column definition](./column-definitions/#default-column-definitions).
-    
+To enable sorting for all columns, set sorting in the [default column definition](../column-definitions/#default-column-definitions).
+
 
 ```js
 gridOptions: {
@@ -64,7 +64,7 @@ colDef.comparator = function(valueA, valueB, nodeA, nodeB, isInverted) {
 The parameters are as follows:
 
 - `valueA, valueB`: The values in the cells to be compared. Typically sorts are done on these values only.
-- `nodeA, nodeB`: The [Row Nodes](./javascript-grid-row-node/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
+- `nodeA, nodeB`: The [Row Nodes](../row-object/) for the rows getting sorted. These can be used if more information, such as data from other columns, are needed for the comparison.
 - `isInverted`: `true` for Ascending, `false` for Descending.
 
 
@@ -80,7 +80,7 @@ Example below shows the following:
 
 ### Example: Custom Sorting Groups
 
-When [Row Grouping](./row-grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
+When [Row Grouping](../row-grouping/) it is possible to override the sort order of the Row Group columns. If using the Auto Group Column, provide a comparator via the `autoGroupColumnDef` grid property.
 
 ```js
 autoGroupColumnDef = {
@@ -131,11 +131,11 @@ and then tailor per column.
 
 The example below shows animation of the rows plus different combinations of sorting orders as follows:
 
-    
+
 - **Grid Default:** ascending -> descending -> no sort
 - **Column Athlete:** ascending -> descending
 - **Column Age:** descending -> ascending
-- **Column Country:** descending -> no sort 
+- **Column Country:** descending -> no sort
 - **Column Year:** ascending only
 
 
@@ -143,7 +143,7 @@ The example below shows animation of the rows plus different combinations of sor
 
 ## Sorting API
 
-What sorting is applied is controlled via [Column State](./column-state/). The below examples uses the Column State API to control column sorting.
+What sorting is applied is controlled via [Column State](../column-state/). The below examples uses the Column State API to control column sorting.
 
 <grid-example title='Sorting API' name='sorting-api' type='generated'></grid-example>
 

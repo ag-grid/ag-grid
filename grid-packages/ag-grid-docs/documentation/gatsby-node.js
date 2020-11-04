@@ -17,7 +17,7 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
             type: GraphQLString,
             args: {},
             description: `Copy static files return public URLs`,
-            resolve: async (file, fieldArgs, context) => {
+            resolve: async (file, _, context) => {
                 const details = getNodeAndSavePathDependency(file.id, context.path);
 
                 let fileName = `static/${file.internal.contentDigest}/${details.base}`;
@@ -99,7 +99,7 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     result.data.allMarkdownRemark.edges.forEach(({ node }) => {
         ['javascript', 'react', 'angular', 'vue'].forEach(framework => {
             createPage({
-                path: `/${framework}${node.fields.path}`,
+                path: `/${framework}${node.fields.path}/`,
                 component: docPageTemplate,
                 context: { framework, srcPath: node.fields.path, }
             });

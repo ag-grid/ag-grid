@@ -54,7 +54,7 @@ Framework-dependent text:
 | var bob = 'hello';
 | ```
 
-You should go and check out [this page](./column-definitions/)
+You should go and check out [this page](../column-definitions/)
 
 [[note | Note With Title]]
 | Make sure you don't do anything bad!
