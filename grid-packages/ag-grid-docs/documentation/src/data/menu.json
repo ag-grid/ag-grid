@@ -9,7 +9,7 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": "javascript",
+            "framework": ["javascript"],
             "items": [
               {
                 "title": "Install with NPM",
@@ -24,7 +24,7 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": "angular",
+            "framework": ["angular"],
             "items": [
               {
                 "title": "Components",
@@ -63,7 +63,7 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": "react",
+            "framework": ["react"],
             "items": [
               {
                 "title": "Column Configuration",
@@ -98,7 +98,7 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": "vue",
+            "framework": ["vue"],
             "items": [
               {
                 "title": "Components",
@@ -121,12 +121,12 @@
           {
             "title": "AngularJS",
             "url": "../best-grid/",
-            "framework": "angular"
+            "framework": ["angular"]
           },
           {
             "title": "Polymer",
             "url": "../getting-started/",
-            "framework": "polymer"
+            "framework": ["polymer"]
           }
         ]
       },
@@ -479,6 +479,7 @@
           {
             "title": "See Also",
             "url": "",
+            "framework": ["angular", "react", "vue"],
             "items": [
               {
                 "title": "Use with RxJS",
