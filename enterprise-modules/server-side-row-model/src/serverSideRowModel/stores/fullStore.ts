@@ -312,8 +312,24 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowIndexAtPixel(pixel: number): number | undefined {
-        if (pixel <= this.topPx) { return this.nodesAfterSort[0].rowIndex!; }
-        if (pixel >= (this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length - 1].rowIndex!; }
+
+        // if pixel before block, return first row
+        const pixelBeforeThisStore = pixel <= this.topPx;
+        if (pixelBeforeThisStore) {
+            return this.nodesAfterSort[0].rowIndex!;
+        }
+        // if pixel after store, return last row, however the last
+        // row could be a child store
+        const pixelAfterThisStore = pixel >= (this.topPx + this.heightPx);
+        if (pixelAfterThisStore) {
+            const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
+            const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
+            if (pixel >= lastRowNodeBottomPx && lastRowNode.childStore) {
+                return lastRowNode.childStore.getRowIndexAtPixel(pixel);
+            } else {
+                return lastRowNode.rowIndex;
+            }
+        }
 
         let res: number | undefined = undefined;
         this.nodesAfterSort.forEach(rowNode => {
@@ -350,7 +366,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        if (params.alwaysReset) {
+        if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
             this.refreshStore(true);
             return;
         }
