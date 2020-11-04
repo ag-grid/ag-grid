@@ -1,0 +1,71 @@
+.icons-panel {
+    &__container {
+        @extend .nav, .nav-tabs, .bg-primary, .pl-2, .pt-2;
+        > li {
+            @extend .nav-item, .mr-2;
+        }
+    }
+    
+    &__nav-link {
+        @extend .nav-link;
+        background-color: transparent;
+        color: theme-color(light);
+
+        &:focus {
+            outline: none;
+        }
+        
+        &__active {
+            @extend .active;
+            background-color: theme-color(light);
+            color: black;
+        }
+        &:hover {
+            color: theme-color(light);
+        }
+    }
+    
+    &__wrapper {
+        @extend .tab-content, .border, .border-top-0;
+        height: 34rem;
+        overflow: hidden;
+    }
+    
+    &__body {
+        @extend .tab-pane, .show, .active, .container, .px-0;
+        position: relative;
+        height: 34rem;
+    }
+    
+    &__icon-list {
+        @extend .row, .mx-0, .w-100, .flex-fill;
+        overflow-y: scroll;
+    }
+
+    &__icon-tile {
+        @extend .col, .col-3, .p-0, .d-flex, .flex-column, .align-items-center, .justify-content-center;
+        height: 5rem;
+        border: 1px solid transparent;
+        border-right-color: lightgrey;
+        border-bottom-color: lightgray;
+        font-size: 0.8rem;
+
+        img {
+            height: 32px;
+        }
+
+        p {
+            @extend .m-0;
+        }
+    }
+    
+    &__download {
+        @extend .bg-primary, .p-2;
+        a {
+            color: theme-color(light);
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+}

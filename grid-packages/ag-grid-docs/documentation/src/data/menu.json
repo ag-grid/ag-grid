@@ -420,7 +420,7 @@
           {
             "title": "Custom Icons",
             "box-title": "Icons",
-            "url": "../icons/",
+            "url": "../custom-icons/",
             "showInCollapsed": true
           },
           {
