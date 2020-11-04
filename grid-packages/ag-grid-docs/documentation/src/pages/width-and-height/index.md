@@ -4,7 +4,6 @@ title: "Grid Size"
 
 Under normal usage, your application should set the width and height of the grid using CSS styles. The grid will then fit the width you provide and use scrolling inside the grid to allowing viewing all rows and columns.
 
-
 ```html
 // set width using percentages
 <div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"></div>
@@ -15,11 +14,11 @@ Under normal usage, your application should set the width and height of the grid
 
 [[note]]
 | **Pitfall When Using Percent Width & Height**
-| <br/>
+|
 | If using % for your height, then make sure the container you are putting the grid into
 | also has height specified, as the browser will fit the div according to a percentage of
 | the parents height, and if the parent has no height, then this % will always be zero.
-| <br/>
+|
 | If your grid is not the size you think it should be then put a border on the grid's
 | div and see if that's the size you want (the grid will fill this div). If it is not the size
 | you want, then you have a CSS layout issue in your application.
@@ -36,7 +35,6 @@ The example below shows setting the grid size and then changing it as the user s
 
 ## Grid Auto Height
 
-
 Depending on your scenario, you may wish for the grid to auto-size it's height to the number of rows displayed inside the grid. This is useful if you have relatively few rows and don't want empty space between the last row and the bottom of the grid.
 
 To allow the grid to auto-size it's height to fit rows, set grid property `domLayout='autoHeight'`.
@@ -45,7 +43,7 @@ When `domLayout='autoHeight'` then your application **should not** set height on
 
 [[note]]
 | Don't use Grid Auto Height when displaying large numbers of rows.
-| <br/><br/>
+|
 | If using Grid Auto Height, then the grid will render all rows
 | into the DOM. This is different to normal operation where the grid will only render
 | rows that are visible inside the grid's scrollable viewport. For large grids (eg >1,000
@@ -59,15 +57,11 @@ When `domLayout='autoHeight'` then your application **should not** set height on
 The example below demonstrates the autoHeight feature. Notice the following:
 
 - As you set different numbers of rows into the grid, the grid will resize it's height to just fit the rows.
-
 - As the grid height exceeds the height of the browser, you will need to use the browser vertical scroll to view data (or the iFrames scroll if you are looking at the example embedded below).
-
 - The height will also adjust as you filter, to add and remove rows.
-
 - If you have pinned rows, the grid will size to accommodate the pinned rows.
 - Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.
 - It is possible to move the grid into and out of 'full height' mode by using the `api.setDomLayout()` or by changing the bound property `domLayout`.
-
 
 [[note]]
 | The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
@@ -77,12 +71,11 @@ The example below demonstrates the autoHeight feature. Notice the following:
 
 ## DOM Layout
 
-
 There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:
 
 - **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
 - **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal.
-- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](./for-print/).
+- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](../for-print/).
 
 ## Min Height with Auto Height
 
@@ -97,12 +90,10 @@ It is not possible to specify a max height when using auto-height.
 
 ## Resize with Parent Container
 
-
 We can dynamically react to screen changes by making use of the grid API features. In this section we describe a few recommended approaches to resize the grid and show/hide columns based on screen size changes.
 
-
 [[note]]
-|These recipes below are suggestions - as the grid can be placed & positioned in your application in many ways and with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve to help point you in the right direction.
+| These recipes below are suggestions - as the grid can be placed & positioned in your application in many ways and with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve to help point you in the right direction.
 
 ### Inside Flexbox Container
 
@@ -125,7 +116,6 @@ For more information on how to work with the Grid Layout, please visit: <a href=
 <grid-example title='Grid Inside a CSS Grid Container' name='css-grid' type='generated'></grid-example>
 
 ### Dynamic Resizing with Horizontal Scroll
-
 
 The quickest way to achieve a responsive grid is to set the grid's containing div to a percentage. With this simple change the grid will automatically resize based on the div size and columns that can't fit in the viewport will simply be hidden and available to the right via the scrollbar.
 

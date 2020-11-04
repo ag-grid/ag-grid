@@ -14,11 +14,25 @@ const getInternalFramework = (framework, useFunctionalReact) => {
 export const getExampleInfo = (pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const boilerplatePath = `/example-runner/grid-${framework}-boilerplate/`;
-    const sourcePath = type === 'generated' || type === 'mixed' ?
-        `${pageName}/examples/${name}/_gen/${importType}/${internalFramework}/` :
-        `${pageName}/examples/${name}/`;
 
-    const appLocation = `/examples/${pageName}/${name}/${importType}/${internalFramework}/`;
+    let sourcePath = `${pageName}/examples/${name}/`;
+    let appLocation = `/examples/${pageName}/${name}/`;
+
+    switch (type) {
+        case 'generated':
+        case 'mixed':
+            sourcePath += `_gen/${importType}/${internalFramework}/`;
+            appLocation += `${importType}/${internalFramework}/`;
+            break;
+
+        case 'multi':
+            sourcePath += `${internalFramework}/`;
+            appLocation += `${internalFramework}/`;
+            break;
+
+        default:
+            break;
+    }
 
     if (type === 'vanilla') {
         framework = 'javascript';

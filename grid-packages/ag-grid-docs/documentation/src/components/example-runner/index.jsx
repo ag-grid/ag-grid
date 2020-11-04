@@ -46,7 +46,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             useFunctionalReact={useFunctionalReact}
                             onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
                     }
-                    {exampleInfo.framework !== 'javascript' &&
+                    {exampleInfo.framework !== 'javascript' && exampleInfo.type !== 'multi' &&
                         <ImportTypeSelector
                             importType={exampleImportType}
                             onChange={event => set({ exampleImportType: event.target.value })} />
