@@ -184,7 +184,7 @@ To suppress events raised when invoking `applyColumnState()` set the grid proper
 
 ## Refreshing Headers
 
-If you are creating your own [Header Components](../javascript-grid-header-rendering/) then you will need to be aware of
+If you are creating your own [Header Components](../header-rendering/) then you will need to be aware of
 how Header Components are refreshed.
 
 All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still

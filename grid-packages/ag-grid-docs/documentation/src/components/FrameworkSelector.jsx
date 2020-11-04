@@ -11,7 +11,7 @@ export default function FrameworkSelector({ path, currentFramework }) {
 
             return <div key={framework} className={`${styles.frameworkSelector__option} ${isSelected ? styles.frameworkSelector__optionSelected : ''}`}>
                 <Link to={`${path.replace(`/${currentFramework}/`, `/${framework}/`)}`}>
-                    <img src={withPrefix(`/fw-logos/${framework}.svg`)} alt={framework} />
+                    <img src={withPrefix(`/images/fw-logos/${framework}.svg`)} alt={framework} />
                 </Link>
             </div>;
         })}

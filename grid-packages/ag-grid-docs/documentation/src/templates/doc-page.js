@@ -9,6 +9,7 @@ import { getPageName } from '../utils/get-page-name';
 import styles from './doc-page.module.scss';
 import { ApiDocumentation } from '../components/ApiDocumentation';
 import IconsPanel from '../components/IconsPanel';
+import ImageCaption from '../components/ImageCaption';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -21,7 +22,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'grid-example': props => ExampleRunner({ ...props, framework, pageName, library: 'grid' }),
       'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
       'api-documentation': props => ApiDocumentation({ ...props, pageName, config: props.config ? JSON.parse(props.config) : {} }),
-      'icons-panel': props => IconsPanel({ ...props })
+      'icons-panel': props => IconsPanel({ ...props }),
+      'image-caption': props => ImageCaption({ ...props })
     },
   }).Compiler;
 
