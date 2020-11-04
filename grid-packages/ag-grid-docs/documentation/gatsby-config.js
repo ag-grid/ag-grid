@@ -16,6 +16,7 @@ const plugins = [
   },
   'gatsby-transformer-json',
   'gatsby-plugin-layout',
+  'gatsby-plugin-sharp',
   {
     resolve: 'gatsby-plugin-page-creator',
     options: {
@@ -49,6 +50,13 @@ const plugins = [
     resolve: 'gatsby-transformer-remark',
     options: {
       plugins: [
+        {
+          resolve: `gatsby-remark-images`,
+          options: {
+            maxWidth: 800,
+            quality: 100,
+          },
+        },
         {
           resolve: 'gatsby-remark-custom-blocks',
           options: {
