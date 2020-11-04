@@ -306,7 +306,7 @@ SNIPPET
         The data has three levels of grouping over columns Product, Portfolio and Book.
     </li>
     <li>
-        The SSRM uses the InMemory store for all group levels.
+        The SSRM uses the Full store for all group levels.
     </li>
     <li>
         The grid property <code>asyncTransactionWaitMillis = 500</code>, which means all
@@ -351,5 +351,11 @@ SNIPPET
 </ul>
 
 <?= grid_example('High Frequency Hierarchy', 'high-frequency-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn how to set <a href="../javascript-grid-server-side-model-row-height/">Row Height</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

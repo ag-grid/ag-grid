@@ -65,9 +65,9 @@ export class BlockUtils extends BeanStub {
     }
 
     public destroyRowNode(rowNode: RowNode): void {
-        if (rowNode.childrenCache) {
-            this.destroyBean(rowNode.childrenCache);
-            rowNode.childrenCache = null;
+        if (rowNode.childStore) {
+            this.destroyBean(rowNode.childStore);
+            rowNode.childStore = null;
         }
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
@@ -161,9 +161,9 @@ export class BlockUtils extends BeanStub {
         rowNode.clearRowTop();
         rowNode.setRowIndex();
 
-        const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
+        const hasChildStore = rowNode.group && _.exists(rowNode.childStore);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache;
+            const childStore = rowNode.childStore;
             childStore!.clearDisplayIndexes();
         }
 
@@ -194,9 +194,9 @@ export class BlockUtils extends BeanStub {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.group && _.exists(rowNode.childrenCache);
+        const hasChildStore = rowNode.group && _.exists(rowNode.childStore);
         if (hasChildStore) {
-            const childStore = rowNode.childrenCache;
+            const childStore = rowNode.childStore;
             if (rowNode.expanded) {
                 childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop);
             } else {
@@ -233,7 +233,7 @@ export class BlockUtils extends BeanStub {
             }
 
             // then check if child cache contains index
-            const childStore = currentRowNode.childrenCache;
+            const childStore = currentRowNode.childStore;
             if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
                 return childStore.getRowUsingDisplayIndex(displayRowIndex);
             }
@@ -260,8 +260,8 @@ export class BlockUtils extends BeanStub {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache;
+        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childStore)) {
+            const childStore = rowNode.childStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
             }
@@ -285,8 +285,8 @@ export class BlockUtils extends BeanStub {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-            const childStore = rowNode.childrenCache;
+        if (rowNode.group && rowNode.expanded && _.exists(rowNode.childStore)) {
+            const childStore = rowNode.childStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);
             }

@@ -156,8 +156,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PreDestroy
     private destroyRootStore(): void {
-        if (!this.rootNode || !this.rootNode.childrenCache) { return; }
-        this.rootNode.childrenCache = this.destroyBean(this.rootNode.childrenCache)!;
+        if (!this.rootNode || !this.rootNode.childStore) { return; }
+        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
         this.nodeManager.clear();
     }
 
@@ -184,7 +184,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();
-            this.rootNode.childrenCache = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
+            this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
         }
 
@@ -290,8 +290,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRootStore(): IServerSideStore | undefined {
-        if (this.rootNode && this.rootNode.childrenCache) {
-            return this.rootNode.childrenCache;
+        if (this.rootNode && this.rootNode.childStore) {
+            return this.rootNode.childStore;
         }
     }
 
@@ -380,7 +380,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return firstInRange.parent!.childrenCache!.getRowNodesInRange(lastInRange, firstInRange);
+        return firstInRange.parent!.childStore!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {

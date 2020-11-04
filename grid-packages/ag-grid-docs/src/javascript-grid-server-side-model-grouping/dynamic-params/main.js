@@ -14,7 +14,7 @@ var gridOptions = {
         sortable: true
     },
     rowGroupPanelShow: 'always',
-    serverSideStoreType: 'inMemory',
+    serverSideStoreType: 'full',
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
@@ -42,7 +42,7 @@ var gridOptions = {
         } else {
             var topLevelRows = params.level==0;
             res = {
-                storeType: topLevelRows ? 'inMemory' : 'infinite',
+                storeType: topLevelRows ? 'full' : 'infinite',
                 cacheBlockSize: params.level==1 ? 5 : 2,
                 maxBlocksInCache: -1 // never purge blocks
             };

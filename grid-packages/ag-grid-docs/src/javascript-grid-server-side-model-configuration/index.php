@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Continue to the next section to learn about
-     <a href="../javascript-grid-server-side-model-sorting/">Server-Side Sorting</a>.
+     <a href="../javascript-grid-server-side-model-sorting/">Sorting</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

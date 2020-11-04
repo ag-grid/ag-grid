@@ -135,10 +135,10 @@ SNIPPET
 
 
 
-<h2>In-Memory vs Infinite Store</h2>
+<h2>Full vs Infinite Store</h2>
 
 <p>
-    The Row Grouping mechanics are almost identical with the In-Memory Store and Infinite Store. The difference
+    The Row Grouping mechanics are almost identical with the Full Store and Infinite Store. The difference
     is that when using the Infinite Store, data will be requested in blocks and could be requested to have
     sorting and / or filtering applied.
 </p>
@@ -205,9 +205,9 @@ interface ServerSideStoreParams {
     cacheBlockSize?: number;
 }
 
-// for storeType above, one of 'inMemory' or 'infinite'
+// for storeType above, one of 'full' or 'infinite'
 enum ServerSideStoreType {
-    InMemory = 'inMemory',
+    Full = 'full',
     Infinite = 'infinite'
 }
 
@@ -276,7 +276,7 @@ SNIPPET
 function getServerSideStoreState(): ServerSideStoreState[];
 
 interface ServerSideStoreState {
-    // store type, 'infinite' or 'inMemory'
+    // store type, 'infinite' or 'full'
     type: ServerSideStoreType;
 
     // the route that identifies this store
@@ -376,6 +376,71 @@ SNIPPET
 
 <?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
+<h2>Sorting</h2>
+
+<p>
+    When a sort is applied to a grouped grid using the SSRM, the grid will behave differently
+    depending on what store is used. How it behaves is as follows:
+</p>
+
+<ul>
+    <li>
+        <h3>Infinite Store</h3>
+
+        <ul>
+            <li>Non-group levels always refresh - all rows are loaded again from the server.</li>
+            <li>
+                Group levels refresh (reload from server) if the sort was changed in:
+                <ul>
+                    <li>Any column with a value active (ie colDef.aggFunc='something')</li>
+                    <li>Any secondary column (ie you are pivoting and sort a pivot value column)</li>
+                    <li>A Column used for this levels group (eg you are grouping by 'Country' and you sort by 'Country').</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <h3>Full Store</h3>
+        <p>
+            The Full Store always sorts inside the grid. The rows are never reloaded due to a sort.
+        </p>
+    </li>
+</ul>
+
+<p>
+    It is possible to force the grid to always refresh (reload data) after a sort changes. Do this by setting
+    grid property <code>serverSideSortingAlwaysResets=true</code>.
+</p>
+
+
+<h2>Filtering</h2>
+
+<p>
+    When a filter is applied to a grouped grid using the SSRM, the grid will behave differently
+    depending on what store is used. How it behaves is as follows:
+</p>
+
+<ul>
+    <li>
+        <h3>Infinite Store</h3>
+        <p>
+            Changing the filter on any column will always refresh the Infinite Store.
+            Rows will be loaded again from the server with the new filter information.
+        </p>
+    </li>
+    <li>
+        <h3>Full Store</h3>
+        <p>
+            The Full Store always filters inside the grid. The rows are never reloaded due to a filter change.
+        </p>
+    </li>
+</ul>
+
+<p>
+    It is possible to force the grid to always refresh (reload data) after a filter changes. Do this by setting
+    grid property <code>serverSideFilteringAlwaysResets=true</code>.
+</p>
+
 <h2>Complex Columns</h2>
 
 <p>
@@ -416,59 +481,11 @@ SNIPPET
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
-<h2>Sorting & Filtering</h2>
-
-<table class="table content reference">
-    <tr>
-        <th>Store Type</th>
-        <th>Event</th>
-        <th>Result</th>
-    </tr>
-    <tr>
-        <td>Infinite</td>
-        <td>Filter Changed</td>
-        <td>
-            Always Reload
-        </td>
-    </tr>
-    <tr>
-        <td>Infinite</td>
-        <td>Sort Changed</td>
-        <td>
-            <ul>
-                <li>Non-group levels always reload.</li>
-                <li>
-                    Group levels reload if sort changed in:
-                    <ul>
-                        <li>Any value col</li>
-                        <li>Any secondary col</li>
-                        <li>Column used for this levels group</li>
-                    </ul>
-                </li>
-            </ul>
-        </td>
-    </tr>
-    <tr>
-        <td>In Memory</td>
-        <td>Filter Changed</td>
-        <td>
-            Filter as normal inside the grid, no reloads.
-            (Filter only works at non-group levels)
-        </td>
-    </tr>
-    <tr>
-        <td>In Memory</td>
-        <td>Sort Changed</td>
-        <td>
-            Sort as normal inside the grid, no reloads.
-        </td>
-    </tr>
-</table>
 
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-refresh/">SSRM Refresh</a>.
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-refresh/">Data Refresh</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

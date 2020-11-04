@@ -227,7 +227,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">SSRM Pagination</a>.
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">Pagination</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

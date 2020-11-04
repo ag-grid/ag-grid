@@ -16,7 +16,7 @@ var gridOptions = {
   },
 
   rowModelType: 'serverSide',
-  serverSideStoreType: 'inMemory',
+  serverSideStoreType: 'full',
   animateRows: true
 };
 

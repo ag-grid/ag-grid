@@ -27,17 +27,17 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td>Single Row</td>
         <td>Update attributes of a single row.</td>
-        <td>Infinite & In Memory</td>
+        <td>Infinite & Full</td>
     </tr>
     <tr>
         <td>Transaction</td>
         <td>Add, remove and update rows in the grid.</td>
-        <td>In Memory Only</td>
+        <td>Full Only</td>
     </tr>
     <tr>
         <td>High Frequency</td>
         <td>Apply transactions at high speed.</td>
-        <td>In Memory Only</td>
+        <td>Full Only</td>
     </tr>
 </table>
 
@@ -76,10 +76,10 @@ include '../documentation-main/documentation_header.php';
     <a href="#update-and-refresh">Update & Refresh</a> below demonstrates this.
 </p>
 
-<h2>In Memory Store Updates</h2>
+<h2>Full Store Updates</h2>
 
 <p>
-    If using the In Memory store, then you can update using <a href="#single-row">Single Row</a>
+    If using the Full store, then you can update using <a href="#single-row">Single Row</a>
     and <a href="#update-and-refresh">Update & Refresh</a> just like the Infinite Store.
 </p>
 
@@ -148,5 +148,11 @@ SNIPPET
 </ul>
 
 <?= grid_example('Server-Side Row Model & CRUD', 'crud', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-transactions/">Transactions</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

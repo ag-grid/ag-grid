@@ -8,9 +8,10 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         width: 240,
-        resizable: true
+        filter: 'agTextColumnFilter'
     },
     autoGroupColumnDef: {
+        field: 'employeeName',
         cellRendererParams: {
             innerRenderer: function (params) {
                 // display employeeName rather than group key (employeeId)
@@ -96,10 +97,16 @@ function createServerSideDatasource(fakeServer) {
     ServerSideDatasource.prototype.getRows = function (params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
 
-        var rows = this.fakeServer.getData(params.request);
+        var allRows = this.fakeServer.getData(params.request);
 
+        var request = params.request;
+        var doingInfinite = request.startRow != null && request.endRow != null;
+        var result = doingInfinite ?
+            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
+            {rowData: allRows};
+        console.log('getRows: result = ', result);
         setTimeout(function () {
-            params.success({rowData: rows, rowCount: rows.length});
+            params.success(result);
         }, 200);
     };
 

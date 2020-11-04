@@ -96,8 +96,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about setting <a href="../javascript-grid-server-side-model-row-height/">Row Height</a>
-    using the Server-Side Row Model.
+    Continue to the next section to learn how to <a href="../javascript-grid-server-side-model-changing-columns/">Change Columns</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -34,12 +34,12 @@ export class ExpandListener extends BeanStub {
         if (rowNode.expanded) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
-            } else if (_.missing(rowNode.childrenCache)) {
+            } else if (_.missing(rowNode.childStore)) {
                 const storeParams = this.serverSideRowModel.getParams();
-                rowNode.childrenCache = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
+                rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache)!;
+        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childStore)) {
+            rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
         const cacheUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };

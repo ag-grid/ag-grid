@@ -34,7 +34,7 @@ import { BlockUtils } from "../blocks/blockUtils";
 import { NodeManager } from "../nodeManager";
 import {TransactionManager} from "../transactionManager";
 
-export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
+export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
@@ -191,7 +191,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
         if (!params.rowData) {
             const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            _.doOnce( () => console.warn(message, params), 'InMemoryStore.noData');
+            _.doOnce( () => console.warn(message, params), 'FullStore.noData');
         }
 
         const rowData = params.rowData ? params.rowData : [];
@@ -230,7 +230,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     private filterRowNodes(): void {
 
-        // filtering for InMemoryStore only words at lowest level details.
+        // filtering for InFullStore only words at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         if (this.groupLevel) {
             this.nodesAfterFilter = this.allRowNodes;
@@ -285,7 +285,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.allRowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
-            const childCache = rowNode.childrenCache;
+            const childCache = rowNode.childStore;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -312,8 +312,24 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowIndexAtPixel(pixel: number): number | undefined {
-        if (pixel <= this.topPx) { return this.nodesAfterSort[0].rowIndex!; }
-        if (pixel >= (this.topPx + this.heightPx)) { return this.nodesAfterSort[this.nodesAfterSort.length - 1].rowIndex!; }
+
+        // if pixel before block, return first row
+        const pixelBeforeThisStore = pixel <= this.topPx;
+        if (pixelBeforeThisStore) {
+            return this.nodesAfterSort[0].rowIndex!;
+        }
+        // if pixel after store, return last row, however the last
+        // row could be a child store
+        const pixelAfterThisStore = pixel >= (this.topPx + this.heightPx);
+        if (pixelAfterThisStore) {
+            const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
+            const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
+            if (pixel >= lastRowNodeBottomPx && lastRowNode.childStore) {
+                return lastRowNode.childStore.getRowIndexAtPixel(pixel);
+            } else {
+                return lastRowNode.rowIndex;
+            }
+        }
 
         let res: number | undefined = undefined;
         this.nodesAfterSort.forEach(rowNode => {
@@ -342,7 +358,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     private forEachChildStoreShallow(callback: (childStore: IServerSideStore) => void): void {
         this.allRowNodes.forEach(rowNode => {
-            const childStore = rowNode.childrenCache;
+            const childStore = rowNode.childStore;
             if (childStore) {
                 callback(childStore);
             }
@@ -350,7 +366,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        if (params.alwaysReset) {
+        if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
             this.refreshStore(true);
             return;
         }
@@ -360,6 +376,11 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
+        if (params.alwaysReset) {
+            this.refreshStore(true);
+            return;
+        }
+
         this.sortRowNodes();
         this.forEachChildStoreShallow(store => store.refreshAfterSort(params));
     }
@@ -521,7 +542,7 @@ export class InMemoryStore extends RowNodeBlock implements IServerSideStore {
 
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
-            type: ServerSideStoreType.InMemory,
+            type: ServerSideStoreType.Full,
             route: this.storeUtils.createGroupKeys(this.parentRowNode),
             rowCount: this.allRowNodes.length,
             info: this.info

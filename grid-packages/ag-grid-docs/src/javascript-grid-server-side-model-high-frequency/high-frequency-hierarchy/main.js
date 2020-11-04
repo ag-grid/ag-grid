@@ -78,7 +78,7 @@ var gridOptions = {
   purgeClosedRowNodes: true,
   rowSelection: 'multiple',
   serverSideAsyncTransactionLoadingStrategy: 'applyAfterLoaded',
-  serverSideStoreType: 'inMemory',
+  serverSideStoreType: 'full',
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',

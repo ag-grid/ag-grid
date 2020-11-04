@@ -81,15 +81,21 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected successCommon(version: number, params: LoadSuccessParams) {
 
-        // we need to check the version, in case there was an old request
-        // from the server that was sent before we refreshed the cache,
-        // if the load was done as a result of a cache refresh
-        if (version === this.version) {
+        // thisIsMostRecentRequest - if block was refreshed, then another request
+        // could of been sent after this one.
+        const thisIsMostRecentRequest = version === this.version;
+        // weAreNotDestroyed - if InfiniteStore is purged, then blocks are destroyed
+        // and new blocks created. so data loads of old blocks are discarded.
+        const weAreNotDestroyed = this.isAlive();
+
+        const processReturnedData = thisIsMostRecentRequest && weAreNotDestroyed;
+        if (processReturnedData) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.processServerResult(params);
-        }
+       }
 
-        // check here if lastRow should be set
+        // we fire event regardless of processing data or now, as we want
+        // the concurrentLoadRequests count to be reduced in BlockLoader
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
             success: true,

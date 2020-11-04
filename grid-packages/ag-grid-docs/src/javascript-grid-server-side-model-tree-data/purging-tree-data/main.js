@@ -10,6 +10,9 @@ var gridOptions = {
         width: 235,
         resizable: true
     },
+    autoGroupColumnDef: {
+        field: 'employeeName'
+    },
     rowModelType: 'serverSide',
     treeData: true,
     columnDefs: columnDefs,
@@ -29,7 +32,7 @@ var gridOptions = {
         setTimeout(function () {
             // expands first node
             params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-        }, 1500);
+        }, 1000);
         setTimeout(function () {
             // expands second node
             params.api.getDisplayedRowAtIndex(1).setExpanded(true);
@@ -95,9 +98,13 @@ function createServerSideDatasource(fakeServer) {
         console.log('ServerSideDatasource.getRows: params = ', params);
         var request = params.request;
         var allRows = this.fakeServer.getData(request);
-        var resultsForBlock = allRows.slice(request.startRow, request.endRow);
+        var doingInfinite = request.startRow != null && request.endRow != null;
+        var result = doingInfinite ?
+            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
+            {rowData: allRows};
+        console.log('getRows: result = ', result);
         setTimeout(function () {
-            params.successCallback({rowData: resultsForBlock, rowCount: allRows.length});
+            params.success(result);
         }, 500);
     };
 

@@ -772,7 +772,7 @@ export interface ChartRef {
 }
 
 export enum ServerSideStoreType {
-    InMemory = 'inMemory',
+    Full = 'full',
     Infinite = 'infinite'
 }
 

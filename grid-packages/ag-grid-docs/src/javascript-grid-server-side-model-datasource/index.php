@@ -265,8 +265,12 @@ SNIPPET
 <h2>Fail Callback</h2>
 
 <p>
-    The Fail Callback has no parameters. It informs the grid the request has failed - eg a network error.
-    It is important to inform the grid of failed requests as it limits the number of concurrent Datasource requests.
+    The Fail callback has no parameters. It informs the grid the request has failed - eg a network error.
+    It is important to inform the grid of failed requests as it limits the number of concurrent datasource requests.
+    If the Fail callback was not called, the grid would still count the request as pending. For example
+    if the grid was configured with <code>maxConcurrentDatasourceRequests = 1</code>, only one request can
+    be pending at any time, and all other requests would be paused until either the Fail or Success callbacks
+    were called for the outstanding request.
 </p>
 
 <h2>Next Up</h2>

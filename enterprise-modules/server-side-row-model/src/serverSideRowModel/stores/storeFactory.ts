@@ -12,7 +12,7 @@ import {
 } from "@ag-grid-community/core";
 import {InfiniteStore} from "./infiniteStore";
 import {SSRMParams} from "../serverSideRowModel";
-import {InMemoryStore} from "./inMemoryStore";
+import {FullStore} from "./fullStore";
 
 @Bean('ssrmStoreFactory')
 export class StoreFactory {
@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.storeType === ServerSideStoreType.InMemory ? InMemoryStore : InfiniteStore;
+        const CacheClass = storeParams.storeType === ServerSideStoreType.Full ? FullStore : InfiniteStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
@@ -49,7 +49,7 @@ export class StoreFactory {
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
         : number | undefined {
 
-        if (storeType==ServerSideStoreType.InMemory) { return undefined; }
+        if (storeType==ServerSideStoreType.Full) { return undefined; }
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache!=null)
             ? userStoreParams.maxBlocksInCache
@@ -79,7 +79,7 @@ export class StoreFactory {
     }
 
     private getBlockSize(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): number | undefined {
-        if (storeType==ServerSideStoreType.InMemory) { return undefined; }
+        if (storeType==ServerSideStoreType.Full) { return undefined; }
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize!=null)
             ? userStoreParams.cacheBlockSize
@@ -107,7 +107,7 @@ export class StoreFactory {
 
         return callback(params);
     }
-
+    
     private getStoreType(storeParams?: ServerSideStoreParams): ServerSideStoreType {
 
         const storeType = (storeParams && storeParams.storeType!=null)
@@ -116,7 +116,7 @@ export class StoreFactory {
 
         switch (storeType) {
             case ServerSideStoreType.Infinite :
-            case ServerSideStoreType.InMemory :
+            case ServerSideStoreType.Full :
                 return storeType;
             case null :
             case undefined :
