@@ -28,7 +28,14 @@ const PanelTabs = ({ activeTheme, setActiveTheme }) => (
     <ul className={styles.iconsPanel__container}>
         {themes.map(theme => (
             <li key={`${theme}-tab`}>
-                <button className={`${styles.iconsPanel__navLink} ${theme === activeTheme ? styles.iconsPanel__navLink__active: ''}`} data-toggle="tab" role="tab" onClick={(e) => onTabClick(e, setActiveTheme, theme)} aria-controls={theme} aria-selected={theme === activeTheme ? 'true' : 'false'}>{`${capitalizeName(theme)} Icons`}</button>
+                <button 
+                    className={`${styles.iconsPanel__navLink} ${theme === activeTheme ? styles.iconsPanel__navLink__active: ''}`}
+                    data-toggle="tab"
+                    role="tab" 
+                    onClick={(e) => onTabClick(e, setActiveTheme, theme)}
+                    aria-controls={theme}
+                    aria-selected={theme === activeTheme ? 'true' : 'false'}>{`${capitalizeName(theme)} Icons`}
+                </button>
             </li>
         ))}
     </ul>
