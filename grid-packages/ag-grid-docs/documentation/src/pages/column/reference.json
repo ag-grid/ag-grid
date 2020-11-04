@@ -1,0 +1,88 @@
+{
+    "methods": {
+        "meta": {
+            "displayName": "Column Methods"
+        },
+        "getId()<br />getColId()<br />getUniqueId()": {
+            "description": "Returns the unique ID for the column."
+        },
+        "getParent()": {
+            "description": "Returns the parent column group, if column grouping is active."
+        },
+        "getColDef()<br />getDefinition()": {
+            "description": "Returns the column definition for this column. The column definition will be the result of merging the application provided column definition with any provided defaults (e.g. <code>defaultColDef</code> grid option, or column types."
+        },
+        "getUserProvidedColDef()": {
+            "description": "Returns the column definition provided by the application. This may not be correct, as items can be superseded by default column options. However it's useful for comparison, eg to know which application column definition matches that column."
+        },
+        "isPrimary()": {
+            "description": "Returns <code>true</code> if column is a primary column, <code>false</code> if secondary. Secondary columns are used for pivoting."
+        },
+        "isFilterAllowed()": {
+            "description": "Returns <code>true</code> if column filtering is allowed."
+        },
+        "isFilterActive()": {
+            "description": "Returns <code>true</code> if filter is active on the column."
+        },
+        "getSort()": {
+            "description": "If sorting is active, returns the sort direction e.g. <code>'asc'</code> or <code>'desc'</code>."
+        },
+        "getAggFunc()": {
+            "description": "If aggregation is set for the column, returns the aggregation function."
+        },
+        "getActualWidth()": {
+            "description": "Returns the current width of the column. If the column is resized, the actual width is the new size."
+        },
+        "isRowGroupActive()": {
+            "description": "Returns <code>true</code> if row group is currently active for this column."
+        },
+        "isPivotActive()": {
+            "description": "Returns <code>true</code> if pivot is currently active for this column."
+        },
+        "isValueActive()": {
+            "description": "Returns <code>true</code> if value (aggregation) is currently active for this column."
+        },
+        "addEventListener()": {
+            "description": "Add event listener to the column."
+        },
+        "removeEventListener()": {
+            "description": "Remove event listener from the column."
+        }
+    },
+    "events": {
+        "meta": {
+            "displayName": "Events on Column",
+            "description": "Columns emit the following events:"
+        },
+        "filterActiveChanged": {
+            "description": "The filter active value has changed."
+        },
+        "sortChanged": {
+            "description": "The sort value has changed."
+        },
+        "leftChanged": {
+            "description": "The left position has changed (e.g. column has moved)."
+        },
+        "widthChanged": {
+            "description": "The width value has changed."
+        },
+        "visibleChanged": {
+            "description": "The visibility value has changed."
+        },
+        "menuVisibleChanged": {
+            "description": "The column menu was shown / hidden."
+        },
+        "columnRowGroupChanged": {
+            "description": "The row group value has changed."
+        },
+        "columnPivotChanged": {
+            "description": "The pivot value has changed."
+        },
+        "columnValueChanged": {
+            "description": "The 'value' value has changed."
+        },
+        "movingChanged": {
+            "description": "The column has started / finished moving (i.e. user is dragging the column to a new location)."
+        }
+    }
+}
