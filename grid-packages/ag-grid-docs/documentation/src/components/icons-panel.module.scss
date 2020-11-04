@@ -35,11 +35,11 @@
         @extend .tab-pane, .show, .active, .container, .px-0;
         position: relative;
         height: 34rem;
+        overflow-y: scroll;
     }
     
     &__icon-list {
         @extend .row, .mx-0, .w-100, .flex-fill;
-        overflow-y: scroll;
     }
 
     &__icon-tile {
