@@ -589,19 +589,23 @@ export class GridApi {
     }
 
     public expandAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(true);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(true);
+        } else {
+            console.warn('ag-Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(false);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(false);
+        } else {
+            console.warn('ag-Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {

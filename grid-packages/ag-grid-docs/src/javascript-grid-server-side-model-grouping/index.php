@@ -352,6 +352,68 @@ SNIPPET
 
 <?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
+<h2>Expand / Collapse All</h2>
+
+<p>
+    It is possible to expand and collapse all group rows using the <code>expandAll()</code> and <code>collapseAll()</code>
+    grid API's.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Expand all group rows
+gridOptions.api.expandAll();
+
+// Collapse all group rows
+gridOptions.api.collapseAll();
+SNIPPET
+) ?>
+
+<p>
+    Calling <code>expandAll()</code> and <code>collapseAll()</code> will impact <b>all loaded group nodes</b>,
+    including those not visible due to their containing group been closed. This means there could potentially
+    be a huge number of groups expanded, so this method should be used very wisely to not create massive
+    amount of server requests and loading a large amount of data.
+</p>
+
+<p>
+    Calling <code>expandAll()</code> and <code>collapseAll()</code> will have no impact on rows yet to be loaded.
+</p>
+
+<p>
+    To open only specific groups, e.g. only groups at the top level, then use the <code>forEachNode()</code>
+    callback and open / close the row using <code>setExpanded()</code> as follows:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Expand all top level row nodes
+gridOptions.api.forEachNode(function(node) {
+    if (node.group && node.level == 0) {
+        node.setExpanded(true);
+    }
+});
+SNIPPET
+) ?>
+
+<p>
+    The example below demonstrates these techniques. Note the following:
+</p>
+<ul>
+    <li>
+        Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads
+        will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause
+        all Year groups as well as their children Country groups to be expanded - this is a heaver operation
+        with 100's of rows to expand.
+    </li>
+    <li>
+        Clicking 'Collapse All' will collapse all rows.
+    </li>
+    <li>
+        Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
+    </li>
+</ul>
+
+<?= grid_example('Expand All', 'expand-all', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
 <h2>Providing Child Counts</h2>
 
 <p>

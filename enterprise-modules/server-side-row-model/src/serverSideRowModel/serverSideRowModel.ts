@@ -67,6 +67,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private storeParams: SSRMParams;
 
+    private pauseStoreUpdateListening = false;
+
     private logger: Logger;
 
     // we don't implement as lazy row heights is not supported in this row model
@@ -257,6 +259,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onStoreUpdated(): void {
+        // sometimes if doing a batch update, we do the batch first,
+        // then call onStoreUpdated manually. eg expandAll() method.
+        if (this.pauseStoreUpdateListening) { return; }
+
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
     }
@@ -283,6 +289,20 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const rootStore = this.getRootStore();
         if (!rootStore) { return null; }
         return rootStore.getRowUsingDisplayIndex(index);
+    }
+
+    public expandAll(value: boolean): void {
+        // if we don't pause store updating, we are needlessly
+        // recalculating row-indexes etc, and also getting rendering
+        // engine to re-render (listens on ModelUpdated event)
+        this.pauseStoreUpdateListening = true;
+        this.forEachNode(node => {
+            if (node.group) {
+                node.setExpanded(value);
+            }
+        });
+        this.pauseStoreUpdateListening = false;
+        this.onStoreUpdated();
     }
 
     public refreshAfterFilter(newFilterModel: any, params: StoreRefreshAfterParams): void {

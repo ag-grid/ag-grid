@@ -7,6 +7,7 @@ export interface IServerSideRowModel extends IRowModel {
     onRowHeightChanged(): void;
     getStoreState(): ServerSideStoreState[];
     retryLoads(): void;
+    expandAll(value: boolean): void;
 }
 
 export interface IServerSideTransactionManager {
