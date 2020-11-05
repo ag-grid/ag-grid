@@ -272,6 +272,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         rootStore.setDisplayIndexes(new NumberSequence(), {value: 0});
     }
 
+    public retryLoads(): void {
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.retryLoads();
+        this.onStoreUpdated();
+    }
+
     public getRow(index: number): RowNode | null {
         const rootStore = this.getRootStore();
         if (!rootStore) { return null; }

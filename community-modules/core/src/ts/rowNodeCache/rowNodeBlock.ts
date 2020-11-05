@@ -33,6 +33,8 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected abstract processServerResult(params: LoadSuccessParams): void;
 
+    protected abstract processServerFail(): void;
+
     protected constructor(id: number) {
         super();
         this.id = id;
@@ -61,14 +63,14 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.state;
     }
 
-    protected pageLoadFailed() {
-        this.state = RowNodeBlock.STATE_FAILED;
-        const event: LoadCompleteEvent = {
-            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: false,
-            block: this
-        };
-        this.dispatchEvent(event);
+    protected pageLoadFailed(version: number) {
+        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+        if (requestMostRecentAndLive) {
+            this.state = RowNodeBlock.STATE_FAILED;
+            this.processServerFail();
+        }
+
+        this.dispatchLoadCompleted(false);
     }
 
     protected success(version: number, params: LoadSuccessParams): void {
@@ -79,30 +81,39 @@ export abstract class RowNodeBlock extends BeanStub {
         this.successCommon(version, {rowData: rows, rowCount: lastRow});
     }
 
-    protected successCommon(version: number, params: LoadSuccessParams) {
-
+    private isRequestMostRecentAndLive(version: number): boolean {
         // thisIsMostRecentRequest - if block was refreshed, then another request
         // could of been sent after this one.
         const thisIsMostRecentRequest = version === this.version;
+
         // weAreNotDestroyed - if InfiniteStore is purged, then blocks are destroyed
         // and new blocks created. so data loads of old blocks are discarded.
         const weAreNotDestroyed = this.isAlive();
 
-        const processReturnedData = thisIsMostRecentRequest && weAreNotDestroyed;
-        if (processReturnedData) {
+        return thisIsMostRecentRequest && weAreNotDestroyed;
+    }
+
+    protected successCommon(version: number, params: LoadSuccessParams) {
+
+        const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
+
+        if (requestMostRecentAndLive) {
             this.state = RowNodeBlock.STATE_LOADED;
             this.processServerResult(params);
-       }
+        }
 
+        this.dispatchLoadCompleted();
+    }
+
+    private dispatchLoadCompleted(success = true) {
         // we fire event regardless of processing data or now, as we want
         // the concurrentLoadRequests count to be reduced in BlockLoader
         const event: LoadCompleteEvent = {
             type: RowNodeBlock.EVENT_LOAD_COMPLETE,
-            success: true,
+            success: success,
             block: this
         };
 
         this.dispatchEvent(event);
     }
-
 }

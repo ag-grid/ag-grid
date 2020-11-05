@@ -18,7 +18,8 @@ import {
     RowNodeBlock,
     RowRenderer,
     ValueService,
-    ServerSideStoreParams
+    ServerSideStoreParams,
+    RowNodeBlockLoader
 } from "@ag-grid-community/core";
 import { StoreUtils } from "../stores/storeUtils";
 import { BlockUtils } from "./blockUtils";
@@ -37,6 +38,7 @@ export class CacheBlock extends RowNodeBlock {
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     private logger: Logger;
 
@@ -191,11 +193,29 @@ export class CacheBlock extends RowNodeBlock {
         this.lastAccessed = this.ssrmParams.lastAccessedSequence.next();
     }
 
+    protected processServerFail(): void {
+        this.parentStore.onBlockLoadFailed(this);
+    }
+
+    public retryLoads(): void {
+        if (this.getState()===RowNodeBlock.STATE_FAILED) {
+            this.setStateWaitingToLoad();
+            this.rowNodeBlockLoader.checkBlockToLoad();
+            this.setData();
+        }
+
+        this.forEachNodeShallow( node => {
+            if (node.childStore) {
+                node.childStore.retryLoads();
+            }
+        });
+    }
+
     protected processServerResult(params: LoadSuccessParams): void {
         this.parentStore.onBlockLoaded(this, params);
     }
 
-    public setData(rows: any[] = []): void {
+    public setData(rows: any[] = [], failedLoad = false): void {
 
         this.destroyRowNodes();
 
@@ -220,6 +240,10 @@ export class CacheBlock extends RowNodeBlock {
                 this.allNodesMap[rowNode.id!] = rowNode;
             }
             this.rowNodes.push(rowNode);
+
+            if (failedLoad) {
+                rowNode.failedLoad = true;
+            }
         }
     }
 
@@ -275,8 +299,8 @@ export class CacheBlock extends RowNodeBlock {
             storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
-            fail: this.pageLoadFailed.bind(this)
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     }
 

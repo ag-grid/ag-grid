@@ -82,6 +82,10 @@ export class InfiniteBlock extends RowNodeBlock {
         }, 0);
     }
 
+    protected processServerFail(): void {
+        // todo - this method has better handling in SSRM
+    }
+
     protected createLoadParams(): any {
         // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
         // is executing before the sort is set up, so server is not getting the sort
@@ -91,7 +95,7 @@ export class InfiniteBlock extends RowNodeBlock {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             sortModel: this.params.sortModel,
             filterModel: this.params.filterModel,
             context: this.gridOptionsWrapper.getContext()

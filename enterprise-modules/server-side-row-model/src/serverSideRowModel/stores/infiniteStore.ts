@@ -103,6 +103,15 @@ export class InfiniteStore extends BeanStub implements IServerSideStore {
         return this.lastRowIndexKnown;
     }
 
+    public retryLoads(): void {
+        this.getBlocksInOrder().forEach( block => block.retryLoads() );
+    }
+
+    public onBlockLoadFailed(block: CacheBlock): void {
+        block.setData([], true);
+        this.fireCacheUpdatedEvent();
+    }
+
     public onBlockLoaded(block: CacheBlock, params: LoadSuccessParams): void {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);

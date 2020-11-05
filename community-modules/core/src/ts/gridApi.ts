@@ -1281,6 +1281,14 @@ export class GridApi {
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
     }
 
+    public retryServerSideLoads(): void {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            return;
+        }
+        this.serverSideRowModel.retryLoads();
+    }
+
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
             console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');

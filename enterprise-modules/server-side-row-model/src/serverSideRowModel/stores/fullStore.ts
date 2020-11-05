@@ -118,13 +118,16 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
     }
 
-    private initialiseRowNodes(loadingRowsCount = 1): void {
+    private initialiseRowNodes(loadingRowsCount = 1, failedLoad = false): void {
         this.destroyRowNodes();
         for (let i = 0; i<loadingRowsCount; i++) {
             const loadingRowNode = this.blockUtils.createRowNode(
                 {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
                     level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
             );
+            if (failedLoad) {
+                loadingRowNode.failedLoad = true;
+            }
             this.allRowNodes.push(loadingRowNode);
             this.nodesAfterFilter.push(loadingRowNode);
             this.nodesAfterSort.push(loadingRowNode);
@@ -146,8 +149,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             storeParams: this.ssrmParams,
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
-            fail: this.pageLoadFailed.bind(this)
+            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
+            fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     }
 
@@ -180,6 +183,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return rowNode;
     }
 
+    protected processServerFail(): void {
+        this.initialiseRowNodes(1, true);
+        this.fireStoreUpdatedEvent();
+        this.flushAsyncTransactions();
+    }
+
     protected processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
@@ -201,6 +210,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         this.fireStoreUpdatedEvent();
 
+        this.flushAsyncTransactions();
+    }
+
+    private flushAsyncTransactions(): void {
         // we want to update the store with any outstanding transactions straight away,
         // as otherwise if waitTimeMillis is large (eg 5s), then the user could be looking
         // at old data for a few seconds before the transactions is applied, which isn't what
@@ -555,9 +568,22 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
             this.initialiseRowNodes(loadingRowsToShow);
         }
+        this.scheduleLoad();
+        this.fireStoreUpdatedEvent();
+    }
+
+    public retryLoads(): void {
+        if (this.getState()===RowNodeBlock.STATE_FAILED) {
+            this.initialiseRowNodes(1);
+            this.scheduleLoad();
+        }
+
+        this.forEachChildStoreShallow(store => store.retryLoads() );
+    }
+
+    private scheduleLoad(): void {
         this.setStateWaitingToLoad();
         this.rowNodeBlockLoader.checkBlockToLoad();
-        this.fireStoreUpdatedEvent();
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted

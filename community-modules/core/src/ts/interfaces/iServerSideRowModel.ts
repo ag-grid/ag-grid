@@ -6,6 +6,7 @@ export interface IServerSideRowModel extends IRowModel {
     refreshStore(params: RefreshStoreParams): void;
     onRowHeightChanged(): void;
     getStoreState(): ServerSideStoreState[];
+    retryLoads(): void;
 }
 
 export interface IServerSideTransactionManager {

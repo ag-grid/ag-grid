@@ -11,9 +11,8 @@ export interface IServerSideStore {
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
-
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
-
+    retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
