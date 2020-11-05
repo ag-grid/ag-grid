@@ -32,17 +32,21 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         }
     }, [isVisible]);
 
+    useEffect(() => {
+        if (!isVisible) {
+            setShouldExecute(false);
+        }
+    }, [generated]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const iframeRef = React.createRef();
 
     useEffect(() => {
-        if (shouldExecute) {
-            const iframe = iframeRef.current;
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const iframe = iframeRef.current;
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-            iframeDoc.open();
-            iframeDoc.write(generated);
-            iframeDoc.close();
-        }
+        iframeDoc.open();
+        iframeDoc.write(shouldExecute ? generated : '');
+        iframeDoc.close();
     }, [shouldExecute, generated]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <iframe ref={iframeRef} title={name} className={styles.exampleRunnerResult}></iframe>;
