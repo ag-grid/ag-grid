@@ -89,18 +89,7 @@ const plugins = [
             },
           },
         },
-        {
-          resolve: 'gatsby-remark-component',
-          options: {
-            components: [
-              'grid-example',
-              'chart-example',
-              'api-documentation',
-              'icons-panel',
-              'image-caption'
-            ]
-          }
-        },
+        'gatsby-remark-component-parent2div',
         {
           resolve: `gatsby-remark-autolink-headers`,
           options: {

@@ -32,7 +32,7 @@ export const ApiDocumentation = ({ pageName, source, sources, section = null, na
         const properties = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
-            .map(([key, value]) => <Section title={key} properties={value} config={config} />);
+            .map(([key, value]) => <Section key={key} title={key} properties={value} config={config} />);
     }
 
     const keys = section.split('.');
@@ -128,7 +128,7 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
             objectProperties[name] = definition;
         }
 
-        rows.push(<tr>
+        rows.push(<tr key={name}>
             <td>
                 <span className={styles.reference__name}><code dangerouslySetInnerHTML={{ __html: name }}></code></span>
                 {isRequired && <><br /><span className={styles.reference__required}>Required</span></>}
@@ -140,7 +140,11 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
 
     return <>
         {header}
-        <table>{rows}</table>
+        <table>
+            <tbody>
+                {rows}
+            </tbody>
+        </table>
         {Object.entries(objectProperties).map(([name, definition]) => <Section
             title={name}
             properties={definition}
