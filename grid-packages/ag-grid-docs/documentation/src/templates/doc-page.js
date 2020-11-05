@@ -29,12 +29,12 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   return (
     <div className={styles.docPageWrapper}>
-      <div className={styles.docPage}>
+      <div id="doc-content" className={styles.docPage}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
         <h1>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
-      {page.headings && <SideMenu headings={page.headings} />}
+      {<SideMenu headings={page.headings} pageName={pageName} />}
     </div>
   );
 };

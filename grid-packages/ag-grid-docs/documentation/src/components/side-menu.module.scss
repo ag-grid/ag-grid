@@ -11,16 +11,19 @@
         @extend .d-block, .my-2;
     }
 
-    &__item--level-2 {
+    &__item--level-1 {
+        font-size: 1.05rem;
         font-weight: 500;
     }
 
     &__item--level-3 {
         @extend .ml-2;
+        font-weight: 300;
     }
 
     &__item--level-4 {
         @extend .ml-3;
+        font-weight: 300;
     }
 
     &__link {
