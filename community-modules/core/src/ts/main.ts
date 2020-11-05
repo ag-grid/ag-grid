@@ -289,6 +289,7 @@ export {
 } from "./entities/colDef";
 export {
     GridOptions,
+    IsServerSideGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsApplyServerSideTransaction,
     GetContextMenuItemsParams,

@@ -1,5 +1,6 @@
 import {
     _,
+    IsServerSideGroupOpenByDefaultParams,
     RowBounds,
     Autowired,
     Bean,
@@ -310,6 +311,28 @@ export class BlockUtils extends BeanStub {
         } else {
             // no prefix, so node id's are left as they are
             return '';
+        }
+    }
+
+    public checkOpenByDefault(rowNode: RowNode): void {
+        const userFunc = this.gridOptionsWrapper.getIsServerSideGroupOpenByDefaultFunc();
+        if (!userFunc) { return; }
+
+        const params: IsServerSideGroupOpenByDefaultParams = {
+            data: rowNode.data,
+            rowNode
+        };
+
+        const userFuncRes = userFunc(params);
+
+        if (userFuncRes) {
+            // we do this in a timeout, so that we don't expand a row node while in the middle
+            // of setting up rows, setting up rows is complex enough without another chunk of work
+            // getting added to the call stack. this is also helpful as openByDefault may or may
+            // not happen (so makes setting up rows more deterministic by expands never happening)
+            // and also checkOpenByDefault is shard with both store types, so easier control how it
+            // impacts things by keeping it in new VM turn.
+            window.setTimeout( ()=> rowNode.setExpanded(true), 0);
         }
     }
 }

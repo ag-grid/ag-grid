@@ -352,6 +352,52 @@ SNIPPET
 
 <?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
+<h2>Open by Default</h2>
+
+<p>
+    It is possible to have rows open as soon as they are loaded. To do this implement the grid callback
+    <code>isServerSideGroupOpenByDefault</code>.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Callback Signature
+function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) => boolean;
+
+// Params for callback
+interface IsServerSideGroupOpenByDefaultParams {
+    data: any;
+    rowNode: RowNode;
+}
+
+// Example implementation
+function isServerSideGroupOpenByDefault(params) {
+    var rowNode = params.rowNode;
+    var isZimbabwe = rowNode.field == 'country' && rowNode.key == 'Zimbabwe';
+    return isZimbabwe;
+}
+SNIPPET
+) ?>
+
+<p>
+    Below shows the callback in action. Note the following:
+</p>
+<ul>
+    <li>
+        The callback opens country Zimbabwe and sport Swimming by default.
+    </li>
+    <li>
+        Note the county Zimbabwe has Swimming as it's only sport, thus both of these
+        are opened as soon as the rows load.
+    </li>
+    <li>
+        Other countries (eg United States and Russia) also have swimming, however the swimming
+        group is now opened and loaded until after those countries are expanded, as it is only
+        then that the swimming group is created.
+    </li>
+</ul>
+
+<?= grid_example('Open by Default', 'open-by-default', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
 <h2>Expand / Collapse All</h2>
 
 <p>
