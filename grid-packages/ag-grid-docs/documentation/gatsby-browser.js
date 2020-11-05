@@ -6,7 +6,11 @@ import './src/themes/prism-coy-without-shadows.css';
 import 'fontsource-roboto';
 import { getPageName } from './src/utils/get-page-name';
 
-export const shouldUpdateScroll = ({ prevRouterProps: { location: { pathname: previousPathname } }, routerProps: { location: { pathname } } }) => {
+export const shouldUpdateScroll = ({ prevRouterProps, routerProps: { location: { pathname } } }) => {
+    if (!prevRouterProps) { return true; }
+
+    const { location: { pathname: previousPathname } } = prevRouterProps;
+
     const previousPageName = getPageName(previousPathname);
     const pageName = getPageName(pathname);
 
