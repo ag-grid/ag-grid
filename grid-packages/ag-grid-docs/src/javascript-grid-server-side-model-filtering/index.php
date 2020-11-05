@@ -41,10 +41,10 @@ SNIPPET
     For more details on filtering configurations see the section on <a href="../javascript-grid-filtering/">Column Filtering</a>.
 </p>
 
-<h2>Infinite Store - Simple Filtering</h2>
+<h2>Partial Store - Simple Filtering</h2>
 
 <p>
-    When using the Infinite Store, filtering of rows is performed on the server.
+    When using the Partial Store, filtering of rows is performed on the server.
     When a filter is applied
     in the grid a request is made for more rows via the
     <a href="../javascript-grid-server-side-model-datasource/">Datasource</a>.
@@ -91,7 +91,7 @@ SNIPPET
 <p>
     The example below demonstrates filtering using
     <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>
-    and the Infinite Store. Notice the following:
+    and the Partial Store. Notice the following:
 </p>
 
 <ul class="content">
@@ -113,9 +113,9 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Infinite Simple', 'infinite-simple', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'menu']]) ?>
+<?= grid_example('Partial Simple', 'partial-simple', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'menu']]) ?>
 
-<h2>Infinite Store - Set Filtering</h2>
+<h2>Partial Store - Set Filtering</h2>
 
 <p>
     Filtering using the <a href="../javascript-grid-set-filtering/">Set Filter</a> has a few
@@ -181,7 +181,7 @@ SNIPPET
 </p>
 
 <p>
-    The example below demonstrates server-side filtering using the Set Filter and the Infinite Row Store.
+    The example below demonstrates server-side filtering using the Set Filter and the Partial Row Store.
     Note the following:
 </p>
 
@@ -204,7 +204,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Infinite Set', 'infinite-set', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Partial Set', 'partial-set', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'setfilter', 'menu']]) ?>
 
 <!--<h2>Set Filter with Complex Object</h2>-->
 <!---->
@@ -236,7 +236,7 @@ SNIPPET
 <?= grid_example('Full Store Filtering', 'full', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <p>
-    Note that the Set Filter is provided values in both the Infinite and Full Stores.
+    Note that the Set Filter is provided values in both the Partial and Full Stores.
     Values are required for the Set Filter when used in the SSRM regardless of which row store is used.
 </p>
 

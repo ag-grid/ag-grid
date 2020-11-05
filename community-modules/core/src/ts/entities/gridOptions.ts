@@ -773,7 +773,7 @@ export interface ChartRef {
 
 export enum ServerSideStoreType {
     Full = 'full',
-    Infinite = 'infinite'
+    Partial = 'partial'
 }
 
 export interface ServerSideStoreParams {

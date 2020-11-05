@@ -24,10 +24,10 @@ import {
 import { StoreUtils } from "../stores/storeUtils";
 import { BlockUtils } from "./blockUtils";
 import { SSRMParams } from "../serverSideRowModel";
-import { InfiniteStore } from "../stores/infiniteStore";
+import { PartialStore } from "../stores/partialStore";
 import { NodeManager } from "../nodeManager";
 
-export class CacheBlock extends RowNodeBlock {
+export class PartialBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
@@ -50,7 +50,7 @@ export class CacheBlock extends RowNodeBlock {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
 
-    private readonly parentStore: InfiniteStore;
+    private readonly parentStore: PartialStore;
     private readonly parentRowNode: RowNode;
 
     private defaultRowHeight: number;
@@ -75,7 +75,7 @@ export class CacheBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
     constructor(blockNumber: number, parentRowNode: RowNode, ssrmParams: SSRMParams,
-                storeParams: ServerSideStoreParams, parentStore: InfiniteStore) {
+                storeParams: ServerSideStoreParams, parentStore: PartialStore) {
         super(blockNumber);
 
         this.ssrmParams = ssrmParams;

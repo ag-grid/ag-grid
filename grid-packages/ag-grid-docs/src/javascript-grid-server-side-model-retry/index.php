@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 <p>
-    The following is the retry example with Finite Store:
+    The following is the retry example with Partial Store:
 </p>
 <?= grid_example('Retry Finite Store', 'retry-infinite', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 

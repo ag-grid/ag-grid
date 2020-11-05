@@ -44,17 +44,17 @@ include '../documentation-main/documentation_header.php';
 
 <p>This can be very useful when debugging issues on the server.</p>
 
-<h2>Custom Infinite Store</h2>
+<h2>Custom Partial Store</h2>
 
 <p>
-    The example below shows a customised SSRM using the Infinite Store.
+    The example below shows a customised SSRM using the Partial Store.
     Note the following:
 </p>
 
 <ul>
     <li>
-        The grid property <code>serverSideStoreType = infinite</code>,
-        which gets the Infinite Store to be used. The grid loads rows one block at a time
+        The grid property <code>serverSideStoreType = partial</code>,
+        which gets the Partial Store to be used. The grid loads rows one block at a time
         as the user scrolsl down.
     </li>
     <li>
@@ -77,7 +77,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Custom Infinite', 'custom-infinite', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Custom Partial', 'custom-infinite', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <h2>Custom Loading Debounce</h2>
 

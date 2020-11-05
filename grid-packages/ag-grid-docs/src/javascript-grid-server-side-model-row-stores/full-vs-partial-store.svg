@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 23.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!-- Generator: Adobe Illustrator 25.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 314.1 223.8" style="enable-background:new 0 0 314.1 223.8;" xml:space="preserve">
 <style type="text/css">
@@ -8,15 +8,15 @@
 	.st2{font-size:12px;}
 	.st3{fill:#F2D4FF;stroke:#000000;stroke-miterlimit:10;}
 	.st4{fill:#BFE8FF;}
-	.st5{enable-background:new    ;}
-	.st6{font-size:7.5826px;}
+	.st5{font-size:7.5826px;}
+	.st6{enable-background:new    ;}
 </style>
 <g>
 	<g>
 		<rect x="0.5" y="0.5" class="st0" width="134" height="222.9"/>
 		<path d="M134,0.9v222H1V0.9H134 M135,0H0v223.8h135V0L135,0z"/>
 	</g>
-	<text transform="matrix(1 0 0 1 9.1789 17.0359)" class="st1 st2">Infinite Store</text>
+	<text transform="matrix(1 0 0 1 9.1789 17.0359)" class="st1 st2">Partial Store</text>
 	<g>
 		<rect x="16.7" y="41.2" class="st3" width="102.6" height="36.6"/>
 		<g>
@@ -25,7 +25,8 @@
 				<path d="M115.1,44.3v4.1H45v-4.1H115.1 M116.1,44.1H44v4.5h72.1V44.1L116.1,44.1z"/>
 			</g>
 		</g>
-		<text transform="matrix(1 0 0 1 21.422 50.8874)" class="st5"><tspan x="0" y="0" class="st1 st6">Row</tspan><tspan x="0" y="9.1" class="st1 st6">Block</tspan></text>
+		<text transform="matrix(1 0 0 1 21.422 50.8874)" class="st1 st5">Row</text>
+		<text transform="matrix(1 0 0 1 21.422 59.9874)" class="st1 st5">Block</text>
 		<g>
 			<g>
 				<rect x="44.5" y="50.8" class="st4" width="71.1" height="4.3"/>
@@ -59,7 +60,8 @@
 				<path d="M114.6,87.4v4.1H44.5v-4.1H114.6 M115.6,87.2H43.5v4.5h72.1V87.2L115.6,87.2z"/>
 			</g>
 		</g>
-		<text transform="matrix(1 0 0 1 20.9587 94.0342)" class="st5"><tspan x="0" y="0" class="st1 st6">Row</tspan><tspan x="0" y="9.1" class="st1 st6">Block</tspan></text>
+		<text transform="matrix(1 0 0 1 20.9587 94.0342)" class="st1 st5">Row</text>
+		<text transform="matrix(1 0 0 1 20.9587 103.1342)" class="st1 st5">Block</text>
 		<g>
 			<g>
 				<rect x="44" y="93.9" class="st4" width="71.1" height="4.3"/>
@@ -87,13 +89,13 @@
 	</g>
 	<g>
 		<rect x="16.2" y="129.6" class="st3" width="102.6" height="36.6"/>
-		<text transform="matrix(1 0 0 1 21.4221 147.484)" class="st1 st6">&lt; other blocks not loaded &gt;</text>
+		<text transform="matrix(1 0 0 1 21.4221 147.484)" class="st1 st5">&lt; other blocks not loaded &gt;</text>
 	</g>
 </g>
 <g>
 	<rect x="179.6" y="0.5" class="st0" width="134" height="222.9"/>
 	<path d="M313.1,0.9v222h-133V0.9H313.1 M314.1,0h-135v223.8h135V0L314.1,0z"/>
-	<text transform="matrix(1 0 0 1 190.9805 16.6008)" class="st1 st2">In Memory Store</text>
+	<text transform="matrix(1 0 0 1 190.9805 16.6008)" class="st1 st2">Full Store</text>
 	<g>
 		<g>
 			<g>
@@ -104,7 +106,7 @@
 		<g>
 			<g>
 				<rect x="208.4" y="46.6" class="st4" width="71.1" height="4.3"/>
-				<path d="M279,46.7v4.1h-70.1v-4.1H279 M280,46.5h-72.1v4.5H280V46.5L280,46.5z"/>
+				<path d="M279,46.7v4.1h-70.1v-4.1H279 M280,46.5h-72.1V51H280V46.5L280,46.5z"/>
 			</g>
 		</g>
 		<g>
@@ -142,7 +144,7 @@
 		<g>
 			<g>
 				<rect x="208.4" y="86.6" class="st4" width="71.1" height="4.3"/>
-				<path d="M279,86.7v4.1h-70.1v-4.1H279 M280,86.5h-72.1v4.5H280V86.5L280,86.5z"/>
+				<path d="M279,86.7v4.1h-70.1v-4.1H279 M280,86.5h-72.1V91H280V86.5L280,86.5z"/>
 			</g>
 		</g>
 		<g>
@@ -222,7 +224,7 @@
 			</g>
 		</g>
 	</g>
-	<text transform="matrix(1 0 0 1 204.3128 194.0923)" class="st5"><tspan x="0" y="0" class="st1 st2">All rows loaded</tspan><tspan x="18.7" y="14.4" class="st1 st2">up front.</tspan></text>
+	<text transform="matrix(1 0 0 1 204.5405 196.0605)" class="st6"><tspan x="0" y="0" class="st1 st2">All rows loaded</tspan><tspan x="2.7" y="14.4" class="st1 st2">in one request</tspan></text>
 </g>
-<text transform="matrix(1 0 0 1 8.2651 191.4503)" class="st5"><tspan x="0" y="0" class="st1 st2">Rows loaded in blocks</tspan><tspan x="3.7" y="14.4" class="st1 st2">as user scrolsl down.</tspan></text>
+<text transform="matrix(1 0 0 1 7.0962 185.5004)" class="st6"><tspan x="0" y="0" class="st1 st2">Rows loaded one block</tspan><tspan x="0.7" y="14.4" class="st1 st2">at a time using multiple</tspan><tspan x="26" y="28.8" class="st1 st2">load requests</tspan></text>
 </svg>

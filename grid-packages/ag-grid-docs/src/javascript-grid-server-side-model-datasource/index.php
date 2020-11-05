@@ -177,10 +177,10 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 interface IServerSideGetRowsRequest {
-    // for Infinite Scroll only, first row requested
+    // for Partial Store only, first row requested
    startRow: number;
 
-   // for Infinite Scroll only, last row requested
+   // for Partial Store only, last row requested
    endRow: number;
 
    // row group columns
@@ -249,11 +249,11 @@ SNIPPET
 </p>
 
 <p>
-    The <code>rowCount</code> is used when Infinite Scrolling is turned on. When the total row count
+    The <code>rowCount</code> is used when Partial Store is used. When the total row count
     is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This
     then allows the user to scroll the full extend of the dataset and the grid will never ask for data
     past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar
-    range will grow as the user scrolls down (the default behaviour for infinite scroll).
+    range will grow as the user scrolls down (the default behaviour for Partial Store).
 </p>
 
 <p>
