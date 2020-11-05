@@ -23,7 +23,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
       'api-documentation': props => ApiDocumentation({ ...props, pageName, config: props.config ? JSON.parse(props.config) : {} }),
       'icons-panel': props => IconsPanel({ ...props }),
-      'image-caption': props => ImageCaption({ ...props })
+      'image-caption': props => ImageCaption({ ...props, caption: props.children.toString() })
     },
   }).Compiler;
 

@@ -16,6 +16,7 @@ const plugins = [
   },
   'gatsby-transformer-json',
   'gatsby-plugin-layout',
+  'gatsby-transformer-sharp',
   'gatsby-plugin-sharp',
   {
     resolve: 'gatsby-plugin-page-creator',
@@ -91,7 +92,13 @@ const plugins = [
         {
           resolve: 'gatsby-remark-component',
           options: {
-            components: ['grid-example', 'chart-example', 'api-documentation']
+            components: [
+              'grid-example',
+              'chart-example',
+              'api-documentation',
+              'icons-panel',
+              'image-caption'
+            ]
           }
         },
         {

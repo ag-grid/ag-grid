@@ -38,6 +38,7 @@
     "gatsby-transformer-json": "2.4.15",
     "gatsby-transformer-rehype": "1.9.5",
     "gatsby-transformer-remark": "2.9.1",
+    "gatsby-transformer-sharp": "2.5.21",
     "jquery": "3.5.1",
     "node-sass": "4.14.1",
     "popper.js": "1.16.1",
