@@ -2,7 +2,7 @@
 title: "Use with RxJS"
 ---
 
-It is possible to use RxJS with ag-Grid - with the rich [API](/javascript-grid-api) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
+It is possible to use RxJS with ag-Grid - with the rich [API](../javascript-grid-api/) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
 
 There are many ways you can use RxJS with ag-Grid. Below we describe two ways to do updates: One that processes just updated rows, and another that supplies the full Row Dataset but with altered rows within it.
 
