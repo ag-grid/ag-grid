@@ -30,7 +30,7 @@
 }
 
 .content {
-    @extend .p-3, .flex-grow-1;
+    @extend .flex-grow-1;
     overflow: auto;
 }
 

@@ -28,7 +28,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   }).Compiler;
 
   return (
-    <div className={styles.docPageWrapper}>
+    <div id="doc-page-wrapper" className={styles.docPageWrapper}>
       <div id="doc-content" className={styles.docPage}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
         <h1>{page.frontmatter.title}</h1>
