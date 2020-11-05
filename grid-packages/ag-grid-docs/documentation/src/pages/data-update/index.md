@@ -54,6 +54,7 @@ There are different ways of updating row data which are summarised as follows:
 
 - ### Transaction
     The grid takes a transaction containing rows to add, remove and update. This is done using `api.applyTransaction(transaction)`.
+
     Use transactions for doing add, remove or update operations on a large number of rows that are infrequent.
 
     If you are frequently updating rows (e.g. 5 or more updates a second), consider moving to High Frequency instead (achieved with Async Transactions).
