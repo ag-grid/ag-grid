@@ -1,5 +1,6 @@
-<h1>Updating Client-Side Data</h1>
-
+---
+title: "Updating Client-Side Data"
+---
 
 There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
 
