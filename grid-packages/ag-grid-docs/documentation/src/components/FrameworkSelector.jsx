@@ -2,11 +2,11 @@ import { Link, withPrefix } from 'gatsby';
 import React from "react";
 import styles from './framework-selector.module.scss';
 
-export default function FrameworkSelector({ path, currentFramework }) {
+export default function FrameworkSelector({ frameworks, path, currentFramework }) {
     if (!currentFramework) { return null; }
 
     return <div className={styles.frameworkSelector}>
-        {['javascript', 'angular', 'react', 'vue'].map(framework => {
+        {['javascript', 'angular', 'react', 'vue'].filter(f => frameworks.includes(f)).map(framework => {
             const isSelected = framework === currentFramework;
 
             return <div key={framework} className={`${styles.frameworkSelector__option} ${isSelected ? styles.frameworkSelector__optionSelected : ''}`}>

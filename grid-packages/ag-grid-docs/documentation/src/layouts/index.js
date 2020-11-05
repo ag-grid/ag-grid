@@ -7,7 +7,7 @@ import { getPageName } from '../utils/get-page-name';
 import styles from './index.module.scss';
 import './index.scss';
 
-export const Layout = ({ path, children, pageContext: { framework, layout } }) => {
+export const Layout = ({ path, children, pageContext: { frameworks, framework, layout } }) => {
     if (layout === 'bare') {
         return children;
     }
@@ -18,7 +18,7 @@ export const Layout = ({ path, children, pageContext: { framework, layout } }) =
         <div className={styles.mainContainer}>
             <div className={styles.header}>
                 <Link to="/" className={styles.header__logo} />
-                <FrameworkSelector path={path} currentFramework={framework} />
+                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
             </div>
             <div className={styles.contentViewport}>
                 {framework && <div className={styles.mainMenu}>

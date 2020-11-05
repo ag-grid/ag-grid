@@ -80,11 +80,12 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     const result = await graphql(`
         {
             allMarkdownRemark {
-                edges {
-                    node {
-                        fields {
-                            path
-                        }
+                nodes {
+                    frontmatter {
+                        frameworks
+                    }
+                    fields {
+                        path
                     }
                 }
             }
@@ -96,12 +97,14 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
         return;
     }
 
-    result.data.allMarkdownRemark.edges.forEach(({ node }) => {
-        ['javascript', 'react', 'angular', 'vue'].forEach(framework => {
+    result.data.allMarkdownRemark.nodes.forEach(node => {
+        const frameworks = node.frontmatter.frameworks || ['javascript', 'react', 'angular', 'vue'];
+
+        frameworks.forEach(framework => {
             createPage({
                 path: `/${framework}${node.fields.path}/`,
                 component: docPageTemplate,
-                context: { framework, srcPath: node.fields.path, }
+                context: { frameworks, framework, srcPath: node.fields.path, }
             });
         });
     });

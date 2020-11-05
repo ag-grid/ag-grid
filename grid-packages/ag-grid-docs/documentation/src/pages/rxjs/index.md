@@ -1,5 +1,6 @@
 ---
 title: "Use with RxJS"
+frameworks: ["angular", "react", "vue"]
 ---
 
 It is possible to use RxJS with ag-Grid - with the rich [API](../javascript-grid-api/) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
@@ -25,7 +26,7 @@ To efficiently process this data we need the following:
         ...
     };
     ```
-    
+
 - A manner of letting ag-Grid know the type of update we're doing - for this we make use of the [Transaction](../data-update/) method:
 
     ```js
