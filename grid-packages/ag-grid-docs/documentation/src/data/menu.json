@@ -9,7 +9,9 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": ["javascript"],
+            "frameworks": [
+              "javascript"
+            ],
             "items": [
               {
                 "title": "Install with NPM",
@@ -24,7 +26,9 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": ["angular"],
+            "frameworks": [
+              "angular"
+            ],
             "items": [
               {
                 "title": "Components",
@@ -63,7 +67,9 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": ["react"],
+            "frameworks": [
+              "react"
+            ],
             "items": [
               {
                 "title": "Column Configuration",
@@ -98,7 +104,9 @@
           {
             "title": "Overview",
             "url": "../getting-started/",
-            "framework": ["vue"],
+            "frameworks": [
+              "vue"
+            ],
             "items": [
               {
                 "title": "Components",
@@ -121,12 +129,16 @@
           {
             "title": "AngularJS",
             "url": "../best-grid/",
-            "framework": ["angular"]
+            "frameworks": [
+              "angular"
+            ]
           },
           {
             "title": "Polymer",
             "url": "../getting-started/",
-            "framework": ["polymer"]
+            "frameworks": [
+              "javascript"
+            ]
           }
         ]
       },
@@ -479,7 +491,11 @@
           {
             "title": "See Also",
             "url": "",
-            "framework": ["angular", "react", "vue"],
+            "frameworks": [
+              "angular",
+              "react",
+              "vue"
+            ],
             "items": [
               {
                 "title": "Use with RxJS",

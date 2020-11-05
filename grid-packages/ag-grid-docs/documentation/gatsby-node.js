@@ -98,7 +98,10 @@ exports.createPages = async ({ actions: { createPage }, graphql, reporter }) => 
     }
 
     result.data.allMarkdownRemark.nodes.forEach(node => {
-        const frameworks = node.frontmatter.frameworks || ['javascript', 'react', 'angular', 'vue'];
+        const { frontmatter: { frameworks: specifiedFrameworks } } = node;
+
+        const frameworks = ['javascript', 'react', 'angular', 'vue']
+            .filter(f => !specifiedFrameworks || specifiedFrameworks.includes(f));
 
         frameworks.forEach(framework => {
             createPage({

@@ -8,27 +8,27 @@ import styles from './menu.module.scss';
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return <li key={title} className={styles.menu__section}>
-        <div 
-            onClick={ () => toggleActive() }
-            onKeyDown={ () => toggleActive() }
+        <div
+            onClick={() => toggleActive()}
+            onKeyDown={() => toggleActive()}
             role="button"
             tabIndex="0">
             <FontAwesomeIcon
                 icon={faChevronRight}
                 fixedWidth
                 rotation={isActive ? 90 : 0}
-                className={styles.menu__arrow} 
+                className={styles.menu__arrow}
             />
             {title}
         </div>
-        { isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} /> }
+        {isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} />}
     </li>;
 };
 
 const MenuGroup = ({ group, currentFramework }) =>
     <ul className={styles.menu__group}>
-        { group.items
-            .filter(item => !item.framework || item.framework.indexOf(currentFramework) !== -1)
+        {group.items
+            .filter(item => !item.frameworks || item.frameworks.includes(currentFramework))
             .map(item => <MenuItem key={item.title} item={item} currentFramework={currentFramework} />)
         }
     </ul>;
@@ -45,7 +45,7 @@ const MenuItem = ({ item, currentFramework }) => {
                     activeClassName={styles.menu__itemActive}>{title}</Link>
                 : title
             }
-            { item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} /> }
+            { item.items && <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />}
         </li>
     );
 };
@@ -53,8 +53,14 @@ const MenuItem = ({ item, currentFramework }) => {
 const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], []);
-    const containsPage = items => items.reduce(
-        (hasPage, item) => hasPage || item.url === `../${currentPage}/` || (item.items && containsPage(item.items)),
+    const containsPage = (items, frameworks) => items.reduce(
+        (hasPage, item) => {
+            const availableFrameworks = item.frameworks || frameworks;
+
+            return hasPage ||
+                (item.url === `../${currentPage}/` && (!availableFrameworks || availableFrameworks.includes(currentFramework))) ||
+                (item.items && containsPage(item.items, availableFrameworks));
+        },
         false);
 
     useEffect(() => {
@@ -63,10 +69,10 @@ const Menu = ({ currentFramework, currentPage }) => {
         if (sectionContainingPage) {
             setActiveSection(sectionContainingPage.title);
         }
-    }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <div className={styles.menu}>
-        <Search indices={ [{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }] } />
+        <Search indices={[{ name: `ag-grid_${currentFramework}`, title: "Documentation Pages" }]} />
 
         <ul className={styles.menu__sections}>
             {combinedMenuItems.map(item => {
