@@ -1,0 +1,9 @@
+.matrix-table {
+    &__true {
+        color: green;
+    }
+
+    &__false {
+        color: red;
+    }
+}

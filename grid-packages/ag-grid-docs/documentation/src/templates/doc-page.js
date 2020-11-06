@@ -10,6 +10,7 @@ import { ApiDocumentation } from '../components/ApiDocumentation';
 import IconsPanel from '../components/IconsPanel';
 import ImageCaption from '../components/ImageCaption';
 import styles from './doc-page.module.scss';
+import MatrixTable from '../components/MatrixTable';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -35,7 +36,8 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
         config: props.config != null ? JSON.parse(props.config) : undefined
       }),
       'icons-panel': props => IconsPanel({ ...props }),
-      'image-caption': ImageCaption
+      'image-caption': ImageCaption,
+      'matrix-table': props => MatrixTable({...props })
     },
   }).Compiler;
 
