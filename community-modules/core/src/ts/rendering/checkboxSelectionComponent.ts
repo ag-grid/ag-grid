@@ -50,15 +50,17 @@ export class CheckboxSelectionComponent extends Component {
         this.eCheckbox.setInputAriaLabel(`Press Space to toggle row selection (${stateName})`);
     }
 
-    private onCheckedClicked(): number {
+    private onCheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, canBeRangeSelect: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        this.eCheckbox.setValue(this.rowNode.isSelected(), true);
         return updatedCount;
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, canBeRangeSelect: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+        this.eCheckbox.setValue(this.rowNode.isSelected(), true);
         return updatedCount;
     }
 
@@ -83,7 +85,7 @@ export class CheckboxSelectionComponent extends Component {
             } else if (params.selected) {
                 this.onUncheckedClicked(params.event || {});
             } else {
-                this.onCheckedClicked();
+                this.onCheckedClicked(params.event || {});
             }
         });
 

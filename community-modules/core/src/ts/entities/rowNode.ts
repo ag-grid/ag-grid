@@ -28,6 +28,8 @@ export interface SetSelectedParams {
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;
+    // used when a range selection is permitted; ie. a user interaction sets the range
+    canBeRangeSelect?: boolean;
 }
 
 export interface RowNodeEvent extends AgEvent {
@@ -695,7 +697,8 @@ export class RowNode implements IEventEmitter {
             newValue,
             clearSelection,
             suppressFinishActions,
-            rangeSelect: false
+            rangeSelect: false,
+            canBeRangeSelect: false
         });
     }
 
@@ -709,6 +712,7 @@ export class RowNode implements IEventEmitter {
         const newValue = params.newValue === true;
         const clearSelection = params.clearSelection === true;
         const suppressFinishActions = params.suppressFinishActions === true;
+        const canBeRangeSelect = params.canBeRangeSelect === true;
         const rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         const groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
@@ -729,10 +733,11 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
-            const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
+        if (rangeSelect && canBeRangeSelect) {
+            const lastSelectedNode = this.selectionController.getLastSelectedNode();
+            const newRowClicked = lastSelectedNode !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
-            if (newRowClicked && allowMultiSelect) {
+            if (newRowClicked && allowMultiSelect && lastSelectedNode) {
                 return this.doRowRangeSelection();
             }
         }
@@ -778,7 +783,7 @@ export class RowNode implements IEventEmitter {
             }
 
             // so if user next does shift-select, we know where to start the selection from
-            if (newValue) {
+            if (canBeRangeSelect) {
                 this.selectionController.setLastSelectedNode(this);
             }
         }
@@ -799,7 +804,7 @@ export class RowNode implements IEventEmitter {
         nodesToSelect.forEach(rowNode => {
             if (rowNode.group && groupsSelectChildren) { return; }
 
-            const nodeWasSelected = rowNode.selectThisNode(true);
+            const nodeWasSelected = rowNode.selectThisNode(lastSelectedNode.isSelected());
             if (nodeWasSelected) {
                 updatedCount++;
             }
