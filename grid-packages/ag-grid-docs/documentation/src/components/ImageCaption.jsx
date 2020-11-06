@@ -2,7 +2,7 @@ import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import styles from './image-caption.module.scss';
 
-const ImageCaption = ({ src, alt, centered, width, height, caption }) => {
+const ImageCaption = ({ src, alt, centered, width, height, children }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/(?:.jpg|.jpg|png|.svg|.gif)$/" } }) {
@@ -30,10 +30,10 @@ const ImageCaption = ({ src, alt, centered, width, height, caption }) => {
         <div className={className} style={style}>
             <img src={img.childImageSharp.fluid.src} className={styles.imageCaption__top} alt={alt} />
             <div className={styles.imageCaption__body}>
-                <p className={styles.imageCaption__bodyText}>{caption}</p>
+                <p className={styles.imageCaption__bodyText}>{children}</p>
             </div>
         </div>
     );
-}
+};
 
 export default ImageCaption;

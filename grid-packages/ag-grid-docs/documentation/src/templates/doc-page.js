@@ -23,7 +23,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
       'api-documentation': props => ApiDocumentation({ ...props, pageName, config: props.config ? JSON.parse(props.config) : {} }),
       'icons-panel': props => IconsPanel({ ...props }),
-      'image-caption': props => ImageCaption({ ...props, caption: props.children.toString() })
+      'image-caption': ImageCaption
     },
   }).Compiler;
 
@@ -31,7 +31,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     <div id="doc-page-wrapper" className={styles.docPageWrapper}>
       <div id="doc-content" className={styles.docPage}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-        <h1 className={page.frontmatter.enterprise ? styles.enterpriseTitle: null}>{page.frontmatter.title}</h1>
+        <h1 className={page.frontmatter.enterprise ? styles.enterpriseTitle : null}>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
       {<SideMenu headings={page.headings} pageName={pageName} />}
