@@ -774,7 +774,7 @@
         "items": [
           {
             "title": "Cell Content",
-            "url": "../rendering-flow/",
+            "url": "../cell-content/",
             "showInCollapsed": true,
             "items": [
               {
@@ -806,11 +806,11 @@
             "items": [
               {
                 "title": "Group Cell Renderer",
-                "url": "../provided-renderer-group/"
+                "url": "../group-cell-renderer/"
               },
               {
                 "title": "Change Cell Renderers",
-                "url": "../provided-renderer-change/"
+                "url": "../change-cell-renderers/"
               }
             ]
           },
@@ -821,7 +821,7 @@
           },
           {
             "title": "View Refresh",
-            "url": "../refresh/",
+            "url": "../view-refresh/",
             "showInCollapsed": true
           },
           {
@@ -840,7 +840,7 @@
             "items": [
               {
                 "title": "Expressions & Context",
-                "url": "example-expressions-and-context/"
+                "url": "../expressions-and-context/"
               }
             ]
           }

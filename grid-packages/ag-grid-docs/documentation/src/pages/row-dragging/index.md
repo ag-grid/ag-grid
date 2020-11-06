@@ -241,7 +241,7 @@ The example above works, however it is not intuitive as the user is given no vis
 
 - The example uses [Cell Class Rules](../cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
 
-- The example uses [Refresh Cells](../refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
+- The example uses [Refresh Cells](../view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
 <grid-example title='Highlighting Drag with Tree Data' name='highlighting-drag-tree-data' type='generated' options='{ "enterprise": true, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
