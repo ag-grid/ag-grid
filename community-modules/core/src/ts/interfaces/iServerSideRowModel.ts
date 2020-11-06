@@ -19,4 +19,5 @@ export interface IServerSideTransactionManager {
 export interface RefreshStoreParams {
     route?: string[];
     showLoading?: boolean;
+    clearChildren?: boolean;
 }

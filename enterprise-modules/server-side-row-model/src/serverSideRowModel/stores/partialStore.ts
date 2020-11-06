@@ -2,33 +2,33 @@ import {
     _,
     Autowired,
     BeanStub,
+    ColumnController,
     Events,
     GridOptionsWrapper,
     IServerSideStore,
+    LoadSuccessParams,
     Logger,
     LoggerFactory,
     NumberSequence,
     PostConstruct,
     PreDestroy,
-    ServerSideTransactionResultStatus,
     Qualifier,
     RowBounds,
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
+    ServerSideStoreParams,
+    ServerSideStoreState,
+    ServerSideStoreType,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    StoreUpdatedEvent,
-    LoadSuccessParams,
-    ColumnController,
-    ServerSideStoreParams,
+    ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
-    ServerSideStoreState,
-    ServerSideStoreType
+    StoreUpdatedEvent
 } from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
-import { StoreUtils } from "./storeUtils";
-import { PartialBlock } from "../blocks/partialBlock";
+import {SSRMParams} from "../serverSideRowModel";
+import {StoreUtils} from "./storeUtils";
+import {PartialBlock} from "../blocks/partialBlock";
 
 enum FindResult {FOUND, CONTINUE_FIND, BREAK_FIND}
 
@@ -251,7 +251,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public refreshStore(showLoading: boolean): void {
+    public refreshStore(showLoading: boolean, clearChildren: boolean): void {
         if (showLoading) {
             this.resetStore();
         } else {

@@ -398,7 +398,7 @@ SNIPPET
 
 <?= grid_example('Open by Default', 'open-by-default', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
-<h2>Expand / Collapse All</h2>
+<h2>Expand All / Collapse All</h2>
 
 <p>
     It is possible to expand and collapse all group rows using the <code>expandAll()</code> and <code>collapseAll()</code>

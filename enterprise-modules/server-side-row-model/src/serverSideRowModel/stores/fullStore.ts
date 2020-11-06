@@ -4,8 +4,10 @@ import {
     Column,
     ColumnController,
     Events,
+    FilterManager,
     GridOptionsWrapper,
     IServerSideStore,
+    LoadSuccessParams,
     NumberSequence,
     PostConstruct,
     PreDestroy,
@@ -13,25 +15,23 @@ import {
     RowNode,
     RowNodeBlock,
     RowNodeBlockLoader,
+    RowNodeSorter,
     RowRenderer,
+    SelectionChangedEvent,
+    ServerSideStoreParams,
+    ServerSideStoreState,
+    ServerSideStoreType,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
-    StoreUpdatedEvent,
-    RowNodeSorter,
     SortController,
-    LoadSuccessParams,
-    FilterManager,
-    SelectionChangedEvent,
     StoreRefreshAfterParams,
-    ServerSideStoreParams,
-    ServerSideStoreState,
-    ServerSideStoreType
+    StoreUpdatedEvent
 } from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
-import { StoreUtils } from "./storeUtils";
-import { BlockUtils } from "../blocks/blockUtils";
-import { NodeManager } from "../nodeManager";
+import {SSRMParams} from "../serverSideRowModel";
+import {StoreUtils} from "./storeUtils";
+import {BlockUtils} from "../blocks/blockUtils";
+import {NodeManager} from "../nodeManager";
 import {TransactionManager} from "../transactionManager";
 
 export class FullStore extends RowNodeBlock implements IServerSideStore {
@@ -198,21 +198,62 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             _.assign(this.info, params.storeInfo);
         }
 
-        this.destroyRowNodes();
+        const nodesToRecycle = this.allRowNodes.length>0 ? this.allNodesMap : undefined;
+
+        this.allRowNodes = [];
+        this.nodesAfterSort = [];
+        this.nodesAfterFilter = [];
+        this.allNodesMap = {};
 
         if (!params.rowData) {
             const message = 'ag-Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
             _.doOnce( () => console.warn(message, params), 'FullStore.noData');
         }
 
-        const rowData = params.rowData ? params.rowData : [];
-        rowData.forEach(this.createDataNode.bind(this));
+        this.createOrRecycleNodes(nodesToRecycle, params.rowData);
+
+        if (nodesToRecycle) {
+            this.blockUtils.destroyRowNodes(Object.values(nodesToRecycle));
+        }
 
         this.filterAndSortNodes();
 
         this.fireStoreUpdatedEvent();
 
         this.flushAsyncTransactions();
+    }
+
+    private createOrRecycleNodes(nodesToRecycle?: {[id:string]: RowNode}, rowData?: any[]): void {
+        if (!rowData) { return; }
+
+        const lookupNodeToRecycle = (dataItem: any): RowNode | undefined => {
+            if (!nodesToRecycle) { return undefined; }
+
+            const userIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+            if (!userIdFunc) { return undefined; }
+
+            const id = userIdFunc(dataItem);
+            const foundNode = nodesToRecycle[id];
+            if (!foundNode) { return undefined; }
+
+            delete nodesToRecycle[id];
+            return foundNode;
+        };
+
+        const recycleNode = (rowNode: RowNode, dataItem: any) => {
+            this.allNodesMap[rowNode.id!] = rowNode;
+            rowNode.setData(dataItem);
+            this.allRowNodes.push(rowNode);
+        };
+
+        rowData.forEach( dataItem => {
+            let nodeToRecycle = lookupNodeToRecycle(dataItem);
+            if (nodeToRecycle) {
+                recycleNode(nodeToRecycle, dataItem);
+            } else {
+                this.createDataNode(dataItem)
+            }
+        });
     }
 
     private flushAsyncTransactions(): void {
@@ -382,7 +423,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
         if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
-            this.refreshStore(true);
+            this.refreshStore(true, true);
             return;
         }
 
@@ -392,7 +433,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
         if (params.alwaysReset) {
-            this.refreshStore(true);
+            this.refreshStore(true, true);
             return;
         }
 
@@ -565,7 +606,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
     }
 
-    public refreshStore(showLoading: boolean): void {
+    public refreshStore(showLoading: boolean, clearChildren: boolean): void {
         if (showLoading) {
             const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
             this.initialiseRowNodes(loadingRowsToShow);

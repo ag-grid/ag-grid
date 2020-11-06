@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
     if the data has changed and you want to do a complete refresh.
 </p>
 
+<h2>Refresh API</h2>
+
 <p>
     The grid has the following API's to assist with refreshing:
 </p>
@@ -84,6 +86,10 @@ SNIPPET
 </ul>
 
 <?= grid_example('Refresh Store', 'refresh-store', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+
+<h2>Group State - Full Store</h2>
+
+<?= grid_example('Keep Group State', 'keep-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Preserving Group State</h2>
 

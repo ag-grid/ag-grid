@@ -2,7 +2,6 @@ import {NumberSequence} from "../utils";
 import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
 import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
-import {SortModelItem} from "../sortController";
 import {ServerSideStoreType} from "../entities/gridOptions";
 
 export interface IServerSideStore {
@@ -21,7 +20,7 @@ export interface IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams): void;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
-    refreshStore(showLoading: boolean): void;
+    refreshStore(showLoading: boolean, clearChildren: boolean): void;
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;
