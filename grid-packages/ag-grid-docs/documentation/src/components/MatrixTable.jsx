@@ -26,7 +26,8 @@ const MatrixTable = ({ src, rootnode, columns }) => {
     let rows = file;
     let currentPath;
 
-    while(currentPath = path.pop()) {
+    while(path.length) {
+        currentPath = path.pop()
         rows = file[currentPath];
     }
 
