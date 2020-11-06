@@ -16,7 +16,7 @@ var columnDefs = [
     { field: 'country' },
     { field: 'year' },
     { field: 'date' },
-    { field: 'sport' }
+    { field: 'sport' },
 ];
 
 var gridOptions = {

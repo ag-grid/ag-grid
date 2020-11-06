@@ -23,51 +23,36 @@ colDef = {
 }
 ```
 
-
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
 - **Managed Dragging**: This is the simplest, where the grid will rearrange rows as you drag them.
-
 - **Unmanaged Dragging**: This is more complex and more powerful. The grid will not rearrange rows as you drag. Instead the application is responsible for responding to events fired by the grid and rows are rearranged by the application.
 
 ## Managed Dragging
-
 
 In managed dragging, the grid is responsible for rearranging the rows as the rows are dragged. Managed dragging is enabled with the property `rowDragManaged=true`.
 
 The example below shows simple managed dragging. The following can be noted:
 
 - The first column has `rowDrag=true` which results in a draggable area being included in the cell.
-
 - The property `rowDragManaged` is set, to tell the grid to move the row as the row is dragged.
-
 - If a sort (click on the header) or filter (open up the column menu) is applied to the column, the draggable icon for row dragging is hidden. This is consistent with the constraints explained after the example.
 
 <grid-example title='Row Drag Simple Managed' name='simple-managed' type='generated'></grid-example>
 
 The logic for managed dragging is simple and has the following constraints:
 
-- Works with [Client-Side](../client-side-model/) row model only; not with the [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model) or [Viewport](../grid-viewport) row models.
-
+- Works with [Client-Side](../client-side-model/) row model only; not with the [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) or [Viewport](../viewport/) row models.
 - Does not work if [Pagination](../pagination/) is enabled.
-
-- Does not work when sorting is applied. This is because the sort order of
-the rows depends on the data and moving the data would break the sort order.
-
-- Does not work when filtering is applied. This is because a filter removes rows
-making it impossible to know what 'real' order of rows when some are missing.
-
-- Does not work when row grouping or pivot is active. This is because moving
-rows between groups would require a knowledge of the underlying data which only
-your application knows.
-
+- Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
+- Does not work when filtering is applied. This is because a filter removes rows making it impossible to know what 'real' order of rows when some are missing.
+- Does not work when row grouping or pivot is active. This is because moving rows between groups would require a knowledge of the underlying data which only your application knows.
 
 These constraints can be bypassed by using [unmanaged row dragging](#unmanaged-dragging).
 
 ### Suppress Move When Dragging
 
 By default, the managed row dragging moves the rows while you are dragging them. This effect might not be desirable due to your application design. To prevent this default behaviour, set `suppressMoveWhenRowDragging` to `true` in the `gridOptions`.
-
 
 <grid-example title='Row Drag with SuppressMoveWhenRowDragging' name='managed-suppress-move-when-dragging' type='generated'></grid-example>
 
@@ -78,9 +63,7 @@ It is possible to drag multiple rows at the same time, when `enableMultiRowDragg
 For this example note the following:
 
 - When you select multiple items and drag one of them, all items in the selection will be dragged.
-
 - When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
-
 
 <grid-example title='Row Drag with Multi Row Drag' name='managed-with-multi-row-drag' type='generated'></grid-example>
 
@@ -100,7 +83,6 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 ## Custom Row Drag Text
 
 When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default this DOM element will contain the same value as the cell that started the row drag. It's possible to override that text by using the `colDef.rowDragText` callback.
-
 
 ```ts
 // function for rowDragText
@@ -136,14 +118,9 @@ The example below shows dragging with custom text. The following can be noted:
 Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`. Unmanaged dragging differs from managed dragging in the following ways:
 
 - The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
-
 - Dragging is allowed while sort is applied.
-
 - Dragging is allowed while filter is applied.
-
 - Dragging is allowed while row group or pivot is applied.
-
-
 
 [[note]]
 | It is not possible for the grid to provide a generic solution for row
@@ -151,32 +128,24 @@ Unmanaged dragging is the default dragging for the grid. To use it, do not set t
 | fires events and the application is responsible for implementing what
 | meets the application's requirements.
 
-
 ### Row Drag Events
 
 There are four grid events associated with row dragging which are:
 
 - `rowDragEnter`: A drag has started, or dragging already started and the mouse has re-entered the grid having previously left the grid.
-
 - `rowDragMove`: The mouse has moved while dragging.
-
 - `rowDragLeave`: The mouse has left the grid while dragging.
-
 - `rowDragEnd`: The drag has finished over the grid.
 
 Typically a drag will fire the following events:
-
 
 1. `rowDragEnter` fired once - The drag has started.
 1. `rowDragMove` fired multiple times - The mouse is dragging over the rows.
 1. `rowDragEnd` fired once - The drag has finished.
 
-
 Additional `rowDragLeave` and `rowDragEnter` events are fired if the mouse leaves or re-enters the grid. If the drag is finished outside of the grid, then the `rowDragLeave` is the last event fired and no `rowDragEnd` is fired, as the drag did not end on the grid.
 
-
 Each of the four row drag events has the following attributes:
-
 
 - `type`: One of `{rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave}`.
 - `api`: The grid API.
@@ -187,7 +156,6 @@ Each of the four row drag events has the following attributes:
 - `overNode`: The row node the mouse is dragging over.
 - `y`: The vertical pixel location the mouse is over, with `0` meaning the top of the first row. This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows. The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant. The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row'.
 - `vDirection`: Direction of the drag, either `up`, `down` or blank (if mouse is moving horizontally and not vertically).
-
 
 ### Example Events
 
@@ -222,37 +190,27 @@ dragging when sorting or filtering is active.
 
 <grid-example title='Row Drag Simple Unmanaged' name='simple-unmanaged' type='generated'></grid-example>
 
-
 The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
 such as row grouping or tree data, which are explained below.
 
 ## Dragging & Row Grouping
 
-
 [Row Grouping](../row-grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
 The example below uses row dragging to place rows into groups. It does not try to order the rows within the group. For this reason, the logic works regardless of sorting or filtering.
 
-
 The example below shows row dragging with [Row Grouping](../row-grouping/) where the following can be noted:
 
-
 - The **Athlete** column has row drag enabled for non-group rows. This is achieved using the function variant of the `rowDrag` property.
-
 - The grid has not set the `rowDragManaged` property which results in unmanaged row dragging.
-
 - The example does not re-order the rows. Instead the example demonstrates putting the rows into groups. If you drag a row, you can place it in a different parent group.
-
 - The example listens to the event `onRowDragMove` and changes the group a row belongs to while the drag is happening (which is different to the next Tree Data example which waits until the drag is complete). It is the choice of your application whether it wants to move rows in real time during the drag, or wait until the drag action is complete.
-
 - The application can still move rows to groups even if ordering or sorting is applied. For this reason, the application does not suppress row dragging if sorting or filtering is applied.
-
 
 <grid-example title='Dragging with Row Groups' name='dragging-with-row-groups' type='generated' options=' {"enterprise": true, "exampleHeight": 650, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Row Dragging & Tree Data
-
 
 [Tree Data](../tree-data/) in the grid allows providing data to the grid in parent / child relationships, similar to that required for a file browser. Dragging rows with tree data is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
@@ -284,7 +242,6 @@ The example above works, however it is not intuitive as the user is given no vis
 - The example uses [Cell Class Rules](../cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
 
 - The example uses [Refresh Cells](../refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
-
 
 <grid-example title='Highlighting Drag with Tree Data' name='highlighting-drag-tree-data' type='generated' options='{ "enterprise": true, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
