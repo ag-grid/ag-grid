@@ -6,10 +6,10 @@ import ExampleRunner from '../components/example-runner';
 import SideMenu from '../components/SideMenu';
 import processFrameworkSpecificSections from '../utils/framework-specific-sections';
 import { getPageName } from '../utils/get-page-name';
-import styles from './doc-page.module.scss';
 import { ApiDocumentation } from '../components/ApiDocumentation';
 import IconsPanel from '../components/IconsPanel';
 import ImageCaption from '../components/ImageCaption';
+import styles from './doc-page.module.scss';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -31,7 +31,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     <div id="doc-page-wrapper" className={styles.docPageWrapper}>
       <div id="doc-content" className={styles.docPage}>
         <Helmet title={`AG-Grid: ${page.frontmatter.title}`} />
-        <h1>{page.frontmatter.title}</h1>
+        <h1 className={page.frontmatter.enterprise ? styles.enterpriseTitle: null}>{page.frontmatter.title}</h1>
         {renderAst(ast)}
       </div>
       {<SideMenu headings={page.headings} pageName={pageName} />}
@@ -45,6 +45,7 @@ export const pageQuery = graphql`
       htmlAst
       frontmatter {
         title
+        enterprise
       }
       headings {
         id

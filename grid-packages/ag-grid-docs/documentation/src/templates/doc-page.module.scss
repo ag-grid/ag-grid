@@ -9,6 +9,21 @@
 
     h1 {
         font-weight: 400;
+        &.enterprise-title:after {
+            display: inline-block;
+            height: 1em;
+            width: 1em;
+            background-image: url('/images/enterprise.svg');
+            text-indent: -10000px;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            content: "e";
+            margin-left: 6px;
+        }
+    }
+
+    h1:first-child + div > p:first-child {
+        font-size: 1.25rem;
     }
 
     h2 {
@@ -19,9 +34,6 @@
         font-weight: 200;
     }
 
-    h1:first-child + div > p:first-child {
-        font-size: 1.25rem;
-    }
 
     table {
         width: 100%;
