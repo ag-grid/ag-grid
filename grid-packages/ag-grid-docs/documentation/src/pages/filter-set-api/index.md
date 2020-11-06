@@ -29,7 +29,7 @@ The filter model contains an array of string values where each item in the array
 
 The Set Filter has the following API:
 
-<api-documentation sources='["filter-api/resources/filterApi.json", "filter-provided/resources/providedFilters.json"]' section='api'></api-documentation>
+<api-documentation sources='["filter-api/resources/filterApi.json", "filter-set-api/resources/setFilterApi.json"]' section='api'></api-documentation>
 
 It is important to note that when updating the Set Filter through the API, it is up to the developer to call `filterInstance.applyModel()` to apply the changes that have been made to the model and then `gridOptions.api.onFilterChanged()` at the end of the interaction with the filter.
 

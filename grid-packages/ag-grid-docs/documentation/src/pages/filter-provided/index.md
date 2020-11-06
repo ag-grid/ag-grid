@@ -12,7 +12,7 @@ Follow the links below to learn more about each specific filter:
 - [Text](../javascript-grid-filter-text/)
 - [Number](../javascript-grid-filter-number/)
 - [Date](../javascript-grid-filter-date/)
-- [Set Filter](../javascript-grid-filter-set/)
+- [Set Filter](../javascript-grid-filter-set/)<enterprise-icon></enterprise-icon>
 
 
 The rest of this section will cover concepts that are common to every provided filter.
@@ -21,14 +21,14 @@ The rest of this section will cover concepts that are common to every provided f
 
 The diagram below outlines the structure of the filters. Each box represents a filter type with the functions listed in it. For example, all provided filters have button logic, but only the Date filter has a Date Comparator or a Date Picker.
 
-<image-caption src="filter-provided/resources/providedFilters.png" alt="Provided Filters" width="48rem" centered="true">
+<image-caption src="filter-provided/resources/providedFilters.png" alt="Provided Filters" width="52rem" centered="true"></image-caption>
 
 ## Provided Filter UI
 
 
 Each provided filter is displayed in a UI with optional buttons at the bottom.
 
-<image-caption src="filter-provided/resources/filterContent.png" alt="Filter Content" width="48rem" centered="true">
+<image-caption src="filter-provided/resources/filterContent.png" alt="Filter Content" width="18rem" centered="true"></image-caption>
 
 ## Provided Filter Params
 

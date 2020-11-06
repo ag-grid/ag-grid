@@ -4,17 +4,11 @@ title: "Simple Filters"
 
 The grid provides three Simple Filters for filtering strings, numbers and dates.
 
-<image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="40rem" centered="true">
-Text Filter
-</image-caption>
-
-<image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="40rem" centered="true">
-Number Filter
-</image-caption>
-
-<image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="40rem" centered="true">
-Date Filter
-</image-caption>
+<div style="display: flex; justify-content: space-between;">
+    <image-caption src="filter-provided-simple/resources/text-filter.png" alt="Text Filter" width="12.5rem" descriptiontop="true"><strong>Text Filter</strong></image-caption>
+    <image-caption src="filter-provided-simple/resources/number-filter.png" alt="Number Filter" width="12.5rem" descriptionTop="true"><strong>Number Filter</strong></image-caption>
+    <image-caption src="filter-provided-simple/resources/date-filter.png" alt="Date Filter" width="12.5rem" descriptiontop="true"><strong>Date Filter</strong></image-caption>
+</div>
 
 Each of the filters works in a similar way. This page describes the common parts of the Simple Filters.
 
@@ -338,7 +332,7 @@ In the following example you can filter by age or date and see how blank values 
 - Columns **Age** and **Date** have both `null` and `undefined` values resulting in blank cells.
 - Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
-<grid-example title='Null Filtering' name='null-filtering' type='vanilla' options=['exampleHeight' => 310, 'modules' => true]></grid-example>
+<grid-example title='Null Filtering' name='null-filtering' type='vanilla' options='{ "exampleHeight": 310 }'></grid-example>
 
 ## Style Header on Filter
 
@@ -346,4 +340,4 @@ Each time a filter is applied to a column the CSS class `ag-header-cell-filtered
 
 In the example below, we've added some styling to `ag-header-cell-filtered`, so when you filter a column you will notice the column header change.
 
-<grid-example title='Style Header' name='style-header-on-filter' type='generated' options=['exampleHeight' => 520, 'modules' => true]></grid-example>
+<grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>

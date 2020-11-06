@@ -26,6 +26,10 @@ export const ApiDocumentation = ({ pageName, source, sources, section, names = [
         return null;
     }
 
+    if (names && names.length) {
+        names = JSON.parse(names);
+    }
+
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
 
     if (section == null) {

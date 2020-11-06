@@ -4,6 +4,7 @@
  * Author: RunDevelopment
  */
 
+ code:not([class]),
  code[class*="language-"],
  pre[class*="language-"] {
      color: black;
@@ -39,6 +40,7 @@
      background-attachment: local;
      margin: .5em 0;
      padding: 0 1em;
+     margin-bottom: 1rem;
  }
  
  pre[class*="language-"] > code {
@@ -46,7 +48,8 @@
  }
  
  /* Inline code */
- :not(pre) > code[class*="language-"] {
+ :not(pre) > code[class*="language-"],
+ :not(pre) > code:not([class]) {
      position: relative;
      padding: .2em;
      border-radius: 0.3em;

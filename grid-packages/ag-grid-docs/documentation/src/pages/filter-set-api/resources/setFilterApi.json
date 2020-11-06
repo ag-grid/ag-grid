@@ -13,7 +13,7 @@
             "description": "Refreshes the values shown in the filter from the original source. For example, if a callback was provided, the callback will be executed again and the filter will refresh using the values returned.",
             "more": {
                 "name": "Refreshing Values",
-                "url": "../javascript-grid-filter-set-filter-list/#refreshing-values"
+                "url": "../filter-set-filter-list/#refreshing-values"
             }
         },
         "setFilterValues(values[])": {

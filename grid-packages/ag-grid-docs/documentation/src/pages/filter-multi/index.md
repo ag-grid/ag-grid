@@ -5,7 +5,7 @@ enterprise: true
 
 The Multi Filter allows multiple [Provided Filters](../filter-provided/) or [Custom Filters](../filter-component/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
 
-<image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" width="40rem" centered="true"></image-caption>
+<image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" width="34rem" centered="true"></image-caption>
 
 ## Enabling the Multi Filter
 

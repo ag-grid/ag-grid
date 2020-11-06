@@ -3,23 +3,33 @@
     position: relative;
 }
 
+%enterprise-icon {
+    display: inline-block;
+    background-image: url('/images/enterprise.svg');
+    text-indent: -10000px;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    content: "e";
+}
+
 .doc-page {
     margin-left: 1rem;
     margin-right: calc(300px + 3rem);
 
     h1 {
         font-weight: 400;
-        &.enterprise-title:after {
-            display: inline-block;
+        &.enterprise:after {
+            @extend %enterprise-icon;
             height: 1em;
             width: 1em;
-            background-image: url('/images/enterprise.svg');
-            text-indent: -10000px;
-            background-position-y: center;
-            background-repeat: no-repeat;
-            content: "e";
             margin-left: 6px;
         }
+    }
+
+    enterprise-icon:after {
+        @extend %enterprise-icon;
+        width: 1rem;
+        margin-left: 0.25rem;
     }
 
     h1:first-child + div > p:first-child {

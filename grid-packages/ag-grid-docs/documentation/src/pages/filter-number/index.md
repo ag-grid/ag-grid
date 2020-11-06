@@ -12,10 +12,9 @@ Number Filters are configured though the `filterParams` attribute of the column 
 
 <api-documentation source='filter-provided/resources/providedFilters.json' section='filterParams'></api-documentation>
 
-
 In addition, the following parameters are also available:
 
-<api-documentation source='filter-provided-simple/resources/simpleFilters.json' section='filterParams' name='["Number"]'></api-documentation>
+<api-documentation source='filter-provided-simple/resources/simpleFilters.json' section='filterParams' names='["Number"]'></api-documentation>
 
 
 ## Custom Number Support

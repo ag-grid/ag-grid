@@ -9,6 +9,14 @@
         }
     }
 
+    &--description-top {
+        @extend .p-1, .text-center;
+    }
+
+    &--constrained {
+        width: 100%;
+    }
+
     &:not(&--centered) {
         @extend .mx-3;
     }

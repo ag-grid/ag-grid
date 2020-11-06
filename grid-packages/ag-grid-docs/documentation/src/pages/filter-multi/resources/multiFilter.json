@@ -2,7 +2,7 @@
     "filterParams": {
         "filters[]": {
             "meta": {
-                "description": "An array of <code>filter</code> definition objects."
+                "description": "An array of `filter` definition objects."
             },
             "filter<br />filterFramework": {
                 "description": "Child filter component to use inside the Multi Filter."
@@ -25,7 +25,7 @@
                 ],
                 "description": "Configures how the filter is shown in the Multi Filter.",
                 "more": {
-                    "url": "../javascript-grid-filter-multi/#display-style",
+                    "url": "../filter-multi/#display-style",
                     "name": "Display Style"
                 }
             },
@@ -38,7 +38,7 @@
         "getChildFilterInstance(index)": {
             "description": "Returns the child filter instance at the specified index.",
             "more": {
-                "url": "../javascript-grid-filter-multi/#accessing-child-filters",
+                "url": "../filter-multi/#accessing-child-filters",
                 "name": "Accessing Child Filters"
             }
         }
