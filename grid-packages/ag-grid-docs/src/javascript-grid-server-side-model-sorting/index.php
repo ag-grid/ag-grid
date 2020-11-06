@@ -36,10 +36,10 @@ SNIPPET
     For more details on sorting configurations see the section on <a href="../javascript-grid-sorting/">Row Sorting</a>.
 </p>
 
-<h2>Infinite Store</h2>
+<h2>Partial Store</h2>
 
 <p>
-    When using the Infinite Store, sorting of rows is performed on the server. When a sort is applied
+    When using the Partial Store, sorting of rows is performed on the server. When a sort is applied
     in the grid a request is made for more rows via the
     <a href="../javascript-grid-server-side-model-datasource/">Datasource</a>.
     The provided request contains sort metadata in the <code>sortModel</code> property.
@@ -68,21 +68,21 @@ SNIPPET
 </p>
 
 <p>
-    The example below demonstrates soring using the SSRM and the Infinite Store. Note the following:
+    The example below demonstrates soring using the SSRM and the Partial Store. Note the following:
 </p>
 
 <ul class="content">
-    <li>The grid is using the Infinite Row Store (the default store).</li>
+    <li>The grid is using the Partial Row Store (the default store).</li>
     <li>All columns have sorting enabled using the <code>defaultColDef.sortable = true</code>.</li>
     <li>The server uses the metadata contained in the <code>sortModel</code> to sort the rows.</li>
     <li>Open the browser's dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
     <li>Try single / multi column (using <code>Shift</code> key) sorting by clicking on column headers.</li>
 </ul>
 
-<?= grid_example('Infinite Sorting', 'infinite-sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+<?= grid_example('Partial Sorting', 'partial-sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <note>
-    When using the Infinite Store, it is not possible for the grid to sort the data as it
+    When using the Partial Store, it is not possible for the grid to sort the data as it
     doesn't not have all the data loaded to sort.
 </note>
 

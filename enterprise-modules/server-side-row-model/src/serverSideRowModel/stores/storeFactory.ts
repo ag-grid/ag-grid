@@ -10,7 +10,7 @@ import {
     ServerSideStoreType,
     ColumnController
 } from "@ag-grid-community/core";
-import {InfiniteStore} from "./infiniteStore";
+import {PartialStore} from "./partialStore";
 import {SSRMParams} from "../serverSideRowModel";
 import {FullStore} from "./fullStore";
 
@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.storeType === ServerSideStoreType.Full ? FullStore : InfiniteStore;
+        const CacheClass = storeParams.storeType === ServerSideStoreType.Full ? FullStore : PartialStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
@@ -115,16 +115,16 @@ export class StoreFactory {
             : this.gridOptionsWrapper.getServerSideStoreType();
 
         switch (storeType) {
-            case ServerSideStoreType.Infinite :
+            case ServerSideStoreType.Partial :
             case ServerSideStoreType.Full :
                 return storeType;
             case null :
             case undefined :
-                return ServerSideStoreType.Infinite;
+                return ServerSideStoreType.Partial;
             default :
                 const types = Object.keys(ServerSideStoreType).join(', ');
                 console.log(`ag-Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
-                return ServerSideStoreType.Infinite;
+                return ServerSideStoreType.Partial;
         }
     }
 }

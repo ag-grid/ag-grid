@@ -164,6 +164,9 @@ export class RowNode implements IEventEmitter {
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
+    /** Used by server side row model, true if this row node failed a load */
+    public failedLoad: boolean;
+
     /** All user provided nodes */
     public allLeafChildren: RowNode[];
 

@@ -1,45 +1,36 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, enableRowGroup: true, hide: true },
-        { field: "year", rowGroup: true, enableRowGroup: true, hide: true },
-        { field: "version" },
+        { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
+        { field: "sport", enableRowGroup: true, rowGroup: true, hide: true },
+        { field: "year", minWidth: 100 },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
         resizable: true,
         sortable: true
     },
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
-        field: 'athlete'
     },
-    // use the server-side row model
+
     rowModelType: 'serverSide',
     serverSideStoreType: 'full',
 
+    isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
     suppressAggFuncInHeader: true,
-
-    rowGroupPanelShow: 'always',
-
     animateRows: true,
-    debug: true,
 };
 
-var versionCounter = 1;
-function refreshCache(route) {
-    versionCounter++;
-    var purge = document.querySelector('#purge').checked === true
-    gridOptions.api.refreshServerSideStore({route: route, purge: purge} );
-}
-
-function getBlockState() {
-    var blockState = gridOptions.api.getCacheBlockState();
-    console.log(blockState);
+function isServerSideGroupOpenByDefault(params) {
+    var rowNode = params.rowNode;
+    var isZimbabwe = rowNode.field == 'country' && rowNode.key == 'Zimbabwe';
+    var isSwimming = rowNode.field == 'sport' && rowNode.key == 'Swimming';
+    return isZimbabwe || isSwimming;
 }
 
 function ServerSideDatasource(server) {
@@ -48,13 +39,6 @@ function ServerSideDatasource(server) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(params.request);
-
-            response.rows = response.rows.map(function(item) {
-                var res = {};
-                Object.assign(res, item);
-                res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-                return res;
-            });
 
             // adding delay to simulate real server call
             setTimeout(function() {
@@ -65,7 +49,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.fail();
                 }
-            }, 1000);
+            }, 400);
         }
     };
 }
@@ -86,4 +70,3 @@ document.addEventListener('DOMContentLoaded', function() {
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
-

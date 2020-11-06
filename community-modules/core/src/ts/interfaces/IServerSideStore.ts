@@ -2,7 +2,6 @@ import {NumberSequence} from "../utils";
 import {RowNode} from "../entities/rowNode";
 import {RowBounds} from "./iRowModel";
 import {ServerSideTransaction, ServerSideTransactionResult} from "./serverSideTransaction";
-import {SortModelItem} from "../sortController";
 import {ServerSideStoreType} from "../entities/gridOptions";
 
 export interface IServerSideStore {
@@ -11,9 +10,8 @@ export interface IServerSideStore {
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }): void;
-
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
-
+    retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
@@ -22,7 +20,7 @@ export interface IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams): void;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
-    refreshStore(showLoading: boolean): void;
+    refreshStore(purge: boolean): void;
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;

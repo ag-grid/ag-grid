@@ -147,7 +147,7 @@ export enum ServerSideTransactionResultStatus {
     // store load attempt failed, transaction not applied.
     StoreLoadingFailed = 'StoreLoadingFailed',
 
-    // store is type Infinite, which doesn't accept transactions
+    // store is type Partial, which doesn't accept transactions
     StoreWrongType = 'StoreWrongType',
 
     // transaction was cancelled, due to grid
@@ -200,7 +200,7 @@ SNIPPET
     </li>
     <li>
         The button <b>New Product</b> will attempt to add an item to the top level, however it will fail
-        as the top level has been configured to use an Infinite store.
+        as the top level has been configured to use an Partial store.
     </li>
     <li>
         The button <b>Store State</b> will print to the console the state of the existing stores.
@@ -210,10 +210,10 @@ SNIPPET
 <?= grid_example('Transactions Hierarchy', 'transactions-hierarchy', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 
-<h2>Transactions and Infinite Store</h2>
+<h2>Transactions and Partial Store</h2>
 
 <p>
-    Transaction Updates work with the SSRM and Full Store only. For SSRM and Infinite Store,
+    Transaction Updates work with the SSRM and Full Store only. For SSRM and Partial Store,
     Transactions are not allowed. Instead either move your application to use Full Store or
     us <a href="../javascript-grid-server-side-model-refresh/">Store Refresh</a> to have the
     grid data update.

@@ -149,7 +149,7 @@ SNIPPET
 
 <p>
     Sorting works in the same way when using Tree Data as when not using Tree Data with one exception.
-    If using the Infinite Store, a change in sort will refresh (reload) the data. If using the
+    If using the Partial Store, a change in sort will refresh (reload) the data. If using the
     Full Store, a change in sort will result in the grid sorting the data without requiring a reload.
 </p>
 
@@ -157,7 +157,7 @@ SNIPPET
 
 <p>
     Changing the filter applied to a column will always refresh (reload) the data. This is true for
-    both the Infinite Store and Full Store.
+    both the Partial Store and Full Store.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

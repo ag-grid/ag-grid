@@ -6,6 +6,14 @@ function FakeServer(allData) {
 
     return {
         getData: function(request) {
+
+            var failLoad = document.querySelector('#failLoad').checked === true;
+            if (failLoad) {
+                return {
+                    success: false
+                }
+            }
+
             var results = executeQuery(request);
 
             return {
@@ -93,7 +101,12 @@ function FakeServer(allData) {
     }
 
     function limitSql(request) {
+        if (request.endRow == null || request.startRow == null) {
+            return '';
+        }
+
         var blockSize = request.endRow - request.startRow;
+
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 

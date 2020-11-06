@@ -589,19 +589,23 @@ export class GridApi {
     }
 
     public expandAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(true);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(true);
+        } else {
+            console.warn('ag-Grid: expandAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        if (missing(this.clientSideRowModel)) {
-            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
-            return;
+        if (this.clientSideRowModel) {
+            this.clientSideRowModel.expandOrCollapseAll(false);
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.expandAll(false);
+        } else {
+            console.warn('ag-Grid: collapseAll only works with Client Side Row Model and Server Side Row Model');
         }
-        this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {
@@ -1281,6 +1285,14 @@ export class GridApi {
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
     }
 
+    public retryServerSideLoads(): void {
+        if (!this.serverSideRowModel) {
+            console.warn('ag-Grid: API retryServerSideLoads() can only be used when using Server-Side Row Model.');
+            return;
+        }
+        this.serverSideRowModel.retryLoads();
+    }
+
     public flushServerSideAsyncTransactions(): void {
         if (!this.serverSideTransactionManager) {
             console.warn('ag-Grid: Cannot flush Server Side Transaction if not using the Server Side Row Model.');
@@ -1400,10 +1412,10 @@ export class GridApi {
 
     public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore() instead.`);
+            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.`);
             this.refreshServerSideStore({
                 route: route,
-                showLoading: true
+                purge: true
             });
         } else {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);

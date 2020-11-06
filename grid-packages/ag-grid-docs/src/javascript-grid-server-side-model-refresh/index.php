@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
     if the data has changed and you want to do a complete refresh.
 </p>
 
+<h2>Refresh API</h2>
+
 <p>
     The grid has the following API's to assist with refreshing:
 </p>
@@ -50,11 +52,13 @@ interface RefreshStoreParams {
     // If no route is passed, or an empty array, then the top level store is refreshed.
     route?: string[];
 
-    // If true, then all rows at the level getting refreshed are destroyed
-    // and 'loading' rows appear, to signal to the user that loading is taking place.
+    // If true, then all rows at the level getting refreshed are destroyed, including
+    // their child rows, and 'loading' rows appear, to signal to the user that loading
+    // is taking place.
+    //
     // If false, then loading will happen in the background and data will be updated
     // immediatly once loading has complete without showing any loading rows.
-    showLoading?: boolean;
+    purge?: boolean;
 }
 SNIPPET
 ) ?>
@@ -79,65 +83,129 @@ SNIPPET
         Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
     </li>
     <li>
-        Toggle <b>Show Loading</b> to change whether loading rows are shown or not during the refresh.
+        Toggle <b>Purge</b> to change whether loading rows are shown or not during the refresh.
     </li>
 </ul>
 
 <?= grid_example('Refresh Store', 'refresh-store', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
-<h2>Preserving Group State</h2>
+<h2>Group State</h2>
 
 <p>
-    It may be necessary to expand groups to a desired initial state or to restore the grid to a previous state after
-    purging / reloading data.
+    When a refresh is done, all open groups at the refreshed level along with their
+    children may be destroyed depending on the store type and whether the probided
+    <code>params.purge=true</code>.
+</p>
+
+<h3>Group State - Full Store</h3>
+
+<p>
+    The Full Store can keep the state of open groups during a refresh. To do this the grid
+    needs to be provided with
+    <a href="../javascript-grid-row-node/#application-assigned-ids">Row ID's</a>
+    by the application implementing <code>getRowNodeId()</code>.
+    This is required to allow the grid to match newly loaded rows with previously loaded rows.
 </p>
 
 <p>
-    This can be achieved by expanding row nodes as blocks are loaded in the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>. The following
-    snippet outlines a possible approach:
+    When using the Full Store, if Row ID's are provided and rows are not purged, then
+    refreshing rows will keep open groups open and not destroy child rows.
 </p>
 
-<?= createSnippet(<<<SNIPPET
-function getRows(params) {
-    // 1) get data from server
-    var response = getServerResponse(params.request);
-
-    // 2) call the success callback
-    params.success({rowData: response.rowsThisBlock});
-
-    // 3) to preserve group state we expand any previously expanded groups for this block
-    rowsInThisBlock.forEach(function(row) {
-        if (expandedGroupIds.indexOf(row.id) > -1) {
-            gridOptions.api.getRowNode(row.id).setExpanded(true);
-        }
-    });
-}
-SNIPPET
-) ?>
+<table class="table reference">
+    <tr>
+        <th>Purge</th>
+        <th>ID's Provided</th>
+        <th>Open Groups</th>
+        <th>Child Rows</th>
+    </tr>
+    <tr>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Kept Open</td>
+        <td>Kept</td>
+    </tr>
+    <tr>
+        <td>No</td>
+        <td>No</td>
+        <td>Closed</td>
+        <td>Destroyed</td>
+    </tr>
+    <tr>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Closed</td>
+        <td>Destroyed</td>
+    </tr>
+    <tr>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Closed</td>
+        <td>Destroyed</td>
+    </tr>
+</table>
 
 <p>
-    Notice that in step 3, newly loaded row nodes for the current block are expanded if they are defined in <code>expandedGroupIds</code>,
-    which is an array of group keys maintained by the application. This will have a cascading effect as expanding a
-    group will cause new block(s) to load.
-</p>
-
-<p>
-    In order to easily look up group row nodes, implementing the following callback is recommended: <code>gridOptions.getRowNodeId()</code>.
-</p>
-
-<p>
-    In the example below, the following can be noted:
+    The example below shows refreshing using the Full Store and keeping group state. The
+    example is similar to the previous example with the addition <code>getRowNodeId()</code>
+    is implemented.
+    Note the following:
 </p>
 
 <ul>
-    <li>The grid has an initial expanded group state where:
-        <code>expandedGroupIds = ['Russia', "Russia-2002", "Ireland", 'Ireland-2008']</code></li>
-    <li>The group state is updated in <code>expandedGroupIds</code> by using listening to the grid event: <code>RowGroupOpened</code>.</li>
-    <li>Clicking the 'Refresh' button reloads data. Notice that the group state has been preserved.</li>
+    <li>
+        <p>
+            When 'Purge' is not checked, refreshing using any refresh button will maintain
+            any open groups and children at that level.
+        </p>
+        <p>
+            For example expand 'United States' and hit 'Refresh Everything' - note that the
+            top level countries are refreshed (the version column changes once the load is
+            complete) and the open 'United States' group is left open and the child rows
+            (displaying year groups) are left intact.
+        </p>
+    </li>
+    <li>
+        <p>
+            When 'Purge' is checked, refreshing using any refresh button will close all
+            open groups and destroy all children at that level.
+        </p>
+        <p>
+            For example expand 'United States' and hit 'Refresh Everything' - note that the
+            list of countries is reset, including closing 'United States' and loosing
+            all child rows to 'United States'. When 'United States' is expanded again, the
+            child rows are loaded again from scratch.
+        </p>
+    </li>
 </ul>
 
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+<p>
+    Because the grid is getting provided ID's with via <code>getRowNodeId()</code> it allows
+    teh grid to update rows rather than replace rows. This also means when grid property
+    <code>enableCellChangeFlash = true</code> the cells will flash when their data changes.
+    If <code>getRowNodeId()</code> is not implemented, rows are replaced and cells are
+    re-created from scratch, no flashing is possible.
+</p>
+
+<?= grid_example('Keep Group State', 'keep-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+
+<h3>Group State - Partial Store</h3>
+
+<p>
+    If using the Partial Store, the grid does not provide for keeping open groups. Refreshing
+    a Partial Store will always reset groups and destroy children.
+</p>
+<p>
+    This is because the Partial Store loads rows in blocks, so it's unreliable to expect rows
+    that existed before to exist in the new load, as the row could be appearing in a different
+    block.
+</p>
+<p>
+    If you are using the Partial Store and need to restore groups to their previously open
+    state, then this logic can be implemented in your application using the
+    <a href="../javascript-grid-server-side-model-grouping/#open-by-default">Open by Default</a>
+    API.
+</p>
 
 <h2>Next Up</h2>
 

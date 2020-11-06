@@ -355,7 +355,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to set <a href="../javascript-grid-server-side-model-row-height/">Row Height</a>.
+    Continue to the next section to learn how to do <a href="../javascript-grid-server-side-model-retry/">Load Retry</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

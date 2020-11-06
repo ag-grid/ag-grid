@@ -265,6 +265,7 @@ export interface GridOptions {
     serverSideStoreType?: ServerSideStoreType;
 
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -773,7 +774,7 @@ export interface ChartRef {
 
 export enum ServerSideStoreType {
     Full = 'full',
-    Infinite = 'infinite'
+    Partial = 'partial'
 }
 
 export interface ServerSideStoreParams {
@@ -788,4 +789,9 @@ export interface GetServerSideStoreParamsParams {
     rowGroupColumns: Column[];
     pivotColumns: Column[];
     pivotMode: boolean;
+}
+
+export interface IsServerSideGroupOpenByDefaultParams {
+    data: any;
+    rowNode: RowNode;
 }

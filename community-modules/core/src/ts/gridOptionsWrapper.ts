@@ -10,7 +10,7 @@ import {
     GridOptions,
     IsApplyServerSideTransaction,
     IsRowMaster,
-    IsRowSelectable,
+    IsRowSelectable, IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
@@ -1116,6 +1116,10 @@ export class GridOptionsWrapper {
 
     public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) | undefined {
         return this.gridOptions.isServerSideGroup;
+    }
+
+    public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
+        return this.gridOptions.isServerSideGroupOpenByDefault;
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {

@@ -23,18 +23,18 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     There is at least one Row Store inside the grid for storing top level rows.
-    The diagram below shows a SSRM with one Row Store. That means there is either no grouping
-    present (no rows to expand).
+    The diagram below shows a SSRM with one Row Store.
 </p>
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
     <img src="./single-store.svg" style="width: 40%;"/>
-    <div>Fig 1. Node Store - No Grouping</div>
+    <div>Fig 1. Node Store</div>
 </div>
 
 <p>
-    If there were groups expanded, there would be multiple row stores
-    which is explained later.
+    If the grid had
+    <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>
+    there would be many rows stores, but for now we consider the simple case.
 </p>
 
 <h2>Row Store Types</h2>
@@ -47,51 +47,50 @@ include '../documentation-main/documentation_header.php';
 <ul>
     <li>
         <p>
-            <b>Infinite Store</b>:
+            <b>Partial Store</b>:
             Loads rows in blocks (eg 100 rows in a block, thus loading 100 rows at a time).
             Blocks are loaded as the user scrolls down and stored in a cache inside the
-            Infinite Store. Blocks that are no longer needed (the user has scrolled past the
-            blocks rows) are optionally purged from the cache, thus controlling the browser's
-            memory footprint.
+            Partial Store. This technique, of loading rows as the user scrolls down,
+            is known as <a href="https://en.wiktionary.org/wiki/infinite_scroll">Infinite Scrolling</a>.
+            Blocks that are no longer
+            needed (the user has scrolled past the blocks rows and are no longer visible)
+            are optionally purged from the cache, thus controlling the browser's memory footprint.
         </p>
         <p>
-            The name "Infinite Store" comes from the fact it provides
-            <a href="https://en.wiktionary.org/wiki/infinite_scroll">Infinite Scrolling</a>
-            over the dataset.
+            The name "Partial Store" comes from the fact rows are partially loaded using blocks,
+            one block at at time.
         </p>
     </li>
     <li>
         <p>
             <b>Full Store</b>:
             Loads rows all at once (eg if 500 children when you expand a group, it loads
-            all 500 children). This allows sorting and filtering inside the grid (a server
+            all 500 child rows). This allows sorting and filtering inside the grid (a server
             request isn't required to sort and filter) and also provides the option of
             inserting and removing rows (explained in the section on
             <a href="../javascript-grid-server-side-model-transactions/">Transactions</a>).
         </p>
         <p>
             The name "Full Store" comes from the fact all data is loaded into the store,
-            and not in blocks. The store is full of rows, no more rows will be loaded
+            and not partially using blocks. The store is full of rows, no more rows will be loaded
             after the initial load.
         </p>
     </li>
 </ul>
 
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-    <img src="./in-memory-store-vs-infinite-store.svg" style="width: 80%;"/>
-    <div>Fig 2. Infinite vs Full Store</div>
+    <img src="./full-vs-partial-store.svg" style="width: 80%;"/>
+    <div>Fig 2. Partial Store vs Full Store</div>
 </div>
-
-
 
 <p>
     Set the store type using the grid property <code>serverSideStoreType</code>. Set to
-    <code>full</code> to use the Full Store and <code>infinite</code> to use
-    the Infinite Store. If not set, the Infinite Store is used.
+    <code>full</code> to use the Full Store and <code>partial</code> to use
+    the Partial Store. If not set, the Partial Store is used.
 </p>
 
 <p>
-    Below shows a simple example using Infinite Store. Note the following:
+    Below shows a simple example using Partial Store. Note the following:
 </p>
 <ul>
     <li>
@@ -106,7 +105,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Infinite Store', 'infinite-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Partial Store', 'partial-store', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <p>
     Below shows a simple example using Full Store. Note the following:
@@ -134,10 +133,10 @@ include '../documentation-main/documentation_header.php';
 </note>
 
 
-<h2>Infinite vs Full</h2>
+<h2>Partial Store vs Full Store</h2>
 
 <p>
-    So when is it best to use Infinite Store? And when is it best to use Full Store?
+    So when is it best to use Partial Store? And when is it best to use Full Store?
 </p>
 
 <p>
@@ -149,15 +148,15 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Use Infinite Store when all of the data at a particular group level will not comfortably
+    Use Partial Store when all of the data at a particular group level will not comfortably
     fit inside the browsers memory. For example a dataset with 10 million rows with no grouping
-    applied would not fit inside a browsers memory, thus Infinite Store would be needed to view it.
+    applied would not fit inside a browsers memory, thus Partial Store would be needed to view it.
 </p>
 
-<h2>Infinite Store Restrictions</h2>
+<h2>Partial Store Restrictions</h2>
 
 <p>
-    The Infinite Store comes with one advantage - it can manage an very large (infinite?) amount of data.
+    The Partial Store comes with one advantage - it can manage an very large (partial?) amount of data.
     However it comes with the following restrictions.
 </p>
 
@@ -165,7 +164,7 @@ include '../documentation-main/documentation_header.php';
     <li>
         <h3>In Grid Sorting</h3>
         <p>
-            Because data is read back in blocks from the Infinite Store, the grid cannot sort the data,
+            Because data is read back in blocks from the Partial Store, the grid cannot sort the data,
             as it does not have all the data loaded.
         </p>
 
@@ -173,7 +172,7 @@ include '../documentation-main/documentation_header.php';
     <li>
         <h3>In Grid Filtering</h3>
         <p>
-            Because data is read back in blocks from the Infinite Store, the grid cannot filter the data,
+            Because data is read back in blocks from the Partial Store, the grid cannot filter the data,
             as it does not have all the data loaded.
         </p>
 
@@ -182,9 +181,9 @@ include '../documentation-main/documentation_header.php';
         <h3>Live Data</h3>
         <p>
             If data is live with regards inserts and deletes, this will cause problems with the
-            Infinite Store. This is because data is read back from the server in blocks.
+            Partial Store. This is because data is read back from the server in blocks.
             If the data is changing such that the data in each block changes,
-            then the Infinite Store will get incorrect rows. For example consider the following
+            then the Partial Store will get incorrect rows. For example consider the following
             scenario:
         </p>
 
@@ -201,7 +200,7 @@ include '../documentation-main/documentation_header.php';
 
         <p>
             If data is changing such that row indexes will change and result in duplicate or missing rows across
-            blocks, then it is best either avoid the Infinite Store or use a snapshot of data to prevent data
+            blocks, then it is best either avoid the Partial Store or use a snapshot of data to prevent data
             updates.
         </p>
 

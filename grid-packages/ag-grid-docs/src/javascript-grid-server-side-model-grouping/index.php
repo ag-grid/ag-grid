@@ -75,12 +75,12 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The Infinite Store is used (the default).
+        The Partial Store is used (the default).
     </li>
     <li>
         The store block size is set to 5 by setting the grid property <code>cacheBlockSize = 5</code>.
         It can then be observed that rows are loaded in blocks at all levels. For example if you expand
-        United States row, the children rows are loaded in blocks using Infinite Scrolling.
+        United States row, the children rows are loaded in blocks using Partial Scrolling.
     </li>
     <li>
         Country and Sport columns have <code>rowGroup=true</code> defined on their column definitions.
@@ -135,16 +135,16 @@ SNIPPET
 
 
 
-<h2>Full vs Infinite Store</h2>
+<h2>Full vs Partial Store</h2>
 
 <p>
-    The Row Grouping mechanics are almost identical with the Full Store and Infinite Store. The difference
-    is that when using the Infinite Store, data will be requested in blocks and could be requested to have
+    The Row Grouping mechanics are almost identical with the Full Store and Partial Store. The difference
+    is that when using the Partial Store, data will be requested in blocks and could be requested to have
     sorting and / or filtering applied.
 </p>
 
 <p>
-    All the examples presented in this section use the Infinite Store as it covers all the semantics found
+    All the examples presented in this section use the Partial Store as it covers all the semantics found
     when using both store types.
 </p>
 
@@ -159,7 +159,7 @@ SNIPPET
 
 <p>
     It is possible to have different configurations for different stores. For example if grouping, infinite
-    scrolling could be turned off at the top level but turned on at the lower levels.
+    scrolling (using the Partial Store) could be turned off at the top level but turned on at the lower levels.
 </p>
 
 <p>
@@ -196,19 +196,19 @@ interface ServerSideStoreParams {
     // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
     storeType?: ServerSideStoreType;
 
-    // For Infinite Store only. How many blocks to keep in cach.
+    // For Partial Store only. How many blocks to keep in cach.
     // If missing, defaults to grid options 'maxBlocksInCache'
     maxBlocksInCache?: number;
 
-    // For Infinite Store only. Cache block size.
+    // For Partial Store only. Cache block size.
     // If missing, defaults to grid options 'cacheBlockSize'
     cacheBlockSize?: number;
 }
 
-// for storeType above, one of 'full' or 'infinite'
+// for storeType above, one of 'full' or 'partial'
 enum ServerSideStoreType {
     Full = 'full',
-    Infinite = 'infinite'
+    Partial = 'partial'
 }
 
 SNIPPET
@@ -232,9 +232,9 @@ SNIPPET
             When grouping is active, the stores are configured as follows:
         </p>
         <ul>
-            <li>Level 0 - No Infinite Scroll</li>
-            <li>Level 1 - Infinite Scroll with block size of 5</li>
-            <li>Level 2 - Infinite Scroll with block size of 2</li>
+            <li>Level 0 - Full Store (no infinite scrolling)</li>
+            <li>Level 1 - Partial Store (infinite scrolling) with block size of 5</li>
+            <li>Level 2 - Partial Store (infinite scrolling) with block size of 2</li>
         </ul>
         <p></p>
         <p>
@@ -276,7 +276,7 @@ SNIPPET
 function getServerSideStoreState(): ServerSideStoreState[];
 
 interface ServerSideStoreState {
-    // store type, 'infinite' or 'full'
+    // store type, 'partial' or 'full'
     type: ServerSideStoreType;
 
     // the route that identifies this store
@@ -288,11 +288,11 @@ interface ServerSideStoreState {
     // any extra info provided to the store, when data was loaded
     info?: any;
 
-    // for infinite store only, whether the last row index is known
+    // for partial store only, whether the last row index is known
     lastRowIndexKnown?: boolean;
-    // for infinite store only, max blocks allowed in the store
+    // for partial store only, max blocks allowed in the store
     maxBlocksInCache?: number;
-    // for infinite store only, the size (number of rows) of each block
+    // for partial store only, the size (number of rows) of each block
     cacheBlockSize?: number;
 }
 SNIPPET
@@ -342,7 +342,7 @@ SNIPPET
     If rows are loaded multiple times into the Store, then the Store Info values will over write existing values
     as they are merged on top of the existing values.
     Rows can be loaded multiple times if a) the store is
-    <a href="../javascript-grid-server-side-model-refresh/">Refreshed</a> or b) Infinite Store is used (as each block
+    <a href="../javascript-grid-server-side-model-refresh/">Refreshed</a> or b) Partial Store is used (as each block
     load will get the opportunity to add info data).
 </p>
 
@@ -351,6 +351,114 @@ SNIPPET
 </p>
 
 <?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
+<h2>Open by Default</h2>
+
+<p>
+    It is possible to have rows open as soon as they are loaded. To do this implement the grid callback
+    <code>isServerSideGroupOpenByDefault</code>.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Callback Signature
+function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) => boolean;
+
+// Params for callback
+interface IsServerSideGroupOpenByDefaultParams {
+    data: any;
+    rowNode: RowNode;
+}
+
+// Example implementation
+function isServerSideGroupOpenByDefault(params) {
+    var rowNode = params.rowNode;
+    var isZimbabwe = rowNode.field == 'country' && rowNode.key == 'Zimbabwe';
+    return isZimbabwe;
+}
+SNIPPET
+) ?>
+
+<p>
+    Below shows the callback in action. Note the following:
+</p>
+<ul>
+    <li>
+        The callback opens country Zimbabwe and sport Swimming by default.
+    </li>
+    <li>
+        Note the county Zimbabwe has Swimming as it's only sport, thus both of these
+        are opened as soon as the rows load.
+    </li>
+    <li>
+        Other countries (eg United States and Russia) also have swimming, however the swimming
+        group is now opened and loaded until after those countries are expanded, as it is only
+        then that the swimming group is created.
+    </li>
+</ul>
+
+<?= grid_example('Open by Default', 'open-by-default', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+
+<h2>Expand All / Collapse All</h2>
+
+<p>
+    It is possible to expand and collapse all group rows using the <code>expandAll()</code> and <code>collapseAll()</code>
+    grid API's.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Expand all group rows
+gridOptions.api.expandAll();
+
+// Collapse all group rows
+gridOptions.api.collapseAll();
+SNIPPET
+) ?>
+
+<p>
+    Calling <code>expandAll()</code> and <code>collapseAll()</code> will impact <b>all loaded group nodes</b>,
+    including those not visible due to their containing group been closed. This means there could potentially
+    be a huge number of groups expanded, so this method should be used very wisely to not create massive
+    amount of server requests and loading a large amount of data.
+</p>
+
+<p>
+    Calling <code>expandAll()</code> and <code>collapseAll()</code> will have no impact on rows yet to be loaded.
+</p>
+
+<p>
+    To open only specific groups, e.g. only groups at the top level, then use the <code>forEachNode()</code>
+    callback and open / close the row using <code>setExpanded()</code> as follows:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// Expand all top level row nodes
+gridOptions.api.forEachNode(function(node) {
+    if (node.group && node.level == 0) {
+        node.setExpanded(true);
+    }
+});
+SNIPPET
+) ?>
+
+<p>
+    The example below demonstrates these techniques. Note the following:
+</p>
+<ul>
+    <li>
+        Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads
+        will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause
+        all Year groups as well as their children Country groups to be expanded - this is a heaver operation
+        with 100's of rows to expand.
+    </li>
+    <li>
+        Clicking 'Collapse All' will collapse all rows.
+    </li>
+    <li>
+        Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
+    </li>
+</ul>
+
+<?= grid_example('Expand All', 'expand-all', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Providing Child Counts</h2>
 
@@ -385,7 +493,7 @@ SNIPPET
 
 <ul>
     <li>
-        <h3>Infinite Store</h3>
+        <h3>Partial Store</h3>
 
         <ul>
             <li>Non-group levels always refresh - all rows are loaded again from the server.</li>
@@ -422,9 +530,9 @@ SNIPPET
 
 <ul>
     <li>
-        <h3>Infinite Store</h3>
+        <h3>Partial Store</h3>
         <p>
-            Changing the filter on any column will always refresh the Infinite Store.
+            Changing the filter on any column will always refresh the Partial Store.
             Rows will be loaded again from the server with the new filter information.
         </p>
     </li>

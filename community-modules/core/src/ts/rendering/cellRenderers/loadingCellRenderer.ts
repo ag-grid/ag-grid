@@ -26,6 +26,14 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     public init(params: ILoadingCellRendererParams): void {
+        params.node.failedLoad ? this.setupFailed() : this.setupLoading();
+    }
+
+    private setupFailed(): void {
+        this.eLoadingText.innerText = 'ERR';
+    }
+
+    private setupLoading(): void {
         const eLoadingIcon = createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         if (eLoadingIcon) {
             this.eLoadingIcon.appendChild(eLoadingIcon);

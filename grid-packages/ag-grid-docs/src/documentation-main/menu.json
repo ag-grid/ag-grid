@@ -575,6 +575,11 @@
                 ]
               },
               {
+                "title": "Load Retry",
+                "url": "javascript-grid-server-side-model-retry/",
+                "enterprise": true
+              },
+              {
                 "title": "Row Height",
                 "url": "javascript-grid-server-side-model-row-height/",
                 "enterprise": true

@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td>Single Row</td>
         <td>Update attributes of a single row.</td>
-        <td>Infinite & Full</td>
+        <td>Partial & Full</td>
     </tr>
     <tr>
         <td>Transaction</td>
@@ -56,10 +56,10 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<h2>Infinite Store Updates</h2>
+<h2>Partial Store Updates</h2>
 
 <p>
-    If using the Infinite Store, then it is not possible to insert or remove rows from the set provided
+    If using the Partial Store, then it is not possible to insert or remove rows from the set provided
     to the grid. The only update option is <a href="#single-row">Single Row</a> updates which is explained
     below.
 </p>
@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     be missing from the end of the block.
 </p>
 <p>
-    If you do need to insert or remove rows while using the Infinite Store, then the update needs
+    If you do need to insert or remove rows while using the Partial Store, then the update needs
     to be done on the server and then have the grid refresh. The example
     <a href="#update-and-refresh">Update & Refresh</a> below demonstrates this.
 </p>
@@ -80,7 +80,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     If using the Full store, then you can update using <a href="#single-row">Single Row</a>
-    and <a href="#update-and-refresh">Update & Refresh</a> just like the Infinite Store.
+    and <a href="#update-and-refresh">Update & Refresh</a> just like the Partial Store.
 </p>
 
 <p>
@@ -131,10 +131,10 @@ SNIPPET
 <h2 id="update-and-refresh">Update & Refresh</h2>
 
 <p>
-    The Infinite Store acts as a cache against the original store of data which typically
-    resides on the server-side of an application. To add or remove records when using the Infinite
+    The Partial Store acts as a cache against the original store of data which typically
+    resides on the server-side of an application. To add or remove records when using the Partial
     Store, the pattern is to update the original dataset (typically on the server) and then get the
-    Infinite Store to refresh.
+    Partial Store to refresh.
 </p>
 
 <p>

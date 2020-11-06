@@ -42,8 +42,8 @@ export class ExpandListener extends BeanStub {
             rowNode.childStore = this.destroyBean(rowNode.childStore)!;
         }
 
-        const cacheUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };
-        this.eventService.dispatchEvent(cacheUpdatedEvent);
+        const storeUpdatedEvent: StoreUpdatedEvent = { type: Events.EVENT_STORE_UPDATED };
+        this.eventService.dispatchEvent(storeUpdatedEvent);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {

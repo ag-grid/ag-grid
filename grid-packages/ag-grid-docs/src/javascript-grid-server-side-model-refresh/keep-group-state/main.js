@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, enableRowGroup: true, hide: true },
-        { field: "year", rowGroup: true, enableRowGroup: true, hide: true },
+        { field: "country", rowGroup: true, hide: true },
+        { field: "year", rowGroup: true, hide: true },
         { field: "version" },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
@@ -18,13 +18,25 @@ var gridOptions = {
         minWidth: 280,
         field: 'athlete'
     },
+    getRowNodeId: function(data) {
+        var parts = [];
+        if (data.country) {
+            parts.push(data.country);
+        }
+        if (data.year) {
+            parts.push(data.year);
+        }
+        if (data.id) {
+            parts.push(data.id);
+        }
+        return parts.join('-');
+    },
     // use the server-side row model
     rowModelType: 'serverSide',
     serverSideStoreType: 'full',
 
+    enableCellChangeFlash: true,
     suppressAggFuncInHeader: true,
-
-    rowGroupPanelShow: 'always',
 
     animateRows: true,
     debug: true,
@@ -53,6 +65,15 @@ function ServerSideDatasource(server) {
                 var res = {};
                 Object.assign(res, item);
                 res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
+
+                // for unique-id purposes in the client, we also want to attached
+                // the parent group keys
+                params.request.groupKeys.forEach( function(groupKey, index) {
+                    var col = params.request.rowGroupCols[index];
+                    var field = col.id;
+                    res[field] = groupKey;
+                });
+
                 return res;
             });
 
@@ -76,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
+        // give each data item an ID
+        data.forEach(function(dataItem, index) {
+            dataItem.id = index;
+        });
+
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

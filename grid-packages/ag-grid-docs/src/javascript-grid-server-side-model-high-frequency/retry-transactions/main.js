@@ -56,7 +56,7 @@ function onBtAdd() {
 }
 
 function onBtRefresh() {
-  gridOptions.api.refreshServerSideStore({showLoading: true});
+  gridOptions.api.refreshServerSideStore({purge: true});
 }
 
 // setup the grid after the page has finished loading

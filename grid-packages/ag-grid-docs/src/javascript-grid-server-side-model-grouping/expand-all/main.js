@@ -1,45 +1,43 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, enableRowGroup: true, hide: true },
-        { field: "year", rowGroup: true, enableRowGroup: true, hide: true },
-        { field: "version" },
+        { field: "year", enableRowGroup: true, rowGroup: true, minWidth: 100 },
+        { field: 'country', enableRowGroup: true, rowGroup: true },
+        { field: "sport", enableRowGroup: true, rowGroup: true },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
         resizable: true,
         sortable: true
     },
     autoGroupColumnDef: {
         flex: 1,
         minWidth: 280,
-        field: 'athlete'
     },
-    // use the server-side row model
+    maxConcurrentDatasourceRequests: 1,
     rowModelType: 'serverSide',
     serverSideStoreType: 'full',
-
     suppressAggFuncInHeader: true,
-
-    rowGroupPanelShow: 'always',
-
     animateRows: true,
-    debug: true,
 };
 
-var versionCounter = 1;
-function refreshCache(route) {
-    versionCounter++;
-    var purge = document.querySelector('#purge').checked === true
-    gridOptions.api.refreshServerSideStore({route: route, purge: purge} );
+function onBtExpandAll() {
+    gridOptions.api.expandAll();
 }
 
-function getBlockState() {
-    var blockState = gridOptions.api.getCacheBlockState();
-    console.log(blockState);
+function onBtCollapseAll() {
+    gridOptions.api.collapseAll();
+}
+
+function onBtExpandTopLevel() {
+    gridOptions.api.forEachNode(function(node) {
+        if (node.group && node.level == 0) {
+            node.setExpanded(true);
+        }
+    });
 }
 
 function ServerSideDatasource(server) {
@@ -49,23 +47,20 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            response.rows = response.rows.map(function(item) {
-                var res = {};
-                Object.assign(res, item);
-                res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-                return res;
-            });
-
             // adding delay to simulate real server call
             setTimeout(function() {
                 if (response.success) {
                     // call the success callback
-                    params.success({rowData: response.rows, rowCount: response.lastRow});
+                    params.success({
+                        rowData: response.rows,
+                        rowCount: response.lastRow,
+                        storeInfo: {lastLoadedTime: new Date().toLocaleString(), randomValue: Math.random()}
+                    });
                 } else {
                     // inform the grid request failed
-                    params.fail();
+                    params.failCallback();
                 }
-            }, 1000);
+            }, 200);
         }
     };
 }
