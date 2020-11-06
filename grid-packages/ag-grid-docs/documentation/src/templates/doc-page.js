@@ -15,12 +15,19 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
   const pageName = getPageName(location.pathname);
   const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+  const getExampleRunnerProps = (props, library) => ({
+    ...props,
+    framework,
+    pageName,
+    library,
+    options: props.options != null ? JSON.parse(props.options) : undefined
+  });
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
     components: {
-      'grid-example': props => ExampleRunner({ ...props, framework, pageName, library: 'grid' }),
-      'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
+      'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
+      'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'chart')),
       'api-documentation': props => ApiDocumentation({
         ...props,
         pageName,

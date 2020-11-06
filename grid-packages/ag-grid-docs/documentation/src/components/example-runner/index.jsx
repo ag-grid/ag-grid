@@ -11,7 +11,7 @@ import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers
 import { generateIndexHtml } from './index-html-generator';
 import styles from './example-runner.module.scss';
 
-const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' }) => {
+const ExampleRunner = ({ pageName, framework, name, title, type, options = {} }) => {
     const [showCode, setShowCode] = useState(false);
     const nodes = useExampleFileNodes();
 
@@ -38,6 +38,11 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                 </div>;
             }
 
+            const exampleStyle = {
+                width: '100%',
+                height: exampleInfo.options.exampleHeight || '500px',
+            };
+
             return <div className={styles.exampleRunner}>
                 <div className={`form-inline ${styles.exampleRunner__header}`}>
                     <div className={styles.exampleRunner__title}>Example: {title}</div>
@@ -52,7 +57,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = '{}' 
                             onChange={event => set({ exampleImportType: event.target.value })} />
                     }
                 </div>
-                <div className={styles.exampleRunner__body}>
+                <div className={styles.exampleRunner__body} style={exampleStyle}>
                     <div className={styles.exampleRunner__menu}>
                         <div
                             className={`${styles.exampleRunner__menuItem} ${showCode ? '' : styles.exampleRunner__menuItemSelected}`}
