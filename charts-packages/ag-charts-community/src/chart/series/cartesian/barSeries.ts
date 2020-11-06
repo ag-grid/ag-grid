@@ -15,7 +15,7 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -98,7 +98,7 @@ export class BarSeries extends CartesianSeries {
     private textSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
 
     private xData: string[] = [];
-    private yData: number[][] = [];
+    private yData: number[][][] = [];
     private yDomain: number[] = [];
 
     readonly label = new BarSeriesLabel();
@@ -209,24 +209,53 @@ export class BarSeries extends CartesianSeries {
         return this._xName;
     }
 
+    private cumYKeyCount: number[] = [];
+    private flatYKeys: string[] | undefined = undefined;
+
     /**
-     * With a single value in the `yKeys` array we get the regular bar series.
-     * With multiple values, we get the stacked bar series.
-     * If the {@link grouped} set to `true`, we get the grouped bar series.
-     * @param values
+     * yKeys: [['coffee']] - regular bars, each category has a single bar that shows a value for coffee
+     * yKeys: [['coffee'], ['tea'], ['milk']] - each category has three bars that show values for coffee, tea and milk
+     * yKeys: [['coffee', 'tea', 'milk']] - each category has a single bar with three stacks that show values for coffee, tea and milk
+     * yKeys: [['coffee', 'tea', 'milk'], ['paper', 'ink']] - each category has 2 stacked bars,
+     *     first showing values for coffee, tea and milk and second values for paper and ink
      */
-    protected _yKeys: string[] = [];
-    set yKeys(values: string[]) {
-        if (!equal(this._yKeys, values)) {
-            this._yKeys = values;
+    protected _yKeys: string[][] = [];
+    set yKeys(yKeys: string[][]) {
+        if (!equal(this._yKeys, yKeys)) {
+            // Convert from flat y-keys to grouped y-keys.
+            if (yKeys.length && !Array.isArray(yKeys[0])) {
+                const keys = this.flatYKeys = yKeys as any as string[];
+                if (this.grouped) {
+                    yKeys = keys.map(k => [k]);
+                } else {
+                    yKeys = [keys];
+                }
+            } else {
+                this.flatYKeys = undefined;
+            }
+
+            this._yKeys = yKeys;
+
+            let prevYKeyCount = 0;
+            this.cumYKeyCount = [];
+            const visibleStacks: string[] = [];
+            yKeys.forEach((stack, index) => {
+                if (stack.length > 0) {
+                    visibleStacks.push(String(index));
+                }
+                this.cumYKeyCount.push(prevYKeyCount);
+                prevYKeyCount += stack.length;
+            });
             this.yData = [];
 
             const { seriesItemEnabled } = this;
             seriesItemEnabled.clear();
-            values.forEach(key => seriesItemEnabled.set(key, true));
+            yKeys.forEach(stack => {
+                stack.forEach(yKey => seriesItemEnabled.set(yKey, true));
+            });
 
-            const groupScale = this.groupScale;
-            groupScale.domain = values;
+            const { groupScale } = this;
+            groupScale.domain = visibleStacks;
             groupScale.padding = 0.1;
             groupScale.round = true;
 
@@ -234,17 +263,41 @@ export class BarSeries extends CartesianSeries {
         }
     }
 
-    get yKeys(): string[] {
+    get yKeys(): string[][] {
         return this._yKeys;
     }
 
-    protected _yNames: string[] = [];
-    set yNames(values: string[]) {
+    protected _grouped: boolean = false;
+    set grouped(value: boolean) {
+        if (this._grouped !== value) {
+            this._grouped = value;
+            if (this.flatYKeys) {
+                this.yKeys = this.flatYKeys as any;
+            }
+        }
+    }
+    get grouped(): boolean {
+        return this._grouped;
+    }
+
+    /**
+     * A map of `yKeys` to their names (used in legends and tooltips).
+     * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
+     */
+    protected _yNames: { [key in string]: string } = {};
+    set yNames(values: { [key in string]: string }) {
+        if (Array.isArray(values) && this.flatYKeys) {
+            const map: { [key in string]: string } = {};
+            this.flatYKeys.forEach((k, i) => {
+                map[k] = values[i];
+            });
+            values = map;
+        }
         this._yNames = values;
         this.scheduleData();
     }
 
-    get yNames(): string[] {
+    get yNames(): { [key in string]: string } {
         return this._yNames;
     }
 
@@ -253,12 +306,10 @@ export class BarSeries extends CartesianSeries {
         this.strokes = strokes;
     }
 
-    @reactive('dataChange') grouped = false;
-
     /**
-     * The value to normalize the stacks to, when {@link grouped} is `false`.
+     * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
-     * Defaults to `undefined` - stacks are not normalized.
+     * Defaults to `undefined` - bars are not normalized.
      */
     private _normalizedTo?: number;
     set normalizedTo(value: number | undefined) {
@@ -308,21 +359,6 @@ export class BarSeries extends CartesianSeries {
         const { xKey, yKeys, seriesItemEnabled } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        // If the data is an array of rows like so:
-        //
-        // [{
-        //   xKey: 'Jan',
-        //   yKey1: 5,
-        //   yKey2: 7,
-        //   yKey3: -9,
-        // }, {
-        //   xKey: 'Feb',
-        //   yKey1: 10,
-        //   yKey2: -15,
-        //   yKey3: 20
-        // }]
-        //
-
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
             if (keysFound && !(xKey in datum)) {
@@ -332,54 +368,45 @@ export class BarSeries extends CartesianSeries {
             return datum[xKey];
         });
 
-        this.yData = data.map(datum => yKeys.map(yKey => {
-            if (keysFound && !(yKey in datum)) {
-                keysFound = false;
-                console.warn(`The key '${yKey}' was not found in the data: `, datum);
-            }
-            const value = datum[yKey];
+        this.yData = data.map(datum => yKeys.map(stack => {
+            return stack.map(yKey => {
+                if (keysFound && !(yKey in datum)) {
+                    keysFound = false;
+                    console.warn(`The key '${yKey}' was not found in the data: `, datum);
+                }
+                const value = datum[yKey];
 
-            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+                return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
+            });
         }));
 
-        // xData: ['Jan', 'Feb']
-        //
-        // yData: [
-        //   [5, 7, -9],
-        //   [10, -15, 20]
-        // ]
-
-        const yMinMax = this.yData.map(values => findMinMax(values)); // used for normalization of stacked bars
+        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // where min is zero and max is a positive total of all values in the stack
+        // or min is a negative total of all values in the stack and max is zero.
+        const yMinMax = this.yData.map(group => group.map(stack => findMinMax(stack)));
         const { yData, normalizedTo } = this;
+
+        const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
-
-        if (this.grouped) {
-            // Find the tallest positive/negative bar in each group,
-            // then find the tallest positive/negative bar overall.
-            // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last bar
-            // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min(0, ...yData.map(values => Math.min(...values)));
-            yMax = Math.max(...yData.map(values => Math.max(...values)));
-        } else { // stacked or regular
-            const yLargestMinMax = findLargestMinMax(yMinMax);
-
-            if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-                yMax = normalizedTo;
-                yData.forEach((stackValues, i) => stackValues.forEach((y, j) => {
-                    if (y < 0) {
-                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
-                    } else {
-                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
-                    }
-                }));
-            } else {
-                yMin = yLargestMinMax.min;
-                yMax = yLargestMinMax.max;
-            }
+        if (normalizedTo && isFinite(normalizedTo)) {
+            yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
+            yMax = normalizedTo;
+            yData.forEach((group, i) => {
+                group.forEach((stack, j) => {
+                    stack.forEach((y, k) => {
+                        if (y < 0) {
+                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
+                        } else {
+                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
+                        }
+                    });
+                });
+            });
+        } else {
+            yMin = yLargestMinMax.min;
+            yMax = yLargestMinMax.max;
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
@@ -387,6 +414,24 @@ export class BarSeries extends CartesianSeries {
         this.fireEvent({ type: 'dataProcessed' });
 
         return true;
+    }
+
+    findLargestMinMax(groups: { min: number, max: number }[][]): { min: number, max: number } {
+        let tallestStackMin = 0;
+        let tallestStackMax = 0;
+
+        for (const group of groups) {
+            for (const stack of group) {
+                if (stack.min < tallestStackMin) {
+                    tallestStackMin = stack.min;
+                }
+                if (stack.max > tallestStackMax) {
+                    tallestStackMax = stack.max;
+                }
+            }
+        }
+
+        return { min: tallestStackMin, max: tallestStackMax };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -425,9 +470,9 @@ export class BarSeries extends CartesianSeries {
         const {
             groupScale,
             yKeys,
+            cumYKeyCount,
             fills,
             strokes,
-            grouped,
             strokeWidth,
             seriesItemEnabled,
             data,
@@ -445,69 +490,75 @@ export class BarSeries extends CartesianSeries {
 
         groupScale.range = [0, xScale.bandwidth!];
 
+        const grouped = true;
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const nodeData: BarNodeDatum[] = [];
 
-        xData.forEach((category, i) => {
-            const yDatum = yData[i];
-            const seriesDatum = data[i];
-            const x = xScale.convert(category);
+        xData.forEach((group, groupIndex) => {
+            const seriesDatum = data[groupIndex];
+            const x = xScale.convert(group);
 
-            let prevMin = 0;
-            let prevMax = 0;
+            const groupYs = yData[groupIndex]; // y-data for groups of stacks
+            for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
+                const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
 
-            for (let j = 0; j < yDatum.length; j++) {
-                const curr = yDatum[j];
-                const yKey = yKeys[j];
-                const barX = grouped ? x + groupScale.convert(yKey) : x;
+                let prevMinY = 0;
+                let prevMaxY = 0;
 
-                if (!xAxis.inRange(barX, barWidth)) {
-                    continue;
-                }
+                for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
+                    const currY = stackYs[levelIndex];
+                    const yKey = yKeys[stackIndex][levelIndex];
+                    const barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
 
-                const prev = curr < 0 ? prevMin : prevMax;
-                const y = yScale.convert(grouped ? curr : prev + curr);
-                const bottomY = yScale.convert(grouped ? 0 : prev);
-                const yValue = seriesDatum[yKey]; // unprocessed y-value
-                const yValueIsNumber = typeof yValue === 'number';
+                    // Bars outside of visible range are not rendered, so we generate node data
+                    // only for the visible subset of user data.
+                    if (!xAxis.inRange(barX, barWidth)) {
+                        continue;
+                    }
 
-                let labelText: string;
+                    const prevY = currY < 0 ? prevMinY : prevMaxY;
+                    const y = yScale.convert(prevY + currY);
+                    const bottomY = yScale.convert(prevY);
+                    const yValue = seriesDatum[yKey]; // unprocessed y-value
+                    const yValueIsNumber = typeof yValue === 'number';
 
-                if (labelFormatter) {
-                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
-                } else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
-                }
+                    let labelText: string;
 
-                nodeData.push({
-                    series: this,
-                    seriesDatum,
-                    yValue,
-                    yKey,
-                    x: flipXY ? Math.min(y, bottomY) : barX,
-                    y: flipXY ? barX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                    height: flipXY ? barWidth : Math.abs(bottomY - y),
-                    fill: fills[j % fills.length],
-                    stroke: strokes[j % strokes.length],
-                    strokeWidth,
-                    label: seriesItemEnabled.get(yKey) && labelText ? {
-                        text: labelText,
-                        fontStyle: labelFontStyle,
-                        fontWeight: labelFontWeight,
-                        fontSize: labelFontSize,
-                        fontFamily: labelFontFamily,
-                        fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
-                    } : undefined
-                });
-
-                if (!grouped) {
-                    if (curr < 0) {
-                        prevMin += curr;
+                    if (labelFormatter) {
+                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                     } else {
-                        prevMax += curr;
+                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                    }
+
+                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    nodeData.push({
+                        series: this,
+                        seriesDatum,
+                        yValue,
+                        yKey,
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        fill: fills[colorIndex % fills.length],
+                        stroke: strokes[colorIndex % strokes.length],
+                        strokeWidth,
+                        label: seriesItemEnabled.get(yKey) && labelText ? {
+                            text: labelText,
+                            fontStyle: labelFontStyle,
+                            fontWeight: labelFontWeight,
+                            fontSize: labelFontSize,
+                            fontFamily: labelFontFamily,
+                            fill: labelColor,
+                            x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                            y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        } : undefined
+                    });
+
+                    if (currY < 0) {
+                        prevMinY += currY;
+                    } else {
+                        prevMaxY += currY;
                     }
                 }
             }
@@ -632,18 +683,27 @@ export class BarSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey } = this;
+        const { xKey, yKeys } = this;
         const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltip } = this;
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
+        let yKeyIndex = 0;
+        for (const stack of yKeys) {
+            const i = stack.indexOf(yKey);
+            if (i >= 0) {
+                yKeyIndex += i;
+                break;
+            }
+            yKeyIndex += stack.length;
+        }
+
+        const { xName, yNames, fills, tooltip } = this;
+        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip; // TODO: remove deprecated tooltipRenderer
         const datum = nodeDatum.seriesDatum;
-        const yKeyIndex = yKeys.indexOf(yKey);
-        const yName = yNames[yKeyIndex];
+        const yName = yNames[yKey];
         const color = fills[yKeyIndex % fills.length];
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -675,25 +735,28 @@ export class BarSeries extends CartesianSeries {
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
-            id, data, xKey, yKeys, yNames, seriesItemEnabled,
+            id, data, xKey, yKeys, yNames, cumYKeyCount, seriesItemEnabled,
             fills, strokes, fillOpacity, strokeOpacity
         } = this;
 
         if (data && data.length && xKey && yKeys.length) {
-            yKeys.forEach((yKey, index) => {
-                legendData.push({
-                    id,
-                    itemId: yKey,
-                    enabled: seriesItemEnabled.get(yKey) || false,
-                    label: {
-                        text: yNames[index] || yKeys[index]
-                    },
-                    marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
-                        fillOpacity: fillOpacity,
-                        strokeOpacity: strokeOpacity
-                    }
+            this.yKeys.forEach((stack, stackIndex) => {
+                stack.forEach((yKey, levelIndex) => {
+                    const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    legendData.push({
+                        id,
+                        itemId: yKey,
+                        enabled: seriesItemEnabled.get(yKey) || false,
+                        label: {
+                            text: yNames[yKey] || yKey
+                        },
+                        marker: {
+                            fill: fills[colorIndex % fills.length],
+                            stroke: strokes[colorIndex % strokes.length],
+                            fillOpacity: fillOpacity,
+                            strokeOpacity: strokeOpacity
+                        }
+                    });
                 });
             });
         }
@@ -701,15 +764,30 @@ export class BarSeries extends CartesianSeries {
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
         const { seriesItemEnabled } = this;
-        const enabledSeriesItems: string[] = [];
-
         seriesItemEnabled.set(itemId, enabled);
+
+        const yKeys = this.yKeys.map(stack => stack.slice()); // deep clone
+
+
         seriesItemEnabled.forEach((enabled, yKey) => {
-            if (enabled) {
-                enabledSeriesItems.push(yKey);
+            if (!enabled) {
+                yKeys.forEach(stack => {
+                    const index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
             }
         });
-        this.groupScale.domain = enabledSeriesItems;
+
+        const visibleStacks: string[] = [];
+        yKeys.forEach((stack, index) => {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+        this.groupScale.domain = visibleStacks;
+
         this.scheduleData();
     }
 }

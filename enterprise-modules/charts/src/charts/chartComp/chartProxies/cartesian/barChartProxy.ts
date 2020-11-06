@@ -106,8 +106,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
-        barSeries.yKeys = params.fields.map(f => f.colId);
-        barSeries.yNames = params.fields.map(f => f.displayName!);
+        barSeries.yKeys = params.fields.map(f => f.colId) as any;
+        barSeries.yNames = params.fields.map(f => f.displayName!) as any;
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
 

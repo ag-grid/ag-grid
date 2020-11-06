@@ -463,9 +463,9 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     grouped?: boolean;
     normalizedTo?: number;
     xKey?: string;
-    yKeys?: string[];
+    yKeys?: string[] | string[][];
     xName?: string;
-    yNames?: string[];
+    yNames?: string[] | { [key in string]: string };
     fills?: string[];
     strokes?: string[];
     strokeWidth?: number;
