@@ -179,6 +179,14 @@ SNIPPET
     </li>
 </ul>
 
+<p>
+    Because the grid is getting provided ID's with via <code>getRowNodeId()</code> it allows
+    teh grid to update rows rather than replace rows. This also means when grid property
+    <code>enableCellChangeFlash = true</code> the cells will flash when their data changes.
+    If <code>getRowNodeId()</code> is not implemented, rows are replaced and cells are
+    re-created from scratch, no flashing is possible.
+</p>
+
 <?= grid_example('Keep Group State', 'keep-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h3>Group State - Partial Store</h3>

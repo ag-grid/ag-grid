@@ -35,6 +35,7 @@ var gridOptions = {
     rowModelType: 'serverSide',
     serverSideStoreType: 'full',
 
+    enableCellChangeFlash: true,
     suppressAggFuncInHeader: true,
 
     animateRows: true,
