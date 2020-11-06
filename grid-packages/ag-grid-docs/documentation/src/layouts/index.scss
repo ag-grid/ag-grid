@@ -49,3 +49,13 @@ a {
         font-weight: bold;
     }
 }
+
+.anchor {
+    color: black;
+    font-size: 1.3rem;
+
+    &.before {
+        top: 0.4rem;
+        padding-right: 6px;
+    }
+}
