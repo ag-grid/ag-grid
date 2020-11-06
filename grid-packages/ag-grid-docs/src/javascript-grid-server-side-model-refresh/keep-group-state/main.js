@@ -44,8 +44,8 @@ var gridOptions = {
 var versionCounter = 1;
 function refreshCache(route) {
     versionCounter++;
-    var showLoading = document.querySelector('#showLoading').checked === true
-    gridOptions.api.refreshServerSideStore({route: route, showLoading: showLoading} );
+    var purge = document.querySelector('#purge').checked === true
+    gridOptions.api.refreshServerSideStore({route: route, purge: purge} );
 }
 
 function getBlockState() {
@@ -64,6 +64,15 @@ function ServerSideDatasource(server) {
                 var res = {};
                 Object.assign(res, item);
                 res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
+
+                // for unique-id purposes in the client, we also want to attached
+                // the parent group keys
+                params.request.groupKeys.forEach( function(groupKey, index) {
+                    var col = params.request.rowGroupCols[index];
+                    var field = col.id;
+                    res[field] = groupKey;
+                });
+
                 return res;
             });
 

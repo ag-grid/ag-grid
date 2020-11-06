@@ -27,7 +27,7 @@ function isRowSelectable(rowNode) {
 }
 
 function refreshStore() {
-  gridOptions.api.refreshServerSideStore({showLoading: true});
+  gridOptions.api.refreshServerSideStore({purge: true});
 }
 
 function updateSelectedRows() {

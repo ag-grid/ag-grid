@@ -20,7 +20,7 @@ export interface IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams): void;
     refreshAfterFilter(params: StoreRefreshAfterParams): void;
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
-    refreshStore(showLoading: boolean, clearChildren: boolean): void;
+    refreshStore(purge: boolean): void;
     getRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     isLastRowIndexKnown(): boolean;

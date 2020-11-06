@@ -423,7 +423,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
         if (params.alwaysReset || this.gridOptionsWrapper.isTreeData()) {
-            this.refreshStore(true, true);
+            this.refreshStore(true);
             return;
         }
 
@@ -433,7 +433,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
         if (params.alwaysReset) {
-            this.refreshStore(true, true);
+            this.refreshStore(true);
             return;
         }
 
@@ -606,8 +606,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
     }
 
-    public refreshStore(showLoading: boolean, clearChildren: boolean): void {
-        if (showLoading) {
+    public refreshStore(purge: boolean): void {
+        if (purge) {
             const loadingRowsToShow = this.nodesAfterSort ? this.nodesAfterSort.length : 1;
             this.initialiseRowNodes(loadingRowsToShow);
         }

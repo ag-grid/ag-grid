@@ -20,6 +20,7 @@ var gridOptions = {
     },
     // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideStoreType: 'full',
 
     suppressAggFuncInHeader: true,
 
@@ -32,8 +33,8 @@ var gridOptions = {
 var versionCounter = 1;
 function refreshCache(route) {
     versionCounter++;
-    var showLoading = document.querySelector('#showLoading').checked === true
-    gridOptions.api.refreshServerSideStore({route: route, showLoading: showLoading} );
+    var purge = document.querySelector('#purge').checked === true
+    gridOptions.api.refreshServerSideStore({route: route, purge: purge} );
 }
 
 function getBlockState() {

@@ -391,7 +391,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public refreshStore(params: RefreshStoreParams = {}): void {
         const route = params.route ? params.route : [];
-        this.executeOnStore(route, store => store.refreshStore(params.showLoading==true, params.clearChildren==true));
+        this.executeOnStore(route, store => store.refreshStore(params.purge==true));
     }
 
     public getStoreState(): ServerSideStoreState[] {

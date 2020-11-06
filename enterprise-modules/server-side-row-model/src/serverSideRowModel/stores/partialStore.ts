@@ -251,7 +251,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public refreshStore(showLoading: boolean, clearChildren: boolean): void {
+    public refreshStore(showLoading: boolean): void {
         if (showLoading) {
             this.resetStore();
         } else {

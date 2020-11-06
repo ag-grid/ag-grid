@@ -1412,10 +1412,10 @@ export class GridApi {
 
     public purgeServerSideCache(route: string[] = []): void {
         if (this.serverSideRowModel) {
-            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore() instead.`);
+            console.warn(`ag-Grid: since v25.0, api.purgeServerSideCache is deprecated. Please use api.refreshServerSideStore({purge: true}) instead.`);
             this.refreshServerSideStore({
                 route: route,
-                showLoading: true
+                purge: true
             });
         } else {
             console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='serverSide'.`);

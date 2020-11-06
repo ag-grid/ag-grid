@@ -64,7 +64,7 @@ function onBtRetry() {
 }
 
 function onBtReset() {
-    gridOptions.api.refreshServerSideStore({showLoading: true});
+    gridOptions.api.refreshServerSideStore({purge: true});
 }
 
 
