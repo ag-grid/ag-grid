@@ -15,7 +15,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -249,7 +249,7 @@ export class AreaSeries extends CartesianSeries {
         const { yData, normalizedTo } = this;
 
         const yMinMax = yData.map(values => findMinMax(values)); // used for normalization
-        const yLargestMinMax = findLargestMinMax(yMinMax);
+        const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
         let yMin: number;
         let yMax: number;
@@ -278,6 +278,22 @@ export class AreaSeries extends CartesianSeries {
         this.fireEvent({ type: 'dataProcessed' });
 
         return true;
+    }
+
+    findLargestMinMax(totals: { min: number, max: number }[]): { min: number, max: number } {
+        let min = 0;
+        let max = 0;
+
+        for (const total of totals) {
+            if (total.min < min) {
+                min = total.min;
+            }
+            if (total.max > max) {
+                max = total.max;
+            }
+        }
+
+        return { min, max };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
