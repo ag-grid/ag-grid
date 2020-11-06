@@ -8,6 +8,7 @@ const ImageCaption = ({ src, alt, centered, width, height, children }) => {
         allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/(?:.jpg|.jpg|png|.svg|.gif)$/" } }) {
             nodes {
                 relativePath
+                publicURL
                 childImageSharp {
                     fluid {
                         src
@@ -28,7 +29,7 @@ const ImageCaption = ({ src, alt, centered, width, height, children }) => {
 
     return (
         <div className={className} style={style}>
-            <img src={img.childImageSharp.fluid.src} className={styles.imageCaption__top} alt={alt} />
+            <img src={img.childImageSharp == null ? img.publicURL : img.childImageSharp.fluid.src} className={styles.imageCaption__top} alt={alt} />
             <div className={styles.imageCaption__body}>
                 <p className={styles.imageCaption__bodyText}>{children}</p>
             </div>
