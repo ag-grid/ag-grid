@@ -21,7 +21,7 @@ column: Column, // the column for this column
 api: GridApi, // the grid API
 columnApi: ColumnApi, // the grid Column API
 context: any,  // the context
-getValue: (colId: string) =&gt; any  // a utility method, for getting other column values
+getValue: (colId: string) => any  // a utility method, for getting other column values
 }
 
 // example value getter, adds two fields together
