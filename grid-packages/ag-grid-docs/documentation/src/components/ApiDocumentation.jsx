@@ -4,7 +4,7 @@ import { useStaticQuery, graphql } from 'gatsby';
 import Prism from 'prismjs';
 import styles from './api-documentation.module.scss';
 
-export const ApiDocumentation = ({ pageName, source, sources, section = null, names = [], config = {} }) => {
+export const ApiDocumentation = ({ pageName, source, sources, section, names = [], config = {} }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { eq: "pages" }, relativePath: { regex: "/json$/" } }) {

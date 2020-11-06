@@ -21,7 +21,12 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
     components: {
       'grid-example': props => ExampleRunner({ ...props, framework, pageName, library: 'grid' }),
       'chart-example': props => ExampleRunner({ ...props, framework, pageName, library: 'chart' }),
-      'api-documentation': props => ApiDocumentation({ ...props, pageName, config: props.config ? JSON.parse(props.config) : {} }),
+      'api-documentation': props => ApiDocumentation({
+        ...props,
+        pageName,
+        sources: props.sources != null ? JSON.parse(props.sources) : undefined,
+        config: props.config != null ? JSON.parse(props.config) : undefined
+      }),
       'icons-panel': props => IconsPanel({ ...props }),
       'image-caption': ImageCaption
     },
