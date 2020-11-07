@@ -857,7 +857,7 @@
           },
           {
             "title": "Saving Content",
-            "url": "../editing-flow/",
+            "url": "../saving-content/",
             "showInCollapsed": true,
             "items": [
               {
@@ -971,16 +971,16 @@
         "items": [
           {
             "title": "Export",
-            "url": "../export/",
+            "url": "../grid-export/",
             "showInCollapsed": true,
             "items": [
               {
                 "title": "CSV Export",
-                "url": "../csv/"
+                "url": "../csv-export/"
               },
               {
                 "title": "Excel Export",
-                "url": "../excel/",
+                "url": "../excel-export/",
                 "enterprise": true
               }
             ]
@@ -1002,7 +1002,7 @@
             "items": [
               {
                 "title": "Import Excel",
-                "url": "example-excel-import/"
+                "url": "../excel-import/"
               }
             ]
           }

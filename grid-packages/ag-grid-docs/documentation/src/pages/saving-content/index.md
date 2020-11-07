@@ -14,4 +14,4 @@ The different parts of the grid concerned with saving cell values are as follows
 
 It is helpful to understand how value parsers, setters and cell editors work together to  provide the end result. The flow diagram below illustrates how these different steps work together.
 
-<image-caption src="editing-flow/resources/valueSetterFlow.svg" alt="Value Setter Flow"></image-caption>
+<image-caption src="saving-content/resources/valueSetterFlow.svg" alt="Value Setter Flow"></image-caption>
