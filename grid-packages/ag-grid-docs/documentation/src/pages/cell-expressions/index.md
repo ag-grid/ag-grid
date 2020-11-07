@@ -15,22 +15,22 @@ Expressions can be used inside column definitions instead of using functions for
 ```js
 // this is using standard functions
 colDef = {
-valueGetter: function(params) { return params.data.firstName; },
-valueFormatter: function(params) { return params.value.toUpperCase(); }
-...
+    valueGetter: function(params) { return params.data.firstName; },
+    valueFormatter: function(params) { return params.value.toUpperCase(); }
+    ...
 };
 
 // this is the same as above but using expressions
 colDef = {
-valueGetter: 'data.firstName',
-valueFormatter: 'value.toUpperCase()'
-...
+    valueGetter: 'data.firstName',
+    valueFormatter: 'value.toUpperCase()'
+    ...
 };
 ```
 
 ## Example Column Definition Expressions
 
-Below is a very similar example to ["Example: Getters, Setters, Formatters, Parsers"](../javascript-grid-value-getters/#example-value-getter). The difference is that expressions are used instead of functions. For example, where a `valueGetter` is used, a string is provided instead of a function.
+Below is a very similar example to ["Example: Getters, Setters, Formatters, Parsers"](../value-getters/#example-value-getters). The difference is that expressions are used instead of functions. For example, where a `valueGetter` is used, a string is provided instead of a function.
 
 <grid-example title='Column Definition Expressions' name='column-definition-expressions' type='mixed' options='{ "exampleHeight": 560 }'></grid-example>
 
@@ -107,7 +107,7 @@ colDef.valueGetter = 'data.firstName';
 
 // the grid will then compile the above to this:
 ___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
-return data.firstName;
+    return data.firstName;
 }
 ```
 

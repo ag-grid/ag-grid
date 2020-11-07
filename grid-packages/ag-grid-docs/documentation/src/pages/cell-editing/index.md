@@ -17,14 +17,34 @@ The simplest way to enable editing is by providing `colDef.editable=true`. By do
 
 It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable. The params for the callback are:
 
-| | |
-| - | - |
-| node | The `RowNode` of the row being rendered. |
-| column | The column being rendered (in ag-Grid, each colDef is wrapped by a `Column`). |
-| colDef | The colDef being rendered. |
-| context | The context as set on the `gridOptions`. |
-| api | A reference to the grid API. |
-| columnApi | A reference to the column API. |
+<table>
+    <tbody>
+        <tr>
+            <td><strong>node</strong></td>
+            <td>The <code class="language-text">RowNode</code> of the row being rendered.</td>
+        </tr>
+        <tr>
+            <td><strong>column</strong></td>
+            <td>The column being rendered (in ag-Grid, each colDef is wrapped by a <code class="language-text">Column</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>colDef</strong></td>
+            <td>The colDef being rendered.</td>
+        </tr>
+        <tr>
+            <td><strong>context</strong></td>
+            <td>The context as set on the <code class="language-text">gridOptions</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>api</strong></td>
+            <td>A reference to the grid API.</td>
+        </tr>
+        <tr>
+            <td><strong>columnApi</strong></td>
+            <td>A reference to the column API.</td>
+        </tr>
+    </tbody>
+</table>
 
 ## Default Editing
 

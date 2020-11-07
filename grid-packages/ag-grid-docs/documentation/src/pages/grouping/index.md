@@ -3,15 +3,13 @@ title: "Row Grouping"
 enterprise: true
 ---
 
-### TODO - add video player
-<videoSection src="https://www.youtube.com/embed/gzqjP_kF4NI" title="Row Grouping Video Tutorial" />
-
-This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row groups and then builds up into more advanced topics for row grouping.
+<video-section src="https://www.youtube.com/embed/gzqjP_kF4NI" title="Row Grouping Video Tutorial">
+    This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row groups and then builds up into more advanced topics for row grouping.
+</video-section>
 
 ## Specifying Group Columns
 
-### TOOD - add video link
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=5s" time="00:05" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=5s" time="00:05"></video-link>
 
 To group rows by a particular column, mark the column you want to group with `rowGroup=true`. There is no limit on the number of columns that the grid can group by. For example, the following will group the rows in the grid by country and then sport:
 
@@ -42,7 +40,7 @@ As you can see in the example below, as soon as there is at least one active row
 
 ## Multi Auto Column Group
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=68s" time="01:08" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=68s" time="01:08"></video-link>
 
 The grid also lets you automatically create one column for each individual group. This is achieved by setting `gridOptions.groupMultiAutoColumn = true`. The following example illustrates this. Note that:
 
@@ -56,7 +54,7 @@ The grid also lets you automatically create one column for each individual group
 
 ## Configuring the Auto Group Column
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=150s" time="02:30") />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=150s" time="02:30"></video-link>
 
 You can specify your own configuration used by the auto group columns by providing a `gridOptions.autoGroupColumnDef`. This can be used to override any property as defined in the [Columns](../column-definitions/)
 documentation page.
@@ -88,7 +86,7 @@ For auto generated group columns, the filter will work if you specify one of `fi
 
 ## Adding Values To Leaf Nodes
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=230s" time="03:50" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=230s" time="03:50"></video-link>
 
 
 You may have noticed in the examples so far that the group columns don't produce values on the leaf nodes, the cells are empty. If you want to add values you can add a [valueGetter](../value-getters) or `field` to the colDef and it will be used to render the leaf node.
@@ -104,13 +102,13 @@ This example shows specifying `field` in the auto group column. Note the followi
 
 ## Group Cell Rendering
 
-If you use the default group cell renderer provided by ag-grid, there are many parameters that can be passed to configure its behaviour, they are all explained in the [Group Cell Renderer](../cell-rendering) documentation. Please have a look at this docs if you are interested in finding our how to change the contents that are displayed in each grouped cell.
+If you use the default group cell renderer provided by ag-grid, there are many parameters that can be passed to configure its behaviour, they are all explained in the [Group Cell Renderer](../group-cell-renderer) documentation. Please have a look at this docs if you are interested in finding our how to change the contents that are displayed in each grouped cell.
 
 You can also configure the look &amp; feel of the expan/contract buttons by [specifying your own custom icons](../custom-icons).
 
 ## Specifying Row Group Order
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=295s" time="04:55" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=295s" time="04:55"></video-link>
 
 By default, if you are using a column to display more than one group, the grid will order the groups based in the order in which you provide the columns. The following code snipped will group by country first, then sport second.
 
@@ -148,7 +146,7 @@ The following examples shows using `rowGroupIndex` to set the order of the group
 
 ## Hide Open Parents
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=348s" time="05:48" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=348s" time="05:48"></video-link>
 
 Depending on your preference, you may wish to hide parent rows when they are open. This gives the impression to the user that the children takes the place of the parent row. This feature only makes sense when groups are in different columns. To turn this feature on set `groupHideOpenParents=true`.
 
@@ -162,7 +160,7 @@ Filter is achieved for each column by providing a `filterValueGetter` for the `a
 
 ## Keeping Columns Visible
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=417s" time="06:57") />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=417s" time="06:57"></video-link>
 
 By default dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again. This default behaviour can be changed with the following properties:
 
@@ -182,7 +180,7 @@ The example below demonstrates these two properties. Note the following:
 
 ## Full Width Group Rows
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=500s" time="08:20" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=500s" time="08:20"></video-link>
 
 Instead of having a column for showing the groups, you can dedicate the full row for showing details about the group. This can be preferred if you have a lot of information you want to say about the group.
 
@@ -255,7 +253,7 @@ _* This is true for Vanilla Javascript and React. Angular uses data binding and 
 
 ## Default Group Order
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=614s" time="10:14" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=614s" time="10:14"></video-link>
 
 The grid does not attempt to order the groups. The groups are presented on a 'first come, first served' basis. For example if grouping by country, and the first row is for country 'Ireland', then the first displayed group will be 'Ireland'.
 
@@ -277,7 +275,7 @@ The example below shows providing a default group order. From the example the fo
 
 ## Unbalanced Groups
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=691s" time="11:31" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=691s" time="11:31"></video-link>
 
 If there are rows containing `null` or `undefined` values for the column that is being grouped then these rows will not be grouped. We refer to this scenario as **Unbalanced Groups** in that there is a mix of groups and rows as siblings. The following example demonstrates:
 
@@ -290,7 +288,7 @@ If you do not want rows with null or undefined to be left out of groups, but wan
 
 ## Expanding Rows via API
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=750s" time="12:30" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=750s" time="12:30"></video-link>
 
 To expand or contract a group via the API, you first must get a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. This will result in the grid getting updated and displaying the correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
 
@@ -306,7 +304,7 @@ Calling `node.setExpanded()` causes the grid to get redrawn. If you have many no
 
 ## Grouping Complex Objects with Keys
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=817s" time="13:37" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=817s" time="13:37"></video-link>
 
 If your rowData has complex objects that you want to group by, then the default grouping will convert each object to `"[object object]"` which will be useless to you. Instead you need to get the grid to convert each object into a meaningful string to act as the key for the group. You could add a 'toString' method to the objects - but this may not be possible if you are working with JSON data. To get around this, use `colDef.keyCreator`, which gets passed a value and should return the string key for that value.
 
@@ -338,7 +336,7 @@ colDef = {
 
 ## Grouping Footers
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=929s" time="15:29" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=929s" time="15:29"></video-link>
 
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 
@@ -381,7 +379,7 @@ The example below uses [aggregation](../aggregation/) which is explained in the 
 
 ## Removing Single Children
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1029s" time="17:09" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1029s" time="17:09"></video-link>
 
 If your data has groups with only one child, then it can make sense to collapse these groups as there is no benefit to the user creating groups with just one child, it's arguably waste of space.
 
@@ -413,7 +411,7 @@ The example below shows this feature. Note the following:
 
 ## Creating Your Own Group Display Columns
 
-<videoLink src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1136s" time="18:56" />
+<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1136s" time="18:56"></video-link>
 
 In all the previous examples the grid is in charge of generating the column's that display the groups, these columns are called auto group columns.
 

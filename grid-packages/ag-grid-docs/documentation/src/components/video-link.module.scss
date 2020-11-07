@@ -1,0 +1,12 @@
+.video-link {
+    @extend .d-flex, .align-items-center, .my-2;
+    img {
+        height: 30px;
+    }
+    a {
+        @extend .ml-2;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}

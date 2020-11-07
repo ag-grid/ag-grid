@@ -88,9 +88,3 @@ The `agRichSelectCellEditor` takes the following parameters:
 - `searchDebounceDelay (Default: 300)`: The value in `ms` for the fuzzy search debounce delay.
 
 ### agDateTimeCellEditor
-
-Available in ag-Grid Enterprise only. A highly configurable editor for date and time values.
-
-<grid-example title='agDateTimeCellEditor' name='date-time-cell-editor' type='generated' options='{ "enterprise": true }'></grid-example>
-
-

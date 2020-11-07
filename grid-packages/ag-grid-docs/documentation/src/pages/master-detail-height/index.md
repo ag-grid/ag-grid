@@ -41,14 +41,14 @@ Set grid property `detailRowAutoHeight=true` to have the detail grid to dynamica
 masterGridOptions.detailRowAutoHeight = true;
 ```
 
-<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail"] }'></grid-example>
+<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 600, "modules": ["clientside", "masterdetail"] }'></grid-example>
 
 [[note]]
 | When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
 | [Row Virtualisation](../dom-virtualisation/) will not happen.
 | This means if the Detail Grid has many rows, it could slow down your application and could
 | result in stalling he browser.
-| <br/>
+| <br/><br/>
 | Do not use Auto Height if you have many rows (eg 100+) in the Detail Grid's. To know if this
 | is a concern for your grid and dataset, try it out and check the performance.
 

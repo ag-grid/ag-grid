@@ -87,8 +87,10 @@ const Section = ({ title, properties, config = {}, breadcrumbs = {}, names = [] 
     const objectProperties = {};
 
     Object.entries(properties).forEach(([name, definition]) => {
+        const { relevantTo } = definition;
+
         if (name === 'meta' ||
-            (names.length > 0 && !names.includes(name) && !definition.relevantTo.includes(names[0]))) {
+            (names.length > 0 && !names.includes(name) && !(relevantTo && relevantTo.includes(names[0])))) {
             return;
         }
 

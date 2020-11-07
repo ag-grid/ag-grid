@@ -82,7 +82,7 @@ To **manually** run value change detection to refresh all visible cells call [ap
 
 ## 2. Aggregation Change Detection
 
-Aggregation change detection means rerunning [aggregations](../javascript-grid-aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
+Aggregation change detection means rerunning [aggregations](../aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
 
 ### Example: Re-Aggregation of Groups
 

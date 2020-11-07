@@ -25,10 +25,10 @@ function refreshCells(params: RefreshCellsParams = {}): void;
 
 // params for refresh cells
 interface RefreshCellsParams {
-rowNodes?: RowNode[]; // specify rows, or all rows by default
-columns?: (string|Column)[]; // specify columns, or all columns by default
-force?: boolean; // skips change detection, refresh everything
-suppressFlash?: boolean; // skips cell flashing, if cell flashing is enabled
+    rowNodes?: RowNode[]; // specify rows, or all rows by default
+    columns?: (string|Column)[]; // specify columns, or all columns by default
+    force?: boolean; // skips change detection, refresh everything
+    suppressFlash?: boolean; // skips cell flashing, if cell flashing is enabled
 }
 ```
 
@@ -86,7 +86,7 @@ function redrawRows(params: RedrawRowsParams = {})
 
 // params for redraw rows
 interface RedrawRowsParams {
-rowNodes?: RowNode[]; // the row nodes to redraw
+    rowNodes?: RowNode[]; // the row nodes to redraw
 }
 ```
 

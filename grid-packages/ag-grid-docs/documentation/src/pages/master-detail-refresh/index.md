@@ -29,7 +29,8 @@ Below are different examples to demonstrate each of the refresh strategies. Each
 - The grid refreshes the first master row every two seconds as follows:
     - The call count is incremented.
     - Half of the call records (displayed in the detail grid) have their durations updated.
-All refresh strategies will have the Master Grid updated (as the strategy applies to the Detail Grid only), however each strategy will have the Detail Grid updated differently.
+
+    All refresh strategies will have the Master Grid updated (as the strategy applies to the Detail Grid only), however each strategy will have the Detail Grid updated differently.
 
 ## Refresh Rows
 
@@ -51,11 +52,8 @@ This example shows the Refresh Everything strategy. Note the following:
 
 
 - The Detail Cell Renderer params has `refreshStrategy='everything'`.
-
 - The callback `getDetailRowData()` is called. The Detail Grid is recreated and contains the most recent data. The grid's context (column position, vertical scroll) is lost.
-
 - The Detail Grid setting [Immutable Data](../immutable-data/) is irrelevant as the Detail Grid is recreated.
-
 - The detail grid title 'Nora Thomas 24 calls' updates with the new call count, as the refresh results in the template getting reset.
 
 <grid-example title='Refresh Everything' name='refresh-everything' type='mixed' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>

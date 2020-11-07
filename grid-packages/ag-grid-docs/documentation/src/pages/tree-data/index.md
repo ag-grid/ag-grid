@@ -23,15 +23,15 @@ When providing tree data to the grid you implement the `gridOptions.getDataPath(
 ```js
 // sample hierarchy, Malcolm is child or Erica
 // + Erica
-// - Malcolm
+//   - Malcolm
 
 // ############
 // Example #1 - hierarchy in the data is already a string array
 // ############
 var rowData = [
-{ orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent" },
-{ orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent" }
-...
+    { orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent" },
+    { orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent" }
+    ...
 ]
 // just return the hierarchy, no conversion required
 getDataPath: function(data) {
@@ -44,7 +44,7 @@ getDataPath: function(data) {
 var rowData = [
     { path: "Erica", jobTitle: "CEO", employmentType: "Permanent" },
     { path: "Erica/Malcolm", jobTitle: "VP", employmentType: "Permanent" }
-...
+    ...
 ]
 // callback converts eg "Erica/Malcolm" to ["Erica","Malcolm"]
 getDataPath: function(data) {
@@ -110,7 +110,7 @@ var rowData = [
 // only leaf level provided
 var rowData = [
     { filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB" }
-...
+    ...
 ]
 ```
 
@@ -140,8 +140,10 @@ Also you can refer to the section on [Aggregation](../aggregation/) more details
 
 As Tree Data has parent / child relationships, by default all child nodes will be included when a parent passes a filter, and as filtering is performed across all group levels, a group will be included if:
 
-a) it has any children that pass the filter, or
-b) its data passes the filter
+<ol style="list-style-type: lower-latin;">
+    <li>it has any children that pass the filter, or</li>
+    <li>its data passes the filter</li>
+</ol>
 
 To override this behaviour to use regular filtering instead, enable the following Grid Options property:
 

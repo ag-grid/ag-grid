@@ -11,6 +11,8 @@ import IconsPanel from '../components/IconsPanel';
 import ImageCaption from '../components/ImageCaption';
 import styles from './doc-page.module.scss';
 import MatrixTable from '../components/MatrixTable';
+import VideoSection from '../components/VideoSection';
+import VideoLink from '../components/VideoLink';
 
 const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
   const { markdownRemark: page } = data;
@@ -26,6 +28,7 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
 
   const renderAst = new rehypeReact({
     createElement: React.createElement,
+    fragment:true,
     components: {
       'grid-example': props => ExampleRunner(getExampleRunnerProps(props, 'grid')),
       'chart-example': props => ExampleRunner(getExampleRunnerProps(props, 'chart')),
@@ -37,7 +40,9 @@ const DocPageTemplate = ({ data, pageContext: { framework }, location }) => {
       }),
       'icons-panel': props => IconsPanel({ ...props }),
       'image-caption': ImageCaption,
-      'matrix-table': props => MatrixTable({...props })
+      'matrix-table': props => MatrixTable({...props }),
+      'video-section': props => VideoSection({ ...props }),
+      'video-link': props => VideoLink({ ...props })
     },
   }).Compiler;
 

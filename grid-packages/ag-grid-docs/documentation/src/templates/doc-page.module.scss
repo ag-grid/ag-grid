@@ -67,4 +67,11 @@
             }
         }
     }
+
+    li {
+        @extend .mb-1;
+        > p:first-child {
+            @extend .mb-0;
+        }
+    }
 }

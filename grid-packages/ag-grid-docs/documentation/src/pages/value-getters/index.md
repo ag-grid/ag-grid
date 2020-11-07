@@ -10,23 +10,23 @@ The interface for value getters is as follows:
 
 ```ts
 // function for valueGetter
-function valueGetter(params: ValueGetterParams) =&gt; any;
+function valueGetter(params: ValueGetterParams) => any;
 
 // interface for params
 interface ValueGetterParams {
-data: any, // the data you provided for this row
-node: RowNode, // the row node for this row
-colDef: ColDef, // the column def for this column
-column: Column, // the column for this column
-api: GridApi, // the grid API
-columnApi: ColumnApi, // the grid Column API
-context: any,  // the context
-getValue: (colId: string) => any  // a utility method, for getting other column values
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any,  // the context
+    getValue: (colId: string) => any  // a utility method, for getting other column values
 }
 
 // example value getter, adds two fields together
 colDef.valueGetter = function(params) {
-return params.data.firstName + params.data.lastName;
+    return params.data.firstName + params.data.lastName;
 }
 ```
 
@@ -40,7 +40,7 @@ return params.data.firstName + params.data.lastName;
 
 Below shows the column definition properties for value getters.
 
-<api-documentation source='column-properties/properties.json' section="columnsOnly" name='["valueGetter(params)", "headerValueGetter(params)", "filterValueGetter(params)"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="columnsOnly" names='["valueGetter(params)", "headerValueGetter(params)", "filterValueGetter(params)"]'></api-documentation>
 
 ### Example Value Getters
 
@@ -59,7 +59,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
     - Column 'Chain' takes the value 'A+B' and works on it further, thus chaining value getters.
     - Column 'Const' returns back the same value for each column.
 
-<grid-example title='Value Getters' name='value-getters' type='generated' options=['modules' => true]></grid-example>
+<grid-example title='Value Getters' name='value-getters' type='generated'></grid-example>
 
 ### Header Value Getters
 
@@ -124,7 +124,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 
 The following are the grid properties related to the value cache.
 
-<api-documentation source='grid-properties/properties.json' section="miscellaneous" name='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section="miscellaneous" names='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
 
 ### Expiring the Value Cache
 
@@ -142,7 +142,7 @@ The value cache starts empty. Then as value getters execute, their results are s
 - The `expireValueCache()` grid API method gets called by the application.
 
 [[note]]
-| * Assuming your framework allows binding properties and this is what you are using.
+| - Assuming your framework allows binding properties and this is what you are using.
 
 ### Example: Expiring through Editing
 

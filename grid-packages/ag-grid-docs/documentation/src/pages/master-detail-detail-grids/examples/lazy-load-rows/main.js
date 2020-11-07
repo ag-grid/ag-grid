@@ -7,7 +7,7 @@ var gridOptions = {
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
     defaultColDef: {
-        flex: 1,
+        flex: 1
     },
     masterDetail: true,
     detailCellRendererParams: {

@@ -57,7 +57,7 @@ The following snippet illustrates this using a simple `setTimeout()` function to
 
 Below shows an example using `setTimeout()` to simulate lazying loading of data in the detail.
 
-<grid-example title='Lazy Load Detail Rows' name='lazy-load-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Lazy Load Detail Rows' name='lazy-load-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 550,  "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 ## Dynamic Definitions
 
@@ -82,13 +82,13 @@ If providing an alternative template, you **must** include an element with `ref=
 
 For comparison, the default template is as follows. It is simplistic, only intended for allowing spacing around the Detail Grid.
 
-```js
-// for when fixed height (normal)
+```html
+<!-- for when fixed height (normal) -->
 <div class="ag-details-row ag-details-row-fixed-height">
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
 </div>
 
-// for when auto-height (detailCellRendererParams.autoHeight=true)
+<!-- for when auto-height (detailCellRendererParams.autoHeight=true) -->
 <div class="ag-details-row ag-details-row-auto-height">
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>
@@ -167,24 +167,21 @@ interface DetailGridInfo {
 
 The Detail Grid Info objects are accessed via the Master Grid's API via the following methods:
 
-- `getDetailGridInfo(id)`: <br/> Returns back the Detail Grid Info for the Detail Grid with the provided ID.
-
-```js
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
-detailGridInfo.api.flashCells();
-```
-
-The grid generates ID's for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
+- `getDetailGridInfo(id)`: Returns back the Detail Grid Info for the Detail Grid with the provided ID.
+    ```js
+    // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+    var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
+    detailGridInfo.api.flashCells();
+    ```
+    The grid generates ID's for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
 
 - `forEachDetailGridInfo(callback)`: Calls the callback for each existing instance of a Detail Grid.
-
-```js
-// iterate over all DetailGridInfo's, and call stopEditing() on each one
-masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
-    detailGridInfo.api.flashCells();
-});
-```
+    ```js
+    // iterate over all DetailGridInfo's, and call stopEditing() on each one
+    masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
+        detailGridInfo.api.flashCells();
+    });
+    ```
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
@@ -202,7 +199,7 @@ When a Master Row is expanded a Detail Row is created. When the Master Row is co
 
 To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shows. The properties are as follows:
 
-<api-documentation source='grid-properties/properties.json' section='masterDetail' name='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='masterDetail' names='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
 
 The example below demonstrates keeping Detail Rows. Note the following:
 

@@ -113,7 +113,7 @@ Notice the following in the example below:
 
 The grid comes with some provided cell renderers out of the box. These cell renderers cover some common complex cell rendering requirements.
 
-- [Group Cell Renderer](../group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](../grid-grouping/), [Master Detail](../master-detail/) or [Tree Data](../master-detail/).
+- [Group Cell Renderer](../group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](../grouping/), [Master Detail](../master-detail/) or [Tree Data](../tree-data/).
 
 - [Show Change Cell Renderers](../change-cell-renderers/): For animating changes when data is changing.
 

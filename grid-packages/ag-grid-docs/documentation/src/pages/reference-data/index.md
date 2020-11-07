@@ -16,21 +16,21 @@ The examples contained within this section use the following reference data. Not
 var rowData = [
     { make: 'tyt', exteriorColour: 'fg', interiorColour: 'bw', price: 35000 },
     { make: 'frd', exteriorColour: 'bw', interiorColour: 'cb', price: 32000 },
-        ...
+    ...
 ]
 
 // supporting reference data
 var carMappings = {
-     'tyt': 'Toyota',
-     'frd': 'Ford',
-     'prs': 'Porsche',
-     'nss': 'Nissan'
+    'tyt': 'Toyota',
+    'frd': 'Ford',
+    'prs': 'Porsche',
+    'nss': 'Nissan'
 };
 
 var colourMappings = {
-     'cb': 'Cadet Blue',
-     'bw': 'Burlywood',
-     'fg': 'Forest Green'
+    'cb': 'Cadet Blue',
+    'bw': 'Burlywood',
+    'fg': 'Forest Green'
 };
 ```
 

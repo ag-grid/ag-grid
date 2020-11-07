@@ -149,16 +149,15 @@ The next example shows many custom aggregation functions configured in a variety
 The following can be noted from the example:
 
 
-- **Min/Max on Age Column**: <br />The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value. <br/> The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
-
-- **Average on Age Column**: <br/> The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes. <br/>
-The average function is also set by placing the function directly as the `colDef.aggFunc`.
-
-- **Sum on Gold**: <br/> The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.<br/> The sum function is set using a `gridOptions` property.
-
-- **'123' on Silver**: <br/> The '123' function ignores the inputs and always returns the value 123. Because it is registered as an aggregation function, it can be reference by name in the column definitions. Having a function return the same thing isn't very useful, however for the example it demonstrates easily where in the grid the function was used. <br/> The '123' function, like 'sum', is set using a `gridOptions` property.
-
-- **'xyz' on Bronze**: <br/> The 'xyz' function is another function with much use, however it demonstrates you can return anythin from an aggregation function - as long as your aggregation function can handle the result (if you have groups inside groups) and as long as your cell renderer can render the result (if using `cellRenderer`). <br/> The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise
+- **Min/Max on Age Column**: The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value. <br/><br/> The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
+<br/><br/>
+- **Average on Age Column**: The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes. <br/><br/> The average function is also set by placing the function directly as the `colDef.aggFunc`.
+<br/><br/>
+- **Sum on Gold**: The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.<br/><br/> The sum function is set using a `gridOptions` property.
+<br/><br/>
+- **'123' on Silver**: The '123' function ignores the inputs and always returns the value 123. Because it is registered as an aggregation function, it can be reference by name in the column definitions. Having a function return the same thing isn't very useful, however for the example it demonstrates easily where in the grid the function was used. <br/><br/> The '123' function, like 'sum', is set using a `gridOptions` property.
+<br/><br/>
+- **'xyz' on Bronze**: The 'xyz' function is another function with much use, however it demonstrates you can return anythin from an aggregation function - as long as your aggregation function can handle the result (if you have groups inside groups) and as long as your cell renderer can render the result (if using `cellRenderer`). <br/><br/> The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise
 the grid would complain 'Function not found' as it tries to use the function before it is set via the API.
 
 <grid-example title='Custom Aggregation Functions' name='custom-agg-functions' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
@@ -262,10 +261,9 @@ Below shows an  example using `groupRowAggNodes`. The example doesn't represent 
 
 ## Empty Aggregation Calls
 
-When providing either [Custom Aggregation Functions](#customAggregationFunctions) or [Custom Full Row Aggregation](#customFullRowAggregation) then you will see strange calls to these functions where empty lists are provided.
+When providing either [Custom Aggregation Functions](#custom-aggregation-functions) or [Custom Full Row Aggregation](#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
 
 The empty aggregation calls happen in the following two scenarios:
-
 
 1. The grid has no data (usually the case when the gird is initially displayed before the application has set data). Aggregating at the root level will request an aggregation of an empty set.
 1. The grid has groups and a filter, such that groups are empty.
