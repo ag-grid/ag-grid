@@ -631,14 +631,14 @@
         },
         "pagination": {
             "default": false,
-            "description": "Set whether <a href='../pagination/'>Pagination</a> is enabled."
+            "description": "Set whether <a href='../row-pagination/'>Pagination</a> is enabled."
         },
         "paginationPageSize": {
             "default": 100,
             "description": "How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.",
             "more": {
                 "name": "Customising Pagination",
-                "url": "../pagination/#customising-pagination"
+                "url": "../row-pagination/#customising-pagination"
             }
         },
         "paginationAutoPageSize": {
@@ -646,7 +646,7 @@
             "description": "Set to `true` so that the number of rows to load per page is automatically adjusted by ag-Grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.",
             "more": {
                 "name": "Auto Page Size",
-                "url": "../pagination/#auto-page-size"
+                "url": "../row-pagination/#auto-page-size"
             }
         },
         "suppressPaginationPanel": {
@@ -654,14 +654,14 @@
             "description": "If `true`, the default ag-Grid controls for navigation are hidden. This is useful if `pagination=true` and you want to provide your own pagination controls. Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.",
             "more": {
                 "name": "Custom Pagination Controls",
-                "url": "../pagination/#custom-pagination-controls"
+                "url": "../row-pagination/#custom-pagination-controls"
             }
         },
         "paginateChildRows": {
             "description": "Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.",
             "more": {
                 "name": "Pagination & Child Rows",
-                "url": "../pagination/#childRows"
+                "url": "../row-pagination/#childRows"
             }
         }
     },

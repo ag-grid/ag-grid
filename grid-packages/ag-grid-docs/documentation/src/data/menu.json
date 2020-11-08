@@ -1543,7 +1543,7 @@
           },
           {
             "title": "Row Pagination",
-            "url": "../pagination/",
+            "url": "../row-pagination/",
             "showInCollapsed": true
           },
           {
@@ -1553,7 +1553,7 @@
           },
           {
             "title": "Scrolling Performance",
-            "url": "../performance/",
+            "url": "../scrolling-performance/",
             "showInCollapsed": true
           },
           {
