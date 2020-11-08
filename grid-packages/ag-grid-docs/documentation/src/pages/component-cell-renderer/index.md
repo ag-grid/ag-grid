@@ -11,9 +11,7 @@ This page explains first how to create cell renderers using standard JavaScript.
 
 The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash (`#`) symbol instead of the medal count.
 
-```js
 <grid-example title='Simple Cell Renderer' name='simple-javascript' type='vanilla' options='{ "showResult": true, "exampleHeight": 460 }'></grid-example>
-```
 
 ## Cell Renderer Component
 
@@ -262,9 +260,7 @@ The example below shows five columns formatted, demonstrating each of the method
 - 'Days of Air Frost' column uses the Component method to format each cell in the column with the same style
 - 'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.
 
-```js
 <grid-example title='Cell Renderer' name='cell-renderer' type='generated'></grid-example>
-```
 
 ## Accessing Cell Renderer Instances
 
@@ -305,9 +301,7 @@ The example below demonstrates custom methods on cell renderers called by the ap
 - The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled past the first row.
 - The **All Cells** method executes a method on all instances of all cell renderers.
 
-```js
 <grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
-```
 
 If your are using a framework component (detailed below), then the returned object is a wrapper and you can get the underlying cell renderer using `getFrameworkComponentInstance()`
 
@@ -325,171 +319,165 @@ if (instances.length > 0) {
 }
 ```
 
-## Angular Cell Render Components
+[[only-angular]]
+|
+| ## Cell Rendering
+|
+| It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the Angular version of ag-Grid. 
+| See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+|
+| ### Example: Rendering using Angular Components
+| <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+| 
+| ### Methods / Lifecycle
+| 
+| Your components need to implement `AgRendererComponent`. The ag Framework expects to find the `agInit` method on the created component, and uses it to supply the cell `params`.
+| 
+| All of the methods in the `ICellRenderer` interface described above are applicable to the Angular Component with the following exceptions:
+| 
+| - `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
+| - `destroy()` is not used. Instead implement the Angular`OnDestroy` interface (`ngOnDestroy`) for any cleanup you need to do.
+| - `getGui()` is not used. Instead do normal Angular magic in your Component via the Angular template.
+| 
+| ### Handling Refresh
+| 
+| To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which | will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
+| 
+| ### Example: Rendering using more complex Components
+| 
+| Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
+| 
+|
+| <grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 380, "showResult": true, "extras": ["bootstrap"] }'></grid-example>
 
-It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the Angular version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+[[only-react]]
+| ## Cell Rendering 
+|
+| It is possible to provide React cell renderers for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components. 
+| 
+| ### Example: Rendering using Components
+| 
+| Using Components in the Cell Renderers 
+| 
+| <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+|
+| ### React Props
+|
+| The Component will get the 'Cell Renderer Params' as described above as its React Props. Therefore you can access all the parameters as React Props.
+| ```js
+| // React Cell Renderer Component
+| class NameCellRenderer extends React.Component {
+| 
+|     // did you know that React passes props to your component constructor??
+|     constructor(props) {
+|         super(props);
+|         // from here you can access any of the props!
+|         console.log('The value is ' + props.value);
+|         // we can even call grid API functions, if that was useful
+|         props.api.selectAll();
+|     }
+|
+|     render() {
+|         // or access props using 'this'
+|         return <span>{this.props.value}</span>;
+|     }
+| }
+| ```
+| 
+| ### Methods / Lifecycle
+| 
+| All of the methods in the `ICellRenderer` interface described above are applicable to the React Component with the following exceptions:
+| 
+| - `init()` is not used. Instead use the React props passed to your Component.
+| - `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
+| - `getGui()` is not used. Instead do normal React magic in your `render()` method..
+| 
+| ### Handling Refresh
+| 
+| To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
+| 
+| ### React Hook Cell Renderer
+| 
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
+| 
+| <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 
-### Example: Rendering using Angular Components
+[[only-vue]]
+| ## Cell Rendering
+| 
+| It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+|
+| ### Example: Rendering using Components
+| 
+| Using Components in the Cell Renderers 
+| 
+| <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+|
+| ### Methods / Lifecycle
+| 
+| All of the methods in the `ICellRenderer` interface described above are applicable to the VueJS Component with the following exceptions:
+| 
+| - `init()` is not used. The cells value is made available implicitly via a data field called `params`.
+| - `getGui()` is not used. Instead do normal VueJS magic in your Component via the VueJS template.
+| 
+| ### Refresh
+| There are two ways in which cell renderers can be refreshed:
+| 
+| - Implement the `refresh` method
+| - Use the `autoParamsRefresh` mechanism
+| - Do neither of the above - in which case the grid will destroy and recreate the cell each time the cell value changes.
+| 
+| ### Implement the `refresh` method
+| 
+| Within the `methods` section of your component you can implement the `refresh()` method which returns a `boolean` value. If you want to manage the refresh yourself return `true` and if you want to let the grid manage the refresh return `false` (the default behaviour). Returning `false` indicates that you do not wish to manage the refresh - in this case your component will be destroyed and recreated if the underlying data changes).
+| 
+| ### Enable `autoParamsRefresh` on your renderer
+| 
+| You can set the `autoParamsRefresh` property on the `ag-grid-vue` component. If you do this then the grid will automatically refresh the component, updating the supplied `params` of the component. This has the same effect as if you implemented the `refresh` method as follows:
+|
+| ```js
+| methods: {
+|     refresh(params) {
+|         this.params = params;
+|         return true;
+|    }
+| ```
+| 
+| Setting this on your renderer to refresh automatically without the cost of the component being destroyed and re-created, but without the need of implementing `refresh` yourself.
+| 
+| Note that if you enable `autoParamsRefresh` then `this.params` will be updated and your version of `refresh` will then be invoked.
+|
+|
+| [[note]]
+| | The full [ag-grid-vue-example](https://github.com/ag-grid/ag-grid-vue-example) repo shows a 
+| | rich example of configuring ag-Grid with Vue components, but each section for renderers, 
+| | filters, editors | etc will also demonstrate how this functionality can be extended with Vue.
 
-```js
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "onlyShow": "angular", "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-```
-
-### Angular Methods / Lifecycle
-
-Your Angular components need to implement `AgRendererComponent`. The ag Framework expects to find the `agInit` method on the created component, and uses it to supply the cell `params`.
-
-All of the methods in the `ICellRenderer` interface described above are applicable to the Angular Component with the following exceptions:
-
-- `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
-- `destroy()` is not used. Instead implement the Angular`OnDestroy` interface (`ngOnDestroy`) for any cleanup you need to do.
-- `getGui()` is not used. Instead do normal Angular magic in your Component via the Angular template.
-
-### Handling Refresh
-
-To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
-
-### Example: Rendering using more complex Angular Components
-
-Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
-
-```js
-<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "showImportsDropdown": false, "exampleHeight": 370, "showResult": true, "extras": ["bootstrap"] }'></grid-example>
-```
-
-## React Cell Rendering 
-
-It is possible to provide React cell renderers for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-### Example: Rendering using React Components
-
-Using React Components in the Cell Renderers 
-
-```js
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "onlyShow": "react", "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-```
-
-### React Props
-
-The React component will get the 'Cell Renderer Params' as described above as its React Props. Therefore you can access all the parameters as React Props.
-
-```js
-// React Cell Renderer Component
-class NameCellRenderer extends React.Component {
-
-    // did you know that React passes props to your component constructor??
-    constructor(props) {
-        super(props);
-        // from here you can access any of the props!
-        console.log('The value is ' + props.value);
-        // we can even call grid API functions, if that was useful
-        props.api.selectAll();
-    }
-
-    render() {
-        // or access props using 'this'
-        return &lt;span&gt;{this.props.value}&lt;/span&gt;;
-    }
-}
-```
-
-### React Methods / Lifecycle
-
-All of the methods in the `ICellRenderer` interface described above are applicable to the React Component with the following exceptions:
-
-- `init()` is not used. Instead use the React props passed to your Component.
-- `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
-- `getGui()` is not used. Instead do normal React magic in your `render()` method..
-
-### Handling Refresh
-
-To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
-
-### React Hook Cell Renderer
-
-Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
-
-```js
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "onlyShow": "reactFunctional", "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-```
-
-## VueJS Cell Rendering
-
-It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-### Example: Rendering using VueJS Components
-
-Using VueJS Components in the Cell Renderers 
-
-```js
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "enterprise": false, "onlyShow": "vue", "extras": ["fontawesome", "bootstrap"] }'></grid-example>
-```
-
-
-### VueJS Methods / Lifecycle
-
-All of the methods in the `ICellRenderer` interface described above are applicable to the VueJS Component with the following exceptions:
-
-- `init()` is not used. The cells value is made available implicitly via a data field called `params`.
-- `getGui()` is not used. Instead do normal VueJS magic in your Component via the VueJS template.
-
-### Refresh
-There are two ways in which cell renderers can be refreshed:
-
-- Implement the `refresh` method
-- Use the `autoParamsRefresh` mechanism
-- Do neither of the above - in which case the grid will destroy and recreate the cell each time the cell value changes.
-
-### Implement the `refresh` method
-
-Within the `methods` section of your component you can implement the `refresh()` method which returns a `boolean` value. If you want to manage the refresh yourself return `true` and if you want to let the grid manage the refresh return `false` (the default behaviour). Returning `false` indicates that you do not wish to manage the refresh - in this case your component will be destroyed and recreated if the underlying data changes).
-
-### Enable `autoParamsRefresh` on your renderer
-
-You can set the `autoParamsRefresh` property on the `ag-grid-vue` component. If you do this then the grid will automatically refresh the component, updating the supplied `params` of the component. This has the same effect as if you implemented the `refresh` method as follows:
-
-```js
-methods: {
-    refresh(params) {
-        this.params = params;
-        return true;
-    }
-```
-
-Setting this on your renderer to refresh automatically without the cost of the component being destroyed and re-created, but without the need of implementing `refresh` yourself.
-
-Note that if you enable `autoParamsRefresh` then `this.params` will be updated and your version of `refresh`
-will then be invoked.
-
-
-[[note]]
-| The full [ag-grid-vue-example](https://github.com/ag-grid/ag-grid-vue-example) repo shows a 
-| rich example of configuring ag-Grid with Vue components, but each section for renderers, filters, editors | etc will also demonstrate how this functionality can be extended with Vue.
-
-## Polymer Cell Rendering
-
-It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-### Example: Rendering using Polymer Components
-
-Using Polymer Components in the Cell Renderers 
-
-```js
-<grid-example title='Simple Dynamic Component' name='polymer-dynamic' type='as-is' options='{ "showImportsDropdown": false, "noPlunker": true, "usePath": "/", "exampleHeight": 460 }'></grid-example>
-```
-
-###  Polymer Methods / Lifecycle
-
-All of the methods in the `ICellRenderer` interface described above are applicable to the Polymer Component with the following exceptions:
-
-- `init()` is not used. Instead implement the `agInit` method.
-- `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
-
-### Handling Refresh
-
-To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
-
-[[note]]
-| The full [ag-grid-polymer-example](https://github.com/ag-grid/ag-grid-polymer-example) repo shows many more examples for rendering, including grouped rows, full width renderers and so on, as well as examples on using Polymer Components with both Cell Editors and Filters
-
-
+[[only-javascript]]
+| ## Polymer Cell Rendering
+| 
+| It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
+| 
+| ### Example: Rendering using Polymer Components
+|
+| Using Polymer Components in the Cell Renderers 
+|
+| ```html
+| <grid-example title='Simple Dynamic Component' name='polymer-dynamic' type='as-is' options='{ "showImportsDropdown": false, "noPlunker": true, "usePath": "/", "exampleHeight": 460 }'></grid-example>
+| ````
+| 
+| ###  Polymer Methods / Lifecycle
+|
+| All of the methods in the `ICellRenderer` interface described above are applicable to the Polymer Component with the following exceptions:
+| 
+| - `init()` is not used. Instead implement the `agInit` method.
+| - `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
+|
+| ### Handling Refresh
+| 
+| To handle refresh, implement logic inside the `refresh()` method inside your component and return true. If you do not want to handle refresh, just return false from the refresh method (which | will tell the grid you do not handle refresh and your component will be destroyed and recreated if the underlying data changes).
+|
+| [[note]]
+| | The full [ag-grid-polymer-example](https://github.com/ag-grid/ag-grid-polymer-example) repo shows 
+| | many more examples for rendering, including grouped rows, full width renderers and so on, 
+| | as well as examples on using Polymer Components with both Cell Editors and Filters

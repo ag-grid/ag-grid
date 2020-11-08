@@ -66,8 +66,8 @@ A Header Component allows customising the inside part of the header. The compone
 
 The grid is always responsible for the following: 
 
-- [**Resizing:**](../javascript-grid-resizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
-- [**Checkbox Selection:**](../javascript-grid-selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
+- [**Resizing:**](../column-sizing/) When enabled, the grid will put an invisible widget to be grabbed by the mouse for resizing.
+- [**Checkbox Selection:**](../selection/) When enabled, the grid puts a checkbox for 'select all' in the header.
 
 The header component (your bit) will be responsible for the following:
 
@@ -248,107 +248,73 @@ The example below shows a header component in action. The following can be obser
 - Some columns have sortable=false, so the header component doesn't add sorting logic.
 - The header component uses additional parameters to allowing configuring the menu icon.
 
-<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true, "onlyShow": "vanilla"]></grid-example>
+[[only-angular]]
+| ##  Angular Header Component 
+| 
+| ### Header Component
+| 
+| Implementing a header component in Angular differs from the standard header component in the following ways:
+| 
+| - Implement `IHeaderAngularComp` instead of `IHeaderComp`.
+| - Use `colDef.headerComponentFramework` instead of `colDef.headerComponent`.
+| 
+| The interface `IHeaderAngularComp` is as follows:
+| 
+| ```ts
+| interface IHeaderAngularComp {
+| 
+|     // equivalent of init in IHeaderComp
+|     // IHeaderCompParams is same as non Angular version
+|     agInit?(params: IHeaderCompParams): void;
+| 
+|     // no getGui() or destroy(), all handled by Angular
+| }
+| ```
+| 
+| For a full working example of Header Components in Angular see 
+| [Angular Example](https://github.com/ag-grid/| ag-grid-angular-cli-example).
+| 
 
-##  Angular Header Component 
+[[only-react]]
+| ## React Header Rendering
+| 
+| ### Header Component
+| 
+| Implementing a header component in React differs from the standard header component in the following ways:
+| 
+| - Implement `IHeaderReactComp` instead of `IHeaderComp`.
+| - Use `colDef.headerComponentFramework` instead of `colDef.headerComponent`.
+| 
+| The interface `IHeaderReactComp` is empty. The params object (IHeaderCompParams) is passed as a constructor to your React 
+| component.
+| 
+| For a full working example of Header Components in React see 
+| [React Example](https://github.com/ag-grid/ag-grid-react-example).
+| 
+|
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
 
-### Header Component
+[[only-vue]]
+| ## VueJS Header Rendering
+| 
+| ### Header Component
+| 
+| Implementing a header component in VueJS differs from the standard header component in it's much easier!
+| 
+| All you need to do is implement your VueJS component as normal, and provide it to the grid as documented above. Easy!
 
-Implementing a header component in Angular differs from the standard header component in the following ways:
+<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true }'></grid-example>
 
-- Implement `IHeaderAngularComp` instead of `IHeaderComp`.
-- Use `colDef.headerComponentFramework` instead of `colDef.headerComponent`.
-
-The interface `IHeaderAngularComp` is as follows:
-
-```ts
-interface IHeaderAngularComp {
-
-    // equivalent of init in IHeaderComp
-    // IHeaderCompParams is same as non Angular version
-    agInit?(params: IHeaderCompParams): void;
-
-    // no getGui() or destroy(), all handled by Angular
-}
-```
-
-### Header Group Component
-
-Implementing a header group component in Angular differs from the standard header group component in the following ways:
-
-- Implement `IHeaderGroupAngularComp` instead of `IHeaderGroupComp`.
-- Use `colDef.headerGroupComponentFramework` instead of `colDef.headerGroupComponent`.
-
-The interface `IHeaderGroupAngularComp` is as follows:
-
-```ts
-interface IHeaderGroupAngularComp {
-
-    // equivalent of init in IHeaderGroupComp,
-    // IHeaderGroupCompParams is same as non Angular version
-    agInit?(params: IHeaderGroupCompParams): void;
-
-    // no getGui() or destroy(), all handled by Angular
-}
-```
-
-For a full working example of Header Components in Angular see [Angular Example](https://github.com/ag-grid/ag-grid-angular-cli-example).
-
-<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true, "onlyShow": "angular" }'></grid-example>
-
-## React Header Rendering
-
-### Header Component
-
-Implementing a header component in React differs from the standard header component in the following ways:
-
-- Implement `IHeaderReactComp` instead of `IHeaderComp`.
-- Use `colDef.headerComponentFramework` instead of `colDef.headerComponent`.
-
-The interface `IHeaderReactComp` is empty. The params object (IHeaderCompParams) is passed as a constructor to your React component.
-
-### Header Group Component
-
-Implementing a header group component in React differs from the standard header group component in the following ways:
-
-- Implement `IHeaderGroupReactComp` instead of `IHeaderGroupComp`.
-- Use `colDef.headerGroupComponentFramework` instead of `colDef.headerGroupComponent`.
-
-The interface `IHeaderReactComp` is empty. The params object (IHeaderGroupCompParams) is passed as a constructor to your React component.
-
-For a full working example of Header Components in React see [React Example](https://github.com/ag-grid/ag-grid-react-example).
-
-<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true, "onlyShow": "react" }'></grid-example>
-
-### React Hook Header Components
-
-Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
-
-<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true, "onlyShow": "reactFunctional" }'></grid-example>
-
-## VueJS Header Rendering
-
-### Header Component
-
-Implementing a header component in VueJS differs from the standard header component in it's much easier!
-
-All you need to do is implement your VueJS component as normal, and provide it to the grid as documented above. Easy!
-
-<grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"], "showResult": true, "onlyShow": "vue" }'></grid-example>
-
-## Header Group Component
-
-This section details how to put a header group component into ag-Grid.
-
+This section details how to put a header group component into ag-Grid. 
 ### Grid vs Your Responsibilities
 
 As with normal headers, ag-Grid will always handle resize and column moving. The grid does not handle selection checkbox as this feature is only at the non-grouped header level. The header group component (your bit) is responsible for the following:
 
 - **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then your header group component should handle the interaction with the user for opening and closing groups.
 - **Anything Else:** Whatever you want, it's your component!
-
+ 
 ### Header Group Component Interface
-
+ 
 The header group component interface is almost identical to the above header component. The only difference is the params object passed to the `init()` method.
 
 ```ts
@@ -379,6 +345,35 @@ interface IHeaderGroupParams
     setExpanded(expanded: boolean): void;
 }
 ```
+
+[[only-angular]]
+| Implementing a header group component in Angular differs from the standard header group component in the following ways:
+| 
+| - Implement `IHeaderGroupAngularComp` instead of `IHeaderGroupComp`.
+| - Use `colDef.headerGroupComponentFramework` instead of `colDef.headerGroupComponent`.
+| 
+| The interface `IHeaderGroupAngularComp` is as follows:
+| 
+| ```ts
+| interface IHeaderGroupAngularComp {
+| 
+|     // equivalent of init in IHeaderGroupComp,
+|     // IHeaderGroupCompParams is same as non Angular version
+|     agInit?(params: IHeaderGroupCompParams): void;
+| 
+|     // no getGui() or destroy(), all handled by Angular
+| }
+| ```
+
+[[only-react]]
+| Implementing a header group component in React differs from the standard header group component in the following ways:
+| 
+| - Implement `IHeaderGroupReactComp` instead of `IHeaderGroupComp`.
+| - Use `colDef.headerGroupComponentFramework` instead of `colDef.headerGroupComponent`.
+| 
+| The interface `IHeaderReactComp` is empty. The params object (IHeaderGroupCompParams) is passed as a constructor 
+| to your React component.
+
 
 ### Opening / Closing Groups
 

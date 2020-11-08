@@ -317,127 +317,143 @@ if (instances.length > 0) {
     var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
 }
 ```
+[[only-angular]]
+| ## Cell Editing
+| 
+| It is possible to provide Angular cell editors's for ag-Grid to use if you are are using the Angular version of 
+| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to 
+| register framework components.
+|
+| Your components need to implement `AgEditorComponent`. The ag Framework expects to find the `agInit` method 
+| on the created component, and uses it to supply the cell `params`.
+|
+| ###  Methods / Lifecycle
+|
+| All of the methods in the `ICellEditor` interface described above are applicable to the Component with the 
+| following exceptions:
+| 
+| - `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
+| - `destroy()` is not used. Instead implement the Angular`OnDestroy` interface (`ngOnDestroy`) for any cleanup you 
+| need to do.
+| - `getGui()` is not used. Instead do normal Angular magic in your Component via the Angular template.
+| - `afterGuiAttached()` is not used. Instead implement `AfterViewInit` (`ngAfterViewInit`) for any post Gui setup (ie 
+| to focus on an element).
+|
+| All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be put 
+| onto your Component and will work as normal.
+|
+| ### Example: Cell Editing using Components
+|
+| Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+| 
+| 
+| <grid-example title='Angular Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 
-## Angular Cell Editing
+[[only-react]]
+| ## Cell Editing
+| 
+| It is possible to provide React cell editors for ag-Grid to use if you are are using the React version of ag-Grid. 
+| See [registering framework components](../grid-components/#registering-framework-components) for how to register 
+| framework components.
+| 
+| ###  React Props
+| 
+| The React component will get the 'Cell Editor Params' as described above as its React Props. Therefore you can 
+| access all the parameters as React Props.
+| 
+| ###  Methods / Lifecycle 
+| 
+| All of the methods in the `ICellEditor` interface described above are applicable to the React Component with 
+| the following exceptions:
+|
+| - `init()` is not used. Instead use the React props passed to your Component.
+| - `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
+| - `getGui()` is not used. Instead do normal React magic in your `render()` method.
+| 
+| All of the other methods (`isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()` etc) should 
+| be put onto your React component and will work as normal.
+| 
+| ### Example: Cell Editing using React Components
+| Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  
+|
+| <grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
+| 
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see 
+| [here](https://www.ag-grid.com/react-hooks/) for more information.
 
-It is possible to provide Angular cell editors's for ag-Grid to use if you are are using the Angular version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
 
-Your Angular components need to implement `AgEditorComponent`. The ag Framework expects to find the `agInit` method on the created component, and uses it to supply the cell `params`.
+[[only-vue]]
+| ##  Cell Editing 
+| 
+| It is possible to provide VueJS cell editors's for ag-Grid to use if you are are using the VueJS version of 
+| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to 
+| register framework components.
+| 
+| ###  VueJS Parameters
+| 
+| The Grid cell's value will be made available implicitly in a data value names `params`. This value will be 
+| available to you from the `created` VueJS lifecycle hook. You can think of this as you having defined the following:
+| 
+| ```js
+| export default {
+|     data () {
+|         return {
+|             params: null
+|         }
+|     },
+|     ...
+| }
+| 
+| but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.
+| 
+| ### Methods / Lifecycle
+| All of the methods in the `ICellEditor` interface described above are applicable to the VueJS Component with 
+| the following exceptions:
+| 
+| - `init()` is not used. The cells value is made available implicitly via a data field called `params`.
+| - `getGui()` is not used. Instead do normal VueJS magic in your Component via the VueJS template.
+| - `afterGuiAttached()` is not used. Instead implement the `mounted` VueJS lifecycle hook for any post Gui 
+| setup (ie to focus on an element).
+| 
+| All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be 
+| put onto your VueJS component and will work as normal.
+| 
+| ### Example: Cell Editing using VueJS Components
+| 
+| Using Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+| 
+| A Component can be defined in a few different ways (please see 
+| [Defining VueJS Components](../vuejs-misc#define_component) for all the options), but in this example we're 
+| going to define our editor as a Single File Component:
+|
+| <grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 
-###  Angular Methods / Lifecycle
-
-All of the methods in the `ICellEditor` interface described above are applicable to the Angular Component with the following exceptions:
-
-- `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
-- `destroy()` is not used. Instead implement the Angular`OnDestroy` interface (`ngOnDestroy`) for any cleanup you need to do.
-- `getGui()` is not used. Instead do normal Angular magic in your Component via the Angular template.
-- `afterGuiAttached()` is not used. Instead implement `AfterViewInit` (`ngAfterViewInit`) for any post Gui setup (ie to focus on an element).
-
-All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be put onto your Angular component and will work as normal.
-
-### Example: Cell Editing using Angular Components
-
-Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-
-```js
-<grid-example title='Angular Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-```
-
-## React Cell Editing
-
-It is possible to provide React cell editors for ag-Grid to use if you are are using the React version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-###  React Props
-
-The React component will get the 'Cell Editor Params' as described above as its React Props. Therefore you can access all the parameters as React Props.
-
-###  React Methods / Lifecycle 
-
-All of the methods in the `ICellEditor` interface described above are applicable to the React Component with the following exceptions:
-
-- `init()` is not used. Instead use the React props passed to your Component.
-- `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
-- `getGui()` is not used. Instead do normal React magic in your `render()` method.
-
-All of the other methods (`isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()` etc) should be put onto your React component and will work as normal.
-
-### Example: Cell Editing using React Components
-Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  
-
-```js
-<grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
-```
-
-### React Hook Cell Editors
-
-Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see [here](https://www.ag-grid.com/react-hooks/) for more information.
-
-```js
-<grid-example title='React Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "onlyShow": "reactFunctional", "extras": ["bootstrap"] }'></grid-example>
-```
-
-##  VueJS Cell Editing 
-
-It is possible to provide VueJS cell editors's for ag-Grid to use if you are are using the VueJS version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-###  VueJS Parameters
-
-The Grid cell's value will be made available implicitly in a data value names `params`. This value will be available to you from the `created` VueJS lifecycle hook. You can think of this as you having defined the following:
-
-```js
-export default {
-    data () {
-        return {
-            params: null
-        }
-    },
-    ...
-}
-```
-
-but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.
-
-### VueJS Methods / Lifecycle
-
-All of the methods in the `ICellEditor` interface described above are applicable to the VueJS Component with the following exceptions:
-
-- `init()` is not used. The cells value is made available implicitly via a data field called `params`.
-- `getGui()` is not used. Instead do normal VueJS magic in your Component via the VueJS template.
-- `afterGuiAttached()` is not used. Instead implement the `mounted` VueJS lifecycle hook for any post Gui setup (ie to focus on an element).
-
-All of the other methods (`isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be put onto your VueJS component and will work as normal.
-
-### Example: Cell Editing using VueJS Components
-
-Using VueJS Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-
-A VueJS component can be defined in a few different ways (please see [Defining VueJS Components](../vuejs-misc#define_component) for all the options), but in this example we're going to define our editor as a Single File Component:
-
-```js
-<grid-example title='Vue Editor Components' name='component-editor' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
-```
-
-##  Polymer Cell Editing 
-
-It is possible to provide Polymer cell editors's for ag-Grid to use if you are are using the Polymer version of ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to register framework components.
-
-###  Polymer Parameters
-
-The ag Framework expects to find the `agInit` method on the created component, and uses it to supply the cell `params`.
-
-### Polymer Methods / Lifecycle
-
-All of the methods in the `ICellEditor` interface described above are applicable to the Polymer Component with the following exceptions:
-
-- `init()` is not used. Instead implement the `agInit` method.
-- `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
-
-All of the other methods (`isPopup(), getValue(), destroy(), afterGuiAttached(), isCancelBeforeStart(), isCancelAfterEnd()` etc) should be put onto your Polymer component and will work as normal.
-
-### Example: Cell Editing using Polymer Components
-
-Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-
-```js
-<grid-example title='Polymer Editor Components' name='polymer-editor' type='as-is' options='{ "showImportsDropdown": false, "noPlunker": true, "usePath": "/", "exampleHeight": 450 }'></grid-example>
-```
+[[only-javascript]]
+| ##  Polymer Cell Editing 
+| 
+| It is possible to provide Polymer cell editors's for ag-Grid to use if you are are using the Polymer version of 
+| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to 
+| register framework components.
+| 
+| ###  Polymer Parameters
+| 
+| The ag Framework expects to find the `agInit` method on the created component, and uses it to supply 
+| the cell `params`.
+| 
+| ### Polymer Methods / Lifecycle
+| 
+| All of the methods in the `ICellEditor` interface described above are applicable to the Polymer Component 
+| with the following exceptions:
+| 
+| - `init()` is not used. Instead implement the `agInit` method.
+| - `getGui()` is not used. Instead do normal Polymer magic in your Component via the Polymer template.
+| 
+| All of the other methods (`isPopup(), getValue(), destroy(), afterGuiAttached(), isCancelBeforeStart(), 
+| isCancelAfterEnd()` etc) should be put onto your Polymer component and will work as normal.
+|
+| ### Example: Cell Editing using Polymer Components
+| 
+| Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation 
+| and lifecycle events.
+| ```html
+| <grid-example title='Polymer Editor Components' name='polymer-editor' type='as-is' options='{ "showImportsDropdown": false, "noPlunker": true, "usePath": "/", "exampleHeight": 450 }'></grid-example>
