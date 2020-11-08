@@ -9,7 +9,7 @@ This section covers Tool Panels, available via the grid's Side Bar, which allow 
 
 Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screenshot below.
 
-<image-caption src="tool-panel/resources/sideBar.png" width="52rem" alt="Side Bar"></image-caption>
+<image-caption src="tool-panel/resources/sideBar.png" maxwidth="52rem" alt="Side Bar" constrained="true"></image-caption>
 
 [[note]]
 |Version 19 of ag-Grid received a major overhaul of the tool panels. It did not make sense to keep
