@@ -920,4 +920,20 @@ export class RowNode implements IEventEmitter {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
+
+    public getRoute(): string[] | undefined {
+        if (this.key==null) {
+            return undefined;
+        }
+
+        const res: string[] = [];
+
+        let pointer: RowNode = this;
+        while (pointer.key!=null) {
+            res.push(pointer.key);
+            pointer = pointer.parent!;
+        }
+
+        return res.reverse();
+    }
 }

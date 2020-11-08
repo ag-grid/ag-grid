@@ -27,7 +27,7 @@ import { SSRMParams } from "../serverSideRowModel";
 import { PartialStore } from "../stores/partialStore";
 import { NodeManager } from "../nodeManager";
 
-export class PartialBlock extends RowNodeBlock {
+export class PartialStoreBlock extends RowNodeBlock {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
