@@ -176,7 +176,7 @@ re-applying the state.
 
 There are a few items to note on specific state attributes. They are as follows:
 
-### `null` vs `undefined`
+### **null** vs **undefined**
 
 For all state attributes, `undefined` means _"do not apply this attribute"_ and `null` means _"clear this attribute"_.
 

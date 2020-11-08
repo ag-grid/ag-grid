@@ -242,7 +242,7 @@
           {
             "title": "Column Sizing",
             "box-title": "Sizing",
-            "url": "../resizing/",
+            "url": "../column-sizing/",
             "showInCollapsed": true
           },
           {
@@ -254,7 +254,7 @@
           {
             "title": "Column Pinning",
             "box-title": "Pinning",
-            "url": "../pinning/",
+            "url": "../column-pinning/",
             "showInCollapsed": true
           },
           {

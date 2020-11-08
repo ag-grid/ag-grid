@@ -42,7 +42,7 @@ var gridOptions = {
 }
 ```
 
-Groups are explained in more detail in the section [Column Groups](../grouping-headers/).
+Groups are explained in more detail in the section [Column Groups](../column-groups/).
 
 ## Declarative Columns
 
