@@ -1075,7 +1075,7 @@
         "items": [
           {
             "title": "Registering Components",
-            "url": "../components/",
+            "url": "../grid-components/",
             "showInCollapsed": true
           },
           {
@@ -1086,65 +1086,65 @@
               {
                 "title": "Cell Renderer",
                 "box-title": "Cell",
-                "url": "../cell-rendering-components/",
+                "url": "../component-cell-renderer/",
                 "showInCollapsed": true
               },
               {
                 "title": "Cell Editor",
                 "box-title": "Editor",
-                "url": "../cell-editor/",
+                "url": "../component-cell-editor/",
                 "showInCollapsed": true
               },
               {
                 "title": "Date Component",
                 "box-title": "Date",
-                "url": "../date-component/"
+                "url": "../component-date/"
               },
               {
                 "title": "Filter Component",
                 "box-title": "Filter",
-                "url": "../filter-component/",
+                "url": "../component-filter/",
                 "showInCollapsed": true
               },
               {
                 "title": "Floating Filter Component",
                 "box-title": "Floating Filter",
-                "url": "../floating-filter-component/"
+                "url": "../component-floating-filter/"
               },
               {
                 "title": "Header Component",
                 "box-title": "Header",
-                "url": "../header-rendering/",
+                "url": "../component-header/",
                 "showInCollapsed": true
               },
               {
                 "title": "Loading Cell Renderer",
                 "box-title": "Loading",
-                "url": "../loading-cell-renderer/"
+                "url": "../component-loading-cell-renderer/"
               },
               {
                 "title": "Overlay Component",
                 "box-title": "Overlays",
-                "url": "../overlay-component/"
+                "url": "../component-overlay/"
               },
               {
                 "title": "Status Bar Component",
                 "box-title": "Status Bar",
-                "url": "../status-bar-component/",
+                "url": "../component-status-bar/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
                 "title": "Tool Panel Component",
                 "box-title": "Tool Panel",
-                "url": "../tool-panel-component/",
+                "url": "../component-tool-panel/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
                 "title": "Tooltip Component",
                 "box-title": "Tooltip",
-                "url": "../tooltip-component/",
+                "url": "../component-tooltip/",
                 "showInCollapsed": true
               }
             ]

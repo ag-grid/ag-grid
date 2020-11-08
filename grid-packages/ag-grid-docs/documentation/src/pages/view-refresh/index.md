@@ -9,7 +9,7 @@ However sometimes you may be updating the data outside of the grids control. Whe
 To deal with the scenario where the row data is changed without the grid been aware, the grid provides the following methods:
 
 
-- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](../cell-rendering-components/) with a refresh method, the refresh method will get called.
+- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](../component-cell-renderer/) with a refresh method, the refresh method will get called.
 
 - **Redraw Rows**: `api.redrawRows(redrawRowsParams)` - Removes the rows from the DOM and draws them again from scratch. The cells are created again from scratch. No change detection is done. No refreshing of cells is done.
 

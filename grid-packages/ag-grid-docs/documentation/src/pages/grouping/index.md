@@ -190,7 +190,7 @@ The following example shows the first example in this page, the Auto Column Grou
 
 ## Configuring Full Width Group Rows
 
-When using Full Width Group Rows, it is possible to change the rendering of the group row. This done by either replacing the Cell Renderer with your own [Custom Cell Renderer](../cell-rendering-components/), or configuring the provided [Group Cell Renderer](../group-cell-renderer/).
+When using Full Width Group Rows, it is possible to change the rendering of the group row. This done by either replacing the Cell Renderer with your own [Custom Cell Renderer](../component-cell-renderer/), or configuring the provided [Group Cell Renderer](../group-cell-renderer/).
 
 If using Full Width Group Rows and no `groupRowRenderer` properties are provided, then the default [Group Cell Renderer](../group-cell-renderer/) is used with it's default values.
 

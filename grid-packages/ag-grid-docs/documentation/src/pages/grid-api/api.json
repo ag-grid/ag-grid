@@ -333,10 +333,10 @@
             "description": "Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer."
         },
         "getCellRendererInstances(params)": {
-            "description": "Returns the list of active <a href='../cell-rendering-components/#accessing-cell-renderer-instances'>Cell Renderer Instances</a>."
+            "description": "Returns the list of active <a href='../component-cell-renderer/#accessing-cell-renderer-instances'>Cell Renderer Instances</a>."
         },
         "getCellEditorInstances(params)": {
-            "description": "Returns the list of active <a href='../cell-editor/#accessing-cell-editor-instances'>Cell Editor Instances</a>."
+            "description": "Returns the list of active <a href='../component-cell-editor/#accessing-cell-editor-instances'>Cell Editor Instances</a>."
         },
         "getSizesForCurrentTheme()": {
             "description": "Gets the sizes that various UI elements will be rendered at with the current theme. Returns an object containing the keys `rowHeight` and `headerHeight`. If you override the row or header height using `gridOptions`, the override value you provided will be returned."

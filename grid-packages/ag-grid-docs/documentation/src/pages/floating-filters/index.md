@@ -22,7 +22,7 @@ Floating filters depend on and co-ordinate with the main column filters. They do
 
 Every floating filter takes a parameter to show/hide automatically a button that will open the main filter.
 
-To see how floating filters work see [Floating Filter Components](../floating-filter-component/).
+To see how floating filters work see [Floating Filter Components](../component-floating-filter/).
 
 The following example shows the following features of floating filters:
 

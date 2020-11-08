@@ -106,7 +106,7 @@ function myCellRenderer(params)  {
 ```
 
 [[note]]
-| A custom [Cell Renderer Component](../cell-rendering-components/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
+| A custom [Cell Renderer Component](../component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
 
 
 The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
@@ -337,7 +337,7 @@ Set filter values that are too long to be displayed are truncated by default wit
 }
 ```
 
-The default tooltip component will be used unless a [Custom Tooltip Component](../tooltip-component/) is provided.
+The default tooltip component will be used unless a [Custom Tooltip Component](../component-tooltip/) is provided.
 
 The following example demonstrates tooltips in the Set Filter. Note the following:
 

@@ -54,7 +54,7 @@ being applied to the cell, which causes the text to wrap.
 <grid-example title='Row Height Complex' name='row-height-complex' type='generated'></grid-example>
 
 [[note]]
-| If you are providing a custom [Cell Renderer Component](../cell-rendering-components/),
+| If you are providing a custom [Cell Renderer Component](../component-cell-renderer/),
 | you can implement text wrapping in the custom component in your own way. The property `wrapText`
 | is intended to be used when you are not using a custom Cell Renderer.
 
@@ -68,7 +68,7 @@ that column to determine the line height.
 
 `autoHeight` is typically used with `wrapText`.
 If `wrapText` is not set, and no custom
-[Cell Renderer Component](../cell-rendering-components/)
+[Cell Renderer Component](../component-cell-renderer/)
 is used, then the cell will display all it's contents on one line. This is probably not
 the intention if using Auto Row Height.
 

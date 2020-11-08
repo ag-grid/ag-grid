@@ -19,7 +19,7 @@ gridOptions = {
 }
 ```
 
-The Detail Cell Renderer should be a [Cell Renderer](../cell-rendering-components/) component. See [Cell Renderer](../cell-rendering-components/) on how to build
+The Detail Cell Renderer should be a [Cell Renderer](../component-cell-renderer/) component. See [Cell Renderer](../component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
 
 The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Customer Detail" is shown.

@@ -30,7 +30,7 @@ The grid provides the following Tool Panels:
 
 In addition to the provided Tool Panels, it is also possible to provide custom Tool Panels.
 
-For more details refer to the section: [Custom Tool Panel Components](../tool-panel-component/).
+For more details refer to the section: [Custom Tool Panel Components](../component-tool-panel/).
 
 ## Next Up
 

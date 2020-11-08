@@ -118,7 +118,7 @@ As you can see in the example below, if you change any of the header heights, th
 
 ## Custom Header
 
-Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](../header-rendering/).
+Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](../component-header/).
 
 ## Header Tooltips
 
@@ -133,7 +133,7 @@ The example below shows header tooltips. Note the following:
 
 ## Header Templates
 
-You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](../header-rendering/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
+You can provide a header template used by the default header component for simple layout changes. If you want to change the behaviour, please look at creating your own [Custom Header Component](../component-header/). The template for the default header is specified in `columnDef.headerComponentParams.template`.
 
 This is the default template used in ag-Grid:
 

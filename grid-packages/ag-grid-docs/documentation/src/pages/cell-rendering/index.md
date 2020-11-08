@@ -41,7 +41,7 @@ var colDef3 = function(params) {
 }
 ```
 
-This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](../cell-rendering-components/).
+This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](../component-cell-renderer/).
 
 ## No Cell Renderer
 
@@ -51,7 +51,7 @@ If you just want to do simple formatting of the data (eg currency or date format
 
 ## Cell Renderer Components
 
-Cell renderer components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Renderers](../cell-rendering-components/) (built by you).
+Cell renderer components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Renderers](../component-cell-renderer/) (built by you).
 
 ## Many Renderers One Column
 

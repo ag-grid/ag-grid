@@ -38,7 +38,7 @@ To use `fullWidth`, you must:
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
 
 The cell renderer can be any ag-Grid cell renderer. Refer to
-[Cell Rendering](../cell-rendering-components/) on how to build cell renderers.
+[Cell Rendering](../component-cell-renderer/) on how to build cell renderers.
 The cell renderer for `fullWidth` has one difference to normal cell renderers: the parameters passed
 are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular
 column. Instead you should work off the data parameter, which represents the value for the entire row.

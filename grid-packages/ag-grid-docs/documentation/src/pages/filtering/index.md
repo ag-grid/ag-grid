@@ -17,7 +17,7 @@ Column filters are accessed in the grid UI either through the [Column Menu](../c
 </div>
 
 
-You can use the [Provided Filters](../filter-provided/) that come with the grid, or you can build your own [Filter Components](../filter-component/) if you want to customise the filter experience to your application.
+You can use the [Provided Filters](../filter-provided/) that come with the grid, or you can build your own [Filter Components](../component-filter/) if you want to customise the filter experience to your application.
 
 ### Example: Simple Filters
 

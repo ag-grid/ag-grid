@@ -75,7 +75,7 @@ The example below is identical to the first example on this page with the additi
 
 ## Custom Drag Component
 
-Drag and drop is a complex application-level requirement. As such, a component (the grid) can't propose a drag and drop solution that is appropriate for all applications. For this reason, if the application has drag and drop requirements, you would likely want to implement a custom [Cell Renderer](../cell-rendering-components/) specifically for your needs.
+Drag and drop is a complex application-level requirement. As such, a component (the grid) can't propose a drag and drop solution that is appropriate for all applications. For this reason, if the application has drag and drop requirements, you would likely want to implement a custom [Cell Renderer](../component-cell-renderer/) specifically for your needs.
 
 The example below shows a custom drag and drop cell renderer. Note the following:
 

@@ -219,7 +219,7 @@ The full list of Detail Cell Renderer Params are as follows:
 
 <api-documentation source='master-detail-detail-grids/resources/properties.json' section='detailCellRenderer'></api-documentation>
 
-The pattern of setting components such as Cell Renderer's and providing parameters to those components is consistent across the grid and explained in [Grid Components](../components/).
+The pattern of setting components such as Cell Renderer's and providing parameters to those components is consistent across the grid and explained in [Grid Components](../grid-components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
 

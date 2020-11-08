@@ -186,5 +186,5 @@ The example below shows two custom layouts for the Filters Tool Panel. Note the 
 
 ## Next Up
 
-Now that we covered the provided Tool Panels, learn how to create [Custom Tool Panel Components](../tool-panel-component/).
+Now that we covered the provided Tool Panels, learn how to create [Custom Tool Panel Components](../component-tool-panel/).
 

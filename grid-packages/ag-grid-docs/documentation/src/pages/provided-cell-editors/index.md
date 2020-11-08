@@ -60,7 +60,7 @@ colDef.cellEditorParams = {
 | If you are unhappy with the additional click required, we advise you don't depend on the 
 | browsers standard Select (ie avoid `agSelectCellEditor` and 
 | `agPopupSelectCellEditor`) and instead use `agRichSelectCellEditor` or 
-| create your own using a [Cell Editor Component](../cell-editor/).
+| create your own using a [Cell Editor Component](../component-cell-editor/).
 
 ### agRichSelectCellEditor
 
@@ -82,7 +82,7 @@ The `agRichSelectCellEditor` takes the following parameters:
 
 - `formatValue`: A callback function that allows you to change the displayed value for simple data.
 
-- `cellRenderer`: The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. See [Cell Rendering Components](../cell-rendering-components/)
+- `cellRenderer`: The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. See [Cell Rendering Components](../component-cell-renderer/)
     for creating custom cell renderers.
 
 - `searchDebounceDelay (Default: 300)`: The value in `ms` for the fuzzy search debounce delay.

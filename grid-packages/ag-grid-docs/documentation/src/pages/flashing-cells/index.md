@@ -43,7 +43,7 @@ One exception to the above is changes due to filtering. If you are [Row Grouping
 
 ## Flashing Cells vs Custom Cell Renderers
 
-Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](../cell-rendering-components/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
+Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](../component-cell-renderer/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
 
 
 The grid comes with two such Cell Renderers for showing data changes which are detailed in the [Change Cell Renderers](../change-cell-renderers/) section.

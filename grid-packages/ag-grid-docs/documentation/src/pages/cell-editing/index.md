@@ -186,7 +186,7 @@ Finally, the example also demonstrates querying which cell is editing:
 
 It is also possible to use different editors for different rows in the same column. Typically an application might check the rows contents and choose an editor accordingly. To configure this set `colDef.cellEditorSelector` to a function that returns the name of the component to be used as an editor and optionally the custom params to be passed into it.
 
-The params that are passed to this function is the same as the params passed to [cell editors](../cell-editor/).
+The params that are passed to this function is the same as the params passed to [cell editors](../component-cell-editor/).
 
 The following example illustrates how to use different editors and parameters in the same column. Note that:
 
