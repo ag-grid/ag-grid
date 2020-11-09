@@ -1,4 +1,11 @@
 .matrix-table {
+    &--pad3 {
+        @extend .ml-3;
+    }
+    &--pad4 {
+        @extend .ml-5;
+    }
+
     &__true {
         color: green;
     }

@@ -4,7 +4,7 @@
     "items": [
       {
         "title": "Getting Started",
-        "matrixExclude": true,
+        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Overview",
@@ -145,7 +145,7 @@
       {
         "title": "Interface / API",
         "icon": "icon-api",
-        "matrixExclude": true,
+        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Grid Interface",
@@ -207,7 +207,7 @@
       {
         "title": "Columns",
         "icon": "icon-columns",
-        "matrixExclude": true,
+        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Column Definitions",
@@ -326,7 +326,7 @@
       {
         "title": "Build & Tooling",
         "icon": "icon-information",
-        "matrixExclude": true,
+        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Community & Enterprise",
@@ -1602,7 +1602,7 @@
       {
         "title": "Testing & Security",
         "icon": "icon-test",
-        "matrixExclude": true,
+        "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
