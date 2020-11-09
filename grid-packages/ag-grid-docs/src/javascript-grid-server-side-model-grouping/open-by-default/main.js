@@ -20,6 +20,7 @@ var gridOptions = {
 
     rowModelType: 'serverSide',
     serverSideStoreType: 'full',
+    rowSelection: 'multiple',
 
     isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
     suppressAggFuncInHeader: true,
@@ -27,10 +28,25 @@ var gridOptions = {
 };
 
 function isServerSideGroupOpenByDefault(params) {
-    var rowNode = params.rowNode;
-    var isZimbabwe = rowNode.field == 'country' && rowNode.key == 'Zimbabwe';
-    var isSwimming = rowNode.field == 'sport' && rowNode.key == 'Swimming';
-    return isZimbabwe || isSwimming;
+    var route = params.rowNode.getRoute();
+    if (!route) { return false; }
+
+    var routeAsString = route.join(',');
+
+    var routesToOpenByDefault = [
+        'Zimbabwe',
+        'Zimbabwe,Swimming',
+        'United States,Swimming',
+    ];
+
+    return routesToOpenByDefault.indexOf(routeAsString) >= 0;
+}
+
+function onBtRouteOfSelected() {
+    var selectedNodes = gridOptions.api.getSelectedNodes();
+    selectedNodes.forEach(function(rowNode, index) {
+        console.log('#' + index + ', route = [' + rowNode.getRoute().join(',') + ']');
+    });
 }
 
 function ServerSideDatasource(server) {

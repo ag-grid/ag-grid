@@ -347,7 +347,7 @@ SNIPPET
 </p>
 
 <p>
-    The example below shows <code>isApplyServerSideTransaction()</code> and also Store Info in action.
+    The example below shows Store Info in action.
 </p>
 
 <?= grid_example('Store Info', 'store-info', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
@@ -379,20 +379,36 @@ SNIPPET
 ) ?>
 
 <p>
-    Below shows the callback in action. Note the following:
+    It may also be helpful to use the <a href="../javascript-grid-row-node/">Row Node</a> API
+    <code>getRoute()</code> to inspect the route of a row node. If the Row Node is a group,
+    it returns the route to that Row Node. If the Row Node is not a group, it returns
+    <code>undefined</code>.
+</p>
+
+<p>
+    Below shows <code>isServerSideGroupOpenByDefault()</code> and <code>getRoute</code>
+    in action. Note the following:
 </p>
 <ul>
     <li>
-        The callback opens country Zimbabwe and sport Swimming by default.
+        The callback opens the following routes those routes are loaded:
+        <ul>
+            <li>[Zimbabwe]</li>
+            <li>[Zimbabwe, Swimming]</li>
+            <li>[United States, Swimming]</li>
+        </ul>
     </li>
     <li>
-        Note the county Zimbabwe has Swimming as it's only sport, thus both of these
-        are opened as soon as the rows load.
+        Note [Zimbabwe] and [Zimbabwe, Swimming] are visibly open by default.
     </li>
     <li>
-        Other countries (eg United States and Russia) also have swimming, however the swimming
-        group is now opened and loaded until after those countries are expanded, as it is only
-        then that the swimming group is created.
+        Note [United States, Swimming] is not visibly open by default, as the
+        parent group 'United States' is not open. However open 'United States' is
+        open, it's 'Swimming' group is open.
+    </li>
+    <li>
+        Selecting a row and clicking 'Route of Selected' will print the route to the
+        selected node.
     </li>
 </ul>
 
