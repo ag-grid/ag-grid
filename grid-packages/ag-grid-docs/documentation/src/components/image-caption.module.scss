@@ -1,5 +1,6 @@
 .image-caption {
-    @extend .card, .my-3, .d-block;
+    @extend .card, .my-3;
+    display: inline-table;
 
     &--centered {
         @extend .mx-auto;

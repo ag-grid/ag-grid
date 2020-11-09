@@ -22,18 +22,19 @@ const ImageCaption = ({ src, alt, centered, children, constrained, descriptionto
     const img = nodes.filter(file => file.relativePath === src)[0];
     const style = {};
 
-    if (width != null) { style.width = width; }
+    if (width != null) { style.width = width; style.minWidth = width; }
     if (maxwidth != null) { style.maxWidth = maxwidth; }
     if (height != null) { style.height = height; }
 
+    const keyName = alt.replace(/\s/g, '').toLowerCase();
     const className = `${styles.imageCaption} ${centered ? styles.imageCaptionCentered : ''}`;
     const bodyClass = `${styles.imageCaption__body} ${descriptiontop ? styles.imageCaptionDescriptionTop : null}`;
     const imageClass= `${styles.imageCaption__top} ${constrained ? styles.imageCaptionConstrained: null}`;
 
     const content = [
-        <img src={img.childImageSharp == null ? img.publicURL : img.childImageSharp.fluid.src} className={imageClass} alt={alt} />,
+        <img src={img.childImageSharp == null ? img.publicURL : img.childImageSharp.fluid.src}  key={`${keyName}-img`} className={imageClass} alt={alt} />,
         children 
-            ? <div className={bodyClass}><p className={styles.imageCaption__bodyText}>{children}</p></div>
+            ? <div className={bodyClass} key={`${keyName}-body`}><p className={styles.imageCaption__bodyText}>{children}</p></div>
             : null
     ]
 
