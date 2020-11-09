@@ -330,24 +330,24 @@ The callback is available as a [column callback](../column-properties/) (set on 
 The example below demonstrates suppressing the following keyboard events:
 
 - On the Athlete column cells only:
-    - `Enter` will not start or stop editing.
+    - <kbd>Enter</kbd> will not start or stop editing.
 - On the Country column cells only:
-    - `&uarr;` `&darr;` arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
+    - <kbd>↑</kbd> <kbd>↓</kbd> arrow keys are allowed. This is the only column that allows navigation from the grid to the header.
 - On all cells (including the cells of the Athlete Column):
-    - `Ctrl & A` will not select all cells into a range.
-    - `Ctrl & C` will not copy to clipboard.
-    - `Ctrl & V` will not paste from clipboard.
-    - `Ctrl & D` will not copy range down.
-    - `Page Up` and `Page Down` will not get handled by the grid.
-    - `Home` will not focus top left cell.
-    - `End` will not focus bottom right cell.
-    - `&larr;` `&uarr;` `&rarr;` `&darr;` Arrow keys will not navigate focused cell.
-    - `F2` will not start editing.
-    - `Delete` will not start editing.
-    - `Backspace` will not start editing.
-    - `Escape` will not cancel editing.
-    - `Space` will not select current row.
-    - `Tab` will not be handled by the grid.
+    - <kbd>Ctrl & A</kbd> will not select all cells into a range.
+    - <kbd>Ctrl & C</kbd> will not copy to clipboard.
+    - <kbd>Ctrl & V</kbd> will not paste from clipboard.
+    - <kbd>Ctrl & D</kbd> will not copy range down.
+    - <kbd>Page Up</kbd> and <kbd>Page Down</kbd> will not get handled by the grid.
+    - <kbd>Home</kbd> will not focus top left cell.
+    - <kbd>End</kbd> will not focus bottom right cell.
+    - <kbd>←</kbd> <kbd>↑</kbd> <kbd>→</kbd> <kbd>↓</kbd> Arrow keys will not navigate focused cell.
+    - <kbd>F2</kbd> will not start editing.
+    - <kbd>Delete</kbd> will not start editing.
+    - <kbd>Backspace</kbd> will not start editing.
+    - <kbd>Escape</kbd> will not cancel editing.
+    - <kbd>Space</kbd> will not select current row.
+    - <kbd>Tab</kbd> will not be handled by the grid.
 - On the Country header only:
     - Navigation is blocked from the left to right using arrows but is allowed using tab.
     - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
