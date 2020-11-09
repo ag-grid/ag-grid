@@ -202,13 +202,13 @@ title: "Testing ag-Grid"
 | ```js
 | ag_grid_utils.verifyRowDataMatchesGridData(
 |     [
-|         // first row
-|     {
-|     "name": "Amelia Braxton",
-|     "proficiency": "42%",
-|     "country": "Germany",
-|     "mobile": "+960 018 686 075",
-|     "landline": "+743 1027 698 318"
+|         {
+|             // first row
+|             "name": "Amelia Braxton",
+|             "proficiency": "42%",
+|             "country": "Germany",
+|             "mobile": "+960 018 686 075",
+|             "landline": "+743 1027 698 318"
 |         },
 |         // more rows...
 |     ]
