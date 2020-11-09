@@ -1,22 +1,13 @@
 var gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'tear', rowGroup: true, hide: true },
+        { headerName: 'Year', valueGetter: 'data.year', rowGroup: true, hide: true },
 
-        { field: 'athlete', rowGroup: true, hide: true },
-        { field: 'gold', rowGroup: true, hide: true  },
-        { field: 'silver', rowGroup: true, hide: true  },
-        { field: 'bronze', rowGroup: true, hide: true  },
-        { field: 'total', rowGroup: true, hide: true  },
-        { field: 'gold', rowGroup: true, hide: true  },
-        { field: 'silver', rowGroup: true, hide: true  },
-        { field: 'bronze',  rowGroup: true, hide: true  },
-        { field: 'total', rowGroup: true, hide: true  },
-        { field: 'silver', rowGroup: true, hide: true  },
-        { field: 'bronze',rowGroup: true, hide: true  },
-        { field: 'total', rowGroup: true, hide: true  },
-        { field: 'gold',  rowGroup: true, hide: true  },
-        { field: 'silver', rowGroup: true, hide: true  },
+        { field: 'athlete', minWidth: 200 },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'total', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
