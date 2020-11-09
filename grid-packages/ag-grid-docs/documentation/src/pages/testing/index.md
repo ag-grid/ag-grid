@@ -3,8 +3,6 @@ title: "Testing ag-Grid"
 ---
 
 [[only-javascript]]
-| ## Testing ag-Grid with Protractor & Jasmine
-| 
 | We will walk through how you can use `Protractor` and `Jasmine` to do Unit & End to End (e2e) 
 | testing with ag-Grid in this section.
 | 
