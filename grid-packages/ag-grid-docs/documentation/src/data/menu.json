@@ -1606,28 +1606,8 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Testing Overview",
+            "title": "Testing",
             "url": "../testing/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Testing Angular",
-            "url": "../testing-angular/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Testing React",
-            "url": "../testing-react/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Testing Vue",
-            "url": "../testing-vue/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Jasmine & Protractor",
-            "url": "../e2e-test-with-jasmine/",
             "showInCollapsed": true
           },
           {
