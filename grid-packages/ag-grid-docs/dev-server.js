@@ -272,13 +272,11 @@ function watchAndGenerateExamples() {
     chokidar.watch([`./src/**/*.{php,html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 
     chokidar
-        .watch([
-            `./documentation/src/pages/**/*.md`,
-            `./documentation/src/pages/**/examples/**/*.{html,css,js,jsx,ts}`
-        ], {
-            ignored: ['**/_gen/**/*'],
-            ignoreInitial: true,
-        })
+        .watch([`./documentation/src/pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
+        .on('change', regenerateDocumentationExamplesForFileChange);
+
+    chokidar
+        .watch([`./documentation/src/pages/**/*.md`], { ignored: ['**/_gen/**/*'], ignoreInitial: true })
         .on('add', regenerateDocumentationExamplesForFileChange)
         .on('change', regenerateDocumentationExamplesForFileChange);
 }
