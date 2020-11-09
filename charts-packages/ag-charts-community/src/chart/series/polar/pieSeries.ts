@@ -24,6 +24,7 @@ export interface PieSeriesNodeClickEvent extends TypedEvent {
     readonly series: PieSeries;
     readonly datum: any;
     readonly angleKey: string;
+    readonly labelKey?: string;
     readonly radiusKey?: string;
 }
 
@@ -503,6 +504,7 @@ export class PieSeries extends PolarSeries {
             series: this,
             datum: datum.seriesDatum,
             angleKey: this.angleKey,
+            labelKey: this.labelKey,
             radiusKey: this.radiusKey
         });
     }
