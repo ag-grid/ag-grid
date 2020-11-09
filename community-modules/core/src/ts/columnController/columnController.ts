@@ -102,6 +102,7 @@ export class ColumnController extends BeanStub {
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
     private primaryColumns: Column[]; // every column available
+    private primaryColumnsMap: {[id: string]: Column};
 
     // if pivoting, these are the generated columns as a result of the pivot
     private secondaryBalancedTree: OriginalColumnGroupChild[] | null;
@@ -116,6 +117,8 @@ export class ColumnController extends BeanStub {
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: OriginalColumnGroupChild[];
     private gridColumns: Column[];
+    private gridColumnsMap: {[id: string]: Column};
+
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
@@ -240,6 +243,8 @@ export class ColumnController extends BeanStub {
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
+        this.primaryColumnsMap = {};
+        this.primaryColumns.forEach( col => this.primaryColumnsMap[col.getId()] = col );
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
@@ -2343,15 +2348,21 @@ export class ColumnController extends BeanStub {
     }
 
     public getPrimaryColumn(key: string | Column): Column | null {
-        return this.getColumn(key, this.primaryColumns);
+        return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     }
 
     public getGridColumn(key: string | Column): Column | null {
-        return this.getColumn(key, this.gridColumns);
+        return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
-    private getColumn(key: string | Column, columnList: Column[]): Column | null {
+    private getColumn(key: string | Column, columnList: Column[], columnMap: {[id: string]: Column}): Column | null {
         if (!key) { return null; }
+
+        // most of the time this method gets called the key is a string, so we put this shortcut in
+        // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
+        if (typeof key == 'string' && columnMap[key]) {
+            return columnMap[key];
+        }
 
         for (let i = 0; i < columnList.length; i++) {
             if (this.columnsMatch(columnList[i], key)) {
@@ -2918,6 +2929,7 @@ export class ColumnController extends BeanStub {
             this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
+
             this.secondaryColumnsPresent = true;
         } else {
             this.secondaryBalancedTree = null;
@@ -2992,6 +3004,9 @@ export class ColumnController extends BeanStub {
         this.clearDisplayedColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+
+        this.gridColumnsMap = {};
+        this.gridColumns.forEach( col => this.gridColumnsMap![col.getId()] = col );
 
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
