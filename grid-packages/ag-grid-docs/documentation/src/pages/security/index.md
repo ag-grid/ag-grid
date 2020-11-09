@@ -71,11 +71,11 @@ Applications may be required to pass an Application Security Test prior to being
 
 ag-Grid is tested for a wide variety of security vulnerabilities using the [SonarQube](https://www.sonarqube.org/) automatic security testing tool. SonarQube performs testing using a number of security rules, covering well-established security vulnerability standards such as CWE, SANS Top 25 and OWASP Top 10. For more details please refer to the section on [Security-related Rules](https://docs.sonarqube.org/latest/user-guide/security-rules/#header-2).
 
-The SonarQube security test results for the latest release of `ag-grid-community` and `ag-grid-enterprise` are shown below:
+## SonarQube Results
 
+The SonarQube security test results for `ag-grid-community` and `ag-grid-enterprise` are shown below:
 
-### SonarQube Results on ag-grid-community
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community)
-
-### SonarQube Results on ag-grid-enterprise
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise)
+| Ag-Grid Package | Result |
+| --------------- | ------ |
+| ag-grid-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
+| ag-grid-enterprise | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
