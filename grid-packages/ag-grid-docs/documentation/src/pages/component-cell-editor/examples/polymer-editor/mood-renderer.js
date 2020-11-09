@@ -1,4 +1,4 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class MoodRenderer extends PolymerElement {
     static get template() {
@@ -19,7 +19,9 @@ export default class MoodRenderer extends PolymerElement {
 
     setMood(params) {
         this.mood = params.value;
-        this.imgForMood = this.mood === 'Happy' ? '/images/smiley.png' : '/images/smiley-sad.png';
+        this.imgForMood = this.mood === 'Happy' ?
+            'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png' :
+            'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png';
     };
 
     static get properties() {

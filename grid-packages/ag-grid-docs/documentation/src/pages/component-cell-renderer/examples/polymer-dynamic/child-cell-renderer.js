@@ -1,4 +1,4 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class ChildCellRenderer extends PolymerElement {
     static get template() {
@@ -12,7 +12,7 @@ export default class ChildCellRenderer extends PolymerElement {
     }
 
     invokeParentMethod() {
-        this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef.headerName}`)
+        this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef.headerName}`);
     }
 }
 

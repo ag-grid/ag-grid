@@ -1,5 +1,6 @@
-import { html, PolymerElement } from '../node_modules/@polymer/polymer/polymer-element.js';
-import '../node_modules/@ag-grid-community/polymer/index.js';
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
+import 'https://unpkg.com/@ag-grid-community/polymer/index.js';
+
 import PartialMatchFilter from './partial-match-filter.js';
 
 class AgGridPolymerExample extends PolymerElement {
@@ -8,11 +9,18 @@ class AgGridPolymerExample extends PolymerElement {
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-grid.css">
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css">
 
-            <button style="margin-bottom: 5px" on-click="onClicked" class="btn btn-primary">Invoke Filter Instance Method</button>
-            <ag-grid-polymer style="width: 100%; height: 300px; "
-                             class="ag-theme-alpine"
-                             gridOptions="{{gridOptions}}"
-                             on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
+            <div style="display: flex; flex-direction: column; height: 100%;">
+                <div>
+                    <button style="margin-bottom: 1rem" on-click="onClicked">Invoke Filter Instance Method</button>
+                </div>
+
+                <div style="flex: 1 1 auto;">
+                    <ag-grid-polymer style="height: 100%;"
+                        class="ag-theme-alpine"
+                        gridOptions="{{gridOptions}}"
+                        on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
+                </div>
+            </div>
     `;
     }
 
@@ -31,7 +39,6 @@ class AgGridPolymerExample extends PolymerElement {
     onClicked(event) {
         this.gridOptions.api.getFilterInstance('name').getFrameworkComponentInstance().componentMethod('Hello World!');
     }
-
 
     createColumnDefs() {
         return [

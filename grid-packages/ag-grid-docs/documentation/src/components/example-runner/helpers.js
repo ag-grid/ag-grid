@@ -1,5 +1,6 @@
 import { withPrefix } from 'gatsby';
-import { generateIndexHtml } from './index-html-generator';
+import { agGridVersion, localPrefix } from './consts';
+import { getIndexHtml } from './index-html-helper';
 
 const getInternalFramework = (framework, useFunctionalReact) => {
     if (framework === 'javascript') {
@@ -11,7 +12,7 @@ const getInternalFramework = (framework, useFunctionalReact) => {
     return framework;
 };
 
-export const getExampleInfo = (pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
+export const getExampleInfo = (nodes, pageName, name, title, type, options, framework, importType, useFunctionalReact) => {
     const internalFramework = getInternalFramework(framework, useFunctionalReact);
     const boilerplatePath = `/example-runner/grid-${framework}-boilerplate/`;
 
@@ -50,6 +51,7 @@ export const getExampleInfo = (pageName, name, title, type, options, framework, 
         sourcePath,
         boilerplatePath,
         appLocation,
+        getFile: name => nodes.filter(file => file.relativePath === sourcePath + name)[0],
     };
 };
 
@@ -100,7 +102,7 @@ export const getExampleFiles = (nodes, exampleInfo) => {
     });
 
     files['index.html'] = {
-        source: generateIndexHtml(nodes, exampleInfo),
+        source: getIndexHtml(nodes, exampleInfo),
         isFramework: false,
     };
 
@@ -148,3 +150,20 @@ export const doOnEnter = (e, action) => {
 };
 
 export const isDevelopment = () => process.env.NODE_ENV === 'development';
+
+export const getCssFilePaths = theme => {
+    const themeFiles = theme ?
+        [theme] :
+        ['alpine-dark', 'alpine', 'balham-dark', 'balham', 'material', 'fresh', 'dark', 'blue', 'bootstrap'];
+
+    const cssFiles = [
+        'ag-grid.css',
+        ...themeFiles.map(theme => `ag-theme-${theme}.css`)
+    ];
+
+    const getCssFilePath = file => isDevelopment() ?
+        `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}` :
+        `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/${file}`;
+
+    return cssFiles.map(getCssFilePath);
+};

@@ -3,7 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
 import { localPrefix, agGridVersion } from './consts';
-import { isDevelopment } from './helpers';
+import { getCssFilePaths, isDevelopment } from './helpers';
 import Scripts from './Scripts';
 import Styles from './Styles';
 
@@ -42,14 +42,7 @@ const VanillaBody = ({ appLocation, options, scriptFiles, indexFragment }) => {
 const VanillaStyles = ({ files }) => {
     if (!isDevelopment()) { return <Styles files={files} />; }
 
-    const themeFiles = ['alpine-dark', 'alpine', 'balham-dark', 'balham', 'material', 'fresh', 'dark', 'blue', 'bootstrap'];
-
-    const cssFiles = [
-        'ag-grid.css',
-        ...themeFiles.map(theme => `ag-theme-${theme}.css`)
-    ];
-
-    const cssPaths = cssFiles.map(file => `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`);
+    const cssPaths = getCssFilePaths();
 
     return <Styles files={[...cssPaths, ...files]} />;
 };

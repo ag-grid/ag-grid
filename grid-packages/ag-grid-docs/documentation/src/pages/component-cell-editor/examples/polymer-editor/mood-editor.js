@@ -1,4 +1,4 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class MoodEditor extends PolymerElement {
     static get template() {
@@ -34,20 +34,20 @@ export default class MoodEditor extends PolymerElement {
             }
         </style>
         <div id="container" class="mood" tabindex="0" on-keydown="onKeyDown">
-            <img src="/images/smiley.png" on-click="onHappy" class$="{{classForHappy}}">
-            <img src="/images/smiley-sad.png" on-click="onSad" class$="{{classForSad}}">
+            <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png" on-click="onHappy" class$="{{classForHappy}}">
+            <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png" on-click="onSad" class$="{{classForSad}}">
         </div>
         `;
     }
 
     agInit(params) {
         this.params = params;
-        this.setHappy(params.value === "Happy");
+        this.setHappy(params.value === 'Happy');
     }
 
     ready() {
         super.ready();
-        this.$.container.focus()
+        this.$.container.focus();
     }
 
     isPopup() {
@@ -55,7 +55,7 @@ export default class MoodEditor extends PolymerElement {
     }
 
     getValue() {
-        return this.happy ? "Happy" : "Sad";
+        return this.happy ? 'Happy' : 'Sad';
     }
 
     onHappy() {
@@ -101,17 +101,11 @@ export default class MoodEditor extends PolymerElement {
     }
 
     getClassForHappy(happy) {
-        if (happy) {
-            return 'selected'
-        }
-        return 'default'
+        return happy ? 'selected' : 'default';
     }
 
     getClassForSad(happy) {
-        if (!happy) {
-            return 'selected'
-        }
-        return 'default'
+        return happy ? 'default' : 'selected';
     }
 }
 

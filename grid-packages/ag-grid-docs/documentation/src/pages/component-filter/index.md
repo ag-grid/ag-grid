@@ -172,19 +172,19 @@ There are two ways you can get fix this problem:
 
 [[only-angular]]
 | ## Angular Filtering
-| 
-| It is possible to provide Angular filters for ag-Grid to use if you are are using the Angular version of ag-Grid. 
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register 
+|
+| It is possible to provide Angular filters for ag-Grid to use if you are are using the Angular version of ag-Grid.
+| See [registering framework components](../grid-components/#registering-framework-components) for how to register
 | framework components.
-| 
-| Your Angular components need to implement `AgFilterComponent`. The ag Framework expects to find the mandatory 
+|
+| Your Angular components need to implement `AgFilterComponent`. The ag Framework expects to find the mandatory
 | methods on the interface on the created component (and will call optional methods if they're present).
-| 
+|
 | ### Angular Params
-| 
-| The ag Framework expects to find the `agInit` (on the `AgFilterComponent` interface) method on the created 
+|
+| The ag Framework expects to find the `agInit` (on the `AgFilterComponent` interface) method on the created
 | component, and uses it to supply the 'filter params'.
-| 
+|
 | ```ts
 | agInit(params: IFilterParams): void {
 |     this.params = params;
@@ -193,25 +193,25 @@ There are two ways you can get fix this problem:
 | ```
 |
 | ### Angular Methods / Lifecycle
-| 
-| All of the methods in the `IFilterComp` interface described above are applicable to the Component with 
+|
+| All of the methods in the `IFilterComp` interface described above are applicable to the Component with
 | the following exceptions:
-| 
+|
 | - `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
 | - `destroy()` is not used. Instead implement the Angular `OnDestroy` interface (`ngOnDestroy`) for any cleanup you need to do.
 | - `getGui()` is not used. Angular will provide the GUI via the supplied template.
-| 
-| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, 
+|
+| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same,
 | so put them directly onto your Angular Component.
-| 
+|
 | ### Accessing the Angular Component Instance
-| 
-| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method. 
-| If your component is a Angular component, this will give you a reference to ag-Grid's component which wraps your 
-| Angular component, just like Russian Dolls. To get to the wrapped Angular instance of your component, use the 
+|
+| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| If your component is a Angular component, this will give you a reference to ag-Grid's component which wraps your
+| Angular component, just like Russian Dolls. To get to the wrapped Angular instance of your component, use the
 | `getFrameworkComponentInstance()` method as follows:
-| 
-| 
+|
+|
 | ```ts
 | // let's assume an Angular component as follows
 | @Component({
@@ -222,46 +222,46 @@ There are two ways you can get fix this problem:
 | })
 | class PartialMatchFilterComponent implements AgFilterComponent {
 |     ... // standard filter methods hidden
-| 
+|
 |     // put a custom method on the filter
 |     myMethod() {
 |         // does something
 |     }
 | }
-| 
+|
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
 |     // get reference to the ag-Grid Filter component
 |     const agGridFilter = api.getFilterInstance('name'); // assume filter on name column
-| 
+|
 |     // get Angular instance from the ag-Grid instance
 |     const angularFilterInstance = agGridFilter.getFrameworkComponentInstance();
-| 
+|
 |     // now we're sucking diesel!!!
 |     angularFilterInstance.myMethod();
 | }
 | ```
-| 
+|
 | ### Example: Filtering using Angular Components
-| 
+|
 | Using Angular Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
-| 
-| 
+|
+|
 | <grid-example title='Angular Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"] }'></grid-example>
 
 [[only-react]]
 | ## React Filtering
-| 
-| It is possible to provide React filters for ag-Grid to use if you are are using the React version of ag-Grid. 
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register 
+|
+| It is possible to provide React filters for ag-Grid to use if you are are using the React version of ag-Grid.
+| See [registering framework components](../grid-components/#registering-framework-components) for how to register
 | framework components.
-| 
+|
 | ###  React Props
-| 
-| The React component will get the 'filter params' as described above as React Props. Therefore you can access all 
+|
+| The React component will get the 'filter params' as described above as React Props. Therefore you can access all
 | the parameters as React Props.
-| 
-| 
+|
+|
 | ```ts
 | // React filter Component
 | class NameFilter extends React.Component {
@@ -270,7 +270,7 @@ There are two ways you can get fix this problem:
 |         // from here you can access any of the props!
 |         console.log('The field for this filter is ' + props.colDef.field);
 |     }
-| 
+|
 |     // maybe your filter has a button in it, and when it gets clicked...
 |     onButtonWasPressed() {
 |         // all the methods in the props can be called
@@ -278,68 +278,68 @@ There are two ways you can get fix this problem:
 |     }
 | }
 | ```
-| 
-| ### React Methods / Lifecycle 
-| 
-| All of the methods in the `IFilterComp` interface described above are applicable to the React Component with the following 
+|
+| ### React Methods / Lifecycle
+|
+| All of the methods in the `IFilterComp` interface described above are applicable to the React Component with the following
 | exceptions:
-| 
+|
 | - `init()` is not used. Instead use the React props passed to your Component.
 | - `destroy()` is not used. Instead use the React `componentWillUnmount()` method for any cleanup you need to do.
 | - `getGui()` is not used. Instead use normal React magic in your `render()` method.
-| 
+|
 | After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, so put them directly | onto your React Component.
-| 
+|
 | ### Accessing the React Component Instance
-| 
-| ag-Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components | are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. If 
-| your component is a React component, this will give you a reference to ag-Grid's component which wraps your React component, | just like Russian Dolls. To get to the wrapped React instance of your component, use the `getFrameworkComponentInstance()` 
+|
+| ag-Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components | are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. If
+| your component is a React component, this will give you a reference to ag-Grid's component which wraps your React component, | just like Russian Dolls. To get to the wrapped React instance of your component, use the `getFrameworkComponentInstance()`
 | method as follows:
-| 
+|
 | ```ts
 | // let's assume a React component as follows
 | class NameFilter extends React.Component {
 |     ... // standard filter methods hidden
-| 
+|
 |     // put a custom method on the filter
 |     myMethod() {
 |         // does something
 |     }
 | }
-| 
+|
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
 |     // get reference to the ag-Grid Filter component on name column
 |     api.getFilterInstance('name', agGridFilterInstance => {
 |         // get React instance from the ag-Grid instance
 |         var reactFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
-| 
+|
 |         // now we're sucking diesel!!!
 |         reactFilterInstance.myMethod();
 |     });
 | }
 | ```
-| 
+|
 | ###  Example: Filtering using React Components
-| 
+|
 | Using React Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
-| 
+|
 | <grid-example title='React Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
-| 
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see 
+|
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please see
 | [here](https://www.ag-grid.com/react-hooks/) for more information.
-| 
+|
 
 [[only-vue]]
 | ## VueJS Filtering
-| 
-| It is possible to provide VueJS filters for ag-Grid to use if you are are using the VueJS version of ag-Grid. 
-| See [registering framework components](../grid-components/#registering-framework-components) for how to register 
+|
+| It is possible to provide VueJS filters for ag-Grid to use if you are are using the VueJS version of ag-Grid.
+| See [registering framework components](../grid-components/#registering-framework-components) for how to register
 | framework components.
-| 
+|
 | ###  VueJS Params
-| 
-| The 'filter params' will be made available implicitly in a data value named `params`. This value will be available 
+|
+| The 'filter params' will be made available implicitly in a data value named `params`. This value will be available
 | to you from the `created` VueJS lifecycle hook.
 |
 | You can think of this as you having defined the following:
@@ -354,25 +354,25 @@ There are two ways you can get fix this problem:
 |     ...
 | }
 | ```
-| 
+|
 | but you do not need to do this - it is made available to you behind the scenes, and contains the cell's value.
 |
 | ### VueJS Methods / Lifecycle
-| 
-| All of the methods in the `IFilterComp` interface described above are applicable to the VueJS Component with 
+|
+| All of the methods in the `IFilterComp` interface described above are applicable to the VueJS Component with
 | the following exceptions:
-| 
+|
 | - `init()` is not used. The cell's value is made available implicitly via a data field called `params`.
 | - `getGui()` is not used. VueJS will provide the GUI via the supplied template.
-| 
-| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, so 
+|
+| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, so
 | put them directly onto your VueJS Component.
-| 
+|
 | ### Accessing the VueJS Component Instance
-| 
-| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method. 
-| If your component is a VueJS component, then this will give you a reference to ag-Grid's component which wraps 
-| your VueJS component, just like Russian Dolls. To get to the wrapped VueJS instance of your component, use 
+|
+| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| If your component is a VueJS component, then this will give you a reference to ag-Grid's component which wraps
+| your VueJS component, just like Russian Dolls. To get to the wrapped VueJS instance of your component, use
 | the `getFrameworkComponentInstance()` method as follows:
 |
 | ```ts
@@ -405,14 +405,14 @@ There are two ways you can get fix this problem:
 
 [[only-javascript]]
 | ## Polymer Filtering
-| 
-| It is possible to provide Polymer filters for ag-Grid to use if you are are using the Polymer version of 
-| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to 
+|
+| It is possible to provide Polymer filters for ag-Grid to use if you are are using the Polymer version of
+| ag-Grid. See [registering framework components](../grid-components/#registering-framework-components) for how to
 | register framework components.
-| 
+|
 | ###  Specifying a Polymer Filter
-| 
-| If you are using the `ag-grid-polymer` component to create the ag-Grid instance, then you will have the 
+|
+| If you are using the `ag-grid-polymer` component to create the ag-Grid instance, then you will have the
 | option of additionally specifying the filters as Polymer components.
 |
 | ```ts
@@ -423,130 +423,129 @@ There are two ways you can get fix this problem:
 |         Filter: <input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}">
 |         `;
 |     }
-| 
+|
 |     agInit(params) {
 |         this.params = params;
 |         this.valueGetter = params.valueGetter;
 |     }
-| 
+|
 |     static get properties() {
 |         return {
 |             text: String
 |         };
 |     }
-| 
+|
 |     isFilterActive() {
 |         return this.text != null && this.text !== '';
 |     }
-| 
+|
 |     doesFilterPass(params) {
 |         return this.text.toLowerCase()
 |             .split(" ")
 |             .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
 |     }
-| 
+|
 |     getModel() {
 |         return {value: this.text};
 |     }
-| 
+|
 |     setModel(model) {
 |         this.text = model ? model.value : '';
 |     }
-| 
+|
 |     afterGuiAttached(params) {
 |         this.$.input.focus();
 |     }
-| 
+|
 |     onChange(event) {
 |         const newValue = event.target.value;
-| 
+|
 |         if (this.text !== newValue) {
 |             this.text = newValue;
 |             this.params.filterChangedCallback();
 |         }
 |     }
 | }
-| 
+|
 | customElements.define('partial-match-filter', PartialMatchFilter);
-| 
+|
 | // then reference the Component in your colDef like this
 | colDef = {
 |     // we use cellRendererFramework instead of cellRenderer
 |     filterFramework: 'partial-match-filter'
-| 
+|
 |     // specify all the other fields as normal
 |     headerName: 'Name',
 |     field: 'firstName',
 |     ...
 | }
 | ```
-| 
-| Your Polymer components need to implement `IFilterComp`. The ag Framework expects to find the mandatory methods on the 
-| interface on the created component (and will call optional methods if they're present) as well as `agInit`, which the 
+|
+| Your Polymer components need to implement `IFilterComp`. The ag Framework expects to find the mandatory methods on the
+| interface on the created component (and will call optional methods if they're present) as well as `agInit`, which the
 | grid uses to provide initial state and parameters.
-| 
+|
 | ### Polymer Params
-| 
+|
 | The ag Framework expects to find the `agInit` method on the created component, and uses it to supply the 'filter params'.
-| 
+|
 | ```ts
 | agInit(params: IFilterParams): void {
 |     this.params = params;
 |     this.valueGetter = params.valueGetter;
 | }
 | ```
-| 
+|
 | ### Polymer Methods / Lifecycle
-| 
+|
 | All of the methods in the `IFilterComp` interface described above are applicable to the Polymer Component with the following | exceptions:
-| 
+|
 | - `init()` is not used. Instead implement the `agInit` method (on the `AgRendererComponent` interface).
 | - `getGui()` is not used. Polymer will provide the GUI via the supplied template.
-| 
-| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, so 
+|
+| After that, all the other methods (`onNewRowsLoaded()`, `getModel()`, `setModel()` etc.) behave the same, so
 | put them directly | onto your Polymer Component.
-| 
+|
 | ### Accessing the Polymer Component Instance
-| 
-| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method. 
-| If your component | is a Polymer component, then this will give you a reference to ag-Grid's component which 
-| wraps your Polymer component, just | like Russian Dolls. To get to the wrapped Polymer instance of your component, 
+|
+| ag-Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| If your component | is a Polymer component, then this will give you a reference to ag-Grid's component which
+| wraps your Polymer component, just | like Russian Dolls. To get to the wrapped Polymer instance of your component,
 | use the `getFrameworkComponentInstance()` method | as follows:
-| 
+|
 | ```ts
 | // let's assume a Polymer component as follows
 | export default class PartialMatchFilter extends PolymerElement {
 |     static get template() {
 |         return html`
 |             Filter: <input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}">
-| 
+|
 |         `;
 |     }
 |     ... // standard filter methods hidden
-| 
+|
 |     // put a custom method on the filter
 |     myMethod() {
 |         // does something
 |     }
 | }
-| 
+|
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
 |     // get reference to the ag-Grid Filter component
 |     const agGridFilterInstance = this.gridOptions.api.getFilterInstance('name');
-| 
+|
 |     // get Polymer instance from the ag-Grid instance
 |     const polymerFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
-| 
+|
 |     // now we're sucking diesel!!!
 |     polymerFilterInstance.myMethod();
 | }
 | ```
-| 
+|
 | ### Example: Filtering using Polymer Components
-| 
+|
 | Using Polymer Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
-| 
-| ```html 
-| <grid-example title='Polymer Filter Component' name='polymer-filter' type='as-is' options='{ "showImportsDropdown": false, "noPlunker": true, "usePath" => "/", "exampleHeight": 360 }'></grid-example>
+|
+| <grid-example title='Polymer Filter Component' name='polymer-filter' type='polymer' options='{ "noPlunker": true }'></grid-example>
 

@@ -8,7 +8,7 @@ import GlobalContextConsumer from '../GlobalContext';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { useExampleFileNodes } from './use-example-file-nodes';
 import { doOnEnter, getExampleInfo, isDevelopment, openPlunker } from './helpers';
-import { generateIndexHtml } from './index-html-generator';
+import { getIndexHtml } from './index-html-helper';
 import styles from './example-runner.module.scss';
 
 const ExampleRunner = ({ pageName, framework, name, title, type, options = {} }) => {
@@ -17,8 +17,8 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {} })
 
     return <GlobalContextConsumer>
         {({ exampleImportType, useFunctionalReact, set }) => {
-            const exampleInfo =
-                getExampleInfo(pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
+            const exampleInfo = getExampleInfo(
+                nodes, pageName, name, title, type, options, framework, exampleImportType, useFunctionalReact);
 
             let openTabLink = <a href={withPrefix(`${exampleInfo.appLocation}index.html`)} target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faWindowRestore} fixedWidth />
@@ -26,7 +26,7 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {} })
 
             if (isDevelopment()) {
                 // as the files will not have been generated in development, we generate the HTML for the new tab here
-                const indexHtml = generateIndexHtml(nodes, exampleInfo, true);
+                const indexHtml = getIndexHtml(nodes, exampleInfo, true);
                 const openTab = () => {
                     const win = window.open(null, '_blank');
                     win.document.write(indexHtml);
@@ -78,14 +78,15 @@ const ExampleRunner = ({ pageName, framework, name, title, type, options = {} })
                         <div className={styles.exampleRunner__menuItem}>
                             {openTabLink}
                         </div>
-                        <div
-                            className={styles.exampleRunner__menuItem}
-                            onClick={() => openPlunker(nodes, exampleInfo)}
-                            onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
-                            role="button"
-                            tabIndex="0">
-                            <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
-                        </div>
+                        {!options.noPlunker &&
+                            <div
+                                className={styles.exampleRunner__menuItem}
+                                onClick={() => openPlunker(nodes, exampleInfo)}
+                                onKeyDown={e => doOnEnter(e, () => openPlunker(nodes, exampleInfo))}
+                                role="button"
+                                tabIndex="0">
+                                <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth />
+                            </div>}
                     </div>
                     <div className={styles.exampleRunner__content}>
                         {!showCode &&

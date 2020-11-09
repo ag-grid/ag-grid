@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import fs from 'fs';
 import { useExampleFileNodes } from './use-example-file-nodes';
-import { generateIndexHtml } from './index-html-generator';
+import { getIndexHtml } from './index-html-helper';
 import styles from './example-runner-result.module.scss';
 
 const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
     const [shouldExecute, setShouldExecute] = useState(isVisible);
 
     const nodes = useExampleFileNodes();
-    const { name, appLocation: modulesLocation, framework, type } = exampleInfo;
-    const generated = generateIndexHtml(nodes, exampleInfo, true);
+    const { name, appLocation, framework, type } = exampleInfo;
+    const indexHtml = getIndexHtml(nodes, exampleInfo, true);
 
-    if (typeof window === 'undefined' && (type === 'generated' || type === 'mixed')) {
+    if (typeof window === 'undefined') {
         // generate code for the website to read at runtime
-        fs.writeFileSync(`public${modulesLocation}index.html`, generated);
+        if (type === 'generated' || type === 'mixed') {
+            const modulesLocation = appLocation; // because modules is the default
 
-        const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
+            fs.writeFileSync(`public${modulesLocation}index.html`, indexHtml);
 
-        fs.writeFileSync(`public${packagesLocation}index.html`, generated);
+            const packagesLocation = modulesLocation.replace('/modules/', '/packages/');
 
-        if (framework === 'react') {
-            // need to ensure functional version is also generated
-            fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, generated);
-            fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, generated);
+            fs.writeFileSync(`public${packagesLocation}index.html`, indexHtml);
+
+            if (framework === 'react') {
+                // need to ensure functional version is also generated
+                fs.writeFileSync(`public${modulesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+                fs.writeFileSync(`public${packagesLocation.replace('/react/', '/reactFunctional/')}index.html`, indexHtml);
+            }
+        } else if (type === 'polymer') {
+            fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
         }
     }
 
@@ -36,7 +42,7 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         if (!isVisible) {
             setShouldExecute(false);
         }
-    }, [generated]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const iframeRef = React.createRef();
 
@@ -45,9 +51,9 @@ const ExampleRunnerResult = ({ isVisible, exampleInfo }) => {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
         iframeDoc.open();
-        iframeDoc.write(shouldExecute ? generated : '');
+        iframeDoc.write(shouldExecute ? indexHtml : '');
         iframeDoc.close();
-    }, [shouldExecute, generated]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [shouldExecute, indexHtml]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return <iframe ref={iframeRef} title={name} className={styles.exampleRunnerResult}></iframe>;
 };

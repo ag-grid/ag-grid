@@ -1,38 +1,8 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class NumericEditor extends PolymerElement {
     static get template() {
         return html`
-        <style>
-            .mood {
-                border-radius: 15px;
-                border: 1px solid grey;
-                background: #e6e6e6;
-                padding: 15px;
-                text-align: center;
-                display: inline-block;
-                outline: none;
-                z-index: 1000;
-            }
-
-            .default {
-                padding-left: 10px;
-                padding-right: 10px;
-                border: 1px solid transparent;
-                padding: 4px;
-            }
-
-            .selected {
-                padding-left: 10px;
-                padding-right: 10px;
-                border: 1px solid lightgreen;
-                padding: 4px;
-            }
-
-            :host {
-                display: block;
-            }
-        </style>
         <input id="input" on-keydown="onKeyDown" value="{{value::input}}">
         `;
     }
@@ -47,7 +17,7 @@ export default class NumericEditor extends PolymerElement {
 
     ready() {
         super.ready();
-        this.$.input.focus()
+        this.$.input.focus();
     }
 
     getValue() {
@@ -67,7 +37,7 @@ export default class NumericEditor extends PolymerElement {
     finishedEditingPressed(event) {
         const KEY_ENTER = 13;
         const KEY_TAB = 9;
-        const KEY_ESC= 27;
+        const KEY_ESC = 27;
 
         const charCode = this.getCharCodeFromEvent(event);
         return charCode === KEY_ENTER || charCode === KEY_TAB || charCode === KEY_ESC;
@@ -81,7 +51,7 @@ export default class NumericEditor extends PolymerElement {
 
     getCharCodeFromEvent(event) {
         event = event || window.event;
-        return (typeof event.which == "undefined") ? event.keyCode : event.which;
+        return typeof event.which == 'undefined' ? event.keyCode : event.which;
     }
 
     isCharNumeric(charStr) {

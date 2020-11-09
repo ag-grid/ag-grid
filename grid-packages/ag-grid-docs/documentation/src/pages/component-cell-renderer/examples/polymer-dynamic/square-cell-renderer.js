@@ -1,4 +1,4 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class SquareCellRenderer extends PolymerElement {
     static get template() {

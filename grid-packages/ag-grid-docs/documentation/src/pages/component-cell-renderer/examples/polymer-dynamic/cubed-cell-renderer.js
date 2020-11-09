@@ -1,4 +1,4 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
 
 export default class CubeCellRenderer extends PolymerElement {
     static get template() {
@@ -13,7 +13,7 @@ export default class CubeCellRenderer extends PolymerElement {
     }
 
     // called when the cell is refreshed (ie when its value changed, for example by editing)
-    refresh(params)  {
+    refresh(params) {
         this.params = params;
         this.value = params.value;
     }

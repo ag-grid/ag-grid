@@ -1,23 +1,31 @@
-import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
-import "../node_modules/@ag-grid-community/polymer/index.js";
+import { html, PolymerElement } from 'https://unpkg.com/@polymer/polymer@3.4.1/polymer-element.js';
+import 'https://unpkg.com/@ag-grid-community/polymer/index.js';
 
-import CubeCellRenderer from "./cubed-cell-renderer.js";
-import ChildCellRenderer from "./child-cell-renderer.js";
-import CurrencyCellRenderer from "./currency-cell-renderer.js";
-import ParamsCellRenderer from "./params-cell-renderer.js";
-import SquareCellRenderer from "./square-cell-renderer.js";
+import CubeCellRenderer from './cubed-cell-renderer.js';
+import ChildCellRenderer from './child-cell-renderer.js';
+import CurrencyCellRenderer from './currency-cell-renderer.js';
+import ParamsCellRenderer from './params-cell-renderer.js';
+import SquareCellRenderer from './square-cell-renderer.js';
 
 class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css">
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css">
-          
-            <button on-click="refreshRowData" style="margin-bottom: 15px">Refresh Data</button>
-            <ag-grid-polymer style="width: 100%; height: 420px; "
-                             class="ag-theme-alpine"
-                             gridOptions="{{gridOptions}}"
-                             on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
+
+            <div style="display: flex; flex-direction: column; height: 100%;">
+                <div>
+                    <button on-click="refreshRowData" style="margin-bottom: 1rem;">Refresh Data</button>
+                </div>
+
+                <div style="flex: 1 1 auto;">
+                    <ag-grid-polymer
+                        style="height: 100%;"
+                        class="ag-theme-alpine"
+                        gridOptions="{{gridOptions}}"
+                        on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
+                </div>
+            </div>
     `;
     }
 
@@ -46,7 +54,7 @@ class AgGridPolymerExample extends PolymerElement {
 
     createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 100},
+            { headerName: "Row", field: "row", width: 100 },
             {
                 headerName: "Square",
                 field: "value",
@@ -108,11 +116,9 @@ class AgGridPolymerExample extends PolymerElement {
         return rowData;
     }
 
-
     firstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
-
 }
 
 customElements.define('ag-grid-polymer-example', AgGridPolymerExample);

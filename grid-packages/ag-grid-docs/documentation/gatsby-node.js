@@ -21,17 +21,19 @@ exports.setFieldsOnGraphQLNodeType = ({ type, getNodeAndSavePathDependency, path
                 const details = getNodeAndSavePathDependency(file.id, context.path);
 
                 let fileName = `static/${file.internal.contentDigest}/${details.base}`;
+                let isExampleFile = false;
 
                 if (file.relativeDirectory.indexOf('/examples/') >= 0) {
                     // handle example runner files separately to preserve the directory structure
                     let rootDirectory = 'examples/' + file.relativeDirectory.replace('/examples/', '/').replace('/_gen/', '/');
                     fileName = `${rootDirectory}/${details.base}`;
+                    isExampleFile = true;
                 }
 
                 const publicPath = path.join(process.cwd(), `public`, fileName);
 
-                if (!fs.existsSync(publicPath)) {
-                    fs.copy(
+                if (!fs.existsSync(publicPath) || isExampleFile) {
+                    fs.copySync(
                         details.absolutePath,
                         publicPath,
                         { dereference: true },
