@@ -886,24 +886,35 @@ export abstract class Chart extends Observable {
     }
 
     protected onClick(event: MouseEvent) {
-        this.checkSeriesNodeClick();
-        this.checkLegendClick(event);
+        if (this.checkSeriesNodeClick()) {
+            return;
+        }
+        if (this.checkLegendClick(event)) {
+            return;
+        }
+        this.fireEvent({
+            type: 'click',
+            event
+        });
     }
 
-    private checkSeriesNodeClick() {
+    private checkSeriesNodeClick(): boolean {
         const { lastPick } = this;
 
         if (lastPick && lastPick.event && lastPick.node) {
             const { event, datum } = lastPick;
             datum.series.fireNodeClickEvent(event, datum);
+            return true;
         }
+
+        return false;
     }
 
     private onSeriesNodeClick(event: SourceEvent<Series>) {
         this.fireEvent({ ...event, type: 'seriesNodeClick' });
     }
 
-    private checkLegendClick(event: MouseEvent) {
+    private checkLegendClick(event: MouseEvent): boolean {
         const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
 
         if (datum) {
@@ -915,8 +926,11 @@ export abstract class Chart extends Observable {
                 if (enabled) {
                     this.hideTooltip();
                 }
+                return true;
             }
         }
+
+        return false;
     }
 
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent) {
