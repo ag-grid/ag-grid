@@ -178,6 +178,8 @@ export class PieSeries extends PolarSeries {
      */
     @reactive('dataChange') radiusKey?: string;
     @reactive('update') radiusName?: string;
+    @reactive('dataChange') radiusMin?: number;
+    @reactive('dataChange') radiusMax?: number;
 
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
@@ -277,10 +279,13 @@ export class PieSeries extends PolarSeries {
         let radiusData: number[] = [];
 
         if (useRadiusKey) {
+            const { radiusMin, radiusMax } = this;
             const radii = data.map(datum => Math.abs(datum[radiusKey!]));
-            const maxDatum = Math.max(...radii);
+            const min = radiusMin !== undefined ? radiusMin : Math.min(...radii);
+            const max = radiusMax !== undefined ? radiusMax : Math.max(...radii);
+            const delta = max - min;
 
-            radiusData = radii.map(value => value / maxDatum);
+            radiusData = radii.map(value => (value - min) / delta);
         }
 
         groupSelectionData.length = 0;
