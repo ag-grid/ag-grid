@@ -20,7 +20,7 @@ It is free to try out ag-Grid Enterprise. Please take ag-Grid Enterprise for a t
 
 The below table summarizes the features included in ag-Grid Community and ag-Grid Enterprise. Note that ag-Grid Enterprise builds on ag-Grid Community, it offers everything ag-Grid Community offers plus more.
 
-<matrix-table src='menu.json' tree='true' childnode='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>
+<matrix-table src='menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>
 
 ## Installing ag-Grid Enterprise
 

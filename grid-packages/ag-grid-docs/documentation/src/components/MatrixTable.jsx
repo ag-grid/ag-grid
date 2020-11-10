@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import styles from './matrix-table.module.scss';
 
-const MatrixTable = ({ src, rootnode, columns, tree, booleanonly, childnode }) => {
+const MatrixTable = ({ src, rootnode, columns, tree, booleanonly, childpropertyname }) => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {
         allFile(filter: { sourceInstanceName: { in: ["pages", "data"] }, relativePath: { regex: "/.json$/" } }) {
@@ -18,102 +18,116 @@ const MatrixTable = ({ src, rootnode, columns, tree, booleanonly, childnode }) =
     }
     `);
 
-    columns = JSON.parse(columns);
-    const columnFields = Object.keys(columns);
-    const columnNames = columnFields.map(column => columns[column]);
     const file = JSON.parse(nodes.find(node => node.relativePath === src).internal.content);
-    const path = (!!rootnode && rootnode.split('.')) || '';
+    const allRows = getRowsToProcess(file, rootnode);
+    const allColumns = JSON.parse(columns);
+    
+    return createTable(allColumns, allRows, tree, booleanonly, childpropertyname);
+}
 
-    let rows = file;
-    let currentPath;
+const getRowsToProcess = (file, rootNode) => {
+    const path = (!!rootNode && rootNode.split('.')) || '';
 
-    while(path.length) {
-        currentPath = path.pop()
-        rows = file[currentPath];
+    while (path.length) {
+        file = file[path.pop()];
     }
+
+    return file;
+}
+
+const createTable = (allColumns, allRows, isTree, booleanOnly, childPropertyName) => {
+    const columnFields = Object.keys(allColumns);
+    const columnNames = columnFields.map(column => allColumns[column]);
 
     return (
         <table className={styles.matrixTable}>
             <thead>
                 <tr>
-                    { columnNames.map(column => <th>{ renderEnterprise(column, tree, {}) }</th>) }
+                    { columnNames.map((column, idx) => <th key={`header-column-${idx}`}>{ renderEnterprise(column, isTree) }</th>) }
                 </tr>
             </thead>
             <tbody>
-                { processRows(rows, columnFields, tree, booleanonly, childnode, 0) }
+                { processRows(allRows, columnFields, isTree, booleanOnly, childPropertyName, 0) }
             </tbody>
         </table>
     );
 }
 
-const renderFirstColumn = (column, tree, row, level) => {
-    const name = tree ? wrapWithLink(renderEnterprise(column, tree, row), row.url) : column;
-    return <span className={level > 2 ? `${styles['matrixTablePad'+ level]}` : null }>{ name }</span>
-}
-
-const renderEnterprise = (value, tree, row) => {
-    const name = value.replace('<enterprise-icon></enterprise-icon>', '');
-    if (name.length !== value.length || (tree && row.enterprise)) {
-        return <React.Fragment>{name}<enterprise-icon></enterprise-icon></React.Fragment>
-    }
-    return name;
-}
-
-const renderNodeWithChildren = (value, tree, row, level) => {
-    if (!value) return [];
-    
-    return [(
-        <tr>
-            <td colSpan="3">
-                { level === 1 
-                    ? <h3>{ value }</h3> 
-                    : (
-                        <span className={level > 2 ? `${styles['matrixTablePad' + level]}` : null }>
-                            {wrapWithLink(renderEnterprise(value, tree, row), row.url)}
-                        </span>
-                    )
-                }
-            </td>
-        </tr>
-    )]
-}
-
 const wrapWithLink = (value, url) => <a href={url}>{value}</a>;
 
-const processRows = (rows, columnFields, tree, booleanonly, childnode, level) => {
-    return rows.reduce((allRows, nextRow) => {
-        const exclude = tree && nextRow.title === 'See Also';
-        if (tree && nextRow[childnode] && !nextRow.matrixExcludeChildren && !exclude) {
-            const processedRows = processRows(nextRow[childnode], columnFields, tree, booleanonly, childnode, level + 1);
-            const title = renderNodeWithChildren(nextRow.title, tree, nextRow, level);
+const renderEnterprise = (value, isTree, rowData = {}) => {
+    const processedValue = value.replace('<enterprise-icon></enterprise-icon>', '');
+    if (processedValue.length !== value.length || (isTree && rowData.enterprise)) {
+        return <React.Fragment>{ processedValue }<enterprise-icon></enterprise-icon></React.Fragment>
+    }
+    return processedValue;
+}
 
-            return allRows.concat(title, processedRows);
+const processRows = (rowArray, columnFields, isTree, booleanOnly, childPropertyName, level, group = 'root') => {
+    return rowArray.reduce((allRows, currentRow, rowIdx) => {
+        const exclude = isTree && currentRow.title === 'See Also';
+        const rowItems = currentRow[childPropertyName];
+
+        if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {
+            const titleField = columnFields[0];
+            const title = currentRow[titleField];
+            const newGroup = title ? `${group}-${title.toLowerCase().replace(/\s/g,'-')}` : group;
+
+            const processedRow = processRows(rowItems, columnFields, isTree, booleanOnly, childPropertyName, level + 1, newGroup);
+            const titleRow = createTitleRow(title, isTree, currentRow, level, `${newGroup}-title`);
+
+            return allRows.concat(titleRow, processedRow);
         }
 
-        const newRows = (nextRow.matrixExclude || (nextRow.matrixExcludeChildren && !nextRow.url) || exclude) ? allRows : 
-        allRows.concat(
-        <tr>
-            {
-                columnFields.map((column, idx) => {
-                    const match = column.match(/not\((.*)\)/);
-                    let fieldName = match ? match[1] : column;
-
-                    return (
-                        <td>{
-                            idx === 0 
-                                ? renderFirstColumn(nextRow[fieldName], tree, nextRow, level)
-                                : renderValue(nextRow[fieldName], booleanonly, !!match)}
-                        </td>
-                    )
-                })
-            }
-        </tr>)
+        const newRows = (currentRow.matrixExclude || (currentRow.matrixExcludeChildren && !currentRow.url) || exclude) 
+            ? allRows 
+            : allRows.concat(createRow(columnFields, currentRow, isTree, booleanOnly, level, `${group}-${rowIdx}`))
 
         return newRows; 
     }, [])
 }
 
-const renderValue = (value, booleanonly, notIn) => {
+const createTitleRow = (title, isTree, rowData, level, rowKey) => !title ? [] : [(
+    <tr key={rowKey}>
+        <td colSpan="3">
+            { level === 1 
+                ? <h3>{ title }</h3> 
+                : (
+                    <span className={ level > 2 ? `${styles['matrixTablePad' + level]}` : null }>
+                        { wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url) }
+                    </span>
+                )
+            }
+        </td>
+    </tr>
+)];
+
+const createRow = (columnFields, rowData, isTree, booleanOnly, level, rowKey) => (
+    <tr key={rowKey}>{
+        columnFields.map((column, colIdx) => {
+            const match = column.match(/not\((.*)\)/);
+            let fieldName = match ? match[1] : column;
+            
+            const value = rowData[fieldName];
+            
+            return (
+                <td key={`${rowKey}-column-${colIdx}`}>{
+                    colIdx === 0
+                        ? renderPropertyColumn(value, isTree, rowData, level)
+                        : renderValue(value, booleanOnly, !!match)}
+                </td>
+            )
+        })
+    }
+    </tr>
+);
+
+const renderPropertyColumn = (value, isTree, rowData, level) => {
+    const processedValue = isTree ? wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url) : value;
+    return <span className={ level > 2 ? `${styles['matrixTablePad'+ level]}` : null }>{ processedValue }</span>
+}
+
+const renderValue = (value, booleanOnly, notIn) => {
     if (value === false || (value === true && notIn)) {
         return <FontAwesomeIcon icon={ faTimes } fixedWidth className={ styles.matrixTable__false } />
     }
@@ -121,7 +135,7 @@ const renderValue = (value, booleanonly, notIn) => {
     return (
         <div>
             <FontAwesomeIcon icon={ faCheck } fixedWidth className={ styles.matrixTable__true } />
-            { typeof value === 'string' && !booleanonly ? value : null }
+            { typeof value === 'string' && !booleanOnly ? value : null }
         </div>
     );
 }
