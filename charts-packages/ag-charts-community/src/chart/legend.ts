@@ -458,7 +458,7 @@ export class Legend extends Observable {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.color = this.color;
+            markerLabel.color = this.item.label.color;
         });
     }
 

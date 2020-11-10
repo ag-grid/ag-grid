@@ -926,6 +926,12 @@ export abstract class Chart extends Observable {
                 if (enabled) {
                     this.hideTooltip();
                 }
+                this.legend.fireEvent({
+                    type: 'click',
+                    event,
+                    itemId,
+                    enabled: !enabled
+                });
                 return true;
             }
         }
