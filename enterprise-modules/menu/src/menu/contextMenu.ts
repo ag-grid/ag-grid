@@ -22,6 +22,7 @@ import {
     IRangeController,
     CellPositionUtils,
     _,
+    AgEvent,
     GridPanel
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
@@ -155,6 +156,9 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         });
 
+        // hide the popup if something gets selected
+        menu.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, hidePopup);
+
         return true;
     }
 }
@@ -184,7 +188,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.destroy.bind(this));
+        menuList.addEventListener(MenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e:AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
