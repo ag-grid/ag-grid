@@ -10,7 +10,7 @@ The grid interface is the combination of the following items:
 - [Grid API](../grid-api/): methods used to interact with the grid after it's created, e.g. `api.getSelectedRows()`.
 - [Grid Events](../grid-events/): events published by the grid to inform applications of changes in state, e.g. `rowSelected`.
 - [Grid Callbacks](../grid-callbacks/): callbacks are used by the grid to retrieve required information from your application, e.g. `getRowHeight()`.
-- [Row Node](../row-node/): each row in the grid is represented by a Row Node object, which in turn has a reference to the piece of row data provided by the application. The Row Node wraps the row data item. The Row Node has attributes, methods and events for interacting with the specific row e.g. `rowNode.setSelected(true)`.
+- [Row Node](../row-object/): each row in the grid is represented by a Row Node object, which in turn has a reference to the piece of row data provided by the application. The Row Node wraps the row data item. The Row Node has attributes, methods and events for interacting with the specific row e.g. `rowNode.setSelected(true)`.
 
 ## Grid Options
 
