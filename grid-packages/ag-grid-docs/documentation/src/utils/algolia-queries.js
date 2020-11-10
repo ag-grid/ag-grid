@@ -1,6 +1,7 @@
 const escapeStringRegexp = require('escape-string-regexp');
 const stripHtml = require('./strip-html');
 const processFrameworkSpecificSections = require('./framework-specific-sections');
+const supportedFrameworks = require('./supported-frameworks');
 
 const pagePath = 'pages';
 
@@ -25,8 +26,6 @@ const pageQuery = `{
   }
 }`;
 
-const frameworks = ['javascript', 'angular', 'react', 'vue'];
-
 function pageToAlgoliaRecord({ node: { id, frontmatter: { title }, fields: { path }, htmlAst } }, framework) {
   const processedAst = processFrameworkSpecificSections(htmlAst, framework);
 
@@ -38,7 +37,7 @@ function pageToAlgoliaRecord({ node: { id, frontmatter: { title }, fields: { pat
   };
 }
 
-const queries = frameworks.map(framework => ({
+const queries = supportedFrameworks.map(framework => ({
   query: pageQuery,
   transformer: ({ data }) => data.pages.edges.map(node => pageToAlgoliaRecord(node, framework)),
   indexName: `ag-grid_${framework}`,
