@@ -125,7 +125,8 @@ export class Observable {
         });
     }
 
-    fireEvent<E extends TypedEvent>(event: E): void {
+    // 'source' is added automatically and is always the object this method belongs to.
+    fireEvent<E extends TypedEvent>(event: Omit<E, 'source'>): void {
         const listeners = (this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>).get(event.type);
 
         if (listeners) {

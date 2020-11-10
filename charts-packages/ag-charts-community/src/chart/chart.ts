@@ -5,7 +5,7 @@ import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
-import { Legend, LegendDatum } from "./legend";
+import { Legend, LegendClickEvent, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
@@ -14,7 +14,6 @@ import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
-import { isTouchDevice } from "../util/touch";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -100,6 +99,10 @@ const defaultTooltipCss = `
     overflow: hidden;
 }
 `;
+
+export interface ChartClickEvent extends SourceEvent<Chart> {
+    event: MouseEvent;
+}
 
 export interface TooltipMeta {
     pageX: number;
@@ -892,7 +895,7 @@ export abstract class Chart extends Observable {
         if (this.checkLegendClick(event)) {
             return;
         }
-        this.fireEvent({
+        this.fireEvent<ChartClickEvent>({
             type: 'click',
             event
         });
@@ -926,7 +929,7 @@ export abstract class Chart extends Observable {
                 if (enabled) {
                     this.hideTooltip();
                 }
-                this.legend.fireEvent({
+                this.legend.fireEvent<LegendClickEvent>({
                     type: 'click',
                     event,
                     itemId,
